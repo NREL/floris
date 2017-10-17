@@ -14,3 +14,7 @@ class Wake(BaseObject):
 
     def solve(self):
         print("Wake")
+    
+    def valid(self):
+        return True
+    
