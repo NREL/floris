@@ -7,7 +7,7 @@ from WakeVelocity import WakeVelocity
 class Wake(BaseObject):
 
     def __init__(self):
-        super(Wake, self).__init__()
+        super().__init__()
         self.combination = WakeCombination("fls")
         self.deflection = WakeDeflection("jimenez")
         self.velocity = WakeVelocity("jensen")

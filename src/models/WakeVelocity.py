@@ -4,7 +4,7 @@ from BaseObject import BaseObject
 class WakeVelocity(BaseObject):
 
     def __init__(self, typeString):
-        super(WakeVelocity, self).__init__()
+        super().__init__()
         self.typeString = typeString
         typeMap = {
             "jensen": self.__jensen

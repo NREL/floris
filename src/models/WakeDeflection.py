@@ -5,7 +5,7 @@ import numpy as np
 class WakeDeflection(BaseObject):
 
     def __init__(self, typeString):
-        super(WakeDeflection, self).__init__()
+        super().__init__()
         self.typeString = typeString
         typeMap = {
             "jimenez": self.__jimenez

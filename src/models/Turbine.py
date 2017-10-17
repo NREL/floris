@@ -4,7 +4,7 @@ from BaseObject import BaseObject
 class Turbine(BaseObject):
 
     def __init__(self):
-        super(Turbine, self).__init__()
+        super().__init__()
 
         self.rotorDiameter = None
         self.hubHeight = None
