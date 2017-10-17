@@ -18,3 +18,12 @@ class Wake(BaseObject):
     def valid(self):
         return True
     
+    def getCombination(self):
+        return self.combination
+    
+    def getDeflection(self):
+        return self.deflection
+    
+    def getVelocity(self):
+        return self.velocity
+
