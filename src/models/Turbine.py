@@ -23,4 +23,23 @@ class Turbine(BaseObject):
         self.wake = None
 
     def printdeets(self):
-        print(self.wake.combination.getType())
+        if self.valid:
+            print(self.wake.combination.getType())
+
+    def valid(self):
+        """
+            Implement property checking here
+            For example, numBlades should be > 1
+        """
+        properties = [
+            self.rotorDiameter,
+            self.hubHeight,
+            self.numBlades,
+            self.pP,
+            self.pT,
+            self.generatorEfficiency,
+            self.eta
+        ]
+        invalid = None in properties
+        return not invalid
+    
