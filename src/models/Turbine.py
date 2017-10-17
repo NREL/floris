@@ -1,5 +1,4 @@
 from BaseObject import BaseObject
-from Wake import Wake
 
 
 class Turbine(BaseObject):
@@ -20,7 +19,7 @@ class Turbine(BaseObject):
         # else:
         #     self.Cp, self.Ct = CpCtWs()
 
-        self.wake = Wake()
+        self.wake = None
 
     def printdeets(self):
         print(self.wake.combination.getType())
