@@ -7,6 +7,7 @@ class Turbine(BaseObject):
     def __init__(self):
         super().__init__()
 
+        # defined attributes
         self.rotorDiameter = None
         self.hubHeight = None
         self.numBlades = None
@@ -15,6 +16,13 @@ class Turbine(BaseObject):
         self.generatorEfficiency = None
         self.eta = None
 
+        # calculated attributes
+        self.Ct = None  # Thrust Coefficient
+        self.Cp = None  # Power Coefficient
+        self.aI = None  # Axial Induction
+        self.TI = None  # Turbulence intensity at rotor
+        self.windSpeed = None  # Windspeed at rotor
+        
         # self.usePitch = usePitch
         # if usePitch:
         #     self.Cp, self.Ct, self.betaLims = CpCtpitchWs()
