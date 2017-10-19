@@ -21,10 +21,6 @@ class Turbine(BaseObject):
         # else:
         #     self.Cp, self.Ct = CpCtWs()
 
-    def printdeets(self):
-        if self.valid:
-            print(self.wake.combination.getType())
-
     def valid(self):
         """
             Implement property checking here
@@ -38,16 +34,15 @@ class Turbine(BaseObject):
         return valid
 
     def calculatePower(self):
-        
-        rho 		= 1.0
-        CpCtTable	= 1.0
+        rho = 1.0
+        CpCtTable = 1.0
 
         # turbine operation
         yaw = 1.0
         tilt = 1.0
         Ct = 1.0
         Cp = 1.0
-        
+
         area = np.pi
 
         area = np.pi * (self.rotorDiameter / 2.)
@@ -58,16 +53,15 @@ class Turbine(BaseObject):
 
     def calculateEffectiveWindSpeed(self):
         return 6.97936532962
-    
+
     def calculateCp(self):
         return 0.44775728
-    
+
     def calculateCt(self):
         return 0.68698416
-    
+
     def calculatePower(self):
         return 1162592.50472816
-    
+
     def calculateAI(self):
         return 0.22026091
-    
