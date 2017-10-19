@@ -21,8 +21,6 @@ class Turbine(BaseObject):
         # else:
         #     self.Cp, self.Ct = CpCtWs()
 
-        self.wake = None
-
     def printdeets(self):
         if self.valid:
             print(self.wake.combination.getType())
