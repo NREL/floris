@@ -13,5 +13,5 @@ class BaseObject(object):
     def __init__(self):
         self.placeholder = "this is a placeholder for future use"
 
-    def valid(self) -> bool:
+    def valid(self):
         return None not in self.__dict__.values()
