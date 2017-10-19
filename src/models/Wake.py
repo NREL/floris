@@ -16,12 +16,15 @@ class Wake(BaseObject):
         print("Wake")
     
     def valid(self):
-        return True
-    
-    def getCombination(self):
-        return self.combination
-    
-    def getDeflection(self):
+        """
+            Implement property checking here
+        """
+        valid = True
+        if not super().valid():
+            valid = False
+        return valid
+
+    def getDeflection(self) -> WakeDeflection:
         return self.deflection
     
     def getVelocity(self):

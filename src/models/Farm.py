@@ -13,4 +13,10 @@ class Farm(BaseObject):
         self.wakeCombination = None
 
     def valid(self):
-        return True
+        """
+            Do validity check
+        """
+        valid = True
+        if not super().valid():
+            valid = False
+        return valid

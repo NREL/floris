@@ -30,18 +30,13 @@ class Turbine(BaseObject):
             Implement property checking here
             For example, numBlades should be > 1
         """
-        properties = [
-            self.rotorDiameter,
-            self.hubHeight,
-            self.numBlades,
-            self.pP,
-            self.pT,
-            self.generatorEfficiency,
-            self.eta
-        ]
-        invalid = None in properties
-        return not invalid
-    
+        valid = True
+        if not super().valid():
+            valid = False
+        if not 1 < self.numBlades < 4:
+            valid = False
+        return valid
+
     def calculatePower(self):
         
         rho 		= 1.0
