@@ -73,3 +73,20 @@ class Turbine(BaseObject):
 
     def calculateAI(self):
         return 0.22026091
+    
+    def createSweptAreaGrid(self):
+        # TODO: add validity check: 
+        # rotor points has a minimum in order to always include points inside
+        # the disk ... 2?
+        rotorPts = int(np.round(np.sqrt(self.nPointsInGrid)))
+        # min, max, n points
+        horizontal = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, rotorPts)
+        vertical = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, rotorPts)
+        grid = []
+        for i in range(rotorPts):
+            if np.hypot(horizontal[i], vertical[i]) < self.rotorDiameter/2:
+                grid.append((horizontal[i], vertical[i]))
+        return grid
+    
+    def calculateAverageVelocity(self):
+        return np.mean(np.array(Utmp)[cond2])
