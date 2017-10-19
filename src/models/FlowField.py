@@ -30,3 +30,9 @@ class FlowField(BaseObject):
         if self.characteristicHeight <= 0:
             valid = False
         return valid
+
+    def initializeVelocities(self):
+        # initialize the flow field used in the 3D model based on shear using 
+        # the power log law.
+        vels = [self.windSpeed * (c[2]/self.characteristicHeight)**self.shear for c in self.turbineCoords]
+        return set(vels)
