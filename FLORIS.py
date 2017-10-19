@@ -13,8 +13,12 @@ from src.models.FlowField import FlowField
 nrelfiveMW = NREL5MW()
 
 # flow field: FLS combination
-ff = FlowField(wakeCombination=WakeCombination("fls"))
-
+ff = FlowField(wakeCombination=WakeCombination("fls"),
+               windSpeed=10,
+               shear=10,
+               turbineCoords={(0,0,0), (0,10,0), (10,0,0)},
+               characteristicHeight=10)
+                   
 # farm: 2 by 2 grid with constant turbine; FLS combination
 twobytwo = TwoByTwo(turbine=nrelfiveMW,
                     wake=Jimenez_Floris_FLS())
