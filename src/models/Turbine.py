@@ -7,6 +7,10 @@ class Turbine(BaseObject):
     def __init__(self):
         super().__init__()
 
+        # constants
+        self.nPointsInGrid = 16
+        self.velocity = 0
+        
         # defined attributes
         self.rotorDiameter = None
         self.hubHeight = None
@@ -15,7 +19,7 @@ class Turbine(BaseObject):
         self.pT = None
         self.generatorEfficiency = None
         self.eta = None
-
+        
         # calculated attributes
         self.Ct = None  # Thrust Coefficient
         self.Cp = None  # Power Coefficient
@@ -28,6 +32,10 @@ class Turbine(BaseObject):
         #     self.Cp, self.Ct, self.betaLims = CpCtpitchWs()
         # else:
         #     self.Cp, self.Ct = CpCtWs()
+        
+        if self.valid():
+            self.grid = self.createSweptAreaGrid()
+            self.velocity = -1     # use invalid value until actually corrected
 
     def valid(self):
         """
@@ -36,8 +44,10 @@ class Turbine(BaseObject):
         """
         valid = True
         if not super().valid():
-            valid = False
+            return False
         if not 1 < self.numBlades < 4:
+            valid = False
+        if self.velocity < 0:
             valid = False
         return valid
 
