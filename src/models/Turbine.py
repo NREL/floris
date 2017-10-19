@@ -50,6 +50,9 @@ class Turbine(BaseObject):
         if self.velocity < 0:
             valid = False
         return valid
+    
+    def setVelocity(self, velocity):
+        self._velocity = velocity
 
     def calculatePower(self):
         rho = 1.0
