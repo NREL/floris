@@ -20,3 +20,10 @@ class Farm(BaseObject):
         if not super().valid():
             valid = False
         return valid
+
+    def plotFarm(self):
+        plt.figure()
+        x = [turbine[0] for turbine in self.turbineMap]
+        y = [turbine[1] for turbine in self.turbineMap]
+        plt.plot(x, y, 'o', color='g')
+        plt.show()
