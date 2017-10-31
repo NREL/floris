@@ -9,8 +9,8 @@ class Turbine(BaseObject):
 
         # constants
         self.nPointsInGrid = 16
-        self.velocity = 0
-        
+        self.velocities = [0]*16
+
         # defined attributes
         self.rotorDiameter = None
         self.hubHeight = None
@@ -19,50 +19,60 @@ class Turbine(BaseObject):
         self.pT = None
         self.generatorEfficiency = None
         self.eta = None
-        
+
         # calculated attributes
-        self.Ct = None  # Thrust Coefficient
-        self.Cp = None  # Power Coefficient
-        self.aI = None  # Axial Induction
-        self.TI = None  # Turbulence intensity at rotor
-        self.windSpeed = None  # Windspeed at rotor
-        
+        # initialized to 0 to pass the validity check
+        self.Ct = 0    # Thrust Coefficient
+        self.Cp = 0    # Power Coefficient
+        self.power = 0
+        self.aI = 0    # Axial Induction
+        # self.TI = None  # Turbulence intensity at rotor
+        self.windSpeed = 0  # Windspeed at rotor
+
+        # controls
+        self.bladePitch = 0
+        self.yawAngle = 0
+        self.tilt = 0
+        self.TSR = 0
+
         # self.usePitch = usePitch
         # if usePitch:
         #     self.Cp, self.Ct, self.betaLims = CpCtpitchWs()
         # else:
         #     self.Cp, self.Ct = CpCtWs()
-        
-        if self.valid():
-            self.grid = self.createSweptAreaGrid()
-            self.velocity = -1     # use invalid value until actually corrected
 
-    def valid(self):
+    def _valid(self):
         """
             Implement property checking here
-            For example, numBlades should be > 1
+            - numBlades should be > 1
+            - nPointsInGrid should be > some number ensuring points in the disk area
+            - velocities should be > 0
+            - rotorDiameter should be > 0
+            - hubHeight should be > 0
+            - numBlades should be > 0
+            - pP should be > 0
+            - pT should be > 0
+            - generatorEfficiency should be > 0
+            - eta should be > 0
+            - Ct should be > 0
+            - Cp should be > 0
+            - aI should be > 0
+            - windSpeed should be > 0
         """
         valid = True
         if not super().valid():
             return False
         if not 1 < self.numBlades < 4:
             valid = False
-        if self.velocity < 0:
+        if any(v < 0 for v in self.velocities):
             valid = False
         return valid
-    
-    def setVelocity(self, velocity):
-        self._velocity = velocity
 
-    def calculatePower(self):
-        rho = 1.0
-        CpCtTable = 1.0
+    def initialize(self):
+        if self._valid():
+            self.grid = self.createSweptAreaGrid()
+            self.velocities = [-1]*16 # use invalid value until actually corrected
 
-        # turbine operation
-        yaw = 1.0
-        tilt = 1.0
-        Ct = 1.0
-        Cp = 1.0
 
         area = np.pi
 

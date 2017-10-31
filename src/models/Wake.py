@@ -7,8 +7,8 @@ class Wake(BaseObject):
 
     def __init__(self):
         super().__init__()
-        self.deflection = None
-        self.velocity = None
+        self.deflectionModel = None
+        self.velocityModel = None
 
     def valid(self):
         """
@@ -19,7 +19,11 @@ class Wake(BaseObject):
             valid = False
         return valid
 
-    def getDeflection(self):
+    def initialize(self):
+        if self.valid():
+            print("cool")
+
+    def getDeflectionFunction(self):
         return self.deflection
 
     def getVelocity(self):

@@ -10,11 +10,7 @@ class Farm(BaseObject):
     def __init__(self):
         super().__init__()
         self.turbineMap = None
-        self.wake = None
         self.flowfield = None
-        if self.valid():
-            print([turbine for turbine in turbineMap])
-            self.flowfield.setTurbineCoords([turbine for turbine in turbineMap])
 
     def valid(self):
         """
@@ -24,6 +20,10 @@ class Farm(BaseObject):
         if not super().valid():
             valid = False
         return valid
+
+    def initialize(self):
+        if self.valid():
+            self.flowfield.setTurbineMap(turbineMap)
 
     def plotFarm(self):
         plt.figure()

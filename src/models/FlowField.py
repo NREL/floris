@@ -17,9 +17,6 @@ class FlowField(BaseObject):
         self.shear = shear
         self.turbineCoords = turbineCoords             # {(x,y,z), (x,y,z), ...}
         self.characteristicHeight = characteristicHeight
-        if self.valid():
-            self.UfieldOrig = self.initializeVelocities() # initial velocities at each turbine
-        
     def valid(self):
         """
             Do validity check
@@ -31,8 +28,23 @@ class FlowField(BaseObject):
             valid = False
         return valid
 
-    def initializeVelocities(self):
-        # initialize the flow field used in the 3D model based on shear using 
-        # the power log law.
-        vels = [self.windSpeed * (c[2]/self.characteristicHeight)**self.shear for c in self.turbineCoords]
-        return set(vels)
+    def initialize(self):
+        if self.valid():
+            self.initializeTurbineVelocities()
+            self.initializeTurbines()
+
+    def initializeTurbineVelocities(self):
+        # TODO: why do we actually need to initialize?
+
+        # initialize the flow field used in the 3D model based on shear using the power log law.
+        for coord, turbine in self.turbineMap.items():
+            grid = turbine.getGrid()
+
+            # use the z coordinate of the turbine grid points for initialization
+            velocities = [self.windSpeed * ((turbine.hubHeight+g[1])/self.characteristicHeight)**self.shear for g in grid]
+
+            turbine.setVelocities(velocities)
+
+    def initializeTurbines(self):
+        for coord, turbine in self.turbineMap.items():
+            turbine.initialize()

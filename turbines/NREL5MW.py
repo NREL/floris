@@ -21,6 +21,25 @@ class NREL5MW(Turbine):
         self.generatorEfficiency = 1.0
         self.eta = 0.768
 
+        self.bladePitch = 1.9
+        self.yawAngle = 0.0
+        self.tilt = 0.0
+        self.TSR = 8.0
+
+        super().initialize()
+        # self.initialize()
+
+    def initialize(self):
+
+        #TODO: improve this
+        self.fCp, self.fCt = self.CpCtWs()
+
+        self.Ct = self.calculateCt()
+        self.Cp = self.calculateCp()
+        self.power = self.calculatePower()
+        self.aI = self.calculateAI()
+        self.windSpeed = self.calculateEffectiveWindSpeed()
+
     def CpCtWs(self):
         CP = [0.        , 0.15643578, 0.31287155, 0.41306749, 0.44895632,
               0.46155227, 0.46330747, 0.46316077, 0.46316077, 0.46280642,
