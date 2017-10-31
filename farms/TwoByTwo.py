@@ -13,10 +13,10 @@ class TwoByTwo(Farm.Farm):
     def __init__(self, turbine=None, wake=None, combination=None):
         super().__init__()
         self.turbineMap = {
-            (0,      0): turbine,
-            (800,    0): turbine,
-            (400,  800): turbine,
-            (1200, 800): turbine
+            (0,      0): copy.deepcopy(turbine)
+            # (800,    0): copy.deepcopy(turbine),
+            # (400,  800): copy.deepcopy(turbine),
+            # (1200, 800): copy.deepcopy(turbine)
         }
         self.wake = wake
         self.combination = combination
