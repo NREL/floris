@@ -2,23 +2,27 @@
 
 # import specific models
 from turbines.NREL5MW import NREL5MW
-from wakes.Jimenez_Floris_FLS import Jimenez_Floris_FLS
+from wakes.JensenJimenez import JensenJimenez
 from src.models.WakeCombination import WakeCombination
 from farms.TwoByTwo import TwoByTwo
 from src.models.FlowField import FlowField
 
-# construct the objects for this simulation
-
-# turbine: NREL 5MW
-nrelfiveMW = NREL5MW()
-
 # flow field: FLS combination
-ff = FlowField(wakeCombination=WakeCombination("fls"),
-               windSpeed=10,
-               shear=10,
-               turbineCoords={(0,0,0), (0,10,0), (10,0,0)},
-               characteristicHeight=10)
-                   
-# farm: 2 by 2 grid with constant turbine; FLS combination
-twobytwo = TwoByTwo(turbine=nrelfiveMW,
-                    wake=Jimenez_Floris_FLS())
+# ff = FlowField(wakeCombination=WakeCombination("fls"),
+#                windSpeed=10,
+#                shear=10,
+#             #    turbineCoords={(0,0,0), (0,10,0), (10,0,0)},
+#                characteristicHeight=10)
+
+# farm: 2 by 2 staggered grid with NREL 5WM turbine; FLS combination
+twobytwo = TwoByTwo(turbine=NREL5MW(),
+                    wake=JensenJimenez(),
+                    combination=WakeCombination("fls"))
+twobytwo.initialize()
+
+t0 = twobytwo.getTurbineAtCoord((0,0))
+
+print("t0.Cp", t0.Cp)
+print("t0.Ct", t0.Ct)
+print("t0.power", t0.power)
+print("t0.aI", t0.aI)
