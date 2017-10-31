@@ -9,14 +9,17 @@ class FlowField(BaseObject):
     def __init__(self, wakeCombination=None,
                        windSpeed=None,
                        shear=None,
-                       turbineCoords=None,
-                       characteristicHeight=None):
+                       turbineMap=None,
+                       characteristicHeight=None,
+                       wake=None):
         super().__init__()
         self.wakeCombination = wakeCombination
         self.windSpeed = windSpeed
         self.shear = shear
-        self.turbineCoords = turbineCoords             # {(x,y,z), (x,y,z), ...}
+        self.turbineMap = turbineMap
         self.characteristicHeight = characteristicHeight
+        self.wake = wake
+
     def valid(self):
         """
             Do validity check
