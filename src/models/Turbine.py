@@ -73,43 +73,39 @@ class Turbine(BaseObject):
             self.grid = self.createSweptAreaGrid()
             self.velocities = [-1]*16 # use invalid value until actually corrected
 
-
-        area = np.pi
-
-        area = np.pi * (self.rotorDiameter / 2.)
-        Cptmp = Cp * (np.cos(yaw * np.pi / 180.)**self.pP) * (np.cos((tilt) * np.pi / 180.)**self.pT)
-        power = 0.5 * rho * area * Cptmp * self.generatorEfficiency * Ueff**3
-
-        return power
-
-    def calculateEffectiveWindSpeed(self):
-        return 6.97936532962
-
-    def calculateCp(self):
-        return 0.44775728
-
-    def calculateCt(self):
-        return 0.68698416
-
-    def calculatePower(self):
-        return 1162592.50472816
-
-    def calculateAI(self):
-        return 0.22026091
-    
     def createSweptAreaGrid(self):
-        # TODO: add validity check: 
+        # TODO: add validity check:
         # rotor points has a minimum in order to always include points inside
         # the disk ... 2?
-        rotorPts = int(np.round(np.sqrt(self.nPointsInGrid)))
-        # min, max, n points
-        horizontal = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, rotorPts)
-        vertical = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, rotorPts)
-        grid = []
-        for i in range(rotorPts):
-            if np.hypot(horizontal[i], vertical[i]) < self.rotorDiameter/2:
-                grid.append((horizontal[i], vertical[i]))
+        #
+        # the grid consists of the y,z coordinates of the discrete points which
+        # lie within the rotor area: [(y1,z1), (y2,z2), ... , (yN, zN)]
+
+        # update:
+        # using all the grid point because that how roald did it.
+        # are the points outside of the rotor disk used later?
+
+        # determine the dimensions of the square grid
+        nPoints = int(np.round(np.sqrt(self.nPointsInGrid)))
+        # syntax: np.linspace(min, max, n points)
+        horizontal = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, nPoints)
+        vertical = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, nPoints)
+
+        # build the grid with all of the points
+        grid = [(h, vertical[i]) for i in range(nPoints) for h in horizontal]
+
+        # keep only the points in the swept area
+        # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotorDiameter/2]
+
         return grid
-    
-    def calculateAverageVelocity(self):
-        return np.mean(np.array(Utmp)[cond2])
+
+    def getGrid(self):
+        return self.grid
+
+    def setVelocities(self, velocities):
+        # TODO: safety check before or after setting velocities
+        # verifying correct size of array and correct values
+        self.velocities = velocities
+
+    def getAverageVelocity(self):
+        return np.mean(self.velocities)

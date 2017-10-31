@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),
                 '..', 'src', 'models')))
 from src.models.Turbine import Turbine
 from scipy.interpolate import interp1d
+import numpy as np
 
 
 class NREL5MW(Turbine):
@@ -67,9 +68,39 @@ class NREL5MW(Turbine):
         fCtInterp = interp1d(wind_speed, CT)
 
         def fCp(Ws):
-            return np.array(max(CP)) if Ws < min(wind_speed) else fCpInterp(Ws)
+            print(Ws < min(wind_speed), Ws, min(wind_speed))
+            return max(CP) if Ws < min(wind_speed) else fCpInterp(Ws)
 
         def fCt(Ws):
-            return np.array(.99) if Ws < min(wind_speed) else fCtInterp(Ws)
+            print(Ws < min(wind_speed), Ws, min(wind_speed))
+            return 0.99 if Ws < min(wind_speed) else fCtInterp(Ws)
 
         return fCp, fCt
+
+    def calculateEffectiveWindSpeed(self):
+        # TODO: why is this here?
+        return self.getAverageVelocity()
+
+    def calculateCp(self):
+        # with average velocity
+        print(self.getAverageVelocity())
+        return self.fCp(self.getAverageVelocity())
+
+    def calculateCt(self):
+        # with average velocity
+        return self.fCt(self.getAverageVelocity())
+
+    def calculatePower(self):
+        # TODO: Add yaw and pitch control
+        yaw, tilt = 0, 0
+
+        cptmp = self.Cp * (np.cos(yaw * np.pi / 180.)**self.pP) * (np.cos(tilt*np.pi/180.)**self.pT)
+
+        #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
+        return 0.5 * 1.225 * (np.pi * (self.rotorDiameter/2)**2) * cptmp * self.generatorEfficiency * self.getAverageVelocity()**3
+
+    def calculateAI(self):
+        # TODO: Add yaw and pitch control
+        yaw, tilt = 0, 0
+
+        return (0.5 / np.cos(yaw * np.pi / 180.)) * (1 - np.sqrt(1 - self.Ct * np.cos(yaw * np.pi/180)))
