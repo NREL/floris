@@ -1,11 +1,12 @@
 import os
 import sys
-from scipy.interpolate import interp1d
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),
                 '..', 'src', 'models')))
-import src.models.Turbine as Turbine
+from src.models.Turbine import Turbine
+from scipy.interpolate import interp1d
 
-class NREL5MW(Turbine.Turbine):
+
+class NREL5MW(Turbine):
     """
         Describe NREL 5MW here
     """
