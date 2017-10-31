@@ -5,14 +5,7 @@ from turbines.NREL5MW import NREL5MW
 from wakes.JensenJimenez import JensenJimenez
 from src.models.WakeCombination import WakeCombination
 from farms.TwoByTwo import TwoByTwo
-from src.models.FlowField import FlowField
 
-# flow field: FLS combination
-# ff = FlowField(wakeCombination=WakeCombination("fls"),
-#                windSpeed=10,
-#                shear=10,
-#             #    turbineCoords={(0,0,0), (0,10,0), (10,0,0)},
-#                characteristicHeight=10)
 
 # farm: 2 by 2 staggered grid with NREL 5WM turbine; FLS combination
 twobytwo = TwoByTwo(turbine=NREL5MW(),

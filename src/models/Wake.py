@@ -1,6 +1,4 @@
 from BaseObject import BaseObject
-from WakeDeflection import WakeDeflection
-from WakeVelocity import WakeVelocity
 
 
 class Wake(BaseObject):
