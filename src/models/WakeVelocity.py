@@ -6,15 +6,22 @@ class WakeVelocity(BaseObject):
     def __init__(self, typeString):
         super().__init__()
         self.typeString = typeString
+
         typeMap = {
-            "jensen": self.__jensen
+            "jensen": self._jensen
         }
-        self.__deflectionFunction = typeMap.get(self.typeString, None)
+        self.function = typeMap[typeString]
 
-    def getType(self):
-        return "{} - {}".format(type(self), self.typeString)
+        self.we = .05 # wake expansion
 
-    def __jensen(D, ke, X, xTurb):
-        # compute the velocity deficit based on the classic Jensen/Park model
-        # see Jensen 1983
-        return (D / (2 * ke * (X - xTurb) + D))**2
+    def _jensen():
+        # compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
+        
+        def calc(D, X, xTurb):
+            # D: turbine diameter
+            # X: downstream location
+            # xTurb: turbine location
+            # ke: wake expansion
+            return (D / (2 * ke * (X - xTurb) + D))**2
+
+        return calc
