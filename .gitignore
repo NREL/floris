@@ -1,2 +1,9 @@
+
+# python compiled files
 __pycache__/
+
+# macOS files
 .DS_Store
+
+# ide settings and files
+.idea
