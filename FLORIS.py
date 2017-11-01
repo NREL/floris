@@ -11,7 +11,6 @@ from farms.TwoByTwo import TwoByTwo
 twobytwo = TwoByTwo(turbine=NREL5MW(),
                     wake=JensenJimenez(),
                     combination=WakeCombination("fls"))
-twobytwo.initialize()
 
 t0 = twobytwo.getTurbineAtCoord((0,0))
 
@@ -19,3 +18,4 @@ print("t0.Cp", t0.Cp)
 print("t0.Ct", t0.Ct)
 print("t0.power", t0.power)
 print("t0.aI", t0.aI)
+print("t0.get_average_velocity()", t0.get_average_velocity())

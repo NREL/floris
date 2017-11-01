@@ -14,14 +14,7 @@ class WakeVelocity(BaseObject):
 
         self.we = .05 # wake expansion
 
-    def _jensen():
+    def _jensen(self, downstream_distance, turbine_diameter, turbine_x):
         # compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
-        
-        def calc(D, X, xTurb):
-            # D: turbine diameter
-            # X: downstream location
-            # xTurb: turbine location
-            # ke: wake expansion
-            return (D / (2 * ke * (X - xTurb) + D))**2
-
-        return calc
+        # +/- 2keX is the slope of the cone boundary for the wake
+        return (turbine_diameter / (2 * self.we * (downstream_distance - turbine_x) + turbine_diameter))**2

@@ -21,9 +21,8 @@ class Wake(BaseObject):
         if self.valid():
             print("cool")
 
-    def _get_deflection_function(self):
+    def get_deflection_function(self):
         return self.deflectionModel.function
 
-    def _get_velocity_function(self):
+    def get_velocity_function(self):
         return self.velocityModel.function
-    

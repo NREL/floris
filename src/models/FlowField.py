@@ -50,3 +50,23 @@ class FlowField(BaseObject):
     def initialize_turbines(self):
         for coord, turbine in self.turbineMap.items():
             turbine.initialize()
+
+    def calculate_wake(self):
+        # TODO: rotate layout here
+        # TODO: sort in ascending order of x coord
+
+        for coord, turbine in self.turbineMap.items():
+            # TODO: store current turbine TI
+            # local_ti = 0
+            # local_velocity = 0
+            previous_turbines_x = 0
+
+            # calculate wake at this turbine
+            print(coord, self.wake.calculate(10, turbine.rotorDiameter, turbine.Ct, coord[0]))
+
+            # TODO: calculate wake at all downstream turbines
+
+
+            # TODO: if last turbine, break
+
+    # def update_flowfield():

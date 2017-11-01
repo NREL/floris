@@ -13,25 +13,27 @@ class WakeDeflection(BaseObject):
         }
         self.function = typeMap.get(self.typeString, None)
 
-        self.we = .05 # wake expansion
+        # to be specified in user input
+        self.kd = .17 # wake deflection
+        self.ad = -4.5
+        self.bd = -0.01
 
-    def _jimenez():
+    def _jimenez(self, downstream_distance, turbine_ct, turbine_diameter):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
         # this is coded as defined in the Jimenez et. al. paper
-        
-        def calc(yaw, Ct, kd, x, D, ad, bd):
-            # angle of deflection
-            xi_init = 1. / 2. * np.cos(yaw) * np.sin(yaw) * Ct
-            xi = (xi_init) / ((1 + 2 * kd * (x / D))**2)
 
-            # yaw displacement
-            yYaw_init = (xi_init * (15 * ((2 * kd * x / D) + 1)**4. + xi_init**2.)
-                         / ((30 * kd / D) * (2 * kd * x / D + 1)**5.)) - \
-                        (xi_init * D * (15 + xi_init**2.) / (30 * kd))
+        # TODO: add yaw
+        yaw = 0
 
-            # corrected yaw displacement with lateral offset
-            yYaw = yYaw_init + (ad + bd * x)
+        # angle of deflection
+        xi_init = (1./2.) * np.cos(yaw) * np.sin(yaw) * turbine_ct
 
-            return yYaw
+        # yaw displacement
+        yYaw_init = (xi_init * (15 * ((2 * self.kd * downstream_distance / turbine_diameter) + 1)**4. + xi_init**2.)
+                     / ((30 * self.kd / turbine_diameter) * (2 * self.kd * downstream_distance / turbine_diameter + 1)**5.)) - \
+                    (xi_init * turbine_diameter * (15 + xi_init**2.) / (30 * self.kd))
 
-        return calc
+        # corrected yaw displacement with lateral offset
+        yYaw = yYaw_init + (self.ad + self.bd * downstream_distance)
+
+        return yYaw
