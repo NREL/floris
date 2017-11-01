@@ -32,3 +32,6 @@ After installing Python3, the remaining dependencies can be installed with `pip3
 ### Executing FLORIS
 Currently, FLORIS is executed by simply running `FLORIS.py`:  
 `python3 FLORIS.py`
+
+### Future work
+- improve the swept area point sampling to consistently include more points
