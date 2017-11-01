@@ -3,9 +3,6 @@ class BaseObject(object):
     """
         The BaseObject class is the basis for all other classes.
 
-        It is mainly a placeholder for future features. Currently implemented
-        in the base class is
-
         valid(self) -> bool
             checks object validity based on null attributes
     """

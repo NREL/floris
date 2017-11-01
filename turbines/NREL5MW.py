@@ -68,11 +68,9 @@ class NREL5MW(Turbine):
         fCtInterp = interp1d(wind_speed, CT)
 
         def fCp(Ws):
-            print(Ws < min(wind_speed), Ws, min(wind_speed))
             return max(CP) if Ws < min(wind_speed) else fCpInterp(Ws)
 
         def fCt(Ws):
-            print(Ws < min(wind_speed), Ws, min(wind_speed))
             return 0.99 if Ws < min(wind_speed) else fCtInterp(Ws)
 
         return fCp, fCt

@@ -10,6 +10,7 @@ class Turbine(BaseObject):
         # constants
         self.nPointsInGrid = 16
         self.velocities = [0]*16
+        self.grid = [0]*16
 
         # defined attributes
         self.rotorDiameter = None
@@ -22,17 +23,17 @@ class Turbine(BaseObject):
 
         # calculated attributes
         # initialized to 0 to pass the validity check
-        self.Ct = 0    # Thrust Coefficient
-        self.Cp = 0    # Power Coefficient
-        self.power = 0
-        self.aI = 0    # Axial Induction
-        # self.TI = None  # Turbulence intensity at rotor
+        self.Ct = 0         # Thrust Coefficient
+        self.Cp = 0         # Power Coefficient
+        self.power = 0      # Power (W) <-- True?
+        self.aI = 0         # Axial Induction
+        self.TI = 0         # Turbulence intensity at rotor
         self.windSpeed = 0  # Windspeed at rotor
 
         # controls
-        self.bladePitch = 0
-        self.yawAngle = 0
-        self.tilt = 0
+        self.bladePitch = 0 # radians
+        self.yawAngle = 0   # radians
+        self.tilt = 0       # radians
         self.TSR = 0
 
         # self.usePitch = usePitch
