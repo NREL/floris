@@ -41,7 +41,7 @@ class Turbine(BaseObject):
         # else:
         #     self.Cp, self.Ct = CpCtWs()
 
-    def _valid(self):
+    def valid(self):
         """
             Implement property checking here
             - numBlades should be > 1
@@ -69,11 +69,13 @@ class Turbine(BaseObject):
         return valid
 
     def initialize(self):
-        if self._valid():
-            self.grid = self.createSweptAreaGrid()
-            self.velocities = [-1]*16 # use invalid value until actually corrected
+        if self.valid():
+            self.grid = self._create_swept_area_grid()
+            self.velocities = [-1]*16  # use invalid value until actually corrected
 
-    def createSweptAreaGrid(self):
+    # Private methods
+
+    def _create_swept_area_grid(self):
         # TODO: add validity check:
         # rotor points has a minimum in order to always include points inside
         # the disk ... 2?
@@ -86,26 +88,28 @@ class Turbine(BaseObject):
         # are the points outside of the rotor disk used later?
 
         # determine the dimensions of the square grid
-        nPoints = int(np.round(np.sqrt(self.nPointsInGrid)))
+        num_points = int(np.round(np.sqrt(self.nPointsInGrid)))
         # syntax: np.linspace(min, max, n points)
-        horizontal = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, nPoints)
-        vertical = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, nPoints)
+        horizontal = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, num_points)
+        vertical = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, num_points)
 
         # build the grid with all of the points
-        grid = [(h, vertical[i]) for i in range(nPoints) for h in horizontal]
+        grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
 
         # keep only the points in the swept area
         # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotorDiameter/2]
 
         return grid
 
-    def getGrid(self):
+    # Public methods
+
+    def get_grid(self):
         return self.grid
 
-    def setVelocities(self, velocities):
+    def set_velocities(self, velocities):
         # TODO: safety check before or after setting velocities
         # verifying correct size of array and correct values
         self.velocities = velocities
 
-    def getAverageVelocity(self):
+    def get_average_velocity(self):
         return np.mean(self.velocities)

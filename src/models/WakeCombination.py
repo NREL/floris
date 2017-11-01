@@ -8,15 +8,12 @@ class WakeCombination(BaseObject):
         super().__init__()
         self.typeString = typeString
         typeMap = {
-            "fls": self.__FLS,
-            "lvls": self.__LVLS,
-            "sosfs": self.__SOSFS,
-            "soslvs": self.__SOSLVS
+            "fls": self._fls,
+            "lvls": self._lvls,
+            "sosfs": self._sosfs,
+            "soslvs": self._soslvs
         }
         self.__combinationFunction = typeMap.get(self.typeString, None)
-
-    def getType(self):
-        return "{} - {}".format(type(self), self.typeString)
 
     def solve(self, Uinf, Ueff, Ufield, Uwake):
         return self.__combinationFunction(Uinf, Ueff, Ufield, Uwake)
@@ -24,17 +21,17 @@ class WakeCombination(BaseObject):
     # private functions defining the wake combinations
 
     # freestream linear superposition
-    def __FLS(Uinf, Ueff, Ufield, Uwake):
-        return Uinf - ((Uinf - Uwake) + (Uinf - Ufield))
+    def _fls(u_inf, _, u_field, u_wake):
+        return u_inf - ((u_inf - u_wake) + (u_inf - u_field))
 
     # local velocity linear superposition
-    def __LVLS(Uinf, Ueff, Ufield, Uwake):
+    def _lvls(Uinf, Ueff, Ufield, Uwake):
         return Uinf - ((Ueff - Uwake) + (Uinf - Ufield))
 
     # sum of squares freestream superposition
-    def __SOSFS(Uinf, Ueff, Ufield, Uwake):
+    def _sosfs(Uinf, Ueff, Ufield, Uwake):
         return Uinf - np.sqrt((Uinf - Uwake)**2 + (Uinf - Ufield)**2)
 
     # sum of squares local velocity superposition
-    def __SOSLVS(Uinf, Ueff, Ufield, Uwake):
+    def _soslvs(Uinf, Ueff, Ufield, Uwake):
         return Ueff - np.sqrt((Ueff - Uwake)**2 + (Uinf - Ufield)**2)

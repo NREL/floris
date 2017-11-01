@@ -7,15 +7,15 @@ class Controls(BaseObject):
     """
 
     def __init__(self,
-                 turbineAngle=None,
-                 yawAngle=None,
-                 tiltAngle=None,
-                 bladePitch=None):
+                 turbine_angle=None,
+                 yaw_angle=None,
+                 tilt_angle=None,
+                 blade_pitch=None):
         super().__init__()
-        self.turbineAngle = turbineAngle
-        self.yawAngle = yawAngle
-        self.tiltAngle = tiltAngle
-        self.bladePitch = bladePitch
+        self.turbineAngle = turbine_angle
+        self.yawAngle = yaw_angle
+        self.tiltAngle = tilt_angle
+        self.bladePitch = blade_pitch
 
     def valid(self):
         """

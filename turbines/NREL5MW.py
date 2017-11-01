@@ -35,11 +35,11 @@ class NREL5MW(Turbine):
         #TODO: improve this
         self.fCp, self.fCt = self.CpCtWs()
 
-        self.Ct = self.calculateCt()
-        self.Cp = self.calculateCp()
-        self.power = self.calculatePower()
-        self.aI = self.calculateAI()
-        self.windSpeed = self.calculateEffectiveWindSpeed()
+        self.Ct = self.calculate_ct()
+        self.Cp = self.calculate_cp()
+        self.power = self.calculate_power()
+        self.aI = self.calculate_ai()
+        self.windSpeed = self.calculate_effective_wind_speed()
 
     def CpCtWs(self):
         CP = [0.        , 0.15643578, 0.31287155, 0.41306749, 0.44895632,
@@ -77,29 +77,28 @@ class NREL5MW(Turbine):
 
         return fCp, fCt
 
-    def calculateEffectiveWindSpeed(self):
+    def calculate_effective_wind_speed(self):
         # TODO: why is this here?
-        return self.getAverageVelocity()
+        return self.get_average_velocity()
 
-    def calculateCp(self):
+    def calculate_cp(self):
         # with average velocity
-        print(self.getAverageVelocity())
-        return self.fCp(self.getAverageVelocity())
+        return self.fCp(self.get_average_velocity())
 
-    def calculateCt(self):
+    def calculate_ct(self):
         # with average velocity
-        return self.fCt(self.getAverageVelocity())
+        return self.fCt(self.get_average_velocity())
 
-    def calculatePower(self):
+    def calculate_power(self):
         # TODO: Add yaw and pitch control
         yaw, tilt = 0, 0
 
         cptmp = self.Cp * (np.cos(yaw * np.pi / 180.)**self.pP) * (np.cos(tilt*np.pi/180.)**self.pT)
 
         #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
-        return 0.5 * 1.225 * (np.pi * (self.rotorDiameter/2)**2) * cptmp * self.generatorEfficiency * self.getAverageVelocity()**3
+        return 0.5 * 1.225 * (np.pi * (self.rotorDiameter/2)**2) * cptmp * self.generatorEfficiency * self.get_average_velocity()**3
 
-    def calculateAI(self):
+    def calculate_ai(self):
         # TODO: Add yaw and pitch control
         yaw, tilt = 0, 0
 

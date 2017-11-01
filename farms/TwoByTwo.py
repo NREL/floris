@@ -4,7 +4,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),
                 '..', 'src', 'models')))
 from src.models.Farm import Farm
 from src.models.FlowField import FlowField
-from src.models.WakeCombination import WakeCombination
 import copy
 
 
@@ -26,16 +25,14 @@ class TwoByTwo(Farm):
         self.windSpeed = 7.0        # wind speed [m/s]
         self.windDirection = 270.0  # wind direction [deg] (compass degrees)
 
-    def initialize(self):
-        self.flowfield = FlowField(wakeCombination=self.combination,
-                                   windSpeed=self.windSpeed,
+        self.flowField = FlowField(wake_combination=self.combination,
+                                   wind_speed=self.windSpeed,
                                    shear=0.12,
-                                   turbineMap=self.turbineMap,
-                                   characteristicHeight=90,
+                                   turbine_map=self.turbineMap,
+                                   characteristic_height=90,
                                    wake=self.wake)
-        self.flowfield.initialize()
 
-    def getTurbineCoords(self):
+    def get_turbine_coords(self):
         return self.turbineMap.keys()
 
     def getTurbineAtCoord(self, coord):
