@@ -5,10 +5,22 @@ from turbines.NREL5MW import NREL5MW
 from wakes.JensenJimenez import JensenJimenez
 from src.models.WakeCombination import WakeCombination
 from farms.TwoByTwo import TwoByTwo
+from src.io.InputReader import InputReader
 
 
-# farm: 2 by 2 staggered grid with NREL 5WM turbine; FLS combination
-twobytwo = TwoByTwo(turbine=NREL5MW(),
+inputReader = InputReader()
+
+# turbine input
+turbineInput = "turbines/NREL5MW.json"
+turbine = inputReader.buildTurbine(turbineInput)
+
+# wake input
+wakeInput = "wakes/JensenJimenez.json"
+
+# farm input
+farmInput = "farms/TwoByTwo.json"
+
+twobytwo = TwoByTwo(turbine=turbine,
                     wake=JensenJimenez(),
                     combination=WakeCombination("fls"))
 

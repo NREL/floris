@@ -1,0 +1,17 @@
+{
+  "type": "turbine",
+  "description": "NREL 5MW",
+  "properties": {
+    "rotorDiameter": "126.0",
+    "hubHeight": "90",
+    "numBlades": "3",
+    "pP": "1.88",
+    "pT": "2.07",
+    "generatorEfficiency": "1.0",
+    "eta": "0.768",
+    "bladePitch": "1.9",
+    "yawAngle": "0.0",
+    "tilt": "0.0",
+    "TSR": "8.0"
+  }
+}

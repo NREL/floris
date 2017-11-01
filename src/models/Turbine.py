@@ -13,6 +13,7 @@ class Turbine(BaseObject):
         self.grid = [0]*16
 
         # defined attributes
+        self.description = None
         self.rotorDiameter = None
         self.hubHeight = None
         self.numBlades = None
@@ -42,6 +43,7 @@ class Turbine(BaseObject):
         # else:
         #     self.Cp, self.Ct = CpCtWs()
 
+
     def valid(self):
         """
             Implement property checking here
@@ -69,7 +71,23 @@ class Turbine(BaseObject):
             valid = False
         return valid
 
-    def initialize(self):
+    def init_with_dict(self, dictionary):
+        self.description = dictionary["description"]
+
+        properties = dictionary["properties"]
+        self.rotorDiameter = properties["rotorDiameter"]
+        self.hubHeight = properties["hubHeight"]
+        self.numBlades = properties["numBlades"]
+        self.pP = properties["pP"]
+        self.pT = properties["pT"]
+        self.generatorEfficiency = properties["generatorEfficiency"]
+        self.eta = properties["eta"]
+        self.bladePitch = properties["bladePitch"]
+        self.yawAngle = properties["yawAngle"]
+        self.tilt = properties["tilt"]
+        self.TSR = properties["TSR"]
+
+    def initialize_velocities(self):
         if self.valid():
             self.grid = self._create_swept_area_grid()
             self.velocities = [-1]*16  # use invalid value until actually corrected

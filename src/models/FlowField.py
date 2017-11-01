@@ -18,11 +18,27 @@ class FlowField(BaseObject):
         self.windSpeed = wind_speed
         self.shear = shear
         self.turbineMap = turbine_map  # {(x,y): {Turbine, U}, (x,y): Turbine, ... }
+
+        # FlowfieldPropertiesAtTurbine: {
+        #     (0, 0): {
+        #         Turbine,
+        #         ti,
+        #         coordinates,
+        #         velocity,
+        #         get_ct(self.velocity): return turbine.Ct,
+        #         get_cp(self.velocity): return turbine.Cp,
+        #         get_power,
+        #         wake_function
+        #     },
+        #     (0,10): Turbine,
+        #     (0,20): Turbine,
+        # }
+
         self.characteristicHeight = characteristic_height
         self.wake = wake
         if self.valid():
-            self.initialize_turbine_velocities()
             self.initialize_turbines()
+            self.initialize_turbine_velocities()
 
     def valid(self):
         """
@@ -36,7 +52,7 @@ class FlowField(BaseObject):
         return valid
 
     def initialize_turbine_velocities(self):
-        # TODO: why do we actually need to initialize?
+        # TODO: this should only be applied to any turbine seeing freestream
 
         # initialize the flow field used in the 3D model based on shear using the power log law.
         for coord, turbine in self.turbineMap.items():
@@ -49,7 +65,7 @@ class FlowField(BaseObject):
 
     def initialize_turbines(self):
         for coord, turbine in self.turbineMap.items():
-            turbine.initialize()
+            turbine.initialize_velocities()
 
     def calculate_wake(self):
         # TODO: rotate layout here
@@ -69,4 +85,12 @@ class FlowField(BaseObject):
 
             # TODO: if last turbine, break
 
+        # for a turbine that doesnt have a TI, find all turbines that impact this turbine's swept area
+        # generate a new TI ...
+
+
     # def update_flowfield():
+
+    def get_properties_at_turbine(tuple_of_coords):
+        #probe the FlowField
+        FlowfieldPropertiesAtTurbine[tuple_of_coords].wake_function()
