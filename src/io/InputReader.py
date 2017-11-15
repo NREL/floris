@@ -13,9 +13,6 @@ class InputReader():
     """
 
     def __init__(self):
-        self.type = None
-        self.description = None
-        self.properties = None
 
         self._validObjects = ["turbine", "wake", "farm"]
 
@@ -40,18 +37,6 @@ class InputReader():
         # self._farmProperties = {
         #     "": type
         # }
-
-    def _reinit(self):
-        """
-        Clears the InputReader for future use
-        inputs:
-            none
-        outputs:
-            none
-        """
-        self.type = None
-        self.description = None
-        self.properties = None
 
     def _parseJSON(self, filename):
         """
@@ -124,7 +109,7 @@ class InputReader():
 
     def _cast_to_type(self, typecast, value):
         """
-        Casts the string input to the type in typcase
+        Casts the string input to the type in typecast
         inputs:
             typcast: type - the type class to use on value
             value: str - the input string to cast to 'typecast'
@@ -141,8 +126,7 @@ class InputReader():
 
     def buildTurbine(self, inputFile):
         """
-        Creates a turbine object from a given input file and resets the InputReader
-        object for future use
+        Creates a turbine object from a given input file
         inputs:
             inputFile: str - path to the json input file
         outputs:
@@ -152,7 +136,6 @@ class InputReader():
         propertyDict = self._validateJSON(jsonDict, self._turbineProperties)
         turbine = Turbine()
         turbine.init_with_dict(propertyDict)
-        self._reinit()
         return turbine
 
     # def buildWake(self, inputFile):
