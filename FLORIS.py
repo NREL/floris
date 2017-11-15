@@ -19,6 +19,7 @@ wakeInput = "wakes/JensenJimenez.json"
 
 # farm input
 farmInput = "farms/TwoByTwo.json"
+# TODO: add controls to farm
 
 twobytwo = TwoByTwo(turbine=turbine,
                     wake=JensenJimenez(),

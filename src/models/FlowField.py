@@ -17,7 +17,12 @@ class FlowField(BaseObject):
         self.wakeCombination = wake_combination
         self.windSpeed = wind_speed
         self.shear = shear
-        self.turbineMap = turbine_map  # {(x,y): {Turbine, U}, (x,y): Turbine, ... }
+        self.turbineMap = turbine_map
+        # {
+        #   (x,y): {Turbine, TurbineSolution(), Wake()},
+        #   (x,y): {Turbine, TurbineSolution(), Wake()},
+        #   ...
+        # }
 
         # FlowfieldPropertiesAtTurbine: {
         #     (0, 0): {
