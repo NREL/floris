@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from BaseObject import BaseObject
 
 
@@ -10,7 +11,7 @@ class Farm(BaseObject):
     def __init__(self):
         super().__init__()
         self.turbineMap = None
-        self.flowfield = None
+        self.flowField = None
 
     def valid(self):
         """
@@ -25,7 +26,10 @@ class Farm(BaseObject):
         if self.valid():
             self.flowfield.setTurbineMap(turbineMap)
 
-    def plotFarm(self):
+    def get_flow_field(self):
+        return self.flowField
+
+    def plot_layout(self):
         plt.figure()
         x = [turbine[0] for turbine in self.turbineMap]
         y = [turbine[1] for turbine in self.turbineMap]
