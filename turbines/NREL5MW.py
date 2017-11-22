@@ -75,29 +75,4 @@ class NREL5MW(Turbine):
 
         return fCp, fCt
 
-    def calculate_effective_wind_speed(self):
-        # TODO: why is this here?
-        return self.get_average_velocity()
-
-    def calculate_cp(self):
-        # with average velocity
-        return self.fCp(self.get_average_velocity())
-
-    def calculate_ct(self):
-        # with average velocity
-        return self.fCt(self.get_average_velocity())
-
-    def calculate_power(self):
-        # TODO: Add yaw and pitch control
-        yaw, tilt = 0, 0
-
-        cptmp = self.Cp * (np.cos(yaw * np.pi / 180.)**self.pP) * (np.cos(tilt*np.pi/180.)**self.pT)
-
-        #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
-        return 0.5 * 1.225 * (np.pi * (self.rotorDiameter/2)**2) * cptmp * self.generatorEfficiency * self.get_average_velocity()**3
-
-    def calculate_ai(self):
-        # TODO: Add yaw and pitch control
-        yaw, tilt = 0, 0
-
-        return (0.5 / np.cos(yaw * np.pi / 180.)) * (1 - np.sqrt(1 - self.Ct * np.cos(yaw * np.pi/180)))
+    
