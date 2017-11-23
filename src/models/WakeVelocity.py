@@ -15,7 +15,7 @@ class WakeVelocity(BaseObject):
 
         self.we = .05 # wake expansion
     
-    def _tanh_filter(self, x, loc):
+    def _activation_function(self, x, loc):
         sharpness = 10
         return (1 + np.tanh(sharpness * (x - loc))) / 2.
 
@@ -26,9 +26,10 @@ class WakeVelocity(BaseObject):
         upper_bound = turbine_radius + 2 * self.we * streamwise_location
         lower_bound = -1 * upper_bound
 
-        if streamwise_location - turbine_x < 0:
-            return 0
-        elif horizontal_location > upper_bound or horizontal_location < lower_bound:
-            return 0
-        else:
-            return (turbine_radius / (self.we * (streamwise_location - turbine_x) + turbine_radius))**2
+        c = (turbine_radius / (self.we * (streamwise_location - turbine_x) + turbine_radius))**2
+
+        c[streamwise_location - turbine_x < 0] = 0  # all points upstream of the turbine
+        c[horizontal_location > upper_bound] = 0    # all points beyond the upper bound
+        c[horizontal_location < lower_bound] = 0    # all points below the lower bound
+
+        return c

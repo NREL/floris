@@ -88,8 +88,7 @@ class Turbine(BaseObject):
         self.TSR = properties["TSR"]
 
         self.grid = self._create_swept_area_grid()
-        # use invalid value until actually corrected
-        self.velocities = [-1] * 16
+        self.velocities = [-1] * 16  # initialize to an invalid value until calculated
 
     def initialize(self):
         """
@@ -98,11 +97,11 @@ class Turbine(BaseObject):
         #TODO: improve this
         self.fCp, self.fCt = self.CpCtWs()
 
-        self.Ct = self.calculate_ct()
-        self.Cp = self.calculate_cp()
-        self.power = self.calculate_power()
-        self.aI = self.calculate_ai()
-        self.windSpeed = self.calculate_effective_wind_speed()
+        self.Cp = self._calculate_cp()
+        self.Ct = self._calculate_ct()
+        self.power = self._calculate_power()
+        self.aI = self._calculate_ai()
+        self.windSpeed = self._calculate_effective_wind_speed()
 
 
     # Private methods
@@ -133,20 +132,20 @@ class Turbine(BaseObject):
 
         return grid
 
-    def calculate_effective_wind_speed(self):
+    def _calculate_effective_wind_speed(self):
         # TODO: why is this here?
         return self.get_average_velocity()
 
-    def calculate_cp(self):
+    def _calculate_cp(self):
         # with average velocity
         return self.fCp(self.get_average_velocity())
 
-    def calculate_ct(self):
+    def _calculate_ct(self):
         # with average velocity
         print("average velocity: ", self.get_average_velocity())
         return self.fCt(self.get_average_velocity())
 
-    def calculate_power(self):
+    def _calculate_power(self):
         # TODO: Add yaw and pitch control
         yaw, tilt = 0, 0
 
@@ -155,7 +154,7 @@ class Turbine(BaseObject):
         #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
         return 0.5 * 1.225 * (np.pi * (self.rotorDiameter/2)**2) * cptmp * self.generatorEfficiency * self.get_average_velocity()**3
 
-    def calculate_ai(self):
+    def _calculate_ai(self):
         # TODO: Add yaw and pitch control
         yaw, tilt = 0, 0
         print(1 - self.Ct * np.cos(yaw * np.pi / 180))

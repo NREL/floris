@@ -34,5 +34,4 @@ print("t0.aI", t0.aI)
 print("t0.get_average_velocity()", t0.get_average_velocity())
 
 ff = twobytwo.get_flow_field()
-
 ff.plot_flow_field_plane()

@@ -19,6 +19,7 @@ class FlowField(BaseObject):
                  characteristic_height=None,
                  wake=None):
         super().__init__()
+        self.vizManager = VisualizationManager()
         self.wakeCombination = wake_combination
         self.windSpeed = wind_speed
         self.shear = shear
@@ -47,8 +48,8 @@ class FlowField(BaseObject):
         self.characteristicHeight = characteristic_height
         self.wake = wake
         if self.valid():
-            self.initialize_turbine_velocities()
-            self.initialize_turbines()
+            self._initialize_turbine_velocities()
+            self._initialize_turbines()
 
     def valid(self):
         """
@@ -61,7 +62,7 @@ class FlowField(BaseObject):
             valid = False
         return valid
 
-    def initialize_turbine_velocities(self):
+    def _initialize_turbine_velocities(self):
         # TODO: this should only be applied to any turbine seeing freestream
 
         # initialize the flow field used in the 3D model based on shear using the power log law.
@@ -73,7 +74,7 @@ class FlowField(BaseObject):
 
             turbine.set_velocities(velocities)
 
-    def initialize_turbines(self):
+    def _initialize_turbines(self):
         for coord, turbine in self.turbineMap.items():
             turbine.initialize()
 
@@ -114,8 +115,7 @@ class FlowField(BaseObject):
         x = np.linspace(-2 * turbine.rotorDiameter, coords[0] + 10 * turbine.rotorDiameter, 200)
         y = np.linspace(-250, coords[1] + 250, 200)
         z = np.linspace(0, 2 * turbine.hubHeight, 50)
-        # x, y, z = np.meshgrid(x, y, z, indexing='ij')
-        return x, y, z
+        return np.meshgrid(x, y, z, indexing='xy')
 
     def plot_flow_field_plane(self):
         turbine = self.turbineMap[(0,0)]
@@ -126,11 +126,10 @@ class FlowField(BaseObject):
         u_free = np.zeros((xmax, ymax, zmax))
         u_free.fill(self.windSpeed)
         u_turb = self.compute_discrete_velocity_field(x, y, z, self.wake)
-        # u = u_free + u_turb
-        # Ufield = output.model.wakeCombine(UfieldOrig, output.windSpeed[turbI], Ufield, Uturb)
 
-        visualizationManager = VisualizationManager()
-        visualizationManager.plot_constant_z(x, y, u_turb, turbine)
+        self.vizManager.plot_constant_z(x[:, :, 24], y[:, :, 24], u_turb[:, :, 24])
+        self.vizManager.add_turbine_marker(turbine.rotorDiameter / 2., (0, 0))
+        self.vizManager.show_plot()
 
     def compute_discrete_velocity_field(self, x, y, z, wake=None):
         turbine = self.turbineMap[(0, 0)]
@@ -138,16 +137,7 @@ class FlowField(BaseObject):
 
         velocity_function = wake.get_velocity_function()
 
-        u = np.empty((xmax, ymax, zmax))
-        for k in range(zmax):
-            for j in range(ymax):
-                for i in range(xmax):
-                    c = velocity_function(x[i], y[j], z[k], turbine.rotorDiameter, 0)
-                    # print(turbine.aI)
-                    u[j, i, k] = self.windSpeed * (1 - 2 * turbine.aI * c)
-
-        # def _jensen(self, downstream_distance, turbine_diameter, turbine_x):
-        # for coord, turbine in self.turbineMap.items():
-        #     vel = velocity_function(x, turbine.rotorDiameter, coord[0])
+        c = velocity_function(x, y, z, turbine.rotorDiameter, 0)
+        u = self.windSpeed * (1 - 2 * turbine.aI * c)
 
         return u
