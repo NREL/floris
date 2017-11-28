@@ -13,23 +13,36 @@ class WakeVelocity(BaseObject):
         }
         self.function = typeMap[typeString]
 
-        self.we = .05 # wake expansion
+        # wake expansion coefficient
+        self.we = .05
     
     def _activation_function(self, x, loc):
         sharpness = 10
         return (1 + np.tanh(sharpness * (x - loc))) / 2.
 
-    def _jensen(self, streamwise_location, horizontal_location, vertical_location, turbine_diameter, turbine_x):
+    def _jensen(self, x_locations, y_locations, z_locations, turbine_radius, turbine_coord):
+        """
+            x direction is streamwise (with the wind)
+            y direction is normal to the streamwise direction and parallel to the ground
+            z direction is normal the streamwise direction and normal to the ground=
+        """
         # compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
         # +/- 2keX is the slope of the cone boundary for the wake
-        turbine_radius = turbine_diameter / 2.
-        upper_bound = turbine_radius + 2 * self.we * streamwise_location
-        lower_bound = -1 * upper_bound
 
-        c = (turbine_radius / (self.we * (streamwise_location - turbine_x) + turbine_radius))**2
+        # y = mx + b
+        m = 2 * self.we
+        x = x_locations - turbine_coord.x
+        b = turbine_radius
+        boundary_line = m * x + b
+        y_upper = boundary_line + turbine_coord.y
+        y_lower = -1 * boundary_line + turbine_coord.y
 
-        c[streamwise_location - turbine_x < 0] = 0  # all points upstream of the turbine
-        c[horizontal_location > upper_bound] = 0    # all points beyond the upper bound
-        c[horizontal_location < lower_bound] = 0    # all points below the lower bound
+        # calculate the wake velocity
+        c = (turbine_radius / (self.we * (x_locations - turbine_coord.x) + turbine_radius))**2
+
+        # filter points upstream and beyond the upper and lower bounds of the wake
+        c[x_locations - turbine_coord.x < 0] = 0
+        c[y_locations > y_upper] = 0
+        c[y_locations < y_lower] = 0
 
         return c

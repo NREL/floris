@@ -48,8 +48,18 @@ class VisualizationManager():
         self._set_colorbar()
         self._set_axis()
 
-    def add_turbine_marker(self, turbine_radius, turbine_coords):
-        plt.plot(list(turbine_coords), [-turbine_radius, turbine_radius],  'k', linewidth=3)
+    def add_turbine_marker(self, radius, coords):
+        x = [coords.x, coords.x]
+        y = [coords.y - radius, coords.y + radius]
+        plt.plot(x, y,  'k', linewidth=1)
+
+        # x = [-50, 1000]
+        # y = [coords.y - radius, coords.y - radius]
+        # plt.plot(x, y,  'b', linewidth=1)
+
+        # x = [-50, 1000]
+        # y = [coords.y + radius, coords.y + radius]
+        # plt.plot(x, y,  'b', linewidth=1)
 
     def show_plot(self):
         plt.show()

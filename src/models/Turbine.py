@@ -94,6 +94,8 @@ class Turbine(BaseObject):
         """
             Creates the grid on the disk and initializes the descrete velocities
         """
+        self.rotorRadius = self.rotorDiameter/2.
+        
         #TODO: improve this
         self.fCp, self.fCt = self.CpCtWs()
 

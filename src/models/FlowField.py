@@ -1,8 +1,8 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-import numpy as np
 from BaseObject import BaseObject
+import numpy as np
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.io.VisualizationManager import VisualizationManager
 
 
@@ -66,7 +66,7 @@ class FlowField(BaseObject):
         # TODO: this should only be applied to any turbine seeing freestream
 
         # initialize the flow field used in the 3D model based on shear using the power log law.
-        for coord, turbine in self.turbineMap.items():
+        for _, turbine in self.turbineMap.items():
             grid = turbine.get_grid()
 
             # use the z coordinate of the turbine grid points for initialization
@@ -75,14 +75,14 @@ class FlowField(BaseObject):
             turbine.set_velocities(velocities)
 
     def _initialize_turbines(self):
-        for coord, turbine in self.turbineMap.items():
+        for _, turbine in self.turbineMap.items():
             turbine.initialize()
 
     def calculate_wake(self):
         # TODO: rotate layout here
         # TODO: sort in ascending order of x coord
 
-        for coord, turbine in self.turbineMap.items():
+        for _, turbine in self.turbineMap.items():
             # TODO: store current turbine TI
             # local_ti = 0
             # local_velocity = 0
@@ -110,34 +110,42 @@ class FlowField(BaseObject):
     # visualization
 
     def discretize_domain(self):
-        turbine = self.turbineMap[(0, 0)]
-        coords = (0,0)
-        x = np.linspace(-2 * turbine.rotorDiameter, coords[0] + 10 * turbine.rotorDiameter, 200)
-        y = np.linspace(-250, coords[1] + 250, 200)
-        z = np.linspace(0, 2 * turbine.hubHeight, 50)
+        coords = [coord for coord, _ in self.turbineMap.items()]
+        x = [coord.x for coord in coords]
+        y = [coord.y for coord in coords]
+        xmin, xmax = min(x), max(x)
+        ymin, ymax = min(y), max(y)
+
+        turbines = [turbine for _, turbine in self.turbineMap.items()]
+        maxDiameter = max([turbine.rotorDiameter for turbine in turbines])
+        hubHeight = turbines[0].hubHeight
+        
+        x = np.linspace(xmin - 2 * maxDiameter, xmax + 10 * maxDiameter, 200)
+        y = np.linspace(ymin - 2 * maxDiameter, ymax + 2 * maxDiameter, 200)
+        z = np.linspace(0, 2 * hubHeight, 50)
         return np.meshgrid(x, y, z, indexing='xy')
 
     def plot_flow_field_plane(self):
-        turbine = self.turbineMap[(0,0)]
         x, y, z = self.discretize_domain()
-        xmax, ymax, zmax = x.shape[0], y.shape[0], z.shape[0]
+        xmax, ymax, zmax = x.shape[0], y.shape[1], z.shape[2]
+
+        velocity_function = self.wake.get_velocity_function()
 
         # calculate the velocities on the mesh
-        u_free = np.zeros((xmax, ymax, zmax))
-        u_free.fill(self.windSpeed)
-        u_turb = self.compute_discrete_velocity_field(x, y, z, self.wake)
+        u_field = np.full((xmax, ymax, zmax), self.windSpeed)
 
-        self.vizManager.plot_constant_z(x[:, :, 24], y[:, :, 24], u_turb[:, :, 24])
-        self.vizManager.add_turbine_marker(turbine.rotorDiameter / 2., (0, 0))
+        for coord, turbine in self.turbineMap.items():
+            u_wake = self.compute_turbine_velocity_field(x, y, z, velocity_function, turbine, coord)
+            u_field = u_field + u_wake
+
+        self.vizManager.plot_constant_z(x[:, :, 24], y[:, :, 24], u_field[:, :, 24])
+        for coord, turbine in self.turbineMap.items():
+            self.vizManager.add_turbine_marker(turbine.rotorRadius, coord)
         self.vizManager.show_plot()
 
-    def compute_discrete_velocity_field(self, x, y, z, wake=None):
-        turbine = self.turbineMap[(0, 0)]
-        xmax, ymax, zmax = x.shape[0], y.shape[0], z.shape[0]        
-
-        velocity_function = wake.get_velocity_function()
-
-        c = velocity_function(x, y, z, turbine.rotorDiameter, 0)
-        u = self.windSpeed * (1 - 2 * turbine.aI * c)
-
-        return u
+    def compute_turbine_velocity_field(self, x, y, z, velocity_function, turbine, coord):
+        """
+            computes the discrete velocity field x, y, z for turbine using velocity_function
+        """
+        return 1 - 2 * turbine.aI * \
+            velocity_function(x, y, z, turbine.rotorRadius, coord)
