@@ -29,7 +29,7 @@ class WakeVelocity(BaseObject):
         # compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
         # +/- 2keX is the slope of the cone boundary for the wake
 
-        # y = mx + b
+        # define the boundary of the wake model ... y = mx + b
         m = 2 * self.we
         x = x_locations - turbine_coord.x
         b = turbine_radius

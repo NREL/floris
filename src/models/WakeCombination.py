@@ -15,14 +15,14 @@ class WakeCombination(BaseObject):
         }
         self.__combinationFunction = typeMap.get(self.typeString, None)
 
-    def solve(self, Uinf, Ueff, Ufield, Uwake):
+    def combine(self, Uinf, Ueff, Ufield, Uwake):
         return self.__combinationFunction(Uinf, Ueff, Ufield, Uwake)
 
     # private functions defining the wake combinations
 
     # freestream linear superposition
-    def _fls(u_inf, _, u_field, u_wake):
-        return u_inf - ((u_inf - u_wake) + (u_inf - u_field))
+    def _fls(self, u_inf, u_eff, u_field, u_wake):
+        return u_field - u_wake
 
     # local velocity linear superposition
     def _lvls(Uinf, Ueff, Ufield, Uwake):

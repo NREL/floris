@@ -135,17 +135,17 @@ class FlowField(BaseObject):
         u_field = np.full((xmax, ymax, zmax), self.windSpeed)
 
         for coord, turbine in self.turbineMap.items():
-            u_wake = self.compute_turbine_velocity_field(x, y, z, velocity_function, turbine, coord)
-            u_field = u_field + u_wake
+            u_wake = self.compute_turbine_velocity_deficit(x, y, z, velocity_function, turbine, coord)
+            u_field = self.wakeCombination.combine(None, None, u_field, u_wake)
 
         self.vizManager.plot_constant_z(x[:, :, 24], y[:, :, 24], u_field[:, :, 24])
         for coord, turbine in self.turbineMap.items():
             self.vizManager.add_turbine_marker(turbine.rotorRadius, coord)
         self.vizManager.show_plot()
 
-    def compute_turbine_velocity_field(self, x, y, z, velocity_function, turbine, coord):
+    def compute_turbine_velocity_deficit(self, x, y, z, velocity_function, turbine, coord):
         """
             computes the discrete velocity field x, y, z for turbine using velocity_function
         """
-        return 1 - 2 * turbine.aI * \
+        return self.windSpeed * 2 * turbine.aI * \
             velocity_function(x, y, z, turbine.rotorRadius, coord)
