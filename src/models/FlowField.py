@@ -24,6 +24,7 @@ class FlowField(BaseObject):
         self.windSpeed = wind_speed
         self.shear = shear
         self.turbineMap = turbine_map
+
         # {
         #   (x,y): {Turbine, TurbineSolution(), Wake()},
         #   (x,y): {Turbine, TurbineSolution(), Wake()},
@@ -47,11 +48,13 @@ class FlowField(BaseObject):
 
         self.characteristicHeight = characteristic_height
         self.wake = wake
-        if self.valid():
-            self._initialize_turbine_velocities()
-            self._initialize_turbines()
 
-    def valid(self):
+        if self._valid():
+            self._initialize_turbines()
+            self.x, self.y, self.z = self._discretize_domain()
+            self.u_field = self._constant_flowfield(self.windSpeed)
+
+    def _valid(self):
         """
             Do validity check
         """
@@ -62,54 +65,17 @@ class FlowField(BaseObject):
             valid = False
         return valid
 
-    def _initialize_turbine_velocities(self):
-        # TODO: this should only be applied to any turbine seeing freestream
-
-        # initialize the flow field used in the 3D model based on shear using the power log law.
+    def _initialize_turbines(self):
+        # TODO: this should only be applied to any turbine seeing freestream -> why? if so, then all turbines cannot be initialized
+        # initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         for _, turbine in self.turbineMap.items():
             grid = turbine.get_grid()
-
             # use the z coordinate of the turbine grid points for initialization
-            velocities = [self.windSpeed * ((turbine.hubHeight+g[1])/self.characteristicHeight)**self.shear for g in grid]
+            velocities = [self.windSpeed * ((turbine.hubHeight+g[1]) / 
+                self.characteristicHeight)**self.shear for g in grid]
+            turbine.initialize(velocities)
 
-            turbine.set_velocities(velocities)
-
-    def _initialize_turbines(self):
-        for _, turbine in self.turbineMap.items():
-            turbine.initialize()
-
-    def calculate_wake(self):
-        # TODO: rotate layout here
-        # TODO: sort in ascending order of x coord
-
-        for _, turbine in self.turbineMap.items():
-            # TODO: store current turbine TI
-            # local_ti = 0
-            # local_velocity = 0
-            previous_turbines_x = 0
-
-            # calculate wake at this turbine
-            # def _jensen(self, streamwise_location, horizontal_location, vertical_location, turbine_diameter, turbine_x):
-            # print(coord, self.wake.calculate(10, 0, turbine.hubHeight, turbine.rotorDiameter, coord[0]))
-
-            # TODO: calculate wake at all downstream turbines
-
-            # TODO: if last turbine, break
-
-        # for a turbine that doesnt have a TI, find all turbines that impact this turbine's swept area
-        # generate a new TI ...
-
-
-    # def update_flowfield():
-
-    def get_properties_at_turbine(tuple_of_coords):
-        #probe the FlowField
-        FlowfieldPropertiesAtTurbine[tuple_of_coords].wake_function()
-
-
-    # visualization
-
-    def discretize_domain(self):
+    def _discretize_domain(self):
         coords = [coord for coord, _ in self.turbineMap.items()]
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
@@ -119,33 +85,56 @@ class FlowField(BaseObject):
         turbines = [turbine for _, turbine in self.turbineMap.items()]
         maxDiameter = max([turbine.rotorDiameter for turbine in turbines])
         hubHeight = turbines[0].hubHeight
-        
+
         x = np.linspace(xmin - 2 * maxDiameter, xmax + 10 * maxDiameter, 200)
         y = np.linspace(ymin - 2 * maxDiameter, ymax + 2 * maxDiameter, 200)
         z = np.linspace(0, 2 * hubHeight, 50)
         return np.meshgrid(x, y, z, indexing='xy')
 
-    def plot_flow_field_plane(self):
-        x, y, z = self.discretize_domain()
-        xmax, ymax, zmax = x.shape[0], y.shape[1], z.shape[2]
+    def _constant_flowfield(self, constant_value):
+        xmax, ymax, zmax = self.x.shape[0], self.y.shape[1], self.z.shape[2]
+        return np.full((xmax, ymax, zmax), constant_value)
 
+    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord):
+        """
+            computes the discrete velocity field x, y, z for turbine using velocity_function
+        """
         velocity_function = self.wake.get_velocity_function()
+        return velocity_function(x, y, z, turbine, coord)
+
+    def _compute_turbine_wake_deflection(self, x, deflection_function, turbine):
+        deflection_function = self.wake.get_deflection_function()
+        return None
+
+    def calculate_wake(self):
+        # TODO: rotate layout here
+        # TODO: sort in ascending order of x coord
 
         # calculate the velocities on the mesh
-        u_field = np.full((xmax, ymax, zmax), self.windSpeed)
-
+        u_wake = np.zeros(self.u_field.shape)
         for coord, turbine in self.turbineMap.items():
-            u_wake = self.compute_turbine_velocity_deficit(x, y, z, velocity_function, turbine, coord)
-            u_field = self.wakeCombination.combine(None, None, u_field, u_wake)
+            # get the velocity deficit
+            u_wake += self.windSpeed * self._compute_turbine_velocity_deficit(
+                self.x, self.y, self.z, turbine, coord)
 
-        self.vizManager.plot_constant_z(x[:, :, 24], y[:, :, 24], u_field[:, :, 24])
+            # deflect the velocity deficit
+            # u_wake = self.compute_turbine_wake_deflection(
+                # x, deflection_function, turbine)
+
+        # combine this turbine's wake into the full flow field
+        self.u_field = self.wakeCombination.combine(None, None, self.u_field, u_wake)
+
+    # Visualization
+    def plot_flow_field_plane(self):
+        self.vizManager.plot_constant_z(
+            self.x[:, :, 24], self.y[:, :, 24], self.u_field[:, :, 24])
         for coord, turbine in self.turbineMap.items():
             self.vizManager.add_turbine_marker(turbine.rotorRadius, coord)
         self.vizManager.show_plot()
 
-    def compute_turbine_velocity_deficit(self, x, y, z, velocity_function, turbine, coord):
-        """
-            computes the discrete velocity field x, y, z for turbine using velocity_function
-        """
-        return self.windSpeed * 2 * turbine.aI * \
-            velocity_function(x, y, z, turbine.rotorRadius, coord)
+    # FUTURE
+    # TODO def get_properties_at_turbine(tuple_of_coords):
+    #     #probe the FlowField
+    #     FlowfieldPropertiesAtTurbine[tuple_of_coords].wake_function()
+
+    # TODO def update_flowfield():

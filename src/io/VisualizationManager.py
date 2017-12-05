@@ -35,10 +35,10 @@ class VisualizationManager():
 
     def _new_filled_contour(self, xmesh, ymesh, data):
         self._new_figure()
-        vmin = np.amin(data)
-        vmax = np.amax(data)
+        # vmin = np.amin(data)
+        # vmax = np.amax(data)
         plt.contourf(xmesh, ymesh, data, 50,
-                            cmap='coolwarm', vmin=vmin, vmax=vmax)
+                            cmap='coolwarm')#, vmin=vmin, vmax=vmax)
 
     def plot_constant_z(self, xmesh, ymesh, data):
         self._new_filled_contour(xmesh, ymesh, data)        

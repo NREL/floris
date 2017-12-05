@@ -16,9 +16,9 @@ class TwoByTwo(Farm):
         super().__init__()
         self.turbineMap = {
             Coordinate(0, 0): copy.deepcopy(turbine),
-            Coordinate(400, 200): copy.deepcopy(turbine),
-            Coordinate(200, 400): copy.deepcopy(turbine),
-            Coordinate(600, 600): copy.deepcopy(turbine)
+            Coordinate(800, 0): copy.deepcopy(turbine),
+            Coordinate(0, 600): copy.deepcopy(turbine),
+            Coordinate(800, 600): copy.deepcopy(turbine)
         }
         self.wake = wake
         self.combination = combination

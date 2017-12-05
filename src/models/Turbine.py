@@ -83,17 +83,17 @@ class Turbine(BaseObject):
         self.generatorEfficiency = properties["generatorEfficiency"]
         self.eta = properties["eta"]
         self.bladePitch = properties["bladePitch"]
-        self.yawAngle = properties["yawAngle"]
+        self.yawAngle = np.radians(properties["yawAngle"])
         self.tilt = properties["tilt"]
         self.TSR = properties["TSR"]
 
         self.grid = self._create_swept_area_grid()
         self.velocities = [-1] * 16  # initialize to an invalid value until calculated
 
-    def initialize(self):
+    def initialize(self, velocities):
         """
-            Creates the grid on the disk and initializes the descrete velocities
         """
+        self.velocities = velocities
         self.rotorRadius = self.rotorDiameter/2.
         
         #TODO: improve this
@@ -103,7 +103,7 @@ class Turbine(BaseObject):
         self.Ct = self._calculate_ct()
         self.power = self._calculate_power()
         self.aI = self._calculate_ai()
-        self.windSpeed = self._calculate_effective_wind_speed()
+        self.windSpeed = self.get_average_velocity()
 
 
     # Private methods
@@ -134,10 +134,6 @@ class Turbine(BaseObject):
 
         return grid
 
-    def _calculate_effective_wind_speed(self):
-        # TODO: why is this here?
-        return self.get_average_velocity()
-
     def _calculate_cp(self):
         # with average velocity
         return self.fCp(self.get_average_velocity())
@@ -159,7 +155,7 @@ class Turbine(BaseObject):
     def _calculate_ai(self):
         # TODO: Add yaw and pitch control
         yaw, tilt = 0, 0
-        print(1 - self.Ct * np.cos(yaw * np.pi / 180))
+        print("turbine._calculate_ai", 1 - self.Ct * np.cos(yaw * np.pi / 180))
         return (0.5 / np.cos(yaw * np.pi / 180.)) * (1 - np.sqrt(1 - self.Ct * np.cos(yaw * np.pi/180)))
 
     def CpCtWs(self):
@@ -195,21 +191,11 @@ class Turbine(BaseObject):
             return 0.99 if Ws < min(wind_speed) else fCtInterp(Ws)
 
         return fCp, fCt
-        
-    # def _show_constant_z_plot(self):
 
     # Public methods
 
     def get_grid(self):
         return self.grid
 
-    def set_velocities(self, velocities):
-        # TODO: safety check before or after setting velocities
-        # verifying correct size of array and correct values
-        self.velocities = velocities
-
     def get_average_velocity(self):
         return np.mean(self.velocities)
-
-    def show_wake_plot(self):
-        self._show_constant_z_plot(self)
