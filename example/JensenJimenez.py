@@ -13,8 +13,9 @@ class JensenJimenez(Wake):
     """
     def __init__(self):
         super().__init__()
+        # self.velocityModel = WakeVelocity("jensen")
+        self.velocityModel = WakeVelocity("floris")
         self.deflectionModel = WakeDeflection("jimenez")
-        self.velocityModel = WakeVelocity("jensen")
 
     def calculate(self, downstream_distance, turbine_diameter, turbine_ct, turbine_x):
         velocity = self.get_velocity_function()

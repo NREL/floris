@@ -25,6 +25,7 @@ class FlowField(BaseObject):
                  wake_combination=None,
                  wind_speed=None,
                  shear=None,
+                 turbulence_intensity=None,
                  turbine_map=None,
                  characteristic_height=None,
                  wake=None):
@@ -105,16 +106,16 @@ class FlowField(BaseObject):
         xmax, ymax, zmax = self.x.shape[0], self.y.shape[1], self.z.shape[2]
         return np.full((xmax, ymax, zmax), constant_value)
 
-    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord):
+    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection):
         """
             computes the discrete velocity field x, y, z for turbine using velocity_function
         """
         velocity_function = self.wake.get_velocity_function()
-        return velocity_function(x, y, z, turbine, coord)
+        return velocity_function(x, y, z, turbine, coord, deflection)
 
-    def _compute_turbine_wake_deflection(self, x, deflection_function, turbine):
+    def _compute_turbine_wake_deflection(self, x, turbine, coord):
         deflection_function = self.wake.get_deflection_function()
-        return None
+        return deflection_function(x, turbine, coord)
 
     def calculate_wake(self):
         # TODO: rotate layout here
@@ -123,13 +124,14 @@ class FlowField(BaseObject):
         # calculate the velocities on the mesh
         u_wake = np.zeros(self.u_field.shape)
         for coord, turbine in self.turbineMap.items():
-            # get the velocity deficit
-            u_wake += self.windSpeed * self._compute_turbine_velocity_deficit(
-                self.x, self.y, self.z, turbine, coord)
+            # get the wake deflecton field
+            deflection = self._compute_turbine_wake_deflection(self.x, turbine, coord)
 
-            # deflect the velocity deficit
-            # u_wake = self.compute_turbine_wake_deflection(
-                # x, deflection_function, turbine)
+            # get the velocity deficit
+            turb_wake = self.windSpeed * self._compute_turbine_velocity_deficit(
+                self.x, self.y, self.z, turbine, coord, deflection)
+
+            u_wake += turb_wake
 
         # combine this turbine's wake into the full flow field
         self.u_field = self.wakeCombination.combine(None, None, self.u_field, u_wake)

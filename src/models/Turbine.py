@@ -95,9 +95,10 @@ class Turbine(BaseObject):
         self.power_thrust_table = properties["power_thrust_table"]
         self.bladePitch = properties["bladePitch"]
         self.yawAngle = np.radians(properties["yawAngle"])
-        self.tilt = properties["tilt"]
+        self.tiltAngle = np.radians(properties["tilt"])
         self.TSR = properties["TSR"]
 
+        self.fCp, self.fCt = self.CpCtWs()
         self.grid = self._create_swept_area_grid()
         self.velocities = [-1] * 16  # initialize to an invalid value until calculated
 
@@ -106,10 +107,6 @@ class Turbine(BaseObject):
         """
         self.velocities = velocities
         self.rotorRadius = self.rotorDiameter/2.
-        
-        #TODO: improve this
-        self.fCp, self.fCt = self.CpCtWs()
-
         self.Cp = self._calculate_cp()
         self.Ct = self._calculate_ct()
         self.power = self._calculate_power()
@@ -149,24 +146,20 @@ class Turbine(BaseObject):
         return self.fCp(self.get_average_velocity())
 
     def _calculate_ct(self):
-        # with average velocity
-        print("average velocity: ", self.get_average_velocity())
+        # with average velocity        
         return self.fCt(self.get_average_velocity())
 
     def _calculate_power(self):
-        # TODO: Add yaw and pitch control
-        yaw, tilt = 0, 0
-
-        cptmp = self.Cp * (np.cos(yaw * np.pi / 180.)**self.pP) * (np.cos(tilt*np.pi/180.)**self.pT)
+        cptmp = self.Cp \
+                * np.cos(self.yawAngle * np.pi / 180.)**self.pP \
+                * np.cos(self.tiltAngle * np.pi / 180.)**self.pT
 
         #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
         return 0.5 * 1.225 * (np.pi * (self.rotorDiameter/2)**2) * cptmp * self.generatorEfficiency * self.get_average_velocity()**3
 
     def _calculate_ai(self):
-        # TODO: Add yaw and pitch control
-        yaw, tilt = 0, 0
-        print("turbine._calculate_ai", 1 - self.Ct * np.cos(yaw * np.pi / 180))
-        return (0.5 / np.cos(yaw * np.pi / 180.)) * (1 - np.sqrt(1 - self.Ct * np.cos(yaw * np.pi/180)))
+        return 0.5 / np.cos(self.yawAngle * np.pi / 180.) \
+               * (1 - np.sqrt(1 - self.Ct * np.cos(self.yawAngle * np.pi / 180) ) )
 
     def CpCtWs(self):
         cp = self.power_thrust_table["power"]
@@ -185,6 +178,9 @@ class Turbine(BaseObject):
         return fCp, fCt
 
     # Public methods
+
+    def set_yaw_angle(self, angle):
+        self.yawAngle = np.radians(angle)
 
     def get_grid(self):
         return self.grid

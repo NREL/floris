@@ -34,7 +34,7 @@ class WakeVelocity(BaseObject):
         sharpness = 10
         return (1 + np.tanh(sharpness * (x - loc))) / 2.
 
-    def _jensen(self, x_locations, y_locations, z_locations, turbine, turbine_coord):
+    def _jensen(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field):
         """
             x direction is streamwise (with the wind)
             y direction is normal to the streamwise direction and parallel to the ground
@@ -57,12 +57,12 @@ class WakeVelocity(BaseObject):
 
         # filter points upstream and beyond the upper and lower bounds of the wake
         c[x_locations - turbine_coord.x < 0] = 0
-        c[y_locations > y_upper] = 0
-        c[y_locations < y_lower] = 0
+        c[y_locations > y_upper + deflection_field] = 0
+        c[y_locations < y_lower + deflection_field] = 0
 
         return 2 * turbine.aI * c
 
-    def _floris(self, x_locations, y_locations, z_locations, turbine, turbine_coord):# yDisp, zDisp, xTurb, yTurb, zTurb, inputData, turbI):
+    def _floris(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field):
         # compute the velocity deficit based on wake zones, see Gebraad et. al. 2016
 
         # wake parameters
@@ -74,8 +74,7 @@ class WakeVelocity(BaseObject):
         mu = [0.5, 1., 5.5] / np.cos(aU + bU * yaw)
 
         # distance from wake centerline
-        yDisp = 0
-        rY = abs(y_locations - (turbine_coord.y + yDisp))
+        rY = abs(y_locations - (turbine_coord.y + deflection_field))
         dx = x_locations - turbine_coord.x
 
         # wake zone diameters
@@ -224,4 +223,4 @@ class WakeVelocity(BaseObject):
 
 
     # def _gauss_thrust_angle(self):
-    
+
