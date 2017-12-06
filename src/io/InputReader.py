@@ -34,6 +34,7 @@ class InputReader():
             "pT": float,
             "generatorEfficiency": float,
             "eta": float,
+            "power_thrust_table": dict,
             "bladePitch": float,
             "yawAngle": float,
             "tilt": float,
