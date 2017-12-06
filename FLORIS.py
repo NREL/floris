@@ -35,12 +35,15 @@ twobytwo = TwoByTwo(turbine=turbine,
                     wake=JensenJimenez(),
                     combination=WakeCombination("fls"))
 
-# t0 = twobytwo.getTurbineAtCoord((0,0))
-# print("t0.Cp", t0.Cp)
-# print("t0.Ct", t0.Ct)
-# print("t0.power", t0.power)
-# print("t0.aI", t0.aI)
-# print("t0.get_average_velocity()", t0.get_average_velocity())
+# output handling
+for coord in twobytwo.get_turbine_coords():
+    turbine = twobytwo.get_turbine_at_coord(coord)
+    print(str(coord) + ":")
+    print("\tCp -", turbine.Cp)
+    print("\tCt -", turbine.Ct)
+    print("\tpower -", turbine.power)
+    print("\tai -", turbine.aI)
+    print("\taverage velocity -", turbine.get_average_velocity())
 
 ff = twobytwo.get_flow_field()
-ff.plot_flow_field_plane()
+# ff.plot_flow_field_plane()

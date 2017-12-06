@@ -33,8 +33,8 @@ class TwoByTwo(Farm):
                                    wake=self.wake)
         self.flowField.calculate_wake()
 
-    # def get_turbine_coords(self):
-    #     return self.turbineMap.keys()
+    def get_turbine_coords(self):
+        return self.turbineMap.keys()
 
-    def getTurbineAtCoord(self, coord):
+    def get_turbine_at_coord(self, coord):
         return self.turbineMap[coord]
