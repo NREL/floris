@@ -51,9 +51,18 @@ class VisualizationManager():
     def _new_filled_contour(self, xmesh, ymesh, data):
         self._new_figure()
         # vmin = np.amin(data)
-        # vmax = np.amax(data)
+        vmax = np.amax(data)
+        # grid = 2
+        # value = 3
+        # for i in range(data.shape[0]):
+        #     if i % grid == 0:
+        #         data[i, :] = value
+        # for i in range(data.shape[1]):
+        #     if i % grid == 0:
+        #         data[:, i] = value
+        # data[10, 14] = -2
         plt.contourf(xmesh, ymesh, data, 50,
-                            cmap='coolwarm')#, vmin=vmin, vmax=vmax)
+                            cmap='gnuplot2', vmin=0, vmax=vmax)
 
     def plot_constant_z(self, xmesh, ymesh, data):
         self._new_filled_contour(xmesh, ymesh, data)        
@@ -62,8 +71,6 @@ class VisualizationManager():
         self._set_texts("Constant Height", "x (m)", "y (m)")
         self._set_colorbar()
         self._set_axis()
-
-        plt.grid(True)
 
     def add_turbine_marker(self, turbine, coords):
         

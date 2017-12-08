@@ -20,16 +20,16 @@ class TwoByTwo(Farm):
         turbine2 = copy.deepcopy(turbine)
         turbine3 = copy.deepcopy(turbine)
 
-        turbine0.set_yaw_angle(-25)
-        turbine1.set_yaw_angle(25)
-        turbine2.set_yaw_angle(25)
-        turbine3.set_yaw_angle(-25)
+        turbine0.set_yaw_angle(25)
+        turbine1.set_yaw_angle(0)
+        turbine2.set_yaw_angle(0)
+        turbine3.set_yaw_angle(0)
 
         self.turbineMap = {
             Coordinate(0, 0): turbine0,
-            Coordinate(400, 0): turbine1,
-            # Coordinate(0, 200): turbine2,
-            # Coordinate(400, 200): turbine3
+            Coordinate(800, 0): turbine1,
+            Coordinate(0, 800): turbine2,
+            Coordinate(800, 800): turbine3
         }
         self.wake = wake
         self.combination = combination

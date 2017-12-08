@@ -86,6 +86,7 @@ class Turbine(BaseObject):
 
         properties = dictionary["properties"]
         self.rotorDiameter = properties["rotorDiameter"]
+        self.rotorRadius = self.rotorDiameter / 2.
         self.hubHeight = properties["hubHeight"]
         self.numBlades = properties["numBlades"]
         self.pP = properties["pP"]
@@ -98,20 +99,9 @@ class Turbine(BaseObject):
         self.tiltAngle = np.radians(properties["tilt"])
         self.TSR = properties["TSR"]
 
-        self.fCp, self.fCt = self.CpCtWs()
+        self.fCp, self.fCt = self._CpCtWs()
         self.grid = self._create_swept_area_grid()
         self.velocities = [-1] * 16  # initialize to an invalid value until calculated
-
-    def initialize(self, velocities):
-        """
-        """
-        self.velocities = velocities
-        self.rotorRadius = self.rotorDiameter/2.
-        self.Cp = self._calculate_cp()
-        self.Ct = self._calculate_ct()
-        self.power = self._calculate_power()
-        self.aI = self._calculate_ai()
-        self.windSpeed = self.get_average_velocity()
 
     # Private methods
 
@@ -161,7 +151,7 @@ class Turbine(BaseObject):
         return 0.5 / np.cos(self.yawAngle * np.pi / 180.) \
                * (1 - np.sqrt(1 - self.Ct * np.cos(self.yawAngle * np.pi / 180) ) )
 
-    def CpCtWs(self):
+    def _CpCtWs(self):
         cp = self.power_thrust_table["power"]
         ct = self.power_thrust_table["thrust"]
         windspeed = self.power_thrust_table["wind_speed"]
@@ -177,7 +167,22 @@ class Turbine(BaseObject):
 
         return fCp, fCt
 
+    def _calculate_swept_area_velocities(self, local_wind_speed, shear):
+        """
+            TODO: explain these velocities
+            initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
+        """
+        return local_wind_speed * ((self.hubHeight + g[1]) / self.hubHeight)**shear for g in self.grid]
+
     # Public methods
+
+    def update_quantities(self, local_wind_speed, shear):
+        self.velocities = self._calculate_swept_area_velocities(local_wind_speed, shear)
+        self.Cp = self._calculate_cp()
+        self.Ct = self._calculate_ct()
+        self.power = self._calculate_power()
+        self.aI = self._calculate_ai()
+        self.windSpeed = self.get_average_velocity()
 
     def set_yaw_angle(self, angle):
         self.yawAngle = np.radians(angle)
