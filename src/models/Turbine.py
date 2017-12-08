@@ -172,7 +172,7 @@ class Turbine(BaseObject):
             TODO: explain these velocities
             initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
-        return local_wind_speed * ((self.hubHeight + g[1]) / self.hubHeight)**shear for g in self.grid]
+        return [local_wind_speed * ((self.hubHeight + g[1]) / self.hubHeight)**shear for g in self.grid]
 
     # Public methods
 
