@@ -8,6 +8,11 @@ http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..')))
+from models.Coordinate import Coordinate
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -58,10 +63,17 @@ class VisualizationManager():
         self._set_colorbar()
         self._set_axis()
 
-    def add_turbine_marker(self, radius, coords):
-        x = [coords.x, coords.x]
-        y = [coords.y - radius, coords.y + radius]
-        plt.plot(x, y,  'k', linewidth=1)
+        plt.grid(True)
+
+    def add_turbine_marker(self, turbine, coords):
+        
+        a = Coordinate(coords.x, coords.y - turbine.rotorRadius)
+        b = Coordinate(coords.x, coords.y + turbine.rotorRadius)
+
+        a.rotate(turbine.yawAngle, (coords.x, coords.y))
+        b.rotate(turbine.yawAngle, (coords.x, coords.y))
+
+        plt.plot([a.xprime, b.xprime], [a.yprime, b.yprime],  'k', linewidth=1)
 
         # x = [-50, 1000]
         # y = [coords.y - radius, coords.y - radius]
@@ -71,5 +83,5 @@ class VisualizationManager():
         # y = [coords.y + radius, coords.y + radius]
         # plt.plot(x, y,  'b', linewidth=1)
 
-    def show_plot(self):
+    def show(self):
         plt.show()

@@ -11,6 +11,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 import os
 import sys
 from BaseObject import BaseObject
+import numpy as np
 
 
 class Coordinate(BaseObject):
@@ -20,6 +21,15 @@ class Coordinate(BaseObject):
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.xprime = self.x
+        self.yprime = self.y
 
     def __str__(self):
         return str(self.x) + ", " + str(self.y)
+
+    def rotate(self, theta, center_of_rotation=(0, 0)):
+        xoffset = self.x - center_of_rotation[0]
+        yoffset = self.y - center_of_rotation[1]
+        self.xprime = xoffset * np.cos(theta) - yoffset * np.sin(theta) + center_of_rotation[0]
+        self.yprime = yoffset * np.cos(theta) + xoffset * np.sin(theta) + center_of_rotation[1]
+        return self.xprime, self.yprime

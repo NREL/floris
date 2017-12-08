@@ -46,4 +46,4 @@ for coord in twobytwo.get_turbine_coords():
     print("\taverage velocity -", turbine.get_average_velocity())
 
 ff = twobytwo.get_flow_field()
-ff.plot_flow_field_plane()
+ff.plot_flow_field_planes([0.2])#, 0.5, 0.8])

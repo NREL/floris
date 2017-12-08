@@ -137,12 +137,19 @@ class FlowField(BaseObject):
         self.u_field = self.wakeCombination.combine(None, None, self.u_field, u_wake)
 
     # Visualization
-    def plot_flow_field_plane(self):
+    def plot_flow_field_plane(self, percent_height=0.5, show=True):
+        zplane = int(self.x.shape[2] * percent_height)
         self.vizManager.plot_constant_z(
-            self.x[:, :, 24], self.y[:, :, 24], self.u_field[:, :, 24])
+            self.x[:, :, zplane], self.y[:, :, zplane], self.u_field[:, :, zplane])
         for coord, turbine in self.turbineMap.items():
-            self.vizManager.add_turbine_marker(turbine.rotorRadius, coord)
-        self.vizManager.show_plot()
+            self.vizManager.add_turbine_marker(turbine, coord)
+        if show:
+            self.vizManager.show()
+
+    def plot_flow_field_planes(self, heights):
+        for height in heights:
+            self.plot_flow_field_plane(height, False)
+        self.vizManager.show()
 
     # FUTURE
     # TODO def get_properties_at_turbine(tuple_of_coords):
