@@ -1,6 +1,6 @@
 ## FLORIS
 
-The `feature/develop` branch of the FLORIS repo represents a rework of the software as a general wind farm wake analysis tool.
+The `develop` branch of the FLORIS repo represents a rework of the software as a general wind farm wake analysis tool.
 
 For any questions regarding FLORIS, please contact [Jen Annoni](mailto:jennifer.annoni@nrel.gov), [Paul Fleming](mailto:paul.fleming@nrel.gov), or [Rafael Mudafort](mailto:rafael.mudafort@nrel.gov).
 
@@ -18,7 +18,7 @@ a more robust and code free input process is coming soon.
 
 ### Download
 FLORIS can be cloned directly from GitHub:  
-``git clone -b feature/develop https://github.com/wisdem/floris``
+``git clone -b develop https://github.com/wisdem/floris``
 
 ### Dependencies
 The following packages are required for FLORIS
@@ -27,8 +27,8 @@ The following packages are required for FLORIS
 - SciPy v0.19.1
 - matplotlib v2.1.0
 
-After installing Python3, the remaining dependencies can be installed with `pip3` referencing the requirements list using this command:  
-`pip3 install -r requirements.txt`
+After installing Python3, the remaining dependencies can be installed with `pip` referencing the requirements list using this command:  
+`pip install -r requirements.txt`
 
 ### Executing FLORIS
 Currently, FLORIS is executed by simply running `FLORIS.py`:  
