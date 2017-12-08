@@ -8,8 +8,8 @@ http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 """
 
-import numpy as np
 from BaseObject import BaseObject
+import numpy as np
 
 
 class WakeVelocity(BaseObject):
@@ -48,8 +48,8 @@ class WakeVelocity(BaseObject):
         x = x_locations - turbine_coord.x
         b = turbine.rotorRadius
         boundary_line = m * x + b
-        y_upper = boundary_line + turbine_coord.y
-        y_lower = -1 * boundary_line + turbine_coord.y
+        y_upper = boundary_line + turbine_coord.y + deflection_field
+        y_lower = -1 * boundary_line + turbine_coord.y + deflection_field
 
         # calculate the wake velocity
         c = (turbine.rotorRadius / 
@@ -57,8 +57,8 @@ class WakeVelocity(BaseObject):
 
         # filter points upstream and beyond the upper and lower bounds of the wake
         c[x_locations - turbine_coord.x < 0] = 0
-        c[y_locations > y_upper + deflection_field] = 0
-        c[y_locations < y_lower + deflection_field] = 0
+        c[y_locations > y_upper] = 0
+        c[y_locations < y_lower] = 0
 
         return 2 * turbine.aI * c
 
@@ -78,16 +78,15 @@ class WakeVelocity(BaseObject):
         dx = x_locations - turbine_coord.x
 
         # wake zone diameters
-        d = np.ndarray((3,) + x_locations.shape)
-        d[0] = (radius + self.we * me[0] * dx)
-        d[1] = (radius + self.we * me[1] * dx)
-        d[2] = (radius + self.we * me[2] * dx)
+        nearwake = (radius + self.we * me[0] * dx)
+        farwake = (radius + self.we * me[1] * dx)
+        mixing = (radius + self.we * me[2] * dx)
 
         # initialize the wake field
         c = np.zeros(x_locations.shape)
 
         # near wake zone
-        mask = rY <= d[0]
+        mask = rY <= nearwake
         c += mask * (radius / (radius + self.we * mu[0] * dx))**2
 
         # far wake zone
@@ -97,7 +96,7 @@ class WakeVelocity(BaseObject):
         #   if that bit in y is 1.
         # The resulting mask is all the points in far wake zone that are not
         # in the near wake zone
-        mask = (rY <= d[1]) ^ (rY <= d[0])
+        mask = (rY <= farwake) ^ (rY <= nearwake)
         c += mask * (radius / (radius + self.we * mu[1] * dx))**2
 
         # mixing zone
@@ -106,7 +105,7 @@ class WakeVelocity(BaseObject):
         #   of y is 0, otherwise it's 1.
         # The resulting mask is all the points in mixing zone that are not
         # in the far wake zone and not in  near wake zone
-        mask = (rY <= d[2]) ^ ((rY <= d[1]) | (rY <= d[0]))
+        mask = (rY <= mixing) ^ ((rY <= farwake) | (rY <= nearwake))
         c += mask * (radius / (radius + self.we * mu[2] * dx))**2
 
         # filter points upstream
@@ -118,6 +117,7 @@ class WakeVelocity(BaseObject):
         unique, counts = np.unique(array, return_counts=True)
         print(dict(zip(unique, counts)))
     
+<<<<<<< HEAD:src/models/WakeVelocity.py
     def _gauss(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field):
 
         # TODO: currently the deflection model, flow field quantities, model parameters is computed within this function
@@ -224,3 +224,9 @@ class WakeVelocity(BaseObject):
 
     # def _gauss_thrust_angle(self):
 
+=======
+    # def _gauss(self):
+        # veer
+        # uinf
+        # TI
+>>>>>>> improve the directory structure to eliminate path hacking:floris/WakeVelocity.py

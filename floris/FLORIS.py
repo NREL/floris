@@ -11,11 +11,15 @@ Unless required by applicable law or agreed to in writing, software distributed 
 # FLORIS driver program
 
 # import specific models
-from turbines.NREL5MW import NREL5MW
+from InputReader import InputReader
+from WakeCombination import WakeCombination
+
+# to be deprecated by json io
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from wakes.JensenJimenez import JensenJimenez
-from src.models.WakeCombination import WakeCombination
 from farms.TwoByTwo import TwoByTwo
-from src.io.InputReader import InputReader
 
 
 inputReader = InputReader()
@@ -33,7 +37,7 @@ farmInput = "farms/TwoByTwo.json"
 
 twobytwo = TwoByTwo(turbine=turbine,
                     wake=JensenJimenez(),
-                    combination=WakeCombination("fls"))
+                    combination=WakeCombination("sosfs"))
 
 # output handling
 for coord in twobytwo.get_turbine_coords():

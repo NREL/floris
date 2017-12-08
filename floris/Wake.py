@@ -36,3 +36,12 @@ class Wake(BaseObject):
 
     def get_velocity_function(self):
         return self.velocityModel.function
+
+    def calculate(self, downstream_distance, turbine, turbine_coords):
+        velocity_function = self.get_velocity_function()
+        deflection_function = self.get_deflection_function()
+
+        # the velocity deficit in general needs to know the wake deflection
+        # calculate the deflection first 
+
+        return velocity(downstream_distance, turbine_diameter, turbine_x), deflection(downstream_distance, turbine_ct, turbine_diameter)
