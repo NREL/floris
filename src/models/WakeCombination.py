@@ -19,29 +19,23 @@ class WakeCombination(BaseObject):
         self.typeString = typeString
         typeMap = {
             "fls": self._fls,
-            "lvls": self._lvls,
             "sosfs": self._sosfs,
-            "soslvs": self._soslvs
         }
         self.__combinationFunction = typeMap.get(self.typeString, None)
 
-    def combine(self, Uinf, Ueff, Ufield, Uwake):
-        return self.__combinationFunction(Uinf, Ueff, Ufield, Uwake)
+    def combine(self, u_field, u_wake):
+        return self.__combinationFunction(u_field, u_wake)
 
     # private functions defining the wake combinations
+    # u_field: the modified flow field without u_wake
+    # u_wake: the wake to add into the rest of the flow field
+    #
+    # the following functions with return u_field with u_wake incorporated
 
     # freestream linear superposition
-    def _fls(self, u_inf, u_eff, u_field, u_wake):
-        return u_field - u_wake
-
-    # local velocity linear superposition
-    def _lvls(Uinf, Ueff, Ufield, Uwake):
-        return Uinf - ((Ueff - Uwake) + (Uinf - Ufield))
+    def _fls(self, u_field, u_wake):
+        return u_field + u_wake
 
     # sum of squares freestream superposition
-    def _sosfs(Uinf, Ueff, Ufield, Uwake):
-        return Uinf - np.sqrt((Uinf - Uwake)**2 + (Uinf - Ufield)**2)
-
-    # sum of squares local velocity superposition
-    def _soslvs(Uinf, Ueff, Ufield, Uwake):
-        return Ueff - np.sqrt((Ueff - Uwake)**2 + (Uinf - Ufield)**2)
+    def _sosfs(self, u_field, u_wake):
+        return np.sqrt( u_wake**2 + u_field**2 )
