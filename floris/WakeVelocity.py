@@ -118,7 +118,7 @@ class WakeVelocity(BaseObject):
         # =======================================================================================================
         # WILL NOT BE IN THE FINAL VERSION
         # hard-coded physical input data (goes in input file)
-        wind_speed    = flowfield.wind_speed             # free-stream velocity (m/s)
+        Uinf    = flowfield.wind_speed             # free-stream velocity (m/s)
         TI_0          = flowfield.turbulence_intensity  # turbulence intensity (%/100)
         veer          = flowfield.veer                  # veer (rad), should be deg in the input file and then converted internally
         TI            = TI_0   # just a placeholder for now, should be computed with turbine
@@ -141,8 +141,8 @@ class WakeVelocity(BaseObject):
         yaw     = -turbine.yawAngle         # opposite sign convention in this model
         tilt    = turbine.tilt
         Ct      = turbine.Ct
-        U_local = turbine.windSpeed # just a placeholder for now, should be initialized with the flowfield
-        Uloc = U_local
+        #U_local = flowfield.windSpeed # just a placeholder for now, should be initialized with the flowfield
+        Uloc = Uinf
         # wake deflection
         delta = deflection_field
         
@@ -162,7 +162,7 @@ class WakeVelocity(BaseObject):
         kz      = ka*TI + kb
 
         # initial wake velocity deficit (quantities based on Porte-Agel/Bastankah 2016 JFM)
-        C0       = 1 - u0/wind_speed
+        C0       = 1 - u0/Uinf
         M0       = C0*(2-C0)    
         E0       = C0**2 - 3*np.exp(1./12.)*C0 + 3*np.exp(1./3.)
         
