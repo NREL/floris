@@ -18,14 +18,14 @@ from WakeCombination import WakeCombination
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from wakes.JensenJimenez import JensenJimenez
-from farms.TwoByTwo import TwoByTwo
+from example.JensenJimenez import JensenJimenez
+from example.TwoByTwo import TwoByTwo
 
 
 inputReader = InputReader()
 
 # turbine input
-turbineInput = "turbines/NREL5MW.json"
+turbineInput = "example/NREL5MW.json"
 turbine = inputReader.buildTurbine(turbineInput)
 
 # wake input

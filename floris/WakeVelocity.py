@@ -117,7 +117,6 @@ class WakeVelocity(BaseObject):
         unique, counts = np.unique(array, return_counts=True)
         print(dict(zip(unique, counts)))
     
-<<<<<<< HEAD:src/models/WakeVelocity.py
     def _gauss(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field):
 
         # TODO: currently the deflection model, flow field quantities, model parameters is computed within this function
@@ -219,14 +218,3 @@ class WakeVelocity(BaseObject):
         velDef1[x_locations < x0] = 0
                   
         return np.sqrt(velDef**2 + velDef1**2)
-
-
-
-    # def _gauss_thrust_angle(self):
-
-=======
-    # def _gauss(self):
-        # veer
-        # uinf
-        # TI
->>>>>>> improve the directory structure to eliminate path hacking:floris/WakeVelocity.py
