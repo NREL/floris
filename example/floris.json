@@ -11,7 +11,9 @@
       "wind_shear": "0.12",
       "wind_veer": "0.0",
       "air_density": "1.225",
-      "layout_csv_file": "layout_example.csv"
+      "layout_x": [0.0,800.0,0.0,800.0],
+      "layout_y": [0.0,0.0,600.0,600.0]
+
     }
   },
   "turbine": {
