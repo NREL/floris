@@ -13,11 +13,15 @@ class JensenJimenez(Wake):
     """
     def __init__(self):
         super().__init__()
-        # self.velocityModel = WakeVelocity("jensen")
-        self.velocityModel = WakeVelocity("floris")
-        self.deflectionModel = WakeDeflection("jimenez")
+        self.velocity_model = WakeVelocity("gauss")
+        self.deflection_model = WakeDeflection("jimenez")
 
-    def calculate(self, downstream_distance, turbine_diameter, turbine_ct, turbine_x):
-        velocity = self.get_velocity_function()
-        deflection = self.get_deflection_function()
-        return velocity(downstream_distance, turbine_diameter, turbine_x), deflection(downstream_distance, turbine_ct, turbine_diameter)
+        # hard-coded model input data (goes in input file)
+        self.ka = 0.38371                   # wake expansion parameter
+        self.kb = 0.004                     # wake expansion parameter
+        self.alpha = 0.58                      # near wake parameter
+        self.beta = 0.07                      # near wake parameter
+        self.ad = 0.0                       # natural lateral deflection parameter
+        self.bd = 0.0                       # natural lateral deflection parameter
+        self.aT = 0.0                       # natural vertical deflection parameter
+        self.bT = 0.0                       # natural vertical deflection parameter

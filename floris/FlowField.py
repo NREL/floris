@@ -22,16 +22,19 @@ class FlowField(BaseObject):
                  wake_combination=None,
                  wind_speed=None,
                  shear=None,
+                 veer=None,
                  turbulence_intensity=None,
                  turbine_map=None,
                  characteristic_height=None,
                  wake=None):
         super().__init__()
-        self.vizManager = VisualizationManager()
-        self.wakeCombination = wake_combination
-        self.windSpeed = wind_speed
+        self.viz_manager = VisualizationManager()
+        self.wake_combination = wake_combination
+        self.wind_speed = wind_speed
         self.shear = shear
-        self.turbineMap = turbine_map
+        self.veer = veer
+        self.turbulence_intensity = turbulence_intensity
+        self.turbine_map = turbine_map
 
         self.characteristicHeight = characteristic_height
         self.wake = wake
@@ -42,7 +45,7 @@ class FlowField(BaseObject):
 
         if self._valid():
             self.x, self.y, self.z = self._discretize_domain()
-            self.u_field = self._constant_flowfield(self.windSpeed)
+            self.u_field = self._constant_flowfield(self.wind_speed)
 
     def _valid(self):
         """
@@ -56,13 +59,13 @@ class FlowField(BaseObject):
         return valid
 
     def _discretize_domain(self):
-        coords = [coord for coord, _ in self.turbineMap.items()]
+        coords = [coord for coord, _ in self.turbine_map.items()]
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
         xmin, xmax = min(x), max(x)
         ymin, ymax = min(y), max(y)
 
-        turbines = [turbine for _, turbine in self.turbineMap.items()]
+        turbines = [turbine for _, turbine in self.turbine_map.items()]
         maxDiameter = max([turbine.rotorDiameter for turbine in turbines])
         hubHeight = turbines[0].hubHeight
 
@@ -72,13 +75,13 @@ class FlowField(BaseObject):
         return np.meshgrid(x, y, z, indexing="xy")
 
     def _field_velocity_at_coord(self, target_coord, field):
-        coords = [coord for coord, _ in self.turbineMap.items()]
+        coords = [coord for coord, _ in self.turbine_map.items()]
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
         xmin, xmax = min(x), max(x)
         ymin, ymax = min(y), max(y)
 
-        turbines = [turbine for _, turbine in self.turbineMap.items()]
+        turbines = [turbine for _, turbine in self.turbine_map.items()]
         maxDiameter = max([turbine.rotorDiameter for turbine in turbines])
 
         x_range = (xmin - 2 * maxDiameter, xmax + 10 * maxDiameter, self.grid_x_resolution)
@@ -96,13 +99,15 @@ class FlowField(BaseObject):
         xmax, ymax, zmax = self.x.shape[0], self.y.shape[1], self.z.shape[2]
         return np.full((xmax, ymax, zmax), constant_value)
 
-    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection):
+    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flowfield):
         velocity_function = self.wake.get_velocity_function()
-        return velocity_function(x, y, z, turbine, coord, deflection)
+        return velocity_function(x, y, z, turbine, coord, deflection, wake, flowfield)
 
     def _compute_turbine_wake_deflection(self, x, turbine, coord):
         deflection_function = self.wake.get_deflection_function()
         return deflection_function(x, turbine, coord)
+
+    # Public methods
 
     def calculate_wake(self):
         # TODO: rotate layout here
@@ -110,40 +115,41 @@ class FlowField(BaseObject):
 
         # calculate the velocity deficit and wake deflection on the mesh
         u_wake = np.zeros(self.u_field.shape)
-        for coord, turbine in self.turbineMap.items():
+        for coord, turbine in self.turbine_map.items():
             # update the turbine based on the velocity at its hub
             local_deficit = self._field_velocity_at_coord(coord, u_wake)
             turbine.update_quantities(
-                self.windSpeed - local_deficit, self.shear)
+                self.wind_speed - local_deficit, self.shear)
             
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(
                 self.x, turbine, coord)
 
             # get the velocity deficit accounting for the deflection
-            turb_wake = self.windSpeed * self._compute_turbine_velocity_deficit(
-                self.x, self.y, self.z, turbine, coord, deflection)
+            turb_wake = self.wind_speed * self._compute_turbine_velocity_deficit(
+                self.x, self.y, self.z, turbine, coord, deflection, self.wake, self)
 
             # combine this turbine's wake into the full wake field
-            u_wake = self.wakeCombination.combine(u_wake, turb_wake)
+            u_wake = self.wake_combination.combine(u_wake, turb_wake)
 
         # apply the velocity deficit field to the freestream
-        self.u_field = self.windSpeed - u_wake
+        self.u_field = self.wind_speed - u_wake
 
     # Visualization
+
     def plot_flow_field_plane(self, percent_height=0.5, show=True):
         zplane = int(self.x.shape[2] * percent_height)
-        self.vizManager.plot_constant_z(
+        self.viz_manager.plot_constant_z(
             self.x[:, :, zplane], self.y[:, :, zplane], self.u_field[:, :, zplane])
-        for coord, turbine in self.turbineMap.items():
-            self.vizManager.add_turbine_marker(turbine, coord)
+        for coord, turbine in self.turbine_map.items():
+            self.viz_manager.add_turbine_marker(turbine, coord)
         if show:
-            self.vizManager.show()
+            self.viz_manager.show()
 
     def plot_flow_field_planes(self, heights):
         for height in heights:
             self.plot_flow_field_plane(height, False)
-        self.vizManager.show()
+        self.viz_manager.show()
 
     # FUTURE
     # TODO def get_properties_at_turbine(tuple_of_coords):

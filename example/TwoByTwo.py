@@ -39,6 +39,7 @@ class TwoByTwo(Farm):
         self.flowField = FlowField(wake_combination=self.combination,
                                    wind_speed=self.windSpeed,
                                    shear=0.12,
+                                   veer=0.0,
                                    turbulence_intensity=0.1,
                                    turbine_map=self.turbineMap,
                                    characteristic_height=90,
