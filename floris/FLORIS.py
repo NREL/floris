@@ -18,7 +18,7 @@ from WakeCombination import WakeCombination
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from example.JensenJimenez import *
+from example.JensenJimenez import JensenJimenez
 from example.TwoByTwo import TwoByTwo
 
 
