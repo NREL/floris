@@ -15,33 +15,11 @@ class Wake(BaseObject):
 
     def __init__(self):
         super().__init__()
-        self.deflectionModel = None  # type: WakeDeflection
-        self.velocityModel = None    # type: WakeVelocity
-
-    def valid(self):
-        """
-            Implement property checking here
-        """
-        valid = True
-        if not super().valid():
-            valid = False
-        return valid
-
-    def initialize(self):
-        if self.valid():
-            print("cool")
+        self.deflection_function = None
+        self.velocity_function = None
 
     def get_deflection_function(self):
-        return self.deflectionModel.function
+        return self.deflection_model.function
 
     def get_velocity_function(self):
-        return self.velocityModel.function
-
-    def calculate(self, downstream_distance, turbine, turbine_coords):
-        velocity_function = self.get_velocity_function()
-        deflection_function = self.get_deflection_function()
-
-        # the velocity deficit in general needs to know the wake deflection
-        # calculate the deflection first 
-
-        return velocity(downstream_distance, turbine_diameter, turbine_x), deflection(downstream_distance, turbine_ct, turbine_diameter)
+        return self.velocity_model.function    

@@ -19,44 +19,32 @@ class FlowField(BaseObject):
     """
 
     def __init__(self,
-                 wake_combination=None,
-                 wind_speed=None,
-                 shear=None,
-                 veer=None,
-                 turbulence_intensity=None,
-                 turbine_map=None,
-                 characteristic_height=None,
-                 wake=None):
+                 wind_speed,
+                 shear,
+                 veer,
+                 turbulence_intensity,
+                 wake,
+                 wake_combination,
+                 turbine_map):
+
         super().__init__()
-        self.viz_manager = VisualizationManager()
-        self.wake_combination = wake_combination
+        
         self.wind_speed = wind_speed
         self.shear = shear
         self.veer = veer
         self.turbulence_intensity = turbulence_intensity
-        self.turbine_map = turbine_map
-
-        self.characteristicHeight = characteristic_height
         self.wake = wake
+        self.wake_combination = wake_combination
+        self.turbine_map = turbine_map
 
         self.grid_x_resolution = 200
         self.grid_y_resolution = 200
         self.grid_z_resolution = 50
 
-        if self._valid():
-            self.x, self.y, self.z = self._discretize_domain()
-            self.u_field = self._constant_flowfield(self.wind_speed)
+        self.x, self.y, self.z = self._discretize_domain()
+        self.u_field = self._constant_flowfield(self.wind_speed)
 
-    def _valid(self):
-        """
-            Do validity check
-        """
-        valid = True
-        if not super().valid():
-            return False
-        if self.characteristicHeight <= 0:
-            valid = False
-        return valid
+        self.viz_manager = VisualizationManager()
 
     def _discretize_domain(self):
         coords = [coord for coord, _ in self.turbine_map.items()]
@@ -66,12 +54,12 @@ class FlowField(BaseObject):
         ymin, ymax = min(y), max(y)
 
         turbines = [turbine for _, turbine in self.turbine_map.items()]
-        maxDiameter = max([turbine.rotorDiameter for turbine in turbines])
-        hubHeight = turbines[0].hubHeight
+        maxDiameter = max([turbine.rotor_diameter for turbine in turbines])
+        hub_height = turbines[0].hub_height
 
         x = np.linspace(xmin - 2 * maxDiameter, xmax + 10 * maxDiameter, self.grid_x_resolution)
         y = np.linspace(ymin - 2 * maxDiameter, ymax + 2 * maxDiameter, self.grid_y_resolution)
-        z = np.linspace(0, 2 * hubHeight, self.grid_z_resolution)
+        z = np.linspace(0, 2 * hub_height, self.grid_z_resolution)
         return np.meshgrid(x, y, z, indexing="xy")
 
     def _field_velocity_at_coord(self, target_coord, field):
@@ -82,7 +70,7 @@ class FlowField(BaseObject):
         ymin, ymax = min(y), max(y)
 
         turbines = [turbine for _, turbine in self.turbine_map.items()]
-        maxDiameter = max([turbine.rotorDiameter for turbine in turbines])
+        maxDiameter = max([turbine.rotor_diameter for turbine in turbines])
 
         x_range = (xmin - 2 * maxDiameter, xmax + 10 * maxDiameter, self.grid_x_resolution)
         y_range = (ymin - 2 * maxDiameter, ymax + 2 * maxDiameter, self.grid_y_resolution)
@@ -150,10 +138,5 @@ class FlowField(BaseObject):
         for height in heights:
             self.plot_flow_field_plane(height, False)
         self.viz_manager.show()
-
-    # FUTURE
-    # TODO def get_properties_at_turbine(tuple_of_coords):
-    #     #probe the FlowField
-    #     FlowfieldPropertiesAtTurbine[tuple_of_coords].wake_function()
 
     # TODO def update_flowfield():

@@ -15,93 +15,46 @@ from scipy.interpolate import interp1d
 
 class Turbine(BaseObject):
 
-    def __init__(self):
+    def __init__(self, instance_dictionary):
+
         super().__init__()
 
         # constants
-        self.nPointsInGrid = 16
-        self.velocities = [0]*16
-        self.grid = [0]*16
+        self.grid_point_count = 16
+        self.velocities = [0] * self.grid_point_count
+        self.grid = [0] * self.grid_point_count
 
-        # defined attributes
-        self.description = None
-        self.rotorDiameter = None
-        self.hubHeight = None
-        self.numBlades = None
-        self.pP = None
-        self.pT = None
-        self.generatorEfficiency = None
-        self.eta = None
+        self.description = instance_dictionary["description"]
 
-        # calculated attributes
-        # initialized to 0 to pass the validity check
-        self.Ct = 0         # Thrust Coefficient
-        self.Cp = 0         # Power Coefficient
-        self.power = 0      # Power (W) <-- True?
-        self.aI = 0         # Axial Induction
-        self.TI = 0         # Turbulence intensity at rotor
-        self.windSpeed = 0  # Windspeed at rotor
+        # loop through all the properties defined in the input dict and 
+        # store as attributes of the turbine object
+        # included attributes are found in InputReader._turbineProperties
+        for key, value in instance_dictionary["properties"].items():
+            setattr(self, key, value)
 
-        # controls
-        self.bladePitch = 0 # radians
-        self.yawAngle = 0   # radians
-        self.tilt = 0       # radians
-        self.TSR = 0
+        # these attributes need special attention
+        self.rotor_radius = self.rotor_diameter / 2.
+        self.yaw_angle = np.radians(self.yaw_angle)
+        self.tilt_angle = np.radians(self.tilt_angle)
+
+        # initialize derived attributes
+        self.fCp, self.fCt = self._CpCtWs()
+        self.grid = self._create_swept_area_grid()
+        self.velocities = [-1] * 16  # initialize to an invalid value until calculated
+
+        # calculated attributes are
+        # self.Ct         # Thrust Coefficient
+        # self.Cp         # Power Coefficient
+        # self.power      # Power (W) <-- True?
+        # self.aI         # Axial Induction
+        # self.TI         # Turbulence intensity at rotor
+        # self.windSpeed  # Windspeed at rotor
 
         # self.usePitch = usePitch
         # if usePitch:
         #     self.Cp, self.Ct, self.betaLims = CpCtpitchWs()
         # else:
         #     self.Cp, self.Ct = CpCtWs()
-
-    def valid(self):
-        """
-            Implement property checking here
-            - numBlades should be > 1
-            - nPointsInGrid should be > some number ensuring points in the disk area
-            - velocities should be > 0
-            - rotorDiameter should be > 0
-            - hubHeight should be > 0
-            - numBlades should be > 0
-            - pP should be > 0
-            - pT should be > 0
-            - generatorEfficiency should be > 0
-            - eta should be > 0
-            - Ct should be > 0
-            - Cp should be > 0
-            - aI should be > 0
-            - windSpeed should be > 0
-        """
-        valid = True
-        if not super().valid():
-            return False
-        if not 1 < self.numBlades < 4:
-            valid = False
-        if any(v < 0 for v in self.velocities):
-            valid = False
-        return valid
-
-    def init_with_dict(self, dictionary):
-        self.description = dictionary["description"]
-
-        properties = dictionary["properties"]
-        self.rotorDiameter = properties["rotorDiameter"]
-        self.rotorRadius = self.rotorDiameter / 2.
-        self.hubHeight = properties["hubHeight"]
-        self.numBlades = properties["numBlades"]
-        self.pP = properties["pP"]
-        self.pT = properties["pT"]
-        self.generatorEfficiency = properties["generatorEfficiency"]
-        self.eta = properties["eta"]
-        self.power_thrust_table = properties["power_thrust_table"]
-        self.bladePitch = properties["bladePitch"]
-        self.yawAngle = np.radians(properties["yawAngle"])
-        self.tiltAngle = np.radians(properties["tilt"])
-        self.TSR = properties["TSR"]
-
-        self.fCp, self.fCt = self._CpCtWs()
-        self.grid = self._create_swept_area_grid()
-        self.velocities = [-1] * 16  # initialize to an invalid value until calculated
 
     # Private methods
 
@@ -118,16 +71,16 @@ class Turbine(BaseObject):
         # are the points outside of the rotor disk used later?
 
         # determine the dimensions of the square grid
-        num_points = int(np.round(np.sqrt(self.nPointsInGrid)))
+        num_points = int(np.round(np.sqrt(self.grid_point_count)))
         # syntax: np.linspace(min, max, n points)
-        horizontal = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, num_points)
-        vertical = np.linspace(-self.rotorDiameter/2, self.rotorDiameter/2, num_points)
+        horizontal = np.linspace(-self.rotor_diameter/2, self.rotor_diameter/2, num_points)
+        vertical = np.linspace(-self.rotor_diameter/2, self.rotor_diameter/2, num_points)
 
         # build the grid with all of the points
         grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
 
         # keep only the points in the swept area
-        # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotorDiameter/2]
+        # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_diameter/2]
 
         return grid
 
@@ -141,15 +94,15 @@ class Turbine(BaseObject):
 
     def _calculate_power(self):
         cptmp = self.Cp \
-                * np.cos(self.yawAngle * np.pi / 180.)**self.pP \
-                * np.cos(self.tiltAngle * np.pi / 180.)**self.pT
+                * np.cos(self.yaw_angle * np.pi / 180.)**self.pP \
+                * np.cos(self.tilt_angle * np.pi / 180.)**self.pT
 
         #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
-        return 0.5 * 1.225 * (np.pi * (self.rotorDiameter/2)**2) * cptmp * self.generatorEfficiency * self.get_average_velocity()**3
+        return 0.5 * 1.225 * (np.pi * (self.rotor_diameter/2)**2) * cptmp * self.generator_efficiency * self.get_average_velocity()**3
 
     def _calculate_ai(self):
-        return 0.5 / np.cos(self.yawAngle * np.pi / 180.) \
-               * (1 - np.sqrt(1 - self.Ct * np.cos(self.yawAngle * np.pi / 180) ) )
+        return 0.5 / np.cos(self.yaw_angle * np.pi / 180.) \
+               * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle * np.pi / 180) ) )
 
     def _CpCtWs(self):
         cp = self.power_thrust_table["power"]
@@ -172,7 +125,7 @@ class Turbine(BaseObject):
             TODO: explain these velocities
             initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
-        return [local_wind_speed * ((self.hubHeight + g[1]) / self.hubHeight)**shear for g in self.grid]
+        return [local_wind_speed * ((self.hub_height + g[1]) / self.hub_height)**shear for g in self.grid]
 
     # Public methods
 
@@ -185,7 +138,14 @@ class Turbine(BaseObject):
         self.windSpeed = self.get_average_velocity()
 
     def set_yaw_angle(self, angle):
-        self.yawAngle = np.radians(angle)
+        """
+        Sets the turbine yaw angle
+        inputs:
+            angle: float - new yaw angle in degrees
+        outputs:
+            none
+        """
+        self.yaw_angle = np.radians(angle)
 
     def get_grid(self):
         return self.grid

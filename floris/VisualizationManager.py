@@ -70,11 +70,11 @@ class VisualizationManager():
 
     def add_turbine_marker(self, turbine, coords):
         
-        a = Coordinate(coords.x, coords.y - turbine.rotorRadius)
-        b = Coordinate(coords.x, coords.y + turbine.rotorRadius)
+        a = Coordinate(coords.x, coords.y - turbine.rotor_radius)
+        b = Coordinate(coords.x, coords.y + turbine.rotor_radius)
 
-        a.rotate(turbine.yawAngle, (coords.x, coords.y))
-        b.rotate(turbine.yawAngle, (coords.x, coords.y))
+        a.rotate(turbine.yaw_angle, (coords.x, coords.y))
+        b.rotate(turbine.yaw_angle, (coords.x, coords.y))
 
         plt.plot([a.xprime, b.xprime], [a.yprime, b.yprime],  'k', linewidth=1)
 

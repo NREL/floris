@@ -24,17 +24,17 @@ class InputReader():
         self._validObjects = ["turbine", "wake", "farm"]
 
         self._turbineProperties = {
-            "rotorDiameter": float,
-            "hubHeight": float,
-            "numBlades": int,
+            "rotor_diameter": float,
+            "hub_height": float,
+            "blade_count": int,
             "pP": float,
             "pT": float,
-            "generatorEfficiency": float,
+            "generator_efficiency": float,
             "eta": float,
             "power_thrust_table": dict,
-            "bladePitch": float,
-            "yawAngle": float,
-            "tilt": float,
+            "blade_pitch": float,
+            "yaw_angle": float,
+            "tilt_angle": float,
             "TSR": float
         }
 
@@ -142,9 +142,7 @@ class InputReader():
         """
         # jsonDict = self._parseJSON(inputFile)
         propertyDict = self._validateJSON(jsonDict, self._turbineProperties)
-        turbine = Turbine()
-        turbine.init_with_dict(propertyDict)
-        return turbine
+        return Turbine(propertyDict)
 
     def input_reader(self, inputFile):
         """

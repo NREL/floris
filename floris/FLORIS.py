@@ -36,7 +36,6 @@ wakeInput = "wakes/JensenJimenez.json"
 
 # farm input
 farmInput = "farms/TwoByTwo.json"
-# TODO: add controls to farm
 
 twobytwo = TwoByTwo(turbine=turbine,
                     wake=JensenJimenez(),
@@ -52,5 +51,4 @@ for coord in twobytwo.get_turbine_coords():
     print("\tai -", turbine.aI)
     print("\taverage velocity -", turbine.get_average_velocity())
 
-ff = twobytwo.get_flow_field()
-ff.plot_flow_field_planes([0.2])#, 0.5, 0.8])
+twobytwo.flowField.plot_flow_field_planes([0.2])  # , 0.5, 0.8])

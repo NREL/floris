@@ -39,16 +39,16 @@ class WakeVelocity(BaseObject):
         # +/- 2keX is the slope of the cone boundary for the wake
 
         # define the boundary of the wake model ... y = mx + b
-        m = 2 * self.we
+        m = 2 * wake.we
         x = x_locations - turbine_coord.x
-        b = turbine.rotorRadius
+        b = turbine.rotor_radius
         boundary_line = m * x + b
         y_upper = boundary_line + turbine_coord.y + deflection_field
         y_lower = -1 * boundary_line + turbine_coord.y + deflection_field
 
         # calculate the wake velocity
-        c = (turbine.rotorRadius / 
-                (self.we * (x_locations - turbine_coord.x) + turbine.rotorRadius))**2
+        c = (turbine.rotor_radius / 
+             (wake.we * (x_locations - turbine_coord.x) + turbine.rotor_radius))**2
 
         # filter points upstream and beyond the upper and lower bounds of the wake
         c[x_locations - turbine_coord.x < 0] = 0
@@ -64,8 +64,8 @@ class WakeVelocity(BaseObject):
         me = np.array([-0.5, 0.3, 1.0]) # inputData['me']
         aU = np.radians(12.0) #inputData['aU']
         bU = np.radians(1.3) #inputData['bU']
-        radius = turbine.rotorRadius
-        yaw = turbine.yawAngle
+        radius = turbine.rotor_radius
+        yaw = turbine.yaw_angle
         mu = [0.5, 1., 5.5] / np.cos(aU + bU * yaw)
 
         # distance from wake centerline
@@ -73,16 +73,16 @@ class WakeVelocity(BaseObject):
         dx = x_locations - turbine_coord.x
 
         # wake zone diameters
-        nearwake = (radius + self.we * me[0] * dx)
-        farwake = (radius + self.we * me[1] * dx)
-        mixing = (radius + self.we * me[2] * dx)
+        nearwake = (radius + wake.we * me[0] * dx)
+        farwake = (radius + wake.we * me[1] * dx)
+        mixing = (radius + wake.we * me[2] * dx)
 
         # initialize the wake field
         c = np.zeros(x_locations.shape)
 
         # near wake zone
         mask = rY <= nearwake
-        c += mask * (radius / (radius + self.we * mu[0] * dx))**2
+        c += mask * (radius / (radius + wake.we * mu[0] * dx))**2
 
         # far wake zone
         # ^ is XOR, x^y:
@@ -92,7 +92,7 @@ class WakeVelocity(BaseObject):
         # The resulting mask is all the points in far wake zone that are not
         # in the near wake zone
         mask = (rY <= farwake) ^ (rY <= nearwake)
-        c += mask * (radius / (radius + self.we * mu[1] * dx))**2
+        c += mask * (radius / (radius + wake.we * mu[1] * dx))**2
 
         # mixing zone
         # | is OR, x|y:
@@ -101,7 +101,7 @@ class WakeVelocity(BaseObject):
         # The resulting mask is all the points in mixing zone that are not
         # in the far wake zone and not in  near wake zone
         mask = (rY <= mixing) ^ ((rY <= farwake) | (rY <= nearwake))
-        c += mask * (radius / (radius + self.we * mu[2] * dx))**2
+        c += mask * (radius / (radius + wake.we * mu[2] * dx))**2
 
         # filter points upstream
         c[x_locations - turbine_coord.x < 0] = 0
@@ -136,12 +136,12 @@ class WakeVelocity(BaseObject):
         # =======================================================================================================
                 
         # turbine parameters
-        D       = turbine.rotorDiameter
-        HH      = turbine.hubHeight
-        yaw     = -turbine.yawAngle         # opposite sign convention in this model
-        tilt    = turbine.tilt
+        D       = turbine.rotor_diameter
+        HH      = turbine.hub_height
+        yaw     = -turbine.yaw_angle         # opposite sign convention in this model
+        tilt_angle    = turbine.tilt_angle
         Ct      = turbine.Ct
-        #U_local = flowfield.windSpeed # just a placeholder for now, should be initialized with the flowfield
+        # U_local = flowfield.wind_speed # just a placeholder for now, should be initialized with the flowfield
         Uloc = Uinf
         # wake deflection
         delta = deflection_field
@@ -168,7 +168,7 @@ class WakeVelocity(BaseObject):
         
         # yaw parameters (skew angle and distance from centerline)
         theta_c0    = ((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw))) # skew angle  
-        theta_z0    = ((0.3*tilt)/np.cos(tilt))*(1-np.sqrt(1-Ct*np.cos(tilt)))  # skew angle  
+        theta_z0    = ((0.3*tilt_angle)/np.cos(tilt_angle))*(1-np.sqrt(1-Ct*np.cos(tilt_angle)))  # skew angle  
         delta0      = np.tan(theta_c0)*(x0-turbine_coord.x)
         delta_z0    = np.tan(theta_z0)*(x0-turbine_coord.x)
         

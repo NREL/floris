@@ -12,8 +12,8 @@ class TwoByTwo(Farm):
         Describe this farm here
     """
 
-    def __init__(self, turbine=None, wake=None, combination=None):
-        super().__init__()
+    def __init__(self, turbine, wake, combination):
+        
         self.turbineMap = {
             Coordinate(0, 0): copy.deepcopy(turbine),
             Coordinate(800, 0): copy.deepcopy(turbine),
@@ -28,13 +28,14 @@ class TwoByTwo(Farm):
         self.flowField = FlowField(wake_combination=self.combination,
                                    wind_speed=self.windSpeed,
                                    shear=0.12,
+                                   veer=0.0,
+                                   turbulence_intensity=0.01,
                                    turbine_map=self.turbineMap,
-                                   characteristic_height=90,
                                    wake=self.wake)
-        self.flowField.calculate_wake()
+        super().__init__(self.turbineMap, self.flowField)
 
-    # def get_turbine_coords(self):
-    #     return self.turbineMap.keys()
+    def get_turbine_coords(self):
+        return self.turbineMap.keys()
 
-    def getTurbineAtCoord(self, coord):
+    def get_turbine_at_coord(self, coord):
         return self.turbineMap[coord]

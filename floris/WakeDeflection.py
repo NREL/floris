@@ -32,23 +32,20 @@ class WakeDeflection(BaseObject):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
         # this is coded as defined in the Jimenez et. al. paper
 
-        kd = 0.17
-        ad = -4.5
-        bd = -0.01
-
         # angle of deflection
-        xi_init = (1. / 2.) * np.cos(turbine.yawAngle) * np.sin(turbine.yawAngle) * turbine.Ct
-        # xi = xi_init / (1 + 2 * kd * x_locations / turbine.rotorDiameter)**2
+        xi_init = (1. / 2.) * np.cos(turbine.yaw_angle) * \
+            np.sin(turbine.yaw_angle) * turbine.Ct
+        # xi = xi_init / (1 + 2 * self.kd * x_locations / turbine.rotor_diameter)**2
         
         x_locations = x_locations - coord.x
 
         # yaw displacement
         yYaw_init = ( xi_init
-            * ( 15 * (2 * kd * x_locations / turbine.rotorDiameter + 1)**4. + xi_init**2. )
-            / ((30 * kd / turbine.rotorDiameter) * (2 * kd * x_locations / turbine.rotorDiameter + 1)**5.)) \
-            - (xi_init * turbine.rotorDiameter * (15 + xi_init**2.) / (30 * kd))
+            * ( 15 * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**4. + xi_init**2. )
+            / ((30 * self.kd / turbine.rotor_diameter) * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**5.)) \
+            - (xi_init * turbine.rotor_diameter * (15 + xi_init**2.) / (30 * self.kd))
 
         # corrected yaw displacement with lateral offset
-        yYaw = yYaw_init + ad + bd * x_locations
+        yYaw = yYaw_init + self.ad + self.bd * x_locations
 
         return yYaw
