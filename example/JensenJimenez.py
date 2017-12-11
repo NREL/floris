@@ -1,10 +1,9 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),
-                '..', 'src', 'models')))
-from src.models.Wake import Wake
-from src.models.WakeDeflection import WakeDeflection
-from src.models.WakeVelocity import WakeVelocity
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+from FLORIS.Wake import Wake
+from FLORIS.WakeDeflection import WakeDeflection
+from FLORIS.WakeVelocity import WakeVelocity
 
 
 class JensenJimenez(Wake):

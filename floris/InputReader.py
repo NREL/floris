@@ -132,7 +132,7 @@ class InputReader():
 
     # Public methods
 
-    def buildTurbine(self, inputFile):
+    def build_turbine(self, jsonDict):
         """
         Creates a turbine object from a given input file
         inputs:
@@ -140,11 +140,25 @@ class InputReader():
         outputs:
             turbine: Turbine - instantiated Turbine object
         """
-        jsonDict = self._parseJSON(inputFile)
+        # jsonDict = self._parseJSON(inputFile)
         propertyDict = self._validateJSON(jsonDict, self._turbineProperties)
         turbine = Turbine()
         turbine.init_with_dict(propertyDict)
         return turbine
+
+    def input_reader(self, inputFile):
+        """
+        Parses main input file
+        inputs:
+            inputFile: str - path to the json input file
+        outputs:
+            farm: instantiated FLORIS model of wind farm
+        """
+        jsonDict = self._parseJSON(inputFile)
+
+        # Build the turbine model
+        return self.build_turbine(jsonDict['turbine'])
+
 
     # def buildWake(self, inputFile):
 

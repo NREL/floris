@@ -1,9 +1,9 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'models')))
-from src.models.Farm import Farm
-from src.models.FlowField import FlowField
-from src.models.Coordinate import Coordinate
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from FLORIS.Farm import Farm
+from FLORIS.FlowField import FlowField
+from FLORIS.Coordinate import Coordinate
 import copy
 
 
