@@ -1,8 +1,0 @@
-{
-  "type": "project",
-  "description": "project",
-  "properties": {
-    "farm_file":"farm_example",
-    "wake_file":"wakes_example"
-  }
-}
