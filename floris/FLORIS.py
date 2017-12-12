@@ -13,20 +13,23 @@ Unless required by applicable law or agreed to in writing, software distributed 
 import sys
 from InputReader import InputReader
 
+class FLORIS():
+    def __init__(self):
+        self.input_reader = InputReader()
+    
+    def process_input(self, input_file):
+        self.farm = self.input_reader.input_reader(input_file)
 
-# Process the input file
-input_file = sys.argv[1]
-input_reader = InputReader()
-twobytwo = input_reader.input_reader(input_file)
-
-# output handling
-for coord in twobytwo.get_turbine_coords():
-    turbine = twobytwo.get_turbine_at_coord(coord)
-    print(str(coord) + ":")
-    print("\tCp -", turbine.Cp)
-    print("\tCt -", turbine.Ct)
-    print("\tpower -", turbine.power)
-    print("\tai -", turbine.aI)
-    print("\taverage velocity -", turbine.get_average_velocity())
-
-twobytwo.flow_field.plot_flow_field_planes([0.2])  # , 0.5, 0.8])
+if __name__=="__main__":
+    floris = FLORIS()
+    floris.process_input(sys.argv[1])
+    # output handling
+    for coord in floris.farm.get_turbine_coords():
+        turbine = floris.farm.get_turbine_at_coord(coord)
+        print(str(coord) + ":")
+        print("\tCp -", turbine.Cp)
+        print("\tCt -", turbine.Ct)
+        print("\tpower -", turbine.power)
+        print("\tai -", turbine.aI)
+        print("\taverage velocity -", turbine.get_average_velocity())
+    floris.farm.flow_field.plot_flow_field_planes([0.2])
