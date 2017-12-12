@@ -22,6 +22,7 @@ class FLORIS():
 
 if __name__=="__main__":
     floris = FLORIS()
+    print('here')
     floris.process_input(sys.argv[1])
     # output handling
     for coord in floris.farm.get_turbine_coords():

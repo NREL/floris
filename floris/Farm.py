@@ -30,6 +30,7 @@ class Farm(BaseObject):
         # included attributes are found in InputReader._farm_properties
         for key, value in instance_dictionary["properties"].items():
             setattr(self, key, value)
+            print(key,value)
 
         # these attributes need special attention
         self.wake_combination = WakeCombination(self.wake_combination)
@@ -40,6 +41,7 @@ class Farm(BaseObject):
 
         self.flow_field = FlowField(wake_combination=self.wake_combination,
                                    wind_speed=self.wind_speed,
+                                   wind_direction = self.wind_direction,
                                    wind_shear=self.wind_shear,
                                    wind_veer=self.wind_veer,
                                    turbulence_intensity=self.turbulence_intensity,
