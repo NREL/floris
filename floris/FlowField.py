@@ -95,9 +95,9 @@ class FlowField(BaseObject):
         velocity_function = self.wake.get_velocity_function()
         return velocity_function(x, y, z, turbine, coord, deflection, wake, flowfield)
 
-    def _compute_turbine_wake_deflection(self, x, turbine, coord):
+    def _compute_turbine_wake_deflection(self, x, y, turbine, coord, flowfield):
         deflection_function = self.wake.get_deflection_function()
-        return deflection_function(x, turbine, coord)
+        return deflection_function(x, y, turbine, coord, flowfield)
 
     def _rotate_coordinates(self):
 
@@ -141,8 +141,7 @@ class FlowField(BaseObject):
             turbine.update_quantities(self.wind_speed - local_deficit, self.wind_shear)
             
             # get the wake deflecton field
-            deflection = self._compute_turbine_wake_deflection(
-                rotated_x, turbine, coord)
+            deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
 
             # get the velocity deficit accounting for the deflection
             turb_wake = self._compute_turbine_velocity_deficit(

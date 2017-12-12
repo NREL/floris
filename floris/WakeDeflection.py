@@ -32,7 +32,7 @@ class WakeDeflection(BaseObject):
         self.ad = float(self.jimenez["ad"])
         self.bd = float(self.jimenez["bd"])
 
-    def _jimenez(self, x_locations, turbine, coord):
+    def _jimenez(self, x_locations, y_locations, turbine, coord, flowfield):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
         # this is coded as defined in the Jimenez et. al. paper
 
@@ -50,6 +50,75 @@ class WakeDeflection(BaseObject):
             - (xi_init * turbine.rotor_diameter * (15 + xi_init**2.) / (30 * self.kd))
 
         # corrected yaw displacement with lateral offset
-        yYaw = yYaw_init + self.ad + self.bd * x_locations
+        deflection = yYaw_init + self.ad + self.bd * x_locations
 
-        return yYaw
+        return deflection
+
+    def _gauss_deflection(self, x_locations, y_locations, turbine, coord, flowfield):
+
+        # =======================================================================================================
+        wind_speed    = flowfield.wind_speed             # free-stream velocity (m/s)
+        TI_0    = flowfield.turbulence_intensity   # turbulence intensity (%/100)
+        veer    = flowfield.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
+        TI      = flowfield.turbulence_intensity   # just a placeholder for now, should be computed with turbine
+        
+        # hard-coded model input data (goes in input file)
+        ka      = self.ka                      # wake expansion parameter
+        kb      = self.kb                      # wake expansion parameter
+        alpha   = self.alpha                   # near wake parameter
+        beta    = self.beta                    # near wake parameter
+        ad      = self.ad                      # natural lateral deflection parameter
+        bd      = self.bd                      # natural lateral deflection parameter
+
+        # turbine parameters
+        D           = turbine.rotor_diameter
+        HH          = turbine.hub_height
+        yaw         = -turbine.yaw_angle         # opposite sign convention in this model
+        tilt        = turbine.tilt_angle
+        Ct          = turbine.Ct
+
+        # U_local = flowfield.wind_speed # just a placeholder for now, should be initialized with the flowfield
+        U_local = wind_speed
+
+        # initial velocity deficits
+        uR          = U_local*Ct*np.cos(tilt)*np.cos(yaw)/(2.*(1-np.sqrt(1-(Ct*np.cos(tilt)*np.cos(yaw)))))
+        u0          = U_local*np.sqrt(1-Ct)
+
+        # length of near wake
+        x0      = D*(np.cos(yaw)*(1+np.sqrt(1-Ct*np.cos(yaw)))) / (np.sqrt(2)*(4*alpha*TI + 2*beta*(1-np.sqrt(1-Ct)))) + coord.x
+
+        # wake expansion parameters
+        ky      = ka*TI + kb 
+        kz      = ka*TI + kb
+
+        C0      = 1 - u0/wind_speed
+        M0      = C0*(2-C0) 
+        E0      = C0**2 - 3*np.exp(1./12.)*C0 + 3*np.exp(1./3.)
+
+        # initial Gaussian wake expansion
+        sigma_z0    = D*0.5*np.sqrt( uR/(U_local + u0) )
+        sigma_y0    = sigma_z0*np.cos(yaw)*np.cos(veer)
+
+        yR = y_locations - coord.y
+        xR = yR*np.tan(yaw) + coord.x
+
+        # yaw parameters (skew angle and distance from centerline)  
+        theta_c0    = ((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
+        delta0      = np.tan(theta_c0)*(x0-coord.x)                            # initial wake deflection
+
+        # deflection in the near wake
+        delta_near_wake = ((x_locations-xR)/(x0-xR))*delta0 + ( ad + bd*(x_locations-coord.x) )                               
+        delta_near_wake[x_locations < xR] = 0.0
+        delta_near_wake[x_locations > x0] = 0.0
+
+        # deflection in the far wake
+        sigma_y = ky*( x_locations - x0 ) + sigma_y0
+        sigma_z = kz*( x_locations - x0 ) + sigma_z0
+        ln_deltaNum = (1.6+np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) - np.sqrt(M0))
+        ln_deltaDen = (1.6-np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) + np.sqrt(M0))
+        delta_far_wake = delta0 + (theta_c0*E0/5.2)*np.sqrt(sigma_y0*sigma_z0/(ky*kz*M0))*np.log(ln_deltaNum/ln_deltaDen) + ( ad + bd*(x_locations-coord.x) )  
+        delta_far_wake[x_locations < x0] = 0.0
+
+        deflection = delta_near_wake + delta_far_wake
+
+        return deflection
