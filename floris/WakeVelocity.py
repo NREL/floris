@@ -14,16 +14,33 @@ import numpy as np
 
 class WakeVelocity(BaseObject):
 
-    def __init__(self, typeString):
+    def __init__(self, type_string, parameter_dictionary):
         super().__init__()
-        self.typeString = typeString
+        self.type_string = type_string
 
-        typeMap = {
+        type_map = {
             "jensen": self._jensen,
             "floris": self._floris,
             "gauss": self._gauss
         }
-        self.function = typeMap[typeString]
+        self.function = type_map[type_string]
+
+        # loop through all the properties defined in the parameter dict and
+        # store as attributes of the WakeVelocity object
+        for key, value in parameter_dictionary.items():
+            setattr(self, key, value)
+
+        # jensen parameters
+        self.we = float(self.jensen["we"])
+        
+        # floris parameters
+        self.me = self.floris["me"]
+        self.aU = np.radians(float(self.floris["aU"]))
+        self.bU = np.radians(float(self.floris["bU"]))
+        self.mU = self.floris["mU"]
+
+        # gauss parameters
+
 
     def _activation_function(self, x, loc):
         sharpness = 10
@@ -33,13 +50,13 @@ class WakeVelocity(BaseObject):
         """
             x direction is streamwise (with the wind)
             y direction is normal to the streamwise direction and parallel to the ground
-            z direction is normal the streamwise direction and normal to the ground=
+            z direction is normal the streamwise direction and normal to the ground
         """
         # compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
         # +/- 2keX is the slope of the cone boundary for the wake
 
         # define the boundary of the wake model ... y = mx + b
-        m = 2 * wake.we
+        m = 2 * self.we
         x = x_locations - turbine_coord.x
         b = turbine.rotor_radius
         boundary_line = m * x + b
@@ -48,7 +65,7 @@ class WakeVelocity(BaseObject):
 
         # calculate the wake velocity
         c = (turbine.rotor_radius / 
-             (wake.we * (x_locations - turbine_coord.x) + turbine.rotor_radius))**2
+             (self.we * (x_locations - turbine_coord.x) + turbine.rotor_radius))**2
 
         # filter points upstream and beyond the upper and lower bounds of the wake
         c[x_locations - turbine_coord.x < 0] = 0
@@ -61,28 +78,28 @@ class WakeVelocity(BaseObject):
         # compute the velocity deficit based on wake zones, see Gebraad et. al. 2016
 
         # wake parameters
-        me = np.array([-0.5, 0.3, 1.0]) # inputData['me']
-        aU = np.radians(12.0) #inputData['aU']
-        bU = np.radians(1.3) #inputData['bU']
+        me = self.me 
+        aU = self.aU
+        bU = self.bU
         radius = turbine.rotor_radius
-        yaw = turbine.yaw_angle
-        mu = [0.5, 1., 5.5] / np.cos(aU + bU * yaw)
+        mu = self.mU / np.cos(aU + bU * turbine.yaw_angle)
+        we = self.we
 
         # distance from wake centerline
         rY = abs(y_locations - (turbine_coord.y + deflection_field))
         dx = x_locations - turbine_coord.x
 
         # wake zone diameters
-        nearwake = (radius + wake.we * me[0] * dx)
-        farwake = (radius + wake.we * me[1] * dx)
-        mixing = (radius + wake.we * me[2] * dx)
+        nearwake = (radius + we * me[0] * dx)
+        farwake = (radius + we * me[1] * dx)
+        mixing = (radius + we * me[2] * dx)
 
         # initialize the wake field
         c = np.zeros(x_locations.shape)
 
         # near wake zone
         mask = rY <= nearwake
-        c += mask * (radius / (radius + wake.we * mu[0] * dx))**2
+        c += mask * (radius / (radius + we * mu[0] * dx))**2
 
         # far wake zone
         # ^ is XOR, x^y:
@@ -92,7 +109,7 @@ class WakeVelocity(BaseObject):
         # The resulting mask is all the points in far wake zone that are not
         # in the near wake zone
         mask = (rY <= farwake) ^ (rY <= nearwake)
-        c += mask * (radius / (radius + wake.we * mu[1] * dx))**2
+        c += mask * (radius / (radius + we * mu[1] * dx))**2
 
         # mixing zone
         # | is OR, x|y:
@@ -101,7 +118,7 @@ class WakeVelocity(BaseObject):
         # The resulting mask is all the points in mixing zone that are not
         # in the far wake zone and not in  near wake zone
         mask = (rY <= mixing) ^ ((rY <= farwake) | (rY <= nearwake))
-        c += mask * (radius / (radius + wake.we * mu[2] * dx))**2
+        c += mask * (radius / (radius + we * mu[2] * dx))**2
 
         # filter points upstream
         c[x_locations - turbine_coord.x < 0] = 0

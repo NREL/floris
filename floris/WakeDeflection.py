@@ -14,19 +14,23 @@ import numpy as np
 
 class WakeDeflection(BaseObject):
 
-    def __init__(self, typeString):
+    def __init__(self, type_string, parameter_dictionary):
         super().__init__()
-        self.typeString = typeString
+        self.type_string = type_string
 
-        typeMap = {
+        type_map = {
             "jimenez": self._jimenez
         }
-        self.function = typeMap.get(self.typeString, None)
+        self.function = type_map.get(self.type_string, None)
 
-        # to be specified in user input
-        self.kd = .17 # wake deflection
-        self.ad = -4.5
-        self.bd = -0.01
+        # loop through all the properties defined in the parameter dict and
+        # store as attributes of the WakeVelocity object
+        for key, value in parameter_dictionary.items():
+            setattr(self, key, value)
+
+        self.kd = float(self.jimenez["kd"])
+        self.ad = float(self.jimenez["ad"])
+        self.bd = float(self.jimenez["bd"])
 
     def _jimenez(self, x_locations, turbine, coord):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine

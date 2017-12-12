@@ -9,17 +9,31 @@ Unless required by applicable law or agreed to in writing, software distributed 
 """
 
 from BaseObject import BaseObject
-
+from WakeDeflection import WakeDeflection
+from WakeVelocity import WakeVelocity
 
 class Wake(BaseObject):
 
-    def __init__(self):
+    def __init__(self, instance_dictionary):
+
         super().__init__()
-        self.deflection_function = None
-        self.velocity_function = None
+
+        self.description = instance_dictionary["description"]
+
+        # loop through all the properties defined in the input dict and
+        # store as attributes of the wake object
+        # included attributes are found in InputReader._wake_properties
+        for key, value in instance_dictionary["properties"].items():
+            setattr(self, key, value)
+
+        # these attributes need special attention
+        self.deflection_model = WakeDeflection(
+            self.deflection_model, self.parameters)
+        self.velocity_model = WakeVelocity(
+            self.velocity_model, self.parameters)
 
     def get_deflection_function(self):
         return self.deflection_model.function
 
     def get_velocity_function(self):
-        return self.velocity_model.function    
+        return self.velocity_model.function

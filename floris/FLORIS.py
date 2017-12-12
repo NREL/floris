@@ -14,32 +14,11 @@ Unless required by applicable law or agreed to in writing, software distributed 
 from InputReader import InputReader
 from WakeCombination import WakeCombination
 
-# to be deprecated by json io
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from example.JensenJimenez import JensenJimenez
-from example.TwoByTwo import TwoByTwo
-
 
 input_reader = InputReader()
 
 # Parse the input file
-turbine = input_reader.input_reader("example/floris.json")
-
-# turbine input
-# turbineInput = "example/NREL5MW.json"
-# turbine = inputReader.buildTurbine(turbineInput)
-
-# wake input
-wakeInput = "wakes/JensenJimenez.json"
-
-# farm input
-farmInput = "farms/TwoByTwo.json"
-
-twobytwo = TwoByTwo(turbine=turbine,
-                    wake=JensenJimenez(),
-                    combination=WakeCombination("sosfs"))
+twobytwo = input_reader.input_reader("example/floris.json")
 
 # output handling
 for coord in twobytwo.get_turbine_coords():
@@ -51,4 +30,4 @@ for coord in twobytwo.get_turbine_coords():
     print("\tai -", turbine.aI)
     print("\taverage velocity -", turbine.get_average_velocity())
 
-twobytwo.flowField.plot_flow_field_planes([0.2])  # , 0.5, 0.8])
+twobytwo.flow_field.plot_flow_field_planes([0.2])  # , 0.5, 0.8])

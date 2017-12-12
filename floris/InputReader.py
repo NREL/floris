@@ -23,7 +23,7 @@ class InputReader():
 
         self._validObjects = ["turbine", "wake", "farm"]
 
-        self._turbineProperties = {
+        self._turbine_properties = {
             "rotor_diameter": float,
             "hub_height": float,
             "blade_count": int,
@@ -37,14 +37,24 @@ class InputReader():
             "tilt_angle": float,
             "TSR": float
         }
+      
+        self._wake_properties = {
+            "velocity_model": str,
+            "deflection_model": str,
+            "parameters": dict
+        }
 
-        # self._wakeProperties = {
-        #     "": type
-        # }
-
-        # self._farmProperties = {
-        #     "": type
-        # }
+        self._farm_properties = {
+            "wind_speed": float,
+            "wind_direction": float,
+            "turbulence_intensity": float,
+            "wind_shear": float,
+            "wind_veer": float,
+            "air_density": float,
+            "wake_combination": str,
+            "layout_x": list,
+            "layout_y": list
+        }
 
     def _parseJSON(self, filename):
         """
@@ -130,19 +140,24 @@ class InputReader():
         except ValueError:
             return None, ValueError
 
-    # Public methods
-
-    def build_turbine(self, jsonDict):
+    def _build_turbine(self, json_dict):
         """
-        Creates a turbine object from a given input file
+        Instantiates a turbine object from a given input file
         inputs:
             inputFile: str - path to the json input file
         outputs:
             turbine: Turbine - instantiated Turbine object
         """
-        # jsonDict = self._parseJSON(inputFile)
-        propertyDict = self._validateJSON(jsonDict, self._turbineProperties)
+        propertyDict = self._validateJSON(json_dict, self._turbine_properties)
         return Turbine(propertyDict)
+
+    def _build_wake(self, json_dict):
+        propertyDict = self._validateJSON(json_dict, self._wake_properties)
+        return Wake(propertyDict)
+
+    def _build_farm(self, json_dict, turbine, wake):
+        propertyDict = self._validateJSON(json_dict, self._farm_properties)
+        return Farm(propertyDict, turbine, wake)
 
     def input_reader(self, inputFile):
         """
@@ -154,10 +169,6 @@ class InputReader():
         """
         jsonDict = self._parseJSON(inputFile)
 
-        # Build the turbine model
-        return self.build_turbine(jsonDict['turbine'])
-
-
-    # def buildWake(self, inputFile):
-
-    # def buildFarm(self, inputFile):
+        turbine = self._build_turbine(jsonDict["turbine"])
+        wake = self._build_wake(jsonDict["wake"])
+        return self._build_farm(jsonDict["farm"], turbine, wake)

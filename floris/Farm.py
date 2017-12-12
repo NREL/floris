@@ -9,17 +9,46 @@ Unless required by applicable law or agreed to in writing, software distributed 
 """
 
 from BaseObject import BaseObject
-import numpy as np
-
+from Coordinate import Coordinate
+from WakeCombination import WakeCombination
+from FlowField import FlowField
+import copy
 
 class Farm(BaseObject):
     """
         Describe farm here
     """
 
-    def __init__(self, turbine_map, flow_field):
-        super().__init__()
-        self.turbine_map = turbine_map
-        self.flow_field = flow_field
+    def __init__(self, instance_dictionary, turbine, wake):
 
-        self.flow_field.calculate_wake()
+        super().__init__()
+
+        self.description = instance_dictionary["description"]
+
+        # loop through all the properties defined in the input dict and
+        # store as attributes of the wake object
+        # included attributes are found in InputReader._farm_properties
+        for key, value in instance_dictionary["properties"].items():
+            setattr(self, key, value)
+
+        # these attributes need special attention
+        self.wake_combination = WakeCombination(self.wake_combination)
+
+        self.turbine_map = {}
+        for c in list(zip(self.layout_x, self.layout_y)):
+            self.turbine_map[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
+
+        self.flow_field = FlowField(wake_combination=self.wake_combination,
+                                   wind_speed=self.wind_speed,
+                                   wind_shear=self.wind_shear,
+                                   wind_veer=self.wind_veer,
+                                   turbulence_intensity=self.turbulence_intensity,
+                                   turbine_map=self.turbine_map,
+                                   wake=wake)
+        self.flow_field.calculate_wake()        
+
+    def get_turbine_coords(self):
+        return self.turbine_map.keys()
+
+    def get_turbine_at_coord(self, coord):
+        return self.turbine_map[coord]

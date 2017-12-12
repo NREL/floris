@@ -20,8 +20,8 @@ class FlowField(BaseObject):
 
     def __init__(self,
                  wind_speed,
-                 shear,
-                 veer,
+                 wind_shear,
+                 wind_veer,
                  turbulence_intensity,
                  wake,
                  wake_combination,
@@ -30,8 +30,8 @@ class FlowField(BaseObject):
         super().__init__()
         
         self.wind_speed = wind_speed
-        self.shear = shear
-        self.veer = veer
+        self.wind_shear = wind_shear
+        self.wind_veer = wind_veer
         self.turbulence_intensity = turbulence_intensity
         self.wake = wake
         self.wake_combination = wake_combination
@@ -107,7 +107,7 @@ class FlowField(BaseObject):
             # update the turbine based on the velocity at its hub
             local_deficit = self._field_velocity_at_coord(coord, u_wake)
             turbine.update_quantities(
-                self.wind_speed - local_deficit, self.shear)
+                self.wind_speed - local_deficit, self.wind_shear)
             
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(

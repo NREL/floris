@@ -28,7 +28,7 @@ class Turbine(BaseObject):
 
         # loop through all the properties defined in the input dict and 
         # store as attributes of the turbine object
-        # included attributes are found in InputReader._turbineProperties
+        # included attributes are found in InputReader._turbine_properties
         for key, value in instance_dictionary["properties"].items():
             setattr(self, key, value)
 
