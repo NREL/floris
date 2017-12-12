@@ -30,7 +30,7 @@ class Farm(BaseObject):
         # included attributes are found in InputReader._farm_properties
         for key, value in instance_dictionary["properties"].items():
             setattr(self, key, value)
-            print(key,value)
+            #print(key,value)
 
         # these attributes need special attention
         self.wake_combination = WakeCombination(self.wake_combination)

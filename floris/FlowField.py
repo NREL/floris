@@ -11,6 +11,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
 from BaseObject import BaseObject
 import numpy as np
 from VisualizationManager import VisualizationManager
+from Coordinate import Coordinate
+import copy
 
 
 class FlowField(BaseObject):
@@ -136,22 +138,25 @@ class FlowField(BaseObject):
 
             # update the turbine based on the velocity at its hub
             local_deficit = self._field_velocity_at_coord(coord, u_wake)
-            turbine.update_quantities(
-                self.wind_speed - local_deficit, self.wind_shear)
+            turbine.update_quantities(self.wind_speed - local_deficit, self.wind_shear)
             
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(
-                self.x, turbine, coord)
+                rotated_x, turbine, coord)
 
             # get the velocity deficit accounting for the deflection
-            turb_wake = self.wind_speed * self._compute_turbine_velocity_deficit(
-                self.x, self.y, self.z, turbine, coord, deflection, self.wake, self)
+            turb_wake = self._compute_turbine_velocity_deficit(
+                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
 
             # combine this turbine's wake into the full wake field
             u_wake = self.wake_combination.combine(u_wake, turb_wake)
 
+            print(np.min(u_wake),np.max(u_wake))
+
         # apply the velocity deficit field to the freestream
         self.u_field = self.wind_speed - u_wake
+
+        print(np.min(self.u_field),np.max(self.u_field))
 
     # Visualization
 

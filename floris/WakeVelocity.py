@@ -40,6 +40,11 @@ class WakeVelocity(BaseObject):
         self.mU = self.floris["mU"]
 
         # gauss parameters
+        print('=========================Setting parameters============================')
+        self.ka = float(self.gauss["ka"])
+        self.kb = float(self.gauss["kb"])
+        self.alpha = float(self.gauss["alpha"])
+        self.beta = float(self.gauss["beta"])
 
 
     def _activation_function(self, x, loc):
@@ -85,6 +90,8 @@ class WakeVelocity(BaseObject):
         mu = self.mU / np.cos(aU + bU * turbine.yaw_angle)
         we = self.we
 
+        wind_speed = flowfield.wind_speed
+
         # distance from wake centerline
         rY = abs(y_locations - (turbine_coord.y + deflection_field))
         dx = x_locations - turbine_coord.x
@@ -123,7 +130,7 @@ class WakeVelocity(BaseObject):
         # filter points upstream
         c[x_locations - turbine_coord.x < 0] = 0
 
-        return 2 * turbine.aI * c
+        return wind_speed * 2 * turbine.aI * c
     
     def _gauss(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flowfield):
 
@@ -135,31 +142,31 @@ class WakeVelocity(BaseObject):
         # =======================================================================================================
         # WILL NOT BE IN THE FINAL VERSION
         # hard-coded physical input data (goes in input file)
-        Uinf    = flowfield.wind_speed             # free-stream velocity (m/s)
-        TI_0          = flowfield.turbulence_intensity  # turbulence intensity (%/100)
-        veer          = flowfield.veer                  # veer (rad), should be deg in the input file and then converted internally
-        TI            = TI_0   # just a placeholder for now, should be computed with turbine
+        wind_speed    = flowfield.wind_speed             # free-stream velocity (m/s)
+        TI_0    = flowfield.turbulence_intensity   # turbulence intensity (%/100)
+        veer    = flowfield.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
+        TI      = flowfield.turbulence_intensity   # just a placeholder for now, should be computed with turbine
         
         # hard-coded model input data (goes in input file)
-        ka      = wake.ka                      # wake expansion parameter
-        kb      = wake.kb                      # wake expansion parameter
-        alpha   = wake.alpha                   # near wake parameter
-        beta    = wake.beta                    # near wake parameter
-        ad      = wake.ad                      # natural lateral deflection parameter
-        bd      = wake.bd                      # natural lateral deflection parameter
-        aT      = wake.aT                      # natural vertical deflection parameter
-        bT      = wake.bT                      # natural vertical deflection parameter
+        ka      = self.ka                      # wake expansion parameter
+        kb      = self.kb                      # wake expansion parameter
+        alpha   = self.alpha                   # near wake parameter
+        beta    = self.beta                    # near wake parameter
+        ad      = 0.0                      # natural lateral deflection parameter
+        bd      = 0.0                      # natural lateral deflection parameter
+        aT      = 0.0                      # natural vertical deflection parameter
+        bT      = 0.0                      # natural vertical deflection parameter
 
         # =======================================================================================================
                 
         # turbine parameters
-        D       = turbine.rotor_diameter
-        HH      = turbine.hub_height
-        yaw     = -turbine.yaw_angle         # opposite sign convention in this model
-        tilt_angle    = turbine.tilt_angle
-        Ct      = turbine.Ct
+        D           = turbine.rotor_diameter
+        HH          = turbine.hub_height
+        yaw         = -turbine.yaw_angle         # opposite sign convention in this model
+        tilt_angle  = turbine.tilt_angle
+        Ct          = turbine.Ct
         # U_local = flowfield.wind_speed # just a placeholder for now, should be initialized with the flowfield
-        Uloc = Uinf
+        U_local = wind_speed
         # wake deflection
         delta = deflection_field
         
@@ -179,7 +186,7 @@ class WakeVelocity(BaseObject):
         kz      = ka*TI + kb
 
         # initial wake velocity deficit (quantities based on Porte-Agel/Bastankah 2016 JFM)
-        C0       = 1 - u0/Uinf
+        C0       = 1 - u0/wind_speed
         M0       = C0*(2-C0)    
         E0       = C0**2 - 3*np.exp(1./12.)*C0 + 3*np.exp(1./3.)
         
@@ -203,7 +210,7 @@ class WakeVelocity(BaseObject):
         c = (np.sin(veer)**2)/(2*sigma_y**2) + (np.cos(veer)**2)/(2*sigma_z**2)
         totGauss = np.exp( -( a*((y_locations-turbine_coord.y)-delta)**2 - 2*b*((y_locations-turbine_coord.y)-delta)*((z_locations-HH)-deltaZ) + c*((z_locations-HH)-deltaZ)**2 ) )
 
-        velDef = (Uloc*(1-np.sqrt(1-((Ct*np.cos(yaw))/(8.0*sigma_y*sigma_z/D**2)) ) )*totGauss)
+        velDef = (U_local*(1-np.sqrt(1-((Ct*np.cos(yaw))/(8.0*sigma_y*sigma_z/D**2)) ) )*totGauss)
         velDef[x_locations < xR] = 0     
         velDef[x_locations > x0] = 0
               
@@ -222,7 +229,10 @@ class WakeVelocity(BaseObject):
         totGauss = np.exp( -( a*((y_locations-turbine_coord.y)-delta)**2 - 2*b*((y_locations-turbine_coord.y)-delta)*((z_locations-HH)-deltaZ) + c*((z_locations-HH)-deltaZ)**2 ) )
         
         # compute velocities in the far wake
-        velDef1 = (Uloc*(1-np.sqrt(1-((Ct*np.cos(yaw))/(8.0*sigma_y*sigma_z/D**2)) ) )*totGauss)
+        velDef1 = (U_local*(1-np.sqrt(1-((Ct*np.cos(yaw))/(8.0*sigma_y*sigma_z/D**2)) ) )*totGauss)
         velDef1[x_locations < x0] = 0
+
+        print(np.min(velDef1))
+        print(np.max(velDef1))
                   
         return np.sqrt(velDef**2 + velDef1**2)
