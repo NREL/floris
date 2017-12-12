@@ -10,15 +10,14 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 # FLORIS driver program
 
-# import specific models
+import sys
 from InputReader import InputReader
-from WakeCombination import WakeCombination
 
 
+# Process the input file
+input_file = sys.argv[1]
 input_reader = InputReader()
-
-# Parse the input file
-twobytwo = input_reader.input_reader("example/floris.json")
+twobytwo = input_reader.input_reader(input_file)
 
 # output handling
 for coord in twobytwo.get_turbine_coords():
