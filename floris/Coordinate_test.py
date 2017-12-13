@@ -8,24 +8,21 @@ http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 """
 
-from .InputReader import InputReader
+from .Coordinate import Coordinate
+import numpy as np
+import pytest
 
 
-class floris():
-    def __init__(self):
-        if test_floris().fails():
-            error = "floris unit tests failed. " \
-                + "Run the standalone pytest framework to debug."
-            raise RuntimeError(error)
-        
-        self.input_reader = InputReader()
+def test_instantiation_with_xy():
+    """
+    object should be instatiated with x and y
+    """
+    assert Coordinate(1, 1) != None
 
-    def process_input(self, input_file):
-        self.farm = self.input_reader.input_reader(input_file)
-
-class test_floris():
-    def __init__(self):
-        pass
-
-    def fails(self):
-        return False
+def test_rotation():
+    """
+    Coordinate at 1,0 rotated 90 degrees should result in 0,1
+    """
+    coordinate = Coordinate(1, 0)
+    coordinate.rotate(np.pi/2.0)
+    assert pytest.approx(coordinate.xprime) == 0.0 and pytest.approx(coordinate.yprime) == 1.0
