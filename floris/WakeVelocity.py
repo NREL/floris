@@ -40,7 +40,6 @@ class WakeVelocity(BaseObject):
         self.mU = self.floris["mU"]
 
         # gauss parameters
-        print('=========================Setting parameters============================')
         self.ka = float(self.gauss["ka"])
         self.kb = float(self.gauss["kb"])
         self.alpha = float(self.gauss["alpha"])
@@ -203,6 +202,9 @@ class WakeVelocity(BaseObject):
         # velocity deficit in the near wake
         sigma_y = (((x0-xR)-(x_locations-xR))/(x0-xR))*0.501*D*np.sqrt(Ct/2.) + ((x_locations-xR)/(x0-xR))*sigma_y0
         sigma_z = (((x0-xR)-(x_locations-xR))/(x0-xR))*0.501*D*np.sqrt(Ct/2.) + ((x_locations-xR)/(x0-xR))*sigma_z0
+        sigma_y[x_locations < xR] = sigma_y0
+        sigma_z[x_locations < xR] = sigma_z0
+
         delta = ((x_locations-xR)/(x0-xR))*delta0 + ( ad + bd*(x_locations-turbine_coord.x) )   
         deltaZ = ((x_locations-xR)/(x0-xR))*delta_z0 + ( aT + bT*(x_locations-turbine_coord.x) )
         a = (np.cos(veer)**2)/(2*sigma_y**2) + (np.sin(veer)**2)/(2*sigma_z**2)
@@ -218,6 +220,9 @@ class WakeVelocity(BaseObject):
         sigma_y = ky*( x_locations - x0 ) + sigma_y0
         sigma_z = kz*( x_locations - x0 ) + sigma_z0
 
+        sigma_y[x_locations < x0] = sigma_y0
+        sigma_z[x_locations < x0] = sigma_z0
+
         # velocity deficit outside the near wake
         ln_deltaNum = (1.6+np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) - np.sqrt(M0))
         ln_deltaDen = (1.6-np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) + np.sqrt(M0))
@@ -231,8 +236,5 @@ class WakeVelocity(BaseObject):
         # compute velocities in the far wake
         velDef1 = (U_local*(1-np.sqrt(1-((Ct*np.cos(yaw))/(8.0*sigma_y*sigma_z/D**2)) ) )*totGauss)
         velDef1[x_locations < x0] = 0
-
-        print(np.min(velDef1))
-        print(np.max(velDef1))
                   
         return np.sqrt(velDef**2 + velDef1**2)

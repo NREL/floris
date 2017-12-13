@@ -150,12 +150,8 @@ class FlowField(BaseObject):
             # combine this turbine's wake into the full wake field
             u_wake = self.wake_combination.combine(u_wake, turb_wake)
 
-            print(np.min(u_wake),np.max(u_wake))
-
         # apply the velocity deficit field to the freestream
         self.u_field = self.wind_speed - u_wake
-
-        print(np.min(self.u_field),np.max(self.u_field))
 
     # Visualization
 

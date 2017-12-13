@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../floris')
 from floris import floris
 
 floris = floris()
