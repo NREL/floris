@@ -1,0 +1,15 @@
+.pad-top-10 {
+    padding-top:10px;
+}
+.pad-top-20 {
+    padding-top:20px;
+}
+
+.pad-bot-10 {
+    padding-bottom:10px;
+}
+
+.pad-fix {
+    padding-left:17px !important;
+    padding-right:17px !important;
+}

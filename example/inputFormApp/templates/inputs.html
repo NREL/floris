@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+    <head>
+        <title>FLORIS Input File Generator</title>
+        <link rel="stylesheet" media="screen" href ="static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+       	<link rel="stylesheet" href="static/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+       	<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+	 
+		<div class="container">
+		 
+		  	<h2>Wacky Pauly's house of INPUTZZZ</h2>
+
+
+			{% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+ 
+        	{% for message in messages %}
+	            {% if "Error" not in message[1]: %}
+	                <div class="alert alert-info">
+	                	<strong>Success! </strong> {{ message[1] }}
+	                </div>
+	            {% endif %}
+	 
+	            {% if "Error" in message[1]: %}
+	                <div class="alert alert-warning">
+	                	{{ message[1] }}
+	                </div>
+	            {% endif %}
+	        {% endfor %}
+	            {% endif %}
+	        {% endwith %}
+
+		  	<form  action="/" method="post" role="form">
+		    	{{ form.csrf_token }}
+		    	<h3> TURBINE </h3>
+                <div class="form-group">
+                  {{ form.turbine_description.label(class_='control-label') }} {{ form.turbine_description(class_='form-control', size=150) }}
+                </div>
+                <div class="form-group">
+                  {{ form.rotor_diameter.label }} {{ form.rotor_diameter(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.hub_height.label }} {{ form.hub_height(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.blade_count.label }} {{ form.blade_count(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.pP.label }} {{ form.pP(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.pT.label }} {{ form.pT(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.generator_efficiency.label }} {{ form.generator_efficiency(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.eta.label }} {{ form.eta(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.blade_pitch.label }} {{ form.blade_pitch (class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.yaw_angle.label }} {{ form.yaw_angle(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.tilt_angle.label }} {{ form.tilt_angle(class_='form-control', size=10) }}
+                </div>
+                <div class="form-group">
+                  {{ form.TSR.label }} {{ form.TSR(class_='form-control', size=10) }}
+                </div>
+
+                <h3> FARM </h3>
+			    <div class="form-group">
+			      {{ form.farm_description.label(class_='control-label') }} {{ form.farm_description(class_='form-control', size=150) }}
+			    </div>
+			    <div class="form-group">
+			      {{ form.wind_speed.label }} {{ form.wind_speed(class_='form-control', size=10) }}
+			    </div>
+			    <div class="form-group">
+			      {{ form.wind_direction.label }} {{ form.wind_direction(class_='form-control', size=10) }}
+			    </div>
+			     <div class="form-group">
+			      {{ form.turbulence_intensity.label }} {{ form.turbulence_intensity(class_='form-control', size=10) }}
+			    </div>
+			     <div class="form-group">
+			      {{ form.wind_shear.label }} {{ form.wind_shear(class_='form-control', size=10) }}
+			    </div>
+			     <div class="form-group">
+			      {{ form.wind_veer.label }} {{ form.wind_veer(class_='form-control', size=10) }}
+			    </div>
+			     <div class="form-group">
+			      {{ form.air_density.label }} {{ form.air_density(class_='form-control', size=10) }}
+			    </div>
+			     <div class="form-group">
+			      {{ form.wake_combination.label }} {{ form.wake_combination(class_='form-control') }}
+			    </div>
+
+			      
+			    <button type="submit" class="btn btn-success">Create Input File</button>
+		  	</form>
+		  		  
+		</div>
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	    <!-- Include all compiled plugins (below), or include individual files as needed -->
+	    <script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+	</body>
+</html>
