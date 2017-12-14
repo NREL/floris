@@ -13,5 +13,7 @@ for coord in floris.farm.get_turbine_coords():
     print("\tpower -", turbine.power)
     print("\tai -", turbine.aI)
     print("\taverage velocity -", turbine.get_average_velocity())
+    #print(turbine.grid)
+    #print(turbine.velocities)
 
-floris.farm.flow_field.plot_flow_field_planes([0.2])
+floris.farm.flow_field.plot_flow_field_planes()

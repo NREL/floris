@@ -2,6 +2,9 @@
 # python compiled files
 __pycache__/
 *.pyc
+*.egg-info
+dist
+build
 
 # macOS files
 .DS_Store

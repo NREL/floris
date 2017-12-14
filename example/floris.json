@@ -8,7 +8,7 @@
     "description": "Example 2x2 Wind Farm",
     "properties": {
       "wind_speed": 8.0,
-      "wind_direction": 300.0,
+      "wind_direction": 270.0,
       "turbulence_intensity": 0.1,
       "wind_shear": 0.12,
       "wind_veer": 0.0,
@@ -36,7 +36,7 @@
         "wind_speed": [0.0, 2.5, 3.52338654, 4.57015961, 5.61693268, 6.66370575, 7.71047882, 8.75725189, 9.80402496, 10.85079803, 11.70448774, 12.25970155, 12.84125247, 13.45038983, 14.08842222, 14.75672029, 15.45671974, 16.18992434, 16.95790922, 17.76232421, 18.60489742, 19.48743891, 20.41184461, 21.38010041, 22.39428636, 23.45658122, 24.56926707, 30.0]
       },
       "blade_pitch": 1.9,
-      "yaw_angle": 20.0,
+      "yaw_angle": 0.0,
       "tilt_angle": 0.0,
       "TSR": 8.0
     }
@@ -47,7 +47,7 @@
     "description": "wake",
     "properties": {
       "velocity_model": "gauss",
-      "deflection_model": "jimenez",
+      "deflection_model": "gauss_deflection",
       "parameters": {
         "jensen": {
           "we": 0.05
@@ -67,17 +67,19 @@
           ]
         },
         "gauss": {
-          "ka": 0.38371,
+          "ka": 0.3,
           "kb": 0.004,
           "alpha": 0.58,
           "beta": 0.077
         },
         "jimenez": {
           "kd": 0.17,
-          "ad": -4.5,
-          "bd": -0.01
+          "ad": 0.0,
+          "bd": 0.0
         },
         "gauss_deflection": {
+          "ka": 0.3,
+          "kb": 0.004,
           "alpha": 0.58,
           "beta": 0.077,
           "ad": 0.0,
