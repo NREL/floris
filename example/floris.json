@@ -47,7 +47,7 @@
     "description": "wake",
     "properties": {
       "velocity_model": "gauss",
-      "deflection_model": "jimenez",
+      "deflection_model": "gauss_deflection",
       "parameters": {
         "jensen": {
           "we": 0.05
@@ -67,17 +67,19 @@
           ]
         },
         "gauss": {
-          "ka": 0.38371,
+          "ka": 0.3,
           "kb": 0.004,
           "alpha": 0.58,
           "beta": 0.077
         },
         "jimenez": {
           "kd": 0.17,
-          "ad": -4.5,
-          "bd": -0.01
+          "ad": 0.0,
+          "bd": 0.0
         },
         "gauss_deflection": {
+          "ka": 0.3,
+          "kb": 0.004,
           "alpha": 0.58,
           "beta": 0.077,
           "ad": 0.0,
