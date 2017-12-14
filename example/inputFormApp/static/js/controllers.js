@@ -105,7 +105,11 @@ function InputsController($scope, $http, $log) {
         $http.post('/generate/', $scope.inputs, config)
             .then(function(response){
                 console.log("RESPONSE: ", response);
-                // TODO: SHOW SUCCESS TO THE SCREEN
+                // show success modal
+                $('#successModal').modal({
+                    keyboard: false
+                })
+
             }, function(error){
                 // TODO: SHOW ERROR ON SCREEN
                 console.log(error);
@@ -115,6 +119,12 @@ function InputsController($scope, $http, $log) {
     $scope.addTurbine = function() {
         $scope.inputs.farm.properties.layout_x.push(0);
         $scope.inputs.farm.properties.layout_y.push(0);
+    }
+
+    $scope.addEntry = function() {
+        $scope.inputs.turbine.properties.power_thrust_table.power.push(0);
+        $scope.inputs.turbine.properties.power_thrust_table.thrust.push(0);
+        $scope.inputs.turbine.properties.power_thrust_table.wind_speed.push(0);
     }
 }
 
