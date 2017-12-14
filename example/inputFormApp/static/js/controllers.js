@@ -95,56 +95,56 @@ function InputsController($scope, $http, $log) {
         }
 	};
 
-    $log.log("INPUTS: ", $scope.inputs);
+  $log.log("INPUTS: ", $scope.inputs);
 
-    $scope.saveFile = function() {
+  $scope.saveFile = function() {
 
-        $log.log("Generating file...");
-        // TODO: call a formatting function here to get the file looking like you want
-        const config = {headers: {Accept: 'application/json'}};
-        $http.post('/generate/', $scope.inputs, config)
-            .then(function(response){
-                $log.log("RESPONSE: ", response);
-                // show success modal
-                $('#successModal').modal();
+      $log.log("Generating file...");
+      // TODO: call a formatting function here to get the file looking like you want
+      const config = {headers: {Accept: 'application/json'}};
+      $http.post('/generate/', $scope.inputs, config)
+          .then(function(response){
+              $log.log("RESPONSE: ", response);
+              // show success modal
+              $('#successModal').modal();
 
-            }, function(error){
-                // show error modal
-                $('#errorModal').modal();
-                if ('data' in error && 'message' in error.data){
-                    $scope.error = error.data.message;
-                } else {
-                    $scope.error = error;
-                }
+          }, function(error){
+              // show error modal
+              $('#errorModal').modal();
+              if ('data' in error && 'message' in error.data){
+                  $scope.error = error.data.message;
+              } else {
+                  $scope.error = error;
+              }
 
-                $log.log(error);
-        });
-    };
+              $log.log(error);
+      });
+  };
 
-    // add turbine to farm layout
-    $scope.addTurbine = function() {
-        $scope.inputs.farm.properties.layout_x.push(0);
-        $scope.inputs.farm.properties.layout_y.push(0);
-    };
+  // add turbine to farm layout
+  $scope.addTurbine = function() {
+      $scope.inputs.farm.properties.layout_x.push(0);
+      $scope.inputs.farm.properties.layout_y.push(0);
+  };
 
-    // add entry to power thrust table
-    $scope.addEntry = function() {
-        $scope.inputs.turbine.properties.power_thrust_table.power.push(0);
-        $scope.inputs.turbine.properties.power_thrust_table.thrust.push(0);
-        $scope.inputs.turbine.properties.power_thrust_table.wind_speed.push(0);
-    };
+  // add entry to power thrust table
+  $scope.addEntry = function() {
+      $scope.inputs.turbine.properties.power_thrust_table.power.push(0);
+      $scope.inputs.turbine.properties.power_thrust_table.thrust.push(0);
+      $scope.inputs.turbine.properties.power_thrust_table.wind_speed.push(0);
+  };
 
-    // remove row from farm layout table or power thrust table
-    $scope.removeEntry = function(type, index) {
-        if (type === 'turbine') {
-            $scope.inputs.farm.properties.layout_x.splice(index, 1);
-            $scope.inputs.farm.properties.layout_y.splice(index, 1);
+  // remove row from farm layout table or power thrust table
+  $scope.removeEntry = function(type, index) {
+      if (type === 'turbine') {
+          $scope.inputs.farm.properties.layout_x.splice(index, 1);
+          $scope.inputs.farm.properties.layout_y.splice(index, 1);
 
-        } else if (type === 'pt'){
-            $scope.inputs.turbine.properties.power_thrust_table.power.splice(index, 1);
-            $scope.inputs.turbine.properties.power_thrust_table.thrust.splice(index, 1);
-            $scope.inputs.turbine.properties.power_thrust_table.wind_speed.splice(index, 1);
-        }
-    };
+      } else if (type === 'pt'){
+          $scope.inputs.turbine.properties.power_thrust_table.power.splice(index, 1);
+          $scope.inputs.turbine.properties.power_thrust_table.thrust.splice(index, 1);
+          $scope.inputs.turbine.properties.power_thrust_table.wind_speed.splice(index, 1);
+      }
+  };
 }
 
