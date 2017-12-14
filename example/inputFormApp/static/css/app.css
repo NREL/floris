@@ -61,6 +61,11 @@
 }
 
 .modal-header-custom {
-    background: #4A9C4B !important;
+    background: #5FB760 !important;
+    color: #fff !important;
+}
+
+.modal-header-error {
+    background: #D75452 !important;
     color: #fff !important;
 }

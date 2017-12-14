@@ -93,22 +93,29 @@
                                             <div ng-repeat="item in inputs.turbine.properties.power_thrust_table.power">
                                                 <div class="form-group">
 
-                                                    <label for="power_$index" class="col-sm-2 control-label">Power</label>
+                                                    <label for="power_$index" class="col-sm-1 control-label">CP</label>
                                                     <div class="col-sm-2">
                                                         <input type="number" id="power_$index" class="form-control" ng-model="inputs.turbine.properties.power_thrust_table.power[$index]">
                                                     </div>
-                                                    <label for="thrust_$index" class="col-sm-1 control-label">Thrust</label>
+                                                    <label for="thrust_$index" class="col-sm-1 control-label">CT</label>
                                                     <div class="col-sm-2">
                                                         <input type="number" id="thrust_$index" class="form-control" ng-model="inputs.turbine.properties.power_thrust_table.thrust[$index]">
                                                     </div>
-                                                    <label for="wind_speed_$index" class="col-sm-3 control-label">Wind Speed</label>
+                                                    <label for="wind_speed_$index" class="col-sm-2 control-label">Wind Speed</label>
                                                     <div class="col-sm-2">
                                                         <input type="number" id="wind_speed_$index" class="form-control" ng-model="inputs.turbine.properties.power_thrust_table.wind_speed[$index]">
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <button type="button" class="btn btn-default" aria-label="delete" ng-click="removeEntry('pt', $index)">
+                                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3 col-sm-offset-5">
-                                                <button type="button" class="btn btn-success" ng-click="addEntry()">+ Add Entry</button>
+                                                <button type="button" class="btn btn-success" ng-click="addEntry()">
+                                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Add Entry
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -233,10 +240,17 @@
                                                     <div class="col-sm-2">
                                                         <input type="number" id="turbine_y_$index" class="form-control" ng-model="inputs.farm.properties.layout_y[$index]">
                                                     </div>
+                                                    <div class="col-sm-1">
+                                                        <button type="button" class="btn btn-default" aria-label="delete" ng-click="removeEntry('turbine', $index)">
+                                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3 col-sm-offset-4">
-                                                <button type="button" class="btn btn-success" ng-click="addTurbine()">+ Add Turbine</button>
+                                                <button type="button" class="btn btn-success" ng-click="addTurbine()">
+                                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;Add Turbine
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -428,8 +442,8 @@
 </div>
 
 
-<!-- Modal -->
-<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="success">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header modal-header-custom">
@@ -442,4 +456,19 @@
         </div>
     </div>
 </div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="error">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-error">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Error</h4>
+            </div>
+            <div class="modal-body">
+                <span class="bold">An error occurred while generating the input file:</span> <br/> {{error}}
+            </div>
+        </div>
+    </div>
+
 
