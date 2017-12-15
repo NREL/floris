@@ -22,7 +22,7 @@ class VisualizationManager():
     IT IS IMPORTANT to note that this class should be treated as a singleton. That is, 
     only one instance of this class should exist.
     """
-    
+
     def __init__(self):
         self.figure_count = 0
 
@@ -72,22 +72,14 @@ class VisualizationManager():
         self._set_axis()
 
     def add_turbine_marker(self, turbine, coords, wind_direction):
-        
+
         a = Coordinate(coords.x, coords.y - turbine.rotor_radius)
         b = Coordinate(coords.x, coords.y + turbine.rotor_radius)
 
-        a.rotate(turbine.yaw_angle-(wind_direction-270.)*np.pi/180., (coords.x, coords.y))
-        b.rotate(turbine.yaw_angle-(wind_direction-270.)*np.pi/180., (coords.x, coords.y))
+        a.rotate(turbine.yaw_angle + wind_direction, (coords.x, coords.y))
+        b.rotate(turbine.yaw_angle + wind_direction, (coords.x, coords.y))
 
         plt.plot([a.xprime, b.xprime], [a.yprime, b.yprime],  'k', linewidth=1)
-
-        # x = [-50, 1000]
-        # y = [coords.y - radius, coords.y - radius]
-        # plt.plot(x, y,  'b', linewidth=1)
-
-        # x = [-50, 1000]
-        # y = [coords.y + radius, coords.y + radius]
-        # plt.plot(x, y,  'b', linewidth=1)
 
     def show(self):
         plt.show()

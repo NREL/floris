@@ -13,6 +13,7 @@ from .Coordinate import Coordinate
 from .WakeCombination import WakeCombination
 from .FlowField import FlowField
 import copy
+import numpy as np
 
 class Farm(BaseObject):
     """
@@ -34,6 +35,7 @@ class Farm(BaseObject):
 
         # these attributes need special attention
         self.wake_combination = WakeCombination(self.wake_combination)
+        self.wind_direction = np.radians(self.wind_direction - 270)
 
         self.turbine_map = {}
         for c in list(zip(self.layout_x, self.layout_y)):

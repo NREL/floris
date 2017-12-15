@@ -119,8 +119,8 @@ class FlowField(BaseObject):
 
         # this rotates the turbine coordinates such that they are now in the frame of reference of the 270 degree wind direction.
         # this makes computing wakes and wake overlap much simpler
+        rotation_angle = self.wind_direction
 
-        rotation_angle = (self.wind_direction - 270.)*np.pi/180.
         xCenter = np.mean(np.unique(self.x))
         yCenter = np.mean(np.unique(self.y))
 
