@@ -25,6 +25,9 @@ class Coordinate(BaseObject):
     def __str__(self):
         return str(self.x) + ", " + str(self.y)
 
+    def as_tuple(self):
+        return (self.x, self.y)
+
     def rotate(self, theta, center_of_rotation=(0, 0)):
         xoffset = self.x - center_of_rotation[0]
         yoffset = self.y - center_of_rotation[1]

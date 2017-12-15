@@ -5,20 +5,12 @@ from floris import floris
 floris = floris()
 floris.process_input("floris.json")
 
-for coord in floris.farm.get_turbine_coords():
-    turbine = floris.farm.get_turbine_at_coord(coord)
+for coord, turbine in floris.farm.turbine_map.items():
     print(str(coord) + ":")
     print("\tCp -", turbine.Cp)
     print("\tCt -", turbine.Ct)
     print("\tpower -", turbine.power)
     print("\tai -", turbine.aI)
     print("\taverage velocity -", turbine.get_average_velocity())
-    #print(turbine.grid)
-    #print(turbine.velocities)
 
-floris.farm.flow_field.plot_flow_field_Zplane(0.25)
-floris.farm.flow_field.plot_flow_field_Zplane(0.5)
-floris.farm.flow_field.plot_flow_field_Zplane(0.75)
-
-floris.farm.flow_field.plot_flow_field_Xplane(0.4)
-
+floris.farm.flow_field.plot_flow_field_planes([0.2, 0.5, 0.8])

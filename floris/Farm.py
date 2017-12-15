@@ -12,6 +12,7 @@ from .BaseObject import BaseObject
 from .Coordinate import Coordinate
 from .WakeCombination import WakeCombination
 from .FlowField import FlowField
+from .TurbineMap import TurbineMap
 import copy
 import numpy as np
 
@@ -31,28 +32,28 @@ class Farm(BaseObject):
         # included attributes are found in InputReader._farm_properties
         for key, value in instance_dictionary["properties"].items():
             setattr(self, key, value)
-            #print(key,value)
 
         # these attributes need special attention
         self.wake_combination = WakeCombination(self.wake_combination)
         self.wind_direction = np.radians(self.wind_direction - 270)
 
-        self.turbine_map = {}
+        turbine_dict = {}
         for c in list(zip(self.layout_x, self.layout_y)):
-            self.turbine_map[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
+            turbine_dict[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
+        self.turbine_map = TurbineMap(turbine_dict)
 
         self.flow_field = FlowField(wake_combination=self.wake_combination,
-                                   wind_speed=self.wind_speed,
-                                   wind_direction = self.wind_direction,
-                                   wind_shear=self.wind_shear,
-                                   wind_veer=self.wind_veer,
-                                   turbulence_intensity=self.turbulence_intensity,
-                                   turbine_map=self.turbine_map,
-                                   wake=wake)
+                                    wind_speed=self.wind_speed,
+                                    wind_direction = self.wind_direction,
+                                    wind_shear=self.wind_shear,
+                                    wind_veer=self.wind_veer,
+                                    turbulence_intensity=self.turbulence_intensity,
+                                    turbine_map=self.turbine_map,
+                                    wake=wake)
         self.flow_field.calculate_wake()        
 
     def get_turbine_coords(self):
-        return self.turbine_map.keys()
+        return self.turbine_map.coords
 
     def get_turbine_at_coord(self, coord):
-        return self.turbine_map[coord]
+        return self.turbine_map.turbine_at_coord(coord)
