@@ -69,7 +69,7 @@ class InputReader():
             data = json.load(jsonfile)
         return data
 
-    def _validateJSON(self, jsonDict, typeMap):
+    def _validateJSON(self, json_dict, typeMap):
         """
         Verifies that the expected fields exist in the json input file and
         validates the type of the input data by casting the fields to
@@ -79,7 +79,7 @@ class InputReader():
         _farmProperties
 
         inputs:
-            jsonDict: dict - Input dictionary with all elements of type str
+            json_dict: dict - Input dictionary with all elements of type str
             typeMap: dict - Predefined type map for type checking inputs
                              structured as {"property": type}
         outputs:
@@ -90,27 +90,27 @@ class InputReader():
         validated = {}
 
         # validate the object type
-        if "type" not in jsonDict:
+        if "type" not in json_dict:
             raise KeyError("'type' key is required")
 
-        if jsonDict["type"] not in self._validObjects:
+        if json_dict["type"] not in self._validObjects:
             raise ValueError("'type' must be one of {}".format(", ".join(self._validObjects)))
 
-        validated["type"] = jsonDict["type"]
+        validated["type"] = json_dict["type"]
 
         # validate the description
-        if "description" not in jsonDict:
+        if "description" not in json_dict:
             raise KeyError("'description' key is required")
 
-        validated["description"] = jsonDict["description"]
+        validated["description"] = json_dict["description"]
 
         # validate the properties dictionary
-        if "properties" not in jsonDict:
+        if "properties" not in json_dict:
             raise KeyError("'properties' key is required")
         # check every attribute in the predefined type dictionary for existence
         # and proper type in the given inputs
         propDict = {}
-        properties = jsonDict["properties"]
+        properties = json_dict["properties"]
         for element in typeMap:
             if element not in properties:
                 raise KeyError("'{}' is required for object type '{}'".format(element, validated["type"]))
@@ -142,7 +142,7 @@ class InputReader():
 
     def _build_turbine(self, json_dict):
         """
-        Instantiates a turbine object from a given input file
+        Instantiates a Turbine object from a given input file
         inputs:
             inputFile: str - path to the json input file
         outputs:
@@ -152,14 +152,28 @@ class InputReader():
         return Turbine(propertyDict)
 
     def _build_wake(self, json_dict):
+        """
+        Instantiates a Wake object from a given input file
+        inputs:
+            inputFile: str - path to the json input file
+        outputs:
+            wake: Wake - instantiated Wake object
+        """
         propertyDict = self._validateJSON(json_dict, self._wake_properties)
         return Wake(propertyDict)
 
     def _build_farm(self, json_dict, turbine, wake):
+        """
+        Instantiates a Farm object from a given input file
+        inputs:
+            inputFile: str - path to the json input file
+        outputs:
+            farm: Farm - instantiated Farm object
+        """
         propertyDict = self._validateJSON(json_dict, self._farm_properties)
         return Farm(propertyDict, turbine, wake)
 
-    def input_reader(self, inputFile):
+    def read(self, input_file):
         """
         Parses main input file
         inputs:
@@ -167,8 +181,9 @@ class InputReader():
         outputs:
             farm: instantiated FLORIS model of wind farm
         """
-        jsonDict = self._parseJSON(inputFile)
+        json_dict = self._parseJSON(input_file)
 
-        turbine = self._build_turbine(jsonDict["turbine"])
-        wake = self._build_wake(jsonDict["wake"])
-        return self._build_farm(jsonDict["farm"], turbine, wake)
+        turbine = self._build_turbine(json_dict["turbine"])
+        wake = self._build_wake(json_dict["wake"])
+        farm = self._build_farm(json_dict["farm"], turbine, wake)
+        return farm

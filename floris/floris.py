@@ -21,7 +21,7 @@ class floris():
         self.input_reader = InputReader()
 
     def process_input(self, input_file):
-        self.farm = self.input_reader.input_reader(input_file)
+        self.farm = self.input_reader.read(input_file)
 
 class test_floris():
     def __init__(self):
