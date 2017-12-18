@@ -16,11 +16,13 @@ class Coordinate(BaseObject):
     """
         The Coordinate class is a model for 
     """
-    def __init__(self, x, y):
+    def __init__(self, x, y, z=0):
         self.x = x
         self.y = y
+        self.z = z
         self.xprime = self.x
         self.yprime = self.y
+        self.zprime = self.z
 
     def __str__(self):
         return str(self.x) + ", " + str(self.y)
@@ -28,7 +30,10 @@ class Coordinate(BaseObject):
     def as_tuple(self):
         return (self.x, self.y)
 
-    def rotate(self, theta, center_of_rotation=(0, 0)):
+    def rotate_z(self, theta, center_of_rotation=(0, 0, 0)):
+        """
+        rotate about the z coordinate axis
+        """
         xoffset = self.x - center_of_rotation[0]
         yoffset = self.y - center_of_rotation[1]
         self.xprime = xoffset * np.cos(theta) - yoffset * np.sin(theta) + center_of_rotation[0]
