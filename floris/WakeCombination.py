@@ -38,4 +38,4 @@ class WakeCombination(BaseObject):
 
     # sum of squares freestream superposition
     def _sosfs(self, u_field, u_wake):
-        return np.sqrt( u_wake**2 + u_field**2 )
+        return np.hypot(u_wake, u_field)
