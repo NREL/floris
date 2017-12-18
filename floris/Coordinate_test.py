@@ -24,5 +24,5 @@ def test_rotation():
     Coordinate at 1,0 rotated 90 degrees should result in 0,1
     """
     coordinate = Coordinate(1, 0)
-    coordinate.rotate(np.pi/2.0)
+    coordinate.rotate_z(np.pi/2.0)
     assert pytest.approx(coordinate.xprime) == 0.0 and pytest.approx(coordinate.yprime) == 1.0
