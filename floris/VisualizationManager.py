@@ -44,32 +44,31 @@ class VisualizationManager():
         plt.figure(self.figure_count)
         self.figure_count += 1
 
-    def _new_filled_contour(self, xmesh, ymesh, data):
+    def _new_filled_contour(self, mesh1, mesh2, data):
         self._new_figure()
-
-        # set maximum data
         vmax = np.amax(data)
-
-        # plot contour plot of the data
-        plt.contourf(xmesh, ymesh, data, 50,
+        plt.contourf(mesh1, mesh2, data, 50,
                             cmap='gnuplot2', vmin=0, vmax=vmax)
 
-    def plot_constant_z(self, xmesh, ymesh, data):
-        self._new_filled_contour(xmesh, ymesh, data)        
-
-        # configure the plot
-        self._set_texts("Constant Height", "x (m)", "y (m)")
+    def _plot_constant_plane(self, mesh1, mesh2, data, title, xlabel, ylabel):
+        # for x in range(data.shape[0]):
+        #     data[x, :] = x
+        self._new_filled_contour(mesh1, mesh2, data)
+        self._set_texts(title, xlabel, ylabel)
         self._set_colorbar()
         self._set_axis()
 
+    def plot_constant_z(self, xmesh, ymesh, data):
+        self._plot_constant_plane(
+            xmesh, ymesh, data, "z plane", "x (m)", "y (m)")
+
+    def plot_constant_y(self, xmesh, zmesh, data):
+        self._plot_constant_plane(
+            xmesh, zmesh, data, "y plane", "x (m)", "z (m)")
 
     def plot_constant_x(self, ymesh, zmesh, data):
-        self._new_filled_contour(ymesh, zmesh, data)
-
-        # configure the plot
-        self._set_texts("Cut Through", "y (m)", "z (m)")
-        self._set_colorbar()
-        self._set_axis()
+        self._plot_constant_plane(
+            ymesh, zmesh, data, "x plane", "y (m)", "z (m)")
 
     def add_turbine_marker(self, turbine, coords, wind_direction):
         a = Coordinate(coords.x, coords.y - turbine.rotor_radius)

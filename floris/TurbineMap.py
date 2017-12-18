@@ -45,7 +45,7 @@ class TurbineMap(BaseObject):
         """
         rotated = {}
         for coord, turbine in self.turbine_map.items():
-            coord_list = coord.rotate(angle, center_of_rotation.as_tuple())
+            coord_list = coord.rotate_z(angle, center_of_rotation.as_tuple())
             rotated_coordinate = Coordinate(coord_list[0], coord_list[1])
             rotated[rotated_coordinate] = turbine
         return TurbineMap(rotated)

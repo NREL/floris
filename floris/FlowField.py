@@ -187,29 +187,34 @@ class FlowField(BaseObject):
 
     # Visualization
 
-    def plot_flow_field_Zplane(self, percent_height=0.5, show=True):
-        zplane = int(self.x.shape[2] * percent_height)
-        
-        # plot flow field
+    def _add_z_plane(self, percent_height=0.5):
+        plane = int(self.grid_z_resolution * percent_height)
         self.viz_manager.plot_constant_z(
-            self.x[:, :, zplane], self.y[:, :, zplane], self.u_field[:, :, zplane])
-
-        # plot turbines
+            self.x[:, :, plane], self.y[:, :, plane], self.u_field[:, :, plane])
         for coord, turbine in self.turbine_map.items():
             self.viz_manager.add_turbine_marker(turbine, coord, self.wind_direction)
-        if show:
-            self.viz_manager.show()
 
-    def plot_flow_field_Xplane(self, percent_distance=0.4, show=True):
-        xplane = int(self.x.shape[0] * percent_distance)
+    def _add_y_plane(self, percent_height=0.5):
+        plane = int(self.grid_y_resolution * percent_height)
+        self.viz_manager.plot_constant_y(
+            self.x[:, plane, :], self.z[:, plane, :], self.u_field[:, plane, :])
 
-        # plot flow field
+    def _add_x_plane(self, percent_height=0.5):
+        plane = int(self.grid_x_resolution * percent_height)
         self.viz_manager.plot_constant_x(
-            self.y[:, xplane, :], self.z[:, xplane, :], self.u_field[:, xplane, :])
+            self.y[plane, :, :], self.z[plane, :, :], self.u_field[plane, :, :])
 
-    def plot_flow_field_planes(self, heights=[0.5]):
-        for height in heights:
-            self.plot_flow_field_Zplane(height, False)
+    def plot_z_planes(self, planes):
+        for p in planes:
+            self._add_z_plane(p)
         self.viz_manager.show()
 
-    # TODO def update_flowfield():
+    def plot_y_planes(self, planes):
+        for p in planes:
+            self._add_y_plane(p)
+        self.viz_manager.show()
+
+    def plot_x_planes(self, planes):
+        for p in planes:
+            self._add_x_plane(p)
+        self.viz_manager.show()
