@@ -30,7 +30,7 @@ class FlowField(BaseObject):
                  turbine_map):
 
         super().__init__()
-        
+
         self.wind_speed = wind_speed
         self.wind_direction = wind_direction
         self.wind_shear = wind_shear
@@ -51,8 +51,7 @@ class FlowField(BaseObject):
 
         self.xmin, self.xmax, self.ymin, self.ymax = self._set_domain_bounds()
         self.x, self.y, self.z = self._discretize_domain()
-        self.u_field = self._constant_flowfield(self.wind_speed)
-        self.initial_flowfield = self._initial_flowfield()
+        self.u_field = self._initial_flowfield()
 
         self.viz_manager = VisualizationManager()
 
@@ -91,9 +90,11 @@ class FlowField(BaseObject):
     # def _grid_velocities(self, turbine, coord):
     #     extract velocities at each of the grid points
 
-    def _constant_flowfield(self, constant_value):
-        xmax, ymax, zmax = self.x.shape[0], self.y.shape[1], self.z.shape[2]
-        return np.full((xmax, ymax, zmax), constant_value)
+    def _initial_flowfield(self):
+        u = np.zeros((self.grid_x_resolution, self.grid_y_resolution, self.grid_z_resolution))
+        for i in range(self.z.shape[2]):
+            u[:, :, i] = self.wind_speed * pow(self.z[:, :, i] / self.hub_height, self.wind_shear)
+        return u
 
     def _initial_flowfield(self):
         turbines = self.turbine_map.turbines
@@ -183,7 +184,7 @@ class FlowField(BaseObject):
 
 
         # apply the velocity deficit field to the freestream
-        self.u_field = self.initial_flowfield - u_wake
+        self.u_field -= u_wake
 
     # Visualization
 
