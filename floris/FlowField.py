@@ -51,6 +51,7 @@ class FlowField(BaseObject):
 
         self.xmin, self.xmax, self.ymin, self.ymax = self._set_domain_bounds()
         self.x, self.y, self.z = self._discretize_domain()
+        self.initial_flowfield = self._initial_flowfield()
         self.u_field = self._initial_flowfield()
 
         self.viz_manager = VisualizationManager()
@@ -130,7 +131,7 @@ class FlowField(BaseObject):
     def calculate_wake(self):
 
         # initialize turbulence intensity at every turbine (seems sloppy)
-        for coord,turbine in self.turbine_map.items():
+        for coord, turbine in self.turbine_map.items():
             turbine.TI = self.turbulence_intensity
 
         # rotate the discrete grid and turbine map
@@ -149,8 +150,8 @@ class FlowField(BaseObject):
         for coord, turbine in sorted_map:
 
             # update the turbine based on the velocity at its hub
-            local_deficit = self._field_velocity_at_coord(coord, u_wake)
-            #turbine.update_quantities(self.wind_speed, self.wind_speed - local_deficit, self.wind_shear,self)
+            # local_deficit = self._field_velocity_at_coord(coord, u_wake)
+            # turbine.update_quantities(self.wind_speed, self.wind_speed - local_deficit, self.wind_shear,self)
             turbine.update_quantities(u_wake, coord, rotated_map, self, rotated_x, rotated_y, rotated_z)
             
             # get the wake deflecton field
@@ -180,8 +181,7 @@ class FlowField(BaseObject):
                             turbine_ti.TI = turbine_ti._calculate_turbulence_intensity(self,self.wake,coord_ti,coord,turbine)
 
             # combine this turbine's wake into the full wake field
-            u_wake = self.wake_combination.combine(u_wake, turb_wake)            
-
+            u_wake = self.wake_combination.combine(u_wake, turb_wake)
 
         # apply the velocity deficit field to the freestream
         self.u_field -= u_wake

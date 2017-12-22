@@ -13,4 +13,4 @@ for coord, turbine in floris.farm.turbine_map.items():
     print("\tai -", turbine.aI)
     print("\taverage velocity -", turbine.get_average_velocity())
 
-floris.farm.flow_field.plot_flow_field_planes([0.2, 0.5, 0.8])
+floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])

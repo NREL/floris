@@ -108,7 +108,8 @@ class Turbine(BaseObject):
         return 0.5 * 1.225 * (np.pi * self.rotor_radius**2) * cptmp * self.generator_efficiency * self.get_average_velocity()**3
 
     def _calculate_ai(self):
-        return 0.5 / np.cos(self.yaw_angle) * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle) ) )
+        return 0.5 / np.cos(self.yaw_angle) \
+               * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle) ) )
 
     def _calculate_turbulence_intensity(self, flowfield, wake, turbine_coord, wake_coord, turbine_wake):
 
