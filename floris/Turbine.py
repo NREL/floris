@@ -27,14 +27,22 @@ class Turbine(BaseObject):
 
         self.description = instance_dictionary["description"]
 
-        # loop through all the properties defined in the input dict and 
-        # store as attributes of the turbine object
-        # included attributes are found in InputReader._turbine_properties
-        for key, value in instance_dictionary["properties"].items():
-            setattr(self, key, value)
+        properties = instance_dictionary["properties"]
+        self.rotor_diameter = properties["rotor_diameter"]
+        self.hub_height = properties["hub_height"]
+        self.blade_count = properties["blade_count"]
+        self.pP = properties["pP"]
+        self.pT = properties["pT"]
+        self.generator_efficiency = properties["generator_efficiency"]
+        self.eta = properties["eta"]
+        self.power_thrust_table = properties["power_thrust_table"]
+        self.blade_pitch = properties["blade_pitch"]
+        self.yaw_angle = properties["yaw_angle"]
+        self.tilt_angle = properties["tilt_angle"]
+        self.TSR = properties["TSR"]
 
         # these attributes need special attention
-        self.rotor_radius = self.rotor_diameter / 2.
+        self.rotor_radius = self.rotor_diameter / 2.0
         self.yaw_angle = np.radians(self.yaw_angle)
         self.tilt_angle = np.radians(self.tilt_angle)
 

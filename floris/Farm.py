@@ -27,11 +27,16 @@ class Farm(BaseObject):
 
         self.description = instance_dictionary["description"]
 
-        # loop through all the properties defined in the input dict and
-        # store as attributes of the wake object
-        # included attributes are found in InputReader._farm_properties
-        for key, value in instance_dictionary["properties"].items():
-            setattr(self, key, value)
+        properties = instance_dictionary["properties"]
+        self.wind_speed = properties["wind_speed"]
+        self.wind_direction = properties["wind_direction"]
+        self.turbulence_intensity = properties["turbulence_intensity"]
+        self.wind_shear = properties["wind_shear"]
+        self.wind_veer = properties["wind_veer"]
+        self.air_density = properties["air_density"]
+        self.wake_combination = properties["wake_combination"]
+        self.layout_x = properties["layout_x"]
+        self.layout_y = properties["layout_y"]
 
         # these attributes need special attention
         self.wake_combination = WakeCombination(self.wake_combination)

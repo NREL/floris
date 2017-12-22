@@ -20,11 +20,10 @@ class Wake(BaseObject):
 
         self.description = instance_dictionary["description"]
 
-        # loop through all the properties defined in the input dict and
-        # store as attributes of the wake object
-        # included attributes are found in InputReader._wake_properties
-        for key, value in instance_dictionary["properties"].items():
-            setattr(self, key, value)
+        properties = instance_dictionary["properties"]
+        self.velocity_model = properties["velocity_model"]
+        self.deflection_model = properties["deflection_model"]
+        self.parameters = properties["parameters"]
 
         # these attributes need special attention
         self.deflection_model = WakeDeflection(
