@@ -82,23 +82,21 @@ class Turbine(BaseObject):
         # determine the dimensions of the square grid
         num_points = int(np.round(np.sqrt(self.grid_point_count)))
         # syntax: np.linspace(min, max, n points)
-        horizontal = np.linspace(-self.rotor_diameter/2, self.rotor_diameter/2, num_points)
-        vertical = np.linspace(-self.rotor_diameter/2, self.rotor_diameter/2, num_points)
+        horizontal = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
+        vertical = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
 
         # build the grid with all of the points
         grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
 
         # keep only the points in the swept area
-        # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_diameter/2]
+        # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_radius]
 
         return grid
 
     def _calculate_cp(self):
-        # with average velocity
         return self.fCp(self.get_average_velocity())
 
     def _calculate_ct(self):
-        # with average velocity        
         return self.fCt(self.get_average_velocity())
 
     def _calculate_power(self):
@@ -107,7 +105,7 @@ class Turbine(BaseObject):
                 * np.cos(self.tilt_angle)**self.pT
 
         #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
-        return 0.5 * 1.225 * (np.pi * (self.rotor_diameter/2)**2) * cptmp * self.generator_efficiency * self.get_average_velocity()**3
+        return 0.5 * 1.225 * (np.pi * self.rotor_radius**2) * cptmp * self.generator_efficiency * self.get_average_velocity()**3
 
     def _calculate_ai(self):
         return 0.5 / np.cos(self.yaw_angle) * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle) ) )
