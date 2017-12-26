@@ -25,11 +25,12 @@ class WakeVelocity(BaseObject):
         }
         self.function = type_map[type_string]
 
-        # loop through all the properties defined in the parameter dict and
-        # store as attributes of the WakeVelocity object
-        for key, value in parameter_dictionary.items():
-            setattr(self, key, value)
+        # store the parameter dictionaries
+        self.jensen = parameter_dictionary["jensen"]
+        self.floris = parameter_dictionary["floris"]
+        self.gauss = parameter_dictionary["gauss"]
 
+        # parse the parameters
         # jensen parameters
         self.we = float(self.jensen["we"])
         
@@ -44,7 +45,6 @@ class WakeVelocity(BaseObject):
         self.kb = float(self.gauss["kb"])
         self.alpha = float(self.gauss["alpha"])
         self.beta = float(self.gauss["beta"])
-
 
     def _activation_function(self, x, loc):
         sharpness = 10

@@ -30,7 +30,7 @@ class WakeCombination(BaseObject):
     # u_field: the modified flow field without u_wake
     # u_wake: the wake to add into the rest of the flow field
     #
-    # the following functions with return u_field with u_wake incorporated
+    # the following functions return u_field with u_wake incorporated
 
     # freestream linear superposition
     def _fls(self, u_field, u_wake):

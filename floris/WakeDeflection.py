@@ -24,10 +24,8 @@ class WakeDeflection(BaseObject):
         }
         self.function = type_map.get(self.type_string, None)
 
-        # loop through all the properties defined in the parameter dict and
-        # store as attributes of the WakeVelocity object
-        for key, value in parameter_dictionary.items():
-            setattr(self, key, value)
+        self.jimenez = parameter_dictionary["jimenez"]
+        self.gauss_deflection = parameter_dictionary["gauss_deflection"]
 
         self.kd = float(self.jimenez["kd"])
         self.ad = float(self.jimenez["ad"])
