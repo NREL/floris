@@ -19,7 +19,8 @@ class WakeDeflection(BaseObject):
         self.type_string = type_string
 
         type_map = {
-            "jimenez": self._jimenez
+            "jimenez": self._jimenez,
+            "gauss_deflection": self._gauss_deflection
         }
         self.function = type_map.get(self.type_string, None)
 
@@ -31,6 +32,11 @@ class WakeDeflection(BaseObject):
         self.kd = float(self.jimenez["kd"])
         self.ad = float(self.jimenez["ad"])
         self.bd = float(self.jimenez["bd"])
+
+        self.ka = float(self.gauss_deflection["ka"])
+        self.kb = float(self.gauss_deflection["kb"])
+        self.alpha = float(self.gauss_deflection["alpha"])
+        self.beta = float(self.gauss_deflection["beta"])
 
     def _jimenez(self, x_locations, y_locations, turbine, coord, flowfield):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
@@ -60,7 +66,7 @@ class WakeDeflection(BaseObject):
         wind_speed    = flowfield.wind_speed             # free-stream velocity (m/s)
         TI_0    = flowfield.turbulence_intensity   # turbulence intensity (%/100)
         veer    = flowfield.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
-        TI      = flowfield.turbulence_intensity   # just a placeholder for now, should be computed with turbine
+        TI      = turbine.TI   # just a placeholder for now, should be computed with turbine
         
         # hard-coded model input data (goes in input file)
         ka      = self.ka                      # wake expansion parameter
@@ -78,7 +84,7 @@ class WakeDeflection(BaseObject):
         Ct          = turbine.Ct
 
         # U_local = flowfield.wind_speed # just a placeholder for now, should be initialized with the flowfield
-        U_local = wind_speed
+        U_local = flowfield.initial_flowfield
 
         # initial velocity deficits
         uR          = U_local*Ct*np.cos(tilt)*np.cos(yaw)/(2.*(1-np.sqrt(1-(Ct*np.cos(tilt)*np.cos(yaw)))))
@@ -103,7 +109,7 @@ class WakeDeflection(BaseObject):
         xR = yR*np.tan(yaw) + coord.x
 
         # yaw parameters (skew angle and distance from centerline)  
-        theta_c0    = ((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
+        theta_c0    = ((0.6*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
         delta0      = np.tan(theta_c0)*(x0-coord.x)                            # initial wake deflection
 
         # deflection in the near wake
@@ -117,7 +123,7 @@ class WakeDeflection(BaseObject):
         ln_deltaNum = (1.6+np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) - np.sqrt(M0))
         ln_deltaDen = (1.6-np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) + np.sqrt(M0))
         delta_far_wake = delta0 + (theta_c0*E0/5.2)*np.sqrt(sigma_y0*sigma_z0/(ky*kz*M0))*np.log(ln_deltaNum/ln_deltaDen) + ( ad + bd*(x_locations-coord.x) )  
-        delta_far_wake[x_locations < x0] = 0.0
+        delta_far_wake[x_locations <= x0] = 0.0
 
         deflection = delta_near_wake + delta_far_wake
 

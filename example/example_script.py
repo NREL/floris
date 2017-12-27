@@ -16,4 +16,9 @@ for coord in floris.farm.get_turbine_coords():
     #print(turbine.grid)
     #print(turbine.velocities)
 
-floris.farm.flow_field.plot_flow_field_planes()
+floris.farm.flow_field.plot_flow_field_Zplane(0.25)
+floris.farm.flow_field.plot_flow_field_Zplane(0.5)
+floris.farm.flow_field.plot_flow_field_Zplane(0.75)
+
+floris.farm.flow_field.plot_flow_field_Xplane(0.4)
+

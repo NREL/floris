@@ -21,6 +21,13 @@ floris.farm.flow_field.plot_flow_field_planes()
 minimum_yaw_angle = 0.0
 maxiumum_yaw_angle = 20.0
 
+# list comprehension (turbine_map())
+# var = [i for i in [1,2,3]]
+
+# var = []
+# for i in [1,2,3]:
+# 	var.append(i)
+
 x0 = []
 bnds = []
 power0 = 0

@@ -46,17 +46,11 @@ class VisualizationManager():
 
     def _new_filled_contour(self, xmesh, ymesh, data):
         self._new_figure()
-        # vmin = np.amin(data)
+
+        # set maximum data
         vmax = np.amax(data)
-        # grid = 2
-        # value = 3
-        # for i in range(data.shape[0]):
-        #     if i % grid == 0:
-        #         data[i, :] = value
-        # for i in range(data.shape[1]):
-        #     if i % grid == 0:
-        #         data[:, i] = value
-        # data[10, 14] = -2
+
+        # plot contour plot of the data
         plt.contourf(xmesh, ymesh, data, 50,
                             cmap='gnuplot2', vmin=0, vmax=vmax)
 
@@ -65,6 +59,15 @@ class VisualizationManager():
 
         # configure the plot
         self._set_texts("Constant Height", "x (m)", "y (m)")
+        self._set_colorbar()
+        self._set_axis()
+
+
+    def plot_constant_x(self, ymesh, zmesh, data):
+        self._new_filled_contour(ymesh, zmesh, data)
+
+        # configure the plot
+        self._set_texts("Cut Through", "y (m)", "z (m)")
         self._set_colorbar()
         self._set_axis()
 
