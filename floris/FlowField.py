@@ -44,12 +44,7 @@ class FlowField(BaseObject):
         self.max_diameter = max(
             [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.hub_height = self.turbine_map.turbines[0].hub_height
-
-        self.grid_x_resolution = 200
-        self.grid_y_resolution = 200
-        self.grid_z_resolution = 50
-
-        self.xmin, self.xmax, self.ymin, self.ymax = self._set_domain_bounds()
+        self.grid_resolution = Coordinate(200, 200, 50)
         self.x, self.y, self.z = self._discretize_domain()
         self.initial_flowfield = self._initial_flowfield()
         self.u_field = self._initial_flowfield()
@@ -92,7 +87,7 @@ class FlowField(BaseObject):
     #     extract velocities at each of the grid points
 
     def _initial_flowfield(self):
-        u = np.zeros((self.grid_x_resolution, self.grid_y_resolution, self.grid_z_resolution))
+        u = np.zeros((self.grid_resolution.x, self.grid_resolution.y, self.grid_resolution.z))
         for i in range(self.z.shape[2]):
             u[:, :, i] = self.wind_speed * pow(self.z[:, :, i] / self.hub_height, self.wind_shear)
         return u
@@ -189,19 +184,19 @@ class FlowField(BaseObject):
     # Visualization
 
     def _add_z_plane(self, percent_height=0.5):
-        plane = int(self.grid_z_resolution * percent_height)
+        plane = int(self.grid_resolution.z * percent_height)
         self.viz_manager.plot_constant_z(
             self.x[:, :, plane], self.y[:, :, plane], self.u_field[:, :, plane])
         for coord, turbine in self.turbine_map.items():
             self.viz_manager.add_turbine_marker(turbine, coord, self.wind_direction)
 
     def _add_y_plane(self, percent_height=0.5):
-        plane = int(self.grid_y_resolution * percent_height)
+        plane = int(self.grid_resolution.y * percent_height)
         self.viz_manager.plot_constant_y(
             self.x[:, plane, :], self.z[:, plane, :], self.u_field[:, plane, :])
 
     def _add_x_plane(self, percent_height=0.5):
-        plane = int(self.grid_x_resolution * percent_height)
+        plane = int(self.grid_resolution.x * percent_height)
         self.viz_manager.plot_constant_x(
             self.y[plane, :, :], self.z[plane, :, :], self.u_field[plane, :, :])
 
