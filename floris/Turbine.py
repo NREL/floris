@@ -154,7 +154,7 @@ class Turbine(BaseObject):
         """
         #return [local_wind_speed * ((self.hub_height + g[1]) / self.hub_height)**shear for g in self.grid]
 
-        dx = (np.max(x) - np.min(x)) / flowfield.grid_x_resolution
+        dx = (np.max(x) - np.min(x)) / flowfield.grid_resolution.x
         mask = (x < coord.x + dx) & (x > (coord.x - dx)) \
              & (y < (coord.y + self.rotor_radius)) & (y > (coord.y - self.rotor_radius)) \
              & (z > (self.hub_height - self.rotor_radius)) & (z < (self.hub_height + self.rotor_radius))

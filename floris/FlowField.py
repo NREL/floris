@@ -1,18 +1,19 @@
 """
 Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
 
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
 """
-
+import numpy as np
 from .BaseObject import BaseObject
 from .VisualizationManager import VisualizationManager
 from .Coordinate import Coordinate
-import numpy as np
-import copy
 
 class FlowField(BaseObject):
     """
@@ -45,6 +46,7 @@ class FlowField(BaseObject):
             [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.hub_height = self.turbine_map.turbines[0].hub_height
         self.grid_resolution = Coordinate(200, 200, 50)
+        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
         self.x, self.y, self.z = self._discretize_domain()
         self.initial_flowfield = self._initial_flowfield()
         self.u_field = self._initial_flowfield()
@@ -55,36 +57,34 @@ class FlowField(BaseObject):
         coords = self.turbine_map.coords
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
-        xmin, xmax = min(x), max(x)
-        ymin, ymax = min(y), max(y)
-        return xmin, xmax, ymin, ymax
+        xmin = min(x) - 2 * self.max_diameter
+        xmax = max(x) + 10 * self.max_diameter
+        ymin = min(y) - 2 * self.max_diameter
+        ymax = max(y) + 2 * self.max_diameter
+        zmin = 0
+        zmax = 2 * self.hub_height
+        return xmin, xmax, ymin, ymax, zmin, zmax
 
     def _discretize_domain(self):
-        x = np.linspace(self.xmin - 2 * self.max_diameter, self.xmax +
-                        10 * self.max_diameter, self.grid_x_resolution)
-        y = np.linspace(self.ymin - 2 * self.max_diameter, self.ymax +
-                        2 * self.max_diameter, self.grid_y_resolution)
-        z = np.linspace(0, 2 * self.hub_height, self.grid_z_resolution)
-        return np.meshgrid(x, y, z, indexing="xy")
+        x = np.linspace(self.xmin, self.xmax, self.grid_resolution.x)
+        y = np.linspace(self.ymin, self.ymax, self.grid_resolution.y)
+        z = np.linspace(self.zmin, self.zmax, self.grid_resolution.z)
+        return np.meshgrid(x, y, z, indexing="ij")
 
-    def _field_velocity_at_coord(self, target_coord, field):
-        x_range = (self.xmin - 2 * self.max_diameter, self.xmax +
-                   10 * self.max_diameter, self.grid_x_resolution)
-        y_range = (self.ymin - 2 * self.max_diameter, self.ymax +
-                   2 * self.max_diameter, self.grid_y_resolution)
+    def _map_coordinate_to_index(self, coord):
+        """
+        """
+        xi = max(0, int(self.grid_resolution.x * (coord.x - self.xmin - 1) \
+            / (self.xmax - self.xmin)))
+        yi = max(0, int(self.grid_resolution.y * (coord.y - self.ymin - 1) \
+            / (self.ymax - self.ymin)))
+        zi = max(0, int(self.grid_resolution.z * (coord.z - self.zmin - 1) \
+            / (self.zmax - self.zmin)))
+        return xi, yi, zi
 
-        dx = (x_range[1] - x_range[0]) / self.grid_x_resolution
-        dy = (y_range[1] - y_range[0]) / self.grid_y_resolution
-
-        # TODO: is this appropriate? gets the downstream point in the ff grid
-        xindex = int((target_coord.x + 2 * self.max_diameter) / dx) + 1
-        yindex = int((target_coord.y + 2 * self.max_diameter) / dy)
-
-        # TODO: add z
-        return field[yindex, xindex, 25]
-
-    # def _grid_velocities(self, turbine, coord):
-    #     extract velocities at each of the grid points
+    def _field_value_at_coord(self, target_coord, field):
+        xi, yi, zi = self._map_coordinate_to_index(target_coord)
+        return field[xi, yi, zi]
 
     def _initial_flowfield(self):
         u = np.zeros((self.grid_resolution.x, self.grid_resolution.y, self.grid_resolution.z))
@@ -132,8 +132,10 @@ class FlowField(BaseObject):
         # rotate the discrete grid and turbine map
         center_of_rotation = Coordinate(
             np.mean(np.unique(self.x)), np.mean(np.unique(self.y)))
+
         rotated_x, rotated_y, rotated_z = self._rotated_grid(
             self.wind_direction, center_of_rotation)
+
         rotated_map = self.turbine_map.rotated(
             self.wind_direction, center_of_rotation)
 
