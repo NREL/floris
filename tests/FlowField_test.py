@@ -23,10 +23,10 @@ from .SampleInputs import SampleInputs
 class FlowFieldTest():
     def __init__(self):
         self.sample_inputs = SampleInputs()
-        self.input_dict = self.build_input_dict()
-        self.instance = self.build_instance()
+        self.input_dict = self._build_input_dict()
+        self.instance = self._build_instance()
 
-    def build_input_dict(self):
+    def _build_input_dict(self):
         wake = Wake(self.sample_inputs.wake)
         wake_combination = WakeCombination("sosfs")
         turbine = Turbine(self.sample_inputs.turbine)
@@ -45,7 +45,7 @@ class FlowFieldTest():
             "turbine_map": turbine_map
         }
 
-    def build_instance(self):
+    def _build_instance(self):
         return FlowField(self.input_dict["wind_speed"],
                          self.input_dict["wind_direction"],
                          self.input_dict["wind_shear"],
@@ -55,14 +55,20 @@ class FlowFieldTest():
                          self.input_dict["wake_combination"],
                          self.input_dict["turbine_map"])
 
-# tests
+    def test_all(self):
+        test_instantiation()
+        test_set_domain_bounds()
+        test_discretize_domain()
+        test_map_coordinate_to_index_xmin()
+        test_map_coordinate_to_index_xmid()
+        test_map_coordinate_to_index_xmax()
 
 def test_instantiation():
     """
     The class should initialize with the standard inputs
     """
     test_class = FlowFieldTest()
-    assert test_class.instance != None
+    assert test_class.instance is not None
 
 def test_set_domain_bounds():
     """
@@ -73,15 +79,16 @@ def test_set_domain_bounds():
     rotor_diameter = 126.0
     hub_height = 90.0
     assert xmin == 0 - 2 * rotor_diameter \
-           and xmax == 100 + 10 * rotor_diameter \
-           and ymin == -2 * rotor_diameter \
-           and ymax == 2 * rotor_diameter \
-           and zmin == 0 \
-           and zmax == 2 * hub_height
+        and xmax == 100 + 10 * rotor_diameter \
+        and ymin == -2 * rotor_diameter \
+        and ymax == 2 * rotor_diameter \
+        and zmin == 0 \
+        and zmax == 2 * hub_height
 
 def test_discretize_domain():
     """
-    The class should discretize the domain on initialization
+    The class should discretize the domain on initialization with three
+    component-arrays each of type np.ndarray and size (200, 200, 50)
     """
     test_class = FlowFieldTest()
     x, y, z = test_class.instance._discretize_domain()
@@ -101,7 +108,7 @@ def test_map_coordinate_to_index_xmin():
     rotor_diameter = 126.0
 
     # xmin should be index 0
-    xi, yi, zi = test_instance._map_coordinate_to_index(Coordinate(0 - 2 * rotor_diameter,0))
+    xi, yi, zi = test_instance._map_coordinate_to_index(Coordinate(0 - 2 * rotor_diameter, 0))
     assert xi == 0
 
 def test_map_coordinate_to_index_xmid():
@@ -117,7 +124,7 @@ def test_map_coordinate_to_index_xmid():
 
     # xmin should be index 0
     mid = ((0 - 2 * rotor_diameter) + (100 + 10 * rotor_diameter)) / 2.0
-    xi, yi, zi = test_instance._map_coordinate_to_index(Coordinate(mid,0))
+    xi, _, __ = test_instance._map_coordinate_to_index(Coordinate(mid, 0))
     assert xi == 99
 
 def test_map_coordinate_to_index_xmax():
@@ -132,5 +139,5 @@ def test_map_coordinate_to_index_xmax():
     rotor_diameter = 126.0
 
     # xmax should be index 199
-    xi, yi, zi = test_instance._map_coordinate_to_index(Coordinate(100 + 10 * rotor_diameter,0))
+    xi, _, __ = test_instance._map_coordinate_to_index(Coordinate(100 + 10 * rotor_diameter, 0))
     assert xi == 199

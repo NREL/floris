@@ -22,14 +22,16 @@ class CoordinateTest():
     def build_input(self):
         return 1, 1
 
-# tests
+    def test_all(self):
+        test_instantiation_with_xy()
+        test_rotation()
 
 def test_instantiation_with_xy():
     """
-    object should be instatiated with x and y
+    The class should initialize with the standard inputs
     """
     test_class = CoordinateTest()
-    assert Coordinate(test_class.x, test_class.y) != None
+    assert Coordinate(test_class.x, test_class.y) is not None
 
 def test_rotation():
     """

@@ -22,8 +22,9 @@ class WakeTest():
     def build_input_dict(self):
         return self.sample_inputs.wake
 
-# tests
+    def test_all(self):
+        test_instantiation()
 
 def test_instantiation():
     test_class = WakeTest()
-    assert Wake(test_class.input_dict) != None
+    assert Wake(test_class.input_dict) is not None
