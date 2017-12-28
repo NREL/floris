@@ -42,7 +42,7 @@ class Turbine(BaseObject):
         self.blade_pitch = properties["blade_pitch"]
         self.yaw_angle = properties["yaw_angle"]
         self.tilt_angle = properties["tilt_angle"]
-        self.TSR = properties["TSR"]
+        self.tsr = properties["TSR"]
 
         # these attributes need special attention
         self.rotor_radius = self.rotor_diameter / 2.0
@@ -106,9 +106,9 @@ class Turbine(BaseObject):
         cptmp = self.Cp \
                 * np.cos(self.yaw_angle)**self.pP \
                 * np.cos(self.tilt_angle)**self.pT
-
-        #TODO: air density (1.225) is hard coded below. should this be variable in the flow field?
-        return 0.5 * 1.225 * (np.pi * self.rotor_radius**2) * cptmp * self.generator_efficiency * self.get_average_velocity()**3
+        return 0.5 * 1.225 * (np.pi * self.rotor_radius**2) \
+                * cptmp * self.generator_efficiency \
+                * self.get_average_velocity()**3
 
     def _calculate_ai(self):
         return 0.5 / np.cos(self.yaw_angle) \
@@ -116,23 +116,25 @@ class Turbine(BaseObject):
 
     def _calculate_turbulence_intensity(self, flowfield, wake, turbine_coord, wake_coord, turbine_wake):
 
-        D = self.rotor_diameter
-        TI_initial = flowfield.turbulence_intensity
+        ti_initial = flowfield.turbulence_intensity
 
         # turbulence intensity parameters stored in floris.json
         #TI_i = wake.added_turbulence_intensity["TI_initial"]
         #TI_constant = wake.added_turbulence_intensity["TI_constant"]
         #TI_ai = wake.added_turbulence_intensity["TI_ai"]
         #TI_downstream = wake.added_turbulence_intensity["TI_downstream"]
-        TI_i = 0.1
-        TI_constant = 0.73
-        TI_ai = 0.8
-        TI_downstream = -0.275
+        ti_i = 0.1
+        ti_constant = 0.73
+        ti_ai = 0.8
+        ti_downstream = -0.275
 
         # turbulence intensity calculation based on Crespo et. al.
-        TI_calculation = TI_constant*(turbine_wake.aI**TI_ai)*(TI_initial**TI_i)*((turbine_coord.x - wake_coord.x)/D)**(TI_downstream)
+        ti_calculation = ti_constant * (turbine_wake.aI**ti_ai) \
+                        * ti_initial**ti_i \
+                        * ((turbine_coord.x - wake_coord.x)
+                        / self.rotor_diameter)**ti_downstream
 
-        return np.sqrt(TI_calculation**2 + self.TI**2)
+        return np.sqrt(ti_calculation**2 + self.TI**2)
 
     def _CpCtWs(self):
         cp = self.power_thrust_table["power"]
@@ -150,19 +152,25 @@ class Turbine(BaseObject):
 
         return fCp, fCt
 
-    def _calculate_swept_area_velocities(self, flowfield, local_wind_speed, coord, x, y, z):
+    def _calculate_swept_area_velocities(self, grid_resolution, local_wind_speed, coord, x, y, z):
         """
             TODO: explain these velocities
             initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
-        #return [local_wind_speed * ((self.hub_height + g[1]) / self.hub_height)**shear for g in self.grid]
 
-        dx = (np.max(x) - np.min(x)) / flowfield.grid_resolution.x
-        mask = (x < coord.x + dx) & (x > (coord.x - dx)) \
-             & (y < (coord.y + self.rotor_radius)) & (y > (coord.y - self.rotor_radius)) \
-             & (z > (self.hub_height - self.rotor_radius)) & (z < (self.hub_height + self.rotor_radius))
+        dx = (np.max(x) - np.min(x)) / grid_resolution.x
 
-        # only keep points relevant to the rotor
+        # filter the relevant points within the rotor swept area
+
+        # keep the planes
+        # - within +/- dx of the turbine plane
+        # - within the turbine radius in y direction
+        # - within the turbine radius in z direction
+        mask = \
+            (x < coord.x + dx) & (x > (coord.x - dx)) & \
+            (y < coord.y + self.rotor_radius) & (y > coord.y - self.rotor_radius) & \
+            (z < self.hub_height + self.rotor_radius) & (z > self.hub_height - self.rotor_radius)
+
         u_at_turbine = local_wind_speed[mask]
         x_grid = x[mask]
         y_grid = y[mask]
@@ -170,27 +178,29 @@ class Turbine(BaseObject):
 
         # interpolate from the flow field to get the flow field at the grid points
         data = np.zeros(len(self.grid))
-        for i,pt in enumerate(self.grid):
-            data[i] = griddata((x_grid,y_grid,z_grid), u_at_turbine, (coord.x,coord.y+pt[0],self.hub_height+pt[1]),method='nearest')
+        for i, point in enumerate(self.grid):
+            data[i] = griddata(
+                (x_grid, y_grid, z_grid),
+                u_at_turbine,
+                (coord.x, coord.y + point[0], self.hub_height + point[1]),
+                method='nearest')
 
         return data
 
     # Public methods
 
-    def update_quantities(self, u_wake, coord, rotated_map, flowfield, rotated_x, rotated_y, rotated_z):
+    def update_quantities(self, u_wake, coord, flowfield, rotated_x, rotated_y, rotated_z):
 
         # extract relevant quantities
-        wind_speed          = flowfield.wind_speed
-        local_wind_speed    = flowfield.initial_flowfield - u_wake
+        local_wind_speed = flowfield.initial_flowfield - u_wake
 
         # update turbine quantities
-        self.initial_velocities = self._calculate_swept_area_velocities(flowfield, flowfield.initial_flowfield, coord, rotated_x, rotated_y, rotated_z)
-        self.velocities         = self._calculate_swept_area_velocities(flowfield, local_wind_speed, coord, rotated_x, rotated_y, rotated_z)
-        self.Cp                 = self._calculate_cp()
-        self.Ct                 = self._calculate_ct()
-        self.power              = self._calculate_power()
-        self.aI                 = self._calculate_ai()
-        self.windSpeed          = self.get_average_velocity()
+        self.initial_velocities = self._calculate_swept_area_velocities(flowfield.grid_resolution, flowfield.initial_flowfield, coord, rotated_x, rotated_y, rotated_z)
+        self.velocities = self._calculate_swept_area_velocities(flowfield.grid_resolution, local_wind_speed, coord, rotated_x, rotated_y, rotated_z)
+        self.Cp = self._calculate_cp()
+        self.Ct = self._calculate_ct()
+        self.power = self._calculate_power()
+        self.aI = self._calculate_ai()
 
     def set_yaw_angle(self, angle):
         """
@@ -201,9 +211,6 @@ class Turbine(BaseObject):
             none
         """
         self.yaw_angle = np.radians(angle)
-
-    def get_grid(self):
-        return self.grid
 
     def get_average_velocity(self):
         return np.mean(self.velocities)

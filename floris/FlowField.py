@@ -10,6 +10,7 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
+
 import numpy as np
 from .BaseObject import BaseObject
 from .VisualizationManager import VisualizationManager
@@ -149,7 +150,7 @@ class FlowField(BaseObject):
             # update the turbine based on the velocity at its hub
             # local_deficit = self._field_velocity_at_coord(coord, u_wake)
             # turbine.update_quantities(self.wind_speed, self.wind_speed - local_deficit, self.wind_shear,self)
-            turbine.update_quantities(u_wake, coord, rotated_map, self, rotated_x, rotated_y, rotated_z)
+            turbine.update_quantities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
             
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
