@@ -11,10 +11,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from Floris import Floris
+from floris import Floris
 
-floris = Floris()
-floris.process_input("floris.json")
+floris = Floris("floris.json")
 
 for coord, turbine in floris.farm.turbine_map.items():
     print(str(coord) + ":")
