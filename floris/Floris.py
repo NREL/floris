@@ -11,24 +11,26 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+from tests.FlorisUnit import FlorisUnitTest
 from .InputReader import InputReader
 
+class Floris():
+    """
+    Floris is the highest level class of the Floris package. Import this class
+    and instantiate it with a path to an input file to begin running Floris
+    """
 
-class floris():
-    def __init__(self):
-        if test_floris().fails():
+    def __init__(self, input_file):
+        try:
+            FlorisUnitTest().run_tests()
+        except AssertionError:
             error = "floris unit tests failed. " \
                 + "Run the standalone pytest framework to debug."
             raise RuntimeError(error)
-        
+
         self.input_reader = InputReader()
+        self.input_file = input_file
+        self.farm = self._process_input()
 
-    def process_input(self, input_file):
-        self.farm = self.input_reader.read(input_file)
-
-class test_floris():
-    def __init__(self):
-        pass
-
-    def fails(self):
-        return False
+    def _process_input(self):
+        return self.input_reader.read(self.input_file)
