@@ -227,8 +227,8 @@ class WakeVelocity(BaseObject):
         sigma_y = ky*( x_locations - x0 ) + sigma_y0
         sigma_z = kz*( x_locations - x0 ) + sigma_z0
 
-        sigma_y[x_locations < x0] = 0.5*D
-        sigma_z[x_locations < x0] = 0.5*D
+        sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
+        sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         # velocity deficit outside the near wake
         a = (np.cos(veer)**2)/(2*sigma_y**2) + (np.sin(veer)**2)/(2*sigma_z**2)

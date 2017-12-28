@@ -11,31 +11,27 @@ from floris import floris
 import OptModules
 import numpy as np
 from scipy.optimize import minimize
+import warnings
+
+warnings.simplefilter('ignore', RuntimeWarning)
 
 floris = floris()
 floris.process_input("floris.json")
 
-floris.farm.flow_field.plot_flow_field_planes()
+floris.farm.flow_field.plot_flow_field_Zplane()
 
 # %%  
 minimum_yaw_angle = 0.0
-maxiumum_yaw_angle = 20.0
+maximum_yaw_angle = 20.0
 
-# list comprehension (turbine_map())
-# var = [i for i in [1,2,3]]
-
-# var = []
-# for i in [1,2,3]:
-# 	var.append(i)
-
+# set initial conditions
 x0 = []
 bnds = []
-power0 = 0
-for i,coord in enumerate(floris.farm.get_turbine_coords()):
-    turbine = floris.farm.get_turbine_at_coord(coord)
-    x0.append(turbine.yaw_angle)
-    bnds.append((np.radians(minimum_yaw_angle),np.radians(maxiumum_yaw_angle)))
-    power0 = power0 + turbine.power
+
+turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
+x0          = [turbine.yaw_angle for turbine in turbines]
+bnds        = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in turbines]
+power0      = np.sum([turbine.power for turbine in turbines]) 
 
 print('=====================================================================')
 print('Optimizing wake redirection control...')
@@ -43,7 +39,6 @@ print('Number of parameters to optimize = ', len(x0))
 print('=====================================================================')
 
 resPlant = minimize(OptModules.optPlant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'ftol':0.001,'eps':0.05})
-print(resPlant)
 
 # %%
 yawOpt = resPlant.x
@@ -52,12 +47,19 @@ print('Optimal yaw angles for:')
 for i in range(len(yawOpt)):
 	print('Turbine ', i, ' yaw angle = ', np.degrees(resPlant.x[i]))
     
-powerOpt = 0
-for i,coord in enumerate(floris.farm.get_turbine_coords()):
-    turbine = floris.farm.get_turbine_at_coord(coord)
+# assign yaw angles to turbines
+turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
+for i,turbine in enumerate(turbines):
     turbine.yaw_angle = yawOpt[i]
-    powerOpt = powerOpt + turbine.power
-floris.farm.flow_field.plot_flow_field_planes()
+    
+# compute the new wake with yaw angles
+floris.farm.flow_field.calculate_wake()
+
+# optimal power 
+powerOpt = np.sum([turbine.power for turbine in turbines]) 
+
+# plot results
+floris.farm.flow_field.plot_flow_field_Zplane()
 
 print('Power increased by ', 100*(powerOpt-power0)/power0)
 

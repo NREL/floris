@@ -120,6 +120,9 @@ class WakeDeflection(BaseObject):
         # deflection in the far wake
         sigma_y = ky*( x_locations - x0 ) + sigma_y0
         sigma_z = kz*( x_locations - x0 ) + sigma_z0
+        sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
+        sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
+
         ln_deltaNum = (1.6+np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) - np.sqrt(M0))
         ln_deltaDen = (1.6-np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) + np.sqrt(M0))
         delta_far_wake = delta0 + (theta_c0*E0/5.2)*np.sqrt(sigma_y0*sigma_z0/(ky*kz*M0))*np.log(ln_deltaNum/ln_deltaDen) + ( ad + bd*(x_locations-coord.x) )  
