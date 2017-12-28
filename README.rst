@@ -65,7 +65,7 @@ Finally, test the installation by starting a python terminal and importing flori
 ``import floris``
 
 pip repo installation
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 The floris version available through the pip repository is always the latest tagged and released version.
 This version represents the most recent stable, tested, and validated code.
 
@@ -75,11 +75,23 @@ In this case, there is no need to download the source code directly. It can be i
 
 Executing FLORIS
 ================
-Currently, FLORIS can be executed by simply running ``FLORIS.py``:
+FLORIS is an importable package and should be driven by a custom script. We have
+provided an example driver script at ``example/example_script.py``.
 
-``python3 FLORIS.py``
+The high level ``Floris`` should be instantiated with a path to an input file
+as the sole argument:
 
-The FLORIS module can also be imported into other projects to extend the current capability.
+``Floris("path/to/floris.json")``
+
+Then, driver programs can calculate the flow field, produce flow field plots,
+and incorporate the wake estimation into an optimization routine or other functionality.
+
+Testing
+=======
+Unit tests are currently included in FLORIS and integrated with the ``pytest``
+framework. Upon instantiating the ``Floris`` class, all unit tests are executed.
+Additionally, unit tests can be executed directly by simply running the command
+``pytest`` from the highest directory in the repository.
 
 Future work
 ===========
