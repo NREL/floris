@@ -11,15 +11,23 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .BaseObject import BaseObject
 import numpy as np
+from .BaseObject import BaseObject
 
 
 class Coordinate(BaseObject):
     """
-        The Coordinate class is a model for 
+        The Coordinate class is a container for coordinates. It provides a
+        convenient and consistent wrapper in order to avoid referencing components
+        of a coordinate by index of list; for example, Coordinate provides
+        access to the x component with coordinate.x whereas typical list or tuple
+        containers require referencing the x component with coordinate[0].
     """
+
     def __init__(self, x, y, z=0):
+
+        super().__init__()
+
         self.x = x
         self.y = y
         self.z = z
@@ -28,14 +36,17 @@ class Coordinate(BaseObject):
         self.zprime = self.z
 
     def __str__(self):
-        return str(self.x) + ", " + str(self.y)
+        return "({}, {})".format(self.x, self.y)
 
     def as_tuple(self):
+        """
+        return the coordinate object as a tuple
+        """
         return (self.x, self.y)
 
     def rotate_z(self, theta, center_of_rotation=(0, 0, 0)):
         """
-        rotate about the z coordinate axis
+        rotate about the z coordinate axis by a given angle and center of rotation
         """
         xoffset = self.x - center_of_rotation[0]
         yoffset = self.y - center_of_rotation[1]

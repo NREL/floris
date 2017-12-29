@@ -24,18 +24,43 @@ class CoordinateTest():
 
     def test_all(self):
         test_instantiation_with_xy()
-        test_rotation()
+        test_string_format()
+        test_as_tuple()
+        test_rotation_on_z()
 
 def test_instantiation_with_xy():
     """
     The class should initialize with the standard inputs
     """
     test_class = CoordinateTest()
-    assert Coordinate(test_class.x, test_class.y) is not None
+    coordinate = Coordinate(test_class.x, test_class.y)
+    assert coordinate is not None and \
+        coordinate.x == test_class.x and \
+        coordinate.y == test_class.y and \
+        coordinate.z == 0 and \
+        coordinate.xprime == test_class.x and \
+        coordinate.yprime == test_class.y and \
+        coordinate.zprime == 0
 
-def test_rotation():
+def test_string_format():
     """
-    Coordinate at 1,1 rotated 90 degrees should result in 1,-1
+    Coordinate should print its coordinates wrapped in parenthesis when cast to string
+    """
+    test_class = CoordinateTest()
+    coordinate = Coordinate(test_class.x, test_class.y)
+    assert str(coordinate) == "({}, {})".format(test_class.x, test_class.y)
+
+def test_as_tuple():
+    """
+    Coordinate return its x and y coordinates as a tuple
+    """
+    test_class = CoordinateTest()
+    coordinate = Coordinate(test_class.x, test_class.y)
+    assert coordinate.as_tuple() == tuple([test_class.x, test_class.y])
+
+def test_rotation_on_z():
+    """
+    Coordinate at 1, 1 rotated 90 degrees around z axis should result in 1,-1
     """
     test_class = CoordinateTest()
     coordinate = Coordinate(test_class.x, test_class.y)
