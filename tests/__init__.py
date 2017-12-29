@@ -10,9 +10,3 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
-
-from .BaseObject_test import BaseObjectTest
-from .Coordinate_test import CoordinateTest
-from .FlorisUnit import FlorisUnitTest
-from .FlowField_test import FlowFieldTest
-from .Wake_test import WakeTest
