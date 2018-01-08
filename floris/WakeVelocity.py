@@ -177,7 +177,6 @@ class WakeVelocity(BaseObject):
         tilt        = turbine.tilt_angle
         Ct          = turbine.Ct
         U_local     = flowfield.initial_flowfield
-        #U_local     = wind_speed
 
         # wake deflection
         delta = deflection_field
