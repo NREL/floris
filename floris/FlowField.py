@@ -46,7 +46,7 @@ class FlowField(BaseObject):
         self.max_diameter = max(
             [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.hub_height = self.turbine_map.turbines[0].hub_height
-        self.grid_resolution = Coordinate(200, 200, 50)
+        self.grid_resolution = Coordinate(100, 100, 25)
         self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
         self.x, self.y, self.z = self._discretize_domain()
         self.initial_flowfield = self._initial_flowfield()
@@ -58,11 +58,12 @@ class FlowField(BaseObject):
         coords = self.turbine_map.coords
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
+        eps = 0.1
         xmin = min(x) - 2 * self.max_diameter
         xmax = max(x) + 10 * self.max_diameter
         ymin = min(y) - 2 * self.max_diameter
         ymax = max(y) + 2 * self.max_diameter
-        zmin = 0
+        zmin = 0 + eps 
         zmax = 2 * self.hub_height
         return xmin, xmax, ymin, ymax, zmin, zmax
 
@@ -182,7 +183,7 @@ class FlowField(BaseObject):
             u_wake = self.wake_combination.combine(u_wake, turb_wake)
 
         # apply the velocity deficit field to the freestream
-        self.u_field -= u_wake
+        self.u_field = self.initial_flowfield - u_wake
 
     # Visualization
 

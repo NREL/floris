@@ -11,10 +11,16 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import sys
+sys.path.append('../floris')
 import numpy as np
+from scipy.optimize import minimize
+import warnings
+
+warnings.simplefilter('ignore', RuntimeWarning)
 
 # optimize wake steering for power maximization
-def optPlant(x,floris):    
+def optimize_plant(x,floris):    
     
     # assign yaw angles to turbines
     turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
@@ -27,4 +33,28 @@ def optPlant(x,floris):
     power       = -np.sum([turbine.power for turbine in turbines]) 
 
     return power
+
+def wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle):
+
+	# set initial conditions
+	x0 = []
+	bnds = []
+
+	turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
+	x0          = [turbine.yaw_angle for turbine in turbines]
+	bnds        = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in turbines]
+	power0      = np.sum([turbine.power for turbine in turbines]) 
+
+	print('=====================================================================')
+	print('Optimizing wake redirection control...')
+	print('Number of parameters to optimize = ', len(x0))
+	print('=====================================================================')
+
+	residual_plant = minimize(optimize_plant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'ftol':0.001,'eps':0.05})
+
+	# %%
+	opt_yaw_angles = residual_plant.x
+
+	return opt_yaw_angles
+
 

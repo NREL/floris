@@ -10,10 +10,8 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
+from floris import Floris
 
-import sys
-sys.path.append('../floris')
-from floris import floris
 import OptModules
 import numpy as np
 from scipy.optimize import minimize
@@ -21,36 +19,23 @@ import warnings
 
 warnings.simplefilter('ignore', RuntimeWarning)
 
-floris = floris()
+# load floris
+floris = Floris()
+
+# setup floris and process input file
 floris.process_input("floris.json")
 
+# plot initial flow field
 floris.farm.flow_field.plot_flow_field_Zplane()
 
-# %%  
+# enter min and max yaw angles for the optimization  
 minimum_yaw_angle = 0.0
 maximum_yaw_angle = 20.0
 
-# set initial conditions
-x0 = []
-bnds = []
-
-turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-x0          = [turbine.yaw_angle for turbine in turbines]
-bnds        = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in turbines]
-power0      = np.sum([turbine.power for turbine in turbines]) 
-
-print('=====================================================================')
-print('Optimizing wake redirection control...')
-print('Number of parameters to optimize = ', len(x0))
-print('=====================================================================')
-
-resPlant = minimize(OptModules.optPlant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'ftol':0.001,'eps':0.05})
-
-# %%
-yawOpt = resPlant.x
+opt_yaw_angles = OptModules.wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle)
 
 print('Optimal yaw angles for:')
-for i in range(len(yawOpt)):
+for i in range(len(opt_yaw_angles)):
 	print('Turbine ', i, ' yaw angle = ', np.degrees(resPlant.x[i]))
     
 # assign yaw angles to turbines

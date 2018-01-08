@@ -82,24 +82,24 @@ def test_set_domain_bounds():
         and xmax == 100 + 10 * rotor_diameter \
         and ymin == -2 * rotor_diameter \
         and ymax == 2 * rotor_diameter \
-        and zmin == 0 \
+        and zmin == 0.1 \
         and zmax == 2 * hub_height
 
 def test_discretize_domain():
     """
     The class should discretize the domain on initialization with three
-    component-arrays each of type np.ndarray and size (200, 200, 50)
+    component-arrays each of type np.ndarray and size (100, 100, 50)
     """
     test_class = FlowFieldTest()
     x, y, z = test_class.instance._discretize_domain()
-    assert np.shape(x) == (200, 200, 50) and type(x) is np.ndarray \
-           and np.shape(y) == (200, 200, 50) and type(y) is np.ndarray \
-           and np.shape(z) == (200, 200, 50) and type(z) is np.ndarray
+    assert np.shape(x) == (100, 100, 25) and type(x) is np.ndarray \
+           and np.shape(y) == (100, 100, 25) and type(y) is np.ndarray \
+           and np.shape(z) == (100, 100, 25) and type(z) is np.ndarray
 
 def test_map_coordinate_to_index_xmin():
     """
     Map a domain coordinate to an index in the field matrix. The field matrices
-    are a constant size of (200, 200, 50) starting with a 0 index.
+    are a constant size of (100, 100, 50) starting with a 0 index.
     
     xmin should map to index 0
     """
@@ -114,7 +114,7 @@ def test_map_coordinate_to_index_xmin():
 def test_map_coordinate_to_index_xmid():
     """
     Map a domain coordinate to an index in the field matrix. The field matrices
-    are a constant size of (200, 200, 50) starting with a 0 index.
+    are a constant size of (100, 100, 50) starting with a 0 index.
     
     xmid should map to index 99
     """
@@ -125,12 +125,12 @@ def test_map_coordinate_to_index_xmid():
     # xmin should be index 0
     mid = ((0 - 2 * rotor_diameter) + (100 + 10 * rotor_diameter)) / 2.0
     xi, _, __ = test_instance._map_coordinate_to_index(Coordinate(mid, 0))
-    assert xi == 99
+    assert xi == 49
 
 def test_map_coordinate_to_index_xmax():
     """
     Map a domain coordinate to an index in the field matrix. The field matrices
-    are a constant size of (200, 200, 50) starting with a 0 index.
+    are a constant size of (100, 100, 50) starting with a 0 index.
 
     xmax should map to index 199
     """
@@ -140,4 +140,4 @@ def test_map_coordinate_to_index_xmax():
 
     # xmax should be index 199
     xi, _, __ = test_instance._map_coordinate_to_index(Coordinate(100 + 10 * rotor_diameter, 0))
-    assert xi == 199
+    assert xi == 99

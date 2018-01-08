@@ -149,18 +149,14 @@ class WakeVelocity(BaseObject):
     
     def _gauss(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flowfield):
 
-        # TODO: currently the deflection model, flow field quantities, model parameters is computed within this function
-
         # analytical wake model based on self-similarity and Gaussian wake model
         # based on Porte-Agel et. al. papers from 2015-2017
 
         # =======================================================================================================
-        # WILL NOT BE IN THE FINAL VERSION
-        # hard-coded physical input data (goes in input file)
-        wind_speed    = flowfield.wind_speed             # free-stream velocity (m/s)
-        TI_0    = flowfield.turbulence_intensity   # turbulence intensity (%/100)
+        wind_speed    = flowfield.wind_speed            # free-stream velocity (m/s)
+        TI_0    = flowfield.turbulence_intensity        # turbulence intensity (%/100)
         veer    = flowfield.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
-        TI      = flowfield.turbulence_intensity   # just a placeholder for now, should be computed with turbine
+        TI      = flowfield.turbulence_intensity        # just a placeholder for now, should be computed with turbine
         
         # hard-coded model input data (goes in input file)
         ka      = self.ka                      # wake expansion parameter
