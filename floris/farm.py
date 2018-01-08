@@ -11,11 +11,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .BaseObject import BaseObject
-from .Coordinate import Coordinate
-from .WakeCombination import WakeCombination
-from .FlowField import FlowField
-from .TurbineMap import TurbineMap
+from .base_object import BaseObject
+from .coordinate import Coordinate
+from .wake_combination import WakeCombination
+from .flow_field import FlowField
+from .turbine_map import TurbineMap
 import copy
 import numpy as np
 

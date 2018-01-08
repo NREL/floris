@@ -11,9 +11,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .BaseObject import BaseObject
-from .Coordinate import Coordinate
-from .Turbine import Turbine
+from .base_object import BaseObject
+from .coordinate import Coordinate
+from .turbine import Turbine
 import numpy as np
 
 

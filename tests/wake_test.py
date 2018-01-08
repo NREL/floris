@@ -11,17 +11,20 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .BaseObject_test import BaseObjectTest
-from .Coordinate_test import CoordinateTest
-from .FlowField_test import FlowFieldTest
+from floris.wake import Wake
+from .sample_inputs import SampleInputs
 
-class FlorisUnitTest():
+class WakeTest():
     def __init__(self):
-        self.baseobject = BaseObjectTest()
-        self.coordinate = CoordinateTest()
-        self.flowfield = FlowFieldTest()
+        self.sample_inputs = SampleInputs()
+        self.input_dict = self.build_input_dict()
 
-    def run_tests(self):
-        self.baseobject.test_all()
-        self.coordinate.test_all()
-        self.flowfield.test_all()
+    def build_input_dict(self):
+        return self.sample_inputs.wake
+
+    def test_all(self):
+        test_instantiation()
+
+def test_instantiation():
+    test_class = WakeTest()
+    assert Wake(test_class.input_dict) is not None

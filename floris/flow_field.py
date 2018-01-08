@@ -12,9 +12,9 @@ specific language governing permissions and limitations under the License.
 """
 
 import numpy as np
-from .BaseObject import BaseObject
-from .VisualizationManager import VisualizationManager
-from .Coordinate import Coordinate
+from .base_object import BaseObject
+from .visualization_manager import VisualizationManager
+from .coordinate import Coordinate
 
 class FlowField(BaseObject):
     """

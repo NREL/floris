@@ -12,6 +12,9 @@ specific language governing permissions and limitations under the License.
 """
 from floris import Floris
 
+# import sys
+# sys.path.append('../floris')
+from floris.floris import Floris
 import OptModules
 import numpy as np
 from scipy.optimize import minimize
@@ -44,8 +47,7 @@ for i,yaw in enumerate(opt_yaw_angles):
     print('Turbine ', i, ' yaw angle = ', np.degrees(yaw))
 
 # assign yaw angles to turbines
-turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-for i,turbine in enumerate(turbines):
+for i, turbine in enumerate(floris.farm.flow_field.turbine_map.turbines):
     turbine.yaw_angle = opt_yaw_angles[i]
     
 # compute the new wake with yaw angles

@@ -11,9 +11,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .BaseObject import BaseObject
-from .WakeDeflection import WakeDeflection
-from .WakeVelocity import WakeVelocity
+from .base_object import BaseObject
+from .wake_deflection import WakeDeflection
+from .wake_velocity import WakeVelocity
 
 class Wake(BaseObject):
 
