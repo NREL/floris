@@ -1,11 +1,9 @@
 
 FLORIS
 ------
-The ``develop`` branch of the FLORIS repo represents a rework of the software as a general wind farm wake analysis tool.
 
 For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
-**NOTE: This FLORIS repository is under active development. Be aware that the implementation is not yet validated or verified.**
 
 Background and objectives
 =========================
@@ -30,6 +28,7 @@ The following packages are required for FLORIS
 
 - matplotlib v2.1.0
 
+- pytest v3.3.1
 
 After installing Python3, the remaining dependencies can be installed with ``pip`` referencing the requirements list using this command:
 
@@ -69,16 +68,17 @@ pip repo installation
 The floris version available through the pip repository is always the latest tagged and released version.
 This version represents the most recent stable, tested, and validated code.
 
-In this case, there is no need to download the source code directly. It can be installed with:
+In this case, there is no need to download the source code directly. Floris and its dependencies can be installed with:
 
 ``pip install floris``
 
 Executing FLORIS
 ================
-FLORIS is an importable package and should be driven by a custom script. We have
-provided an example driver script at ``example/example_script.py``.
+``floris`` is an importable package and should be driven by a custom script. We have
+provided an example driver script at ``example/example_script.py`` and a Jupyter notebook
+detailing a real world use case at ``example/FLORIS_Run_Notebook.ipynb``.
 
-The high level ``Floris`` should be instantiated with a path to an input file
+Generally, a ``Floris`` class should be instantiated with a path to an input file
 as the sole argument:
 
 ``Floris("path/to/floris.json")``
@@ -95,7 +95,7 @@ Additionally, unit tests can be executed directly by simply running the command
 
 Future work
 ===========
-- improve the swept area point sampling to consistently include more points
+Coming soon
 
 License
 =======
