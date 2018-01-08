@@ -11,16 +11,20 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from floris.Floris import Floris
+from floris.Wake import Wake
+from .SampleInputs import SampleInputs
 
-floris = Floris("floris.json")
+class WakeTest():
+    def __init__(self):
+        self.sample_inputs = SampleInputs()
+        self.input_dict = self.build_input_dict()
 
-for coord, turbine in floris.farm.turbine_map.items():
-    print(str(coord) + ":")
-    print("\tCp -", turbine.Cp)
-    print("\tCt -", turbine.Ct)
-    print("\tpower -", turbine.power)
-    print("\tai -", turbine.aI)
-    print("\taverage velocity -", turbine.get_average_velocity())
+    def build_input_dict(self):
+        return self.sample_inputs.wake
 
-floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])
+    def test_all(self):
+        test_instantiation()
+
+def test_instantiation():
+    test_class = WakeTest()
+    assert Wake(test_class.input_dict) is not None

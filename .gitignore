@@ -1,6 +1,7 @@
 
 # python compiled files
 __pycache__/
+.cache
 *.pyc
 *.egg-info
 dist

@@ -18,10 +18,6 @@ An architecture diagram as in input to `draw.io <https://www.draw.io>`_ is conta
 Generally, a user will not have to write Python code in order to express a wind farm, turbine, or wake model combination. Currently, 
 an example wake model, turbine, and wind farm is expressed in ``examples/floris.json``.
 
-Download
-========
-FLORIS can be cloned directly from GitHub: ``git clone https://github.com/wisdem/floris``
-
 Dependencies
 ============
 The following packages are required for FLORIS
@@ -39,14 +35,81 @@ After installing Python3, the remaining dependencies can be installed with ``pip
 
 ``pip install -r requirements.txt``
 
+Installation
+============
+Using ``pip``, FLORIS can be installed in two ways
+
+- local editable install
+
+- using a tagged release version from the ``pip`` repo
+
+For consistency between all developers, it is recommended to use Python virtual environments;
+`this link <https://realpython.com/blog/python/python-virtual-environments-a-primer/>`_ provides a great introduction.
+
+Local editable installation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The local editable installation allows developers maintain an importable instance of floris while continuing to extending it.
+The alternative is to constantly update python paths within the package to match the local environment.
+
+Before doing the local install, the source code repository must be cloned directly from GitHub:
+
+``git clone https://github.com/wisdem/floris``
+
+Then, using the local editable installation is as simple as running the following command from the parent directory of the
+cloned repository:
+
+``pip install -e FLORIS/``
+
+Finally, test the installation by starting a python terminal and importing floris:
+
+``import floris``
+
+pip repo installation
+~~~~~~~~~~~~~~~~~~~~~
+The floris version available through the pip repository is always the latest tagged and released version.
+This version represents the most recent stable, tested, and validated code.
+
+In this case, there is no need to download the source code directly. It can be installed with:
+
+``pip install floris``
+
 Executing FLORIS
 ================
-Currently, FLORIS can be executed by simply running ``FLORIS.py``:
+FLORIS is an importable package and should be driven by a custom script. We have
+provided an example driver script at ``example/example_script.py``.
 
-``python3 FLORIS.py``
+The high level ``Floris`` should be instantiated with a path to an input file
+as the sole argument:
 
-The FLORIS module can also be imported into other projects to extend the current capability.
+``Floris("path/to/floris.json")``
+
+Then, driver programs can calculate the flow field, produce flow field plots,
+and incorporate the wake estimation into an optimization routine or other functionality.
+
+Testing
+=======
+Unit tests are currently included in FLORIS and integrated with the ``pytest``
+framework. Upon instantiating the ``Floris`` class, all unit tests are executed.
+Additionally, unit tests can be executed directly by simply running the command
+``pytest`` from the highest directory in the repository.
 
 Future work
 ===========
 - improve the swept area point sampling to consistently include more points
+
+License
+=======
+
+Copyright 2017 NREL
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

@@ -1,18 +1,20 @@
 """
 Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
 
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
 """
 
+import numpy as np
 from .BaseObject import BaseObject
 from .VisualizationManager import VisualizationManager
 from .Coordinate import Coordinate
-import numpy as np
-import copy
 
 class FlowField(BaseObject):
     """
@@ -30,7 +32,7 @@ class FlowField(BaseObject):
                  turbine_map):
 
         super().__init__()
-        
+
         self.wind_speed = wind_speed
         self.wind_direction = wind_direction
         self.wind_shear = wind_shear
@@ -39,73 +41,62 @@ class FlowField(BaseObject):
         self.wake = wake
         self.wake_combination = wake_combination
         self.turbine_map = turbine_map
-
-        self.grid_x_resolution = 200
-        self.grid_y_resolution = 200
-        self.grid_z_resolution = 50
-
+        
+        # initialize derived attributes and constants
+        self.max_diameter = max(
+            [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
+        self.hub_height = self.turbine_map.turbines[0].hub_height
+        self.grid_resolution = Coordinate(200, 200, 50)
+        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
         self.x, self.y, self.z = self._discretize_domain()
-        self.u_field = self._constant_flowfield(self.wind_speed)
         self.initial_flowfield = self._initial_flowfield()
+        self.u_field = self._initial_flowfield()
 
         self.viz_manager = VisualizationManager()
 
+    def _set_domain_bounds(self):
+        coords = self.turbine_map.coords
+        x = [coord.x for coord in coords]
+        y = [coord.y for coord in coords]
+        xmin = min(x) - 2 * self.max_diameter
+        xmax = max(x) + 10 * self.max_diameter
+        ymin = min(y) - 2 * self.max_diameter
+        ymax = max(y) + 2 * self.max_diameter
+        zmin = 0
+        zmax = 2 * self.hub_height
+        return xmin, xmax, ymin, ymax, zmin, zmax
+
     def _discretize_domain(self):
-        coords = [coord for coord, _ in self.turbine_map.items()]
-        x = [coord.x for coord in coords]
-        y = [coord.y for coord in coords]
-        xmin, xmax = min(x), max(x)
-        ymin, ymax = min(y), max(y)
+        x = np.linspace(self.xmin, self.xmax, self.grid_resolution.x)
+        y = np.linspace(self.ymin, self.ymax, self.grid_resolution.y)
+        z = np.linspace(self.zmin, self.zmax, self.grid_resolution.z)
+        return np.meshgrid(x, y, z, indexing="ij")
 
-        turbines = [turbine for _, turbine in self.turbine_map.items()]
-        maxDiameter = max([turbine.rotor_diameter for turbine in turbines])
-        hub_height = turbines[0].hub_height
+    def _map_coordinate_to_index(self, coord):
+        """
+        """
+        xi = max(0, int(self.grid_resolution.x * (coord.x - self.xmin - 1) \
+            / (self.xmax - self.xmin)))
+        yi = max(0, int(self.grid_resolution.y * (coord.y - self.ymin - 1) \
+            / (self.ymax - self.ymin)))
+        zi = max(0, int(self.grid_resolution.z * (coord.z - self.zmin - 1) \
+            / (self.zmax - self.zmin)))
+        return xi, yi, zi
 
-        x = np.linspace(xmin - 5 * maxDiameter, xmax + 10 * maxDiameter, self.grid_x_resolution)
-        y = np.linspace(ymin - 5 * maxDiameter, ymax + 2 * maxDiameter, self.grid_y_resolution)
-        z = np.linspace(0.1, 2 * hub_height, self.grid_z_resolution)
-        return np.meshgrid(x, y, z, indexing="xy")
-
-    def _field_velocity_at_coord(self, target_coord, field):
-        coords = [coord for coord, _ in self.turbine_map.items()]
-        x = [coord.x for coord in coords]
-        y = [coord.y for coord in coords]
-        xmin, xmax = min(x), max(x)
-        ymin, ymax = min(y), max(y)
-
-        turbines = [turbine for _, turbine in self.turbine_map.items()]
-        maxDiameter = max([turbine.rotor_diameter for turbine in turbines])
-
-        #x_range = (xmin - 5 * maxDiameter, xmax + 10 * maxDiameter, self.grid_x_resolution)
-        #y_range = (ymin - 5 * maxDiameter, ymax + 2 * maxDiameter, self.grid_y_resolution)
-        x_range = (np.min(self.x), np.max(self.x), self.grid_x_resolution)
-        y_range = (np.min(self.y), np.max(self.y), self.grid_y_resolution)
-
-        dx = (x_range[1] - x_range[0]) / self.grid_x_resolution
-        dy = (y_range[1] - y_range[0]) / self.grid_y_resolution
-
-        xindex = int((target_coord.x + maxDiameter) / dx) + 1
-        yindex = int((target_coord.y + maxDiameter) / dy)
-
-        return field[yindex, xindex, 25]
-
-    #def _grid_velocities(self, turbine, coord):
-
-    #    # extract velocities at each of the grid points
-
-
-
-    def _constant_flowfield(self, constant_value):
-        xmax, ymax, zmax = self.x.shape[0], self.y.shape[1], self.z.shape[2]
-        return np.full((xmax, ymax, zmax), constant_value)
+    def _field_value_at_coord(self, target_coord, field):
+        xi, yi, zi = self._map_coordinate_to_index(target_coord)
+        return field[xi, yi, zi]
 
     def _initial_flowfield(self):
+        u = np.zeros((self.grid_resolution.x, self.grid_resolution.y, self.grid_resolution.z))
+        for i in range(self.z.shape[2]):
+            u[:, :, i] = self.wind_speed * pow(self.z[:, :, i] / self.hub_height, self.wind_shear)
+        return u
 
-        turbines = [turbine for _, turbine in self.turbine_map.items()]
-        maxDiameter = max([turbine.rotor_diameter for turbine in turbines])
-        hub_height = turbines[0].hub_height
-
-        return self.wind_speed*(self.z/hub_height)**self.wind_shear
+    def _initial_flowfield(self):
+        turbines = self.turbine_map.turbines
+        max_diameter = max([turbine.rotor_diameter for turbine in turbines])
+        return self.wind_speed * (self.z / self.hub_height)**self.wind_shear
 
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flowfield):
         velocity_function = self.wake.get_velocity_function()
@@ -115,58 +106,51 @@ class FlowField(BaseObject):
         deflection_function = self.wake.get_deflection_function()
         return deflection_function(x, y, turbine, coord, flowfield)
 
-    def _rotate_coordinates(self):
-
-        # this rotates the turbine coordinates such that they are now in the frame of reference of the 270 degree wind direction.
-        # this makes computing wakes and wake overlap much simpler
-
-        rotation_angle = (self.wind_direction - 270.)*np.pi/180.
-        xCenter = np.mean(np.unique(self.x))
-        yCenter = np.mean(np.unique(self.y))
-
-        rotated_x = (self.x-xCenter)*np.cos(rotation_angle) - (self.y-yCenter)*np.sin(rotation_angle) + xCenter 
-        rotated_y = (self.x-xCenter)*np.sin(rotation_angle) + (self.y-yCenter)*np.cos(rotation_angle) + yCenter 
-        rotated_z = self.z
-
-        rotated_map = dict()
-        for coord,turbine in self.turbine_map.items():
-            x_rotated = (coord.x-xCenter)*np.cos(rotation_angle) - (coord.y-yCenter)*np.sin(rotation_angle)
-            y_rotated = (coord.x-xCenter)*np.sin(rotation_angle) + (coord.y-yCenter)*np.cos(rotation_angle)
-            rotated_map[Coordinate(x_rotated+xCenter,y_rotated+yCenter)] = turbine
-
-        return rotated_map, rotated_x, rotated_y, rotated_z
+    def _rotated_grid(self, angle, center_of_rotation):
+        xoffset = self.x - center_of_rotation.x
+        yoffset = self.y - center_of_rotation.y
+        rotated_x = xoffset * \
+            np.cos(angle) - yoffset * \
+            np.sin(angle) + center_of_rotation.x
+        rotated_y = xoffset * \
+            np.sin(angle) + yoffset * \
+            np.cos(angle) + center_of_rotation.y
+        return rotated_x, rotated_y, self.z
 
     def _calculate_area_overlap(self, wake_velocities, freestream_velocities, turbine):
-
         # compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
         count = np.sum(freestream_velocities - wake_velocities <= 0.05)
-
-        return (turbine.grid_point_count-count)/turbine.grid_point_count
+        return (turbine.grid_point_count - count) / turbine.grid_point_count
 
     # Public methods
 
     def calculate_wake(self):
 
         # initialize turbulence intensity at every turbine (seems sloppy)
-        for coord,turbine in self.turbine_map.items():
+        for coord, turbine in self.turbine_map.items():
             turbine.TI = self.turbulence_intensity
 
-        # rotate and sort the turbine coordinates
-        rotated_map, rotated_x, rotated_y, rotated_z = self._rotate_coordinates()
-        sorted_coords = sorted(rotated_map, key=lambda coord:coord.x)
+        # rotate the discrete grid and turbine map
+        center_of_rotation = Coordinate(
+            np.mean(np.unique(self.x)), np.mean(np.unique(self.y)))
+
+        rotated_x, rotated_y, rotated_z = self._rotated_grid(
+            self.wind_direction, center_of_rotation)
+
+        rotated_map = self.turbine_map.rotated(
+            self.wind_direction, center_of_rotation)
+
+        # sort the turbine map
+        sorted_map = rotated_map.sorted_in_x_as_list()
 
         # calculate the velocity deficit and wake deflection on the mesh
         u_wake = np.zeros(self.u_field.shape)
-
-        for coord in sorted_coords:
-
-            # assign turbine based on coordinates
-            turbine = rotated_map[coord]
+        for coord, turbine in sorted_map:
 
             # update the turbine based on the velocity at its hub
-            local_deficit = self._field_velocity_at_coord(coord, u_wake)
-            #turbine.update_quantities(self.wind_speed, self.wind_speed - local_deficit, self.wind_shear,self)
-            turbine.update_quantities(u_wake, coord, rotated_map, self, rotated_x, rotated_y, rotated_z)
+            # local_deficit = self._field_velocity_at_coord(coord, u_wake)
+            # turbine.update_quantities(self.wind_speed, self.wind_speed - local_deficit, self.wind_shear,self)
+            turbine.update_quantities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
             
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
@@ -178,7 +162,7 @@ class FlowField(BaseObject):
             # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
 
             if self.wake.velocity_model == 'gauss':
-                for coord_ti in sorted_coords:
+                for coord_ti, _ in sorted_map:
 
                     if coord_ti.x > coord.x:
                         turbine_ti = rotated_map[coord_ti]
@@ -195,37 +179,41 @@ class FlowField(BaseObject):
                             turbine_ti.TI = turbine_ti._calculate_turbulence_intensity(self,self.wake,coord_ti,coord,turbine)
 
             # combine this turbine's wake into the full wake field
-            u_wake = self.wake_combination.combine(u_wake, turb_wake)            
-
+            u_wake = self.wake_combination.combine(u_wake, turb_wake)
 
         # apply the velocity deficit field to the freestream
-        self.u_field = self.initial_flowfield - u_wake
+        self.u_field -= u_wake
 
     # Visualization
 
-    def plot_flow_field_Zplane(self, percent_height=0.5, show=True):
-        zplane = int(self.x.shape[2] * percent_height)
-        
-        # plot flow field
+    def _add_z_plane(self, percent_height=0.5):
+        plane = int(self.grid_resolution.z * percent_height)
         self.viz_manager.plot_constant_z(
-            self.x[:, :, zplane], self.y[:, :, zplane], self.u_field[:, :, zplane])
-
-        # plot turbines
+            self.x[:, :, plane], self.y[:, :, plane], self.u_field[:, :, plane])
         for coord, turbine in self.turbine_map.items():
             self.viz_manager.add_turbine_marker(turbine, coord, self.wind_direction)
-        if show:
-            self.viz_manager.show()
 
-    def plot_flow_field_Xplane(self, percent_distance=0.4, show=True):
-        xplane = int(self.x.shape[0] * percent_distance)
+    def _add_y_plane(self, percent_height=0.5):
+        plane = int(self.grid_resolution.y * percent_height)
+        self.viz_manager.plot_constant_y(
+            self.x[:, plane, :], self.z[:, plane, :], self.u_field[:, plane, :])
 
-        # plot flow field
+    def _add_x_plane(self, percent_height=0.5):
+        plane = int(self.grid_resolution.x * percent_height)
         self.viz_manager.plot_constant_x(
-            self.y[:, xplane, :], self.z[:, xplane, :], self.u_field[:, xplane, :])
+            self.y[plane, :, :], self.z[plane, :, :], self.u_field[plane, :, :])
 
-    def plot_flow_field_planes(self, heights=[0.5]):
-        for height in heights:
-            self.plot_flow_field_plane(height, False)
+    def plot_z_planes(self, planes):
+        for p in planes:
+            self._add_z_plane(p)
         self.viz_manager.show()
 
-    # TODO def update_flowfield():
+    def plot_y_planes(self, planes):
+        for p in planes:
+            self._add_y_plane(p)
+        self.viz_manager.show()
+
+    def plot_x_planes(self, planes):
+        for p in planes:
+            self._add_x_plane(p)
+        self.viz_manager.show()

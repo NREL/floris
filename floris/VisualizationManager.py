@@ -1,11 +1,14 @@
 """
 Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
 
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
 """
 
 from .Coordinate import Coordinate
@@ -22,7 +25,7 @@ class VisualizationManager():
     IT IS IMPORTANT to note that this class should be treated as a singleton. That is, 
     only one instance of this class should exist.
     """
-    
+
     def __init__(self):
         self.figure_count = 0
 
@@ -44,50 +47,38 @@ class VisualizationManager():
         plt.figure(self.figure_count)
         self.figure_count += 1
 
-    def _new_filled_contour(self, xmesh, ymesh, data):
+    def _new_filled_contour(self, mesh1, mesh2, data):
         self._new_figure()
-
-        # set maximum data
         vmax = np.amax(data)
-
-        # plot contour plot of the data
-        plt.contourf(xmesh, ymesh, data, 50,
+        plt.contourf(mesh1, mesh2, data, 50,
                             cmap='gnuplot2', vmin=0, vmax=vmax)
 
-    def plot_constant_z(self, xmesh, ymesh, data):
-        self._new_filled_contour(xmesh, ymesh, data)        
-
-        # configure the plot
-        self._set_texts("Constant Height", "x (m)", "y (m)")
+    def _plot_constant_plane(self, mesh1, mesh2, data, title, xlabel, ylabel):
+        # for x in range(data.shape[0]):
+        #     data[x, :] = x
+        self._new_filled_contour(mesh1, mesh2, data)
+        self._set_texts(title, xlabel, ylabel)
         self._set_colorbar()
         self._set_axis()
 
+    def plot_constant_z(self, xmesh, ymesh, data):
+        self._plot_constant_plane(
+            xmesh, ymesh, data, "z plane", "x (m)", "y (m)")
+
+    def plot_constant_y(self, xmesh, zmesh, data):
+        self._plot_constant_plane(
+            xmesh, zmesh, data, "y plane", "x (m)", "z (m)")
 
     def plot_constant_x(self, ymesh, zmesh, data):
-        self._new_filled_contour(ymesh, zmesh, data)
-
-        # configure the plot
-        self._set_texts("Cut Through", "y (m)", "z (m)")
-        self._set_colorbar()
-        self._set_axis()
+        self._plot_constant_plane(
+            ymesh, zmesh, data, "x plane", "y (m)", "z (m)")
 
     def add_turbine_marker(self, turbine, coords, wind_direction):
-        
         a = Coordinate(coords.x, coords.y - turbine.rotor_radius)
         b = Coordinate(coords.x, coords.y + turbine.rotor_radius)
-
-        a.rotate(turbine.yaw_angle-(wind_direction-270.)*np.pi/180., (coords.x, coords.y))
-        b.rotate(turbine.yaw_angle-(wind_direction-270.)*np.pi/180., (coords.x, coords.y))
-
-        plt.plot([a.xprime, b.xprime], [a.yprime, b.yprime],  'k', linewidth=1)
-
-        # x = [-50, 1000]
-        # y = [coords.y - radius, coords.y - radius]
-        # plt.plot(x, y,  'b', linewidth=1)
-
-        # x = [-50, 1000]
-        # y = [coords.y + radius, coords.y + radius]
-        # plt.plot(x, y,  'b', linewidth=1)
+        a.rotate_z(turbine.yaw_angle + wind_direction, coords.as_tuple())
+        b.rotate_z(turbine.yaw_angle + wind_direction, coords.as_tuple())
+        plt.plot([a.xprime, b.xprime], [a.yprime, b.yprime], 'k', linewidth=1)
 
     def show(self):
         plt.show()

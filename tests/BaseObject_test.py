@@ -11,16 +11,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from floris.Floris import Floris
+from floris.BaseObject import BaseObject
 
-floris = Floris("floris.json")
+class BaseObjectTest():
+    def test_all(self):
+        test_object_instantiation()
 
-for coord, turbine in floris.farm.turbine_map.items():
-    print(str(coord) + ":")
-    print("\tCp -", turbine.Cp)
-    print("\tCt -", turbine.Ct)
-    print("\tpower -", turbine.power)
-    print("\tai -", turbine.aI)
-    print("\taverage velocity -", turbine.get_average_velocity())
-
-floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])
+def test_object_instantiation():
+    """
+    The class should initialize with the standard inputs
+    """
+    assert BaseObject() is not None

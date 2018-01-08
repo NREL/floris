@@ -11,16 +11,17 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from floris.Floris import Floris
+from .BaseObject_test import BaseObjectTest
+from .Coordinate_test import CoordinateTest
+from .FlowField_test import FlowFieldTest
 
-floris = Floris("floris.json")
+class FlorisUnitTest():
+    def __init__(self):
+        self.baseobject = BaseObjectTest()
+        self.coordinate = CoordinateTest()
+        self.flowfield = FlowFieldTest()
 
-for coord, turbine in floris.farm.turbine_map.items():
-    print(str(coord) + ":")
-    print("\tCp -", turbine.Cp)
-    print("\tCt -", turbine.Ct)
-    print("\tpower -", turbine.power)
-    print("\tai -", turbine.aI)
-    print("\taverage velocity -", turbine.get_average_velocity())
-
-floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])
+    def run_tests(self):
+        self.baseobject.test_all()
+        self.coordinate.test_all()
+        self.flowfield.test_all()
