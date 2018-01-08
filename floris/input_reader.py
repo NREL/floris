@@ -11,9 +11,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .Turbine import Turbine
-from .Wake import Wake
-from .Farm import Farm
+from .turbine import Turbine
+from .wake import Wake
+from .farm import Farm
 import json
 
 

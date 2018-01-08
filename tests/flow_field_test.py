@@ -12,13 +12,13 @@ specific language governing permissions and limitations under the License.
 """
 
 import numpy as np
-from floris.FlowField import FlowField
-from floris.Coordinate import Coordinate
-from floris.Wake import Wake
-from floris.WakeCombination import WakeCombination
-from floris.TurbineMap import TurbineMap
-from floris.Turbine import Turbine
-from .SampleInputs import SampleInputs
+from floris.flow_field import FlowField
+from floris.coordinate import Coordinate
+from floris.wake import Wake
+from floris.wake_combination import WakeCombination
+from floris.turbine_map import TurbineMap
+from floris.turbine import Turbine
+from .sample_inputs import SampleInputs
 
 class FlowFieldTest():
     def __init__(self):

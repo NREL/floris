@@ -11,8 +11,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from tests.FlorisUnit import FlorisUnitTest
-from .InputReader import InputReader
+from tests.floris_unit import FlorisUnitTest
+from .input_reader import InputReader
 
 class Floris():
     """

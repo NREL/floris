@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import numpy as np
-from .BaseObject import BaseObject
+from .base_object import BaseObject
 
 
 class Coordinate(BaseObject):

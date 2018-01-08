@@ -11,20 +11,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from floris.Wake import Wake
-from .SampleInputs import SampleInputs
+from floris.base_object import BaseObject
 
-class WakeTest():
-    def __init__(self):
-        self.sample_inputs = SampleInputs()
-        self.input_dict = self.build_input_dict()
-
-    def build_input_dict(self):
-        return self.sample_inputs.wake
-
+class BaseObjectTest():
     def test_all(self):
-        test_instantiation()
+        test_object_instantiation()
 
-def test_instantiation():
-    test_class = WakeTest()
-    assert Wake(test_class.input_dict) is not None
+def test_object_instantiation():
+    """
+    The class should initialize with the standard inputs
+    """
+    assert BaseObject() is not None
