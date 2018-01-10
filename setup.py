@@ -44,6 +44,7 @@ setup(
         'numpy >= 1.12.1',
         'scipy >= 0.19.1',
         'matplotlib >= 2.1.0',
+        'pytest >= 3.3.1',
     ],
     python_requires='~=3.3',
 )
