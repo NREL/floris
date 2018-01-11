@@ -43,11 +43,12 @@ Using ``pip``, FLORIS can be installed in two ways
 - using a tagged release version from the ``pip`` repo
 
 For consistency between all developers, it is recommended to use Python virtual environments;
-`this link <https://realpython.com/blog/python/python-virtual-environments-a-primer/>`_ provides a great introduction.
+`this link <https://realpython.com/blog/python/python-virtual-environments-a-primer/>`_  provides a great introduction. Using virtual environments in a Jupyter Notebook is described `here <https://help.pythonanywhere.com/pages/IPythonNotebookVirtualenvs/>`_.
 
 Local editable installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The local editable installation allows developers maintain an importable instance of floris while continuing to extending it.
+
+The local editable installation allows developers maintain an importable instance of FLORIS while continuing to extend it.
 The alternative is to constantly update python paths within the package to match the local environment.
 
 Before doing the local install, the source code repository must be cloned directly from GitHub:
@@ -59,16 +60,16 @@ cloned repository:
 
 ``pip install -e FLORIS/``
 
-Finally, test the installation by starting a python terminal and importing floris:
+Finally, test the installation by starting a python terminal and importing FLORIS:
 
 ``import floris``
 
 pip repo installation
 ~~~~~~~~~~~~~~~~~~~~~
-The floris version available through the pip repository is always the latest tagged and released version.
+The Floris version available through the pip repository is always the latest tagged and released version.
 This version represents the most recent stable, tested, and validated code.
 
-In this case, there is no need to download the source code directly. Floris and its dependencies can be installed with:
+In this case, there is no need to download the source code directly. FLORIS and its dependencies can be installed with:
 
 ``pip install floris``
 
@@ -88,10 +89,15 @@ and incorporate the wake estimation into an optimization routine or other functi
 
 Testing
 =======
-Unit tests are currently included in FLORIS and integrated with the ``pytest``
-framework. Upon instantiating the ``Floris`` class, all unit tests are executed.
-Additionally, unit tests can be executed directly by simply running the command
-``pytest`` from the highest directory in the repository.
+
+In order to maintain a level of confidence in the software, FLORIS is expected to
+maintain a reasonable level of test coverage. To that end, there are unit, integration,
+and regression tests included in the package.
+
+Unit tests are currently included in FLORIS and integrated with the `pytest <https://docs.pytest.org/en/latest/>`_
+framework.
+
+See the testing documentation at ``tests/README.rst`` for more information.
 
 Future work
 ===========
