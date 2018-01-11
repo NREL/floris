@@ -2,6 +2,9 @@
 FLORIS
 ------
 
+.. image:: https://travis-ci.org/WISDEM/FLORIS.svg?branch=develop
+        :target: https://travis-ci.org/WISDEM/FLORIS
+
 For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
 
