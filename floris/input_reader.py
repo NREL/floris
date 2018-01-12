@@ -72,7 +72,7 @@ class InputReader():
             data = json.load(jsonfile)
         return data
 
-    def _validateJSON(self, json_dict, typeMap):
+    def _validateJSON(self, json_dict, type_map):
         """
         Verifies that the expected fields exist in the json input file and
         validates the type of the input data by casting the fields to
@@ -83,7 +83,7 @@ class InputReader():
 
         inputs:
             json_dict: dict - Input dictionary with all elements of type str
-            typeMap: dict - Predefined type map for type checking inputs
+            type_map: dict - Predefined type map for type checking inputs
                              structured as {"property": type}
         outputs:
             validated: dict - Validated and correctly typed input property
@@ -114,13 +114,13 @@ class InputReader():
         # and proper type in the given inputs
         propDict = {}
         properties = json_dict["properties"]
-        for element in typeMap:
+        for element in type_map:
             if element not in properties:
                 raise KeyError("'{}' is required for object type '{}'".format(element, validated["type"]))
 
-            value,error = self._cast_to_type(typeMap[element], properties[element])
+            value,error = self._cast_to_type(type_map[element], properties[element])
             if error is not None:
-                raise error("'{}' must be of type '{}'".format(element, typeMap[element]))
+                raise error("'{}' must be of type '{}'".format(element, type_map[element]))
 
             propDict[element] = value
 
@@ -147,7 +147,7 @@ class InputReader():
         """
         Instantiates a Turbine object from a given input file
         inputs:
-            inputFile: str - path to the json input file
+            json_dict: dict - Input dictionary describing a turbine model
         outputs:
             turbine: Turbine - instantiated Turbine object
         """
@@ -158,7 +158,7 @@ class InputReader():
         """
         Instantiates a Wake object from a given input file
         inputs:
-            inputFile: str - path to the json input file
+            json_dict: dict - Input dictionary describing a wake model
         outputs:
             wake: Wake - instantiated Wake object
         """
@@ -169,7 +169,9 @@ class InputReader():
         """
         Instantiates a Farm object from a given input file
         inputs:
-            inputFile: str - path to the json input file
+            json_dict: dict - Input dictionary describing a farm model
+            turbine: Turbine - Turbine instance used in Farm
+            wake: Wake - Wake instance used in Farm
         outputs:
             farm: Farm - instantiated Farm object
         """
@@ -180,7 +182,7 @@ class InputReader():
         """
         Parses main input file
         inputs:
-            inputFile: str - path to the json input file
+            input_file: str - path to the json input file
         outputs:
             farm: instantiated FLORIS model of wind farm
         """
