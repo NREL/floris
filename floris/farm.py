@@ -21,7 +21,28 @@ import numpy as np
 
 class Farm(BaseObject):
     """
-        Describe farm here
+    Farm is the container class of the FLORIS package. It brings together all 
+    of the component objects after input (ie Turbine, Wake, FlowField) and 
+    packages everything into the appropriate data type. Farm should also be used
+    as an entry point to probe objects for generating output.
+    inputs:
+        instance_dictionary: dict - the input dictionary as generated from the input_reader;
+            it should have the following key-value pairs:
+            {
+                "wind_speed": float,
+                "wind_direction": float,
+                "turbulence_intensity": float,
+                "wind_shear": float,
+                "wind_veer": float,
+                "air_density": float,
+                "wake_combination": str,
+                "layout_x": list,
+                "layout_y": list
+            }
+        turbine: Turbine - Turbine instance used in Farm
+        wake: Wake - Wake instance used in Farm
+    outputs:
+        self: Farm - an instantiated Farm object
     """
 
     def __init__(self, instance_dictionary, turbine, wake):

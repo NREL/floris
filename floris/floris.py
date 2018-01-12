@@ -17,7 +17,12 @@ from .input_reader import InputReader
 class Floris():
     """
     Floris is the highest level class of the Floris package. Import this class
-    and instantiate it with a path to an input file to begin running Floris
+    and instantiate it with a path to an input file to begin running Floris. Use 
+    the ``farm`` attribute to access other objects within the model.
+    inputs:
+        input_file: str - path to the json input file
+    outputs:
+        self: Floris - an instantiated Floris object
     """
 
     def __init__(self, input_file):

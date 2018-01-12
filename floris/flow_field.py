@@ -18,7 +18,22 @@ from .coordinate import Coordinate
 
 class FlowField(BaseObject):
     """
-        Describe FF here
+    FlowField is at the core of the FLORIS package. This class handles the domain
+    creation and initialization and computes the flow field based on the input
+    wake model and turbine map. It also contains helper functions for quick flow
+    field visualization.
+     
+    inputs:
+        wind_speed: float - atmospheric condition
+        wind_direction - atmospheric condition
+        wind_shear - atmospheric condition
+        wind_veer - atmospheric condition
+        turbulence_intensity - atmospheric condition
+        wake: Wake - used to calculate the flow field
+        wake_combination: WakeCombination - used to combine turbine wakes into the flow field
+        turbine_map: TurbineMap - locates turbines in space
+    outputs:
+        self: FlowField - an instantiated FlowField object
     """
 
     def __init__(self,
@@ -87,12 +102,6 @@ class FlowField(BaseObject):
     def _field_value_at_coord(self, target_coord, field):
         xi, yi, zi = self._map_coordinate_to_index(target_coord)
         return field[xi, yi, zi]
-
-    def _initial_flowfield(self):
-        u = np.zeros((self.grid_resolution.x, self.grid_resolution.y, self.grid_resolution.z))
-        for i in range(self.z.shape[2]):
-            u[:, :, i] = self.wind_speed * pow(self.z[:, :, i] / self.hub_height, self.wind_shear)
-        return u
 
     def _initial_flowfield(self):
         turbines = self.turbine_map.turbines
