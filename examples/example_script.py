@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 from floris.floris import Floris
 
-floris = Floris("floris.json")
+floris = Floris("example_input.json")
 
 for coord, turbine in floris.farm.turbine_map.items():
     print(str(coord) + ":")
