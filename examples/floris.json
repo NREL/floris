@@ -46,8 +46,8 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "floris",
-      "deflection_model": "jimenez",
+      "velocity_model": "gauss",
+      "deflection_model": "gauss_deflection",
       "parameters": {
         "jensen": {
           "we": 0.05
