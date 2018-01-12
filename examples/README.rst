@@ -11,7 +11,7 @@ For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.anno
 Input
 =====
 A sample input file to the Floris model is provided at ``examples/example_inputs.json``.
-This example case uses the NREL 5MW turbine and the Gauss wake model as a reference.
+This example case uses the NREL 5MW turbine and the Gaussian wake model as a reference.
 All model parameters provided have been published in previous work, but the inputs to
 in the example input file can be changed as needed. However, be aware that changing these parameters
 may result in an unphysical solution.
@@ -51,7 +51,18 @@ This script provides an example of how to execute Floris.  In particular, this s
 
 example_optimization.py
 =======================
-Coming soon. Currently, see Annotated Usage.
+The Annotated Usage goes into detail on how to run Floris as well as how to set up
+an optimization. The ``example_optimization.py`` script allows a user to run an 
+optimization in Python rather than through an interactive console.  
+
+The optimial yaw angles are computed using:
+
+::
+
+	opt_yaw_angles = OptModules.wake_steering(floris, minimum_yaw_angle, maximum_yaw_angle)
+
+This script will write out the optimal yaw angles as well as plot the resulting
+flow field for the given direction.
 
 Future work
 ===========
