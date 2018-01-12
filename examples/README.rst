@@ -13,14 +13,8 @@ This script provides an example of how to execute Floris.  In particular, this s
 	1. Loads the input file "floris.json" and initializes Floris
 		``floris = Floris("floris.json")``
 
-	2. Computes the local power coefficient, thrust coefficients, power, axial induction, and wind speeds at each turbine.
-		``for coord, turbine in floris.farm.turbine_map.items():
-		    print(str(coord) + ":")
-		    print("\tCp -", turbine.Cp)
-		    print("\tCt -", turbine.Ct)
-		    print("\tpower -", turbine.power)
-		    print("\tai -", turbine.aI)
-		    print("\taverage velocity -", turbine.get_average_velocity())``
+	2. Computes the local power coefficient, thrust coefficients, power, axial induction, and wind speeds at each turbine.  Here is an example of how to get the local wind speeds at a turbine.
+		``turbine.get_average_velocity())``
 
 	3. Plot the flow field at a horizontal slice.  In this example, the flow field is plotted at 50% (0.5) of the total z domain, which is 2x the hub height.  
 		``floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])``
