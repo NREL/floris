@@ -28,7 +28,7 @@ Architecture
 An architecture diagram as in input to `draw.io <https://www.draw.io>`_ is contained in the repository at ``FLORIS/florisarch.xml``.
 
 Generally, a user will not have to write Python code in order to express a wind farm, turbine, or wake model combination. Currently, 
-an example wake model, turbine, and wind farm is expressed in ``examples/floris.json``.
+an example wake model, turbine, and wind farm is expressed in ``examples/example_input.json``.
 
 Dependencies
 ============
@@ -96,7 +96,7 @@ detailing a real world use case at ``example/FLORIS_Run_Notebook.ipynb``.
 Generally, a ``Floris`` class should be instantiated with a path to an input file
 as the sole argument:
 
-``Floris("path/to/floris.json")``
+``Floris("path/to/example_input.json")``
 
 Then, driver programs can calculate the flow field, produce flow field plots,
 and incorporate the wake estimation into an optimization routine or other functionality.
