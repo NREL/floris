@@ -51,7 +51,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'floris'
+project = 'FLORIS'
 copyright = '2018, National Renewable Energy Lab'
 author = 'National Wind Technology Center'
 
@@ -88,6 +88,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
+# html_theme = 'alabaster'
 html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -109,6 +110,7 @@ html_static_path = ['_static']
 html_sidebars = {
     '**': [
         'relations.html',  # needs 'show_related': True theme option to display
+        'navigation.html',
         'searchbox.html',
     ]
 }
