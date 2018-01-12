@@ -5,6 +5,9 @@ FLORIS
 The inputs to the Floirs model are provided in floris.json and use the NREL 5MW turbine as a reference.  The model parameters used have been published in previous work.  All inputs to the FLORIS model can be changed in the floris.json file.  Note that changing these parameters may result in an unphysical solution.  For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
 
+FLORIS_Run_Notebook.ipynb is an interactive python notebook that details the execution of Floris in normal operating conditions.  It also demonstrates how to perform an example optimization for wake steering with Floris.  
+
+
 example_script.py
 =================
 
@@ -26,10 +29,6 @@ example_optimization.py
 
 
 There is absolutely no warranty on the optimization results.  
-
-
-FLORIS_Run_Notebook
-===================
 
 
 Future work
