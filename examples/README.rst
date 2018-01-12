@@ -57,7 +57,7 @@ The optimial yaw angles are computed using:
 
 ::
 
-opt_yaw_angles = OptModules.wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle)
+	opt_yaw_angles = OptModules.wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle)
 
 
 This script will write out the optimal yaw angles as well as plot the resulting flow field for the given direction.
