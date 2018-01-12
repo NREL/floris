@@ -59,6 +59,11 @@ class WakeDeflection(BaseObject):
         # corrected yaw displacement with lateral offset
         deflection = yYaw_init + self.ad + self.bd * x_locations
 
+        x = np.unique(x_locations)
+        for i in range(len(x)):
+            tmp = np.max(deflection[x_locations == x[i]])
+            deflection[x_locations == x[i]] = tmp
+
         return deflection
 
     def _gauss_deflection(self, x_locations, y_locations, turbine, coord, flowfield):

@@ -42,7 +42,7 @@ def wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle):
 
 	turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
 	x0          = [turbine.yaw_angle for turbine in turbines]
-	bnds        = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in turbines]
+	bnds        = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle)) for turbine in turbines]
 	power0      = np.sum([turbine.power for turbine in turbines]) 
 
 	print('=====================================================================')
@@ -50,7 +50,7 @@ def wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle):
 	print('Number of parameters to optimize = ', len(x0))
 	print('=====================================================================')
 
-	residual_plant = minimize(optimize_plant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'ftol':0.001,'eps':0.05})
+	residual_plant = minimize(optimize_plant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'eps':np.radians(5.0)})
 
 	# %%
 	opt_yaw_angles = residual_plant.x

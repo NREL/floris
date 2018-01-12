@@ -63,10 +63,12 @@ class WakeVelocity(BaseObject):
         # +/- 2keX is the slope of the cone boundary for the wake
 
         # define the boundary of the wake model ... y = mx + b
-        m = 2 * self.we
+        m = self.we
         x = x_locations - turbine_coord.x
         b = turbine.rotor_radius
+
         boundary_line = m * x + b
+
         y_upper = boundary_line + turbine_coord.y + deflection_field
         y_lower = -1 * boundary_line + turbine_coord.y + deflection_field
 
@@ -75,7 +77,7 @@ class WakeVelocity(BaseObject):
 
         # calculate the wake velocity
         c = (turbine.rotor_diameter / 
-             (self.we * (x_locations - turbine_coord.x) + turbine.rotor_diameter))**2
+             (2 * self.we * (x_locations - turbine_coord.x) + turbine.rotor_diameter))**2
 
         # filter points upstream and beyond the upper and lower bounds of the wake
         c[x_locations - turbine_coord.x < 0] = 0
@@ -95,7 +97,8 @@ class WakeVelocity(BaseObject):
         aU = self.aU
         bU = self.bU
         radius = turbine.rotor_radius
-        mu = self.mU / np.cos(aU + bU * turbine.yaw_angle)
+        diameter = turbine.rotor_diameter
+        mu = self.mU / np.cos( (aU + bU * np.degrees(turbine.yaw_angle))*np.pi/180. )
         we = self.we
 
         wind_speed = flowfield.wind_speed
@@ -115,7 +118,7 @@ class WakeVelocity(BaseObject):
 
         # near wake zone
         mask = rY <= nearwake
-        c += mask * (radius / (radius + we * mu[0] * dx))**2
+        c += mask * (diameter / (diameter + 2 * we * mu[0] * dx))**2
         #mask = rZ <= nearwake
         #c += mask * (radius / (radius + we * mu[0] * dx))**2
 
@@ -127,7 +130,7 @@ class WakeVelocity(BaseObject):
         # The resulting mask is all the points in far wake zone that are not
         # in the near wake zone
         mask = (rY <= farwake) ^ (rY <= nearwake)
-        c += mask * (radius / (radius + we * mu[1] * dx))**2
+        c += mask * (diameter / (diameter + 2 * we * mu[1] * dx))**2
         #mask = (rZ <= farwake) ^ (rZ <= nearwake)
         #c += mask * (radius / (radius + we * mu[1] * dx))**2
 
@@ -138,7 +141,7 @@ class WakeVelocity(BaseObject):
         # The resulting mask is all the points in mixing zone that are not
         # in the far wake zone and not in  near wake zone
         mask = (rY <= mixing) ^ ((rY <= farwake) | (rY <= nearwake))
-        c += mask * (radius / (radius + we * mu[2] * dx))**2
+        c += mask * (diameter / (diameter + 2 * we * mu[2] * dx))**2
         #mask = (rZ <= mixing) ^ ((rZ <= farwake) | (rZ <= nearwake))
         #c += mask * (radius / (radius + we * mu[2] * dx))**2
 

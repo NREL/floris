@@ -185,6 +185,10 @@ class FlowField(BaseObject):
         # apply the velocity deficit field to the freestream
         self.u_field = self.initial_flowfield - u_wake
 
+        # update wind velocities at each turbine
+        #for coord, turbine in sorted_map:
+        #    turbine.update_quantities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
+
     # Visualization
 
     def _add_z_plane(self, percent_height=0.5):
