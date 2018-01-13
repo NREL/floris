@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# floris documentation build configuration file, created by
-# sphinx-quickstart on Mon Jan  8 11:59:13 2018.
+# FLORIS documentation build configuration file, created by
+# sphinx-quickstart on Fri Jan 12 14:22:01 2018.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -19,7 +19,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join('..','..','floris')))
+cwd = os.getcwd()
+florispath = os.path.dirname(os.path.dirname(cwd))
+sys.path.insert(0, florispath)
+import floris
 
 
 # -- General configuration ------------------------------------------------
@@ -31,12 +34,10 @@ sys.path.insert(0, os.path.abspath(os.path.join('..','..','floris')))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
+extensions = ['sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages']
+    'sphinx.ext.githubpages',
+    'sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -52,8 +53,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'FLORIS'
-copyright = '2018, National Renewable Energy Lab'
-author = 'National Wind Technology Center'
+copyright = '2018, NREL'
+author = 'NREL'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -74,13 +75,13 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+todo_include_todos = False
 
 
 # -- Options for HTML output ----------------------------------------------
@@ -88,7 +89,6 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = 'alabaster'
 html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -109,9 +109,11 @@ html_static_path = ['_static']
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
     '**': [
-        'relations.html',  # needs 'show_related': True theme option to display
+        'about.html',
         'navigation.html',
+        'relations.html',  # needs 'show_related': True theme option to display
         'searchbox.html',
+        'donate.html',
     ]
 }
 
@@ -119,7 +121,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'florisdoc'
+htmlhelp_basename = 'FLORISdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -146,8 +148,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'floris.tex', 'floris Documentation',
-     'National Renewable Energy Lab', 'manual'),
+    (master_doc, 'FLORIS.tex', 'FLORIS Documentation',
+     'NREL', 'manual'),
 ]
 
 
@@ -156,7 +158,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'floris', 'floris Documentation',
+    (master_doc, 'floris', 'FLORIS Documentation',
      [author], 1)
 ]
 
@@ -167,31 +169,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'floris', 'floris Documentation',
-     author, 'floris', 'One line description of project.',
+    (master_doc, 'FLORIS', 'FLORIS Documentation',
+     author, 'FLORIS', 'One line description of project.',
      'Miscellaneous'),
 ]
 
-
-
-# -- Options for Epub output ----------------------------------------------
-
-# Bibliographic Dublin Core info.
-epub_title = project
-epub_author = author
-epub_publisher = author
-epub_copyright = copyright
-
-# The unique identifier of the text. This can be a ISBN number
-# or the project homepage.
-#
-# epub_identifier = ''
-
-# A unique identification for the text.
-#
-# epub_uid = ''
-
-# A list of files that should not be packed into the epub file.
-epub_exclude_files = ['search.html']
 
 

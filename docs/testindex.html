@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FLORIS Tests &#8212; FLORIS 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code Reference" href="code.html" />
+    <link rel="prev" title="Welcome to FLORIS" href="README.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="floris-tests">
+<span id="testindex"></span><h1>FLORIS Tests<a class="headerlink" href="#floris-tests" title="Permalink to this headline">¶</a></h1>
+<p>In order to maintain a level of confidence in the software, FLORIS is expected to
+maintain a reasonable level of test coverage. To that end, there are unit, integration,
+and regression tests included in the package.</p>
+<div class="section" id="unit-tests">
+<h2>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
+<p>Unit tests are currently included in FLORIS and integrated with the <a class="reference external" href="https://docs.pytest.org/en/latest/">pytest</a>
+framework.</p>
+<p>In the <code class="docutils literal"><span class="pre">Floris</span></code> class initializer, all unit tests are executed and must pass for
+initialization to succeed. Unit tests can also be executed directly by simply running the command
+<code class="docutils literal"><span class="pre">pytest</span></code> from the highest directory in the repository.</p>
+<p>The currently tested modules are:</p>
+<ul class="simple">
+<li>coordinate.py</li>
+<li>flow_field.py</li>
+<li>wake.py</li>
+</ul>
+<p>A testing-only class is included to provide consistent and convenient inputs
+to modules at <code class="docutils literal"><span class="pre">sample_inputs.py</span></code>.</p>
+</div>
+<div class="section" id="integration-tests">
+<h2>Integration Tests<a class="headerlink" href="#integration-tests" title="Permalink to this headline">¶</a></h2>
+<p>Coming soon.</p>
+</div>
+<div class="section" id="regression-tests">
+<h2>Regression Tests<a class="headerlink" href="#regression-tests" title="Permalink to this headline">¶</a></h2>
+<p>Coming soon.</p>
+</div>
+<div class="section" id="continuous-integration">
+<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this headline">¶</a></h2>
+<p>Continuous integration is configured with <a class="reference external" href="https://travis-ci.org">TravisCI</a> and executes all of the existing tests
+for every commit. The configuration file is located in the top directory at <code class="docutils literal"><span class="pre">.travis.yml</span></code>.</p>
+<p>If forked, continuous integration can be included with TravisCI by simply creating an account,
+linking to a GitHub account, and turning on the switch to test the FLORIS fork.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">FLORIS</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Welcome to FLORIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#background-and-objectives">Background and objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#architecture">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#dependencies">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#executing-floris">Executing FLORIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#testing">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#future-work">Future work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#license">License</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FLORIS Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-tests">Integration Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#regression-tests">Regression Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Code Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="README.html" title="previous chapter">Welcome to FLORIS</a></li>
+      <li>Next: <a href="code.html" title="next chapter">Code Reference</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, NREL.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/testindex.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
