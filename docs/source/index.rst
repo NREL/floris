@@ -5,6 +5,6 @@
     :hidden:
     :glob:
 
-    testindex
+    tests
     examples
     code
