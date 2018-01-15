@@ -11,17 +11,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .base_object_test import BaseObjectTest
 from .coordinate_test import CoordinateTest
 from .flow_field_test import FlowFieldTest
 
 class FlorisUnitTest():
     def __init__(self):
-        self.baseobject = BaseObjectTest()
         self.coordinate = CoordinateTest()
         self.flowfield = FlowFieldTest()
 
     def run_tests(self):
-        self.baseobject.test_all()
         self.coordinate.test_all()
         self.flowfield.test_all()

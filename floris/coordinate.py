@@ -10,10 +10,8 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
-from .base_object import BaseObject
 
-
-class Coordinate(BaseObject):
+class Coordinate():
     """
         The Coordinate class is a container for coordinates. It provides a
         convenient and consistent wrapper in order to avoid referencing components

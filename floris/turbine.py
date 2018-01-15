@@ -9,13 +9,11 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from .base_object import BaseObject
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
 
-
-class Turbine(BaseObject):
+class Turbine():
     """
     Turbine is model object representing a particular wind turbine. It is largely
     a container of data and parameters, but also contains method to probe properties

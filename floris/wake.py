@@ -10,11 +10,10 @@
 # specific language governing permissions and limitations under the License.
 
 
-from .base_object import BaseObject
 from .wake_deflection import WakeDeflection
 from .wake_velocity import WakeVelocity
 
-class Wake(BaseObject):
+class Wake():
     """
     Wake is a container class for the various wake model objects. In particular,
     Wake holds references to the velocity and deflection models as well as their

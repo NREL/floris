@@ -9,13 +9,11 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from .base_object import BaseObject
 from .coordinate import Coordinate
 from .turbine import Turbine
 import numpy as np
 
-
-class TurbineMap(BaseObject):
+class TurbineMap():
     """
     TurbineMap is container object which maps a Turbine instance to a Coordinate
     object. This class also provides some helper methods for sorting and 

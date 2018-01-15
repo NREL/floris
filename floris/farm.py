@@ -9,7 +9,6 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from .base_object import BaseObject
 from .coordinate import Coordinate
 from .wake_combination import WakeCombination
 from .flow_field import FlowField
@@ -17,7 +16,7 @@ from .turbine_map import TurbineMap
 import copy
 import numpy as np
 
-class Farm(BaseObject):
+class Farm():
     """
     Farm is the container class of the FLORIS package. It brings together all
     of the component objects after input (ie Turbine, Wake, FlowField) and

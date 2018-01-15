@@ -10,11 +10,10 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
-from .base_object import BaseObject
 from .visualization_manager import VisualizationManager
 from .coordinate import Coordinate
 
-class FlowField(BaseObject):
+class FlowField():
     """
     FlowField is at the core of the FLORIS package. This class handles the domain
     creation and initialization and computes the flow field based on the input

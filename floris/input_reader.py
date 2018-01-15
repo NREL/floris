@@ -14,7 +14,6 @@ from .wake import Wake
 from .farm import Farm
 import json
 
-
 class InputReader():
     """
     InputReader is a helper class which parses json input files and provides an

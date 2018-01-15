@@ -9,11 +9,9 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-
 from .coordinate import Coordinate
 import matplotlib.pyplot as plt
 import numpy as np
-
 
 class VisualizationManager():
     """

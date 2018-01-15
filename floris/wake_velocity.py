@@ -9,11 +9,9 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from .base_object import BaseObject
 import numpy as np
 
-
-class WakeVelocity(BaseObject):
+class WakeVelocity():
 
     def __init__(self, type_string, parameter_dictionary):
         super().__init__()
