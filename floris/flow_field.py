@@ -17,24 +17,7 @@ from .visualization_manager import VisualizationManager
 from .coordinate import Coordinate
 
 class FlowField(BaseObject):
-    """
-    FlowField is at the core of the FLORIS package. This class handles the domain
-    creation and initialization and computes the flow field based on the input
-    wake model and turbine map. It also contains helper functions for quick flow
-    field visualization.
-     
-    inputs:
-        wind_speed: float - atmospheric condition
-        wind_direction - atmospheric condition
-        wind_shear - atmospheric condition
-        wind_veer - atmospheric condition
-        turbulence_intensity - atmospheric condition
-        wake: Wake - used to calculate the flow field
-        wake_combination: WakeCombination - used to combine turbine wakes into the flow field
-        turbine_map: TurbineMap - locates turbines in space
-    outputs:
-        self: FlowField - an instantiated FlowField object
-    """
+    
 
     def __init__(self,
                  wind_speed,
@@ -45,6 +28,24 @@ class FlowField(BaseObject):
                  wake,
                  wake_combination,
                  turbine_map):
+        """
+        FlowField is at the core of the FLORIS package. This class handles the domain
+        creation and initialization and computes the flow field based on the input
+        wake model and turbine map. It also contains helper functions for quick flow
+        field visualization.
+            
+        inputs:
+            wind_speed: float - atmospheric condition
+            wind_direction - atmospheric condition
+            wind_shear - atmospheric condition
+            wind_veer - atmospheric condition
+            turbulence_intensity - atmospheric condition
+            wake: Wake - used to calculate the flow field
+            wake_combination: WakeCombination - used to combine turbine wakes into the flow field
+            turbine_map: TurbineMap - locates turbines in space
+        outputs:
+            self: FlowField - an instantiated FlowField object
+        """
 
         super().__init__()
 

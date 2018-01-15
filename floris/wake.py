@@ -16,30 +16,30 @@ from .wake_deflection import WakeDeflection
 from .wake_velocity import WakeVelocity
 
 class Wake(BaseObject):
-    """
-    Wake is a container class for the various wake model objects. In particular, 
-    Wake holds references to the velocity and deflection models as well as their
-    parameters.
-     
-    inputs:
-        instance_dictionary: dict - the input dictionary;
-            it should have the following key-value pairs:
-            {
-                "description": str,
-                "properties": dict({
-                    velocity_model: WakeVelocity
-                    deflection_model: WakeDeflection
-                    parameters: dict({
-                        see WakeVelocity, WakeDeflection
-                    })
-                }),
-            }
-
-    outputs:
-        self: Wake - an instantiated Wake object
-    """
 
     def __init__(self, instance_dictionary):
+        """
+        Wake is a container class for the various wake model objects. In particular,
+        Wake holds references to the velocity and deflection models as well as their
+        parameters.
+
+        inputs:
+            instance_dictionary: dict - the input dictionary;
+                it should have the following key-value pairs:
+                {
+                    "description": str,
+                    "properties": dict({
+                        velocity_model: WakeVelocity
+                        deflection_model: WakeDeflection
+                        parameters: dict({
+                            see WakeVelocity, WakeDeflection
+                        })
+                    }),
+                }
+
+        outputs:
+            self: Wake - an instantiated Wake object
+        """
 
         super().__init__()
 

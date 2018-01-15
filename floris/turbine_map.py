@@ -18,14 +18,25 @@ import numpy as np
 
 
 class TurbineMap(BaseObject):
-    """
-    Describe TurbineMap
-
-    inputs:
-        turbine_map: dict<Coordinate(), Turbine()>
-    """
 
     def __init__(self, turbine_map):
+        """
+        TurbineMap is container object which maps a Turbine instance to a Coordinate
+        object. This class also provides some helper methods for sorting and 
+        manipulating the turbine layout.
+
+        inputs:
+            turbine_map: dict - a dictionary mapping of Turbines to Coordinates
+                it should have the following form:
+                {
+                    Coordinate(): Turbine(),
+                    Coordinate(): Turbine(),
+                    ...,
+                    Coordinate(): Turbine(),
+                }
+        outputs:
+            self: TurbineMap - an instantiated TurbineMap object
+        """
 
         super().__init__()
 

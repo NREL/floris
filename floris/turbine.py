@@ -18,32 +18,32 @@ from scipy.interpolate import griddata
 
 
 class Turbine(BaseObject):
-    """
-    Turbine is model object representing a particular wind turbine. It is largely
-    a container of data and parameters, but also contains method to probe properties
-    for output.
-    inputs:
-        instance_dictionary: dict - the input dictionary as generated from the input_reader;
-            it should have the following key-value pairs:
-            {
-                "rotor_diameter": float,
-                "hub_height": float,
-                "blade_count": int,
-                "pP": float,
-                "pT": float,
-                "generator_efficiency": float,
-                "eta": float,
-                "power_thrust_table": dict,
-                "blade_pitch": float,
-                "yaw_angle": float,
-                "tilt_angle": float,
-                "TSR": float
-            }
-    outputs:
-        self: Turbine - an instantiated Turbine object
-    """
 
     def __init__(self, instance_dictionary):
+        """
+        Turbine is model object representing a particular wind turbine. It is largely
+        a container of data and parameters, but also contains method to probe properties
+        for output.
+        inputs:
+            instance_dictionary: dict - the input dictionary as generated from the input_reader;
+                it should have the following key-value pairs:
+                {
+                    "rotor_diameter": float,
+                    "hub_height": float,
+                    "blade_count": int,
+                    "pP": float,
+                    "pT": float,
+                    "generator_efficiency": float,
+                    "eta": float,
+                    "power_thrust_table": dict,
+                    "blade_pitch": float,
+                    "yaw_angle": float,
+                    "tilt_angle": float,
+                    "TSR": float
+                }
+        outputs:
+            self: Turbine - an instantiated Turbine object
+        """
 
         super().__init__()
 

@@ -18,19 +18,19 @@ import json
 
 
 class InputReader():
-    """
-    InputReader is a helper class which parses json input files and provides an
-    interface to instantiate model objects in FLORIS. This class handles input
-    validation regarding input type, but does not enforce value checking. It is
-    designed to function as a singleton object, but that is not enforced or required.
-    
-    inputs:
-        None
-    outputs:
-        self: InputReader - an instantiated InputReader object
-    """
 
     def __init__(self):
+        """
+        InputReader is a helper class which parses json input files and provides an
+        interface to instantiate model objects in FLORIS. This class handles input
+        validation regarding input type, but does not enforce value checking. It is
+        designed to function as a singleton object, but that is not enforced or required.
+
+        inputs:
+            None
+        outputs:
+            self: InputReader - an instantiated InputReader object
+        """
 
         self._validObjects = ["turbine", "wake", "farm"]
 

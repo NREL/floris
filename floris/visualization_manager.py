@@ -17,16 +17,17 @@ import numpy as np
 
 
 class VisualizationManager():
-    """
-    The VisualizationManager handles all of the lower level visualization instantiation 
-    and data management. Currently, it produces 2D matplotlib plots for a given plane 
-    of data.
-
-    IT IS IMPORTANT to note that this class should be treated as a singleton. That is, 
-    only one instance of this class should exist.
-    """
 
     def __init__(self):
+        """
+        The VisualizationManager handles all of the lower level visualization instantiation 
+        and data management. Currently, it produces 2D matplotlib plots for a given plane 
+        of data.
+
+        IT IS IMPORTANT to note that this class should be treated as a singleton. That is, 
+        only one instance of this class should exist.
+        """
+
         self.figure_count = 0
 
     def _set_texts(self, plot_title, horizontal_axis_title, vertical_axis_title):
