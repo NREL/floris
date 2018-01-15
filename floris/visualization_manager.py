@@ -1,15 +1,14 @@
-"""
-Copyright 2017 NREL
+# Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
+
 
 from .coordinate import Coordinate
 import matplotlib.pyplot as plt
@@ -17,17 +16,16 @@ import numpy as np
 
 
 class VisualizationManager():
+    """
+    The VisualizationManager handles all of the lower level visualization instantiation
+    and data management. Currently, it produces 2D matplotlib plots for a given plane
+    of data.
+
+    IT IS IMPORTANT to note that this class should be treated as a singleton. That is,
+    only one instance of this class should exist.
+    """
 
     def __init__(self):
-        """
-        The VisualizationManager handles all of the lower level visualization instantiation 
-        and data management. Currently, it produces 2D matplotlib plots for a given plane 
-        of data.
-
-        IT IS IMPORTANT to note that this class should be treated as a singleton. That is, 
-        only one instance of this class should exist.
-        """
-
         self.figure_count = 0
 
     def _set_texts(self, plot_title, horizontal_axis_title, vertical_axis_title):

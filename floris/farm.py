@@ -1,15 +1,13 @@
-"""
-Copyright 2017 NREL
+# Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
 
 from .base_object import BaseObject
 from .coordinate import Coordinate
@@ -20,32 +18,45 @@ import copy
 import numpy as np
 
 class Farm(BaseObject):
+    """
+    Farm is the container class of the FLORIS package. It brings together all
+    of the component objects after input (ie Turbine, Wake, FlowField) and
+    packages everything into the appropriate data type. Farm should also be used
+    as an entry point to probe objects for generating output.
 
-    def __init__(self, instance_dictionary, turbine, wake):
-        """
-        Farm is the container class of the FLORIS package. It brings together all 
-        of the component objects after input (ie Turbine, Wake, FlowField) and 
-        packages everything into the appropriate data type. Farm should also be used
-        as an entry point to probe objects for generating output.
-        inputs:
-            instance_dictionary: dict - the input dictionary as generated from the input_reader;
-                it should have the following key-value pairs:
+    inputs:
+        instance_dictionary: dict - the input dictionary as generated from the input_reader;
+            it should have the following key-value pairs:
                 {
                     "wind_speed": float,
+
                     "wind_direction": float,
+
                     "turbulence_intensity": float,
+
                     "wind_shear": float,
+
                     "wind_veer": float,
+
                     "air_density": float,
+
                     "wake_combination": str,
+
                     "layout_x": list,
+
                     "layout_y": list
+        
                 }
-            turbine: Turbine - Turbine instance used in Farm
-            wake: Wake - Wake instance used in Farm
-        outputs:
-            self: Farm - an instantiated Farm object
-        """
+     
+        turbine: Turbine - Turbine instance used in Farm
+
+        wake: Wake - Wake instance used in Farm
+
+    outputs:
+        self: Farm - an instantiated Farm object
+    """
+
+    def __init__(self, instance_dictionary, turbine, wake):
 
         super().__init__()
 

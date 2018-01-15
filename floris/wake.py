@@ -1,45 +1,52 @@
-"""
-Copyright 2017 NREL
+# Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
+
 
 from .base_object import BaseObject
 from .wake_deflection import WakeDeflection
 from .wake_velocity import WakeVelocity
 
 class Wake(BaseObject):
+    """
+    Wake is a container class for the various wake model objects. In particular,
+    Wake holds references to the velocity and deflection models as well as their
+    parameters.
 
-    def __init__(self, instance_dictionary):
-        """
-        Wake is a container class for the various wake model objects. In particular,
-        Wake holds references to the velocity and deflection models as well as their
-        parameters.
-
-        inputs:
-            instance_dictionary: dict - the input dictionary;
-                it should have the following key-value pairs:
+    inputs:
+        instance_dictionary: dict - the input dictionary;
+            it should have the following key-value pairs:
                 {
                     "description": str,
+
                     "properties": dict({
+
                         velocity_model: WakeVelocity
+
                         deflection_model: WakeDeflection
+
                         parameters: dict({
+
                             see WakeVelocity, WakeDeflection
+
                         })
+
                     }),
+
                 }
 
-        outputs:
-            self: Wake - an instantiated Wake object
-        """
+    outputs:
+        self: Wake - an instantiated Wake object
+    """
+
+    def __init__(self, instance_dictionary):
 
         super().__init__()
 

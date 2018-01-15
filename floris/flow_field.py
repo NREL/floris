@@ -1,15 +1,13 @@
-"""
-Copyright 2017 NREL
+# Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
 
 import numpy as np
 from .base_object import BaseObject
@@ -17,7 +15,32 @@ from .visualization_manager import VisualizationManager
 from .coordinate import Coordinate
 
 class FlowField(BaseObject):
-    
+    """
+    FlowField is at the core of the FLORIS package. This class handles the domain
+    creation and initialization and computes the flow field based on the input
+    wake model and turbine map. It also contains helper functions for quick flow
+    field visualization.
+        
+    inputs:
+        wind_speed: float - atmospheric condition
+
+        wind_direction - atmospheric condition
+        
+        wind_shear - atmospheric condition
+        
+        wind_veer - atmospheric condition
+        
+        turbulence_intensity - atmospheric condition
+        
+        wake: Wake - used to calculate the flow field
+        
+        wake_combination: WakeCombination - used to combine turbine wakes into the flow field
+        
+        turbine_map: TurbineMap - locates turbines in space
+
+    outputs:
+        self: FlowField - an instantiated FlowField object
+    """
 
     def __init__(self,
                  wind_speed,
@@ -28,24 +51,6 @@ class FlowField(BaseObject):
                  wake,
                  wake_combination,
                  turbine_map):
-        """
-        FlowField is at the core of the FLORIS package. This class handles the domain
-        creation and initialization and computes the flow field based on the input
-        wake model and turbine map. It also contains helper functions for quick flow
-        field visualization.
-            
-        inputs:
-            wind_speed: float - atmospheric condition
-            wind_direction - atmospheric condition
-            wind_shear - atmospheric condition
-            wind_veer - atmospheric condition
-            turbulence_intensity - atmospheric condition
-            wake: Wake - used to calculate the flow field
-            wake_combination: WakeCombination - used to combine turbine wakes into the flow field
-            turbine_map: TurbineMap - locates turbines in space
-        outputs:
-            self: FlowField - an instantiated FlowField object
-        """
 
         super().__init__()
 

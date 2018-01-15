@@ -1,15 +1,13 @@
-"""
-Copyright 2017 NREL
+# Copyright 2017 NREL
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-"""
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
 
 from .base_object import BaseObject
 import numpy as np
@@ -18,32 +16,47 @@ from scipy.interpolate import griddata
 
 
 class Turbine(BaseObject):
+    """
+    Turbine is model object representing a particular wind turbine. It is largely
+    a container of data and parameters, but also contains method to probe properties
+    for output.
+
+    inputs:
+        instance_dictionary: dict - the input dictionary as generated from the input_reader;
+            it should have the following key-value pairs:
+                {
+        
+                    "rotor_diameter": float,
+        
+                    "hub_height": float,
+        
+                    "blade_count": int,
+        
+                    "pP": float,
+        
+                    "pT": float,
+        
+                    "generator_efficiency": float,
+        
+                    "eta": float,
+        
+                    "power_thrust_table": dict,
+        
+                    "blade_pitch": float,
+        
+                    "yaw_angle": float,
+        
+                    "tilt_angle": float,
+        
+                    "TSR": float
+        
+                }
+
+    outputs:
+        self: Turbine - an instantiated Turbine object
+    """
 
     def __init__(self, instance_dictionary):
-        """
-        Turbine is model object representing a particular wind turbine. It is largely
-        a container of data and parameters, but also contains method to probe properties
-        for output.
-        inputs:
-            instance_dictionary: dict - the input dictionary as generated from the input_reader;
-                it should have the following key-value pairs:
-                {
-                    "rotor_diameter": float,
-                    "hub_height": float,
-                    "blade_count": int,
-                    "pP": float,
-                    "pT": float,
-                    "generator_efficiency": float,
-                    "eta": float,
-                    "power_thrust_table": dict,
-                    "blade_pitch": float,
-                    "yaw_angle": float,
-                    "tilt_angle": float,
-                    "TSR": float
-                }
-        outputs:
-            self: Turbine - an instantiated Turbine object
-        """
 
         super().__init__()
 
@@ -229,8 +242,10 @@ class Turbine(BaseObject):
     def set_yaw_angle(self, angle):
         """
         Sets the turbine yaw angle
+        
         inputs:
             angle: float - new yaw angle in degrees
+        
         outputs:
             none
         """
