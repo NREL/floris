@@ -74,7 +74,12 @@ todo_include_todos = False
 
 html_theme = 'alabaster'
 html_theme_options = {
-    "fixed_sidebar": True
+    # "logo": "logo.png",
+    # "logo_name": True,
+    # "travis_button": True,
+    "fixed_sidebar": True,
+    "github_user": "WISDEM",
+    "github_repo": "FLORIS"
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
