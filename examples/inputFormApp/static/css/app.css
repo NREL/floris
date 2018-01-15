@@ -1,0 +1,71 @@
+.pad-top-10 {
+  padding-top:10px;
+}
+.pad-top-20 {
+  padding-top:20px;
+}
+
+.pad-bot-10 {
+  padding-bottom:10px;
+}
+
+.pad-bot-20 {
+  padding-bottom:20px;
+}
+
+.pad-fix {
+  padding-left:17px !important;
+  padding-right:17px !important;
+}
+
+.bold {
+  font-weight:bold;
+}
+
+.navbar-custom {
+  background-color:#377BB5;
+  color:#ffffff;
+  border-radius:0;
+}
+
+.navbar-custom .navbar-nav > li > a {
+  color:#fff;
+}
+
+.navbar-custom .navbar-nav > .active > a {
+  color: #ffffff;
+  background-color:transparent;
+}
+
+.navbar-custom .navbar-nav > li > a:hover,
+.navbar-custom .navbar-nav > li > a:focus,
+.navbar-custom .navbar-nav > .active > a:hover,
+.navbar-custom .navbar-nav > .active > a:focus,
+.navbar-custom .navbar-nav > .open >a {
+  text-decoration: none;
+  background-color: #33aa33;
+}
+
+.navbar-custom .navbar-brand {
+  color:#eeeeee;
+}
+.navbar-custom .navbar-toggle {
+  background-color:#eeeeee;
+}
+.navbar-custom .icon-bar {
+  background-color:#33aa33;
+}
+
+.panel-default > .panel-heading-custom {
+  background: #377BB5; color: #fff;
+}
+
+.modal-header-custom {
+  background: #5FB760 !important;
+  color: #fff !important;
+}
+
+.modal-header-error {
+  background: #D75452 !important;
+  color: #fff !important;
+}

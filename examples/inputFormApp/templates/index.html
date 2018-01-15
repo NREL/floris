@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" ng-app="angularApp">
+    <head>
+      <meta charset="utf-8">
+      <title>FLORIS Input File Generator</title>
+
+      <link rel="stylesheet" href="/static/css/bootstrap.css">
+      <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+      <link rel="stylesheet" href="/static/css/app.css">
+
+      <script src="/static/lib/angular.js"></script>
+
+      <script src="/static/lib/jquery-3.2.1.js"></script>
+      <script src="/static/lib/bootstrap.js"></script>
+      <script src="/static/js/app.js"></script>
+      <script src="/static/js/controllers.js"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">FLORIS Input File Generator</a>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <header class="header clearfix"></header>
+
+            <main role="main" ng-view></main>
+
+            <footer class="footer footer-inverse">
+              <div class="container">
+                <p class="text-muted"></p>
+              </div>
+            </footer>
+        </div>
+    </body>
+</html>

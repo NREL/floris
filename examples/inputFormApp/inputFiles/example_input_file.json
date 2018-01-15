@@ -1,0 +1,97 @@
+{
+  "description": "Example FLORIS Input file",
+  "farm": {
+    "description": "Example Wind Farm",
+    "name": "farm_example_2x2",
+    "properties": {
+      "air_density": 1.225,
+      "layout_x": [
+        0,
+        10,
+        20
+      ],
+      "layout_y": [
+        0,
+        0,
+        5
+      ],
+      "turbulence_intensity": 0.1,
+      "wake_combination": "sosfs",
+      "wind_direction": 270,
+      "wind_shear": 0.12,
+      "wind_speed": 8,
+      "wind_veer": 0
+    },
+    "type": "farm"
+  },
+  "name": "floris_input_file_Example",
+  "turbine": {
+    "description": "NREL 5MW",
+    "name": "nrel_5mw",
+    "properties": {
+      "TSR": 8,
+      "blade_count": 3,
+      "blade_pitch": 1.9,
+      "eta": 0.768,
+      "generator_efficiency": 1,
+      "hub_height": 90,
+      "pP": 1.88,
+      "pT": 1.88,
+      "power_thrust_table": {
+        "power": [],
+        "thrust": [],
+        "wind_speed": []
+      },
+      "rotor_diameter": 126,
+      "tilt_angle": 0,
+      "yaw_angle": 20
+    },
+    "type": "turbine"
+  },
+  "type": "floris input",
+  "wake": {
+    "description": "wake",
+    "name": "wake_default",
+    "properties": {
+      "deflection_model": "jimenez",
+      "parameters": {
+        "floris": {
+          "aU": 12,
+          "bU": 1.3,
+          "mU": [
+            0.5,
+            1,
+            5.5
+          ],
+          "me": [
+            -0.05,
+            0.3,
+            1
+          ]
+        },
+        "gauss": {
+          "alpha": 0.58,
+          "beta": 0.077,
+          "ka": 0.38371,
+          "kb": 0.004
+        },
+        "gauss_deflection": {
+          "ad": 0,
+          "alpha": 0.58,
+          "bd": 0,
+          "beta": 0.077
+        },
+        "jensen": {
+          "we": 0.05
+        },
+        "jimenez": {
+          "ad": -4.5,
+          "bd": -0.01,
+          "kd": 0.17
+        }
+      },
+      "velocity_model": "gauss"
+    },
+    "type": "wake"
+  }
+}
