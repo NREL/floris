@@ -1,6 +1,6 @@
 
-FLORIS
-------
+FLORIS Wake Modeling Utility
+----------------------------
 
 .. image:: https://travis-ci.org/WISDEM/FLORIS.svg?branch=develop
         :target: https://travis-ci.org/WISDEM/FLORIS
