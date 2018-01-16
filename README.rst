@@ -2,33 +2,9 @@
 FLORIS Wake Modeling Utility
 ----------------------------
 
-.. image:: https://travis-ci.org/WISDEM/FLORIS.svg?branch=develop
-        :target: https://travis-ci.org/WISDEM/FLORIS
+Further documentation is available at http://floris.readthedocs.io/.
 
 For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
-
-
-Background and objectives
-=========================
-This FLORIS model is designed to provide a computationally inexpensive, controls-oriented model of the steady-state wake characteristics in a wind farm.  This can be used for real-time optimization and control.  This version of FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al. 2016), and Gaussian wake model.  Literature on the Gaussian model can be found in the following papers:
-
-1. Niayifar, A. and Porté-Agel, F.: A new 15 analytical model for wind farm power prediction, in: Journal of Physics: Conference Series, vol. 625, p. 012039, IOP Publishing, 2015.
-
-2. Dilip, D. and Porté-Agel, F.: Wind Turbine Wake Mitigation through Blade Pitch Offset, Energies, 10, 757, 2017.
-
-3. Abkar, M. and Porté-Agel, F.: Influence of atmospheric stability on wind-turbine wakes: A large-eddy simulation study, Physics of Fluids, 27, 035 104, 2015.
-
-4. Bastankhah, M. and Porté-Agel, F.: A new analytical model for wind-turbine wakes, Renewable Energy, 70, 116–123, 2014.
-
-5. Bastankhah, M. and Porté-Agel, 5 F.: Experimental and theoretical study of wind turbine wakes in yawed conditions, Journal of FluidMechanics, 806, 506–541, 2016.
-
-
-Architecture
-============
-An architecture diagram as in input to `draw.io <https://www.draw.io>`_ is contained in the repository at ``FLORIS/florisarch.xml``.
-
-Generally, a user will not have to write Python code in order to express a wind farm, turbine, or wake model combination. Currently, 
-an example wake model, turbine, and wind farm is expressed in ``examples/example_input.json``.
 
 Dependencies
 ============
@@ -100,22 +76,6 @@ as the sole argument:
 
 Then, driver programs can calculate the flow field, produce flow field plots,
 and incorporate the wake estimation into an optimization routine or other functionality.
-
-Testing
-=======
-
-In order to maintain a level of confidence in the software, FLORIS is expected to
-maintain a reasonable level of test coverage. To that end, there are unit, integration,
-and regression tests included in the package.
-
-Unit tests are currently included in FLORIS and integrated with the `pytest <https://docs.pytest.org/en/latest/>`_
-framework.
-
-See the testing documentation at ``tests/README.rst`` for more information.
-
-Future work
-===========
-Coming soon
 
 License
 =======

@@ -20,11 +20,12 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='floris',
+    name='FLORIS',
     version='0.1.0',
     description='A wind turbine wake modeling software',
     long_description=long_description,
-    url='https://github.com/wisdem/floris',
+    downloadurl='https://github.com/WISDEM/FLORIS/archive/v0.1.0.tar.gz',
+    url='https://github.com/WISDEM/FLORIS',
     author='NREL National Wind Technology Center',
     author_email='rafael.mudafort@nrel.gov',
     license='Apache-2.0',

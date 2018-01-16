@@ -76,7 +76,7 @@ html_theme = 'alabaster'
 html_theme_options = {
     # "logo": "logo.png",
     # "logo_name": True,
-    # "travis_button": True,
+    "travis_button": True,
     "fixed_sidebar": True,
     "github_user": "WISDEM",
     "github_repo": "FLORIS"
