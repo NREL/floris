@@ -2,13 +2,13 @@
 FLORIS Wake Modeling Utility
 ----------------------------
 
-Further documentation is available at http://floris.readthedocs.io/.
+**Further documentation is available at http://floris.readthedocs.io/.**
 
 For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
 Dependencies
 ============
-The following packages are required for FLORIS
+The following packages are used in FLORIS
 
 - Python3
 
@@ -18,9 +18,11 @@ The following packages are required for FLORIS
 
 - matplotlib v2.1.0
 
-- pytest v3.3.1
+- pytest v3.3.1 (optional)
 
-After installing Python3, the remaining dependencies can be installed with ``pip`` referencing the requirements list using this command:
+- Sphinx v1.6.6 (optional)
+
+After installing Python3, the remaining required dependencies can be installed with ``pip`` referencing the requirements list using this command:
 
 ``pip install -r requirements.txt``
 

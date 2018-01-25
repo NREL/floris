@@ -3,8 +3,8 @@
     :hidden:
     :glob:
 
-    tests
     examples
+    tests
     code
 
 
@@ -38,7 +38,7 @@ an example wake model, turbine, and wind farm is expressed in ``examples/example
 
 Dependencies
 ============
-The following packages are required for FLORIS
+The following packages are used in FLORIS
 
 - Python3
 
@@ -48,9 +48,11 @@ The following packages are required for FLORIS
 
 - matplotlib v2.1.0
 
-- pytest v3.3.1
+- pytest v3.3.1 (optional)
 
-After installing Python3, the remaining dependencies can be installed with ``pip`` referencing the requirements list using this command:
+- Sphinx v1.6.6 (optional)
+
+After installing Python3, the remaining required dependencies can be installed with ``pip`` referencing the requirements list using this command:
 
 ``pip install -r requirements.txt``
 

@@ -10,10 +10,7 @@ Unit Tests
 ==========
 
 Unit tests are currently included in FLORIS and integrated with the `pytest <https://docs.pytest.org/en/latest/>`_
-framework.
-
-In the ``Floris`` class initializer, all unit tests are executed and must pass for
-initialization to succeed. Unit tests can also be executed directly by simply running the command
+framework. These can be executed by simply running the command
 ``pytest`` from the highest directory in the repository.
 
 The currently tested modules are:
