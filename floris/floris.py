@@ -9,7 +9,6 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from tests.floris_unit import FlorisUnitTest
 from .input_reader import InputReader
 
 class Floris():
@@ -26,13 +25,6 @@ class Floris():
     """
 
     def __init__(self, input_file):
-        
-        try:
-            FlorisUnitTest().run_tests()
-        except AssertionError:
-            error = "floris unit tests failed. " \
-                + "Run the standalone pytest framework to debug."
-            raise RuntimeError(error)
 
         self.input_reader = InputReader()
         self.input_file = input_file
