@@ -1,6 +1,6 @@
 
-FLORIS Examples
----------------
+Examples
+--------
 
 As FLORIS is a versatile, standalone wake analysis tool, it can be used effectively
 in a variety of ways. Some example cases are provided in ``examples/``.

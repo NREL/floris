@@ -5,6 +5,7 @@
 
     examples
     tests
+    for_developers
     code
 
 

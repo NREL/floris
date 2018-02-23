@@ -1,6 +1,6 @@
 
-FLORIS Tests
-------------
+Tests
+-----
 
 In order to maintain a level of confidence in the software, FLORIS is expected to
 maintain a reasonable level of test coverage. To that end, there are unit, integration,
