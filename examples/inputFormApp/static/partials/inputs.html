@@ -293,7 +293,6 @@
                             <div class="form-group pad-top-10 pad-bot-10">
                                 <label for="floris" class="col-sm-offset-2 col-sm-3 control-label">Floris Parameters</label>
                             </div>
-
                             <div class="form-group">
                                 <label for="wake_me" class="col-sm-4 control-label">me</label>
                                 <div class="col-sm-2">
@@ -358,6 +357,30 @@
                                 <label for="wake_beta" class="col-sm-4 control-label">beta</label>
                                 <div class="col-sm-6">
                                     <input type="number" id="wake_beta" class="form-control" ng-model="inputs.wake.properties.parameters.gauss.beta">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ti_initial" class="col-sm-4 control-label">initial turbulence intensity</label>
+                                <div class="col-sm-6">
+                                    <input type="number" id="ti_initial" class="form-control" ng-model="inputs.wake.properties.parameters.turbulence_intensity.initial">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ti_constant" class="col-sm-4 control-label">constant turbulence intensity</label>
+                                <div class="col-sm-6">
+                                    <input type="number" id="ti_constant" class="form-control" ng-model="inputs.wake.properties.parameters.turbulence_intensity.constant">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ti_ai" class="col-sm-4 control-label">ai turbulence intensity</label>
+                                <div class="col-sm-6">
+                                    <input type="number" id="ti_ai" class="form-control" ng-model="inputs.wake.properties.parameters.turbulence_intensity.ai">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ti_downstream" class="col-sm-4 control-label">downstream turbulence intensity</label>
+                                <div class="col-sm-6">
+                                    <input type="number" id="ti_downstream" class="form-control" ng-model="inputs.wake.properties.parameters.turbulence_intensity.downstream">
                                 </div>
                             </div>
                         </div>

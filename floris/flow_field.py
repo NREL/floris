@@ -176,16 +176,16 @@ class FlowField():
 
             # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
 
-            if self.wake.velocity_model == 'gauss':
-                for coord_ti, _ in sorted_map:
+            if self.wake.velocity_model.type_string is 'gauss':
+                for coord_ti, turbine_ti in sorted_map:
 
                     if coord_ti.x > coord.x:
-                        turbine_ti = rotated_map[coord_ti]
+                        #turbine_ti = rotated_map.items()[coord_ti]
 
                         # only assess the effects of the current wake
-                        wake_velocities = turbine_ti._calculate_swept_area_velocities(self, self.initial_flowfield - turb_wake, 
+                        wake_velocities = turbine_ti._calculate_swept_area_velocities(self.grid_resolution, self.initial_flowfield - turb_wake, 
                                             coord_ti, rotated_x, rotated_y, rotated_z)
-                        freestream_velocities = turbine_ti._calculate_swept_area_velocities(self, self.initial_flowfield, 
+                        freestream_velocities = turbine_ti._calculate_swept_area_velocities(self.grid_resolution, self.initial_flowfield, 
                                             coord_ti, rotated_x, rotated_y, rotated_z)
 
                         area_overlap = self._calculate_area_overlap(wake_velocities, freestream_velocities, turbine)

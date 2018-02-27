@@ -57,6 +57,12 @@ function InputsController($scope, $http, $log) {
             velocity_model: "gauss",
             deflection_model: "jimenez",
             parameters: {
+                turbulence_intensity: {
+                    initial: 0.1,
+                    constant: 0.73,
+                    ai: 0.8,
+                    downstream: -0.275
+                },
                 jensen: {
                     we: 0.05
                 },

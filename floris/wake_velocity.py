@@ -28,6 +28,7 @@ class WakeVelocity():
         self.jensen = parameter_dictionary["jensen"]
         self.floris = parameter_dictionary["floris"]
         self.gauss = parameter_dictionary["gauss"]
+        self.turbulence_intensity = parameter_dictionary["turbulence_intensity"]
 
         # parse the parameters
         # jensen parameters
@@ -44,6 +45,12 @@ class WakeVelocity():
         self.kb = float(self.gauss["kb"])
         self.alpha = float(self.gauss["alpha"])
         self.beta = float(self.gauss["beta"])
+
+        # turbulence parameters
+        self.ti_initial = float(self.turbulence_intensity["initial"])
+        self.ti_constant = float(self.turbulence_intensity["constant"])
+        self.ti_ai = float(self.turbulence_intensity["ai"])
+        self.ti_downstream = float(self.turbulence_intensity["downstream"])
 
     def _activation_function(self, x, loc):
         sharpness = 10
@@ -158,14 +165,14 @@ class WakeVelocity():
         TI      = flowfield.turbulence_intensity        # just a placeholder for now, should be computed with turbine
         
         # hard-coded model input data (goes in input file)
-        ka      = self.ka                      # wake expansion parameter
-        kb      = self.kb                      # wake expansion parameter
-        alpha   = self.alpha                   # near wake parameter
-        beta    = self.beta                    # near wake parameter
-        ad      = 0.0                      # natural lateral deflection parameter
-        bd      = 0.0                      # natural lateral deflection parameter
-        aT      = 0.0                      # natural vertical deflection parameter
-        bT      = 0.0                      # natural vertical deflection parameter
+        ka      = self.ka           # wake expansion parameter
+        kb      = self.kb           # wake expansion parameter
+        alpha   = self.alpha        # near wake parameter
+        beta    = self.beta         # near wake parameter
+        ad      = 0.0               # natural lateral deflection parameter
+        bd      = 0.0               # natural lateral deflection parameter
+        aT      = 0.0               # natural vertical deflection parameter
+        bT      = 0.0               # natural vertical deflection parameter
 
         # =======================================================================================================
                 

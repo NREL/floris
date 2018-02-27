@@ -15,8 +15,6 @@ def index():
 @app.route('/generate/', methods=['POST'])
 def generate_file():
 
-    print('In generate file resource')
-    
     content = request.get_json(silent=True)
     data = {}
     if content:

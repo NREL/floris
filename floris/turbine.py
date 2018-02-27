@@ -154,20 +154,16 @@ class Turbine():
         ti_initial = flowfield.turbulence_intensity
 
         # turbulence intensity parameters stored in floris.json
-        #TI_i = wake.added_turbulence_intensity["TI_initial"]
-        #TI_constant = wake.added_turbulence_intensity["TI_constant"]
-        #TI_ai = wake.added_turbulence_intensity["TI_ai"]
-        #TI_downstream = wake.added_turbulence_intensity["TI_downstream"]
-        ti_i = 0.1
-        ti_constant = 0.73
-        ti_ai = 0.8
-        ti_downstream = -0.275
+        ti_i = wake.velocity_model.ti_initial
+        ti_constant = wake.velocity_model.ti_constant
+        ti_ai = wake.velocity_model.ti_ai
+        ti_downstream = wake.velocity_model.ti_downstream
 
         # turbulence intensity calculation based on Crespo et. al.
-        ti_calculation = ti_constant * (turbine_wake.aI**ti_ai) \
-                        * ti_initial**ti_i \
-                        * ((turbine_coord.x - wake_coord.x)
-                        / self.rotor_diameter)**ti_downstream
+        ti_calculation = ti_constant \
+                       * turbine_wake.aI**ti_ai \
+                       * ti_initial**ti_i \
+                       * ((turbine_coord.x - wake_coord.x) / self.rotor_diameter)**ti_downstream
 
         return np.sqrt(ti_calculation**2 + self.TI**2)
 
