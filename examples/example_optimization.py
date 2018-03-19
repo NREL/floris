@@ -10,23 +10,18 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
-from floris import Floris
 
 # import sys
 # sys.path.append('../floris')
 from floris.floris import Floris
 import OptModules
 import numpy as np
-from scipy.optimize import minimize
 import warnings
 
 warnings.simplefilter('ignore', RuntimeWarning)
 
-# load floris
-floris = Floris()
-
 # setup floris and process input file
-floris.process_input("floris.json")
+floris = Floris("example_input.json")
 
 # plot initial flow field
 floris.farm.flow_field.plot_z_planes([0.5])
@@ -37,7 +32,7 @@ power_initial = np.sum([turbine.power for turbine in turbines])  # determine ini
 
 # enter min and max yaw angles for the optimization  
 minimum_yaw_angle = 0.0
-maximum_yaw_angle = 20.0
+maximum_yaw_angle = 25.0
 
 # compute optimal yaw angles
 opt_yaw_angles = OptModules.wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle)
