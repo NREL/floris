@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 from floris.floris import Floris
+from copy import deepcopy
 
 floris = Floris("example_input.json")
 
@@ -23,4 +24,9 @@ for coord, turbine in floris.farm.turbine_map.items():
     print("\tai -", turbine.aI)
     print("\taverage velocity -", turbine.get_average_velocity())
 
-floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])
+# Visualization
+
+flowfield_viz = deepcopy(floris.farm.flow_field)
+flowfield_viz.initialize_visualization()
+flowfield_viz.calculate_wake()
+flowfield_viz.plot_z_planes([0.2, 0.5, 0.8])

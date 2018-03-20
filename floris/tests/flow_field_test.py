@@ -59,9 +59,6 @@ class FlowFieldTest():
         test_instantiation()
         test_set_domain_bounds()
         test_discretize_domain()
-        test_map_coordinate_to_index_xmin()
-        test_map_coordinate_to_index_xmid()
-        test_map_coordinate_to_index_xmax()
 
 def test_instantiation():
     """
@@ -91,53 +88,7 @@ def test_discretize_domain():
     component-arrays each of type np.ndarray and size (100, 100, 50)
     """
     test_class = FlowFieldTest()
-    x, y, z = test_class.instance._discretize_domain()
-    assert np.shape(x) == (100, 100, 25) and type(x) is np.ndarray \
-           and np.shape(y) == (100, 100, 25) and type(y) is np.ndarray \
-           and np.shape(z) == (100, 100, 25) and type(z) is np.ndarray
-
-def test_map_coordinate_to_index_xmin():
-    """
-    Map a domain coordinate to an index in the field matrix. The field matrices
-    are a constant size of (100, 100, 50) starting with a 0 index.
-    
-    xmin should map to index 0
-    """
-    test_class = FlowFieldTest()
-    test_instance = test_class.instance
-    rotor_diameter = 126.0
-
-    # xmin should be index 0
-    xi, yi, zi = test_instance._map_coordinate_to_index(Coordinate(0 - 2 * rotor_diameter, 0))
-    assert xi == 0
-
-def test_map_coordinate_to_index_xmid():
-    """
-    Map a domain coordinate to an index in the field matrix. The field matrices
-    are a constant size of (100, 100, 50) starting with a 0 index.
-    
-    xmid should map to index 99
-    """
-    test_class = FlowFieldTest()
-    test_instance = test_class.instance
-    rotor_diameter = 126.0
-
-    # xmin should be index 0
-    mid = ((0 - 2 * rotor_diameter) + (100 + 10 * rotor_diameter)) / 2.0
-    xi, _, __ = test_instance._map_coordinate_to_index(Coordinate(mid, 0))
-    assert xi == 49
-
-def test_map_coordinate_to_index_xmax():
-    """
-    Map a domain coordinate to an index in the field matrix. The field matrices
-    are a constant size of (100, 100, 50) starting with a 0 index.
-
-    xmax should map to index 199
-    """
-    test_class = FlowFieldTest()
-    test_instance = test_class.instance
-    rotor_diameter = 126.0
-
-    # xmax should be index 199
-    xi, _, __ = test_instance._map_coordinate_to_index(Coordinate(100 + 10 * rotor_diameter, 0))
-    assert xi == 99
+    x, y, z = test_class.instance._discretize_turbine_domain()
+    assert np.shape(x) == (2, 4, 4) and type(x) is np.ndarray \
+           and np.shape(y) == (2, 4, 4) and type(y) is np.ndarray \
+           and np.shape(z) == (2, 4, 4) and type(z) is np.ndarray

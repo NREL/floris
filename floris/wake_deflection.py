@@ -68,7 +68,7 @@ class WakeDeflection():
         wind_speed    = flowfield.wind_speed             # free-stream velocity (m/s)
         TI_0    = flowfield.turbulence_intensity   # turbulence intensity (%/100)
         veer    = flowfield.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
-        TI      = turbine.TI   # just a placeholder for now, should be computed with turbine
+        TI      = turbine.turbulence_intensity   # just a placeholder for now, should be computed with turbine
         
         # hard-coded model input data (goes in input file)
         ka      = self.ka                      # wake expansion parameter

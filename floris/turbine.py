@@ -60,6 +60,9 @@ class Turbine():
 
         # constants
         self.grid_point_count = 16
+        if np.sqrt(self.grid_point_count) % 1 != 0.0:
+            raise ValueError("Turbine.grid_point_count must be the square of a number")
+
         self.velocities = [0] * self.grid_point_count
         self.grid = [0] * self.grid_point_count
 
@@ -87,7 +90,10 @@ class Turbine():
         # initialize derived attributes
         self.fCp, self.fCt = self._CpCtWs()
         self.grid = self._create_swept_area_grid()
-        self.velocities = [-1] * 16  # initialize to an invalid value until calculated
+        # initialize to an invalid value until calculated
+        self.velocities = [-1] * self.grid_point_count
+        self.turbulence_intensity = -1
+        self.plotting = False
 
         # calculated attributes are
         # self.Ct         # Thrust Coefficient
@@ -149,24 +155,6 @@ class Turbine():
         return 0.5 / np.cos(self.yaw_angle) \
                * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle) ) )
 
-    def _calculate_turbulence_intensity(self, flowfield, wake, turbine_coord, wake_coord, turbine_wake):
-
-        ti_initial = flowfield.turbulence_intensity
-
-        # turbulence intensity parameters stored in floris.json
-        ti_i = wake.velocity_model.ti_initial
-        ti_constant = wake.velocity_model.ti_constant
-        ti_ai = wake.velocity_model.ti_ai
-        ti_downstream = wake.velocity_model.ti_downstream
-
-        # turbulence intensity calculation based on Crespo et. al.
-        ti_calculation = ti_constant \
-                       * turbine_wake.aI**ti_ai \
-                       * ti_initial**ti_i \
-                       * ((turbine_coord.x - wake_coord.x) / self.rotor_diameter)**ti_downstream
-
-        return np.sqrt(ti_calculation**2 + self.TI**2)
-
     def _CpCtWs(self):
         cp = self.power_thrust_table["power"]
         ct = self.power_thrust_table["thrust"]
@@ -183,13 +171,12 @@ class Turbine():
 
         return fCp, fCt
 
-    def _calculate_swept_area_velocities(self, grid_resolution, local_wind_speed, coord, x, y, z):
+    def _calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
         """
-            TODO: explain these velocities
-            initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
+            Initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
-
-        dx = (np.max(x) - np.min(x)) / grid_resolution.x
+        dx = self.rotor_radius * np.sin(wind_direction + self.yaw_angle)
+        dy = self.rotor_radius * np.cos(wind_direction + self.yaw_angle)
 
         # filter the relevant points within the rotor swept area
 
@@ -198,8 +185,8 @@ class Turbine():
         # - within the turbine radius in y direction
         # - within the turbine radius in z direction
         mask = \
-            (x < coord.x + dx) & (x > (coord.x - dx)) & \
-            (y < coord.y + self.rotor_radius) & (y > coord.y - self.rotor_radius) & \
+            (x <= coord.x + dx) & (x >= (coord.x - dx)) & \
+            (y <= coord.y + dy) & (y >= coord.y - dy) & \
             (z < self.hub_height + self.rotor_radius) & (z > self.hub_height - self.rotor_radius)
 
         u_at_turbine = local_wind_speed[mask]
@@ -218,7 +205,46 @@ class Turbine():
 
         return data
 
+    def _calculate_swept_area_velocities_visualization(self, grid_resolution, local_wind_speed, coord, x, y, z):
+            dx = (np.max(x) - np.min(x)) / grid_resolution.x
+            dy = (np.max(y) - np.min(y)) / grid_resolution.y
+            mask = \
+                (x <= coord.x + dx) & (x >= (coord.x - dx)) & \
+                (y <= coord.y + dy) & (y >= coord.y - dy) & \
+                (z < self.hub_height + self.rotor_radius) & (z >
+                                                             self.hub_height - self.rotor_radius)
+            u_at_turbine = local_wind_speed[mask]
+            x_grid = x[mask]
+            y_grid = y[mask]
+            z_grid = z[mask]
+            data = np.zeros(len(self.grid))
+            for i, point in enumerate(self.grid):
+                data[i] = griddata(
+                    (x_grid, y_grid, z_grid),
+                    u_at_turbine,
+                    (coord.x, coord.y + point[0], self.hub_height + point[1]),
+                    method='nearest')
+            return data
+
     # Public methods
+
+    def calculate_turbulence_intensity(self, flowfield_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
+
+        ti_initial = flowfield_ti
+
+        # turbulence intensity parameters stored in floris.json
+        ti_i = velocity_model.ti_initial
+        ti_constant = velocity_model.ti_constant
+        ti_ai = velocity_model.ti_ai
+        ti_downstream = velocity_model.ti_downstream
+
+        # turbulence intensity calculation based on Crespo et. al.
+        ti_calculation = ti_constant \
+                       * turbine_wake.aI**ti_ai \
+                       * ti_initial**ti_i \
+                       * ((turbine_coord.x - wake_coord.x) / self.rotor_diameter)**ti_downstream
+
+        return np.sqrt(ti_calculation**2 + self.turbulence_intensity**2)
 
     def update_quantities(self, u_wake, coord, flowfield, rotated_x, rotated_y, rotated_z):
 
@@ -226,8 +252,36 @@ class Turbine():
         local_wind_speed = flowfield.initial_flowfield - u_wake
 
         # update turbine quantities
-        self.initial_velocities = self._calculate_swept_area_velocities(flowfield.grid_resolution, flowfield.initial_flowfield, coord, rotated_x, rotated_y, rotated_z)
-        self.velocities = self._calculate_swept_area_velocities(flowfield.grid_resolution, local_wind_speed, coord, rotated_x, rotated_y, rotated_z)
+        if self.plotting:
+            self.initial_velocities = self._calculate_swept_area_velocities_visualization(
+                                        flowfield.grid_resolution,
+                                        flowfield.initial_flowfield,
+                                        coord,
+                                        rotated_x,
+                                        rotated_y,
+                                        rotated_z)
+            self.velocities = self._calculate_swept_area_velocities_visualization(
+                flowfield.grid_resolution,
+                                        local_wind_speed,
+                                        coord,
+                                        rotated_x,
+                                        rotated_y,
+                                        rotated_z)
+        else:
+            self.initial_velocities = self._calculate_swept_area_velocities(
+                                        flowfield.wind_direction,
+                                        flowfield.initial_flowfield,
+                                        coord,
+                                        rotated_x,
+                                        rotated_y,
+                                        rotated_z)
+            self.velocities = self._calculate_swept_area_velocities(
+                                        flowfield.wind_direction,
+                                        local_wind_speed,
+                                        coord,
+                                        rotated_x,
+                                        rotated_y,
+                                        rotated_z)
         self.Cp = self._calculate_cp()
         self.Ct = self._calculate_ct()
         self.power = self._calculate_power()
