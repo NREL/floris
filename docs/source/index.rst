@@ -7,6 +7,7 @@
     tests
     for_developers
     code
+    changelog
 
 
 FLORIS Wake Modeling Utility
@@ -56,6 +57,8 @@ The following packages are used in FLORIS
 After installing Python3, the remaining required dependencies can be installed with ``pip`` referencing the requirements list using this command:
 
 ``pip install -r requirements.txt``
+
+.. _installation:
 
 Installation
 ============
