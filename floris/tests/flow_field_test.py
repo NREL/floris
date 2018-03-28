@@ -67,21 +67,6 @@ def test_instantiation():
     test_class = FlowFieldTest()
     assert test_class.instance is not None
 
-def test_set_domain_bounds():
-    """
-    The class should set the domain bounds on initialization
-    """
-    test_class = FlowFieldTest()
-    xmin, xmax, ymin, ymax, zmin, zmax = test_class.instance._set_domain_bounds()
-    rotor_diameter = 126.0
-    hub_height = 90.0
-    assert xmin == 0 - 2 * rotor_diameter \
-        and xmax == 100 + 10 * rotor_diameter \
-        and ymin == -2 * rotor_diameter \
-        and ymax == 2 * rotor_diameter \
-        and zmin == 0.1 \
-        and zmax == 2 * hub_height
-
 def test_discretize_domain():
     """
     The class should discretize the domain on initialization with three

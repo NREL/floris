@@ -211,8 +211,7 @@ class Turbine():
             mask = \
                 (x <= coord.x + dx) & (x >= (coord.x - dx)) & \
                 (y <= coord.y + dy) & (y >= coord.y - dy) & \
-                (z < self.hub_height + self.rotor_radius) & (z >
-                                                             self.hub_height - self.rotor_radius)
+                (z < self.hub_height + self.rotor_radius) & (z > self.hub_height - self.rotor_radius)
             u_at_turbine = local_wind_speed[mask]
             x_grid = x[mask]
             y_grid = y[mask]

@@ -13,6 +13,7 @@ specific language governing permissions and limitations under the License.
 
 from floris.floris import Floris
 from copy import deepcopy
+from visualization_manager import VisualizationManager
 
 floris = Floris("example_input.json")
 
@@ -25,8 +26,9 @@ for coord, turbine in floris.farm.turbine_map.items():
     print("\taverage velocity -", turbine.get_average_velocity())
 
 # Visualization
-
-flowfield_viz = deepcopy(floris.farm.flow_field)
-flowfield_viz.initialize_visualization()
-flowfield_viz.calculate_wake()
-flowfield_viz.plot_z_planes([0.2, 0.5, 0.8])
+ff_viz = deepcopy(floris.farm.flow_field)
+grid_resolution = (100, 100, 25)
+visualization_manager = VisualizationManager(ff_viz, grid_resolution)
+visualization_manager.plot_z_planes([0.5])
+visualization_manager.plot_x_planes([0.5])
+visualization_manager.plot_y_planes([0.5])

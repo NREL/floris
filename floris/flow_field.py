@@ -10,7 +10,6 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
-from .visualization_manager import VisualizationManager
 from .coordinate import Coordinate
 from scipy.interpolate import griddata
 
@@ -73,7 +72,7 @@ class FlowField():
 
     def _discretize_turbine_domain(self):
         """
-        generate compressed grid
+        Create grid points at each turbine
         """
         xt = [coord.x for coord in self.turbine_map.coords]
         rotor_points = int(np.sqrt(self.turbine_map.turbines[0].grid_point_count))
@@ -168,14 +167,14 @@ class FlowField():
 
                         # only assess the effects of the current wake
                         wake_velocities = turbine_ti._calculate_swept_area_velocities(
-                            self.grid_resolution,
+                            self.wind_direction,
                             self.initial_flowfield - turb_wake,
                             coord_ti,
                             rotated_x,
                             rotated_y,
                             rotated_z)
                         freestream_velocities = turbine_ti._calculate_swept_area_velocities(
-                            self.grid_resolution,
+                            self.wind_direction,
                             self.initial_flowfield,
                             coord_ti,
                             rotated_x,
@@ -194,81 +193,3 @@ class FlowField():
 
         # apply the velocity deficit field to the freestream
         self.u_field = self.initial_flowfield - u_wake
-
-    # Visualization
-    def _discretize_freestream_domain(self):
-        """
-        Generate a structured grid for the entire flow field domain.
-        """
-        x = np.linspace(self.xmin, self.xmax, self.grid_resolution.x)
-        y = np.linspace(self.ymin, self.ymax, self.grid_resolution.y)
-        z = np.linspace(self.zmin, self.zmax, self.grid_resolution.z)
-        return np.meshgrid(x, y, z, indexing="ij")
-
-    def _set_domain_bounds(self):
-        coords = self.turbine_map.coords
-        x = [coord.x for coord in coords]
-        y = [coord.y for coord in coords]
-        eps = 0.1
-        xmin = min(x) - 2 * self.max_diameter
-        xmax = max(x) + 10 * self.max_diameter
-        ymin = min(y) - 2 * self.max_diameter
-        ymax = max(y) + 2 * self.max_diameter
-        zmin = 0 + eps 
-        zmax = 2 * self.hub_height
-        return xmin, xmax, ymin, ymax, zmin, zmax
-
-    # def _map_coordinate_to_index(self, coord):
-    #     xi = max(0, int(self.grid_resolution.x * (coord.x - self.xmin - 1) \
-    #         / (self.xmax - self.xmin)))
-    #     yi = max(0, int(self.grid_resolution.y * (coord.y - self.ymin - 1) \
-    #         / (self.ymax - self.ymin)))
-    #     zi = max(0, int(self.grid_resolution.z * (coord.z - self.zmin - 1) \
-    #         / (self.zmax - self.zmin)))
-    #     return xi, yi, zi
-
-    # def _field_value_at_coord(self, target_coord, field):
-    #     xi, yi, zi = self._map_coordinate_to_index(target_coord)
-    #     return field[xi, yi, zi]
-
-    def _add_z_plane(self, percent_height=0.5):
-        plane = int(self.grid_resolution.z * percent_height)
-        self.viz_manager.plot_constant_z(
-            self.x[:, :, plane], self.y[:, :, plane], self.u_field[:, :, plane])
-        for coord, turbine in self.turbine_map.items():
-            self.viz_manager.add_turbine_marker(turbine, coord, self.wind_direction)
-
-    def _add_y_plane(self, percent_height=0.5):
-        plane = int(self.grid_resolution.y * percent_height)
-        self.viz_manager.plot_constant_y(
-            self.x[:, plane, :], self.z[:, plane, :], self.u_field[:, plane, :])
-
-    def _add_x_plane(self, percent_height=0.5):
-        plane = int(self.grid_resolution.x * percent_height)
-        self.viz_manager.plot_constant_x(
-            self.y[plane, :, :], self.z[plane, :, :], self.u_field[plane, :, :])
-
-    def initialize_visualization(self):
-        self.viz_manager = VisualizationManager()
-        self.grid_resolution = Coordinate(100, 100, 25)
-        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
-        self.x, self.y, self.z = self._discretize_freestream_domain()
-        self.initial_flowfield = self._initial_flowfield()
-        self.u_field = self._initial_flowfield()
-        for turbine in self.turbine_map.turbines:
-            turbine.plotting = True
-
-    def plot_z_planes(self, planes):
-        for p in planes:
-            self._add_z_plane(p)
-        self.viz_manager.show()
-
-    def plot_y_planes(self, planes):
-        for p in planes:
-            self._add_y_plane(p)
-        self.viz_manager.show()
-
-    def plot_x_planes(self, planes):
-        for p in planes:
-            self._add_x_plane(p)
-        self.viz_manager.show()
