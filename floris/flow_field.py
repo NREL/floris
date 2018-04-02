@@ -127,9 +127,13 @@ class FlowField():
 
     def calculate_wake(self):
 
+        #import matplotlib.pyplot as plt
+        #plt.figure()
+
         # initialize turbulence intensity at every turbine (seems sloppy)
-        for turbine in self.turbine_map.turbines:
+        for coord,turbine in self.turbine_map.items():
             turbine.turbulence_intensity = self.turbulence_intensity
+            #plt.plot(coord.x,coord.y,'ro')
 
         # rotate the discrete grid and turbine map
         center_of_rotation = Coordinate(
@@ -137,6 +141,10 @@ class FlowField():
 
         rotated_x, rotated_y, rotated_z = self._rotated_grid(
             self.wind_direction, center_of_rotation)
+
+        #plt.plot(rotated_x.flatten(),rotated_y.flatten(),'ko')
+
+
 
         rotated_map = self.turbine_map.rotated(
             self.wind_direction, center_of_rotation)

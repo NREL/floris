@@ -175,26 +175,34 @@ class Turbine():
         """
             Initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
-        dx = self.rotor_radius * np.sin(wind_direction + self.yaw_angle)
-        dy = self.rotor_radius * np.cos(wind_direction + self.yaw_angle)
+        u_at_turbine = local_wind_speed
+        x_grid = x
+        y_grid = y
+        z_grid = z
 
-        # filter the relevant points within the rotor swept area
+        yPts = np.array([point[0] for point in self.grid])
+        zPts = np.array([point[1] for point in self.grid])
 
-        # keep the planes
-        # - within +/- dx of the turbine plane
-        # - within the turbine radius in y direction
-        # - within the turbine radius in z direction
+        # interpolate from the flow field to get the flow field at the grid points
+        dist = [np.sqrt( (coord.x - x_grid)**2 + (coord.y+yPts[i] - y_grid)**2 + (self.hub_height+zPts[i] - z_grid)**2  ) for i in range(len(yPts))]
+
+        idx = [np.where(dist[i]==np.min(dist[i])) for i in range(len(yPts))]
+        data = [u_at_turbine[idx[i]] for i in range(len(yPts))]
+
+        return np.array(data)
+
+    def _calculate_swept_area_velocities_visualization(self, grid_resolution, local_wind_speed, coord, x, y, z):
+
+        dx = (np.max(x) - np.min(x)) / grid_resolution.x
+        dy = (np.max(y) - np.min(y)) / grid_resolution.y
         mask = \
             (x <= coord.x + dx) & (x >= (coord.x - dx)) & \
             (y <= coord.y + dy) & (y >= coord.y - dy) & \
             (z < self.hub_height + self.rotor_radius) & (z > self.hub_height - self.rotor_radius)
-
         u_at_turbine = local_wind_speed[mask]
         x_grid = x[mask]
         y_grid = y[mask]
         z_grid = z[mask]
-
-        # interpolate from the flow field to get the flow field at the grid points
         data = np.zeros(len(self.grid))
         for i, point in enumerate(self.grid):
             data[i] = griddata(
@@ -202,28 +210,7 @@ class Turbine():
                 u_at_turbine,
                 (coord.x, coord.y + point[0], self.hub_height + point[1]),
                 method='nearest')
-
         return data
-
-    def _calculate_swept_area_velocities_visualization(self, grid_resolution, local_wind_speed, coord, x, y, z):
-            dx = (np.max(x) - np.min(x)) / grid_resolution.x
-            dy = (np.max(y) - np.min(y)) / grid_resolution.y
-            mask = \
-                (x <= coord.x + dx) & (x >= (coord.x - dx)) & \
-                (y <= coord.y + dy) & (y >= coord.y - dy) & \
-                (z < self.hub_height + self.rotor_radius) & (z > self.hub_height - self.rotor_radius)
-            u_at_turbine = local_wind_speed[mask]
-            x_grid = x[mask]
-            y_grid = y[mask]
-            z_grid = z[mask]
-            data = np.zeros(len(self.grid))
-            for i, point in enumerate(self.grid):
-                data[i] = griddata(
-                    (x_grid, y_grid, z_grid),
-                    u_at_turbine,
-                    (coord.x, coord.y + point[0], self.hub_height + point[1]),
-                    method='nearest')
-            return data
 
     # Public methods
 

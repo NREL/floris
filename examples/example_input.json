@@ -9,7 +9,7 @@
     "properties": {
       "wind_speed": 8.0,
       "wind_direction": 270.0,
-      "turbulence_intensity": 0.1,
+      "turbulence_intensity": 0.06,
       "wind_shear": 0.12,
       "wind_veer": 0.0,
       "air_density": 1.225,
@@ -23,8 +23,8 @@
       "layout_y": [
         0.0,
         0.0,
-        600.0,
-        600.0
+        630.0,
+        630.0
       ]
     }
   },
@@ -132,7 +132,7 @@
           30.0
         ]
       },
-      "blade_pitch": 1.9,
+      "blade_pitch": 0.0,
       "yaw_angle": 0.0,
       "tilt_angle": 0.0,
       "TSR": 8.0
