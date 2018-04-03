@@ -57,6 +57,7 @@ class InputReader():
             "wind_speed": float,
             "wind_direction": float,
             "turbulence_intensity": float,
+            "air_density": float,
             "wind_shear": float,
             "wind_veer": float,
             "air_density": float,

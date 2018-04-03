@@ -47,6 +47,7 @@ class FlowField():
                  wind_shear,
                  wind_veer,
                  turbulence_intensity,
+                 air_density,
                  wake,
                  wake_combination,
                  turbine_map):
@@ -58,6 +59,7 @@ class FlowField():
         self.wind_shear = wind_shear
         self.wind_veer = wind_veer
         self.turbulence_intensity = turbulence_intensity
+        self.air_density = air_density
         self.wake = wake
         self.wake_combination = wake_combination
         self.turbine_map = turbine_map
@@ -133,6 +135,7 @@ class FlowField():
         # initialize turbulence intensity at every turbine (seems sloppy)
         for coord,turbine in self.turbine_map.items():
             turbine.turbulence_intensity = self.turbulence_intensity
+            turbine.air_density = self.air_density
             #plt.plot(coord.x,coord.y,'ro')
 
         # rotate the discrete grid and turbine map

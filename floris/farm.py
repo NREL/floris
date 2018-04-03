@@ -87,6 +87,7 @@ class Farm():
                                     wind_shear=self.wind_shear,
                                     wind_veer=self.wind_veer,
                                     turbulence_intensity=self.turbulence_intensity,
+                                    air_density=self.air_density,
                                     turbine_map=self.turbine_map,
                                     wake=wake)
         self.flow_field.calculate_wake()        

@@ -147,7 +147,7 @@ class Turbine():
         cptmp = self.Cp \
                 * np.cos(self.yaw_angle)**self.pP \
                 * np.cos(self.tilt_angle)**self.pT
-        return 0.5 * 1.225 * (np.pi * self.rotor_radius**2) \
+        return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
                 * cptmp * self.generator_efficiency \
                 * self.get_average_velocity()**3
 
