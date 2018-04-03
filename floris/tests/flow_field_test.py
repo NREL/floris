@@ -40,6 +40,7 @@ class FlowFieldTest():
             "wind_shear": 0.0,
             "wind_veer": 0.0,
             "turbulence_intensity": 1.0,
+            "air_density": 1.225,
             "wake": wake,
             "wake_combination": wake_combination,
             "turbine_map": turbine_map
@@ -51,6 +52,7 @@ class FlowFieldTest():
                          self.input_dict["wind_shear"],
                          self.input_dict["wind_veer"],
                          self.input_dict["turbulence_intensity"],
+                         self.input_dict["air_density"],
                          self.input_dict["wake"],
                          self.input_dict["wake_combination"],
                          self.input_dict["turbine_map"])
