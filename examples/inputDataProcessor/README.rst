@@ -27,7 +27,3 @@ The following packages are required for FLORIS
 - Python3
 
 - utm (pip install utm)
-
-.. code-block:: python
-
-   Some Ruby code.

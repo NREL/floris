@@ -25,7 +25,7 @@ import utm
 # path to intermediate file to save processed CSV data
 intermediate_file = 'farms.json'
 # path to json input file template
-template_file = '../inputFormApp/inputFiles/floris_input_file_Example.json'
+template_file = '../inputFormApp/inputFiles/example_input_file.json'
 generated_files_directory = './generatedInputFiles'
 
 def main(argv):
