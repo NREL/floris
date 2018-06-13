@@ -11,11 +11,15 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import sys
 from floris.floris import Floris
 from copy import deepcopy
 from visualization_manager import VisualizationManager
 
-floris = Floris("example_input.json")
+if len(sys.argv) > 1:
+    floris = Floris(sys.argv[1])
+else:
+    floris = Floris("example_input.json")
 
 for coord, turbine in floris.farm.turbine_map.items():
     print(str(coord) + ":")
