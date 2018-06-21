@@ -169,7 +169,7 @@ class FlowField():
             turb_wake = self._compute_turbine_velocity_deficit(
                 rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
 
-            if self.wake.velocity_model.type_string is 'gauss':
+            if self.wake.velocity_model.type_string == 'gauss':
 
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
