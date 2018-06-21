@@ -122,6 +122,7 @@ class FlowField():
 
     def _calculate_area_overlap(self, wake_velocities, freestream_velocities, turbine):
         # compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
+        
         count = np.sum(freestream_velocities - wake_velocities <= 0.05)
         return (turbine.grid_point_count - count) / turbine.grid_point_count
 
@@ -176,21 +177,39 @@ class FlowField():
 
                     if coord_ti.x > coord.x:
 
-                        # only assess the effects of the current wake
-                        wake_velocities = turbine_ti._calculate_swept_area_velocities(
-                            self.wind_direction,
-                            self.initial_flowfield - turb_wake,
-                            coord_ti,
-                            rotated_x,
-                            rotated_y,
-                            rotated_z)
-                        freestream_velocities = turbine_ti._calculate_swept_area_velocities(
-                            self.wind_direction,
-                            self.initial_flowfield,
-                            coord_ti,
-                            rotated_x,
-                            rotated_y,
-                            rotated_z)
+                        if turbine_ti.plotting:
+                            wake_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
+                                self.grid_resolution,
+                                self.initial_flowfield - turb_wake,
+                                coord_ti,
+                                rotated_x,
+                                rotated_y,
+                                rotated_z)
+                            freestream_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
+                                self.grid_resolution,
+                                self.initial_flowfield,
+                                coord_ti,
+                                rotated_x,
+                                rotated_y,
+                                rotated_z)
+
+                        else:
+
+                            # only assess the effects of the current wake
+                            wake_velocities = turbine_ti._calculate_swept_area_velocities(
+                                self.wind_direction,
+                                self.initial_flowfield - turb_wake,
+                                coord_ti,
+                                rotated_x,
+                                rotated_y,
+                                rotated_z)
+                            freestream_velocities = turbine_ti._calculate_swept_area_velocities(
+                                self.wind_direction,
+                                self.initial_flowfield,
+                                coord_ti,
+                                rotated_x,
+                                rotated_y,
+                                rotated_z)
 
                         area_overlap = self._calculate_area_overlap(wake_velocities, freestream_velocities, turbine)
 
