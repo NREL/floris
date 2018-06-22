@@ -36,13 +36,14 @@ class Coordinate():
 
     def as_tuple(self):
         """
-        return the coordinate object as a tuple
+        Return the coordinate object as a tuple
         """
         return (self.x, self.y)
 
     def rotate_z(self, theta, center_of_rotation=(0, 0, 0)):
         """
-        rotate about the z coordinate axis by a given angle and center of rotation
+        Rotate about the z coordinate axis by a given angle and center of rotation.
+        The angle theta should be given in radians.
         """
         xoffset = self.x - center_of_rotation[0]
         yoffset = self.y - center_of_rotation[1]

@@ -134,7 +134,7 @@ class FlowField():
         #plt.figure()
 
         # initialize turbulence intensity at every turbine (seems sloppy)
-        for coord,turbine in self.turbine_map.items():
+        for coord, turbine in self.turbine_map.items():
             turbine.turbulence_intensity = self.turbulence_intensity
             turbine.air_density = self.air_density
             #plt.plot(coord.x,coord.y,'ro')
@@ -146,10 +146,8 @@ class FlowField():
         rotated_x, rotated_y, rotated_z = self._rotated_grid(
             self.wind_direction, center_of_rotation)
 
-        #plt.plot(rotated_x.flatten(),rotated_y.flatten(),'ko')
-
-
-
+        # Rotate the turbines such that they are now in the frame of reference 
+        # of the wind direction simpifying computing the wakes and wake overlap
         rotated_map = self.turbine_map.rotated(
             self.wind_direction, center_of_rotation)
 
