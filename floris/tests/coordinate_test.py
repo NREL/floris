@@ -15,6 +15,7 @@ import numpy as np
 import pytest
 from floris.coordinate import Coordinate
 
+
 class CoordinateTest():
     def __init__(self):
         self.x, self.y = self.build_input()
@@ -22,11 +23,6 @@ class CoordinateTest():
     def build_input(self):
         return 1, 1
 
-    def test_all(self):
-        test_instantiation_with_xy()
-        test_string_format()
-        test_as_tuple()
-        test_rotation_on_z()
 
 def test_instantiation_with_xy():
     """
@@ -42,6 +38,7 @@ def test_instantiation_with_xy():
         coordinate.yprime == test_class.y and \
         coordinate.zprime == 0
 
+
 def test_string_format():
     """
     Coordinate should print its coordinates wrapped in parenthesis when cast to string
@@ -49,6 +46,7 @@ def test_string_format():
     test_class = CoordinateTest()
     coordinate = Coordinate(test_class.x, test_class.y)
     assert str(coordinate) == "({}, {})".format(test_class.x, test_class.y)
+
 
 def test_as_tuple():
     """
@@ -58,11 +56,13 @@ def test_as_tuple():
     coordinate = Coordinate(test_class.x, test_class.y)
     assert coordinate.as_tuple() == tuple([test_class.x, test_class.y])
 
+
 def test_rotation_on_z():
     """
     Coordinate at 1, 1 rotated 90 degrees around z axis should result in 1,-1
     """
     test_class = CoordinateTest()
     coordinate = Coordinate(test_class.x, test_class.y)
-    coordinate.rotate_z(np.pi/2.0)
-    assert pytest.approx(coordinate.xprime) == -1.0 and pytest.approx(coordinate.yprime) == 1.0
+    coordinate.rotate_z(np.pi / 2.0)
+    assert pytest.approx(coordinate.xprime) == -1.0 \
+        and pytest.approx(coordinate.yprime) == 1.0

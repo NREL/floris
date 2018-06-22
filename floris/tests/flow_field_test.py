@@ -19,6 +19,8 @@ from floris.wake_combination import WakeCombination
 from floris.turbine_map import TurbineMap
 from floris.turbine import Turbine
 from .sample_inputs import SampleInputs
+import copy
+
 
 class FlowFieldTest():
     def __init__(self):
@@ -31,8 +33,8 @@ class FlowFieldTest():
         wake_combination = WakeCombination("sosfs")
         turbine = Turbine(self.sample_inputs.turbine)
         turbine_map = TurbineMap({
-            Coordinate(0.0, 0.0): turbine,
-            Coordinate(100.0, 0.0): turbine,
+            Coordinate(0.0, 0.0): copy.deepcopy(turbine),
+            Coordinate(100.0, 0.0): copy.deepcopy(turbine)
         })
         return {
             "wind_direction": 270.0,
@@ -57,10 +59,6 @@ class FlowFieldTest():
                          self.input_dict["wake_combination"],
                          self.input_dict["turbine_map"])
 
-    def test_all(self):
-        test_instantiation()
-        test_set_domain_bounds()
-        test_discretize_domain()
 
 def test_instantiation():
     """
@@ -68,6 +66,7 @@ def test_instantiation():
     """
     test_class = FlowFieldTest()
     assert test_class.instance is not None
+
 
 def test_discretize_domain():
     """
@@ -77,5 +76,5 @@ def test_discretize_domain():
     test_class = FlowFieldTest()
     x, y, z = test_class.instance._discretize_turbine_domain()
     assert np.shape(x) == (2, 4, 4) and type(x) is np.ndarray \
-           and np.shape(y) == (2, 4, 4) and type(y) is np.ndarray \
-           and np.shape(z) == (2, 4, 4) and type(z) is np.ndarray
+        and np.shape(y) == (2, 4, 4) and type(y) is np.ndarray \
+        and np.shape(z) == (2, 4, 4) and type(z) is np.ndarray
