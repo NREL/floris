@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 """
 
 import sys
-sys.path.append('../floris')
 import numpy as np
 from scipy.optimize import minimize
 import warnings
@@ -20,17 +19,17 @@ import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
 
 # optimize wake steering for power maximization
-def optimize_plant(x,floris):    
-    
+def optimize_plant(x,floris):
+
     # assign yaw angles to turbines
     turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
     for i,turbine in enumerate(turbines):
         turbine.yaw_angle = x[i]
-     
+
     floris.farm.flow_field.calculate_wake()
-   
+
     turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-    power       = -np.sum([turbine.power for turbine in turbines]) 
+    power       = -np.sum([turbine.power for turbine in turbines])
 
     return power/(10**3)
 
@@ -43,7 +42,7 @@ def wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle):
 	turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
 	x0          = [turbine.yaw_angle for turbine in turbines]
 	bnds        = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle)) for turbine in turbines]
-	power0      = np.sum([turbine.power for turbine in turbines]) 
+	power0      = np.sum([turbine.power for turbine in turbines])
 
 	print('=====================================================================')
 	print('Optimizing wake redirection control...')
@@ -59,5 +58,3 @@ def wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle):
 	opt_yaw_angles = residual_plant.x
 
 	return opt_yaw_angles
-
-
