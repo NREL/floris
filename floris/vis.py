@@ -53,7 +53,7 @@ class VisualizationManager():
         self._new_figure()
         vmax = np.amax(data)
         plt.contourf(mesh1, mesh2, data, 50,
-                            cmap='gnuplot2', vmin=0, vmax=vmax)
+                     cmap='viridis', vmin=0, vmax=vmax)
 
     def _plot_constant_plane(self, mesh1, mesh2, data, title, xlabel, ylabel):
         self._new_filled_contour(mesh1, mesh2, data)
@@ -90,7 +90,7 @@ class VisualizationManager():
         xmax = max(x) + 10 * self.flowfield.max_diameter
         ymin = min(y) - 2 * self.flowfield.max_diameter
         ymax = max(y) + 2 * self.flowfield.max_diameter
-        zmin = 0 + eps 
+        zmin = 0 + eps
         zmax = 2 * self.flowfield.hub_height
         return xmin, xmax, ymin, ymax, zmin, zmax
 
