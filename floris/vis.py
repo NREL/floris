@@ -47,7 +47,7 @@ class VisualizationManager():
         plt.tick_params(which='both', labelsize=15)
 
     def _new_figure(self):
-        plt.figure(self.figure_count)
+        plt.figure()
         self.figure_count += 1
 
     def _new_filled_contour(self, mesh1, mesh2, data):
