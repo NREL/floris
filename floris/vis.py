@@ -140,17 +140,14 @@ class VisualizationManager():
     def plot_z_planes(self, planes):
         for p in planes:
             self._add_z_plane(p)
-        self.show()
 
     def plot_y_planes(self, planes):
         for p in planes:
             self._add_y_plane(p)
-        self.show()
 
     def plot_x_planes(self, planes):
         for p in planes:
             self._add_x_plane(p)
-        self.show()
 
     def show(self):
         plt.show()
