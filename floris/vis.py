@@ -39,6 +39,7 @@ class VisualizationManager():
 
     def _set_colorbar(self):
         cb = plt.colorbar()
+        cb.set_label("Flow speed (m/s)")
         cb.ax.tick_params(labelsize=15)
 
     def _set_axis(self):
