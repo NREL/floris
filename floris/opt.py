@@ -33,28 +33,29 @@ def optimize_plant(x,floris):
 
     return power/(10**3)
 
-def wake_steering(floris,minimum_yaw_angle,maximum_yaw_angle):
 
-	# set initial conditions
-	x0 = []
-	bnds = []
+def wake_steering(floris, minimum_yaw_angle=-25, maximum_yaw_angle=25,
+                  verbose=False):
+    # set initial conditions
+    x0 = []
+    bnds = []
 
-	turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-	x0          = [turbine.yaw_angle for turbine in turbines]
-	bnds        = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle)) for turbine in turbines]
-	power0      = np.sum([turbine.power for turbine in turbines])
+    turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
+    x0          = [turbine.yaw_angle for turbine in turbines]
+    bnds        = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle)) for turbine in turbines]
+    power0      = np.sum([turbine.power for turbine in turbines])
 
-	print('=====================================================================')
-	print('Optimizing wake redirection control...')
-	print('Number of parameters to optimize = ', len(x0))
-	print('=====================================================================')
+    if verbose:
+    	print('=====================================================================')
+    	print('Optimizing wake redirection control...')
+    	print('Number of parameters to optimize =', len(x0))
+    	print('=====================================================================')
 
-	residual_plant = minimize(optimize_plant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'eps':np.radians(5.0)})
+    residual_plant = minimize(optimize_plant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'eps':np.radians(5.0)})
 
-	if np.sum(residual_plant.x) == 0:
-		print('No change in controls suggested for this inflow condition...')
+    if np.sum(residual_plant.x) == 0 and verbose:
+        print('No change in controls suggested for this inflow condition...')
 
-	# %%
-	opt_yaw_angles = residual_plant.x
+    opt_yaw_angles = residual_plant.x
 
-	return opt_yaw_angles
+    return opt_yaw_angles
