@@ -35,7 +35,8 @@ def optimize_plant(x,floris):
 
 
 def wake_steering(floris, minimum_yaw_angle=-25, maximum_yaw_angle=25,
-                  verbose=False):
+                  verbose=False, minimize_method='SLSQP', maxiter=100,
+                  eps=5.0):
     # set initial conditions
     x0 = []
     bnds = []
@@ -51,7 +52,10 @@ def wake_steering(floris, minimum_yaw_angle=-25, maximum_yaw_angle=25,
     	print('Number of parameters to optimize =', len(x0))
     	print('=====================================================================')
 
-    residual_plant = minimize(optimize_plant,x0,args=(floris),method='SLSQP',bounds=bnds,options={'eps':np.radians(5.0)})
+    residual_plant = minimize(
+        optimize_plant, x0, args=(floris), method=minimize_method, bounds=bnds,
+        options={'eps': np.radians(eps), 'maxiter': maxiter}
+    )
 
     if np.sum(residual_plant.x) == 0 and verbose:
         print('No change in controls suggested for this inflow condition...')
