@@ -87,10 +87,10 @@ class VisualizationManager():
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
         eps = 0.1
-        xmin = min(x) - 2 * self.flowfield.max_diameter
+        xmin = min(x) - 5 * self.flowfield.max_diameter
         xmax = max(x) + 10 * self.flowfield.max_diameter
-        ymin = min(y) - 2 * self.flowfield.max_diameter
-        ymax = max(y) + 2 * self.flowfield.max_diameter
+        ymin = min(y) - 5 * self.flowfield.max_diameter
+        ymax = max(y) + 5 * self.flowfield.max_diameter
         zmin = 0 + eps
         zmax = 2 * self.flowfield.hub_height
         return xmin, xmax, ymin, ymax, zmin, zmax
