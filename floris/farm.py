@@ -122,3 +122,16 @@ class Farm(object):
     def set_air_density(self, value):
         """Set air density."""
         self._set_flow_property("air_density", value)
+
+    @property
+    def turbines(self):
+        """Return a list of turbine objects."""
+        return [turbine for _, turbine in self.flow_field.turbine_map.items()]
+
+    def set_yaw_angles(self, yaw_angles):
+        """Set yaw angles for all turbines (degrees)."""
+        if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
+            yaw_angles = [yaw_angles] * len(self.turbines)
+        for ya, turbine in zip(yaw_angles, self.turbines):
+            turbine.yaw_angle = np.radians(ya)
+        self.flow_field.calculate_wake()
