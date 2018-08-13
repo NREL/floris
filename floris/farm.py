@@ -92,46 +92,50 @@ class Farm(object):
                                     turbine_map=self.turbine_map,
                                     wake=self.wake)
 
-    def _set_flow_property(self, prop_name, value):
+    def _set_flow_property(self, prop_name, value, recalc_wake=True):
         """Set a flow property, then recreate flow field and calculate wake."""
         self.__setattr__(prop_name, value)
         self._create_flow_field()
-        self.flow_field.calculate_wake()
+        if recalc_wake:
+            self.flow_field.calculate_wake()
 
-    def set_wind_speed(self, value):
+    def set_wind_speed(self, value, recalc_wake=True):
         """Set wind speed."""
-        self._set_flow_property("wind_speed", value)
+        self._set_flow_property("wind_speed", value, recalc_wake=recalc_wake)
 
-    def set_wind_direction(self, value):
+    def set_wind_direction(self, value, recalc_wake=True):
         """Set wind direction (in degrees)."""
         value = np.radians(value - 270)
-        self._set_flow_property("wind_direction", value)
+        self._set_flow_property("wind_direction", value,
+                                recalc_wake=recalc_wake)
 
-    def set_wind_shear(self, value):
+    def set_wind_shear(self, value, recalc_wake=True):
         """Set wind shear."""
-        self._set_flow_property("wind_shear", value)
+        self._set_flow_property("wind_shear", value, recalc_wake=recalc_wake)
 
-    def set_wind_veer(self, value):
+    def set_wind_veer(self, value, recalc_wake=True):
         """Set wind shear."""
-        self._set_flow_property("wind_veer", value)
+        self._set_flow_property("wind_veer", value, recalc_wake=recalc_wake)
 
-    def set_turbulence_intensity(self, value):
+    def set_turbulence_intensity(self, value, recalc_wake=True):
         """Set turbulence intensity."""
-        self._set_flow_property("turbulence_intensity", value)
+        self._set_flow_property("turbulence_intensity", value,
+                                recalc_wake=recalc_wake)
 
-    def set_air_density(self, value):
+    def set_air_density(self, value, recalc_wake=True):
         """Set air density."""
-        self._set_flow_property("air_density", value)
+        self._set_flow_property("air_density", value, recalc_wake=recalc_wake)
 
     @property
     def turbines(self):
         """Return a list of turbine objects."""
         return [turbine for _, turbine in self.flow_field.turbine_map.items()]
 
-    def set_yaw_angles(self, yaw_angles):
+    def set_yaw_angles(self, yaw_angles, recalc_wake=True):
         """Set yaw angles for all turbines (degrees)."""
         if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
             yaw_angles = [yaw_angles] * len(self.turbines)
         for ya, turbine in zip(yaw_angles, self.turbines):
             turbine.yaw_angle = np.radians(ya)
-        self.flow_field.calculate_wake()
+        if recalc_wake:
+            self.flow_field.calculate_wake()
