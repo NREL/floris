@@ -56,10 +56,12 @@ class VisualizationManager():
         plt.contourf(mesh1, mesh2, data, 50,
                      cmap='viridis', vmin=0, vmax=vmax)
 
-    def _plot_constant_plane(self, mesh1, mesh2, data, title, xlabel, ylabel):
+    def _plot_constant_plane(self, mesh1, mesh2, data, title, xlabel, ylabel,
+                             colorbar=True):
         self._new_filled_contour(mesh1, mesh2, data)
         self._set_texts(title, xlabel, ylabel)
-        self._set_colorbar()
+        if colorbar:
+            self._set_colorbar()
         self._set_axis()
 
     # FLORIS-specific data manipulation and plotting
@@ -102,53 +104,56 @@ class VisualizationManager():
         b.rotate_z(turbine.yaw_angle - wind_direction, coords.as_tuple())
         plt.plot([a.xprime, b.xprime], [a.yprime, b.yprime], 'k', linewidth=1)
 
-    def _plot_constant_z(self, xmesh, ymesh, data):
+    def _plot_constant_z(self, xmesh, ymesh, data, **kwargs):
         self._plot_constant_plane(
-            xmesh, ymesh, data, "z plane", "x (m)", "y (m)")
+            xmesh, ymesh, data, "z plane", "x (m)", "y (m)", **kwargs)
 
-    def _plot_constant_y(self, xmesh, zmesh, data):
+    def _plot_constant_y(self, xmesh, zmesh, data, **kwargs):
         self._plot_constant_plane(
-            xmesh, zmesh, data, "y plane", "x (m)", "z (m)")
+            xmesh, zmesh, data, "y plane", "x (m)", "z (m)", **kwargs)
 
-    def _plot_constant_x(self, ymesh, zmesh, data):
+    def _plot_constant_x(self, ymesh, zmesh, data, **kwargs):
         self._plot_constant_plane(
-            ymesh, zmesh, data, "x plane", "y (m)", "z (m)")
+            ymesh, zmesh, data, "x plane", "y (m)", "z (m)", **kwargs)
 
-    def _add_z_plane(self, percent_height=0.5):
+    def _add_z_plane(self, percent_height=0.5, **kwargs):
         plane = int(self.flowfield.grid_resolution.z * percent_height)
         self._plot_constant_z(
             self.flowfield.x[:, :, plane],
             self.flowfield.y[:, :, plane],
-            self.flowfield.u_field[:, :, plane])
+            self.flowfield.u_field[:, :, plane],
+            **kwargs)
         for coord, turbine in self.flowfield.turbine_map.items():
             self._add_turbine_marker(
                 turbine, coord, self.flowfield.wind_direction)
 
-    def _add_y_plane(self, percent_height=0.5):
+    def _add_y_plane(self, percent_height=0.5, **kwargs):
         plane = int(self.flowfield.grid_resolution.y * percent_height)
         self._plot_constant_y(
             self.flowfield.x[:, plane, :],
             self.flowfield.z[:, plane, :],
-            self.flowfield.u_field[:, plane, :])
+            self.flowfield.u_field[:, plane, :],
+            **kwargs)
 
-    def _add_x_plane(self, percent_height=0.5):
+    def _add_x_plane(self, percent_height=0.5, **kwargs):
         plane = int(self.flowfield.grid_resolution.x * percent_height)
         self._plot_constant_x(
             self.flowfield.y[plane, :, :],
             self.flowfield.z[plane, :, :],
-            self.flowfield.u_field[plane, :, :])
+            self.flowfield.u_field[plane, :, :],
+            **kwargs)
 
-    def plot_z_planes(self, planes):
+    def plot_z_planes(self, planes, **kwargs):
         for p in planes:
-            self._add_z_plane(p)
+            self._add_z_plane(p, **kwargs)
 
-    def plot_y_planes(self, planes):
+    def plot_y_planes(self, planes, **kwargs):
         for p in planes:
-            self._add_y_plane(p)
+            self._add_y_plane(p, **kwargs)
 
-    def plot_x_planes(self, planes):
+    def plot_x_planes(self, planes, **kwargs):
         for p in planes:
-            self._add_x_plane(p)
+            self._add_x_plane(p, **kwargs)
 
     def show(self):
         plt.show()
