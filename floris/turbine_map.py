@@ -39,11 +39,7 @@ class TurbineMap():
     """
 
     def __init__(self, turbine_map_dict):
-
-        super().__init__()
-
         self.turbine_map_dict = turbine_map_dict
-
         self.coords = [coord for coord, _ in self.items()]
         self.turbines = [turbine for _, turbine in self.items()]
 

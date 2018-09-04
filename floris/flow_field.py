@@ -52,8 +52,6 @@ class FlowField():
                  wake_combination,
                  turbine_map):
 
-        super().__init__()
-
         self.wind_speed = wind_speed
         self.wind_direction = wind_direction
         self.wind_shear = wind_shear
