@@ -14,7 +14,7 @@ import numpy as np
 class WakeVelocity():
 
     def __init__(self, type_string, parameter_dictionary):
-        super().__init__()
+
         self.type_string = type_string
 
         type_map = {

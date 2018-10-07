@@ -42,10 +42,11 @@ setup(
     keywords='wind turbine energy wake modeling floris nrel nwtc',
     packages=find_packages(),
     install_requires=[
-        'numpy >= 1.12.1',
-        'scipy >= 0.19.1',
         'matplotlib >= 2.1.0',
+        'numpy >= 1.12.1',
         'pytest >= 3.3.1',
+        'scipy >= 0.19.1',
+        'Sphinx == 1.6.6',
     ],
     python_requires='~=3.3',
 )

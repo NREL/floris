@@ -56,8 +56,6 @@ class Turbine():
 
     def __init__(self, instance_dictionary):
 
-        super().__init__()
-
         # constants
         self.grid_point_count = 16
         if np.sqrt(self.grid_point_count) % 1 != 0.0:

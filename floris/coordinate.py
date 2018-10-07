@@ -21,9 +21,6 @@ class Coordinate():
     """
 
     def __init__(self, x, y, z=0):
-
-        super().__init__()
-
         self.x = x
         self.y = y
         self.z = z

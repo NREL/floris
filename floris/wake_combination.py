@@ -14,7 +14,6 @@ import numpy as np
 class WakeCombination():
 
     def __init__(self, typeString):
-        super().__init__()
         self.typeString = typeString
         typeMap = {
             "fls": self._fls,
