@@ -95,6 +95,11 @@ class FlowField():
                     x_grid[i,j,k] = xt[i]
                     y_grid[i,j,k] = yt[j]
                     z_grid[i,j,k] = zt[k]
+
+                    xoffset = x_grid[i,j,k] - coord.x
+                    yoffset = y_grid[i,j,k] - coord.y
+                    x_grid[i,j,k] = xoffset * np.cos(-self.wind_direction) - yoffset * np.sin(-self.wind_direction) + coord.x
+                    y_grid[i,j,k] = yoffset * np.cos(-self.wind_direction) + xoffset * np.sin(-self.wind_direction) + coord.y
         
         return x_grid, y_grid, z_grid
     
@@ -129,8 +134,8 @@ class FlowField():
 
     def calculate_wake(self):
 
-        #import matplotlib.pyplot as plt
-        #plt.figure()
+        # import matplotlib.pyplot as plt
+        # plt.figure()
 
         # initialize turbulence intensity at every turbine (seems sloppy)
         for coord,turbine in self.turbine_map.items():
@@ -139,16 +144,12 @@ class FlowField():
             #plt.plot(coord.x,coord.y,'ro')
 
         # rotate the discrete grid and turbine map
-        center_of_rotation = Coordinate(
-            np.mean(np.unique(self.x)), np.mean(np.unique(self.y)))
+        center_of_rotation = Coordinate(0,0)
 
         rotated_x, rotated_y, rotated_z = self._rotated_grid(
             self.wind_direction, center_of_rotation)
 
-        #plt.plot(rotated_x.flatten(),rotated_y.flatten(),'ko')
-
-
-
+        # rotate turbines
         rotated_map = self.turbine_map.rotated(
             self.wind_direction, center_of_rotation)
 
@@ -169,7 +170,7 @@ class FlowField():
             turb_wake = self._compute_turbine_velocity_deficit(
                 rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
 
-            if self.wake.velocity_model.type_string is 'gauss':
+            if self.wake.velocity_model.type_string == 'gauss':
 
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
