@@ -160,8 +160,8 @@ class Turbine():
         ct = self.power_thrust_table["thrust"]
         windspeed = self.power_thrust_table["wind_speed"]
 
-        fCpInterp = interp1d(windspeed, cp)
-        fCtInterp = interp1d(windspeed, ct)
+        fCpInterp = interp1d(windspeed, cp, fill_value='extrapolate')
+        fCtInterp = interp1d(windspeed, ct, fill_value='extrapolate')
 
         def fCp(Ws):
             return max(cp) if Ws < min(windspeed) else fCpInterp(Ws)
@@ -185,9 +185,11 @@ class Turbine():
 
         # interpolate from the flow field to get the flow field at the grid points
         dist = [np.sqrt( (coord.x - x_grid)**2 + (coord.y+yPts[i] - y_grid)**2 + (self.hub_height+zPts[i] - z_grid)**2  ) for i in range(len(yPts))]
+        #print(np.shape(dist),np.shape(x_grid))
 
         idx = [np.where(dist[i]==np.min(dist[i])) for i in range(len(yPts))]
-        data = [u_at_turbine[idx[i]] for i in range(len(yPts))]
+
+        data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
 
         return np.array(data)
 
