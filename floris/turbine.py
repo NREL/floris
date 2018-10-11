@@ -158,8 +158,8 @@ class Turbine():
         ct = self.power_thrust_table["thrust"]
         windspeed = self.power_thrust_table["wind_speed"]
 
-        fCpInterp = interp1d(windspeed, cp)
-        fCtInterp = interp1d(windspeed, ct)
+        fCpInterp = interp1d(windspeed, cp, fill_value='extrapolate')
+        fCtInterp = interp1d(windspeed, ct, fill_value='extrapolate')
 
         def fCp(Ws):
             return max(cp) if Ws < min(windspeed) else fCpInterp(Ws)
@@ -188,11 +188,12 @@ class Turbine():
         
         data = [u_at_turbine[idx[i]] for i in range(len(yPts))]
 
+        data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
+
         return np.array(data)
 
     def _calculate_swept_area_velocities_visualization(self, grid_resolution, local_wind_speed, coord, x, y, z):
 
-        
         dx = (np.max(x) - np.min(x)) / grid_resolution.x
         dy = (np.max(y) - np.min(y)) / grid_resolution.y
         mask = \
