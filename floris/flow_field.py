@@ -134,6 +134,7 @@ class FlowField():
 
     def calculate_wake(self):
 
+
         # import matplotlib.pyplot as plt
         # plt.figure()
 
@@ -148,7 +149,6 @@ class FlowField():
 
         rotated_x, rotated_y, rotated_z = self._rotated_grid(
             self.wind_direction, center_of_rotation)
-
         # rotate turbines
         rotated_map = self.turbine_map.rotated(
             self.wind_direction, center_of_rotation)
@@ -162,7 +162,6 @@ class FlowField():
 
             # update the turbine based on the velocity at its hub
             turbine.update_quantities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
-            
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
 
@@ -175,8 +174,7 @@ class FlowField():
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
 
-                    if coord_ti.x > coord.x:
-
+                    if coord_ti.x > coord.x and np.abs(coord.y - coord_ti.y) < 2*turbine.rotor_diameter:
                         # only assess the effects of the current wake
                         wake_velocities = turbine_ti._calculate_swept_area_velocities(
                             self.wind_direction,
@@ -192,13 +190,12 @@ class FlowField():
                             rotated_x,
                             rotated_y,
                             rotated_z)
-
                         area_overlap = self._calculate_area_overlap(wake_velocities, freestream_velocities, turbine)
-
                         if area_overlap > 0.0:
                             turbine_ti.turbulence_intensity = turbine_ti.calculate_turbulence_intensity(
                                                 self.turbulence_intensity,
                                                 self.wake.velocity_model, coord_ti, coord, turbine)
+
 
             # combine this turbine's wake into the full wake field
             u_wake = self.wake_combination.combine(u_wake, turb_wake)
