@@ -19,7 +19,7 @@ class Floris():
 
     inputs:
         input_file: str - path to the json input file
-        input_dict: str - dict of appropriate inputs
+        input_dict: dict - dictionary of appropriate inputs
 
     outputs:
         self: Floris - an instantiated Floris object
