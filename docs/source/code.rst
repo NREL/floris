@@ -69,10 +69,10 @@ Helper Classes
 These classes provide functionality and an interface to some aspects of the 
 FLORIS objects.
 
-``visualization_manager`` module
+``visualization`` module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: floris.visualization_manager
+.. automodule:: floris.visualization
     :members:
 
 ``input_reader`` module

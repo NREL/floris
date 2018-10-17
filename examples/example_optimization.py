@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 from floris.floris import Floris
-import floris.opt as flopt
+import floris.optimization as flopt
 import numpy as np
 
 # setup floris and process input file

@@ -11,27 +11,28 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-import sys
 import numpy as np
 from scipy.optimize import minimize
 import warnings
 
 warnings.simplefilter('ignore', RuntimeWarning)
 
-# optimize wake steering for power maximization
-def optimize_plant(x,floris):
+def optimize_plant(x, floris):
+    # optimize wake steering for power maximization
 
     # assign yaw angles to turbines
-    turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-    for i,turbine in enumerate(turbines):
+    turbines = [turbine for _,
+                turbine in floris.farm.flow_field.turbine_map.items()]
+    for i, turbine in enumerate(turbines):
         turbine.yaw_angle = x[i]
 
     floris.farm.flow_field.calculate_wake()
 
-    turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-    power       = -np.sum([turbine.power for turbine in turbines])
+    turbines = [turbine for _,
+                turbine in floris.farm.flow_field.turbine_map.items()]
+    power = -1 * np.sum([turbine.power for turbine in turbines])
 
-    return power/(10**3)
+    return power / (10**3)
 
 
 def wake_steering(floris, minimum_yaw_angle=-25, maximum_yaw_angle=25,
@@ -41,10 +42,11 @@ def wake_steering(floris, minimum_yaw_angle=-25, maximum_yaw_angle=25,
     x0 = []
     bnds = []
 
-    turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-    x0          = [turbine.yaw_angle for turbine in turbines]
-    bnds        = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle)) for turbine in turbines]
-    power0      = np.sum([turbine.power for turbine in turbines])
+    turbines = [turbine for _,
+                turbine in floris.farm.flow_field.turbine_map.items()]
+    x0 = [turbine.yaw_angle for turbine in turbines]
+    bnds = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle))
+            for turbine in turbines]
 
     if verbose:
     	print('=====================================================================')
