@@ -9,7 +9,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from floris.coordinate import Coordinate
+from .coordinate import Coordinate
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -37,9 +37,9 @@ class VisualizationManager():
         plt.xlabel(horizontal_axis_title, fontsize=fontsize)
         plt.ylabel(vertical_axis_title, fontsize=fontsize)
 
-    def _set_colorbar(self):
+    def _set_colorbar(self, label):
         cb = plt.colorbar()
-        cb.set_label("Flow speed (m/s)")
+        cb.set_label(label)
         cb.ax.tick_params(labelsize=15)
 
     def _set_axis(self):
@@ -56,12 +56,19 @@ class VisualizationManager():
         plt.contourf(mesh1, mesh2, data, 50,
                      cmap='viridis', vmin=0, vmax=vmax)
 
-    def _plot_constant_plane(self, mesh1, mesh2, data, title, xlabel, ylabel,
-                             colorbar=True):
+    def _plot_constant_plane(self,
+                             mesh1,
+                             mesh2,
+                             data,
+                             title,
+                             xlabel,
+                             ylabel,
+                             colorbar=True,
+                             colorbar_label=''):
         self._new_filled_contour(mesh1, mesh2, data)
         self._set_texts(title, xlabel, ylabel)
         if colorbar:
-            self._set_colorbar()
+            self._set_colorbar(colorbar_label)
         self._set_axis()
 
     # FLORIS-specific data manipulation and plotting
@@ -77,12 +84,12 @@ class VisualizationManager():
 
     def _discretize_freestream_domain(self):
         """
-            Generate a structured grid for the entire flow field domain.
+        Generate a structured grid for the entire flow field domain.
         """
         x = np.linspace(self.flowfield.xmin, self.flowfield.xmax, self.flowfield.grid_resolution.x)
         y = np.linspace(self.flowfield.ymin, self.flowfield.ymax, self.flowfield.grid_resolution.y)
         z = np.linspace(self.flowfield.zmin, self.flowfield.zmax, self.flowfield.grid_resolution.z)
-        return np.meshgrid(x, y, z, indexing="ij")
+        return np.meshgrid(x, y, z, indexing='ij')
 
     def _set_domain_bounds(self):
         coords = self.flowfield.turbine_map.coords
@@ -106,15 +113,15 @@ class VisualizationManager():
 
     def _plot_constant_z(self, xmesh, ymesh, data, **kwargs):
         self._plot_constant_plane(
-            xmesh, ymesh, data, "z plane", "x (m)", "y (m)", **kwargs)
+            xmesh, ymesh, data, 'z plane', 'x (m)', 'y (m)', colorbar_label='Flow speed (m/s)', **kwargs)
 
     def _plot_constant_y(self, xmesh, zmesh, data, **kwargs):
         self._plot_constant_plane(
-            xmesh, zmesh, data, "y plane", "x (m)", "z (m)", **kwargs)
+            xmesh, zmesh, data, 'y plane', 'x (m)', 'z (m)', colorbar_label='Flow speed (m/s)', **kwargs)
 
     def _plot_constant_x(self, ymesh, zmesh, data, **kwargs):
         self._plot_constant_plane(
-            ymesh, zmesh, data, "x plane", "y (m)", "z (m)", **kwargs)
+            ymesh, zmesh, data, 'x plane', 'y (m)', 'z (m)', colorbar_label='Flow speed (m/s)', **kwargs)
 
     def _add_z_plane(self, percent_height=0.5, **kwargs):
         plane = int(self.flowfield.grid_resolution.z * percent_height)
