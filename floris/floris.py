@@ -19,16 +19,15 @@ class Floris():
 
     inputs:
         input_file: str - path to the json input file
-    
+        input_dict: dict - dictionary of appropriate inputs
+
     outputs:
         self: Floris - an instantiated Floris object
     """
 
-    def __init__(self, input_file):
-
+    def __init__(self, input_file=None, input_dict=None):
         self.input_reader = InputReader()
         self.input_file = input_file
-        self.farm = self._process_input()
-
-    def _process_input(self):
-        return self.input_reader.read(self.input_file)
+        self.input_dict = input_dict
+        self.farm = self.input_reader.read(input_file=self.input_file,
+                                           input_dict=self.input_dict)

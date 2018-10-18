@@ -46,7 +46,7 @@ class InputReader():
             "tilt_angle": float,
             "TSR": float
         }
-      
+
         self._wake_properties = {
             "velocity_model": str,
             "deflection_model": str,
@@ -69,10 +69,10 @@ class InputReader():
     def _parseJSON(self, filename):
         """
         Opens the input json file and parses the contents into a python dict
-       
+
         inputs:
             filename: str - path to the json input file
-       
+
         outputs:
             data: dict - contents of the json input file
         """
@@ -85,16 +85,16 @@ class InputReader():
         Verifies that the expected fields exist in the json input file and
         validates the type of the input data by casting the fields to
         appropriate values based on the predefined type maps in
-        
+
         _turbineProperties
-        
+
         _wakeProperties
-        
+
         _farmProperties
 
         inputs:
             json_dict: dict - Input dictionary with all elements of type str
-        
+
             type_map: dict - Predefined type map for type checking inputs
                              structured as {"property": type}
         outputs:
@@ -143,15 +143,15 @@ class InputReader():
     def _cast_to_type(self, typecast, value):
         """
         Casts the string input to the type in typecast
-        
+
         inputs:
             typcast: type - the type class to use on value
-        
+
             value: str - the input string to cast to 'typecast'
-        
+
         outputs:
             position 0: type or None - the casted value
-        
+
             position 1: None or Error - the caught error
         """
         try:
@@ -162,10 +162,10 @@ class InputReader():
     def _build_turbine(self, json_dict):
         """
         Instantiates a Turbine object from a given input file
-        
+
         inputs:
             json_dict: dict - Input dictionary describing a turbine model
-        
+
         outputs:
             turbine: Turbine - instantiated Turbine object
         """
@@ -175,10 +175,10 @@ class InputReader():
     def _build_wake(self, json_dict):
         """
         Instantiates a Wake object from a given input file
-        
+
         inputs:
             json_dict: dict - Input dictionary describing a wake model
-        
+
         outputs:
             wake: Wake - instantiated Wake object
         """
@@ -188,31 +188,36 @@ class InputReader():
     def _build_farm(self, json_dict, turbine, wake):
         """
         Instantiates a Farm object from a given input file
-        
+
         inputs:
             json_dict: dict - Input dictionary describing a farm model
-         
+
             turbine: Turbine - Turbine instance used in Farm
-         
+
             wake: Wake - Wake instance used in Farm
-        
+
         outputs:
             farm: Farm - instantiated Farm object
         """
         propertyDict = self._validateJSON(json_dict, self._farm_properties)
         return Farm(propertyDict, turbine, wake)
 
-    def read(self, input_file):
+    def read(self, input_file=None, input_dict=None):
         """
         Parses main input file
 
         inputs:
             input_file: str - path to the json input file
-        
+
         outputs:
             farm: instantiated FLORIS model of wind farm
         """
-        json_dict = self._parseJSON(input_file)
+        if input_file is not None:
+            json_dict = self._parseJSON(input_file)
+        elif input_dict is not None:
+            json_dict = input_dict.copy()
+        else:
+            raise ValueError("Input file or dictionary must be provided")
 
         turbine = self._build_turbine(json_dict["turbine"])
         wake = self._build_wake(json_dict["wake"])

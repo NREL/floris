@@ -14,7 +14,7 @@ specific language governing permissions and limitations under the License.
 import sys
 from floris.floris import Floris
 from copy import deepcopy
-from visualization_manager import VisualizationManager
+from floris.visualization import VisualizationManager
 
 if len(sys.argv) > 1:
     floris = Floris(sys.argv[1])
