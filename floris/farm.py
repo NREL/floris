@@ -80,12 +80,6 @@ class Farm(object):
             turbine_dict[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
         self.turbine_map = TurbineMap(turbine_dict)
 
-        self.turbine = turbine
-        self.wake = wake
-        self._create_flow_field()
-        self.flow_field.calculate_wake()
-
-    def _create_flow_field(self):
         self.flow_field = FlowField(wake_combination=self.wake_combination,
                                     wind_speed=self.wind_speed,
                                     wind_direction=self.wind_direction,
@@ -94,7 +88,8 @@ class Farm(object):
                                     turbulence_intensity=self.turbulence_intensity,
                                     air_density=self.air_density,
                                     turbine_map=self.turbine_map,
-                                    wake=self.wake)
+                                    wake=wake)
+        self.flow_field.calculate_wake()
 
     def _set_flow_property(self, property_name, value, calculate_wake=True):
         """
@@ -173,7 +168,7 @@ class Farm(object):
         outputs:
             none
 
-        """    
+        """
         if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
             yaw_angles = [yaw_angles] * len(self.turbines)
 
