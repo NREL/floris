@@ -13,6 +13,7 @@ from .coordinate import Coordinate
 from .turbine import Turbine
 import numpy as np
 
+
 class TurbineMap():
     """
     TurbineMap is container object which maps a Turbine instance to a Coordinate
@@ -20,7 +21,7 @@ class TurbineMap():
     manipulating the turbine layout.
 
     inputs:
-        turbine_map: dict - a dictionary mapping of Turbines to Coordinates
+        turbine_map_dict: dict - a dictionary mapping of Turbines to Coordinates
             it should have the following form:
                 {
                     Coordinate(): Turbine(),
@@ -37,34 +38,27 @@ class TurbineMap():
         self: TurbineMap - an instantiated TurbineMap object
     """
 
-    def __init__(self, turbine_map):
-
-        super().__init__()
-
-        self.turbine_map = turbine_map
-
-        self.coords = [coord for coord, _ in self.turbine_map.items()]
-        self.turbines = [turbine for _, turbine in self.turbine_map.items()]
-        
-    def turbine_at_coord(self, coord):
-        return self.turbine_map[coord]
+    def __init__(self, turbine_map_dict):
+        self.turbine_map_dict = turbine_map_dict
+        self.coords = [coord for coord, _ in self.items()]
+        self.turbines = [turbine for _, turbine in self.items()]
 
     def items(self):
-        return list(zip(self.coords, self.turbines))
+        return self.turbine_map_dict.items()
 
     def rotated(self, angle, center_of_rotation):
         """
-        Rotates the turbine coordinates such that they are now in the frame of
-        reference of the 270 degree wind direction simpifying computing the wakes
-        and wake overlap
+        Rotated the turbine coordinates by a given angle about a given center
+        of rotation. This function returns a new TurbineMap object whose turbines
+        are rotated. The original TurbineMap is not modified.
         """
         rotated = {}
-        for coord, turbine in self.turbine_map.items():
+        for coord, turbine in self.items():
             coord_list = coord.rotate_z(angle, center_of_rotation.as_tuple())
             rotated_coordinate = Coordinate(coord_list[0], coord_list[1])
             rotated[rotated_coordinate] = turbine
         return TurbineMap(rotated)
 
     def sorted_in_x_as_list(self):
-        coords = sorted(self.turbine_map, key=lambda coord: coord.x)
-        return [(c, self.turbine_map[c]) for c in coords]
+        coords = sorted(self.turbine_map_dict, key=lambda coord: coord.x)
+        return [(c, self.turbine_map_dict[c]) for c in coords]

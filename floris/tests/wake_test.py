@@ -14,6 +14,7 @@ specific language governing permissions and limitations under the License.
 from floris.wake import Wake
 from .sample_inputs import SampleInputs
 
+
 class WakeTest():
     def __init__(self):
         self.sample_inputs = SampleInputs()
@@ -22,8 +23,6 @@ class WakeTest():
     def build_input_dict(self):
         return self.sample_inputs.wake
 
-    def test_all(self):
-        test_instantiation()
 
 def test_instantiation():
     test_class = WakeTest()
