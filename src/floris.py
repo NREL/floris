@@ -63,3 +63,6 @@ class Floris():
             print('\tDescription:', farm.description)
             print('\tWake Model:', farm.flow_field.wake.velocity_model.type_string)                                      
             print('\tDeflection Model:', farm.flow_field.wake.deflection_model.type_string)
+
+    def calculate_wake(self):
+        self.farm.flow_field.calculate_wake()
