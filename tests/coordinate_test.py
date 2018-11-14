@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 import numpy as np
 import pytest
-from floris.coordinate import Coordinate
+from src.coordinate import Coordinate
 
 
 class CoordinateTest():
