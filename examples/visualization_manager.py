@@ -63,14 +63,15 @@ class VisualizationManager():
 
     # FLORIS-specific data manipulation and plotting
     def _initialize_flowfield_for_plotting(self):
-        self.flowfield.grid_resolution = self.grid_resolution
-        self.flowfield.xmin, self.flowfield.xmax, self.flowfield.ymin, self.flowfield.ymax, self.flowfield.zmin, self.flowfield.zmax = self._set_domain_bounds()
-        self.flowfield.x, self.flowfield.y, self.flowfield.z = self._discretize_freestream_domain()
-        self.flowfield.initial_flowfield = self.flowfield._initial_flowfield()
-        self.flowfield.u_field = self.flowfield._initial_flowfield()
-        for turbine in self.flowfield.turbine_map.turbines:
-            turbine.plotting = True
-        self.flowfield.calculate_wake()
+        if self.flowfield.wake.velocity_model.type_string != 'curl':
+            self.flowfield.grid_resolution = self.grid_resolution
+            self.flowfield.xmin, self.flowfield.xmax, self.flowfield.ymin, self.flowfield.ymax, self.flowfield.zmin, self.flowfield.zmax = self._set_domain_bounds()
+            self.flowfield.x, self.flowfield.y, self.flowfield.z = self._discretize_freestream_domain()
+            self.flowfield.initial_flowfield = self.flowfield._initial_flowfield()
+            self.flowfield.u_field = self.flowfield._initial_flowfield()
+            for turbine in self.flowfield.turbine_map.turbines:
+                turbine.plotting = True
+                self.flowfield.calculate_wake()
 
     def _discretize_freestream_domain(self):
         """

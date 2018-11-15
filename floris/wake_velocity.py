@@ -10,6 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
+from scipy.ndimage.filters import gaussian_filter
 
 class WakeVelocity():
 
@@ -20,7 +21,8 @@ class WakeVelocity():
         type_map = {
             "jensen": self._jensen,
             "floris": self._floris,
-            "gauss": self._gauss
+            "gauss": self._gauss,
+            "curl": self._curl
         }
         self.function = type_map[type_string]
 
@@ -28,6 +30,7 @@ class WakeVelocity():
         self.jensen = parameter_dictionary["jensen"]
         self.floris = parameter_dictionary["floris"]
         self.gauss = parameter_dictionary["gauss"]
+        self.curl = parameter_dictionary["curl"]
         self.turbulence_intensity = parameter_dictionary["turbulence_intensity"]
 
         # parse the parameters
@@ -45,6 +48,12 @@ class WakeVelocity():
         self.kb = float(self.gauss["kb"])
         self.alpha = float(self.gauss["alpha"])
         self.beta = float(self.gauss["beta"])
+
+        # curl parameters
+        self.grid_resolution = np.asarray(self.curl["grid_resolution"])
+        self.vortex_strength = float(self.curl["vortex_strength"])
+        self.initial_deficit = float(self.curl["initial_deficit"])
+        self.dissipation = float(self.curl["dissipation"])
 
         # turbulence parameters
         self.ti_initial = float(self.turbulence_intensity["initial"])
@@ -245,3 +254,210 @@ class WakeVelocity():
         velDef1[x_locations < x0] = 0
                   
         return np.sqrt(velDef**2 + velDef1**2)
+
+    def _curl(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flowfield):
+
+        # this code has been adapted from Martinez et. al.
+
+        vortex_strength = self.vortex_strength
+        intial_deficit = self.initial_deficit
+        dissipation = self.dissipation
+
+        x = np.linspace(np.min(x_locations),np.max(x_locations),flowfield.grid_resolution.x)
+        y = np.linspace(np.min(y_locations),np.max(y_locations),flowfield.grid_resolution.y)
+
+        idx = np.min(np.where(x >= turbine_coord.x+0*turbine.rotor_radius))
+        uw = np.zeros((flowfield.grid_resolution.x,flowfield.grid_resolution.y,flowfield.grid_resolution.z))
+        
+        y1 = y_locations[idx,:,:] - turbine_coord.y
+        z1 = z_locations[idx,:,:] - turbine.hub_height #turbine_coord.z
+        r1 = np.sqrt(y1**2 + z1**2)
+
+        uw_initial = -(flowfield.wind_speed*intial_deficit*turbine.aI)#*np.ones((75,75)) # 1.4, 1.75
+
+        uw[idx,:,:] = gaussian_filter(uw_initial * (r1 <= turbine.rotor_diameter/2), sigma=1) # 1, 2
+        uw[idx,0,:] = 0.0
+        uw[idx,:,0] = 0.0
+        uw[idx,-1,:] = 0.0
+        uw[idx,:,-1] = 0.0
+        
+        uw = -uw
+
+        D = turbine.rotor_diameter 
+        Ct = turbine.Ct 
+        yaw = turbine.yaw_angle
+        HH = turbine.hub_height
+        Uinf = flowfield.wind_speed
+        alpha = flowfield.wind_shear
+        TSR = turbine.tsr 
+        rho = flowfield.air_density
+        aI = turbine.aI 
+        U = flowfield.initial_flowfield
+        V = flowfield.v
+        W = flowfield.w
+        tilt = turbine.tilt_angle
+
+        X = flowfield.x 
+        Y = flowfield.y 
+        Z = flowfield.z
+
+        Gamma_Yaw = vortex_strength * np.pi * D/2 * Ct * turbine.get_average_velocity() * np.sin(yaw) * np.cos(yaw)**2 # 0.35 * 
+        if turbine.yaw_angle != 0.0:
+            YawFlag = 1
+        else:
+            YawFlag = 0
+        Gamma_Tilt = np.pi * D/2 * Ct * turbine.get_average_velocity() * np.sin(tilt) * np.cos(tilt)**2
+        if turbine.tilt_angle != 0.0:
+            TiltFlag = 1
+            NuTiltFlag = 0
+            if np.abs(turbine.tilt_angle) <= np.radians(2.0):
+                NuTiltFlag = 1
+        else:
+            TiltFlag = 0
+            NuTiltFlag = 1
+
+        Gamma = Gamma_Yaw + Gamma_Tilt
+
+        Gamma_wake_rotation = 2 * np.pi * D * (aI - aI**2) * Uinf/TSR #* 0.001 
+        
+        # =======================================================================
+        # add curl Elliptic
+        # =======================================================================
+        eps = 0.2 * D
+
+        # distribute rotation across the blade
+        z_vector = np.linspace(0,D/2,100)
+        #z_vector = [D/3,D/2]
+
+        # length of each section dz
+        dz = z_vector[1] - z_vector[0]
+
+        # scale the circulation of each section dz 
+        if yaw != 0 or tilt != 0:
+            Gamma0 = 4 / np.pi * Gamma 
+        else:
+            Gamma0 = 0.0
+
+        # loop through all the vortices from an elliptic wind distribution 
+        # skip the last point because it has zero circulation
+        nu = 1
+        #print(np.shape(flowfield.z))
+        for z in z_vector[:-1]:
+
+            # Compute the non-dimensional circulation
+            Gamma = (-4 * Gamma0 * z * dz / (D**2 * np.sqrt(1 - (2 * z/D)**2)))
+
+            # locations of the tip vortices
+            # top
+            y_vortex_1 = turbine_coord.y + z*TiltFlag
+            z_vortex_1 = HH + z*YawFlag
+
+            # bottom
+            y_vortex_2 = turbine_coord.y - z*TiltFlag 
+            z_vortex_2 = HH - z*YawFlag 
+
+            # vortex velocities
+            # top
+            v1, w1 = self._vortex(flowfield.y[idx, :, :] - y_vortex_1, flowfield.z[idx, :, :] - z_vortex_1, flowfield.x[idx, :, :]-turbine_coord.x, -Gamma, eps, nu, Uinf)
+            # bottom
+            v2, w2 = self._vortex(flowfield.y[idx, :, :] - y_vortex_2, flowfield.z[idx, :, :] - z_vortex_2, flowfield.x[idx, :, :]-turbine_coord.x, Gamma, eps, nu, Uinf)
+
+            # add ground effects
+            v3, w3 = self._vortex(flowfield.y[idx, :, :] - y_vortex_1, flowfield.z[idx, :, :] + z_vortex_1, flowfield.x[idx, :, :]-turbine_coord.x, Gamma, eps, nu, Uinf)
+            v4, w4 = self._vortex(flowfield.y[idx, :, :] - y_vortex_2, flowfield.z[idx, :, :] + z_vortex_2, flowfield.x[idx, :, :]-turbine_coord.x, -Gamma, eps, nu, Uinf)
+
+            V[idx, :, :] += v1 + v2 + v3 + v4
+            W[idx, :, :] += w1 + w2 + w3 + w4
+
+        # add wake rotation
+        v5, w5 = self._vortex(flowfield.y[idx, :, :] - turbine_coord.y, flowfield.z[idx, :, :] - turbine.hub_height, flowfield.x[idx, :, :]-turbine_coord.x, Gamma_wake_rotation, 0.2*D, nu, Uinf)
+        v6, w6 = self._vortex(flowfield.y[idx, :, :] - turbine_coord.y, flowfield.z[idx, :, :] + turbine.hub_height, flowfield.x[idx, :, :]-turbine_coord.x, -Gamma_wake_rotation, 0.2*D, nu, Uinf)
+        V[idx, :, :] += v5 + v6
+        W[idx, :, :] += w5 + w6
+        
+        lmda = 15
+        kappa = 0.41
+        lm = kappa * z / (1 + kappa*z/lmda)
+        dudz_initial = np.gradient(U, z, axis=2)
+        nu = lm**2 * np.abs(dudz_initial[0,:,:])
+        
+        for i in range(idx,len(x)-1):
+            V[i+1, :, :] = V[idx, :, :] * eps**2 / (4 * nu * (flowfield.x[i,:,:]-turbine_coord.x)/Uinf + eps**2) # do you really mean plus?
+            W[i+1, :, :] = W[idx, :, :] * eps**2 / (4 * nu * (flowfield.x[i,:,:]-turbine_coord.x)/Uinf + eps**2)
+        
+        z = np.linspace(np.min(z_locations),np.max(z_locations),flowfield.grid_resolution.z)
+        z_min = HH
+        b_veer = 0
+        m_veer = -b_veer/z_min
+
+        v_veer = m_veer*z + b_veer
+
+        for i in range(len(z)-1):
+            V[:, :, i] = V[:, :, i] + v_veer[i]
+
+        # ===========================================================================================
+        # SOLVE CURL
+        # ===========================================================================================
+        # figure out where to start in x (based on where the turbine is located)
+
+        yz,zy = np.meshgrid(z,y)
+
+        idx = np.min(np.where(x >= turbine_coord.x+0*turbine.rotor_radius))
+        idx1 = np.min(np.where(y >= (turbine_coord.y)))
+        idx2 = np.min(np.where(z >= turbine.hub_height))
+
+        dudz_initial = np.gradient(U, z, axis=2)
+
+        for i in range(idx+1,len(x)):
+        
+            # compute the change in x 
+            dx = x[i] - x[i-1]
+            dy = y[1] - y[0]
+            dz = z[1] - z[0]
+
+            dudy = np.gradient(uw[i-1,:,:], y, axis=0)
+            dudz = np.gradient(uw[i-1,:,:], z, axis=1)
+
+            gradU = np.gradient(np.gradient(uw[i-1,:,:],y,axis=0),y,axis=0) \
+                  + np.gradient(np.gradient(uw[i-1,:,:],z,axis=1),z,axis=1)
+
+            lm = kappa * z / (1 + kappa*z/lmda) 
+            nu = lm**2 * np.abs(dudz_initial[i-1,:,:])
+            strX = 'x = ' + str(x[i])
+
+            # solve the marching problem for u, v, and w 
+            if NuTiltFlag == 1:
+                uw[i,:,:] = uw[i-1,:,:] + (dx / (U[i-1,:,:])) * (-V[i-1,:,:]*dudy - W[i-1,:,:]*dudz + dissipation*D*nu*gradU)
+            else:
+                uw[i,:,:] = uw[i-1,:,:] + (dx / (U[i-1,:,:])) * (-V[i-1,:,:]*dudy - W[i-1,:,:]*dudz + dissipation*D*nu*gradU)
+            # enforce boundary conditions
+            uw[i,:,0] = np.zeros(len(y))
+            uw[i,0,:] = np.zeros(len(z))
+        
+        #print(str(turbine_coord) + ":")
+        #print("\tCp -", turbine.Cp)
+        #print("\tCt -", turbine.Ct)
+        #print("\tpower -", turbine.power)
+        #print("\tai -", turbine.aI)
+        #print("\taverage velocity -", turbine.get_average_velocity())
+        #print("\tyaw angle -", turbine.yaw_angle*180/np.pi)
+        #print("\tNutiltFlag is: ",NuTiltFlag)
+        #plt.figure()
+        #plt.plot(x,8+uw[:,idx1,idx2])
+        #plt.show()
+        #plt.grid()
+        #plt.xlabel('nu_T')
+        #plt.ylabel('z (m)')
+        uw[x_locations < turbine_coord.x] = 0.0
+
+        return uw, V, W
+
+    def _vortex(self,x,y,z,Gamma,eps,nu,U):
+
+        # compute the vortex velocity 
+        # eps = the core size of the tip vortex 
+        nu = 2 # 2 for NREL 5MW; 1.55 for SUMR13
+        v =  (Gamma / (2*np.pi)) * (y / (x**2 + y**2)) * (1 - np.exp( -(x**2 + y**2)/eps**2 ))#*np.exp(-2*nu*z/U*0.003388) # 0.003388 for 5 MW,   0.001435 for 13 MW
+        w = -(Gamma / (2*np.pi)) * (x / (x**2 + y**2)) * (1 - np.exp( -(x**2 + y**2)/eps**2 ))#*np.exp(-2*nu*z/U*0.003388)
+
+        return v,w

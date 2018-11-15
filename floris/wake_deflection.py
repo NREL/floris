@@ -19,7 +19,8 @@ class WakeDeflection():
 
         type_map = {
             "jimenez": self._jimenez,
-            "gauss_deflection": self._gauss_deflection
+            "gauss_deflection": self._gauss_deflection,
+            "curl": self._curl
         }
         self.function = type_map.get(self.type_string, None)
 
@@ -34,6 +35,12 @@ class WakeDeflection():
         self.kb = float(self.gauss_deflection["kb"])
         self.alpha = float(self.gauss_deflection["alpha"])
         self.beta = float(self.gauss_deflection["beta"])
+
+    def _curl(self, x_locations, y_locations, turbine, coord, flowfield):
+
+        deflection = np.zeros(np.shape(x_locations))
+
+        return deflection 
 
     def _jimenez(self, x_locations, y_locations, turbine, coord, flowfield):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine

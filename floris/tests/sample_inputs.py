@@ -107,6 +107,12 @@ class SampleInputs():
                         "beta": 0.077,
                         "ad": 0.0,
                         "bd": 0.0
+                    },
+                    "curl": {
+                        "grid_resolution": [250, 100, 75],
+                        "vortex_strength": 0.35,
+                        "initial_deficit": 1.4,
+                        "dissipation": 0.06
                     }
                 }
             }

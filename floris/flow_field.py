@@ -68,9 +68,18 @@ class FlowField():
         self.max_diameter = max(
             [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.hub_height = self.turbine_map.turbines[0].hub_height
-        self.x, self.y, self.z = self._discretize_turbine_domain()
-        self.initial_flowfield = self._initial_flowfield()
-        self.u_field = self._initial_flowfield()
+
+        if self.wake.velocity_model.type_string == 'curl':
+            grid_resolution = self.wake.velocity_model.grid_resolution
+            self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
+            self.initial_flowfield = self._initialize_flowfield_for_curled_wake()
+            self.u_field = self._initial_flowfield()
+        else:
+            self.x, self.y, self.z = self._discretize_turbine_domain()
+            self.initial_flowfield = self._initial_flowfield()
+            self.u_field = self._initial_flowfield()
+        self.v = np.zeros(np.shape(self.u_field))
+        self.w = np.zeros(np.shape(self.u_field))
 
     def _discretize_turbine_domain(self):
         """
@@ -102,9 +111,41 @@ class FlowField():
                     y_grid[i,j,k] = yoffset * np.cos(-self.wind_direction) + xoffset * np.sin(-self.wind_direction) + coord.y
         
         return x_grid, y_grid, z_grid
+
+    def _discretize_freestream_domain(self):
+        """
+            Generate a structured grid for the entire flow field domain.
+        """
+        x = np.linspace(self.xmin, self.xmax, self.grid_resolution.x)
+        y = np.linspace(self.ymin, self.ymax, self.grid_resolution.y)
+        z = np.linspace(self.zmin, self.zmax, self.grid_resolution.z)
+        return np.meshgrid(x, y, z, indexing="ij")
     
     def _initial_flowfield(self):
         return self.wind_speed * (self.z / self.hub_height)**self.wind_shear
+
+    def _initialize_flowfield_for_curled_wake(self):
+        #self.grid_resolution = self.grid_resolution
+        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
+        self.x, self.y, self.z = self._discretize_freestream_domain()
+        return self._initial_flowfield()
+        #self.u_field = self._initial_flowfield()
+        # for turbine in self.turbine_map.turbines:
+        #     turbine.plotting = True
+        # self.calculate_wake()
+
+    def _set_domain_bounds(self):
+        coords = self.turbine_map.coords
+        x = [coord.x for coord in coords]
+        y = [coord.y for coord in coords]
+        eps = 0.1
+        xmin = min(x) - 2 * self.max_diameter
+        xmax = max(x) + 10 * self.max_diameter
+        ymin = min(y) - 2 * self.max_diameter
+        ymax = max(y) + 2 * self.max_diameter
+        zmin = 0 + eps 
+        zmax = 6 * self.hub_height
+        return xmin, xmax, ymin, ymax, zmin, zmax
 
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flowfield):
         velocity_function = self.wake.get_velocity_function()
@@ -157,7 +198,9 @@ class FlowField():
         sorted_map = rotated_map.sorted_in_x_as_list()
 
         # calculate the velocity deficit and wake deflection on the mesh
-        u_wake = np.zeros(self.u_field.shape)
+        u_wake = np.zeros(np.shape(self.u_field))
+        v_wake = np.zeros(np.shape(self.u_field))
+        w_wake = np.zeros(np.shape(self.u_field))
         for coord, turbine in sorted_map:
 
             # update the turbine based on the velocity at its hub
@@ -166,8 +209,14 @@ class FlowField():
             deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
 
             # get the velocity deficit accounting for the deflection
-            turb_wake = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
+            if self.wake.velocity_model.type_string == 'curl':
+                turb_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(
+                    rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
+            else:
+                turb_wake = self._compute_turbine_velocity_deficit(
+                    rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
+                turb_v_wake = np.zeros(self.u_field.shape)
+                turb_w_wake = np.zeros(self.u_field.shape)
 
             if self.wake.velocity_model.type_string == 'gauss':
 
@@ -199,6 +248,10 @@ class FlowField():
 
             # combine this turbine's wake into the full wake field
             u_wake = self.wake_combination.combine(u_wake, turb_wake)
+            v_wake = (v_wake + turb_v_wake)
+            w_wake = (w_wake + turb_w_wake)
 
         # apply the velocity deficit field to the freestream
         self.u_field = self.initial_flowfield - u_wake
+        self.v += v_wake 
+        self.w += w_wake

@@ -90,7 +90,7 @@ class Farm():
                                     air_density=self.air_density,
                                     turbine_map=self.turbine_map,
                                     wake=wake)
-        self.flow_field.calculate_wake()        
+        #self.flow_field.calculate_wake()        
 
     def get_turbine_coords(self):
         return self.turbine_map.coords
