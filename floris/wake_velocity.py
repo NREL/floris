@@ -387,7 +387,7 @@ class WakeVelocity():
         
         z = np.linspace(np.min(z_locations),np.max(z_locations),flowfield.grid_resolution.z)
         z_min = HH
-        b_veer = 0
+        b_veer = 0.0
         m_veer = -b_veer/z_min
 
         v_veer = m_veer*z + b_veer
@@ -406,7 +406,7 @@ class WakeVelocity():
         idx1 = np.min(np.where(y >= (turbine_coord.y)))
         idx2 = np.min(np.where(z >= turbine.hub_height))
 
-        dudz_initial = np.gradient(U, z, axis=2)
+        dudz_initial = np.gradient(U, axis=2)/np.gradient(z_locations,axis=2)
 
         for i in range(idx+1,len(x)):
         
@@ -415,11 +415,11 @@ class WakeVelocity():
             dy = y[1] - y[0]
             dz = z[1] - z[0]
 
-            dudy = np.gradient(uw[i-1,:,:], y, axis=0)
-            dudz = np.gradient(uw[i-1,:,:], z, axis=1)
+            dudy = np.gradient(uw[i-1,:,:], axis=0)/np.gradient(y_locations[i-1,:,:],axis=0)
+            dudz = np.gradient(uw[i-1,:,:], axis=1)/np.gradient(z_locations[i-1,:,:],axis=1)
 
-            gradU = np.gradient(np.gradient(uw[i-1,:,:],y,axis=0),y,axis=0) \
-                  + np.gradient(np.gradient(uw[i-1,:,:],z,axis=1),z,axis=1)
+            gradU = np.gradient(np.gradient(uw[i-1,:,:],axis=0),axis=0)/np.gradient(y_locations[i-1,:,:],axis=0)**2 \
+                  + np.gradient(np.gradient(uw[i-1,:,:],axis=1),axis=1)/np.gradient(z_locations[i-1,:,:],axis=1)**2
 
             lm = kappa * z / (1 + kappa*z/lmda) 
             nu = lm**2 * np.abs(dudz_initial[i-1,:,:])
