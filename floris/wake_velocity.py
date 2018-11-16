@@ -48,6 +48,10 @@ class WakeVelocity():
         self.kb = float(self.gauss["kb"])
         self.alpha = float(self.gauss["alpha"])
         self.beta = float(self.gauss["beta"])
+        self.ad = float(self.gauss["ad"])
+        self.bd = float(self.gauss["bd"])
+        self.aT = float(self.gauss["aT"])
+        self.bT = float(self.gauss["bT"])
 
         # curl parameters
         self.grid_resolution = np.asarray(self.curl["grid_resolution"])
@@ -179,10 +183,10 @@ class WakeVelocity():
         kb      = self.kb           # wake expansion parameter
         alpha   = self.alpha        # near wake parameter
         beta    = self.beta         # near wake parameter
-        ad      = 0.0               # natural lateral deflection parameter
-        bd      = 0.0               # natural lateral deflection parameter
-        aT      = 0.0               # natural vertical deflection parameter
-        bT      = 0.0               # natural vertical deflection parameter
+        ad      = self.ad           # natural lateral deflection parameter
+        bd      = self.bd           # natural lateral deflection parameter
+        aT      = self.aT           # natural vertical deflection parameter
+        bT      = self.bT           # natural vertical deflection parameter
 
         # =======================================================================================================
                 
