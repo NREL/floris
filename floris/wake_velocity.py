@@ -54,6 +54,7 @@ class WakeVelocity():
         self.vortex_strength = float(self.curl["vortex_strength"])
         self.initial_deficit = float(self.curl["initial_deficit"])
         self.dissipation = float(self.curl["dissipation"])
+        self.veer_linear = float(self.curl["veer_linear"])
 
         # turbulence parameters
         self.ti_initial = float(self.turbulence_intensity["initial"])
@@ -262,6 +263,7 @@ class WakeVelocity():
         vortex_strength = self.vortex_strength
         intial_deficit = self.initial_deficit
         dissipation = self.dissipation
+        veer_linear = self.veer_linear
 
         x = np.linspace(np.min(x_locations),np.max(x_locations),flowfield.grid_resolution.x)
         y = np.linspace(np.min(y_locations),np.max(y_locations),flowfield.grid_resolution.y)
@@ -387,7 +389,7 @@ class WakeVelocity():
         
         z = np.linspace(np.min(z_locations),np.max(z_locations),flowfield.grid_resolution.z)
         z_min = HH
-        b_veer = 0.0
+        b_veer = veer_linear
         m_veer = -b_veer/z_min
 
         v_veer = m_veer*z + b_veer
