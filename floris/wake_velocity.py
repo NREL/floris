@@ -183,10 +183,6 @@ class WakeVelocity():
         kb      = self.kb           # wake expansion parameter
         alpha   = self.alpha        # near wake parameter
         beta    = self.beta         # near wake parameter
-        ad      = self.ad           # natural lateral deflection parameter
-        bd      = self.bd           # natural lateral deflection parameter
-        aT      = self.aT           # natural vertical deflection parameter
-        bT      = self.bT           # natural vertical deflection parameter
 
         # =======================================================================================================
                 
