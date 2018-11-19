@@ -48,10 +48,6 @@ class WakeVelocity():
         self.kb = float(self.gauss["kb"])
         self.alpha = float(self.gauss["alpha"])
         self.beta = float(self.gauss["beta"])
-        self.ad = float(self.gauss["ad"])
-        self.bd = float(self.gauss["bd"])
-        self.aT = float(self.gauss["aT"])
-        self.bT = float(self.gauss["bT"])
 
         # curl parameters
         self.grid_resolution = np.asarray(self.curl["grid_resolution"])
