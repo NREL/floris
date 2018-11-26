@@ -65,8 +65,7 @@ class FlowField():
         self.turbine_map = turbine_map
         
         # initialize derived attributes and constants
-        self.max_diameter = max(
-            [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
+        self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.hub_height = self.turbine_map.turbines[0].hub_height
 
         if self.wake.velocity_model.type_string == 'curl':
