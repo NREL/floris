@@ -63,7 +63,7 @@ class Farm(object):
         properties = instance_dictionary["properties"]
         _wake_combination = properties["wake_combination"]
         self.wind_speed = properties["wind_speed"]
-        _wind_direction = properties["wind_direction"]
+        self.wind_direction = properties["wind_direction"]
         self.turbulence_intensity = properties["turbulence_intensity"]
         self.wind_shear = properties["wind_shear"]
         self.wind_veer = properties["wind_veer"]
@@ -73,7 +73,7 @@ class Farm(object):
 
         # these attributes need special attention
         self.wake_combination = WakeCombination(_wake_combination)
-        self.wind_direction = np.radians(_wind_direction - 270)
+        self.set_wind_direction(self.wind_direction, calculate_wake=False)
         self.wake = wake
 
         turbine_dict = {}
@@ -180,57 +180,62 @@ class Farm(object):
         """
         Sets wind speed
         """
-        self._set_flow_property("wind_speed",
-                                value,
-                                calculate_wake=calculate_wake)
+        self._set_flow_property(
+            "wind_speed",
+            value,
+            calculate_wake=calculate_wake
+        )
 
     def set_wind_direction(self, value, calculate_wake=True):
         """
         Sets wind direction (in degrees)
         """
         value = np.radians(value - 270)
-        self._set_flow_property("wind_direction",
-                                value,
-                                calculate_wake=calculate_wake)
+        self._set_flow_property(
+            "wind_direction",                    
+            value,
+            calculate_wake=calculate_wake
+        )
 
     def set_wind_shear(self, value, calculate_wake=True):
         """
         Sets wind shear
         """
-        self._set_flow_property("wind_shear",
-                                value,
-                                calculate_wake=calculate_wake)
+        self._set_flow_property(
+            "wind_shear",
+            value,
+            calculate_wake=calculate_wake
+        )
 
     def set_wind_veer(self, value, calculate_wake=True):
         """
         Sets wind shear
         """
-        self._set_flow_property("wind_veer",
-                                value,
-                                calculate_wake=calculate_wake)
+        self._set_flow_property(
+            "wind_veer",
+            value,
+            calculate_wake=calculate_wake
+        )
 
     def set_turbulence_intensity(self, value, calculate_wake=True):
         """
         Sets turbulence intensity
         """
-        self._set_flow_property("turbulence_intensity",
-                                value,
-                                calculate_wake=calculate_wake)
+        self._set_flow_property(
+            "turbulence_intensity",
+            value,
+            calculate_wake=calculate_wake
+        )
 
     def set_air_density(self, value, calculate_wake=True):
         """
         Sets air density
         """
-        self._set_flow_property("air_density",
-                                value,
-                                calculate_wake=calculate_wake)
-
-    @property
-    def turbines(self):
-        """
-        Returns a list of turbine objects
-        """
-        return [turbine for _, turbine in self.flow_field.turbine_map.items()]
+        self._set_flow_property(
+            "air_density",
+            value,
+            calculate_wake=calculate_wake
+        )
 
     def set_yaw_angles(self, yaw_angles, calculate_wake=True):
         """
@@ -243,7 +248,6 @@ class Farm(object):
 
         outputs:
             none
-
         """
         if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
             yaw_angles = [yaw_angles] * len(self.turbines)
@@ -287,3 +291,10 @@ class Farm(object):
 
         if calculate_wake:
             self.flow_field.calculate_wake()
+
+    @property
+    def turbines(self):
+        """
+        Returns a list of turbine objects
+        """
+        return [turbine for _, turbine in self.flow_field.turbine_map.items()]

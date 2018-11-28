@@ -76,13 +76,13 @@ class Turbine():
         self.eta = properties["eta"]
         self.power_thrust_table = properties["power_thrust_table"]
         self.blade_pitch = properties["blade_pitch"]
-        self.yaw_angle = properties["yaw_angle"]
-        self.tilt_angle = properties["tilt_angle"]
+        self._yaw_angle = properties["yaw_angle"]
+        self._tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
         # these attributes need special attention
         self.rotor_radius = self.rotor_diameter / 2.0
-        self.yaw_angle = np.radians(self.yaw_angle)
+        self.yaw_angle = self._yaw_angle
         self.tilt_angle = np.radians(self.tilt_angle)
 
         # initialize derived attributes
@@ -134,24 +134,6 @@ class Turbine():
         # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_radius]
 
         return grid
-
-    def _calculate_cp(self):
-        return self.fCp(self.get_average_velocity())
-
-    def _calculate_ct(self):
-        return self.fCt(self.get_average_velocity())
-
-    def _calculate_power(self):
-        cptmp = self.Cp \
-                * np.cos(self.yaw_angle)**self.pP \
-                * np.cos(self.tilt_angle)**self.pT
-        return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
-                * cptmp * self.generator_efficiency \
-                * self.get_average_velocity()**3
-
-    def _calculate_ai(self):
-        return 0.5 / np.cos(self.yaw_angle) \
-               * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle) ) )
 
     def _CpCtWs(self):
         cp = self.power_thrust_table["power"]
@@ -269,22 +251,46 @@ class Turbine():
                                         rotated_x,
                                         rotated_y,
                                         rotated_z)
-        self.Cp = self._calculate_cp()
-        self.Ct = self._calculate_ct()
-        self.power = self._calculate_power()
-        self.aI = self._calculate_ai()
 
-    def set_yaw_angle(self, angle):
-        """
-        Sets the turbine yaw angle
-        
-        inputs:
-            angle: float - new yaw angle in degrees
-        
-        outputs:
-            none
-        """
-        self.yaw_angle = np.radians(angle)
+    # Getters & Setters
+    @property
+    def yaw_angle(self):
+        return np.degrees(self._yaw_angle)
 
-    def get_average_velocity(self):
+    @yaw_angle.setter
+    def yaw_angle(self, value):
+        self._yaw_angle = np.radians(value)
+
+    @property
+    def tilt_angle(self):
+        return np.degrees(self._tilt_angle)
+
+    @tilt_angle.setter
+    def tilt_angle(self, value):
+        self._tilt_angle = np.radians(value)
+
+    @property
+    def average_velocity(self):
         return np.mean(self.velocities)
+
+    @property
+    def Cp(self):
+        return self.fCp(self.average_velocity)
+    
+    @property
+    def Ct(self):
+        return self.fCt(self.average_velocity)
+
+    @property
+    def power(self):
+        cptmp = self.Cp \
+                * np.cos(self.yaw_angle)**self.pP \
+                * np.cos(self.tilt_angle)**self.pT
+        return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
+                * cptmp * self.generator_efficiency \
+                * self.average_velocity**3
+
+    @property
+    def aI(self):
+        return 0.5 / np.cos(self.yaw_angle) \
+            * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle)))

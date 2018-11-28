@@ -53,7 +53,7 @@ class FlowField():
                  turbine_map):
 
         self.wind_speed = wind_speed
-        self.wind_direction = wind_direction
+        self._wind_direction = wind_direction
         self.wind_shear = wind_shear
         self.wind_veer = wind_veer
         self.turbulence_intensity = turbulence_intensity
@@ -94,8 +94,8 @@ class FlowField():
 
                     xoffset = x_grid[i,j,k] - coord.x
                     yoffset = y_grid[i,j,k] - coord.y
-                    x_grid[i,j,k] = xoffset * np.cos(-self.wind_direction) - yoffset * np.sin(-self.wind_direction) + coord.x
-                    y_grid[i,j,k] = yoffset * np.cos(-self.wind_direction) + xoffset * np.sin(-self.wind_direction) + coord.y
+                    x_grid[i,j,k] = xoffset * np.cos(-1 * self.wind_direction) - yoffset * np.sin(-1 * self.wind_direction) + coord.x
+                    y_grid[i,j,k] = yoffset * np.cos(-1 * self.wind_direction) + xoffset * np.sin(-1 * self.wind_direction) + coord.y
         
         return x_grid, y_grid, z_grid
 
@@ -286,3 +286,13 @@ class FlowField():
             self.u_field = self.initial_flow_field - u_wake
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake
+
+    # Getters & Setters
+    @property
+    def wind_direction(self):
+        return self._wind_direction
+    
+    @wind_direction.setter
+    def wind_direction(self, value):
+        # frame of reference is west
+        self._wind_direction = np.radians(value - 270)  
