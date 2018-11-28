@@ -69,6 +69,8 @@ class VisualizationManager():
             self.flowfield.x, self.flowfield.y, self.flowfield.z = self._discretize_freestream_domain()
             self.flowfield.initial_flowfield = self.flowfield._initial_flowfield()
             self.flowfield.u_field = self.flowfield._initial_flowfield()
+            self.flowfield.v = np.zeros(np.shape(self.flowfield.u_field))
+            self.flowfield.w = np.zeros(np.shape(self.flowfield.u_field))
             for turbine in self.flowfield.turbine_map.turbines:
                 turbine.plotting = True
                 self.flowfield.calculate_wake()

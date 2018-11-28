@@ -174,15 +174,10 @@ class FlowField():
 
     def calculate_wake(self):
 
-
-        # import matplotlib.pyplot as plt
-        # plt.figure()
-
         # initialize turbulence intensity at every turbine (seems sloppy)
         for coord,turbine in self.turbine_map.items():
             turbine.turbulence_intensity = self.turbulence_intensity
             turbine.air_density = self.air_density
-            #plt.plot(coord.x,coord.y,'ro')
 
         # rotate the discrete grid and turbine map
         center_of_rotation = Coordinate(0,0)
