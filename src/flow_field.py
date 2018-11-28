@@ -64,9 +64,10 @@ class FlowField():
         
         # initialize derived attributes and constants
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
-        self.hub_height = self.turbine_map.turbines[0].hub_height
-
-        self._initialize_flow_field()
+        self.specified_wind_height = self.turbine_map.turbines[0].hub_height
+        self.x, self.y, self.z = self._discretize_turbine_domain()
+        self.initial_flowfield = self._initialize_flowfield()
+        self.u_field = self._initialize_flowfield()
 
     def _discretize_turbine_domain(self):
         """
@@ -79,12 +80,16 @@ class FlowField():
         z_grid = np.zeros((len(xt), rotor_points, rotor_points))
 
         for i, (coord, turbine) in enumerate(self.turbine_map.items()):
-            yt = np.linspace(coord.y - turbine.rotor_radius,
-                             coord.y + turbine.rotor_radius,
-                             rotor_points)
-            zt = np.linspace(turbine.hub_height - turbine.rotor_radius,
-                             turbine.hub_height + turbine.rotor_radius,
-                             rotor_points)
+            yt = np.linspace(
+                coord.y - turbine.rotor_radius,
+                coord.y + turbine.rotor_radius,
+                rotor_points
+            )
+            zt = np.linspace(
+                turbine.hub_height - turbine.rotor_radius,
+                turbine.hub_height + turbine.rotor_radius,
+                rotor_points
+            )
 
             for j in range(len(yt)):
                 for k in range(len(zt)):
@@ -107,12 +112,15 @@ class FlowField():
         y = np.linspace(self.ymin, self.ymax, self.model_grid_resolution.y)
         z = np.linspace(self.zmin, self.zmax, self.model_grid_resolution.z)
         return np.meshgrid(x, y, z, indexing="ij")
-    
+
     def initialize_flow_field(self):
-        u = self.wind_speed * (self.z / self.hub_height)**self.wind_shear
+        u = self.wind_speed * (self.z / self.specified_wind_height)**self.wind_shear
         v = np.zeros(np.shape(u))
         w = np.zeros(np.shape(u))
         return u, v, w
+
+    # def _initialize_flowfield(self):
+    #     return self.wind_speed * (self.z / self.specified_wind_height)**self.wind_shear
 
     def _initialize_flow_field(self):
         if self.wake.velocity_model.requires_resolution:
@@ -140,7 +148,7 @@ class FlowField():
         ymin = min(y) - 2 * self.max_diameter
         ymax = max(y) + 2 * self.max_diameter
         zmin = 0 + eps 
-        zmax = 6 * self.hub_height
+        zmax = 6 * self.specified_wind_height
         return xmin, xmax, ymin, ymax, zmin, zmax
 
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flow_field):

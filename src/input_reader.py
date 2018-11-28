@@ -204,7 +204,7 @@ class InputReader():
 
     def read(self, input_file=None, input_dict=None):
         """
-        Parses main input file
+        Parses main input file and instantiates floris objects
 
         inputs:
             input_file: str - path to the json input file

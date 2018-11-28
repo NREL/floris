@@ -79,6 +79,7 @@ class Turbine():
         self._yaw_angle = properties["yaw_angle"]
         self._tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
+        self.plotting = False
 
         # these attributes need special attention
         self.rotor_radius = self.rotor_diameter / 2.0
@@ -91,7 +92,7 @@ class Turbine():
         # initialize to an invalid value until calculated
         self.velocities = [-1] * self.grid_point_count
         self.turbulence_intensity = -1
-        self.plotting = False
+        self.air_density = -1
 
         # calculated attributes are
         # self.Ct         # Thrust Coefficient
@@ -100,12 +101,6 @@ class Turbine():
         # self.aI         # Axial Induction
         # self.TI         # Turbulence intensity at rotor
         # self.windSpeed  # Windspeed at rotor
-
-        # self.usePitch = usePitch
-        # if usePitch:
-        #     self.Cp, self.Ct, self.betaLims = CpCtpitchWs()
-        # else:
-        #     self.Cp, self.Ct = CpCtWs()
 
     # Private methods
 
@@ -164,12 +159,9 @@ class Turbine():
         zPts = np.array([point[1] for point in self.grid])
 
         # interpolate from the flow field to get the flow field at the grid points
-        dist = [np.sqrt( (coord.x - x_grid)**2 + (coord.y+yPts[i] - y_grid)**2 + (self.hub_height+zPts[i] - z_grid)**2  ) for i in range(len(yPts))]
-
-        idx = [np.where(dist[i]==np.min(dist[i])) for i in range(len(yPts))]
-        
+        dist = [np.sqrt((coord.x - x_grid)**2 + (coord.y + yPts[i] - y_grid)**2 + (self.hub_height + zPts[i] - z_grid)**2) for i in range(len(yPts))]
+        idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
         data = [u_at_turbine[idx[i]] for i in range(len(yPts))]
-
         data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
 
         return np.array(data)
