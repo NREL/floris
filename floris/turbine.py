@@ -56,8 +56,6 @@ class Turbine():
 
     def __init__(self, instance_dictionary):
 
-        super().__init__()
-
         # constants
         self.grid_point_count = 16
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
@@ -185,9 +183,10 @@ class Turbine():
 
         # interpolate from the flow field to get the flow field at the grid points
         dist = [np.sqrt( (coord.x - x_grid)**2 + (coord.y+yPts[i] - y_grid)**2 + (self.hub_height+zPts[i] - z_grid)**2  ) for i in range(len(yPts))]
-        #print(np.shape(dist),np.shape(x_grid))
 
         idx = [np.where(dist[i]==np.min(dist[i])) for i in range(len(yPts))]
+        
+        data = [u_at_turbine[idx[i]] for i in range(len(yPts))]
 
         data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
 
@@ -249,7 +248,7 @@ class Turbine():
                                         rotated_y,
                                         rotated_z)
             self.velocities = self._calculate_swept_area_velocities_visualization(
-                flowfield.grid_resolution,
+                                        flowfield.grid_resolution,
                                         local_wind_speed,
                                         coord,
                                         rotated_x,

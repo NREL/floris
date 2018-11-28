@@ -15,7 +15,7 @@ from scipy.ndimage.filters import gaussian_filter
 class WakeVelocity():
 
     def __init__(self, type_string, parameter_dictionary):
-        super().__init__()
+
         self.type_string = type_string
 
         type_map = {

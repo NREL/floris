@@ -47,8 +47,6 @@ class Wake():
 
     def __init__(self, instance_dictionary):
 
-        super().__init__()
-
         self.description = instance_dictionary["description"]
 
         properties = instance_dictionary["properties"]
