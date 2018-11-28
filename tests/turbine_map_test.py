@@ -15,9 +15,9 @@ import numpy as np
 import copy
 import pytest
 from .sample_inputs import SampleInputs
-from src.coordinate import Coordinate
-from src.turbine import Turbine
-from src.turbine_map import TurbineMap
+from src.floris.coordinate import Coordinate
+from src.floris.turbine import Turbine
+from src.floris.turbine_map import TurbineMap
 
 class TurbineMapTest():
     def __init__(self):
