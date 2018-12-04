@@ -27,13 +27,13 @@ class WakeDeflection():
         self.jimenez = parameter_dictionary["jimenez"]
         self.gauss_deflection = parameter_dictionary["gauss_deflection"]
 
-    def _curl(self, x_locations, y_locations, turbine, coord, flowfield):
+    def _curl(self, x_locations, y_locations, turbine, coord, flow_field):
 
         deflection = np.zeros(np.shape(x_locations))
 
         return deflection 
 
-    def _jimenez(self, x_locations, y_locations, turbine, coord, flowfield):
+    def _jimenez(self, x_locations, y_locations, turbine, coord, flow_field):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
         # this is coded as defined in the Jimenez et. al. paper
 
@@ -64,7 +64,7 @@ class WakeDeflection():
 
         return deflection
 
-    def _gauss_deflection(self, x_locations, y_locations, turbine, coord, flowfield):
+    def _gauss_deflection(self, x_locations, y_locations, turbine, coord, flow_field):
 
         self.ka = float(self.gauss_deflection["ka"])
         self.kb = float(self.gauss_deflection["kb"])
@@ -74,9 +74,9 @@ class WakeDeflection():
         self.beta = float(self.gauss_deflection["beta"])
 
         # =======================================================================================================
-        wind_speed    = flowfield.wind_speed             # free-stream velocity (m/s)
-        TI_0    = flowfield.turbulence_intensity   # turbulence intensity (%/100)
-        veer    = flowfield.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
+        wind_speed    = flow_field.wind_speed             # free-stream velocity (m/s)
+        TI_0    = flow_field.turbulence_intensity   # turbulence intensity (%/100)
+        veer    = flow_field.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
         TI      = turbine.turbulence_intensity   # just a placeholder for now, should be computed with turbine
         
         # hard-coded model input data (goes in input file)
@@ -94,8 +94,8 @@ class WakeDeflection():
         tilt        = turbine.tilt_angle
         Ct          = turbine.Ct
 
-        # U_local = flowfield.wind_speed # just a placeholder for now, should be initialized with the flowfield
-        U_local = flowfield.initial_flowfield
+        # U_local = flow_field.wind_speed # just a placeholder for now, should be initialized with the flow_field
+        U_local = flow_field.initial_flow_field
 
         # initial velocity deficits
         uR          = U_local*Ct*np.cos(tilt)*np.cos(yaw)/(2.*(1-np.sqrt(1-(Ct*np.cos(tilt)*np.cos(yaw)))))

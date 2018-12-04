@@ -215,9 +215,9 @@ class Turbine():
 
     # Public methods
 
-    def calculate_turbulence_intensity(self, flowfield_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
+    def calculate_turbulence_intensity(self, flow_field_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
 
-        ti_initial = flowfield_ti
+        ti_initial = flow_field_ti
 
         # turbulence intensity parameters stored in floris.json
         ti_i = velocity_model.ti_initial
@@ -233,22 +233,22 @@ class Turbine():
 
         return np.sqrt(ti_calculation**2 + self.turbulence_intensity**2)
 
-    def update_quantities(self, u_wake, coord, flowfield, rotated_x, rotated_y, rotated_z):
+    def update_quantities(self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z):
 
         # extract relevant quantities
-        local_wind_speed = flowfield.initial_flowfield - u_wake
+        local_wind_speed = flow_field.initial_flow_field - u_wake
 
         # update turbine quantities
         if self.plotting:
             self.initial_velocities = self._calculate_swept_area_velocities_visualization(
-                                        flowfield.grid_resolution,
-                                        flowfield.initial_flowfield,
+                                        flow_field.grid_resolution,
+                                        flow_field.initial_flow_field,
                                         coord,
                                         rotated_x,
                                         rotated_y,
                                         rotated_z)
             self.velocities = self._calculate_swept_area_velocities_visualization(
-                                        flowfield.grid_resolution,
+                                        flow_field.grid_resolution,
                                         local_wind_speed,
                                         coord,
                                         rotated_x,
@@ -256,14 +256,14 @@ class Turbine():
                                         rotated_z)
         else:
             self.initial_velocities = self._calculate_swept_area_velocities(
-                                        flowfield.wind_direction,
-                                        flowfield.initial_flowfield,
+                                        flow_field.wind_direction,
+                                        flow_field.initial_flow_field,
                                         coord,
                                         rotated_x,
                                         rotated_y,
                                         rotated_z)
             self.velocities = self._calculate_swept_area_velocities(
-                                        flowfield.wind_direction,
+                                        flow_field.wind_direction,
                                         local_wind_speed,
                                         coord,
                                         rotated_x,

@@ -74,6 +74,7 @@ class Farm(object):
         # these attributes need special attention
         self.wake_combination = WakeCombination(_wake_combination)
         self.wind_direction = np.radians(_wind_direction - 270)
+        self.wake = wake
 
         turbine_dict = {}
         for c in list(zip(self.layout_x, self.layout_y)):
@@ -89,7 +90,64 @@ class Farm(object):
                                     air_density=self.air_density,
                                     turbine_map=self.turbine_map,
                                     wake=wake)
-        self.flow_field.calculate_wake()
+
+    def set_wake_model(self, wake_model, calculate_wake=False):
+        """
+        Sets the flow model
+
+        inputs:
+        wake_model: string - the wake model used to calculate the wake;
+            valid wake model options are:
+                {
+                    "gauss",
+
+                    "curl"
+                }
+        calculate_wake: boolean - option to calculate the wake after the wake model is set
+        """
+        valid_wake_models = ['curl', 'gauss', 'jensen', 'floris']
+        if wake_model not in valid_wake_models:
+            raise Exception("Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models)))
+
+        if wake_model == 'gauss':
+            vel_model = self.flow_field.wake.velocity_model._gauss
+            vel_model_string = 'gauss'
+            defl_model = self.flow_field.wake.deflection_model._gauss_deflection
+            defl_model_string = 'gauss_deflection'
+        elif wake_model == 'curl':
+            vel_model = self.flow_field.wake.velocity_model._curl
+            vel_model_string = 'curl'
+            defl_model = self.flow_field.wake.deflection_model._curl
+            defl_model_string = 'curl'
+        elif wake_model == 'jensen':
+            vel_model = self.flow_field.wake.velocity_model._jensen
+            vel_model_string = 'jensen'
+            defl_model = self.flow_field.wake.deflection_model._jimenez
+            defl_model_string = 'jimenez'
+        elif wake_model == 'floris':
+            vel_model = self.flow_field.wake.velocity_model._floris
+            vel_model_string = 'floris'
+            defl_model = self.flow_field.wake.deflection_model._jimenez
+            defl_model_string = 'jimenez'
+        
+
+        self.flow_field.wake.velocity_model.function = vel_model
+        self.flow_field.wake.velocity_model.type_string = vel_model_string
+        self.flow_field.wake.deflection_model.function = defl_model
+        self.flow_field.wake.deflection_model.type_string = defl_model_string
+
+        self.flow_field._initialize_flow_field()
+
+        if calculate_wake:
+            self.flow_field.calculate_wake()
+
+    def set_description(self, value, calculate_wake=False):
+        """
+        Sets the farm desciption
+        """
+        self._set_flow_property("description",
+                                value,
+                                calculate_wake=calculate_wake) 
 
     def _set_flow_property(self, property_name, value, calculate_wake=True):
         """
@@ -99,6 +157,20 @@ class Farm(object):
         self._create_flow_field()
         if calculate_wake:
             self.flow_field.calculate_wake()
+
+    def _create_flow_field(self):
+        """
+        Creates the flow field with respective attributes
+        """
+        self.flow_field = FlowField(wake_combination=self.wake_combination,
+                                    wind_speed=self.wind_speed,
+                                    wind_direction=self.wind_direction,
+                                    wind_shear=self.wind_shear,
+                                    wind_veer=self.wind_veer,
+                                    turbulence_intensity=self.turbulence_intensity,
+                                    air_density=self.air_density,
+                                    turbine_map=self.turbine_map,
+                                    wake=self.wake)
 
     def set_wind_speed(self, value, calculate_wake=True):
         """

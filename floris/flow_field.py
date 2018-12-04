@@ -66,17 +66,7 @@ class FlowField():
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.hub_height = self.turbine_map.turbines[0].hub_height
 
-        if self.wake.velocity_model.type_string == 'curl':
-            grid_resolution = self.wake.velocity_model.grid_resolution
-            self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
-            self.initial_flowfield = self._initialize_flowfield_for_curled_wake()
-            self.u_field = self._initial_flowfield()
-        else:
-            self.x, self.y, self.z = self._discretize_turbine_domain()
-            self.initial_flowfield = self._initial_flowfield()
-            self.u_field = self._initial_flowfield()
-        self.v = np.zeros(np.shape(self.u_field))
-        self.w = np.zeros(np.shape(self.u_field))
+        self._initialize_flow_field()
 
     def _discretize_turbine_domain(self):
         """
@@ -118,18 +108,22 @@ class FlowField():
         z = np.linspace(self.zmin, self.zmax, self.grid_resolution.z)
         return np.meshgrid(x, y, z, indexing="ij")
     
-    def _initial_flowfield(self):
-        return self.wind_speed * (self.z / self.hub_height)**self.wind_shear
+    def initialize_flow_field(self):
+        u = self.wind_speed * (self.z / self.hub_height)**self.wind_shear
+        v = np.zeros(np.shape(u))
+        w = np.zeros(np.shape(u))
+        return u, v, w
 
-    def _initialize_flowfield_for_curled_wake(self):
-        #self.grid_resolution = self.grid_resolution
-        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
-        self.x, self.y, self.z = self._discretize_freestream_domain()
-        return self._initial_flowfield()
-        #self.u_field = self._initial_flowfield()
-        # for turbine in self.turbine_map.turbines:
-        #     turbine.plotting = True
-        # self.calculate_wake()
+    def _initialize_flow_field(self):
+        if self.wake.velocity_model.type_string == 'curl':
+            grid_resolution = self.wake.velocity_model.grid_resolution
+            self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
+            self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
+            self.x, self.y, self.z = self._discretize_freestream_domain()
+        else:
+            self.x, self.y, self.z = self._discretize_turbine_domain()
+        self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
+        self.u_field, self.v, self.w = self.initialize_flow_field()
 
     def _set_domain_bounds(self):
         coords = self.turbine_map.coords
@@ -144,13 +138,13 @@ class FlowField():
         zmax = 6 * self.hub_height
         return xmin, xmax, ymin, ymax, zmin, zmax
 
-    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flowfield):
+    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flow_field):
         velocity_function = self.wake.get_velocity_function()
-        return velocity_function(x, y, z, turbine, coord, deflection, wake, flowfield)
+        return velocity_function(x, y, z, turbine, coord, deflection, wake, flow_field)
 
-    def _compute_turbine_wake_deflection(self, x, y, turbine, coord, flowfield):
+    def _compute_turbine_wake_deflection(self, x, y, turbine, coord, flow_field):
         deflection_function = self.wake.get_deflection_function()
-        return deflection_function(x, y, turbine, coord, flowfield)
+        return deflection_function(x, y, turbine, coord, flow_field)
 
     def _rotated_grid(self, angle, center_of_rotation):
         xoffset = self.x - center_of_rotation.x
@@ -224,14 +218,14 @@ class FlowField():
                         if turbine_ti.plotting:
                             wake_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
                                 self.grid_resolution,
-                                self.initial_flowfield - turb_wake,
+                                self.initial_flow_field - turb_wake,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
                                 rotated_z)
                             freestream_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
                                 self.grid_resolution,
-                                self.initial_flowfield,
+                                self.initial_flow_field,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
@@ -240,14 +234,14 @@ class FlowField():
                         else:
                             wake_velocities = turbine_ti._calculate_swept_area_velocities(
                                 self.wind_direction,
-                                self.initial_flowfield - turb_wake,
+                                self.initial_flow_field - turb_wake,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
                                 rotated_z)
                             freestream_velocities = turbine_ti._calculate_swept_area_velocities(
                                 self.wind_direction,
-                                self.initial_flowfield,
+                                self.initial_flow_field,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
@@ -265,6 +259,6 @@ class FlowField():
             w_wake = (w_wake + turb_w_wake)
 
         # apply the velocity deficit field to the freestream
-        self.u_field = self.initial_flowfield - u_wake
-        self.v += v_wake 
-        self.w += w_wake
+        self.u_field = self.initial_flow_field - u_wake
+        self.v = self.v_initial + v_wake
+        self.w = self.w_initial + w_wake

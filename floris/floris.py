@@ -29,5 +29,37 @@ class Floris():
         self.input_reader = InputReader()
         self.input_file = input_file
         self.input_dict = input_dict
-        self.farm = self.input_reader.read(input_file=self.input_file,
-                                           input_dict=self.input_dict)
+        self._farm = []
+        self.add_farm(
+                input_file=self.input_file,
+                input_dict=self.input_dict
+        )
+
+    @property
+    def farm(self):
+        if len(self._farm) == 1:
+            return self._farm[0]
+        else:
+            return self._farm
+
+    @farm.setter
+    def farm(self, value):
+        if not hasattr(self._farm):
+            self._farm = value
+
+    def add_farm(self, input_file=None, input_dict=None):
+        """
+        Adds a farm with user-defined input file to the FLORIS object
+        """
+        self._farm.append(self.input_reader.read(input_file=input_file,
+                                                input_dict=input_dict))
+
+    def list_farms(self):
+        """
+        Lists the farms and relevant farm details stored in FLORIS object
+        """
+        for num, farm in enumerate(self._farm):
+            print('Farm', num)
+            print('\tDescription:', farm.description)
+            print('\tWake Model:', farm.flow_field.wake.velocity_model.type_string)                                      
+            print('\tDeflection Model:', farm.flow_field.wake.deflection_model.type_string)

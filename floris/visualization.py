@@ -23,11 +23,11 @@ class VisualizationManager():
     only one instance of this class should exist.
     """
 
-    def __init__(self, flowfield, grid_resolution=(100, 100, 25)):
+    def __init__(self, flow_field, grid_resolution=(100, 100, 25)):
         self.figure_count = 0
-        self.flowfield = flowfield
+        self.flow_field = flow_field
         self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
-        self._initialize_flowfield_for_plotting()
+        self._initialize_flow_field_for_plotting()
 
     # General plotting functions
 
@@ -72,39 +72,37 @@ class VisualizationManager():
         self._set_axis()
 
     # FLORIS-specific data manipulation and plotting
-    def _initialize_flowfield_for_plotting(self):
-        if self.flowfield.wake.velocity_model.type_string != 'curl':
-            self.flowfield.grid_resolution = self.grid_resolution
-            self.flowfield.xmin, self.flowfield.xmax, self.flowfield.ymin, self.flowfield.ymax, self.flowfield.zmin, self.flowfield.zmax = self._set_domain_bounds()
-            self.flowfield.x, self.flowfield.y, self.flowfield.z = self._discretize_freestream_domain()
-            self.flowfield.initial_flowfield = self.flowfield._initial_flowfield()
-            self.flowfield.u_field = self.flowfield._initial_flowfield()
-            self.flowfield.v = np.zeros(np.shape(self.flowfield.u_field))
-            self.flowfield.w = np.zeros(np.shape(self.flowfield.u_field))
-            for turbine in self.flowfield.turbine_map.turbines:
+    def _initialize_flow_field_for_plotting(self):
+        if self.flow_field.wake.velocity_model.type_string != 'curl':
+            self.flow_field.grid_resolution = self.grid_resolution
+            self.flow_field.xmin, self.flow_field.xmax, self.flow_field.ymin, self.flow_field.ymax, self.flow_field.zmin, self.flow_field.zmax = self._set_domain_bounds()
+            self.flow_field.x, self.flow_field.y, self.flow_field.z = self._discretize_freestream_domain()
+            self.flow_field.initial_flow_field, self.flow_field.v_initial, self.flow_field.w_initial = self.flow_field.initialize_flow_field()
+            self.flow_field.u_field, self.flow_field.v, self.flow_field.w = self.flow_field.initialize_flow_field()
+            for turbine in self.flow_field.turbine_map.turbines:
                 turbine.plotting = True
-                self.flowfield.calculate_wake()
+                self.flow_field.calculate_wake()
 
     def _discretize_freestream_domain(self):
         """
         Generate a structured grid for the entire flow field domain.
         """
-        x = np.linspace(self.flowfield.xmin, self.flowfield.xmax, self.flowfield.grid_resolution.x)
-        y = np.linspace(self.flowfield.ymin, self.flowfield.ymax, self.flowfield.grid_resolution.y)
-        z = np.linspace(self.flowfield.zmin, self.flowfield.zmax, self.flowfield.grid_resolution.z)
+        x = np.linspace(self.flow_field.xmin, self.flow_field.xmax, self.flow_field.grid_resolution.x)
+        y = np.linspace(self.flow_field.ymin, self.flow_field.ymax, self.flow_field.grid_resolution.y)
+        z = np.linspace(self.flow_field.zmin, self.flow_field.zmax, self.flow_field.grid_resolution.z)
         return np.meshgrid(x, y, z, indexing='ij')
 
     def _set_domain_bounds(self):
-        coords = self.flowfield.turbine_map.coords
+        coords = self.flow_field.turbine_map.coords
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
         eps = 0.1
-        xmin = min(x) - 5 * self.flowfield.max_diameter
-        xmax = max(x) + 10 * self.flowfield.max_diameter
-        ymin = min(y) - 5 * self.flowfield.max_diameter
-        ymax = max(y) + 5 * self.flowfield.max_diameter
+        xmin = min(x) - 5 * self.flow_field.max_diameter
+        xmax = max(x) + 10 * self.flow_field.max_diameter
+        ymin = min(y) - 5 * self.flow_field.max_diameter
+        ymax = max(y) + 5 * self.flow_field.max_diameter
         zmin = 0 + eps
-        zmax = 2 * self.flowfield.hub_height
+        zmax = 2 * self.flow_field.hub_height
         return xmin, xmax, ymin, ymax, zmin, zmax
 
     def _add_turbine_marker(self, turbine, coords, wind_direction):
@@ -127,30 +125,30 @@ class VisualizationManager():
             ymesh, zmesh, data, 'x plane', 'y (m)', 'z (m)', colorbar_label='Flow speed (m/s)', **kwargs)
 
     def _add_z_plane(self, percent_height=0.5, **kwargs):
-        plane = int(self.flowfield.grid_resolution.z * percent_height)
+        plane = int(self.flow_field.grid_resolution.z * percent_height)
         self._plot_constant_z(
-            self.flowfield.x[:, :, plane],
-            self.flowfield.y[:, :, plane],
-            self.flowfield.u_field[:, :, plane],
+            self.flow_field.x[:, :, plane],
+            self.flow_field.y[:, :, plane],
+            self.flow_field.u_field[:, :, plane],
             **kwargs)
-        for coord, turbine in self.flowfield.turbine_map.items():
+        for coord, turbine in self.flow_field.turbine_map.items():
             self._add_turbine_marker(
-                turbine, coord, self.flowfield.wind_direction)
+                turbine, coord, self.flow_field.wind_direction)
 
     def _add_y_plane(self, percent_height=0.5, **kwargs):
-        plane = int(self.flowfield.grid_resolution.y * percent_height)
+        plane = int(self.flow_field.grid_resolution.y * percent_height)
         self._plot_constant_y(
-            self.flowfield.x[:, plane, :],
-            self.flowfield.z[:, plane, :],
-            self.flowfield.u_field[:, plane, :],
+            self.flow_field.x[:, plane, :],
+            self.flow_field.z[:, plane, :],
+            self.flow_field.u_field[:, plane, :],
             **kwargs)
 
     def _add_x_plane(self, percent_height=0.5, **kwargs):
-        plane = int(self.flowfield.grid_resolution.x * percent_height)
+        plane = int(self.flow_field.grid_resolution.x * percent_height)
         self._plot_constant_x(
-            self.flowfield.y[plane, :, :],
-            self.flowfield.z[plane, :, :],
-            self.flowfield.u_field[plane, :, :],
+            self.flow_field.y[plane, :, :],
+            self.flow_field.z[plane, :, :],
+            self.flow_field.u_field[plane, :, :],
             **kwargs)
 
     def plot_z_planes(self, planes, **kwargs):
