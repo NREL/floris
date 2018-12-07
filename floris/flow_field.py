@@ -164,7 +164,7 @@ class FlowField():
 
     # Public methods
 
-    def calculate_wake(self):
+    def calculate_wake(self, no_wake=False):
 
         # initialize turbulence intensity at every turbine (seems sloppy)
         for coord, turbine in self.turbine_map.items():
@@ -254,11 +254,13 @@ class FlowField():
                                                 self.wake.velocity_model, coord_ti, coord, turbine)
 
             # combine this turbine's wake into the full wake field
-            u_wake = self.wake_combination.combine(u_wake, turb_wake)
-            v_wake = (v_wake + turb_v_wake)
-            w_wake = (w_wake + turb_w_wake)
+            if not no_wake:
+                u_wake = self.wake_combination.combine(u_wake, turb_wake)
+                v_wake = (v_wake + turb_v_wake)
+                w_wake = (w_wake + turb_w_wake)
 
         # apply the velocity deficit field to the freestream
-        self.u_field = self.initial_flow_field - u_wake
-        self.v = self.v_initial + v_wake
-        self.w = self.w_initial + w_wake
+        if not no_wake:
+            self.u_field = self.initial_flow_field - u_wake
+            self.v = self.v_initial + v_wake
+            self.w = self.w_initial + w_wake
