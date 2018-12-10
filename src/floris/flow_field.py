@@ -66,8 +66,8 @@ class FlowField():
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
         self.x, self.y, self.z = self._discretize_turbine_domain()
-        self.initial_flowfield = self._initialize_flowfield()
-        self.u_field = self._initialize_flowfield()
+        self.initial_flow_field = self._initialize_flow_field()
+        self.u_field = self._initialize_flow_field()
 
     def _discretize_turbine_domain(self):
         """
@@ -119,7 +119,7 @@ class FlowField():
         w = np.zeros(np.shape(u))
         return u, v, w
 
-    # def _initialize_flowfield(self):
+    # def _initialize_flow_field(self):
     #     return self.wind_speed * (self.z / self.specified_wind_height)**self.wind_shear
 
     def _initialize_flow_field(self):
@@ -208,8 +208,8 @@ class FlowField():
             self.turbulence_intensity = turbulence_intensity
 
         # reinitialize the flow field
-        self.initial_flowfield = self._initialize_flowfield()
-        self.u_field = self._initialize_flowfield()
+        self.initial_flow_field = self._initialize_flow_field()
+        self.u_field = self._initialize_flow_field()
 
     def calculate_wake(self, no_wake=False):
 

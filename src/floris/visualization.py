@@ -105,7 +105,7 @@ class VisualizationManager():
         ymin = min(y) - 5 * self.flow_field.max_diameter
         ymax = max(y) + 5 * self.flow_field.max_diameter
         zmin = 0 + eps
-        zmax = 2 * self.flow_field.hub_height
+        zmax = 2 * self.flow_field.specified_wind_height
         return xmin, xmax, ymin, ymax, zmin, zmax
 
     def _add_turbine_marker(self, turbine, coords, wind_direction):
