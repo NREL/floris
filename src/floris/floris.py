@@ -9,6 +9,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+import pickle
 from .input_reader import InputReader
 
 class Floris():
@@ -66,3 +67,10 @@ class Floris():
 
     def calculate_wake(self):
         self.farm.flow_field.calculate_wake()
+
+
+    def export_pickle(self, pickle_file):
+        pickle.dump(self.farm, open(pickle_file, "wb"))
+
+    def import_pickle(self, pickle_file):
+        self.farm = pickle.load(open(pickle_file, "rb"))

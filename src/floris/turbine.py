@@ -87,7 +87,6 @@ class Turbine():
         self.tilt_angle = np.radians(self.tilt_angle)
 
         # initialize derived attributes
-        self.fCp, self.fCt = self._CpCtWs()
         self.grid = self._create_swept_area_grid()
         # initialize to an invalid value until calculated
         self.velocities = [-1] * self.grid_point_count
@@ -130,21 +129,17 @@ class Turbine():
 
         return grid
 
-    def _CpCtWs(self):
+    def _fCp(self, at_wind_speed):
         cp = self.power_thrust_table["power"]
+        wind_speed = self.power_thrust_table["wind_speed"]
+        fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
+        return max(cp) if at_wind_speed < min(wind_speed) else fCpInterp(at_wind_speed)
+
+    def _fCt(self, at_wind_speed):
         ct = self.power_thrust_table["thrust"]
-        windspeed = self.power_thrust_table["wind_speed"]
-
-        fCpInterp = interp1d(windspeed, cp, fill_value='extrapolate')
-        fCtInterp = interp1d(windspeed, ct, fill_value='extrapolate')
-
-        def fCp(Ws):
-            return max(cp) if Ws < min(windspeed) else fCpInterp(Ws)
-
-        def fCt(Ws):
-            return 0.99 if Ws < min(windspeed) else fCtInterp(Ws)
-
-        return fCp, fCt
+        wind_speed = self.power_thrust_table["wind_speed"]
+        fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
+        return 0.99 if at_wind_speed < min(wind_speed) else fCtInterp(at_wind_speed)
 
     def _calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
         """
@@ -267,11 +262,11 @@ class Turbine():
 
     @property
     def Cp(self):
-        return self.fCp(self.average_velocity)
+        return self._fCp(self.average_velocity)
     
     @property
     def Ct(self):
-        return self.fCt(self.average_velocity)
+        return self._fCt(self.average_velocity)
 
     @property
     def power(self):
