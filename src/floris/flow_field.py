@@ -152,12 +152,10 @@ class FlowField():
         return xmin, xmax, ymin, ymax, zmin, zmax
 
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flow_field):
-        velocity_function = self.wake.get_velocity_function()
-        return velocity_function(x, y, z, turbine, coord, deflection, wake, flow_field)
+        return self.wake.velocity_function(x, y, z, turbine, coord, deflection, wake, flow_field)
 
     def _compute_turbine_wake_deflection(self, x, y, turbine, coord, flow_field):
-        deflection_function = self.wake.get_deflection_function()
-        return deflection_function(x, y, turbine, coord, flow_field)
+        return self.wake.deflection_function(x, y, turbine, coord, flow_field)
 
     def _rotated_grid(self, angle, center_of_rotation):
         xoffset = self.x - center_of_rotation.x
@@ -193,6 +191,25 @@ class FlowField():
         self.x, self.y, self.z = self._discretize_freestream_domain()
         self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
         self.u_field, self.v, self.w = self.initialize_flow_field()
+
+    def reinitialize_flow_field(self,
+                                wind_speed=None,
+                                wind_direction=None,
+                                wind_shear=None,
+                                turbulence_intensity=None):
+        # reset the given parameters
+        if wind_speed is not None:
+            self.wind_speed = wind_speed
+        if wind_direction is not None:
+            self.wind_direction = wind_direction
+        if wind_shear is not None:
+            self.wind_shear = wind_shear
+        if turbulence_intensity is not None:
+            self.turbulence_intensity = turbulence_intensity
+
+        # reinitialize the flow field
+        self.initial_flowfield = self._initialize_flowfield()
+        self.u_field = self._initialize_flowfield()
 
     def calculate_wake(self, no_wake=False):
 

@@ -63,8 +63,11 @@ class Wake():
         self.deflection_model = WakeDeflection(self.deflection_model, self.parameters)
         self.velocity_model = self.models[properties["velocity_model"]]
 
-    def get_deflection_function(self):
+    # Getters & Setters
+    @property
+    def deflection_function(self):
         return self.deflection_model.function
 
-    def get_velocity_function(self):
+    @property
+    def velocity_function(self):
         return self.velocity_model.function
