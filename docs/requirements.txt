@@ -1,0 +1,3 @@
+doxypypy==0.8.8.6
+readthedocs-sphinx-ext==0.5.15
+sphinxcontrib-doxylink==1.3

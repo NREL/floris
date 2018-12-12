@@ -9,6 +9,11 @@ FLORIS is currently maintained at NREL's National Wind Technology Center by
 outside contribution, and this page outlines processes and procedures we'd like to follow
 when contributing to the source code.
 
+API Reference
+=============
+The `FLORIS API documentation <../doxygen/html/index.html>`_ is auto-generated
+with Doxygen. It is a work in progress and continuously update, so please feel free to contribute!
+
 Git and GitHub
 ==============
 Coming soon.

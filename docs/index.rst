@@ -3,11 +3,10 @@
     :hidden:
     :glob:
 
-    examples
-    tests
-    for_developers
-    code
-    changelog
+    source/examples
+    source/tests
+    source/for_developers
+    source/changelog
 
 
 FLORIS Wake Modeling Utility
