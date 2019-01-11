@@ -66,8 +66,7 @@ class FlowField():
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
         self.x, self.y, self.z = self._discretize_turbine_domain()
-        self.initial_flow_field = self._initialize_flow_field()
-        self.u_field = self._initialize_flow_field()
+        self.reinitialize_flow_field()
 
     def _discretize_turbine_domain(self):
         """
@@ -112,9 +111,10 @@ class FlowField():
         y = np.linspace(self.ymin, self.ymax, self.model_grid_resolution.y)
         z = np.linspace(self.zmin, self.zmax, self.model_grid_resolution.z)
         return np.meshgrid(x, y, z, indexing="ij")
-
+    
     def initialize_flow_field(self):
-        u = self.wind_speed * (self.z / self.specified_wind_height)**self.wind_shear
+        u = self.wind_speed * \
+            (self.z / self.specified_wind_height)**self.wind_shear
         v = np.zeros(np.shape(u))
         w = np.zeros(np.shape(u))
         return u, v, w
@@ -208,8 +208,7 @@ class FlowField():
             self.turbulence_intensity = turbulence_intensity
 
         # reinitialize the flow field
-        self.initial_flow_field = self._initialize_flow_field()
-        self.u_field = self._initialize_flow_field()
+        self._initialize_flow_field()
 
     def calculate_wake(self, no_wake=False):
 
@@ -281,14 +280,14 @@ class FlowField():
                         else:
                             wake_velocities = turbine_ti._calculate_swept_area_velocities(
                                 self.wind_direction,
-                                self.initial_flow_field - turb_wake,
+                                self.free_stream_flow_field - turb_wake,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
                                 rotated_z)
                             freestream_velocities = turbine_ti._calculate_swept_area_velocities(
                                 self.wind_direction,
-                                self.initial_flow_field,
+                                self.free_stream_flow_field,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
@@ -308,7 +307,7 @@ class FlowField():
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
-            self.u_field = self.initial_flow_field - u_wake
+            self.u_field = self.free_stream_flow_field - u_wake
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake
 
