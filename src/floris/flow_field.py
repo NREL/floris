@@ -319,4 +319,4 @@ class FlowField():
     @wind_direction.setter
     def wind_direction(self, value):
         # frame of reference is west
-        self._wind_direction = np.radians(value - 270)  
+        self._wind_direction = np.radians(value - 270)

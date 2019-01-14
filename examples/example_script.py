@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import sys
-from floris.floris import Floris
+from floris import Floris
 from copy import deepcopy
 from floris.visualization import VisualizationManager
 

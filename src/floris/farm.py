@@ -19,7 +19,7 @@ import copy
 import numpy as np
 
 
-class Farm(object):
+class Farm():
     """
     Farm is the container class of the FLORIS package. It brings together all
     of the component objects after input (ie Turbine, Wake, FlowField) and

@@ -19,10 +19,10 @@ class WakeCombination():
             "fls": self._fls,
             "sosfs": self._sosfs,
         }
-        self._combinationFunction = typeMap.get(self.typeString, None)
+        self._combination_function = typeMap.get(self.typeString, None)
 
     def combine(self, u_field, u_wake):
-        return self._combinationFunction(u_field, u_wake)
+        return self._combination_function(u_field, u_wake)
 
     # private functions defining the wake combinations
     # these functions return u_field with u_wake incorporated
