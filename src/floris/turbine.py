@@ -133,13 +133,25 @@ class Turbine():
         cp = self.power_thrust_table["power"]
         wind_speed = self.power_thrust_table["wind_speed"]
         fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
-        return max(cp) if at_wind_speed < min(wind_speed) else fCpInterp(at_wind_speed)
+        if at_wind_speed < min(wind_speed):
+            return max(cp)
+        else:
+            _cp = fCpInterp(at_wind_speed)
+            if _cp.size > 1:
+                _cp = _cp[0]
+            return float(_cp)
 
     def _fCt(self, at_wind_speed):
         ct = self.power_thrust_table["thrust"]
         wind_speed = self.power_thrust_table["wind_speed"]
         fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
-        return 0.99 if at_wind_speed < min(wind_speed) else fCtInterp(at_wind_speed)
+        if at_wind_speed < min(wind_speed):
+            return 0.99
+        else:
+            _ct = fCtInterp(at_wind_speed)
+            if _ct.size > 1:
+                _ct = _ct[0]
+            return float(_ct)
 
     def _calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
         """
