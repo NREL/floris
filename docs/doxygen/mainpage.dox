@@ -1,0 +1,27 @@
+
+/*!
+
+\mainpage FLORIS API Documentation
+
+This documentation describes the FLORIS classes, functions, and code hierarchy.
+
+\section floris_init Floris Initialization
+
+The primary object in FLORIS is the \link floris.floris.Floris \endlink class. A call-graph
+of the classes and functions used in the Floris init method is included below.
+
+\imageSize{initialization.png,width:1000px;}
+\image html initialization.png "Floris Object Initialization"
+\image latex initialization.png "Floris object initialization" width=1000px
+
+\section calc_wake Calculate Wake
+
+After the wind farm, turbine, and wake models are well established, the flow field
+is actually calculated by calling the `calculate_wake` function in \link floris.flow_field.FlowField \endlink.
+A call-graph of the classes and functions used in this process is included below.
+
+\imageSize{calculate_wake.png,width:1000px;}
+\image html calculate_wake.png "Flow Field Calculate Wake"
+\image latex calculate_wake.png "Flow Field Calculate Wake" width=1000px
+
+*/
