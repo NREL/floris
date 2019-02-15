@@ -20,6 +20,7 @@ if len(sys.argv) > 1:
     floris = Floris(sys.argv[1])
 else:
     floris = Floris("example_input.json")
+floris.farm.flow_field.calculate_wake()
 
 for coord, turbine in floris.farm.turbine_map.items():
     print(str(coord) + ":")
@@ -33,6 +34,6 @@ for coord, turbine in floris.farm.turbine_map.items():
 ff_viz = deepcopy(floris.farm.flow_field)
 grid_resolution = (100, 100, 25)
 visualization_manager = VisualizationManager(ff_viz, grid_resolution)
-visualization_manager.plot_z_planes([0.5])
+visualization_manager.plot_z_planes([1/6.])
 visualization_manager.plot_x_planes([0.5])
-#visualization_manager.plot_y_planes([0.5])
+visualization_manager.show()

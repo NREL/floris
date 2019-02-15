@@ -119,3 +119,12 @@ class SampleInputs():
                 }
             }
         }
+
+        self.floris = {
+            "type": "floris_input",
+            "name": "floris_input_file_Example",
+            "description": "Example FLORIS Input file",
+            "farm": self.farm,
+            "turbine": self.turbine,
+            "wake": self.wake
+        }
