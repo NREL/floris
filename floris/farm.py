@@ -99,9 +99,13 @@ class Farm(object):
         wake_model: string - the wake model used to calculate the wake;
             valid wake model options are:
                 {
+                    "curl",
+
                     "gauss",
 
-                    "curl"
+                    "jensen",
+
+                    "floris"
                 }
         calculate_wake: boolean - option to calculate the wake after the wake model is set
         """
@@ -246,6 +250,40 @@ class Farm(object):
 
         for yaw_angle, turbine in zip(yaw_angles, self.turbines):
             turbine.set_yaw_angle(yaw_angle)
+
+        if calculate_wake:
+            self.flow_field.calculate_wake()
+
+    def set_turbine_locations(self, layout_x, layout_y, calculate_wake=True): 
+        """
+        Sets the locations for all turbines and calculates the wake
+
+        inputs:
+            layout_x:
+                float - x coordinate(s) for the turbine(s)
+            
+            layout_y:
+                float - y coordinate(s) for the turbine(s)
+
+        outputs:
+            none
+
+        """
+        # assign coordinates to turbines      
+        self.layout_x = layout_x
+        self.layout_y = layout_y
+
+        turbine_dict = {}
+        turbine = self.turbines[0]
+        for c in list(zip(self.layout_x, self.layout_y)):
+            turbine_dict[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
+
+        self.turbine_map = TurbineMap(turbine_dict)
+
+        #update relevant flow_field values
+        self.flow_field.turbine_map = self.turbine_map
+        self.flow_field.xmin, self.flow_field.xmax, self.flow_field.ymin, self.flow_field.ymax, self.flow_field.zmin, self.flow_field.zmax = self.flow_field._set_domain_bounds()
+        self.flow_field.x, self.flow_field.y, self.flow_field.z = self.flow_field._discretize_freestream_domain() 
 
         if calculate_wake:
             self.flow_field.calculate_wake()

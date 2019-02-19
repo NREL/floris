@@ -81,7 +81,7 @@ class VisualizationManager():
             self.flow_field.u_field, self.flow_field.v, self.flow_field.w = self.flow_field.initialize_flow_field()
             for turbine in self.flow_field.turbine_map.turbines:
                 turbine.plotting = True
-                self.flow_field.calculate_wake()
+            self.flow_field.calculate_wake()
 
     def _discretize_freestream_domain(self):
         """

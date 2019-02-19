@@ -409,6 +409,7 @@ class WakeVelocity():
             nu = lm**2 * np.abs(dudz_initial[i-1,:,:])
 
             # solve the marching problem for u, v, and w 
+            # uw[i,:,:] = uw[i-1,:,:] + (dx / (U[i-1,:,:])) * (-V[i-1,:,:]*dudy - W[i-1,:,:]*dudz + dissipation*D*(np.arctan(1/375*dx - np.pi/1.5)/(np.pi/2)+1)/2*nu*gradU)
             uw[i,:,:] = uw[i-1,:,:] + (dx / (U[i-1,:,:])) * (-V[i-1,:,:]*dudy - W[i-1,:,:]*dudz + dissipation*D*nu*gradU)
             # enforce boundary conditions
             uw[i,:,0] = np.zeros(len(y))
