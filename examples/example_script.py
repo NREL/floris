@@ -32,8 +32,8 @@ for coord, turbine in floris.farm.turbine_map.items():
 
 # Visualization
 ff_viz = deepcopy(floris.farm.flow_field)
-grid_resolution = (100, 100, 25)
-visualization_manager = VisualizationManager(ff_viz, grid_resolution)
+visualization_grid_resolution = (100, 100, 25)
+visualization_manager = VisualizationManager(ff_viz, visualization_grid_resolution)
 visualization_manager.plot_z_planes([1/6.])
 visualization_manager.plot_x_planes([0.5])
 visualization_manager.show()

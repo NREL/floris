@@ -103,9 +103,9 @@ class FlowField():
         """
             Generate a structured grid for the entire flow field domain.
         """
-        x = np.linspace(self.xmin, self.xmax, self.grid_resolution.x)
-        y = np.linspace(self.ymin, self.ymax, self.grid_resolution.y)
-        z = np.linspace(self.zmin, self.zmax, self.grid_resolution.z)
+        x = np.linspace(self.xmin, self.xmax, self.model_grid_resolution.x)
+        y = np.linspace(self.ymin, self.ymax, self.model_grid_resolution.y)
+        z = np.linspace(self.zmin, self.zmax, self.model_grid_resolution.z)
         return np.meshgrid(x, y, z, indexing="ij")
     
     def initialize_flow_field(self):
@@ -116,8 +116,12 @@ class FlowField():
 
     def _initialize_flow_field(self):
         if self.wake.velocity_model.requires_resolution:
-            grid_resolution = self.wake.velocity_model.grid_resolution
-            self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
+            model_grid_resolution = self.wake.velocity_model.model_grid_resolution
+            self.model_grid_resolution = Coordinate(
+                model_grid_resolution[0],
+                model_grid_resolution[1],
+                model_grid_resolution[2]
+            )
             self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
             self.x, self.y, self.z = self._discretize_freestream_domain()
         else:
@@ -159,17 +163,24 @@ class FlowField():
         return rotated_x, rotated_y, self.z
 
     def _calculate_area_overlap(self, wake_velocities, freestream_velocities, turbine):
-        # compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
+        """
+        compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
+        """
         count = np.sum(freestream_velocities - wake_velocities <= 0.05)
         return (turbine.grid_point_count - count) / turbine.grid_point_count
 
     # Public methods
-    def full_flow_field(self, grid_resolution):
+    def full_flow_field(self, resolution):
         if self.wake.velocity_model.requires_resolution:
-            self.grid_resolution = self.wake.velocity_model.grid_resolution
+            print("WARNING: The current wake velocity model contains a required grid resolution; the Resolution given to FlowField.full_flow_field is ignored.")
+            self.model_grid_resolution = self.wake.velocity_model.grid_resolution
         else:
-            self.grid_resolution = grid_resolution
-        self.grid_resolution = Coordinate(self.grid_resolution[0], self.grid_resolution[1], self.grid_resolution[2])
+            self.model_grid_resolution = resolution
+        self.model_grid_resolution = Coordinate(
+            self.model_grid_resolution[0],
+            self.model_grid_resolution[1],
+            self.model_grid_resolution[2]
+        )
         self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
         self.x, self.y, self.z = self._discretize_freestream_domain()
         self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
@@ -228,14 +239,14 @@ class FlowField():
 
                         if turbine_ti.plotting:
                             wake_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
-                                self.grid_resolution,
+                                self.model_grid_resolution,
                                 self.initial_flow_field - turb_wake,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
                                 rotated_z)
                             freestream_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
-                                self.grid_resolution,
+                                self.model_grid_resolution,
                                 self.initial_flow_field,
                                 coord_ti,
                                 rotated_x,

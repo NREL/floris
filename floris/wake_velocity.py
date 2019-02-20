@@ -256,7 +256,7 @@ class Curl(WakeVelocity):
         super().__init__(parameter_dictionary)
 
         model_dictionary = parameter_dictionary["curl"]
-        self.grid_resolution = np.asarray(model_dictionary["grid_resolution"])
+        self.model_grid_resolution = np.asarray(model_dictionary["model_grid_resolution"])
         self.vortex_strength = float(model_dictionary["vortex_strength"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])
         self.dissipation = float(model_dictionary["dissipation"])
@@ -278,16 +278,19 @@ class Curl(WakeVelocity):
         veer_linear = self.veer_linear
 
         # setup x and y grid information
-        x = np.linspace(np.min(x_locations), np.max(
-            x_locations), flow_field.grid_resolution.x)
-        y = np.linspace(np.min(y_locations), np.max(
-            y_locations), flow_field.grid_resolution.y)
+        x = np.linspace(np.min(x_locations), np.max(x_locations), flow_field.model_grid_resolution.x)
+        y = np.linspace(np.min(y_locations), np.max(y_locations), flow_field.model_grid_resolution.y)
 
         # find the x-grid location closest to the current turbine
         idx = np.min(np.where(x >= turbine_coord.x))
         # initialize the flow field
-        uw = np.zeros((flow_field.grid_resolution.x,
-                       flow_field.grid_resolution.y, flow_field.grid_resolution.z))
+        uw = np.zeros(
+            (
+                flow_field.model_grid_resolution.x,
+                flow_field.model_grid_resolution.y,
+                flow_field.model_grid_resolution.z
+            )
+        )
 
         # determine values to create a rotor mask for velocities
         y1 = y_locations[idx, :, :] - turbine_coord.y
@@ -417,8 +420,11 @@ class Curl(WakeVelocity):
                            turbine_coord.x) / Uinf + eps**2)
 
         # simple implementation of linear veer, added to the V component of the flow field
-        z = np.linspace(np.min(z_locations), np.max(
-            z_locations), flow_field.grid_resolution.z)
+        z = np.linspace(
+            np.min(z_locations),
+            np.max(z_locations),
+            flow_field.model_grid_resolution.z
+        )
         z_min = HH
         b_veer = veer_linear
         m_veer = -b_veer / z_min
