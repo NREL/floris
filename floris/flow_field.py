@@ -126,15 +126,6 @@ class FlowField():
         self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
         self.u_field, self.v, self.w = self.initialize_flow_field()
 
-    def _full_flow_field(self):
-
-        grid_resolution = self.wake.velocity_model.grid_resolution
-        self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
-        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
-        self.x, self.y, self.z = self._discretize_freestream_domain()
-        self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
-        self.u_field, self.v, self.w = self.initialize_flow_field()
-
     def _set_domain_bounds(self):
         coords = self.turbine_map.coords
         x = [coord.x for coord in coords]
@@ -173,6 +164,16 @@ class FlowField():
         return (turbine.grid_point_count - count) / turbine.grid_point_count
 
     # Public methods
+    def full_flow_field(self, grid_resolution):
+        if self.wake.velocity_model.requires_resolution:
+            self.grid_resolution = self.wake.velocity_model.grid_resolution
+        else:
+            self.grid_resolution = grid_resolution
+        self.grid_resolution = Coordinate(self.grid_resolution[0], self.grid_resolution[1], self.grid_resolution[2])
+        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
+        self.x, self.y, self.z = self._discretize_freestream_domain()
+        self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
+        self.u_field, self.v, self.w = self.initialize_flow_field()
 
     def calculate_wake(self, no_wake=False):
 
