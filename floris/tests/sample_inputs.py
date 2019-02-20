@@ -82,6 +82,7 @@ class SampleInputs():
                             0.3,
                             1.0
                         ],
+                        "we": 0.05,
                         "aU": 12.0,
                         "bU": 1.3,
                         "mU": [
