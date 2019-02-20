@@ -122,6 +122,16 @@ class FlowField():
             self.x, self.y, self.z = self._discretize_freestream_domain()
         else:
             self.x, self.y, self.z = self._discretize_turbine_domain()
+
+        self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
+        self.u_field, self.v, self.w = self.initialize_flow_field()
+
+    def _full_flow_field(self):
+
+        grid_resolution = self.wake.velocity_model.grid_resolution
+        self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
+        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
+        self.x, self.y, self.z = self._discretize_freestream_domain()
         self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
         self.u_field, self.v, self.w = self.initialize_flow_field()
 
