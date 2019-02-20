@@ -73,7 +73,7 @@ class VisualizationManager():
 
     # FLORIS-specific data manipulation and plotting
     def _initialize_flow_field_for_plotting(self):
-        if self.flow_field.wake.velocity_model.type_string != 'curl':
+        if not self.flow_field.wake.velocity_model.requires_resolution:
             self.flow_field.grid_resolution = self.grid_resolution
             self.flow_field.xmin, self.flow_field.xmax, self.flow_field.ymin, self.flow_field.ymax, self.flow_field.zmin, self.flow_field.zmax = self._set_domain_bounds()
             self.flow_field.x, self.flow_field.y, self.flow_field.z = self._discretize_freestream_domain()

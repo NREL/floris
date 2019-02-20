@@ -115,7 +115,7 @@ class FlowField():
         return u, v, w
 
     def _initialize_flow_field(self):
-        if self.wake.velocity_model.type_string == 'curl':
+        if self.wake.velocity_model.requires_resolution:
             grid_resolution = self.wake.velocity_model.grid_resolution
             self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
             self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
@@ -209,7 +209,7 @@ class FlowField():
             deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
 
             # get the velocity deficit accounting for the deflection
-            if self.wake.velocity_model.type_string == 'curl':
+            if self.wake.velocity_model.requires_resolution:
                 turb_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(
                     rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
             else:
@@ -218,7 +218,7 @@ class FlowField():
                 turb_v_wake = np.zeros(self.u_field.shape)
                 turb_w_wake = np.zeros(self.u_field.shape)
 
-            if self.wake.velocity_model.type_string == 'gauss':
+            if self.wake.velocity_model.requires_resolution:
 
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
