@@ -7,6 +7,13 @@ FLORIS Wake Modeling Utility
 For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_,
 or join the conversation on our `Slack team <https://join.slack.com/t/floris-nwtc/shared_invite/enQtMzMzODczNzE2NTAwLTYyZTcyZDVmODA5NDFmYzNmZmY0YzNjZTQwNTYxMzkyMGE1YWE0ZTBmNWRmNGI3NTZmZjFjMTljYWMxNzM4MmI>`_.
 
+Citation
+========
+
+If FLORIS played a role in your research, please cite it. This software can be cited as::
+
+   FLORIS. Version X.Y.Z (2018). Available at https://github.com/wisdem/floris.
+
 Dependencies
 ============
 The following packages are used in FLORIS

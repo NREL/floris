@@ -29,6 +29,12 @@ This FLORIS model is designed to provide a computationally inexpensive, controls
 
 5. Bastankhah, M. and Porté-Agel, 5 F.: Experimental and theoretical study of wind turbine wakes in yawed conditions, Journal of FluidMechanics, 806, 506–541, 2016.
 
+Citation
+========
+
+If FLORIS played a role in your research, please cite it. This software can be cited as::
+
+   FLORIS. Version X.Y.Z (2018). Available at https://github.com/wisdem/floris.
 
 Architecture
 ============
