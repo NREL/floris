@@ -23,10 +23,13 @@ class VisualizationManager():
     only one instance of this class should exist.
     """
 
-    def __init__(self, flow_field, grid_resolution=(100, 100, 25)):
+    def __init__(self, flow_field, visualization_grid_resolution=(100, 100, 25)):
         self.figure_count = 0
         self.flow_field = flow_field
-        self.grid_resolution = Coordinate(grid_resolution[0], grid_resolution[1], grid_resolution[2])
+        self.visualization_grid_resolution = Coordinate(
+            visualization_grid_resolution[0],
+            visualization_grid_resolution[1],
+            visualization_grid_resolution[2])
         self._initialize_flow_field_for_plotting()
 
     # General plotting functions
@@ -73,8 +76,8 @@ class VisualizationManager():
 
     # FLORIS-specific data manipulation and plotting
     def _initialize_flow_field_for_plotting(self):
-        if self.flow_field.wake.velocity_model.type_string != 'curl':
-            self.flow_field.grid_resolution = self.grid_resolution
+        if not self.flow_field.wake.velocity_model.requires_resolution:
+            self.flow_field.model_grid_resolution = self.visualization_grid_resolution
             self.flow_field.xmin, self.flow_field.xmax, self.flow_field.ymin, self.flow_field.ymax, self.flow_field.zmin, self.flow_field.zmax = self._set_domain_bounds()
             self.flow_field.x, self.flow_field.y, self.flow_field.z = self._discretize_freestream_domain()
             self.flow_field.initial_flow_field, self.flow_field.v_initial, self.flow_field.w_initial = self.flow_field.initialize_flow_field()
@@ -87,9 +90,9 @@ class VisualizationManager():
         """
         Generate a structured grid for the entire flow field domain.
         """
-        x = np.linspace(self.flow_field.xmin, self.flow_field.xmax, self.flow_field.grid_resolution.x)
-        y = np.linspace(self.flow_field.ymin, self.flow_field.ymax, self.flow_field.grid_resolution.y)
-        z = np.linspace(self.flow_field.zmin, self.flow_field.zmax, self.flow_field.grid_resolution.z)
+        x = np.linspace(self.flow_field.xmin, self.flow_field.xmax, self.flow_field.model_grid_resolution.x)
+        y = np.linspace(self.flow_field.ymin, self.flow_field.ymax, self.flow_field.model_grid_resolution.y)
+        z = np.linspace(self.flow_field.zmin, self.flow_field.zmax, self.flow_field.model_grid_resolution.z)
         return np.meshgrid(x, y, z, indexing='ij')
 
     def _set_domain_bounds(self):
@@ -125,7 +128,7 @@ class VisualizationManager():
             ymesh, zmesh, data, 'x plane', 'y (m)', 'z (m)', colorbar_label='Flow speed (m/s)', **kwargs)
 
     def _add_z_plane(self, percent_height=0.5, **kwargs):
-        plane = int(self.flow_field.grid_resolution.z * percent_height)
+        plane = int(self.flow_field.model_grid_resolution.z * percent_height)
         self._plot_constant_z(
             self.flow_field.x[:, :, plane],
             self.flow_field.y[:, :, plane],
@@ -136,7 +139,7 @@ class VisualizationManager():
                 turbine, coord, self.flow_field.wind_direction)
 
     def _add_y_plane(self, percent_height=0.5, **kwargs):
-        plane = int(self.flow_field.grid_resolution.y * percent_height)
+        plane = int(self.flow_field.model_grid_resolution.y * percent_height)
         self._plot_constant_y(
             self.flow_field.x[:, plane, :],
             self.flow_field.z[:, plane, :],
@@ -144,7 +147,7 @@ class VisualizationManager():
             **kwargs)
 
     def _add_x_plane(self, percent_height=0.5, **kwargs):
-        plane = int(self.flow_field.grid_resolution.x * percent_height)
+        plane = int(self.flow_field.model_grid_resolution.x * percent_height)
         self._plot_constant_x(
             self.flow_field.y[plane, :, :],
             self.flow_field.z[plane, :, :],

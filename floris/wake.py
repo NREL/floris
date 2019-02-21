@@ -11,7 +11,7 @@
 
 
 from .wake_deflection import WakeDeflection
-from .wake_velocity import WakeVelocity
+from .wake_velocity import Jensen, Floris, Gauss, Curl
 
 class Wake():
     """
@@ -50,15 +50,18 @@ class Wake():
         self.description = instance_dictionary["description"]
 
         properties = instance_dictionary["properties"]
-        self.velocity_model = properties["velocity_model"]
         self.deflection_model = properties["deflection_model"]
         self.parameters = properties["parameters"]
 
-        # these attributes need special attention
-        self.deflection_model = WakeDeflection(
-            self.deflection_model, self.parameters)
-        self.velocity_model = WakeVelocity(
-            self.velocity_model, self.parameters)
+        self.models = {
+            "jensen": Jensen(properties["parameters"]),
+            "floris": Floris(properties["parameters"]),
+            "gauss": Gauss(properties["parameters"]),
+            "curl": Curl(properties["parameters"])
+        }
+        
+        self.deflection_model = WakeDeflection(self.deflection_model, self.parameters)
+        self.velocity_model = self.models[properties["velocity_model"]]
 
     def get_deflection_function(self):
         return self.deflection_model.function

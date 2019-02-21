@@ -192,10 +192,10 @@ class Turbine():
 
         return np.array(data)
 
-    def _calculate_swept_area_velocities_visualization(self, grid_resolution, local_wind_speed, coord, x, y, z):
+    def _calculate_swept_area_velocities_visualization(self, visualization_grid_resolution, local_wind_speed, coord, x, y, z):
 
-        dx = (np.max(x) - np.min(x)) / grid_resolution.x
-        dy = (np.max(y) - np.min(y)) / grid_resolution.y
+        dx = (np.max(x) - np.min(x)) / visualization_grid_resolution.x
+        dy = (np.max(y) - np.min(y)) / visualization_grid_resolution.y
         mask = \
             (x <= coord.x + dx) & (x >= (coord.x - dx)) & \
             (y <= coord.y + dy) & (y >= coord.y - dy) & \
@@ -241,14 +241,14 @@ class Turbine():
         # update turbine quantities
         if self.plotting:
             self.initial_velocities = self._calculate_swept_area_velocities_visualization(
-                                        flow_field.grid_resolution,
+                                        flow_field.model_grid_resolution,
                                         flow_field.initial_flow_field,
                                         coord,
                                         rotated_x,
                                         rotated_y,
                                         rotated_z)
             self.velocities = self._calculate_swept_area_velocities_visualization(
-                                        flow_field.grid_resolution,
+                                        flow_field.model_grid_resolution,
                                         local_wind_speed,
                                         coord,
                                         rotated_x,

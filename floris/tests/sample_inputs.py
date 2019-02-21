@@ -82,6 +82,7 @@ class SampleInputs():
                             0.3,
                             1.0
                         ],
+                        "we": 0.05,
                         "aU": 12.0,
                         "bU": 1.3,
                         "mU": [
@@ -110,7 +111,7 @@ class SampleInputs():
                         "bd": 0.0
                     },
                     "curl": {
-                        "grid_resolution": [250, 100, 75],
+                        "model_grid_resolution": [250, 100, 75],
                         "vortex_strength": 0.35,
                         "initial_deficit": 1.4,
                         "dissipation": 0.06,
