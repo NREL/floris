@@ -251,7 +251,7 @@ class Farm():
             yaw_angles = [yaw_angles] * len(self.turbines)
 
         for yaw_angle, turbine in zip(yaw_angles, self.turbines):
-            turbine.set_yaw_angle(yaw_angle)
+            turbine.yaw_angle = yaw_angle
 
         if calculate_wake:
             self.flow_field.calculate_wake()
