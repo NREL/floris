@@ -68,6 +68,22 @@ class Wake():
 
     # Getters & Setters
     @property
+    def velocity_model(self):
+        return self._velocity_model
+
+    @velocity_model.setter
+    def velocity_model(self, value):
+        self._velocity_model = self.velocity_models[value]
+
+    @property
+    def deflection_model(self):
+        return self._deflection_model
+
+    @deflection_model.setter
+    def deflection_model(self, value):
+        self._deflection_model = self.deflection_models[value]
+
+    @property
     def deflection_function(self):
         return self.deflection_model.function
 
