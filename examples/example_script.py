@@ -28,7 +28,7 @@ for coord, turbine in floris.farm.turbine_map.items():
     print("\tCt -", turbine.Ct)
     print("\tpower -", turbine.power)
     print("\tai -", turbine.aI)
-    print("\taverage velocity -", turbine.get_average_velocity())
+    print("\taverage velocity -", turbine.average_velocity)
 
 # Visualization
 ff_viz = deepcopy(floris.farm.flow_field)

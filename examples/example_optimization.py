@@ -33,8 +33,7 @@ minimum_yaw_angle = 0.0
 maximum_yaw_angle = 25.0
 
 # compute the optimal yaw angles
-opt_yaw_angles = flopt.wake_steering(floris, minimum_yaw_angle,
-                                     maximum_yaw_angle)
+opt_yaw_angles = flopt.wake_steering(floris, minimum_yaw_angle, maximum_yaw_angle)
 
 print('Optimal yaw angles for:')
 for i, yaw in enumerate(opt_yaw_angles):
