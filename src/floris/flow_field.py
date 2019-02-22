@@ -280,14 +280,14 @@ class FlowField():
                         else:
                             wake_velocities = turbine_ti._calculate_swept_area_velocities(
                                 self.wind_direction,
-                                self.free_stream_flow_field - turb_wake,
+                                self.initial_flow_field - turb_wake,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
                                 rotated_z)
                             freestream_velocities = turbine_ti._calculate_swept_area_velocities(
                                 self.wind_direction,
-                                self.free_stream_flow_field,
+                                self.initial_flow_field,
                                 coord_ti,
                                 rotated_x,
                                 rotated_y,
@@ -307,7 +307,7 @@ class FlowField():
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
-            self.u_field = self.free_stream_flow_field - u_wake
+            self.u_field = self.initial_flow_field - u_wake
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake
 

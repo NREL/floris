@@ -80,7 +80,7 @@ class VisualizationManager():
             self.flow_field.model_grid_resolution = self.visualization_grid_resolution
             self.flow_field.xmin, self.flow_field.xmax, self.flow_field.ymin, self.flow_field.ymax, self.flow_field.zmin, self.flow_field.zmax = self._set_domain_bounds()
             self.flow_field.x, self.flow_field.y, self.flow_field.z = self._discretize_freestream_domain()
-            self.flow_field.free_stream_flow_field, self.flow_field.v_initial, self.flow_field.w_initial = self.flow_field.initial_flow_field()
+            self.flow_field.initial_flow_field, self.flow_field.v_initial, self.flow_field.w_initial = self.flow_field.initial_flow_field()
             self.flow_field.u_field, self.flow_field.v, self.flow_field.w = self.flow_field.initial_flow_field()
             for turbine in self.flow_field.turbine_map.turbines:
                 turbine.plotting = True

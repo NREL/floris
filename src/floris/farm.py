@@ -70,10 +70,6 @@ class Farm():
         self.air_density = properties["air_density"]
         self.layout_x = properties["layout_x"]
         self.layout_y = properties["layout_y"]
-
-        # these attributes need special attention
-        self.wake_combination = WakeCombination(_wake_combination)
-        self.set_wind_direction(self.wind_direction, calculate_wake=False)
         self.wake = wake
 
         turbine_dict = {}
@@ -81,6 +77,8 @@ class Farm():
             turbine_dict[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
         self.turbine_map = TurbineMap(turbine_dict)
 
+        self.wake_combination = WakeCombination(_wake_combination)
+        self.set_wind_direction(self.wind_direction, calculate_wake=False)
         self.flow_field = FlowField(wake_combination=self.wake_combination,
                                     wind_speed=self.wind_speed,
                                     wind_direction=self.wind_direction,

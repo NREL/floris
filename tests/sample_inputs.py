@@ -123,8 +123,8 @@ class SampleInputs():
 
         self.floris = {
             "type": "floris_input",
-            "name": "floris_input_file_Example",
-            "description": "Example FLORIS Input file",
+            "name": "floris_regression_test",
+            "description": "Regression tests for FLORIS",
             "farm": self.farm,
             "turbine": self.turbine,
             "wake": self.wake

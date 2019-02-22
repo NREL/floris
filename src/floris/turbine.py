@@ -217,7 +217,7 @@ class Turbine():
     def update_quantities(self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z):
 
         # extract relevant quantities
-        local_wind_speed = flow_field.free_stream_flow_field - u_wake
+        local_wind_speed = flow_field.initial_flow_field - u_wake
 
         # update turbine quantities
         if self.plotting:
@@ -238,7 +238,7 @@ class Turbine():
         else:
             self.initial_velocities = self._calculate_swept_area_velocities(
                                         flow_field.wind_direction,
-                                        flow_field.free_stream_flow_field,
+                                        flow_field.initial_flow_field,
                                         coord,
                                         rotated_x,
                                         rotated_y,
