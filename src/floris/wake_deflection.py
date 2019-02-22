@@ -13,33 +13,24 @@ import numpy as np
 
 class WakeDeflection():
 
-    def __init__(self, type_string, parameter_dictionary):
+    def __init__(self, parameter_dictionary):
+        self.model_string = None
 
-        self.type_string = type_string
+    def __str__(self):
+        return self.model_string
 
-        type_map = {
-            "jimenez": self._jimenez,
-            "gauss_deflection": self._gauss_deflection,
-            "curl": self._curl
-        }
-        self.function = type_map.get(self.type_string, None)
+class Jimenez(WakeDeflection):
+    def __init__(self, parameter_dictionary):
+        super().__init__(parameter_dictionary)
+        self.model_string = "jimenez"
+        model_dictionary = parameter_dictionary[self.model_string]
+        self.ad = float(model_dictionary["ad"])
+        self.kd = float(model_dictionary["kd"])
+        self.bd = float(model_dictionary["bd"])
 
-        self.jimenez = parameter_dictionary["jimenez"]
-        self.gauss_deflection = parameter_dictionary["gauss_deflection"]
-
-    def _curl(self, x_locations, y_locations, turbine, coord, flow_field):
-
-        deflection = np.zeros(np.shape(x_locations))
-
-        return deflection 
-
-    def _jimenez(self, x_locations, y_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations, turbine, coord, flow_field):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
         # this is coded as defined in the Jimenez et. al. paper
-
-        self.kd = float(self.jimenez["kd"])
-        self.ad = float(self.jimenez["ad"])
-        self.bd = float(self.jimenez["bd"])
 
         # angle of deflection
         xi_init = (1. / 2.) * np.cos(turbine.yaw_angle) * \
@@ -64,15 +55,19 @@ class WakeDeflection():
 
         return deflection
 
-    def _gauss_deflection(self, x_locations, y_locations, turbine, coord, flow_field):
+class Gauss(WakeDeflection):
+    def __init__(self, parameter_dictionary):
+        super().__init__(parameter_dictionary)
+        self.model_string = "gauss_deflection"
+        model_dictionary = parameter_dictionary[self.model_string]
+        self.ka = float(model_dictionary["ka"])
+        self.kb = float(model_dictionary["kb"])
+        self.ad = float(model_dictionary["ad"])
+        self.bd = float(model_dictionary["bd"])
+        self.alpha = float(model_dictionary["alpha"])
+        self.beta = float(model_dictionary["beta"])
 
-        self.ka = float(self.gauss_deflection["ka"])
-        self.kb = float(self.gauss_deflection["kb"])
-        self.ad = float(self.gauss_deflection["ad"])
-        self.bd = float(self.gauss_deflection["bd"])
-        self.alpha = float(self.gauss_deflection["alpha"])
-        self.beta = float(self.gauss_deflection["beta"])
-
+    def function(self, x_locations, y_locations, turbine, coord, flow_field):
         # =======================================================================================================
         wind_speed    = flow_field.wind_speed             # free-stream velocity (m/s)
         TI_0    = flow_field.turbulence_intensity   # turbulence intensity (%/100)
@@ -142,3 +137,11 @@ class WakeDeflection():
         deflection = delta_near_wake + delta_far_wake
 
         return deflection
+
+class Curl(WakeDeflection):
+    def __init__(self, parameter_dictionary):
+        super().__init__(parameter_dictionary)
+        self.model_string = "curl"
+        
+    def function(self, x_locations, y_locations, turbine, coord, flow_field):
+        return np.zeros(np.shape(x_locations)) 
