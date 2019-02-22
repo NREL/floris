@@ -17,6 +17,7 @@ class WakeVelocity():
 
     def __init__(self, parameter_dictionary):
         self.requires_resolution = False
+        self.model_string = None
 
         # turbulence parameters
         turbulence_intensity = parameter_dictionary["turbulence_intensity"]
@@ -25,11 +26,14 @@ class WakeVelocity():
         self.ti_ai = float(turbulence_intensity["ai"])
         self.ti_downstream = float(turbulence_intensity["downstream"])
 
+    def __str__(self):
+        return self.model_string
 
 class Jensen(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        model_dictionary = parameter_dictionary["jensen"]
+        self.model_string = "jensen"
+        model_dictionary = parameter_dictionary[self.model_string]
         self.we = float(model_dictionary["we"])
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
@@ -72,7 +76,8 @@ class Jensen(WakeVelocity):
 class Floris(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        model_dictionary = parameter_dictionary["floris"]
+        self.model_string = "floris"
+        model_dictionary = parameter_dictionary[self.model_string]
         self.me = [float(n) for n in model_dictionary["me"]]
         self.we = float(model_dictionary["we"])
         self.aU = np.radians(float(model_dictionary["aU"]))
@@ -135,7 +140,8 @@ class Floris(WakeVelocity):
 class Gauss(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        model_dictionary = parameter_dictionary["gauss"]
+        self.model_string = "gauss"
+        model_dictionary = parameter_dictionary[self.model_string]
         self.ka = float(model_dictionary["ka"])
         self.kb = float(model_dictionary["kb"])
         self.alpha = float(model_dictionary["alpha"])
@@ -254,8 +260,8 @@ class Gauss(WakeVelocity):
 class Curl(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-
-        model_dictionary = parameter_dictionary["curl"]
+        self.model_string = "curl"
+        model_dictionary = parameter_dictionary[self.model_string]
         self.model_grid_resolution = np.asarray(model_dictionary["model_grid_resolution"])
         self.vortex_strength = float(model_dictionary["vortex_strength"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])

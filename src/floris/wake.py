@@ -58,10 +58,15 @@ class Wake():
             "floris": Floris(properties["parameters"]),
             "gauss": Gauss(properties["parameters"]),
             "curl": Curl(properties["parameters"])
+        self.velocity_models = {
+            "jensen": wake_velocity.Jensen(parameters),
+            "floris": wake_velocity.Floris(parameters),
+            "gauss": wake_velocity.Gauss(parameters),
+            "curl": wake_velocity.Curl(parameters)
         }
         
         self.deflection_model = WakeDeflection(self.deflection_model, self.parameters)
-        self.velocity_model = self.models[properties["velocity_model"]]
+        self._velocity_model = self.velocity_models[properties["velocity_model"]]
 
     # Getters & Setters
     @property
