@@ -61,7 +61,6 @@ class Farm():
     def __init__(self, instance_dictionary, turbine, wake):
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
-        _wake_combination = properties["wake_combination"]
         self.wind_speed = properties["wind_speed"]
         self.wind_direction = properties["wind_direction"]
         self.turbulence_intensity = properties["turbulence_intensity"]
@@ -77,10 +76,8 @@ class Farm():
             turbine_dict[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
         self.turbine_map = TurbineMap(turbine_dict)
 
-        self.wake_combination = WakeCombination(_wake_combination)
         self.set_wind_direction(self.wind_direction, calculate_wake=False)
-        self.flow_field = FlowField(wake_combination=self.wake_combination,
-                                    wind_speed=self.wind_speed,
+        self.flow_field = FlowField(wind_speed=self.wind_speed,
                                     wind_direction=self.wind_direction,
                                     wind_shear=self.wind_shear,
                                     wind_veer=self.wind_veer,
@@ -164,8 +161,7 @@ class Farm():
         """
         Creates the flow field with respective attributes
         """
-        self.flow_field = FlowField(wake_combination=self.wake_combination,
-                                    wind_speed=self.wind_speed,
+        self.flow_field = FlowField(wind_speed=self.wind_speed,
                                     wind_direction=self.wind_direction,
                                     wind_shear=self.wind_shear,
                                     wind_veer=self.wind_veer,
