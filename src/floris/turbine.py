@@ -13,6 +13,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
 
+
 class Turbine():
     """
     Turbine is model object representing a particular wind turbine. It is largely
@@ -79,7 +80,6 @@ class Turbine():
         self._yaw_angle = properties["yaw_angle"]
         self._tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
-        self.plotting = False
 
         # these attributes need special attention
         self.rotor_radius = self.rotor_diameter / 2.0
@@ -173,27 +173,6 @@ class Turbine():
 
         return np.array(data)
 
-    def _calculate_swept_area_velocities_visualization(self, visualization_grid_resolution, local_wind_speed, coord, x, y, z):
-
-        dx = (np.max(x) - np.min(x)) / visualization_grid_resolution.x
-        dy = (np.max(y) - np.min(y)) / visualization_grid_resolution.y
-        mask = \
-            (x <= coord.x + dx) & (x >= (coord.x - dx)) & \
-            (y <= coord.y + dy) & (y >= coord.y - dy) & \
-            (z < self.hub_height + self.rotor_radius) & (z > self.hub_height - self.rotor_radius)
-        u_at_turbine = local_wind_speed[mask]
-        x_grid = x[mask]
-        y_grid = y[mask]
-        z_grid = z[mask]
-        data = np.zeros(len(self.grid))
-        for i, point in enumerate(self.grid):
-            data[i] = griddata(
-                (x_grid, y_grid, z_grid),
-                u_at_turbine,
-                (coord.x, coord.y + point[0], self.hub_height + point[1]),
-                method='nearest')
-        return data
-
     # Public methods
 
     def calculate_turbulence_intensity(self, flow_field_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
@@ -217,39 +196,28 @@ class Turbine():
     def update_quantities(self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z):
 
         # extract relevant quantities
-        local_wind_speed = flow_field.initial_flow_field - u_wake
+        """
+        """
+        # reset the initial velocities
+        self.initial_velocities = self._calculate_swept_area_velocities(
+            flow_field.wind_direction,
+            flow_field.initial_flow_field,
+            coord,
+            rotated_x,
+            rotated_y,
+            rotated_z
+        )
 
-        # update turbine quantities
-        if self.plotting:
-            self.initial_velocities = self._calculate_swept_area_velocities_visualization(
-                                        flow_field.model_grid_resolution,
-                                        flow_field.initial_flow_field,
-                                        coord,
-                                        rotated_x,
-                                        rotated_y,
-                                        rotated_z)
-            self.velocities = self._calculate_swept_area_velocities_visualization(
-                                        flow_field.model_grid_resolution,
-                                        local_wind_speed,
-                                        coord,
-                                        rotated_x,
-                                        rotated_y,
-                                        rotated_z)
-        else:
-            self.initial_velocities = self._calculate_swept_area_velocities(
-                                        flow_field.wind_direction,
-                                        flow_field.initial_flow_field,
-                                        coord,
-                                        rotated_x,
-                                        rotated_y,
-                                        rotated_z)
-            self.velocities = self._calculate_swept_area_velocities(
-                                        flow_field.wind_direction,
-                                        local_wind_speed,
-                                        coord,
-                                        rotated_x,
-                                        rotated_y,
-                                        rotated_z)
+        # reset the waked velocities
+        local_wind_speed = flow_field.initial_flow_field - u_wake
+        self.velocities = self._calculate_swept_area_velocities(
+            flow_field.wind_direction,
+            local_wind_speed,
+            coord,
+            rotated_x,
+            rotated_y,
+            rotated_z
+        )
 
     # Getters & Setters
     @property

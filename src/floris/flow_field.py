@@ -258,38 +258,22 @@ class FlowField():
 
                     if coord_ti.x > coord.x and np.abs(coord.y - coord_ti.y) < 2*turbine.rotor_diameter:
                         # only assess the effects of the current wake
+                        
+                        freestream_velocities = turbine_ti._calculate_swept_area_velocities(
+                            self.wind_direction,
+                            self.u_initial,
+                            coord_ti,
+                            rotated_x,
+                            rotated_y,
+                            rotated_z)
 
-                        if turbine_ti.plotting:
-                            wake_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
-                                self.model_grid_resolution,
-                                self.initial_flow_field - turb_wake,
-                                coord_ti,
-                                rotated_x,
-                                rotated_y,
-                                rotated_z)
-                            freestream_velocities = turbine_ti._calculate_swept_area_velocities_visualization(
-                                self.model_grid_resolution,
-                                self.initial_flow_field,
-                                coord_ti,
-                                rotated_x,
-                                rotated_y,
-                                rotated_z)
-
-                        else:
-                            wake_velocities = turbine_ti._calculate_swept_area_velocities(
-                                self.wind_direction,
-                                self.initial_flow_field - turb_wake,
-                                coord_ti,
-                                rotated_x,
-                                rotated_y,
-                                rotated_z)
-                            freestream_velocities = turbine_ti._calculate_swept_area_velocities(
-                                self.wind_direction,
-                                self.initial_flow_field,
-                                coord_ti,
-                                rotated_x,
-                                rotated_y,
-                                rotated_z)
+                        wake_velocities = turbine_ti._calculate_swept_area_velocities(
+                            self.wind_direction,
+                            self.u_initial - turb_u_wake,
+                            coord_ti,
+                            rotated_x,
+                            rotated_y,
+                            rotated_z)
 
                         area_overlap = self._calculate_area_overlap(wake_velocities, freestream_velocities, turbine)
                         if area_overlap > 0.0:
