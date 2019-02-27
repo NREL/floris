@@ -11,28 +11,42 @@
 
 import numpy as np
 
+
 class WakeCombination():
+    """
+    these functions return u_field with u_wake incorporated
+    u_field: the modified flow field without u_wake
+    u_wake: the wake to add into the rest of the flow field
+    """
 
-    def __init__(self, typeString):
-        self.typeString = typeString
-        typeMap = {
-            "fls": self._fls,
-            "sosfs": self._sosfs,
-        }
-        self._combination_function = typeMap.get(self.typeString, None)
+    def __init__(self):
+        self.model_string = None
 
-    def combine(self, u_field, u_wake):
-        return self._combination_function(u_field, u_wake)
+    def __str__(self):
+        return self.model_string
 
-    # private functions defining the wake combinations
-    # these functions return u_field with u_wake incorporated
-    # u_field: the modified flow field without u_wake
-    # u_wake: the wake to add into the rest of the flow field
 
-    # freestream linear superposition
-    def _fls(self, u_field, u_wake):
+class FLS(WakeCombination):
+    """
+    freestream linear superposition
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.model_string = "fls"
+
+    def function(self, u_field, u_wake):
         return u_field + u_wake
 
-    # sum of squares freestream superposition
-    def _sosfs(self, u_field, u_wake):
+
+class SOSFS(WakeCombination):
+    """
+    sum of squares freestream superposition
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.model_string = "sosfs"
+
+    def function(self, u_field, u_wake):
         return np.hypot(u_wake, u_field)

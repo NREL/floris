@@ -66,6 +66,7 @@ class SampleInputs():
             "properties": {
                 "velocity_model": "gauss",
                 "deflection_model": "gauss_deflection",
+                "combination_model": "sosfs",
                 "parameters": {
                     "turbulence_intensity": {
                         "initial": 0.1,

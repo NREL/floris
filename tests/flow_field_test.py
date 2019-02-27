@@ -30,7 +30,6 @@ class FlowFieldTest():
 
     def _build_input_dict(self):
         wake = Wake(self.sample_inputs.wake)
-        wake_combination = WakeCombination("sosfs")
         turbine = Turbine(self.sample_inputs.turbine)
         turbine_map = TurbineMap({
             Coordinate(0.0, 0.0): copy.deepcopy(turbine),
@@ -44,7 +43,6 @@ class FlowFieldTest():
             "turbulence_intensity": 1.0,
             "air_density": 1.225,
             "wake": wake,
-            "wake_combination": wake_combination,
             "turbine_map": turbine_map
         }
 
@@ -56,7 +54,6 @@ class FlowFieldTest():
                          self.input_dict["turbulence_intensity"],
                          self.input_dict["air_density"],
                          self.input_dict["wake"],
-                         self.input_dict["wake_combination"],
                          self.input_dict["turbine_map"])
 
 

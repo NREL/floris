@@ -49,7 +49,6 @@ class FlowField():
                  turbulence_intensity,
                  air_density,
                  wake,
-                 wake_combination,
                  turbine_map):
 
         self.wind_speed = wind_speed
@@ -59,7 +58,6 @@ class FlowField():
         self.turbulence_intensity = turbulence_intensity
         self.air_density = air_density
         self.wake = wake
-        self.wake_combination = wake_combination
         self.turbine_map = turbine_map
         
         # initialize derived attributes and constants
@@ -301,7 +299,7 @@ class FlowField():
 
             # combine this turbine's wake into the full wake field
             if not no_wake:
-                u_wake = self.wake_combination.combine(u_wake, turb_wake)
+                u_wake = self.wake.combination_function(u_wake, turb_u_wake)
                 v_wake = (v_wake + turb_v_wake)
                 w_wake = (w_wake + turb_w_wake)
 

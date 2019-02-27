@@ -11,7 +11,7 @@
 
 from . import wake_deflection
 from . import wake_velocity
-
+from . import wake_combination
 
 class Wake():
     """
@@ -66,6 +66,12 @@ class Wake():
         }
         self._deflection_model = self.deflection_models[properties["deflection_model"]]
 
+        self.combination_models = {
+            "fls": wake_combination.FLS(),
+            "sosfs": wake_combination.SOSFS()
+        }
+        self._combination_model = self.combination_models[properties["combination_model"]]
+
     # Getters & Setters
     @property
     def velocity_model(self):
@@ -84,9 +90,21 @@ class Wake():
         self._deflection_model = self.deflection_models[value]
 
     @property
+    def combination_model(self):
+        return self._combination_model
+
+    @combination_model.setter
+    def combination_model(self, value):
+        self._combination_model = self.combination_models[value]
+
+    @property
     def deflection_function(self):
-        return self.deflection_model.function
+        return self._deflection_model.function
 
     @property
     def velocity_function(self):
-        return self.velocity_model.function
+        return self._velocity_model.function
+
+    @property
+    def combination_function(self):
+        return self._combination_model.function
