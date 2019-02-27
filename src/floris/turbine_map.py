@@ -9,28 +9,28 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from .coordinate import Coordinate
+from .types import Vec3
 from .turbine import Turbine
 import numpy as np
 
 
 class TurbineMap():
     """
-    TurbineMap is container object which maps a Turbine instance to a Coordinate
+    TurbineMap is container object which maps a Turbine instance to a Vec3
     object. This class also provides some helper methods for sorting and 
     manipulating the turbine layout.
 
     inputs:
-        turbine_map_dict: dict - a dictionary mapping of Turbines to Coordinates
+        turbine_map_dict: dict - a dictionary mapping of Turbines to Vec3
             it should have the following form:
                 {
-                    Coordinate(): Turbine(),
+                    Vec3(): Turbine(),
 
-                    Coordinate(): Turbine(),
+                    Vec3(): Turbine(),
 
                     ...,
 
-                    Coordinate(): Turbine(),
+                    Vec3(): Turbine(),
 
                 }
 
@@ -54,11 +54,10 @@ class TurbineMap():
         """
         rotated = {}
         for coord, turbine in self.items():
-            coord_list = coord.rotate_z(angle, center_of_rotation.as_tuple())
-            rotated_coordinate = Coordinate(coord_list[0], coord_list[1])
-            rotated[rotated_coordinate] = turbine
+            coord.rotate_on_x3(angle, center_of_rotation)
+            rotated[Vec3(coord.x1prime, coord.x2prime, coord.x3prime)] = turbine
         return TurbineMap(rotated)
 
     def sorted_in_x_as_list(self):
-        coords = sorted(self.turbine_map_dict, key=lambda coord: coord.x)
+        coords = sorted(self.turbine_map_dict, key=lambda coord: coord.x1)
         return [(c, self.turbine_map_dict[c]) for c in coords]

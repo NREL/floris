@@ -10,8 +10,9 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
-from .coordinate import Coordinate
+from .types import Vec3
 from scipy.interpolate import griddata
+
 
 class FlowField():
     """
@@ -63,6 +64,7 @@ class FlowField():
         # initialize derived attributes and constants
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
+        self.model_grid_resolution = Vec3(0, 0, 0)
         self.x, self.y, self.z = self._discretize_turbine_domain()
         self.reinitialize_flow_field()
 
@@ -70,21 +72,22 @@ class FlowField():
         """
         Create grid points at each turbine
         """
-        xt = [coord.x for coord in self.turbine_map.coords]
+        xt = [coord.x1 for coord in self.turbine_map.coords]
         rotor_points = int(np.sqrt(self.turbine_map.turbines[0].grid_point_count))
         x_grid = np.zeros((len(xt), rotor_points, rotor_points))
         y_grid = np.zeros((len(xt), rotor_points, rotor_points))
         z_grid = np.zeros((len(xt), rotor_points, rotor_points))
 
         for i, (coord, turbine) in enumerate(self.turbine_map.items()):
+            xt = [coord.x1 for coord in self.turbine_map.coords]
             yt = np.linspace(
-                coord.y - turbine.rotor_radius,
-                coord.y + turbine.rotor_radius,
+                coord.x2 - turbine.rotor_radius,
+                coord.x2 + turbine.rotor_radius,
                 rotor_points
             )
             zt = np.linspace(
-                turbine.hub_height - turbine.rotor_radius,
-                turbine.hub_height + turbine.rotor_radius,
+                coord.x3 - turbine.rotor_radius,
+                coord.x3 + turbine.rotor_radius,
                 rotor_points
             )
 
@@ -94,10 +97,10 @@ class FlowField():
                     y_grid[i,j,k] = yt[j]
                     z_grid[i,j,k] = zt[k]
 
-                    xoffset = x_grid[i,j,k] - coord.x
-                    yoffset = y_grid[i,j,k] - coord.y
-                    x_grid[i,j,k] = xoffset * np.cos(-1 * self.wind_direction) - yoffset * np.sin(-1 * self.wind_direction) + coord.x
-                    y_grid[i,j,k] = yoffset * np.cos(-1 * self.wind_direction) + xoffset * np.sin(-1 * self.wind_direction) + coord.y
+                    xoffset = x_grid[i,j,k] - coord.x1
+                    yoffset = y_grid[i,j,k] - coord.x2
+                    x_grid[i,j,k] = xoffset * np.cos(-1 * self.wind_direction) - yoffset * np.sin(-1 * self.wind_direction) + coord.x1
+                    y_grid[i,j,k] = yoffset * np.cos(-1 * self.wind_direction) + xoffset * np.sin(-1 * self.wind_direction) + coord.x2
         
         return x_grid, y_grid, z_grid
 
@@ -156,14 +159,14 @@ class FlowField():
         return self.wake.deflection_function(x, y, turbine, coord, flow_field)
 
     def _rotated_grid(self, angle, center_of_rotation):
-        xoffset = self.x - center_of_rotation.x
-        yoffset = self.y - center_of_rotation.y
+        xoffset = self.x - center_of_rotation.x1
+        yoffset = self.y - center_of_rotation.x2
         rotated_x = xoffset * \
             np.cos(angle) - yoffset * \
-            np.sin(angle) + center_of_rotation.x
+            np.sin(angle) + center_of_rotation.x1
         rotated_y = xoffset * \
             np.sin(angle) + yoffset * \
-            np.cos(angle) + center_of_rotation.y
+            np.cos(angle) + center_of_rotation.x2
         return rotated_x, rotated_y, self.z
 
     def _calculate_area_overlap(self, wake_velocities, freestream_velocities, turbine):
@@ -216,10 +219,8 @@ class FlowField():
             turbine.air_density = self.air_density
 
         # rotate the discrete grid and turbine map
-        center_of_rotation = Coordinate(0,0)
-
-        rotated_x, rotated_y, rotated_z = self._rotated_grid(
-            self.wind_direction, center_of_rotation)
+        center_of_rotation = Vec3(0, 0, 0)
+        rotated_x, rotated_y, rotated_z = self._rotated_grid(self.wind_direction, center_of_rotation)
 
         # Rotate the turbines such that they are now in the frame of reference 
         # of the wind direction simpifying computing the wakes and wake overlap

@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 import numpy as np
 from src.floris.flow_field import FlowField
-from src.floris.coordinate import Coordinate
+from src.floris.types import Vec3
 from src.floris.wake import Wake
 from src.floris.wake_combination import WakeCombination
 from src.floris.turbine_map import TurbineMap
@@ -32,8 +32,8 @@ class FlowFieldTest():
         wake = Wake(self.sample_inputs.wake)
         turbine = Turbine(self.sample_inputs.turbine)
         turbine_map = TurbineMap({
-            Coordinate(0.0, 0.0): copy.deepcopy(turbine),
-            Coordinate(100.0, 0.0): copy.deepcopy(turbine)
+            Vec3(0.0, 0.0, 0.0): copy.deepcopy(turbine),
+            Vec3(100.0, 0.0, 0.0): copy.deepcopy(turbine)
         })
         return {
             "wind_direction": 270.0,

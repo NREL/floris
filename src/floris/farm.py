@@ -11,7 +11,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from .coordinate import Coordinate
+from .types import Vec3
 from .wake_combination import WakeCombination
 from .flow_field import FlowField
 from .turbine_map import TurbineMap
@@ -73,7 +73,7 @@ class Farm():
 
         turbine_dict = {}
         for c in list(zip(self.layout_x, self.layout_y)):
-            turbine_dict[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
+            turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
         self.turbine_map = TurbineMap(turbine_dict)
 
         self.set_wind_direction(self.wind_direction, calculate_wake=False)
@@ -274,7 +274,7 @@ class Farm():
         turbine_dict = {}
         turbine = self.turbines[0]
         for c in list(zip(self.layout_x, self.layout_y)):
-            turbine_dict[Coordinate(c[0], c[1])] = copy.deepcopy(turbine)
+            turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
 
         self.turbine_map = TurbineMap(turbine_dict)
 

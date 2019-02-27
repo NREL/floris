@@ -37,7 +37,7 @@ class Jimenez(WakeDeflection):
             np.sin(turbine.yaw_angle) * turbine.Ct
         # xi = xi_init / (1 + 2 * self.kd * x_locations / turbine.rotor_diameter)**2
         
-        x_locations = x_locations - coord.x
+        x_locations = x_locations - coord.x1
 
         # yaw displacement
         yYaw_init = ( xi_init
@@ -97,7 +97,7 @@ class Gauss(WakeDeflection):
         u0          = U_local*np.sqrt(1-Ct)
 
         # length of near wake
-        x0      = D*(np.cos(yaw)*(1+np.sqrt(1-Ct*np.cos(yaw)))) / (np.sqrt(2)*(4*alpha*TI + 2*beta*(1-np.sqrt(1-Ct)))) + coord.x
+        x0      = D*(np.cos(yaw)*(1+np.sqrt(1-Ct*np.cos(yaw)))) / (np.sqrt(2)*(4*alpha*TI + 2*beta*(1-np.sqrt(1-Ct)))) + coord.x1
 
         # wake expansion parameters
         ky      = ka*TI + kb 
@@ -111,15 +111,15 @@ class Gauss(WakeDeflection):
         sigma_z0    = D*0.5*np.sqrt( uR/(U_local + u0) )
         sigma_y0    = sigma_z0*np.cos(yaw)*np.cos(veer)
 
-        yR = y_locations - coord.y
-        xR = yR*np.tan(yaw) + coord.x
+        yR = y_locations - coord.x2
+        xR = yR*np.tan(yaw) + coord.x1
 
         # yaw parameters (skew angle and distance from centerline)  
         theta_c0    = 2*((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
-        delta0      = np.tan(theta_c0)*(x0-coord.x)                            # initial wake deflection
+        delta0      = np.tan(theta_c0)*(x0-coord.x1)                            # initial wake deflection
 
         # deflection in the near wake
-        delta_near_wake = ((x_locations-xR)/(x0-xR))*delta0 + ( ad + bd*(x_locations-coord.x) )                               
+        delta_near_wake = ((x_locations-xR)/(x0-xR))*delta0 + ( ad + bd*(x_locations-coord.x1) )                               
         delta_near_wake[x_locations < xR] = 0.0
         delta_near_wake[x_locations > x0] = 0.0
 
