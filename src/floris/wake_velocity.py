@@ -327,7 +327,7 @@ class Curl(WakeVelocity):
         # the axial induction factor of the turbine
         aI = turbine.aI
         # initial velocities in the stream-wise, span-wise, and vertical direction
-        U, V, W = flow_field.initialize_flow_field()
+        U, V, W = flow_field.u, flow_field.v, flow_field.w
         # the tilt angle of the rotor of the turbine
         tilt = turbine.tilt_angle
 
