@@ -109,20 +109,20 @@ class Farm():
         if wake_model not in valid_wake_models:
             raise Exception("Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models)))
 
-        if wake_model == 'gauss':
-            self.flow_field.wake.velocity_model = 'gauss'
-            self.flow_field.wake.deflection_model = 'gauss_deflection'
-        elif wake_model == 'curl':
-            self.flow_field.wake.velocity_model = 'curl'
-            self.flow_field.wake.deflection_model = 'curl'
-        elif wake_model == 'jensen':
+        if wake_model == 'jensen':
             self.flow_field.wake.velocity_model = 'jensen'
             self.flow_field.wake.deflection_model = 'jimenez'
         elif wake_model == 'floris':
             self.flow_field.wake.velocity_model = 'floris'
             self.flow_field.wake.deflection_model = 'floris'
+        elif wake_model == 'gauss':
+            self.flow_field.wake.velocity_model = 'gauss'
+            self.flow_field.wake.deflection_model = 'gauss_deflection'
+        elif wake_model == 'curl':
+            self.flow_field.wake.velocity_model = 'curl'
+            self.flow_field.wake.deflection_model = 'curl'
 
-        self.flow_field.reinitialize_flow_field()
+        self.flow_field.reinitialize_flow_field(with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution)
 
         if calculate_wake:
             self.flow_field.calculate_wake()

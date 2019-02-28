@@ -18,6 +18,7 @@ class WakeVelocity():
     def __init__(self, parameter_dictionary):
         self.requires_resolution = False
         self.model_string = None
+        self.model_grid_resolution = None
 
         # turbulence parameters
         turbulence_intensity = parameter_dictionary["turbulence_intensity"]
@@ -275,27 +276,24 @@ class Curl(WakeVelocity):
         """
 
         # parameters available for tuning to match high-fidelity data
-        # scaling parameter that adjusts strength of vortexes
-        vortex_strength = self.vortex_strength
-        # parameter for defining initial velocity deficity in the flow field at a turbine
-        intial_deficit = self.initial_deficit
-        # scaling parameter that adjusts the amount of dissipation of the vortexes
-        dissipation = self.dissipation
-        # parameter that defines the wind velocity of veer at 0 meters height
-        veer_linear = self.veer_linear
+        vortex_strength = self.vortex_strength  # scaling parameter that adjusts strength of vortexes
+        intial_deficit = self.initial_deficit   # parameter for defining initial velocity deficity in the flow field at a turbine
+        dissipation = self.dissipation          # scaling parameter that adjusts the amount of dissipation of the vortexes
+        veer_linear = self.veer_linear          # parameter that defines the wind velocity of veer at 0 meters height
 
         # setup x and y grid information
-        x = np.linspace(np.min(x_locations), np.max(x_locations), flow_field.model_grid_resolution.x1)
-        y = np.linspace(np.min(y_locations), np.max(y_locations), flow_field.model_grid_resolution.x2)
+        x = np.linspace(np.min(x_locations), np.max(x_locations), self.model_grid_resolution.x1)
+        y = np.linspace(np.min(y_locations), np.max(y_locations), self.model_grid_resolution.x2)
 
         # find the x-grid location closest to the current turbine
         idx = np.min(np.where(x >= turbine_coord.x1))
+
         # initialize the flow field
         uw = np.zeros(
             (
-                int(flow_field.model_grid_resolution.x1),
-                int(flow_field.model_grid_resolution.x2),
-                int(flow_field.model_grid_resolution.x3)
+                int(self.model_grid_resolution.x1),
+                int(self.model_grid_resolution.x2),
+                int(self.model_grid_resolution.x3)
             )
         )
 
@@ -430,7 +428,7 @@ class Curl(WakeVelocity):
         z = np.linspace(
             np.min(z_locations),
             np.max(z_locations),
-            flow_field.model_grid_resolution.z
+            self.model_grid_resolution.x3
         )
         z_min = HH
         b_veer = veer_linear

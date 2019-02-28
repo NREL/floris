@@ -64,12 +64,7 @@ class FlowField():
         # initialize derived attributes and constants
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
-        if self.wake.velocity_model.requires_resolution:
-            self.model_grid_resolution = self.wake.velocity_model.model_grid_resolution
-        else:
-            self.model_grid_resolution = Vec3(0, 0, 0)
-        self.x, self.y, self.z = self._discretize_turbine_domain()
-        self.reinitialize_flow_field()
+        self.reinitialize_flow_field(with_resolution=self.wake.velocity_model.model_grid_resolution)
 
     def _discretize_turbine_domain(self):
         """
@@ -107,19 +102,20 @@ class FlowField():
         
         return x_grid, y_grid, z_grid
 
-    def _discretize_freestream_domain(self, xmin, xmax, ymin, ymax, zmin, zmax):
+    def _discretize_freestream_domain(self, xmin, xmax, ymin, ymax, zmin, zmax, resolution):
         """
         Generate a structured grid for the entire flow field domain.
+        resolution: Vec3
         """
-        x = np.linspace(xmin, xmax, self.model_grid_resolution.x1)
-        z = np.linspace(zmin, zmax, self.model_grid_resolution.x2)
-        y = np.linspace(ymin, ymax, self.model_grid_resolution.x3)
+        x = np.linspace(xmin, xmax, resolution.x1)
+        y = np.linspace(ymin, ymax, resolution.x2)
+        z = np.linspace(zmin, zmax, resolution.x3)
         return np.meshgrid(x, y, z, indexing="ij")
 
     def _compute_initialized_domain(self, with_resolution=None):
         if with_resolution is not None:
             xmin, xmax, ymin, ymax, zmin, zmax = self._get_domain_bounds()
-            self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax)
+            self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, with_resolution)
         else:
             self.x, self.y, self.z = self._discretize_turbine_domain()
 
@@ -173,7 +169,8 @@ class FlowField():
                                 wind_speed=None,
                                 wind_direction=None,
                                 wind_shear=None,
-                                turbulence_intensity=None):
+                                turbulence_intensity=None,
+                                with_resolution=None):
         # reset the given parameters
         if wind_speed is not None:
             self.wind_speed = wind_speed
@@ -185,7 +182,7 @@ class FlowField():
             self.turbulence_intensity = turbulence_intensity
 
         # reinitialize the flow field
-        self._compute_initialized_domain()
+        self._compute_initialized_domain(with_resolution=with_resolution)
 
     def calculate_wake(self, no_wake=False):
 
@@ -276,15 +273,14 @@ class FlowField():
         """
         resolution: Vec3()
         """
-        if self.wake.velocity_model.requires_resolution:
+        if self.wake.velocity_model.requires_resolution and \
+            self.wake.velocity_model.requires_resolution != resolution:
             print("WARNING: The current wake velocity model contains a required grid resolution;")
             print("    The Resolution given to FlowField.get_flow_field_with_resolution is ignored.")
-            self.model_grid_resolution = self.wake.velocity_model.grid_resolution
-        else:
-            self.model_grid_resolution = resolution
+            resolution = self.wake.velocity_model.grid_resolution
         xmin, xmax, ymin, ymax, zmin, zmax = self._get_domain_bounds()
-        self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax)
-        self.reinitialize_flow_field()
+        self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, resolution)
+        self.reinitialize_flow_field(with_resolution=resolution)
         return self.u, self.v, self.w
 
     # Getters & Setters
