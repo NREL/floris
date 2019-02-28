@@ -64,7 +64,10 @@ class FlowField():
         # initialize derived attributes and constants
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
-        self.model_grid_resolution = Vec3(0, 0, 0)
+        if self.wake.velocity_model.requires_resolution:
+            self.model_grid_resolution = self.wake.velocity_model.model_grid_resolution
+        else:
+            self.model_grid_resolution = Vec3(0, 0, 0)
         self.x, self.y, self.z = self._discretize_turbine_domain()
         self.reinitialize_flow_field()
 

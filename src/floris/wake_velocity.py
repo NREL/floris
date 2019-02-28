@@ -261,7 +261,7 @@ class Curl(WakeVelocity):
         super().__init__(parameter_dictionary)
         self.model_string = "curl"
         model_dictionary = parameter_dictionary[self.model_string]
-        self.model_grid_resolution = np.asarray(model_dictionary["model_grid_resolution"])
+        self.model_grid_resolution = Vec3(model_dictionary["model_grid_resolution"])
         self.vortex_strength = float(model_dictionary["vortex_strength"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])
         self.dissipation = float(model_dictionary["dissipation"])
@@ -291,9 +291,9 @@ class Curl(WakeVelocity):
         # initialize the flow field
         uw = np.zeros(
             (
-                flow_field.model_grid_resolution.x1,
-                flow_field.model_grid_resolution.x2,
-                flow_field.model_grid_resolution.x3
+                int(flow_field.model_grid_resolution.x1),
+                int(flow_field.model_grid_resolution.x2),
+                int(flow_field.model_grid_resolution.x3)
             )
         )
 
