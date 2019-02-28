@@ -72,7 +72,7 @@ class Gauss(WakeDeflection):
         wind_speed = flow_field.wind_speed      # free-stream velocity (m/s)
         TI_0 = flow_field.turbulence_intensity  # turbulence intensity (%/100)
         veer = flow_field.wind_veer             # veer (rad), should be deg in the input file and then converted internally
-        TI      = turbine.turbulence_intensity   # just a placeholder for now, should be computed with turbine
+        TI = TI_0
         
         # hard-coded model input data (goes in input file)
         ka      = self.ka                      # wake expansion parameter
