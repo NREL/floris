@@ -104,38 +104,25 @@ class Farm():
                 }
         calculate_wake: boolean - option to calculate the wake after the wake model is set
         """
+
         valid_wake_models = ['curl', 'gauss', 'jensen', 'floris']
         if wake_model not in valid_wake_models:
             raise Exception("Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models)))
 
         if wake_model == 'gauss':
-            vel_model = self.flow_field.wake.velocity_model._gauss
-            vel_model_string = 'gauss'
-            defl_model = self.flow_field.wake.deflection_model._gauss_deflection
-            defl_model_string = 'gauss_deflection'
+            self.flow_field.wake.velocity_model = 'gauss'
+            self.flow_field.wake.deflection_model = 'gauss_deflection'
         elif wake_model == 'curl':
-            vel_model = self.flow_field.wake.velocity_model._curl
-            vel_model_string = 'curl'
-            defl_model = self.flow_field.wake.deflection_model._curl
-            defl_model_string = 'curl'
+            self.flow_field.wake.velocity_model = 'curl'
+            self.flow_field.wake.deflection_model = 'curl'
         elif wake_model == 'jensen':
-            vel_model = self.flow_field.wake.velocity_model._jensen
-            vel_model_string = 'jensen'
-            defl_model = self.flow_field.wake.deflection_model._jimenez
-            defl_model_string = 'jimenez'
+            self.flow_field.wake.velocity_model = 'jensen'
+            self.flow_field.wake.deflection_model = 'jimenez'
         elif wake_model == 'floris':
-            vel_model = self.flow_field.wake.velocity_model._floris
-            vel_model_string = 'floris'
-            defl_model = self.flow_field.wake.deflection_model._jimenez
-            defl_model_string = 'jimenez'
-        
+            self.flow_field.wake.velocity_model = 'floris'
+            self.flow_field.wake.deflection_model = 'floris'
 
-        self.flow_field.wake.velocity_model.function = vel_model
-        self.flow_field.wake.velocity_model.type_string = vel_model_string
-        self.flow_field.wake.deflection_model.function = defl_model
-        self.flow_field.wake.deflection_model.type_string = defl_model_string
-
-        self.flow_field._initialize_flow_field()
+        self.flow_field.reinitialize_flow_field()
 
         if calculate_wake:
             self.flow_field.calculate_wake()
