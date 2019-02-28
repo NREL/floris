@@ -30,6 +30,9 @@ class WakeVelocity():
         return self.model_string
 
 class Jensen(WakeVelocity):
+    """
+    compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "jensen"
@@ -38,12 +41,12 @@ class Jensen(WakeVelocity):
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
         """
-            x direction is streamwise (with the wind)
-            y direction is normal to the streamwise direction and parallel to the ground
-            z direction is normal the streamwise direction and normal to the ground
+        +/- 2keX is the slope of the cone boundary for the wake
+
+        x direction is streamwise (with the wind)
+        y direction is normal to the streamwise direction and parallel to the ground
+        z direction is normal the streamwise direction and normal to the ground
         """
-        # compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
-        # +/- 2keX is the slope of the cone boundary for the wake
 
         # define the boundary of the wake model ... y = mx + b
         m = self.we
@@ -73,6 +76,9 @@ class Jensen(WakeVelocity):
 
 
 class Floris(WakeVelocity):
+    """
+    compute the velocity deficit based on wake zones, see Gebraad et. al. 2016
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "floris"
@@ -84,9 +90,8 @@ class Floris(WakeVelocity):
         self.mU = [float(n) for n in model_dictionary["mU"]]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
-        # compute the velocity deficit based on wake zones, see Gebraad et. al. 2016
         
-        mu = self.mU / np.cos((self.aU + self.bU * np.degrees(turbine.yaw_angle)) * np.pi / 180.)
+        mu = self.mU / np.cos((self.aU + self.bU * np.degrees(turbine.yaw_angle)) * np.pi / 180.0)
 
         # distance from wake centerline
         rY = abs(y_locations - (turbine_coord.x2 + deflection_field))
@@ -137,6 +142,10 @@ class Floris(WakeVelocity):
 
 
 class Gauss(WakeVelocity):
+    """
+    analytical wake model based on self-similarity and Gaussian wake model
+    based on Porte-Agel et. al. papers from 2015-2017
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "gauss"
@@ -257,6 +266,9 @@ class Gauss(WakeVelocity):
 
 
 class Curl(WakeVelocity):
+    """
+    this code has been adapted from Martinez et. al.
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "curl"
@@ -269,8 +281,8 @@ class Curl(WakeVelocity):
         self.requires_resolution = True
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
-
-        # this code has been adapted from Martinez et. al.
+        """
+        """
 
         # parameters available for tuning to match high-fidelity data
         # scaling parameter that adjusts strength of vortexes
