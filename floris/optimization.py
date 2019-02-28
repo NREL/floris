@@ -22,14 +22,14 @@ def optimize_plant(x, floris):
 
     # assign yaw angles to turbines
     turbines = [turbine for _,
-                turbine in floris.farm.flow_field.turbine_map.items()]
+                turbine in floris.farm.flow_field.turbine_map.items]
     for i, turbine in enumerate(turbines):
         turbine.yaw_angle = x[i]
 
     floris.farm.flow_field.calculate_wake()
 
     turbines = [turbine for _,
-                turbine in floris.farm.flow_field.turbine_map.items()]
+                turbine in floris.farm.flow_field.turbine_map.items]
     power = -1 * np.sum([turbine.power for turbine in turbines])
 
     return power / (10**3)

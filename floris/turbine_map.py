@@ -40,11 +40,6 @@ class TurbineMap():
 
     def __init__(self, turbine_map_dict):
         self.turbine_map_dict = turbine_map_dict
-        self.coords = [coord for coord, _ in self.items()]
-        self.turbines = [turbine for _, turbine in self.items()]
-
-    def items(self):
-        return self.turbine_map_dict.items()
 
     def rotated(self, angle, center_of_rotation):
         """
@@ -53,7 +48,7 @@ class TurbineMap():
         are rotated. The original TurbineMap is not modified.
         """
         rotated = {}
-        for coord, turbine in self.items():
+        for coord, turbine in self.items:
             coord.rotate_on_x3(angle, center_of_rotation)
             rotated[Vec3(coord.x1prime, coord.x2prime, coord.x3prime)] = turbine
         return TurbineMap(rotated)
@@ -61,3 +56,15 @@ class TurbineMap():
     def sorted_in_x_as_list(self):
         coords = sorted(self.turbine_map_dict, key=lambda coord: coord.x1)
         return [(c, self.turbine_map_dict[c]) for c in coords]
+
+    @property
+    def turbines(self):
+        return [turbine for _, turbine in self.items]
+
+    @property
+    def coords(self):
+        return [coord for coord, _ in self.items]
+
+    @property
+    def items(self):
+        return self.turbine_map_dict.items()

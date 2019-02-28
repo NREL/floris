@@ -52,7 +52,7 @@ def test_items():
     The class should return a dict_items containing all items
     """
     test_class = TurbineMapTest()
-    items = test_class.instance.items()
+    items = test_class.instance.items
     for i, item in enumerate(items):
         assert test_class.coordinates[i] is item[0]
         assert test_class.turbine_map_dict[test_class.coordinates[i]] is item[1]

@@ -28,7 +28,7 @@ gauss_floris.farm.set_wake_model("gauss", calculate_wake=True)
 # Display the results
 print("Gauss model results")
 print("{:>30} | {:<7} {:<7} {:<15} {:<15} {:<15}".format("turbine location", "Cp", "Ct", "Power", "AxialInduction", "AverageVelocity"))
-gauss_items = gauss_floris.farm.turbine_map.items()
+gauss_items = gauss_floris.farm.turbine_map.items
 for coord, turbine in gauss_items:
     print("{} | {:<7.3f} {:<7.3f} {:<15.3f} {:<15.3f} {:<15.3f}".format(coord, turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
 print("")
@@ -40,7 +40,7 @@ curl_floris.farm.set_wake_model("curl", calculate_wake=True)
 # Display the results
 print("Curl model results")
 print("{:>30} | {:<7} {:<7} {:<15} {:<15} {:<15}".format("turbine location", "Cp", "Ct", "Power", "AxialInduction", "AverageVelocity"))
-curl_items = curl_floris.farm.turbine_map.items()
+curl_items = curl_floris.farm.turbine_map.items
 for coord, turbine in curl_items:
     print("{} | {:<7.3f} {:<7.3f} {:<15.3f} {:<15.3f} {:<15.3f}".format(coord, turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
 print("")

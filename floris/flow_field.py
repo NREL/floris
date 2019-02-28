@@ -76,7 +76,7 @@ class FlowField():
         y_grid = np.zeros((len(xt), rotor_points, rotor_points))
         z_grid = np.zeros((len(xt), rotor_points, rotor_points))
 
-        for i, (coord, turbine) in enumerate(self.turbine_map.items()):
+        for i, (coord, turbine) in enumerate(self.turbine_map.items):
             xt = [coord.x1 for coord in self.turbine_map.coords]
             yt = np.linspace(
                 coord.x2 - turbine.rotor_radius,
@@ -187,7 +187,7 @@ class FlowField():
     def calculate_wake(self, no_wake=False):
 
         # initialize turbulence intensity at every turbine (seems sloppy)
-        for coord, turbine in self.turbine_map.items():
+        for coord, turbine in self.turbine_map.items:
             turbine.air_density = self.air_density
 
         # rotate the discrete grid and turbine map

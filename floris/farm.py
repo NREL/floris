@@ -278,4 +278,4 @@ class Farm():
         """
         Returns a list of turbine objects
         """
-        return [turbine for _, turbine in self.flow_field.turbine_map.items()]
+        return self.turbine_map.turbines
