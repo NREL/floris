@@ -282,8 +282,8 @@ class Curl(WakeVelocity):
         veer_linear = self.veer_linear          # parameter that defines the wind velocity of veer at 0 meters height
 
         # setup x and y grid information
-        x = np.linspace(np.min(x_locations), np.max(x_locations), self.model_grid_resolution.x1)
-        y = np.linspace(np.min(y_locations), np.max(y_locations), self.model_grid_resolution.x2)
+        x = np.linspace(np.min(x_locations), np.max(x_locations), int(self.model_grid_resolution.x1))
+        y = np.linspace(np.min(y_locations), np.max(y_locations), int(self.model_grid_resolution.x2))
 
         # find the x-grid location closest to the current turbine
         idx = np.min(np.where(x >= turbine_coord.x1))
@@ -429,7 +429,7 @@ class Curl(WakeVelocity):
         z = np.linspace(
             np.min(z_locations),
             np.max(z_locations),
-            self.model_grid_resolution.x3
+            int(self.model_grid_resolution.x3)
         )
         z_min = HH
         b_veer = veer_linear

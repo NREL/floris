@@ -107,9 +107,9 @@ class FlowField():
         Generate a structured grid for the entire flow field domain.
         resolution: Vec3
         """
-        x = np.linspace(xmin, xmax, resolution.x1)
-        y = np.linspace(ymin, ymax, resolution.x2)
-        z = np.linspace(zmin, zmax, resolution.x3)
+        x = np.linspace(xmin, xmax, int(resolution.x1))
+        y = np.linspace(ymin, ymax, int(resolution.x2))
+        z = np.linspace(zmin, zmax, int(resolution.x3))
         return np.meshgrid(x, y, z, indexing="ij")
 
     def _compute_initialized_domain(self, with_resolution=None):
