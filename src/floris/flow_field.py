@@ -107,42 +107,31 @@ class FlowField():
         
         return x_grid, y_grid, z_grid
 
-    def _discretize_freestream_domain(self):
+    def _discretize_freestream_domain(self, xmin, xmax, ymin, ymax, zmin, zmax):
         """
-            Generate a structured grid for the entire flow field domain.
+        Generate a structured grid for the entire flow field domain.
         """
-        x = np.linspace(self.xmin, self.xmax, self.model_grid_resolution.x)
-        y = np.linspace(self.ymin, self.ymax, self.model_grid_resolution.y)
-        z = np.linspace(self.zmin, self.zmax, self.model_grid_resolution.z)
+        x = np.linspace(xmin, xmax, self.model_grid_resolution.x1)
+        z = np.linspace(zmin, zmax, self.model_grid_resolution.x2)
+        y = np.linspace(ymin, ymax, self.model_grid_resolution.x3)
         return np.meshgrid(x, y, z, indexing="ij")
-    
-    def initialize_flow_field(self):
-        u = self.wind_speed * \
-            (self.z / self.specified_wind_height)**self.wind_shear
-        v = np.zeros(np.shape(u))
-        w = np.zeros(np.shape(u))
-        return u, v, w
 
-    # def _initialize_flow_field(self):
-    #     return self.wind_speed * (self.z / self.specified_wind_height)**self.wind_shear
-
-    def _initialize_flow_field(self):
-        if self.wake.velocity_model.requires_resolution:
-            model_grid_resolution = self.wake.velocity_model.model_grid_resolution
-            self.model_grid_resolution = Coordinate(
-                model_grid_resolution[0],
-                model_grid_resolution[1],
-                model_grid_resolution[2]
-            )
-            self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
-            self.x, self.y, self.z = self._discretize_freestream_domain()
+    def _compute_initialized_domain(self, with_resolution=None):
+        if with_resolution is not None:
+            xmin, xmax, ymin, ymax, zmin, zmax = self._get_domain_bounds()
+            self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax)
         else:
             self.x, self.y, self.z = self._discretize_turbine_domain()
 
-        self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
-        self.u_field, self.v, self.w = self.initialize_flow_field()
+        self.u_initial = self.wind_speed * (self.z / self.specified_wind_height)**self.wind_shear
+        self.v_initial = np.zeros(np.shape(self.u_initial))
+        self.w_initial = np.zeros(np.shape(self.u_initial))
 
-    def _set_domain_bounds(self):
+        self.u = self.u_initial.copy()
+        self.v = self.v_initial.copy()
+        self.w = self.w_initial.copy()
+
+    def _get_domain_bounds(self):
         coords = self.turbine_map.coords
         x = [coord.x for coord in coords]
         y = [coord.y for coord in coords]
@@ -196,7 +185,7 @@ class FlowField():
             self.turbulence_intensity = turbulence_intensity
 
         # reinitialize the flow field
-        self._initialize_flow_field()
+        self._compute_initialized_domain()
 
     def calculate_wake(self, no_wake=False):
 
@@ -218,9 +207,9 @@ class FlowField():
         sorted_map = rotated_map.sorted_in_x_as_list()
 
         # calculate the velocity deficit and wake deflection on the mesh
-        u_wake = np.zeros(np.shape(self.u_field))
-        v_wake = np.zeros(np.shape(self.u_field))
-        w_wake = np.zeros(np.shape(self.u_field))
+        u_wake = np.zeros(np.shape(self.u))
+        v_wake = np.zeros(np.shape(self.u))
+        w_wake = np.zeros(np.shape(self.u))
         for coord, turbine in sorted_map:
 
             # update the turbine based on the velocity at its hub
@@ -277,7 +266,7 @@ class FlowField():
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
-            self.u_field = self.initial_flow_field - u_wake
+            self.u = self.u_initial - u_wake
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake
 

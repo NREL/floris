@@ -201,7 +201,7 @@ class Turbine():
         # reset the initial velocities
         self.initial_velocities = self._calculate_swept_area_velocities(
             flow_field.wind_direction,
-            flow_field.initial_flow_field,
+            flow_field.u_initial,
             coord,
             rotated_x,
             rotated_y,
@@ -209,7 +209,7 @@ class Turbine():
         )
 
         # reset the waked velocities
-        local_wind_speed = flow_field.initial_flow_field - u_wake
+        local_wind_speed = flow_field.u_initial - u_wake
         self.velocities = self._calculate_swept_area_velocities(
             flow_field.wind_direction,
             local_wind_speed,

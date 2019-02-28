@@ -90,7 +90,7 @@ class Gauss(WakeDeflection):
         Ct          = turbine.Ct
 
         # U_local = flow_field.wind_speed # just a placeholder for now, should be initialized with the flow_field
-        U_local = flow_field.initial_flow_field
+        U_local = flow_field.u_initial
 
         # initial velocity deficits
         uR          = U_local*Ct*np.cos(tilt)*np.cos(yaw)/(2.*(1-np.sqrt(1-(Ct*np.cos(tilt)*np.cos(yaw)))))
