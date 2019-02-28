@@ -69,9 +69,9 @@ class Gauss(WakeDeflection):
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
         # =======================================================================================================
-        wind_speed    = flow_field.wind_speed             # free-stream velocity (m/s)
-        TI_0    = flow_field.turbulence_intensity   # turbulence intensity (%/100)
-        veer    = flow_field.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
+        wind_speed = flow_field.wind_speed      # free-stream velocity (m/s)
+        TI_0 = flow_field.turbulence_intensity  # turbulence intensity (%/100)
+        veer = flow_field.wind_veer             # veer (rad), should be deg in the input file and then converted internally
         TI      = turbine.turbulence_intensity   # just a placeholder for now, should be computed with turbine
         
         # hard-coded model input data (goes in input file)
@@ -84,7 +84,6 @@ class Gauss(WakeDeflection):
 
         # turbine parameters
         D           = turbine.rotor_diameter
-        HH          = turbine.hub_height
         yaw         = -turbine.yaw_angle         # opposite sign convention in this model
         tilt        = turbine.tilt_angle
         Ct          = turbine.Ct
