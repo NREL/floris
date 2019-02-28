@@ -179,23 +179,7 @@ class FlowField():
         count = np.sum(freestream_velocities - wake_velocities <= 0.05)
         return (turbine.grid_point_count - count) / turbine.grid_point_count
 
-    # Public methods
-    def full_flow_field(self, resolution):
-        if self.wake.velocity_model.requires_resolution:
-            print("WARNING: The current wake velocity model contains a required grid resolution; the Resolution given to FlowField.full_flow_field is ignored.")
-            self.model_grid_resolution = self.wake.velocity_model.grid_resolution
-        else:
-            self.model_grid_resolution = resolution
-        self.model_grid_resolution = Coordinate(
-            self.model_grid_resolution[0],
-            self.model_grid_resolution[1],
-            self.model_grid_resolution[2]
-        )
-        self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax = self._set_domain_bounds()
-        self.x, self.y, self.z = self._discretize_freestream_domain()
-        self.initial_flow_field, self.v_initial, self.w_initial = self.initialize_flow_field()
-        self.u_field, self.v, self.w = self.initialize_flow_field()
-
+    # Public methods    
     def reinitialize_flow_field(self,
                                 wind_speed=None,
                                 wind_direction=None,
@@ -296,6 +280,21 @@ class FlowField():
             self.u_field = self.initial_flow_field - u_wake
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake
+
+    def get_flow_field_with_resolution(self, resolution):
+        """
+        resolution: Vec3()
+        """
+        if self.wake.velocity_model.requires_resolution:
+            print("WARNING: The current wake velocity model contains a required grid resolution;")
+            print("    The Resolution given to FlowField.get_flow_field_with_resolution is ignored.")
+            self.model_grid_resolution = self.wake.velocity_model.grid_resolution
+        else:
+            self.model_grid_resolution = resolution
+        xmin, xmax, ymin, ymax, zmin, zmax = self._get_domain_bounds()
+        self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax)
+        self.reinitialize_flow_field()
+        return self.u, self.v, self.w
 
     # Getters & Setters
     @property
