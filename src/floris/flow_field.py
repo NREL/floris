@@ -199,8 +199,7 @@ class FlowField():
 
         # Rotate the turbines such that they are now in the frame of reference 
         # of the wind direction simpifying computing the wakes and wake overlap
-        rotated_map = self.turbine_map.rotated(
-            self.wind_direction, center_of_rotation)
+        rotated_map = self.turbine_map.rotated(self.wind_direction, center_of_rotation)
 
         # sort the turbine map
         sorted_map = rotated_map.sorted_in_x_as_list()
@@ -252,17 +251,23 @@ class FlowField():
                         area_overlap = self._calculate_area_overlap(wake_velocities, freestream_velocities, turbine)
                         if area_overlap > 0.0:
                             turbine_ti.turbulence_intensity = turbine_ti.calculate_turbulence_intensity(
-                                                self.turbulence_intensity,
-                                                self.wake.velocity_model, coord_ti, coord, turbine)
+                                self.turbulence_intensity,
+                                self.wake.velocity_model,
+                                coord_ti,
+                                coord,
+                                turbine
+                            )
 
             # combine this turbine's wake into the full wake field
             if not no_wake:
+                # TODO: why not use the wake combination scheme in every component?
                 u_wake = self.wake.combination_function(u_wake, turb_u_wake)
                 v_wake = (v_wake + turb_v_wake)
                 w_wake = (w_wake + turb_w_wake)
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
+            # TODO: are these signs correct?
             self.u = self.u_initial - u_wake
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake

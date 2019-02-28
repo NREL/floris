@@ -313,7 +313,8 @@ class Curl(WakeVelocity):
         uw[idx, -1, :] = 0.0
         uw[idx, :, -1] = 0.0
 
-        uw = -uw
+        # TODO: explain?
+        uw = -1 * uw
 
         # parameters to simplify the code
         # diameter of the turbine rotor from the input file
