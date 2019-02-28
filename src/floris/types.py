@@ -43,7 +43,7 @@ class Vec3():
             if type(self.x1) in [int]:
                 self.string_format = "{:8d}"
             elif type(self.x1) in [float, np.float64]:
-                self.string_format = "{:8.5f}"
+                self.string_format = "{:8.3f}"
 
     def rotate_on_x3(self, theta, center_of_rotation=None):
         """
@@ -61,7 +61,7 @@ class Vec3():
         self.x3prime = self.x3
 
     def __str__(self):
-        template_string = "{} {} {}".format(
+        template_string = "<{}, {}, {}>".format(
             self.string_format, self.string_format, self.string_format)
         return template_string.format(self.x1, self.x2, self.x3)
 
