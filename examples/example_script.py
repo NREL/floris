@@ -14,7 +14,6 @@ specific language governing permissions and limitations under the License.
 import sys
 from floris import Floris
 from copy import deepcopy
-from floris.visualization import VisualizationManager
 
 if len(sys.argv) > 1:
     floris = Floris(sys.argv[1])
@@ -29,11 +28,3 @@ for coord, turbine in floris.farm.turbine_map.items():
     print("\tpower -", turbine.power)
     print("\tai -", turbine.aI)
     print("\taverage velocity -", turbine.average_velocity)
-
-# Visualization
-ff_viz = deepcopy(floris.farm.flow_field)
-visualization_grid_resolution = (100, 100, 25)
-visualization_manager = VisualizationManager(ff_viz, visualization_grid_resolution)
-visualization_manager.plot_z_planes([1/6.])
-visualization_manager.plot_x_planes([0.5])
-visualization_manager.show()
