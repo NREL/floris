@@ -191,7 +191,6 @@ class FlowField():
 
         # initialize turbulence intensity at every turbine (seems sloppy)
         for coord, turbine in self.turbine_map.items():
-            turbine.turbulence_intensity = self.turbulence_intensity
             turbine.air_density = self.air_density
 
         # rotate the discrete grid and turbine map
@@ -213,20 +212,18 @@ class FlowField():
         for coord, turbine in sorted_map:
 
             # update the turbine based on the velocity at its hub
-            turbine.update_quantities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
+            turbine.update_velocities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
             
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
 
             # get the velocity deficit accounting for the deflection
             if self.wake.velocity_model.requires_resolution:
-                turb_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(
-                    rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
+                turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
             else:
-                turb_wake = self._compute_turbine_velocity_deficit(
-                    rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
-                turb_v_wake = np.zeros(self.u_field.shape)
-                turb_w_wake = np.zeros(self.u_field.shape)
+                turb_u_wake = self._compute_turbine_velocity_deficit(rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
+                turb_v_wake = np.zeros(self.u.shape)
+                turb_w_wake = np.zeros(self.u.shape)
 
             if self.wake.velocity_model.requires_resolution:
 

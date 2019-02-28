@@ -90,16 +90,14 @@ class Turbine():
         self.grid = self._create_swept_area_grid()
         # initialize to an invalid value until calculated
         self.velocities = [-1] * self.grid_point_count
-        self.turbulence_intensity = -1
         self.air_density = -1
 
         # calculated attributes are
         # self.Ct         # Thrust Coefficient
         # self.Cp         # Power Coefficient
-        # self.power      # Power (W) <-- True?
+        # self.power      # Power (W)
         # self.aI         # Axial Induction
-        # self.TI         # Turbulence intensity at rotor
-        # self.windSpeed  # Windspeed at rotor
+        # self.windSpeed  # Windspeed at rotor (m/s)
 
     # Private methods
 
@@ -155,7 +153,7 @@ class Turbine():
 
     def _calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
         """
-            Initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
+        Initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
         u_at_turbine = local_wind_speed
         x_grid = x
@@ -176,10 +174,17 @@ class Turbine():
     # Public methods
 
     def calculate_turbulence_intensity(self, flow_field_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
+        """
+        flow_field_ti
+        velocity_model
+        turbine_coord
+        wake_coord
+        turbine_wake
+        """
 
         ti_initial = flow_field_ti
 
-        # turbulence intensity parameters stored in floris.json
+        # user-input turbulence intensity parameters
         ti_i = velocity_model.ti_initial
         ti_constant = velocity_model.ti_constant
         ti_ai = velocity_model.ti_ai
@@ -191,11 +196,9 @@ class Turbine():
                        * ti_initial**ti_i \
                        * ((turbine_coord.x - wake_coord.x) / self.rotor_diameter)**ti_downstream
 
-        return np.sqrt(ti_calculation**2 + self.turbulence_intensity**2)
+        return np.sqrt(ti_calculation**2 + flow_field_ti**2)
 
-    def update_quantities(self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z):
-
-        # extract relevant quantities
+    def update_velocities(self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z):
         """
         """
         # reset the initial velocities
