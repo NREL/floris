@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import sys
-from floris.floris import Floris
+from floris import Floris
 import copy
 
 # Initialize the floris object with a json input file

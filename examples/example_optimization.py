@@ -11,14 +11,13 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from floris.floris import Floris
+from floris import Floris
 import floris.optimization as flopt
 import numpy as np
 
 # Setup floris with the Gauss velocity and deflection models
 floris = Floris("example_input.json")
-floris.farm.wake.velocity_model = "gauss"
-floris.farm.wake.deflection_model = "gauss_deflection"
+floris.farm.set_wake_model("gauss")
 
 # Run floris with no yaw
 floris.farm.set_yaw_angles(0.0, calculate_wake=True)

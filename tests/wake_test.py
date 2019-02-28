@@ -11,7 +11,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from src.floris.wake import Wake
+from floris.wake import Wake
 from .sample_inputs import SampleInputs
 
 

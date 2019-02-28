@@ -12,12 +12,12 @@ specific language governing permissions and limitations under the License.
 """
 
 import numpy as np
-from src.floris.flow_field import FlowField
-from src.floris.types import Vec3
-from src.floris.wake import Wake
-from src.floris.wake_combination import WakeCombination
-from src.floris.turbine_map import TurbineMap
-from src.floris.turbine import Turbine
+from floris.flow_field import FlowField
+from floris.types import Vec3
+from floris.wake import Wake
+from floris.wake_combination import WakeCombination
+from floris.turbine_map import TurbineMap
+from floris.turbine import Turbine
 from .sample_inputs import SampleInputs
 import copy
 

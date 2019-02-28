@@ -11,7 +11,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from setuptools import setup, find_packages, find_namespace_packages
+from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
@@ -41,8 +41,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     keywords='wind turbine energy wake modeling floris nrel nwtc',
-    package_dir={'': 'src'},
-    packages=find_namespace_packages(where='src'),
+    packages=find_packages(),
     install_requires=[
         'matplotlib >= 2.1.0',
         'numpy >= 1.12.1',
