@@ -129,8 +129,8 @@ class FlowField():
 
     def _get_domain_bounds(self):
         coords = self.turbine_map.coords
-        x = [coord.x for coord in coords]
-        y = [coord.y for coord in coords]
+        x = [coord.x1 for coord in coords]
+        y = [coord.x2 for coord in coords]
         eps = 0.1
         xmin = min(x) - 2 * self.max_diameter
         xmax = max(x) + 10 * self.max_diameter
@@ -226,7 +226,7 @@ class FlowField():
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
 
-                    if coord_ti.x > coord.x and np.abs(coord.y - coord_ti.y) < 2*turbine.rotor_diameter:
+                    if coord_ti.x1 > coord.x1 and np.abs(coord.x2 - coord_ti.x2) < 2*turbine.rotor_diameter:
                         # only assess the effects of the current wake
                         
                         freestream_velocities = turbine_ti._calculate_swept_area_velocities(

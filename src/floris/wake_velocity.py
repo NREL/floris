@@ -305,11 +305,12 @@ class Curl(WakeVelocity):
         # add initial velocity deficit at the rotor to the flow field
         uw_initial = -1 * (flow_field.wind_speed * intial_deficit * turbine.aI)
         uw[idx, :, :] = gaussian_filter(uw_initial * (r1 <= turbine.rotor_diameter / 2), sigma=1)
+
         # enforce the boundary conditions
-        uw[idx, 0, :] = 0.0
-        uw[idx, :, 0] = 0.0
-        uw[idx, -1, :] = 0.0
-        uw[idx, :, -1] = 0.0
+        uw[idx,  0,  :] = 0.0
+        uw[idx,  :,  0] = 0.0
+        uw[idx, -1,  :] = 0.0
+        uw[idx,  :, -1] = 0.0
 
         # TODO: explain?
         uw = -1 * uw
@@ -403,9 +404,9 @@ class Curl(WakeVelocity):
 
         # add wake rotation
         v5, w5 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.x2, flow_field.z[idx, :, :] -
-                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x, Gamma_wake_rotation, 0.2 * D, Uinf)
+                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma_wake_rotation, 0.2 * D, Uinf)
         v6, w6 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.x2, flow_field.z[idx, :, :] +
-                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x, -Gamma_wake_rotation, 0.2 * D, Uinf)
+                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma_wake_rotation, 0.2 * D, Uinf)
         V[idx, :, :] += v5 + v6
         W[idx, :, :] += w5 + w6
 

@@ -194,7 +194,7 @@ class Turbine():
         ti_calculation = ti_constant \
                        * turbine_wake.aI**ti_ai \
                        * ti_initial**ti_i \
-                       * ((turbine_coord.x - wake_coord.x) / self.rotor_diameter)**ti_downstream
+                       * ((turbine_coord.x1 - wake_coord.x1) / self.rotor_diameter)**ti_downstream
 
         return np.sqrt(ti_calculation**2 + flow_field_ti**2)
 
