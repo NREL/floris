@@ -170,6 +170,7 @@ class FlowField():
                                 wind_direction=None,
                                 wind_shear=None,
                                 turbulence_intensity=None,
+                                turbine_map=None,
                                 with_resolution=None):
         # reset the given parameters
         if wind_speed is not None:
@@ -180,6 +181,8 @@ class FlowField():
             self.wind_shear = wind_shear
         if turbulence_intensity is not None:
             self.turbulence_intensity = turbulence_intensity
+        if turbine_map is not None:
+            self.turbine_map = turbine_map
 
         # reinitialize the flow field
         self._compute_initialized_domain(with_resolution=with_resolution)
@@ -277,7 +280,8 @@ class FlowField():
             self.wake.velocity_model.requires_resolution != resolution:
             print("WARNING: The current wake velocity model contains a required grid resolution;")
             print("    The Resolution given to FlowField.get_flow_field_with_resolution is ignored.")
-            resolution = self.wake.velocity_model.grid_resolution
+            resolution = self.wake.velocity_model.model_grid_resolution
+
         xmin, xmax, ymin, ymax, zmin, zmax = self._get_domain_bounds()
         self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, resolution)
         self.reinitialize_flow_field(with_resolution=resolution)

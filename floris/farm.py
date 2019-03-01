@@ -140,14 +140,6 @@ class Farm():
         Sets a flow property, then recreates the flow field and calculates wake
         """
         self.__setattr__(property_name, value)
-        self._create_flow_field()
-        if calculate_wake:
-            self.flow_field.calculate_wake()
-
-    def _create_flow_field(self):
-        """
-        Creates the flow field with respective attributes
-        """
         self.flow_field = FlowField(wind_speed=self.wind_speed,
                                     wind_direction=self.wind_direction,
                                     wind_shear=self.wind_shear,
@@ -156,6 +148,8 @@ class Farm():
                                     air_density=self.air_density,
                                     turbine_map=self.turbine_map,
                                     wake=self.wake)
+        if calculate_wake:
+            self.flow_field.calculate_wake()
 
     def set_wind_speed(self, value, calculate_wake=True):
         """
@@ -254,6 +248,10 @@ class Farm():
             none
 
         """
+        # TODO: this function requires all turbines to be the same.
+        # Is it reasonable to require the user to give a TurbineMap-like object
+        # where the turbines are instantiated and located externally?
+
         # assign coordinates to turbines      
         self.layout_x = layout_x
         self.layout_y = layout_y
@@ -263,12 +261,11 @@ class Farm():
         for c in list(zip(self.layout_x, self.layout_y)):
             turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
 
-        self.turbine_map = TurbineMap(turbine_dict)
-
         #update relevant flow_field values
-        self.flow_field.turbine_map = self.turbine_map
-        self.flow_field.xmin, self.flow_field.xmax, self.flow_field.ymin, self.flow_field.ymax, self.flow_field.zmin, self.flow_field.zmax = self.flow_field._set_domain_bounds()
-        self.flow_field.x, self.flow_field.y, self.flow_field.z = self.flow_field._discretize_freestream_domain() 
+        self.flow_field.reinitialize_flow_field(
+            turbine_map=TurbineMap(turbine_dict),
+            with_resolution=self.wake.velocity_model.model_grid_resolution
+        )
 
         if calculate_wake:
             self.flow_field.calculate_wake()
