@@ -68,6 +68,17 @@ class Floris():
     def calculate_wake(self):
         self.farm.flow_field.calculate_wake()
 
+    def calculate_with_conditions(self, wind_speed, wind_direction, ti):
+        """
+        wind_speed: Float - Updated wind speed
+        wind_direction: Float - Updated wind direction in degrees
+        ti: Float - Updated turbulence intensity
+        """
+        self.farm.flow_field.reinitialize_flow_field(
+            wind_speed=wind_speed,
+            wind_direction=wind_direction
+        )
+        self.calculate_wake()
 
     def export_pickle(self, pickle_file):
         pickle.dump(self.farm, open(pickle_file, "wb"))
