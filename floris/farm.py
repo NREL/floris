@@ -261,7 +261,8 @@ class Farm():
         for c in list(zip(self.layout_x, self.layout_y)):
             turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
 
-        #update relevant flow_field values
+        #update relevant farm and flow_field values
+        self.turbine_map = TurbineMap(turbine_dict)
         self.flow_field.reinitialize_flow_field(
             turbine_map=TurbineMap(turbine_dict),
             with_resolution=self.wake.velocity_model.model_grid_resolution
