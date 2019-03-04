@@ -42,8 +42,6 @@ class Farm():
 
                     "air_density": float,
 
-                    "wake_combination": str,
-
                     "layout_x": list,
 
                     "layout_y": list

@@ -93,11 +93,12 @@ class Turbine():
         self.air_density = -1
 
         # calculated attributes are
-        # self.Ct         # Thrust Coefficient
-        # self.Cp         # Power Coefficient
-        # self.power      # Power (W)
-        # self.aI         # Axial Induction
-        # self.windSpeed  # Windspeed at rotor (m/s)
+        # self.Ct                   # Thrust Coefficient
+        # self.Cp                   # Power Coefficient
+        # self.power                # Power (W)
+        # self.aI                   # Axial Induction
+        # self.windSpeed            # Windspeed at rotor (m/s)
+        # self.turbulence_intensity # turbulence intensity at a downstream turbine
 
     # Private methods
 
@@ -221,6 +222,8 @@ class Turbine():
             rotated_y,
             rotated_z
         )
+
+
 
     # Getters & Setters
     @property

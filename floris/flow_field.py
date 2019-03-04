@@ -192,6 +192,7 @@ class FlowField():
         # initialize turbulence intensity at every turbine (seems sloppy)
         for coord, turbine in self.turbine_map.items:
             turbine.air_density = self.air_density
+            turbine.turbulence_intensity = self.turbulence_intensity
 
         # rotate the discrete grid and turbine map
         center_of_rotation = Vec3(0, 0, 0)
@@ -224,7 +225,8 @@ class FlowField():
                 turb_v_wake = np.zeros(self.u.shape)
                 turb_w_wake = np.zeros(self.u.shape)
 
-            if self.wake.velocity_model.requires_resolution:
+            # include turbulence model for the gaussian wake model from Porte-Agel 
+            if self.wake.velocity_model.model_string == 'gauss':
 
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:

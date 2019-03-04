@@ -188,7 +188,10 @@ class Gauss(WakeVelocity):
         veer = flow_field.wind_veer
         
         # TODO: placeholder for now, should be computed with turbine
-        TI = flow_field.turbulence_intensity
+        #TI = flow_field.turbulence_intensity
+	
+	    # added turbulence model
+        TI = turbine.turbulence_intensity	
 
         # turbine parameters
         D = turbine.rotor_diameter
