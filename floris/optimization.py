@@ -22,31 +22,32 @@ def optimize_plant(x, floris):
 
     # assign yaw angles to turbines
     turbines = [turbine for _,
-                turbine in floris.farm.flow_field.turbine_map.items()]
+                turbine in floris.farm.flow_field.turbine_map.items]
     for i, turbine in enumerate(turbines):
         turbine.yaw_angle = x[i]
 
     floris.farm.flow_field.calculate_wake()
 
     turbines = [turbine for _,
-                turbine in floris.farm.flow_field.turbine_map.items()]
+                turbine in floris.farm.flow_field.turbine_map.items]
     power = -1 * np.sum([turbine.power for turbine in turbines])
 
     return power / (10**3)
 
 
-def wake_steering(floris, minimum_yaw_angle=-25, maximum_yaw_angle=25,
-                  verbose=False, minimize_method='SLSQP', maxiter=100,
+def wake_steering(floris,
+                  minimum_yaw_angle=-25,
+                  maximum_yaw_angle=25,
+                  verbose=False,
+                  minimize_method='SLSQP',
+                  maxiter=100,
                   eps=5.0):
-    # set initial conditions
-    x0 = []
-    bnds = []
+    """
+    """
 
-    turbines = [turbine for _,
-                turbine in floris.farm.flow_field.turbine_map.items()]
-    x0 = [turbine.yaw_angle for turbine in turbines]
-    bnds = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle))
-            for turbine in turbines]
+    # set initial conditions
+    x0 = [turbine.yaw_angle for turbine in floris.farm.turbines]
+    bounds = [(np.radians(minimum_yaw_angle), np.radians(maximum_yaw_angle)) for turbine in floris.farm.turbines]
 
     if verbose:
     	print('=====================================================================')
@@ -55,13 +56,20 @@ def wake_steering(floris, minimum_yaw_angle=-25, maximum_yaw_angle=25,
     	print('=====================================================================')
 
     residual_plant = minimize(
-        optimize_plant, x0, args=(floris), method=minimize_method, bounds=bnds,
-        options={'eps': np.radians(eps), 'maxiter': maxiter}
+        optimize_plant,
+        x0,
+        args=(floris),
+        method=minimize_method,
+        bounds=bounds,
+        options={
+            'eps': np.radians(eps),
+            'maxiter': maxiter
+        }
     )
 
     if np.sum(residual_plant.x) == 0 and verbose:
         print('No change in controls suggested for this inflow condition...')
 
-    opt_yaw_angles = residual_plant.x
+    optimum_yaw_angles = residual_plant.x
 
-    return opt_yaw_angles
+    return optimum_yaw_angles

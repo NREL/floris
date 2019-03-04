@@ -50,6 +50,7 @@ class InputReader():
         self._wake_properties = {
             "velocity_model": str,
             "deflection_model": str,
+            "combination_model": str,
             "parameters": dict
         }
 
@@ -57,11 +58,9 @@ class InputReader():
             "wind_speed": float,
             "wind_direction": float,
             "turbulence_intensity": float,
-            "air_density": float,
             "wind_shear": float,
             "wind_veer": float,
             "air_density": float,
-            "wake_combination": str,
             "layout_x": list,
             "layout_y": list
         }
@@ -204,7 +203,7 @@ class InputReader():
 
     def read(self, input_file=None, input_dict=None):
         """
-        Parses main input file
+        Parses main input file and instantiates floris objects
 
         inputs:
             input_file: str - path to the json input file

@@ -20,7 +20,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='FLORIS',
+    name='floris.floris',
     version='0.4.0',
     description='A wind turbine wake modeling software',
     long_description=long_description,
@@ -38,15 +38,15 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     keywords='wind turbine energy wake modeling floris nrel nwtc',
     packages=find_packages(),
     install_requires=[
         'matplotlib >= 2.1.0',
         'numpy >= 1.12.1',
-        'pytest >= 3.3.1',
+        'pickleshare >= 0.7.4',
         'scipy >= 0.19.1',
-        'Sphinx == 1.6.6',
     ],
     python_requires='~=3.3',
 )

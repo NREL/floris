@@ -11,45 +11,32 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from floris.floris import Floris
+from floris import Floris
 import floris.optimization as flopt
 import numpy as np
 
-# setup floris and process input file
+# Setup floris with the Gauss velocity and deflection models
 floris = Floris("example_input.json")
+floris.farm.set_wake_model("gauss")
 
-# run FLORIS with no yaw
-turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-for k,turbine in enumerate(turbines):
-    turbine.yaw_angle = 0.0
-floris.farm.flow_field.calculate_wake()
-power_initial = np.sum([turbine.power for turbine in turbines])  # determine initial power production
+# Run floris with no yaw
+floris.farm.set_yaw_angles(0.0, calculate_wake=True)
 
-# number of turbines
-nTurbs = len(turbines)
+# Determine initial power production
+power_initial = np.sum([turbine.power for turbine in floris.farm.turbines])
 
-# set bounds for the optimization on the yaw angles (deg)
-minimum_yaw_angle = 0.0
-maximum_yaw_angle = 25.0
+# Set bounds for the optimization on the yaw angles (deg)
+minimum_yaw, maximum_yaw = 0.0, 25.0
 
-# compute the optimal yaw angles
-opt_yaw_angles = flopt.wake_steering(floris, minimum_yaw_angle,
-                                     maximum_yaw_angle)
-
+# Compute the optimal yaw angles
+opt_yaw_angles = flopt.wake_steering(floris, minimum_yaw, maximum_yaw)
 print('Optimal yaw angles for:')
 for i, yaw in enumerate(opt_yaw_angles):
     print('Turbine ', i, ' yaw angle = ', np.degrees(yaw))
 
-# calculate power gain
-# assign yaw angles to turbines
-turbines    = [turbine for _, turbine in floris.farm.flow_field.turbine_map.items()]
-for i,turbine in enumerate(turbines):
-    turbine.yaw_angle = opt_yaw_angles[i]
+# Calculate power gain with new yaw angles
+floris.farm.set_yaw_angles(opt_yaw_angles, calculate_wake=True)
 
-# compute the new wake with yaw angles
-floris.farm.flow_field.calculate_wake()
-
-# optimal power
-power_opt = np.sum([turbine.power for turbine in turbines])
-
-print('Power increased by ', 100*(power_opt-power_initial)/power_initial, '%')
+# Optimal power
+power_optimal = np.sum([turbine.power for turbine in floris.farm.turbines])
+print('Power increased by {}%'.format(100 * (power_optimal - power_initial) / power_initial))

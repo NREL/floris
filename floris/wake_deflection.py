@@ -13,40 +13,31 @@ import numpy as np
 
 class WakeDeflection():
 
-    def __init__(self, type_string, parameter_dictionary):
+    def __init__(self, parameter_dictionary):
+        self.model_string = None
 
-        self.type_string = type_string
+    def __str__(self):
+        return self.model_string
 
-        type_map = {
-            "jimenez": self._jimenez,
-            "gauss_deflection": self._gauss_deflection,
-            "curl": self._curl
-        }
-        self.function = type_map.get(self.type_string, None)
+class Jimenez(WakeDeflection):
+    def __init__(self, parameter_dictionary):
+        super().__init__(parameter_dictionary)
+        self.model_string = "jimenez"
+        model_dictionary = parameter_dictionary[self.model_string]
+        self.ad = float(model_dictionary["ad"])
+        self.kd = float(model_dictionary["kd"])
+        self.bd = float(model_dictionary["bd"])
 
-        self.jimenez = parameter_dictionary["jimenez"]
-        self.gauss_deflection = parameter_dictionary["gauss_deflection"]
-
-    def _curl(self, x_locations, y_locations, turbine, coord, flow_field):
-
-        deflection = np.zeros(np.shape(x_locations))
-
-        return deflection 
-
-    def _jimenez(self, x_locations, y_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations, turbine, coord, flow_field):
         # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
         # this is coded as defined in the Jimenez et. al. paper
-
-        self.kd = float(self.jimenez["kd"])
-        self.ad = float(self.jimenez["ad"])
-        self.bd = float(self.jimenez["bd"])
 
         # angle of deflection
         xi_init = (1. / 2.) * np.cos(turbine.yaw_angle) * \
             np.sin(turbine.yaw_angle) * turbine.Ct
         # xi = xi_init / (1 + 2 * self.kd * x_locations / turbine.rotor_diameter)**2
         
-        x_locations = x_locations - coord.x
+        x_locations = x_locations - coord.x1
 
         # yaw displacement
         yYaw_init = ( xi_init
@@ -64,20 +55,24 @@ class WakeDeflection():
 
         return deflection
 
-    def _gauss_deflection(self, x_locations, y_locations, turbine, coord, flow_field):
+class Gauss(WakeDeflection):
+    def __init__(self, parameter_dictionary):
+        super().__init__(parameter_dictionary)
+        self.model_string = "gauss_deflection"
+        model_dictionary = parameter_dictionary[self.model_string]
+        self.ka = float(model_dictionary["ka"])
+        self.kb = float(model_dictionary["kb"])
+        self.ad = float(model_dictionary["ad"])
+        self.bd = float(model_dictionary["bd"])
+        self.alpha = float(model_dictionary["alpha"])
+        self.beta = float(model_dictionary["beta"])
 
-        self.ka = float(self.gauss_deflection["ka"])
-        self.kb = float(self.gauss_deflection["kb"])
-        self.ad = float(self.gauss_deflection["ad"])
-        self.bd = float(self.gauss_deflection["bd"])
-        self.alpha = float(self.gauss_deflection["alpha"])
-        self.beta = float(self.gauss_deflection["beta"])
-
+    def function(self, x_locations, y_locations, turbine, coord, flow_field):
         # =======================================================================================================
-        wind_speed    = flow_field.wind_speed             # free-stream velocity (m/s)
-        TI_0    = flow_field.turbulence_intensity   # turbulence intensity (%/100)
-        veer    = flow_field.wind_veer                   # veer (rad), should be deg in the input file and then converted internally
-        TI      = turbine.turbulence_intensity   # just a placeholder for now, should be computed with turbine
+        wind_speed = flow_field.wind_speed      # free-stream velocity (m/s)
+        TI_0 = flow_field.turbulence_intensity  # turbulence intensity (%/100)
+        veer = flow_field.wind_veer             # veer (rad), should be deg in the input file and then converted internally
+        TI = TI_0
         
         # hard-coded model input data (goes in input file)
         ka      = self.ka                      # wake expansion parameter
@@ -89,20 +84,19 @@ class WakeDeflection():
 
         # turbine parameters
         D           = turbine.rotor_diameter
-        HH          = turbine.hub_height
         yaw         = -turbine.yaw_angle         # opposite sign convention in this model
         tilt        = turbine.tilt_angle
         Ct          = turbine.Ct
 
         # U_local = flow_field.wind_speed # just a placeholder for now, should be initialized with the flow_field
-        U_local = flow_field.initial_flow_field
+        U_local = flow_field.u_initial
 
         # initial velocity deficits
         uR          = U_local*Ct*np.cos(tilt)*np.cos(yaw)/(2.*(1-np.sqrt(1-(Ct*np.cos(tilt)*np.cos(yaw)))))
         u0          = U_local*np.sqrt(1-Ct)
 
         # length of near wake
-        x0      = D*(np.cos(yaw)*(1+np.sqrt(1-Ct*np.cos(yaw)))) / (np.sqrt(2)*(4*alpha*TI + 2*beta*(1-np.sqrt(1-Ct)))) + coord.x
+        x0      = D*(np.cos(yaw)*(1+np.sqrt(1-Ct*np.cos(yaw)))) / (np.sqrt(2)*(4*alpha*TI + 2*beta*(1-np.sqrt(1-Ct)))) + coord.x1
 
         # wake expansion parameters
         ky      = ka*TI + kb 
@@ -116,15 +110,15 @@ class WakeDeflection():
         sigma_z0    = D*0.5*np.sqrt( uR/(U_local + u0) )
         sigma_y0    = sigma_z0*np.cos(yaw)*np.cos(veer)
 
-        yR = y_locations - coord.y
-        xR = yR*np.tan(yaw) + coord.x
+        yR = y_locations - coord.x2
+        xR = yR*np.tan(yaw) + coord.x1
 
         # yaw parameters (skew angle and distance from centerline)  
         theta_c0    = 2*((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
-        delta0      = np.tan(theta_c0)*(x0-coord.x)                            # initial wake deflection
+        delta0      = np.tan(theta_c0)*(x0-coord.x1)                            # initial wake deflection
 
         # deflection in the near wake
-        delta_near_wake = ((x_locations-xR)/(x0-xR))*delta0 + ( ad + bd*(x_locations-coord.x) )                               
+        delta_near_wake = ((x_locations-xR)/(x0-xR))*delta0 + ( ad + bd*(x_locations-coord.x1) )                               
         delta_near_wake[x_locations < xR] = 0.0
         delta_near_wake[x_locations > x0] = 0.0
 
@@ -136,9 +130,17 @@ class WakeDeflection():
 
         ln_deltaNum = (1.6+np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) - np.sqrt(M0))
         ln_deltaDen = (1.6-np.sqrt(M0))*(1.6*np.sqrt(sigma_y*sigma_z/(sigma_y0*sigma_z0)) + np.sqrt(M0))
-        delta_far_wake = delta0 + (theta_c0*E0/5.2)*np.sqrt(sigma_y0*sigma_z0/(ky*kz*M0))*np.log(ln_deltaNum/ln_deltaDen) + ( ad + bd*(x_locations-coord.x) )  
+        delta_far_wake = delta0 + (theta_c0*E0/5.2)*np.sqrt(sigma_y0*sigma_z0/(ky*kz*M0))*np.log(ln_deltaNum/ln_deltaDen) + ( ad + bd*(x_locations-coord.x1) )  
         delta_far_wake[x_locations <= x0] = 0.0
 
         deflection = delta_near_wake + delta_far_wake
 
         return deflection
+
+class Curl(WakeDeflection):
+    def __init__(self, parameter_dictionary):
+        super().__init__(parameter_dictionary)
+        self.model_string = "curl"
+        
+    def function(self, x_locations, y_locations, turbine, coord, flow_field):
+        return np.zeros(np.shape(x_locations)) 

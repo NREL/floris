@@ -66,6 +66,7 @@ class SampleInputs():
             "properties": {
                 "velocity_model": "gauss",
                 "deflection_model": "gauss_deflection",
+                "combination_model": "sosfs",
                 "parameters": {
                     "turbulence_intensity": {
                         "initial": 0.1,
@@ -123,8 +124,8 @@ class SampleInputs():
 
         self.floris = {
             "type": "floris_input",
-            "name": "floris_input_file_Example",
-            "description": "Example FLORIS Input file",
+            "name": "floris_regression_test",
+            "description": "Regression tests for FLORIS",
             "farm": self.farm,
             "turbine": self.turbine,
             "wake": self.wake

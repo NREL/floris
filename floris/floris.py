@@ -9,6 +9,7 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+import pickle
 from .input_reader import InputReader
 
 class Floris():
@@ -63,3 +64,24 @@ class Floris():
             print('\tDescription:', farm.description)
             print('\tWake Model:', farm.flow_field.wake.velocity_model.type_string)                                      
             print('\tDeflection Model:', farm.flow_field.wake.deflection_model.type_string)
+
+    def calculate_wake(self):
+        self.farm.flow_field.calculate_wake()
+
+    def calculate_with_conditions(self, wind_speed, wind_direction, ti):
+        """
+        wind_speed: Float - Updated wind speed
+        wind_direction: Float - Updated wind direction in degrees
+        ti: Float - Updated turbulence intensity
+        """
+        self.farm.flow_field.reinitialize_flow_field(
+            wind_speed=wind_speed,
+            wind_direction=wind_direction
+        )
+        self.calculate_wake()
+
+    def export_pickle(self, pickle_file):
+        pickle.dump(self.farm, open(pickle_file, "wb"))
+
+    def import_pickle(self, pickle_file):
+        self.farm = pickle.load(open(pickle_file, "rb"))

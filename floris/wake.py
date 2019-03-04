@@ -9,9 +9,9 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-
-from .wake_deflection import WakeDeflection
-from .wake_velocity import Jensen, Floris, Gauss, Curl
+from . import wake_deflection
+from . import wake_velocity
+from . import wake_combination
 
 class Wake():
     """
@@ -48,23 +48,63 @@ class Wake():
     def __init__(self, instance_dictionary):
 
         self.description = instance_dictionary["description"]
-
         properties = instance_dictionary["properties"]
-        self.deflection_model = properties["deflection_model"]
-        self.parameters = properties["parameters"]
+        parameters = properties["parameters"]
 
-        self.models = {
-            "jensen": Jensen(properties["parameters"]),
-            "floris": Floris(properties["parameters"]),
-            "gauss": Gauss(properties["parameters"]),
-            "curl": Curl(properties["parameters"])
+        self.velocity_models = {
+            "jensen": wake_velocity.Jensen(parameters),
+            "floris": wake_velocity.Floris(parameters),
+            "gauss": wake_velocity.Gauss(parameters),
+            "curl": wake_velocity.Curl(parameters)
         }
-        
-        self.deflection_model = WakeDeflection(self.deflection_model, self.parameters)
-        self.velocity_model = self.models[properties["velocity_model"]]
+        self._velocity_model = self.velocity_models[properties["velocity_model"]]
 
-    def get_deflection_function(self):
-        return self.deflection_model.function
+        self.deflection_models = {
+            "jimenez": wake_deflection.Jimenez(parameters),
+            "gauss_deflection": wake_deflection.Gauss(parameters),
+            "curl": wake_deflection.Curl(parameters)
+        }
+        self._deflection_model = self.deflection_models[properties["deflection_model"]]
 
-    def get_velocity_function(self):
-        return self.velocity_model.function
+        self.combination_models = {
+            "fls": wake_combination.FLS(),
+            "sosfs": wake_combination.SOSFS()
+        }
+        self._combination_model = self.combination_models[properties["combination_model"]]
+
+    # Getters & Setters
+    @property
+    def velocity_model(self):
+        return self._velocity_model
+
+    @velocity_model.setter
+    def velocity_model(self, value):
+        self._velocity_model = self.velocity_models[value]
+
+    @property
+    def deflection_model(self):
+        return self._deflection_model
+
+    @deflection_model.setter
+    def deflection_model(self, value):
+        self._deflection_model = self.deflection_models[value]
+
+    @property
+    def combination_model(self):
+        return self._combination_model
+
+    @combination_model.setter
+    def combination_model(self, value):
+        self._combination_model = self.combination_models[value]
+
+    @property
+    def deflection_function(self):
+        return self._deflection_model.function
+
+    @property
+    def velocity_function(self):
+        return self._velocity_model.function
+
+    @property
+    def combination_function(self):
+        return self._combination_model.function

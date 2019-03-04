@@ -13,7 +13,6 @@
       "wind_shear": 0.12,
       "wind_veer": 0.0,
       "air_density": 1.225,
-      "wake_combination": "sosfs",
       "layout_x": [
         0.0,
         800.0,
@@ -145,6 +144,7 @@
     "properties": {
       "velocity_model": "curl",
       "deflection_model": "curl",
+      "combination_model": "sosfs",
       "parameters": {
         "turbulence_intensity": {
           "initial": 0.1,

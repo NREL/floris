@@ -12,28 +12,50 @@ specific language governing permissions and limitations under the License.
 """
 
 import sys
-from floris.floris import Floris
-from copy import deepcopy
-from floris.visualization import VisualizationManager
+from floris import Floris
+import copy
 
+# Initialize the floris object with a json input file
 if len(sys.argv) > 1:
     floris = Floris(sys.argv[1])
 else:
     floris = Floris("example_input.json")
-floris.farm.flow_field.calculate_wake()
 
-for coord, turbine in floris.farm.turbine_map.items():
-    print(str(coord) + ":")
-    print("\tCp -", turbine.Cp)
-    print("\tCt -", turbine.Ct)
-    print("\tpower -", turbine.power)
-    print("\tai -", turbine.aI)
-    print("\taverage velocity -", turbine.get_average_velocity())
+# Setup the Gauss velocity and deflection models
+gauss_floris = copy.deepcopy(floris)
+gauss_floris.farm.set_wake_model("gauss", calculate_wake=True)
 
-# Visualization
-ff_viz = deepcopy(floris.farm.flow_field)
-visualization_grid_resolution = (100, 100, 25)
-visualization_manager = VisualizationManager(ff_viz, visualization_grid_resolution)
-visualization_manager.plot_z_planes([1/6.])
-visualization_manager.plot_x_planes([0.5])
-visualization_manager.show()
+# Display the results
+print("Gauss model results")
+print("{:>30} | {:<7} {:<7} {:<15} {:<15} {:<15}".format("turbine location", "Cp", "Ct", "Power", "AxialInduction", "AverageVelocity"))
+gauss_items = gauss_floris.farm.turbine_map.items
+for coord, turbine in gauss_items:
+    print("{} | {:<7.3f} {:<7.3f} {:<15.3f} {:<15.3f} {:<15.3f}".format(coord, turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+print("")
+
+# Setup the Curl velocity and deflection models
+curl_floris = copy.deepcopy(floris)
+curl_floris.farm.set_wake_model("curl", calculate_wake=True)
+
+# Display the results
+print("Curl model results")
+print("{:>30} | {:<7} {:<7} {:<15} {:<15} {:<15}".format("turbine location", "Cp", "Ct", "Power", "AxialInduction", "AverageVelocity"))
+curl_items = curl_floris.farm.turbine_map.items
+for coord, turbine in curl_items:
+    print("{} | {:<7.3f} {:<7.3f} {:<15.3f} {:<15.3f} {:<15.3f}".format(coord, turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+print("")
+
+# calculate and display the difference
+print("Difference (absolute difference)")
+print("{:>30} | {:<7} {:<7} {:<15} {:<15} {:<15}".format("turbine location", "Cp", "Ct", "Power", "AxialInduction", "AverageVelocity"))
+for gauss, curl in zip(gauss_items, curl_items):
+    gauss_coord, gauss_turbine = gauss[0], gauss[1]
+    curl_coord, curl_turbine = curl[0], curl[1]
+    print("{} | {:<7.3f} {:<7.3f} {:<15.3f} {:<15.3f} {:<15.3f}".format(
+        gauss_coord,
+        abs(gauss_turbine.Cp - curl_turbine.Cp),
+        abs(gauss_turbine.Ct - curl_turbine.Ct),
+        abs(gauss_turbine.power - curl_turbine.power),
+        abs(gauss_turbine.aI - curl_turbine.aI),
+        abs(gauss_turbine.average_velocity - curl_turbine.average_velocity))
+    )

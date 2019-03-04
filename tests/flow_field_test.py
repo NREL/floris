@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 import numpy as np
 from floris.flow_field import FlowField
-from floris.coordinate import Coordinate
+from floris.types import Vec3
 from floris.wake import Wake
 from floris.wake_combination import WakeCombination
 from floris.turbine_map import TurbineMap
@@ -30,11 +30,10 @@ class FlowFieldTest():
 
     def _build_input_dict(self):
         wake = Wake(self.sample_inputs.wake)
-        wake_combination = WakeCombination("sosfs")
         turbine = Turbine(self.sample_inputs.turbine)
         turbine_map = TurbineMap({
-            Coordinate(0.0, 0.0): copy.deepcopy(turbine),
-            Coordinate(100.0, 0.0): copy.deepcopy(turbine)
+            Vec3(0.0, 0.0, 0.0): copy.deepcopy(turbine),
+            Vec3(100.0, 0.0, 0.0): copy.deepcopy(turbine)
         })
         return {
             "wind_direction": 270.0,
@@ -44,7 +43,6 @@ class FlowFieldTest():
             "turbulence_intensity": 1.0,
             "air_density": 1.225,
             "wake": wake,
-            "wake_combination": wake_combination,
             "turbine_map": turbine_map
         }
 
@@ -56,7 +54,6 @@ class FlowFieldTest():
                          self.input_dict["turbulence_intensity"],
                          self.input_dict["air_density"],
                          self.input_dict["wake"],
-                         self.input_dict["wake_combination"],
                          self.input_dict["turbine_map"])
 
 

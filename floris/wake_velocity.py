@@ -11,12 +11,14 @@
 
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
-
+from .types import Vec3
 
 class WakeVelocity():
 
     def __init__(self, parameter_dictionary):
         self.requires_resolution = False
+        self.model_string = None
+        self.model_grid_resolution = None
 
         # turbulence parameters
         turbulence_intensity = parameter_dictionary["turbulence_intensity"]
@@ -25,54 +27,63 @@ class WakeVelocity():
         self.ti_ai = float(turbulence_intensity["ai"])
         self.ti_downstream = float(turbulence_intensity["downstream"])
 
+    def __str__(self):
+        return self.model_string
 
 class Jensen(WakeVelocity):
+    """
+    compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        model_dictionary = parameter_dictionary["jensen"]
+        self.model_string = "jensen"
+        model_dictionary = parameter_dictionary[self.model_string]
         self.we = float(model_dictionary["we"])
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
         """
-            x direction is streamwise (with the wind)
-            y direction is normal to the streamwise direction and parallel to the ground
-            z direction is normal the streamwise direction and normal to the ground
+        +/- 2keX is the slope of the cone boundary for the wake
+
+        x direction is streamwise (with the wind)
+        y direction is normal to the streamwise direction and parallel to the ground
+        z direction is normal the streamwise direction and normal to the ground
         """
-        # compute the velocity deficit based on the classic Jensen/Park model. see Jensen 1983
-        # +/- 2keX is the slope of the cone boundary for the wake
 
         # define the boundary of the wake model ... y = mx + b
         m = self.we
-        x = x_locations - turbine_coord.x
+        x = x_locations - turbine_coord.x1
         b = turbine.rotor_radius
 
         boundary_line = m * x + b
 
-        y_upper = boundary_line + turbine_coord.y + deflection_field
-        y_lower = -1 * boundary_line + turbine_coord.y + deflection_field
+        y_upper = boundary_line + turbine_coord.x2 + deflection_field
+        y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_field
 
         z_upper = boundary_line + turbine.hub_height
         z_lower = -1 * boundary_line + turbine.hub_height
 
         # calculate the wake velocity
         c = (turbine.rotor_diameter /
-             (2 * self.we * (x_locations - turbine_coord.x) + turbine.rotor_diameter))**2
+             (2 * self.we * (x_locations - turbine_coord.x1) + turbine.rotor_diameter))**2
 
         # filter points upstream and beyond the upper and lower bounds of the wake
-        c[x_locations - turbine_coord.x < 0] = 0
+        c[x_locations - turbine_coord.x1 < 0] = 0
         c[y_locations > y_upper] = 0
         c[y_locations < y_lower] = 0
-
         c[z_locations > z_upper] = 0
         c[z_locations < z_lower] = 0
 
-        return 2 * turbine.aI * c * flow_field.initial_flow_field
+        return 2 * turbine.aI * c * flow_field.u_initial
 
 
 class Floris(WakeVelocity):
+    """
+    compute the velocity deficit based on wake zones, see Gebraad et. al. 2016
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        model_dictionary = parameter_dictionary["floris"]
+        self.model_string = "floris"
+        model_dictionary = parameter_dictionary[self.model_string]
         self.me = [float(n) for n in model_dictionary["me"]]
         self.we = float(model_dictionary["we"])
         self.aU = np.radians(float(model_dictionary["aU"]))
@@ -80,14 +91,13 @@ class Floris(WakeVelocity):
         self.mU = [float(n) for n in model_dictionary["mU"]]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
-        # compute the velocity deficit based on wake zones, see Gebraad et. al. 2016
         
-        mu = self.mU / np.cos((self.aU + self.bU * np.degrees(turbine.yaw_angle)) * np.pi / 180.)
+        mu = self.mU / np.cos((self.aU + self.bU * np.degrees(turbine.yaw_angle)) * np.pi / 180.0)
 
         # distance from wake centerline
-        rY = abs(y_locations - (turbine_coord.y + deflection_field))
-        rZ = abs(z_locations - (turbine.hub_height))
-        dx = x_locations - turbine_coord.x
+        rY = abs(y_locations - (turbine_coord.x2 + deflection_field))
+        # rZ = abs(z_locations - (turbine.hub_height))
+        dx = x_locations - turbine_coord.x1
 
         # wake zone diameters
         nearwake = (turbine.rotor_radius + self.we * self.me[0] * dx)
@@ -127,136 +137,134 @@ class Floris(WakeVelocity):
         #c += mask * (radius / (radius + we * mu[2] * dx))**2
 
         # filter points upstream
-        c[x_locations - turbine_coord.x < 0] = 0
+        c[x_locations - turbine_coord.x1 < 0] = 0
 
-        return flow_field.wind_speed * 2 * turbine.aI * c
+        return 2 * turbine.aI * c * flow_field.wind_speed
 
 
 class Gauss(WakeVelocity):
+    """
+    analytical wake model based on self-similarity and Gaussian wake model
+    based on Porte-Agel et. al. papers from 2015-2017
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        model_dictionary = parameter_dictionary["gauss"]
-        self.ka = float(model_dictionary["ka"])
-        self.kb = float(model_dictionary["kb"])
-        self.alpha = float(model_dictionary["alpha"])
-        self.beta = float(model_dictionary["beta"])
+        self.model_string = "gauss"
+        model_dictionary = parameter_dictionary[self.model_string]
+        self.ka = float(model_dictionary["ka"])        # wake expansion parameter
+        self.kb = float(model_dictionary["kb"])        # wake expansion parameter
+        self.alpha = float(model_dictionary["alpha"])  # near wake parameter
+        self.beta = float(model_dictionary["beta"])    # near wake parameter
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+        """
+        user defined model parameters:
 
-            # analytical wake model based on self-similarity and Gaussian wake model
-            # based on Porte-Agel et. al. papers from 2015-2017
+        
+        internal model parameters:
 
-            # =======================================================================================================
-            # free-stream velocity (m/s)
-            wind_speed = flow_field.wind_speed
-            # turbulence intensity (%/100)
-            TI_0 = flow_field.turbulence_intensity
-            # veer (rad), should be deg in the input file and then converted internally
-            veer = flow_field.wind_veer
-            # just a placeholder for now, should be computed with turbine
-            TI = flow_field.turbulence_intensity
 
-            # hard-coded model input data (goes in input file)
-            ka = self.ka           # wake expansion parameter
-            kb = self.kb           # wake expansion parameter
-            alpha = self.alpha        # near wake parameter
-            beta = self.beta         # near wake parameter
+        inputs:
+            x_locations: [float] - x-component of the turbine locations
 
-            # =======================================================================================================
+            y_locations: [float] - y-component of the turbine locations
 
-            # turbine parameters
-            D = turbine.rotor_diameter
-            HH = turbine.hub_height
-            yaw = -turbine.yaw_angle         # opposite sign convention in this model
-            tilt = turbine.tilt_angle
-            Ct = turbine.Ct
-            U_local = flow_field.initial_flow_field
+            z_locations: [float] - z-component of the turbine locations
 
-            # wake deflection
-            delta = deflection_field
+            turbine: Turbine - the turbine where the wake effects are calculated
 
-            # initial velocity deficits
-            uR = U_local * Ct * np.cos(tilt) * np.cos(yaw) / (2. *
-                                                              (1 - np.sqrt(1 - (Ct * np.cos(tilt) * np.cos(yaw)))))
-            u0 = U_local * np.sqrt(1 - Ct)
+            turbine_coord: Vec3 - the location of the turbine above
 
-            # initial Gaussian wake expansion
-            sigma_z0 = D * 0.5 * np.sqrt(uR / (U_local + u0))
-            sigma_y0 = sigma_z0 * (np.cos((yaw))) * (np.cos(veer))
+            deflection_field: [float]
 
-            # quantity that determines when the far wake starts
-            x0 = D * (np.cos(yaw) * (1 + np.sqrt(1 - Ct * np.cos(yaw)))) / (np.sqrt(2)
-                                                                            * (4 * alpha * TI + 2 * beta * (1 - np.sqrt(1 - Ct)))) + turbine_coord.x
+            wake: Wake - 
 
-            # wake expansion parameters
-            ky = ka * TI + kb
-            kz = ka * TI + kb
+            flow_field: FlowField -
 
-            # initial wake velocity deficit (quantities based on Porte-Agel/Bastankah 2016 JFM)
-            C0 = 1 - u0 / wind_speed
-            M0 = C0 * (2 - C0)
-            E0 = C0**2 - 3 * np.exp(1. / 12.) * C0 + 3 * np.exp(1. / 3.)
+        """
 
-            ## COMPUTE VELOCITY DEFICIT
-            yR = y_locations - turbine_coord.y
-            xR = yR * np.tan(yaw) + turbine_coord.x
+        # veer (radians)
+        # TODO: should be deg in the input file and then converted internally
+        veer = flow_field.wind_veer
+        
+        # TODO: placeholder for now, should be computed with turbine
+        TI = flow_field.turbulence_intensity
 
-            # velocity deficit in the near wake
-            sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * \
-                D * np.sqrt(Ct / 2.) + \
-                ((x_locations - xR) / (x0 - xR)) * sigma_y0
-            sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * \
-                D * np.sqrt(Ct / 2.) + \
-                ((x_locations - xR) / (x0 - xR)) * sigma_z0
+        # turbine parameters
+        D = turbine.rotor_diameter
+        HH = turbine.hub_height
+        yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
+        tilt = turbine.tilt_angle
+        Ct = turbine.Ct
+        U_local = flow_field.u_initial
 
-            sigma_y[x_locations < xR] = 0.5 * D
-            sigma_z[x_locations < xR] = 0.5 * D
+        # wake deflection
+        delta = deflection_field
 
-            a = (np.cos(veer)**2) / (2 * sigma_y**2) + \
-                (np.sin(veer)**2) / (2 * sigma_z**2)
-            b = -(np.sin(2 * veer)) / (4 * sigma_y**2) + \
-                (np.sin(2 * veer)) / (4 * sigma_z**2)
-            c = (np.sin(veer)**2) / (2 * sigma_y**2) + \
-                (np.cos(veer)**2) / (2 * sigma_z**2)
-            totGauss = np.exp(-(a * ((y_locations - turbine_coord.y) - delta)**2 - 2 * b * (
-                (y_locations - turbine_coord.y) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2))
+        # initial velocity deficits
+        uR = U_local * Ct * np.cos(tilt) * np.cos(yaw) / (2.0 * (1 - np.sqrt(1 - (Ct * np.cos(tilt) * np.cos(yaw)))))
+        u0 = U_local * np.sqrt(1 - Ct)
 
-            velDef = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) /
-                                                  (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
-            velDef[x_locations < xR] = 0
-            velDef[x_locations > x0] = 0
+        # initial Gaussian wake expansion
+        sigma_z0 = D * 0.5 * np.sqrt(uR / (U_local + u0))
+        sigma_y0 = sigma_z0 * (np.cos((yaw))) * (np.cos(veer))
 
-            # wake expansion in the lateral (y) and the vertical (z)
-            sigma_y = ky * (x_locations - x0) + sigma_y0
-            sigma_z = kz * (x_locations - x0) + sigma_z0
+        # quantity that determines when the far wake starts
+        x0 = D * (np.cos(yaw) * (1 + np.sqrt(1 - Ct * np.cos(yaw)))) / (np.sqrt(2) * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) + turbine_coord.x1
 
-            sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
-            sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
+        # wake expansion parameters
+        ky = self.ka * TI + self.kb
+        kz = self.ka * TI + self.kb
 
-            # velocity deficit outside the near wake
-            a = (np.cos(veer)**2) / (2 * sigma_y**2) + \
-                (np.sin(veer)**2) / (2 * sigma_z**2)
-            b = -(np.sin(2 * veer)) / (4 * sigma_y**2) + \
-                (np.sin(2 * veer)) / (4 * sigma_z**2)
-            c = (np.sin(veer)**2) / (2 * sigma_y**2) + \
-                (np.cos(veer)**2) / (2 * sigma_z**2)
-            totGauss = np.exp(-(a * ((y_locations - turbine_coord.y) - delta)**2 - 2 * b * (
-                (y_locations - turbine_coord.y) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2))
+        # compute velocity deficit
+        yR = y_locations - turbine_coord.x2
+        xR = yR * np.tan(yaw) + turbine_coord.x1
 
-            # compute velocities in the far wake
-            velDef1 = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) /
-                                                   (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
-            velDef1[x_locations < x0] = 0
+        # velocity deficit in the near wake
+        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(Ct / 2.) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
+        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(Ct / 2.) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
 
-            return np.sqrt(velDef**2 + velDef1**2)
+        sigma_y[x_locations < xR] = 0.5 * D
+        sigma_z[x_locations < xR] = 0.5 * D
+
+        a = (np.cos(veer)**2) / (2 * sigma_y**2) + (np.sin(veer)**2) / (2 * sigma_z**2)
+        b = -(np.sin(2 * veer)) / (4 * sigma_y**2) + (np.sin(2 * veer)) / (4 * sigma_z**2)
+        c = (np.sin(veer)**2) / (2 * sigma_y**2) + (np.cos(veer)**2) / (2 * sigma_z**2)
+        totGauss = np.exp(-(a * ((y_locations - turbine_coord.x2) - delta)**2 - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2))
+
+        velDef = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
+        velDef[x_locations < xR] = 0
+        velDef[x_locations > x0] = 0
+
+        # wake expansion in the lateral (y) and the vertical (z)
+        sigma_y = ky * (x_locations - x0) + sigma_y0
+        sigma_z = kz * (x_locations - x0) + sigma_z0
+
+        sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
+        sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
+
+        # velocity deficit outside the near wake
+        a = (np.cos(veer)**2) / (2 * sigma_y**2) + (np.sin(veer)**2) / (2 * sigma_z**2)
+        b = -(np.sin(2 * veer)) / (4 * sigma_y**2) + (np.sin(2 * veer)) / (4 * sigma_z**2)
+        c = (np.sin(veer)**2) / (2 * sigma_y**2) + (np.cos(veer)**2) / (2 * sigma_z**2)
+        totGauss = np.exp(-(a * ((y_locations - turbine_coord.x2) - delta)**2 - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2))
+
+        # compute velocities in the far wake
+        velDef1 = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
+        velDef1[x_locations < x0] = 0
+
+        return np.sqrt(velDef**2 + velDef1**2)
 
 
 class Curl(WakeVelocity):
+    """
+    this code has been adapted from Martinez et. al.
+    """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-
-        model_dictionary = parameter_dictionary["curl"]
-        self.model_grid_resolution = np.asarray(model_dictionary["model_grid_resolution"])
+        self.model_string = "curl"
+        model_dictionary = parameter_dictionary[self.model_string]
+        self.model_grid_resolution = Vec3(model_dictionary["model_grid_resolution"])
         self.vortex_strength = float(model_dictionary["vortex_strength"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])
         self.dissipation = float(model_dictionary["dissipation"])
@@ -264,50 +272,48 @@ class Curl(WakeVelocity):
         self.requires_resolution = True
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
-
-        # this code has been adapted from Martinez et. al.
+        """
+        """
 
         # parameters available for tuning to match high-fidelity data
-        # scaling parameter that adjusts strength of vortexes
-        vortex_strength = self.vortex_strength
-        # parameter for defining initial velocity deficity in the flow field at a turbine
-        intial_deficit = self.initial_deficit
-        # scaling parameter that adjusts the amount of dissipation of the vortexes
-        dissipation = self.dissipation
-        # parameter that defines the wind velocity of veer at 0 meters height
-        veer_linear = self.veer_linear
+        vortex_strength = self.vortex_strength  # scaling parameter that adjusts strength of vortexes
+        intial_deficit = self.initial_deficit   # parameter for defining initial velocity deficity in the flow field at a turbine
+        dissipation = self.dissipation          # scaling parameter that adjusts the amount of dissipation of the vortexes
+        veer_linear = self.veer_linear          # parameter that defines the wind velocity of veer at 0 meters height
 
         # setup x and y grid information
-        x = np.linspace(np.min(x_locations), np.max(x_locations), flow_field.model_grid_resolution.x)
-        y = np.linspace(np.min(y_locations), np.max(y_locations), flow_field.model_grid_resolution.y)
+        x = np.linspace(np.min(x_locations), np.max(x_locations), int(self.model_grid_resolution.x1))
+        y = np.linspace(np.min(y_locations), np.max(y_locations), int(self.model_grid_resolution.x2))
 
         # find the x-grid location closest to the current turbine
-        idx = np.min(np.where(x >= turbine_coord.x))
+        idx = np.min(np.where(x >= turbine_coord.x1))
+
         # initialize the flow field
         uw = np.zeros(
             (
-                flow_field.model_grid_resolution.x,
-                flow_field.model_grid_resolution.y,
-                flow_field.model_grid_resolution.z
+                int(self.model_grid_resolution.x1),
+                int(self.model_grid_resolution.x2),
+                int(self.model_grid_resolution.x3)
             )
         )
 
         # determine values to create a rotor mask for velocities
-        y1 = y_locations[idx, :, :] - turbine_coord.y
+        y1 = y_locations[idx, :, :] - turbine_coord.x2
         z1 = z_locations[idx, :, :] - turbine.hub_height
         r1 = np.sqrt(y1**2 + z1**2)
 
         # add initial velocity deficit at the rotor to the flow field
-        uw_initial = -(flow_field.wind_speed * intial_deficit * turbine.aI)
-        uw[idx, :, :] = gaussian_filter(
-            uw_initial * (r1 <= turbine.rotor_diameter / 2), sigma=1)
-        # enforce the boundary conditions
-        uw[idx, 0, :] = 0.0
-        uw[idx, :, 0] = 0.0
-        uw[idx, -1, :] = 0.0
-        uw[idx, :, -1] = 0.0
+        uw_initial = -1 * (flow_field.wind_speed * intial_deficit * turbine.aI)
+        uw[idx, :, :] = gaussian_filter(uw_initial * (r1 <= turbine.rotor_diameter / 2), sigma=1)
 
-        uw = -uw
+        # enforce the boundary conditions
+        uw[idx,  0,  :] = 0.0
+        uw[idx,  :,  0] = 0.0
+        uw[idx, -1,  :] = 0.0
+        uw[idx,  :, -1] = 0.0
+
+        # TODO: explain?
+        uw = -1 * uw
 
         # parameters to simplify the code
         # diameter of the turbine rotor from the input file
@@ -322,18 +328,18 @@ class Curl(WakeVelocity):
         # the axial induction factor of the turbine
         aI = turbine.aI
         # initial velocities in the stream-wise, span-wise, and vertical direction
-        U, V, W = flow_field.initialize_flow_field()
+        U, V, W = flow_field.u, flow_field.v, flow_field.w
         # the tilt angle of the rotor of the turbine
         tilt = turbine.tilt_angle
 
         # calculate the curled wake effects due to the yaw and tilt of the turbine
         Gamma_Yaw = vortex_strength * np.pi * D / 2 * Ct * \
-            turbine.get_average_velocity() * np.sin(yaw) * np.cos(yaw)**2
+            turbine.average_velocity * np.sin(yaw) * np.cos(yaw)**2
         if turbine.yaw_angle != 0.0:
             YawFlag = 1
         else:
             YawFlag = 0
-        Gamma_Tilt = np.pi * D / 2 * Ct * turbine.get_average_velocity() * np.sin(tilt) * \
+        Gamma_Tilt = np.pi * D / 2 * Ct * turbine.average_velocity * np.sin(tilt) * \
             np.cos(tilt)**2
         if turbine.tilt_angle != 0.0:
             TiltFlag = 1
@@ -372,35 +378,35 @@ class Curl(WakeVelocity):
 
             # locations of the tip vortices
             # top
-            y_vortex_1 = turbine_coord.y + z * TiltFlag
+            y_vortex_1 = turbine_coord.x2 + z * TiltFlag
             z_vortex_1 = HH + z * YawFlag
 
             # bottom
-            y_vortex_2 = turbine_coord.y - z * TiltFlag
+            y_vortex_2 = turbine_coord.x2 - z * TiltFlag
             z_vortex_2 = HH - z * YawFlag
 
             # vortex velocities
             # top
             v1, w1 = self._vortex(flow_field.y[idx, :, :] - y_vortex_1, flow_field.z[idx, :, :] -
-                                  z_vortex_1, flow_field.x[idx, :, :] - turbine_coord.x, -Gamma, eps, Uinf)
+                                  z_vortex_1, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma, eps, Uinf)
             # bottom
             v2, w2 = self._vortex(flow_field.y[idx, :, :] - y_vortex_2, flow_field.z[idx, :, :] -
-                                  z_vortex_2, flow_field.x[idx, :, :] - turbine_coord.x, Gamma, eps, Uinf)
+                                  z_vortex_2, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma, eps, Uinf)
 
             # add ground effects
             v3, w3 = self._vortex(flow_field.y[idx, :, :] - y_vortex_1, flow_field.z[idx, :, :] +
-                                  z_vortex_1, flow_field.x[idx, :, :] - turbine_coord.x, Gamma, eps, Uinf)
+                                  z_vortex_1, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma, eps, Uinf)
             v4, w4 = self._vortex(flow_field.y[idx, :, :] - y_vortex_2, flow_field.z[idx, :, :] +
-                                  z_vortex_2, flow_field.x[idx, :, :] - turbine_coord.x, -Gamma, eps, Uinf)
+                                  z_vortex_2, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma, eps, Uinf)
 
             V[idx, :, :] += v1 + v2 + v3 + v4
             W[idx, :, :] += w1 + w2 + w3 + w4
 
         # add wake rotation
-        v5, w5 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.y, flow_field.z[idx, :, :] -
-                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x, Gamma_wake_rotation, 0.2 * D, Uinf)
-        v6, w6 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.y, flow_field.z[idx, :, :] +
-                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x, -Gamma_wake_rotation, 0.2 * D, Uinf)
+        v5, w5 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.x2, flow_field.z[idx, :, :] -
+                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma_wake_rotation, 0.2 * D, Uinf)
+        v6, w6 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.x2, flow_field.z[idx, :, :] +
+                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma_wake_rotation, 0.2 * D, Uinf)
         V[idx, :, :] += v5 + v6
         W[idx, :, :] += w5 + w6
 
@@ -414,16 +420,16 @@ class Curl(WakeVelocity):
         for i in range(idx, len(x) - 1):
             V[i + 1, :, :] = V[idx, :, :] * eps**2 / \
                 (4 * nu * (flow_field.x[i, :, :] -
-                           turbine_coord.x) / Uinf + eps**2)
+                           turbine_coord.x1) / Uinf + eps**2)
             W[i + 1, :, :] = W[idx, :, :] * eps**2 / \
                 (4 * nu * (flow_field.x[i, :, :] -
-                           turbine_coord.x) / Uinf + eps**2)
+                           turbine_coord.x1) / Uinf + eps**2)
 
         # simple implementation of linear veer, added to the V component of the flow field
         z = np.linspace(
             np.min(z_locations),
             np.max(z_locations),
-            flow_field.model_grid_resolution.z
+            int(self.model_grid_resolution.x3)
         )
         z_min = HH
         b_veer = veer_linear
@@ -465,7 +471,7 @@ class Curl(WakeVelocity):
             uw[i, :, 0] = np.zeros(len(y))
             uw[i, 0, :] = np.zeros(len(z))
 
-        uw[x_locations < turbine_coord.x] = 0.0
+        uw[x_locations < turbine_coord.x1] = 0.0
 
         return uw, V, W
 

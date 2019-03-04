@@ -78,7 +78,7 @@ def test_regression_jensen_jimenez():
             turbine.Ct,
             turbine.power,
             turbine.aI,
-            turbine.get_average_velocity()
+            turbine.average_velocity
         )
         assert local == test_class.jensen_jimenez_baseline(i)
 
@@ -99,7 +99,7 @@ def test_regression_floris_jimenez():
             turbine.Ct,
             turbine.power,
             turbine.aI,
-            turbine.get_average_velocity()
+            turbine.average_velocity
         )
         assert local == test_class.floris_jimenez_baseline(i)
 
@@ -120,7 +120,7 @@ def test_regression_gauss():
             turbine.Ct,
             turbine.power,
             turbine.aI,
-            turbine.get_average_velocity()
+            turbine.average_velocity
         )
         assert local == test_class.gauss_baseline(i)
 
@@ -141,6 +141,6 @@ def test_regression_curl():
             turbine.Ct,
             turbine.power,
             turbine.aI,
-            turbine.get_average_velocity()
+            turbine.average_velocity
         )
         assert local == test_class.curl_baseline(i)
