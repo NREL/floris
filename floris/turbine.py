@@ -225,19 +225,19 @@ class Turbine():
     # Getters & Setters
     @property
     def yaw_angle(self):
-        return np.degrees(self._yaw_angle)
+        return self._yaw_angle
 
     @yaw_angle.setter
     def yaw_angle(self, value):
-        self._yaw_angle = np.radians(value)
+        self._yaw_angle = value
 
     @property
     def tilt_angle(self):
-        return np.degrees(self._tilt_angle)
+        return self._tilt_angle
 
     @tilt_angle.setter
     def tilt_angle(self, value):
-        self._tilt_angle = np.radians(value)
+        self._tilt_angle = value
 
     @property
     def average_velocity(self):
