@@ -77,8 +77,8 @@ class Turbine():
         self.eta = properties["eta"]
         self.power_thrust_table = properties["power_thrust_table"]
         self.blade_pitch = properties["blade_pitch"]
-        self._yaw_angle = properties["yaw_angle"]
-        self._tilt_angle = properties["tilt_angle"]
+        self._yaw_angle = np.radians(properties["yaw_angle"])
+        self._tilt_angle = np.radians(properties["tilt_angle"])
         self.tsr = properties["TSR"]
 
         # these attributes need special attention
