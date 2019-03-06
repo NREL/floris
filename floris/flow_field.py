@@ -279,7 +279,7 @@ class FlowField():
         resolution: Vec3()
         """
         if self.wake.velocity_model.requires_resolution and \
-            self.wake.velocity_model.requires_resolution != resolution:
+            self.wake.velocity_model.model_grid_resolution != resolution:
             print("WARNING: The current wake velocity model contains a required grid resolution;")
             print("    The Resolution given to FlowField.get_flow_field_with_resolution is ignored.")
             resolution = self.wake.velocity_model.model_grid_resolution
