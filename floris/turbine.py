@@ -41,8 +41,6 @@ class Turbine():
         
                     "power_thrust_table": dict,
         
-                    "blade_pitch": float,
-        
                     "yaw_angle": float,
         
                     "tilt_angle": float,
@@ -76,7 +74,6 @@ class Turbine():
         self.generator_efficiency = properties["generator_efficiency"]
         self.eta = properties["eta"]
         self.power_thrust_table = properties["power_thrust_table"]
-        self.blade_pitch = properties["blade_pitch"]
         self.yaw_angle = properties["yaw_angle"]
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
