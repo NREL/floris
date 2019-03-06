@@ -77,14 +77,12 @@ class Turbine():
         self.eta = properties["eta"]
         self.power_thrust_table = properties["power_thrust_table"]
         self.blade_pitch = properties["blade_pitch"]
-        self._yaw_angle = np.radians(properties["yaw_angle"])
-        self._tilt_angle = np.radians(properties["tilt_angle"])
+        self.yaw_angle = properties["yaw_angle"]
+        self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
         # these attributes need special attention
         self.rotor_radius = self.rotor_diameter / 2.0
-        self.yaw_angle = self._yaw_angle
-        self.tilt_angle = np.radians(self.tilt_angle)
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
@@ -232,7 +230,7 @@ class Turbine():
 
     @yaw_angle.setter
     def yaw_angle(self, value):
-        self._yaw_angle = value
+        self._yaw_angle = np.radians(value)
 
     @property
     def tilt_angle(self):
@@ -240,7 +238,7 @@ class Turbine():
 
     @tilt_angle.setter
     def tilt_angle(self, value):
-        self._tilt_angle = value
+        self._tilt_angle = np.radians(value)
 
     @property
     def average_velocity(self):
