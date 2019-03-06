@@ -218,8 +218,6 @@ class Turbine():
             rotated_z
         )
 
-
-
     # Getters & Setters
     @property
     def yaw_angle(self):
@@ -227,7 +225,7 @@ class Turbine():
 
     @yaw_angle.setter
     def yaw_angle(self, value):
-        self._yaw_angle = np.radians(value)
+        self._yaw_angle = value
 
     @property
     def tilt_angle(self):
@@ -235,7 +233,7 @@ class Turbine():
 
     @tilt_angle.setter
     def tilt_angle(self, value):
-        self._tilt_angle = np.radians(value)
+        self._tilt_angle = value
 
     @property
     def average_velocity(self):
@@ -244,7 +242,7 @@ class Turbine():
     @property
     def Cp(self):
         return self._fCp(self.average_velocity)
-    
+
     @property
     def Ct(self):
         return self._fCt(self.average_velocity)
