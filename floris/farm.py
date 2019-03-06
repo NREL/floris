@@ -83,6 +83,11 @@ class Farm():
                                     air_density=self.air_density,
                                     turbine_map=self.turbine_map,
                                     wake=wake)
+    def __str__(self):
+        return \
+            "Description: {}\n".format(self.description) + \
+            "Wake Model: {}\n".format(self.flow_field.wake.velocity_model) + \
+            "Deflection Model: {}\n".format(self.flow_field.wake.deflection_model)
 
     def set_wake_model(self, wake_model, calculate_wake=False):
         """
