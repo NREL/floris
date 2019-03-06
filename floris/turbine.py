@@ -59,10 +59,8 @@ class Turbine():
             raise ValueError("Turbine.grid_point_count must be the square of a number")
 
         self.velocities = [0] * self.grid_point_count
-        self.grid = [0] * self.grid_point_count
 
         self.description = instance_dictionary["description"]
-
         properties = instance_dictionary["properties"]
         self.rotor_diameter = properties["rotor_diameter"]
         self.hub_height = properties["hub_height"]
@@ -75,22 +73,13 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
-        # these attributes need special attention
         self.rotor_radius = self.rotor_diameter / 2.0
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
+        
         # initialize to an invalid value until calculated
-        self.velocities = [-1] * self.grid_point_count
         self.air_density = -1
-
-        # calculated attributes are
-        # self.Ct                   # Thrust Coefficient
-        # self.Cp                   # Power Coefficient
-        # self.power                # Power (W)
-        # self.aI                   # Axial Induction
-        # self.windSpeed            # Windspeed at rotor (m/s)
-        # self.turbulence_intensity # turbulence intensity at a downstream turbine
 
     # Private methods
 
