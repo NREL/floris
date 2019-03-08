@@ -54,7 +54,7 @@ class Turbine():
     def __init__(self, instance_dictionary):
 
         # constants
-        self.grid_point_count = 16
+        self.grid_point_count = 5*5
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
             raise ValueError("Turbine.grid_point_count must be the square of a number")
 
@@ -103,7 +103,7 @@ class Turbine():
         grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
 
         # keep only the points in the swept area
-        # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_radius]
+        grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_radius]
 
         return grid
 
