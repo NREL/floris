@@ -148,9 +148,7 @@ class Turbine():
         # interpolate from the flow field to get the flow field at the grid points
         dist = [np.sqrt((coord.x1 - x_grid)**2 + (coord.x2 + yPts[i] - y_grid)**2 + (self.hub_height + zPts[i] - z_grid)**2) for i in range(len(yPts))]
         idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
-        data = [u_at_turbine[idx[i]] for i in range(len(yPts))]
         data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
-
         return np.array(data)
 
     # Public methods
@@ -183,16 +181,6 @@ class Turbine():
     def update_velocities(self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z):
         """
         """
-        # reset the initial velocities
-        self.initial_velocities = self._calculate_swept_area_velocities(
-            flow_field.wind_direction,
-            flow_field.u_initial,
-            coord,
-            rotated_x,
-            rotated_y,
-            rotated_z
-        )
-
         # reset the waked velocities
         local_wind_speed = flow_field.u_initial - u_wake
         self.velocities = self._calculate_swept_area_velocities(
