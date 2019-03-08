@@ -35,29 +35,29 @@ class RegressionTest():
 
     def jensen_jimenez_baseline(self, turbine_index):
         baseline = [
-            (0.46328782548262326, 0.7661304442831962, 1712005.16797175561077893, 0.25819969204072352, 7.85065163365445962),
-            (0.46184306919581714, 0.7972304459337220, 1127336.88354835403151810, 0.27485029754279156, 6.83713371659016733)
+            (0.46327059026119216, 0.7655827589952246, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703),
+            (0.46327059026119216, 0.7655827589952246, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703)
         ]
         return baseline[turbine_index]
 
     def floris_jimenez_baseline(self, turbine_index):
         baseline = [
-            (0.46328782548262326, 0.7661304442831962, 1712005.16797175561077893, 0.25819969204072352, 7.85065163365445962),
-            (0.46181073960039850, 0.7979032595900662, 1117748.16816022805869579, 0.27522414475196977, 6.81785286549156577)
+            (0.46327059026119216, 0.76558275899522465, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703),
+            (0.46327059026119216, 0.76558275899522465, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703)
         ]
         return baseline[turbine_index]
 
     def gauss_baseline(self, turbine_index):
         baseline = [
-            (0.46328782548262326, 0.7661304442831962, 1712005.16797175561077893, 0.25819969204072352, 7.85065163365445962),
-            (0.46216883282818080, 0.7904509543330357, 1227059.75092757423408329, 0.27111736322573293, 7.03141391117972780)
+            (0.46327059026119216, 0.76558275899522465, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703),
+            (0.46295000582431872, 0.77419390400616217, 1489994.26820553094148636, 0.26240470543704059, 7.49729293087458881)
         ]
         return baseline[turbine_index]
 
     def curl_baseline(self, turbine_index):
         baseline = [
-            (0.46328739380548106, 0.7661167268371584, 1714019.48714753659442067, 0.25819260083547813, 7.85373185183701050),
-            (0.46320695168382275, 0.7688465842832697, 1584115.79411471495404840, 0.25960791625100760, 7.65053131178665691)
+            (0.46327071810653836, 0.76558682154907887, 1793046.59442605217918754, 0.25791882639756913, 7.97272075829006344),
+            (0.46327226152676604, 0.76563586696199948, 1785632.39061502995900810, 0.25794415260213166, 7.96170773354537342)
         ]
         return baseline[turbine_index]
 
@@ -73,13 +73,8 @@ def test_regression_jensen_jimenez():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
         assert local == test_class.jensen_jimenez_baseline(i)
 
 
@@ -94,15 +89,9 @@ def test_regression_floris_jimenez():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
         assert local == test_class.floris_jimenez_baseline(i)
-
 
 def test_regression_gauss():
     """
@@ -115,15 +104,9 @@ def test_regression_gauss():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
         assert local == test_class.gauss_baseline(i)
-
 
 def test_regression_curl():
     """
@@ -136,11 +119,6 @@ def test_regression_curl():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
         assert local == test_class.curl_baseline(i)

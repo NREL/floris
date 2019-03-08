@@ -72,6 +72,6 @@ def test_discretize_domain():
     """
     test_class = FlowFieldTest()
     x, y, z = test_class.instance._discretize_turbine_domain()
-    assert np.shape(x) == (2, 4, 4) and type(x) is np.ndarray \
-        and np.shape(y) == (2, 4, 4) and type(y) is np.ndarray \
-        and np.shape(z) == (2, 4, 4) and type(z) is np.ndarray
+    assert np.shape(x) == (2, 5, 5) and type(x) is np.ndarray \
+        and np.shape(y) == (2, 5, 5) and type(y) is np.ndarray \
+        and np.shape(z) == (2, 5, 5) and type(z) is np.ndarray
