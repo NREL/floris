@@ -52,19 +52,17 @@ class FlowField():
                  wake,
                  turbine_map):
 
-        self.wind_speed = wind_speed
-        self._wind_direction = wind_direction
-        self.wind_shear = wind_shear
-        self.wind_veer = wind_veer
-        self.turbulence_intensity = turbulence_intensity
-        self.air_density = air_density
-        self.wake = wake
-        self.turbine_map = turbine_map
-        
-        # initialize derived attributes and constants
-        self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
-        self.specified_wind_height = self.turbine_map.turbines[0].hub_height
-        self.reinitialize_flow_field(with_resolution=self.wake.velocity_model.model_grid_resolution)
+        self.reinitialize_flow_field(
+            wind_speed=wind_speed,
+            wind_direction=wind_direction,
+            wind_shear=wind_shear,
+            wind_veer=wind_veer,
+            turbulence_intensity=turbulence_intensity,
+            air_density=air_density,
+            wake=wake,
+            turbine_map=turbine_map,
+            with_resolution=wake.velocity_model.model_grid_resolution
+        )
 
     def _discretize_turbine_domain(self):
         """
@@ -169,30 +167,42 @@ class FlowField():
                                 wind_speed=None,
                                 wind_direction=None,
                                 wind_shear=None,
+                                wind_veer=None,
                                 turbulence_intensity=None,
+                                air_density=None,
+                                wake=None,
                                 turbine_map=None,
                                 with_resolution=None):
         # reset the given parameters
+        if turbine_map is not None:
+            self.turbine_map = turbine_map
         if wind_speed is not None:
             self.wind_speed = wind_speed
         if wind_direction is not None:
             self.wind_direction = wind_direction
         if wind_shear is not None:
             self.wind_shear = wind_shear
+        if wind_veer is not None:
+            self.wind_veer = wind_veer
         if turbulence_intensity is not None:
             self.turbulence_intensity = turbulence_intensity
-        if turbine_map is not None:
-            self.turbine_map = turbine_map
+            for turbine in self.turbine_map.turbines:
+                turbine.turbulence_intensity = self.turbulence_intensity
+        if air_density is not None:
+            self.air_density = air_density
+            for turbine in self.turbine_map.turbines:
+                turbine.air_density = self.air_density
+        if wake is not None:
+            self.wake = wake
+
+        # initialize derived attributes and constants
+        self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
+        self.specified_wind_height = self.turbine_map.turbines[0].hub_height
 
         # reinitialize the flow field
         self._compute_initialized_domain(with_resolution=with_resolution)
 
     def calculate_wake(self, no_wake=False):
-
-        # initialize turbulence intensity at every turbine (seems sloppy)
-        for coord, turbine in self.turbine_map.items:
-            turbine.air_density = self.air_density
-            turbine.turbulence_intensity = self.turbulence_intensity
 
         # rotate the discrete grid and turbine map
         center_of_rotation = Vec3(0, 0, 0)

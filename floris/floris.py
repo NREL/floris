@@ -60,10 +60,8 @@ class Floris():
         Lists the farms and relevant farm details stored in FLORIS object
         """
         for num, farm in enumerate(self._farm):
-            print('Farm', num)
-            print('\tDescription:', farm.description)
-            print('\tWake Model:', farm.flow_field.wake.velocity_model.type_string)                                      
-            print('\tDeflection Model:', farm.flow_field.wake.deflection_model.type_string)
+            print('Farm {}'.format(num))
+            print(farm)
 
     def calculate_wake(self):
         self.farm.flow_field.calculate_wake()

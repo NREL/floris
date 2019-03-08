@@ -11,6 +11,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import pytest
 from floris import Floris
 from .sample_inputs import SampleInputs
 
@@ -35,29 +36,29 @@ class RegressionTest():
 
     def jensen_jimenez_baseline(self, turbine_index):
         baseline = [
-            (0.46328782548262326, 0.7661304442831962, 1712005.16797175561077893, 0.25819969204072352, 7.85065163365445962),
-            (0.46184306919581714, 0.7972304459337220, 1127336.88354835403151810, 0.27485029754279156, 6.83713371659016733)
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329),
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329)
         ]
         return baseline[turbine_index]
 
     def floris_jimenez_baseline(self, turbine_index):
         baseline = [
-            (0.46328782548262326, 0.7661304442831962, 1712005.16797175561077893, 0.25819969204072352, 7.85065163365445962),
-            (0.46181073960039850, 0.7979032595900662, 1117748.16816022805869579, 0.27522414475196977, 6.81785286549156577)
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329),
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329)
         ]
         return baseline[turbine_index]
 
     def gauss_baseline(self, turbine_index):
         baseline = [
-            (0.46328782548262326, 0.7661304442831962, 1712005.16797175561077893, 0.25819969204072352, 7.85065163365445962),
-            (0.46216883282818080, 0.7904509543330357, 1227059.75092757423408329, 0.27111736322573293, 7.03141391117972780)
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329),
+            (0.4629500, 0.7741939, 1489994.2682055, 0.2624047, 7.4972929)
         ]
         return baseline[turbine_index]
 
     def curl_baseline(self, turbine_index):
         baseline = [
-            (0.46328739380548106, 0.7661167268371584, 1714019.48714753659442067, 0.25819260083547813, 7.85373185183701050),
-            (0.46320695168382275, 0.7688465842832697, 1584115.79411471495404840, 0.25960791625100760, 7.65053131178665691)
+            (0.4632707, 0.7655868, 1793046.5944260, 0.2579188, 7.9727207),
+            (0.4632722, 0.7656358, 1785632.3906150, 0.2579441, 7.9617077)
         ]
         return baseline[turbine_index]
 
@@ -73,14 +74,9 @@ def test_regression_jensen_jimenez():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
-        assert local == test_class.jensen_jimenez_baseline(i)
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+        assert pytest.approx(local) == test_class.jensen_jimenez_baseline(i)
 
 
 def test_regression_floris_jimenez():
@@ -94,15 +90,9 @@ def test_regression_floris_jimenez():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
-        assert local == test_class.floris_jimenez_baseline(i)
-
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+        assert pytest.approx(local) == test_class.floris_jimenez_baseline(i)
 
 def test_regression_gauss():
     """
@@ -115,15 +105,9 @@ def test_regression_gauss():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
-        assert local == test_class.gauss_baseline(i)
-
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+        assert pytest.approx(local) == test_class.gauss_baseline(i)
 
 def test_regression_curl():
     """
@@ -136,11 +120,6 @@ def test_regression_curl():
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        local = (
-            turbine.Cp,
-            turbine.Ct,
-            turbine.power,
-            turbine.aI,
-            turbine.average_velocity
-        )
-        assert local == test_class.curl_baseline(i)
+        # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+        assert pytest.approx(local) == test_class.curl_baseline(i)

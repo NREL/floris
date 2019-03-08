@@ -54,15 +54,13 @@ class Turbine():
     def __init__(self, instance_dictionary):
 
         # constants
-        self.grid_point_count = 16
+        self.grid_point_count = 5*5
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
             raise ValueError("Turbine.grid_point_count must be the square of a number")
 
         self.velocities = [0] * self.grid_point_count
-        self.grid = [0] * self.grid_point_count
 
         self.description = instance_dictionary["description"]
-
         properties = instance_dictionary["properties"]
         self.rotor_diameter = properties["rotor_diameter"]
         self.hub_height = properties["hub_height"]
@@ -75,22 +73,11 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
-        # these attributes need special attention
-        self.rotor_radius = self.rotor_diameter / 2.0
-
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
+        
         # initialize to an invalid value until calculated
-        self.velocities = [-1] * self.grid_point_count
         self.air_density = -1
-
-        # calculated attributes are
-        # self.Ct                   # Thrust Coefficient
-        # self.Cp                   # Power Coefficient
-        # self.power                # Power (W)
-        # self.aI                   # Axial Induction
-        # self.windSpeed            # Windspeed at rotor (m/s)
-        # self.turbulence_intensity # turbulence intensity at a downstream turbine
 
     # Private methods
 
@@ -116,7 +103,7 @@ class Turbine():
         grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
 
         # keep only the points in the swept area
-        # grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_radius]
+        grid = [point for point in grid if np.hypot(point[0], point[1]) < self.rotor_radius]
 
         return grid
 
@@ -159,9 +146,7 @@ class Turbine():
         # interpolate from the flow field to get the flow field at the grid points
         dist = [np.sqrt((coord.x1 - x_grid)**2 + (coord.x2 + yPts[i] - y_grid)**2 + (self.hub_height + zPts[i] - z_grid)**2) for i in range(len(yPts))]
         idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
-        data = [u_at_turbine[idx[i]] for i in range(len(yPts))]
         data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
-
         return np.array(data)
 
     # Public methods
@@ -194,16 +179,6 @@ class Turbine():
     def update_velocities(self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z):
         """
         """
-        # reset the initial velocities
-        self.initial_velocities = self._calculate_swept_area_velocities(
-            flow_field.wind_direction,
-            flow_field.u_initial,
-            coord,
-            rotated_x,
-            rotated_y,
-            rotated_z
-        )
-
         # reset the waked velocities
         local_wind_speed = flow_field.u_initial - u_wake
         self.velocities = self._calculate_swept_area_velocities(
@@ -216,6 +191,10 @@ class Turbine():
         )
 
     # Getters & Setters
+    @property
+    def rotor_radius(self):
+        return self.rotor_diameter / 2.0
+
     @property
     def yaw_angle(self):
         return self._yaw_angle
@@ -234,7 +213,7 @@ class Turbine():
 
     @property
     def average_velocity(self):
-        return np.mean(self.velocities)
+        return np.cbrt(np.mean(self.velocities**3))
 
     @property
     def Cp(self):

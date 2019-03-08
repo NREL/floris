@@ -59,12 +59,6 @@ class Farm():
     def __init__(self, instance_dictionary, turbine, wake):
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
-        self.wind_speed = properties["wind_speed"]
-        self.wind_direction = properties["wind_direction"]
-        self.turbulence_intensity = properties["turbulence_intensity"]
-        self.wind_shear = properties["wind_shear"]
-        self.wind_veer = properties["wind_veer"]
-        self.air_density = properties["air_density"]
         self.layout_x = properties["layout_x"]
         self.layout_y = properties["layout_y"]
         self.wake = wake
@@ -72,17 +66,23 @@ class Farm():
         turbine_dict = {}
         for c in list(zip(self.layout_x, self.layout_y)):
             turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
-        self.turbine_map = TurbineMap(turbine_dict)
 
-        self.set_wind_direction(self.wind_direction, calculate_wake=False)
-        self.flow_field = FlowField(wind_speed=self.wind_speed,
-                                    wind_direction=self.wind_direction,
-                                    wind_shear=self.wind_shear,
-                                    wind_veer=self.wind_veer,
-                                    turbulence_intensity=self.turbulence_intensity,
-                                    air_density=self.air_density,
-                                    turbine_map=self.turbine_map,
-                                    wake=wake)
+        self.flow_field = FlowField(
+            wind_speed=properties["wind_speed"],
+            wind_direction=properties["wind_direction"],
+            wind_shear=properties["wind_shear"],
+            wind_veer=properties["wind_veer"],
+            turbulence_intensity=properties["turbulence_intensity"],
+            air_density=properties["air_density"],
+            turbine_map=TurbineMap(turbine_dict),
+            wake=wake
+        )
+
+    def __str__(self):
+        return \
+            "Description: {}\n".format(self.description) + \
+            "Wake Model: {}\n".format(self.flow_field.wake.velocity_model) + \
+            "Deflection Model: {}\n".format(self.flow_field.wake.deflection_model)
 
     def set_wake_model(self, wake_model, calculate_wake=False):
         """
@@ -125,90 +125,23 @@ class Farm():
         if calculate_wake:
             self.flow_field.calculate_wake()
 
-    def set_description(self, value, calculate_wake=False):
-        """
-        Sets the farm desciption
-        """
-        self._set_flow_property("description",
-                                value,
-                                calculate_wake=calculate_wake) 
-
-    def _set_flow_property(self, property_name, value, calculate_wake=True):
+    def _update_flow_field(self, calculate_wake=True):
         """
         Sets a flow property, then recreates the flow field and calculates wake
         """
-        self.__setattr__(property_name, value)
-        self.flow_field = FlowField(wind_speed=self.wind_speed,
-                                    wind_direction=self.wind_direction,
-                                    wind_shear=self.wind_shear,
-                                    wind_veer=self.wind_veer,
-                                    turbulence_intensity=self.turbulence_intensity,
-                                    air_density=self.air_density,
-                                    turbine_map=self.turbine_map,
-                                    wake=self.wake)
+        self.flow_field.reinitialize_flow_field(
+            wind_speed=self.wind_speed,
+            wind_direction=self.wind_direction,
+            wind_shear=self.wind_shear,
+            wind_veer=self.wind_veer,
+            turbulence_intensity=self.turbulence_intensity,
+            air_density=self.air_density,
+            wake=self.wake,
+            turbine_map=self.turbine_map,
+            with_resolution=self.wake.velocity_model.model_grid_resolution
+        )
         if calculate_wake:
             self.flow_field.calculate_wake()
-
-    def set_wind_speed(self, value, calculate_wake=True):
-        """
-        Sets wind speed
-        """
-        self._set_flow_property(
-            "wind_speed",
-            value,
-            calculate_wake=calculate_wake
-        )
-
-    def set_wind_direction(self, value, calculate_wake=True):
-        """
-        Sets wind direction (in degrees)
-        """
-        value = np.radians(value - 270)
-        self._set_flow_property(
-            "wind_direction",                    
-            value,
-            calculate_wake=calculate_wake
-        )
-
-    def set_wind_shear(self, value, calculate_wake=True):
-        """
-        Sets wind shear
-        """
-        self._set_flow_property(
-            "wind_shear",
-            value,
-            calculate_wake=calculate_wake
-        )
-
-    def set_wind_veer(self, value, calculate_wake=True):
-        """
-        Sets wind shear
-        """
-        self._set_flow_property(
-            "wind_veer",
-            value,
-            calculate_wake=calculate_wake
-        )
-
-    def set_turbulence_intensity(self, value, calculate_wake=True):
-        """
-        Sets turbulence intensity
-        """
-        self._set_flow_property(
-            "turbulence_intensity",
-            value,
-            calculate_wake=calculate_wake
-        )
-
-    def set_air_density(self, value, calculate_wake=True):
-        """
-        Sets air density
-        """
-        self._set_flow_property(
-            "air_density",
-            value,
-            calculate_wake=calculate_wake
-        )
 
     def set_yaw_angles(self, yaw_angles, calculate_wake=True):
         """
@@ -244,7 +177,6 @@ class Farm():
 
         outputs:
             none
-
         """
         # TODO: this function requires all turbines to be the same.
         # Is it reasonable to require the user to give a TurbineMap-like object
@@ -260,7 +192,6 @@ class Farm():
             turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
 
         #update relevant farm and flow_field values
-        self.turbine_map = TurbineMap(turbine_dict)
         self.flow_field.reinitialize_flow_field(
             turbine_map=TurbineMap(turbine_dict),
             with_resolution=self.wake.velocity_model.model_grid_resolution
@@ -269,9 +200,66 @@ class Farm():
         if calculate_wake:
             self.flow_field.calculate_wake()
 
+    # Getters & Setters
+    @property
+    def wind_speed(self):
+        return self.flow_field.wind_speed
+
+    @wind_speed.setter
+    def wind_speed(self, value):
+        self.flow_field.wind_speed = value
+
+    @property
+    def wind_direction(self):
+        return self.flow_field.wind_direction
+
+    @wind_direction.setter
+    def wind_direction(self, value):
+        self.flow_field.wind_direction = value
+
+    @property
+    def wind_shear(self):
+        return self.flow_field.wind_shear
+
+    @wind_shear.setter
+    def wind_shear(self, value):
+        self.flow_field.wind_shear = value
+
+    @property
+    def wind_veer(self):
+        return self.flow_field.wind_veer
+
+    @wind_veer.setter
+    def wind_veer(self, value):
+        self.flow_field.wind_veer = value
+
+    @property
+    def turbulence_intensity(self):
+        return self.flow_field.turbulence_intensity
+
+    @turbulence_intensity.setter
+    def turbulence_intensity(self, value):
+        self.flow_field.turbulence_intensity = value
+
+    @property
+    def air_density(self):
+        return self.flow_field.air_density
+
+    @air_density.setter
+    def air_density(self, value):
+        self.flow_field.air_density = value
+
+    @property
+    def turbine_map(self):
+        return self.flow_field.turbine_map
+    
+    @turbine_map.setter
+    def turbine_map(self, value):
+        self.flow_field.turbine_map = value
+
     @property
     def turbines(self):
         """
-        Returns a list of turbine objects
+        Returns a list of turbine objects gotten from the TurbineMap
         """
         return self.turbine_map.turbines
