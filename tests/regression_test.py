@@ -11,6 +11,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import pytest
 from floris import Floris
 from .sample_inputs import SampleInputs
 
@@ -35,29 +36,29 @@ class RegressionTest():
 
     def jensen_jimenez_baseline(self, turbine_index):
         baseline = [
-            (0.46327059026119216, 0.7655827589952246, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703),
-            (0.46327059026119216, 0.7655827589952246, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703)
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329),
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329)
         ]
         return baseline[turbine_index]
 
     def floris_jimenez_baseline(self, turbine_index):
         baseline = [
-            (0.46327059026119216, 0.76558275899522465, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703),
-            (0.46327059026119216, 0.76558275899522465, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703)
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329),
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329)
         ]
         return baseline[turbine_index]
 
     def gauss_baseline(self, turbine_index):
         baseline = [
-            (0.46327059026119216, 0.76558275899522465, 1793661.64941828721202910, 0.25791672868371546, 7.97363299459228703),
-            (0.46295000582431872, 0.77419390400616217, 1489994.26820553094148636, 0.26240470543704059, 7.49729293087458881)
+            (0.4632705, 0.7655827, 1793661.6494182, 0.2579167, 7.9736329),
+            (0.4629500, 0.7741939, 1489994.2682055, 0.2624047, 7.4972929)
         ]
         return baseline[turbine_index]
 
     def curl_baseline(self, turbine_index):
         baseline = [
-            (0.46327071810653836, 0.76558682154907887, 1793046.59442605217918754, 0.25791882639756913, 7.97272075829006344),
-            (0.46327226152676604, 0.76563586696199948, 1785632.39061502995900810, 0.25794415260213166, 7.96170773354537342)
+            (0.4632707, 0.7655868, 1793046.5944260, 0.2579188, 7.9727207),
+            (0.4632722, 0.7656358, 1785632.3906150, 0.2579441, 7.9617077)
         ]
         return baseline[turbine_index]
 
@@ -75,7 +76,7 @@ def test_regression_jensen_jimenez():
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
         local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
-        assert local == test_class.jensen_jimenez_baseline(i)
+        assert pytest.approx(local) == test_class.jensen_jimenez_baseline(i)
 
 
 def test_regression_floris_jimenez():
@@ -91,7 +92,7 @@ def test_regression_floris_jimenez():
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
         local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
-        assert local == test_class.floris_jimenez_baseline(i)
+        assert pytest.approx(local) == test_class.floris_jimenez_baseline(i)
 
 def test_regression_gauss():
     """
@@ -106,7 +107,7 @@ def test_regression_gauss():
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
         local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
-        assert local == test_class.gauss_baseline(i)
+        assert pytest.approx(local) == test_class.gauss_baseline(i)
 
 def test_regression_curl():
     """
@@ -121,4 +122,4 @@ def test_regression_curl():
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         # print("({:.17f}, {:.17f}, {:.17f}, {:.17f}, {:.17f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
         local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
-        assert local == test_class.curl_baseline(i)
+        assert pytest.approx(local) == test_class.curl_baseline(i)
