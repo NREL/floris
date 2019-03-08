@@ -174,6 +174,8 @@ class FlowField():
                                 turbine_map=None,
                                 with_resolution=None):
         # reset the given parameters
+        if turbine_map is not None:
+            self.turbine_map = turbine_map
         if wind_speed is not None:
             self.wind_speed = wind_speed
         if wind_direction is not None:
@@ -184,16 +186,14 @@ class FlowField():
             self.wind_veer = wind_veer
         if turbulence_intensity is not None:
             self.turbulence_intensity = turbulence_intensity
-            for turbine in self.turbines:
-                turbine.air_density = self.air_density
+            for turbine in self.turbine_map.turbines:
+                turbine.turbulence_intensity = self.turbulence_intensity
         if air_density is not None:
             self.air_density = air_density
-            for turbine in self.turbines:
-                turbine.turbulence_intensity = self.turbulence_intensity
+            for turbine in self.turbine_map.turbines:
+                turbine.air_density = self.air_density
         if wake is not None:
             self.wake = wake
-        if turbine_map is not None:
-            self.turbine_map = turbine_map
 
         # initialize derived attributes and constants
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
