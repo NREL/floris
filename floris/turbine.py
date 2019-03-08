@@ -73,8 +73,6 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
-        self.rotor_radius = self.rotor_diameter / 2.0
-
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
         
@@ -193,6 +191,10 @@ class Turbine():
         )
 
     # Getters & Setters
+    @property
+    def rotor_radius(self):
+        return self.rotor_diameter / 2.0
+
     @property
     def yaw_angle(self):
         return self._yaw_angle
