@@ -184,8 +184,12 @@ class FlowField():
             self.wind_veer = wind_veer
         if turbulence_intensity is not None:
             self.turbulence_intensity = turbulence_intensity
+            for turbine in self.turbines:
+                turbine.air_density = self.air_density
         if air_density is not None:
             self.air_density = air_density
+            for turbine in self.turbines:
+                turbine.turbulence_intensity = self.turbulence_intensity
         if wake is not None:
             self.wake = wake
         if turbine_map is not None:
@@ -199,11 +203,6 @@ class FlowField():
         self._compute_initialized_domain(with_resolution=with_resolution)
 
     def calculate_wake(self, no_wake=False):
-
-        # initialize turbulence intensity at every turbine (seems sloppy)
-        for coord, turbine in self.turbine_map.items:
-            turbine.air_density = self.air_density
-            turbine.turbulence_intensity = self.turbulence_intensity
 
         # rotate the discrete grid and turbine map
         center_of_rotation = Vec3(0, 0, 0)
