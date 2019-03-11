@@ -114,7 +114,7 @@ class Gauss(WakeDeflection):
         xR = yR*np.tan(yaw) + coord.x1
 
         # yaw parameters (skew angle and distance from centerline)  
-        theta_c0    = 2*((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
+        theta_c0    = ((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
         delta0      = np.tan(theta_c0)*(x0-coord.x1)                            # initial wake deflection
 
         # deflection in the near wake
