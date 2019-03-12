@@ -205,7 +205,7 @@ class Gauss(WakeVelocity):
         delta = deflection_field
 
         # initial velocity deficits
-        uR = U_local * Ct * np.cos(tilt) * np.cos(yaw) / (2.0 * (1 - np.sqrt(1 - (Ct * np.cos(tilt) * np.cos(yaw)))))
+        uR = U_local * Ct  / (2.0 * (1 - np.sqrt(1 - (Ct))))
         u0 = U_local * np.sqrt(1 - Ct)
 
         # initial Gaussian wake expansion
@@ -213,7 +213,7 @@ class Gauss(WakeVelocity):
         sigma_y0 = sigma_z0 * (np.cos((yaw))) * (np.cos(veer))
 
         # quantity that determines when the far wake starts
-        x0 = D * (np.cos(yaw) * (1 + np.sqrt(1 - Ct * np.cos(yaw)))) / (np.sqrt(2) * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) + turbine_coord.x1
+        x0 = D * (np.cos(yaw) * (1 + np.sqrt(1 - Ct))) / (np.sqrt(2) * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) + turbine_coord.x1
 
         # wake expansion parameters
         ky = self.ka * TI + self.kb
