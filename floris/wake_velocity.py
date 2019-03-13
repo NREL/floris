@@ -337,7 +337,7 @@ class Curl(WakeVelocity):
 
         # calculate the curled wake effects due to the yaw and tilt of the turbine
         Gamma_Yaw = vortex_strength * np.pi * D / 2 * Ct * \
-            turbine.average_velocity * np.sin(yaw) * np.cos(yaw)**2
+            turbine.average_velocity * np.sin(yaw)
         if turbine.yaw_angle != 0.0:
             YawFlag = 1
         else:
