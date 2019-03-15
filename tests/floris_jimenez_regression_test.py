@@ -41,7 +41,7 @@ class FlorisJimenezRegressionTest():
         return baseline[turbine_index]
 
 
-def test_regression_gauss():
+def test_regression_tandem():
     """
     Tandem turbines
     """
