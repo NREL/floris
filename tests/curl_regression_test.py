@@ -64,12 +64,9 @@ def test_regression_triangle_farm():
     Triangle farm where wind direction of 270 and 360 should result in the same power
     """
     test_class = CurlRegressionTest()
-    distance = 5 * \
-        test_class.input_dict["turbine"]["properties"]["rotor_diameter"]
-    test_class.input_dict["farm"]["properties"]["layout_x"] = [
-        0.0, distance, 0.0]
-    test_class.input_dict["farm"]["properties"]["layout_y"] = [
-        distance, distance, 0.0]
+    distance = 5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"]
+    test_class.input_dict["farm"]["properties"]["layout_x"] = [0.0, distance, 0.0]
+    test_class.input_dict["farm"]["properties"]["layout_y"] = [0.0, 0.0, distance]
     floris = Floris(input_dict=test_class.input_dict)
 
     ### unrotated
@@ -77,20 +74,17 @@ def test_regression_triangle_farm():
 
     # turbine 1 - unwaked
     turbine = floris.farm.turbine_map.turbines[0]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
+    local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
     assert pytest.approx(local) == test_class.baseline(0)
 
     # turbine 2 - waked
     turbine = floris.farm.turbine_map.turbines[1]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
+    local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
     assert pytest.approx(local) == test_class.baseline(1)
 
     # turbine 3 - unwaked
     turbine = floris.farm.turbine_map.turbines[2]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
+    local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
     assert pytest.approx(local) == test_class.baseline(0)
 
     ### rotated
@@ -99,20 +93,17 @@ def test_regression_triangle_farm():
 
     # turbine 1 - unwaked
     turbine = floris.farm.turbine_map.turbines[0]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
+    local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
     assert pytest.approx(local) == test_class.baseline(0)
 
     # turbine 2 - unwaked
     turbine = floris.farm.turbine_map.turbines[1]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
+    local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
     assert pytest.approx(local) == test_class.baseline(0)
 
     # turbine 3 - waked
     turbine = floris.farm.turbine_map.turbines[2]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
+    local = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
     assert pytest.approx(local) == test_class.baseline(1)
 
 
