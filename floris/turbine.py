@@ -221,7 +221,7 @@ class Turbine():
 
     @property
     def Ct(self):
-        return self._fCt(self.average_velocity)
+        return self._fCt(self.average_velocity) * np.cos(self.yaw_angle)**self.pP
 
     @property
     def power(self):
