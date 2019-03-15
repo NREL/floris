@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import pytest
+import numpy as np
 from floris import Floris
 from .sample_inputs import SampleInputs
 
@@ -35,7 +36,7 @@ class CurlRegressionTest():
 
     def yawed_baseline(self, turbine_index):
         baseline = [
-            (0.4632707, 0.7655868,  167825.6319350, 0.2030974, 7.9727208),
+            (0.4632707, 0.7655868, 1780240.6778116, 0.2573987, 7.9727208),
             (0.4633075, 0.9900000, 1793661.6494183, 0.2579167, 7.9736330)
         ]
         return baseline[turbine_index]
@@ -123,7 +124,8 @@ def test_regression_yaw():
     floris = Floris(input_dict=test_class.input_dict)
 
     # yaw the upstream turbine 5 degrees
-    floris.farm.set_yaw_angles([5.0, 0.0])
+    rotation_angle = 5.0
+    floris.farm.set_yaw_angles([np.radians(rotation_angle), 0.0])
     floris.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         # print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))

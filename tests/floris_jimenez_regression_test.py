@@ -12,6 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import pytest
+import numpy as np
 from floris import Floris
 from .sample_inputs import SampleInputs
 
@@ -35,8 +36,8 @@ class FlorisJimenezRegressionTest():
 
     def yawed_baseline(self, turbine_index):
         baseline = [
-            (0.4632706, 0.7655828, 167883.1998717, 0.2030962, 7.9736330),
-            (0.4524012, 0.8386068, 710767.0644128, 0.2991311, 5.9032180)
+            (0.4632706, 0.7655828, 1780851.3400887, 0.2573966, 7.9736330),
+            (0.4395615, 0.8696385,  512024.7148690, 0.3194719, 5.3429127)
         ]
         return baseline[turbine_index]
 
@@ -123,10 +124,11 @@ def test_regression_yaw():
     floris = Floris(input_dict=test_class.input_dict)
 
     # yaw the upstream turbine 5 degrees
-    floris.farm.set_yaw_angles([5.0, 0.0])
+    rotation_angle = 5.0
+    floris.farm.set_yaw_angles([np.radians(rotation_angle), 0.0])
     floris.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        # print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
         baseline = test_class.yawed_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
