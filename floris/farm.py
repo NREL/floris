@@ -143,7 +143,7 @@ class Farm():
         if calculate_wake:
             self.flow_field.calculate_wake()
 
-    def set_yaw_angles(self, yaw_angles, calculate_wake=True):
+    def set_yaw_angles(self, yaw_angles, calculate_wake=False):
         """
         Sets yaw angles for all turbines and calculates the wake
 
@@ -164,7 +164,7 @@ class Farm():
         if calculate_wake:
             self.flow_field.calculate_wake()
 
-    def set_turbine_locations(self, layout_x, layout_y, calculate_wake=True): 
+    def set_turbine_locations(self, layout_x, layout_y, calculate_wake=False):
         """
         Sets the locations for all turbines and calculates the wake
 
