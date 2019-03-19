@@ -125,25 +125,7 @@ class Farm():
         if calculate_wake:
             self.flow_field.calculate_wake()
 
-    def _update_flow_field(self, calculate_wake=True):
-        """
-        Sets a flow property, then recreates the flow field and calculates wake
-        """
-        self.flow_field.reinitialize_flow_field(
-            wind_speed=self.wind_speed,
-            wind_direction=self.wind_direction,
-            wind_shear=self.wind_shear,
-            wind_veer=self.wind_veer,
-            turbulence_intensity=self.turbulence_intensity,
-            air_density=self.air_density,
-            wake=self.wake,
-            turbine_map=self.turbine_map,
-            with_resolution=self.wake.velocity_model.model_grid_resolution
-        )
-        if calculate_wake:
-            self.flow_field.calculate_wake()
-
-    def set_yaw_angles(self, yaw_angles, calculate_wake=True):
+    def set_yaw_angles(self, yaw_angles, calculate_wake=False):
         """
         Sets yaw angles for all turbines and calculates the wake
 
@@ -164,7 +146,7 @@ class Farm():
         if calculate_wake:
             self.flow_field.calculate_wake()
 
-    def set_turbine_locations(self, layout_x, layout_y, calculate_wake=True): 
+    def set_turbine_locations(self, layout_x, layout_y, calculate_wake=False):
         """
         Sets the locations for all turbines and calculates the wake
 
