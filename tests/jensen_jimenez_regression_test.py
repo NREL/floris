@@ -26,6 +26,7 @@ class JensenJimenezRegressionTest():
         sample_inputs.floris["wake"]["properties"]["velocity_model"] = "jensen"
         sample_inputs.floris["wake"]["properties"]["deflection_model"] = "jimenez"
         self.input_dict = sample_inputs.floris
+        self.debug = False
 
     def baseline(self, turbine_index):
         baseline = [
@@ -50,7 +51,8 @@ def test_regression_tandem():
     floris = Floris(input_dict=test_class.input_dict)
     floris.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        # print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        if test_class.debug:
+            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
         baseline = test_class.baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -128,7 +130,8 @@ def test_regression_yaw():
     floris.farm.set_yaw_angles([np.radians(rotation_angle), 0.0])
     floris.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        # print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+        if test_class.debug:
+            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
         baseline = test_class.yawed_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
