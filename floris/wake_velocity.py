@@ -12,6 +12,7 @@
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 from .types import Vec3
+import copy
 
 class WakeVelocity():
 
@@ -73,7 +74,7 @@ class Jensen(WakeVelocity):
         c[z_locations > z_upper] = 0
         c[z_locations < z_lower] = 0
 
-        return 2 * turbine.aI * c * flow_field.u_initial
+        return 2 * turbine.aI * c * flow_field.u_initial, np.zeros(np.shape(flow_field.u_initial)), np.zeros(np.shape(flow_field.u_initial))
 
 
 class Floris(WakeVelocity):
@@ -139,7 +140,7 @@ class Floris(WakeVelocity):
         # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
 
-        return 2 * turbine.aI * c * flow_field.wind_speed
+        return 2 * turbine.aI * c * flow_field.wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
 
 
 class Gauss(WakeVelocity):
@@ -256,7 +257,7 @@ class Gauss(WakeVelocity):
         velDef1 = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
         velDef1[x_locations < x0] = 0
 
-        return np.sqrt(velDef**2 + velDef1**2)
+        return np.sqrt(velDef**2 + velDef1**2), np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
 
 class Curl(WakeVelocity):
@@ -331,7 +332,7 @@ class Curl(WakeVelocity):
         # the axial induction factor of the turbine
         aI = turbine.aI
         # initial velocities in the stream-wise, span-wise, and vertical direction
-        U, V, W = flow_field.u, flow_field.v, flow_field.w
+        U, V, W = copy.deepcopy(flow_field.u), copy.deepcopy(flow_field.v), copy.deepcopy(flow_field.w)
         # the tilt angle of the rotor of the turbine
         tilt = turbine.tilt_angle
 
