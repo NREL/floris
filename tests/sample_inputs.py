@@ -111,9 +111,9 @@ class SampleInputs():
                     },
                     "curl": {
                         "model_grid_resolution": [250, 100, 75],
-                        "vortex_strength": 0.35,
+                        "vortex_strength": 0.3,
                         "initial_deficit": 2.0,
-                        "dissipation": 0.06,
+                        "dissipation": 0.05,
                         "veer_linear": 0.0
                     }
                 }
