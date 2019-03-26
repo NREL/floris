@@ -71,7 +71,7 @@ class Turbine():
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
             raise ValueError("Turbine.grid_point_count must be the square of a number")
 
-        self.velocities = [0] * self.grid_point_count
+        self.reinitialize_turbine()
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
