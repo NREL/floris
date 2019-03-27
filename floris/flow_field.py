@@ -173,6 +173,8 @@ class FlowField():
                                 wake=None,
                                 turbine_map=None,
                                 with_resolution=None):
+        """
+        """
         # reset the given parameters
         if turbine_map is not None:
             self.turbine_map = turbine_map
@@ -194,6 +196,8 @@ class FlowField():
                 turbine.air_density = self.air_density
         if wake is not None:
             self.wake = wake
+        if with_resolution is None:
+            with_resolution = self.wake.velocity_model.model_grid_resolution
 
         # initialize derived attributes and constants
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
@@ -202,7 +206,12 @@ class FlowField():
         # reinitialize the flow field
         self._compute_initialized_domain(with_resolution=with_resolution)
 
-    def calculate_wake(self, no_wake=False):
+        # reinitialize the turbines
+        for turbine in self.turbine_map.turbines:
+            turbine.reinitialize_turbine()
+
+    def calculate_wake(self, no_wake=False, with_resolution=None):
+        self.reinitialize_flow_field(with_resolution=with_resolution)
 
         # rotate the discrete grid and turbine map
         center_of_rotation = Vec3(0, 0, 0)
@@ -228,12 +237,7 @@ class FlowField():
             deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
 
             # get the velocity deficit accounting for the deflection
-            if self.wake.velocity_model.requires_resolution:
-                turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
-            else:
-                turb_u_wake = self._compute_turbine_velocity_deficit(rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
-                turb_v_wake = np.zeros(self.u.shape)
-                turb_w_wake = np.zeros(self.u.shape)
+            turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
 
             # include turbulence model for the gaussian wake model from Porte-Agel 
             if self.wake.velocity_model.model_string == 'gauss':
@@ -284,20 +288,6 @@ class FlowField():
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake
 
-    def get_flow_field_with_resolution(self, resolution):
-        """
-        resolution: Vec3()
-        """
-        if self.wake.velocity_model.requires_resolution and \
-            self.wake.velocity_model.model_grid_resolution != resolution:
-            print("WARNING: The current wake velocity model contains a required grid resolution;")
-            print("    The Resolution given to FlowField.get_flow_field_with_resolution is ignored.")
-            resolution = self.wake.velocity_model.model_grid_resolution
-
-        xmin, xmax, ymin, ymax, zmin, zmax = self._get_domain_bounds()
-        self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, resolution)
-        self.reinitialize_flow_field(with_resolution=resolution)
-        return self.u, self.v, self.w
 
     # Getters & Setters
     @property

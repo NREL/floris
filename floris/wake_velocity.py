@@ -12,6 +12,7 @@
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 from .types import Vec3
+import copy
 
 class WakeVelocity():
 
@@ -73,7 +74,7 @@ class Jensen(WakeVelocity):
         c[z_locations > z_upper] = 0
         c[z_locations < z_lower] = 0
 
-        return 2 * turbine.aI * c * flow_field.u_initial
+        return 2 * turbine.aI * c * flow_field.u_initial, np.zeros(np.shape(flow_field.u_initial)), np.zeros(np.shape(flow_field.u_initial))
 
 
 class Floris(WakeVelocity):
@@ -139,7 +140,7 @@ class Floris(WakeVelocity):
         # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
 
-        return 2 * turbine.aI * c * flow_field.wind_speed
+        return 2 * turbine.aI * c * flow_field.wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
 
 
 class Gauss(WakeVelocity):
@@ -256,7 +257,7 @@ class Gauss(WakeVelocity):
         velDef1 = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
         velDef1[x_locations < x0] = 0
 
-        return np.sqrt(velDef**2 + velDef1**2)
+        return np.sqrt(velDef**2 + velDef1**2), np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
 
 class Curl(WakeVelocity):
@@ -449,6 +450,14 @@ class Curl(WakeVelocity):
         dudz_initial = np.gradient(U, axis=2) / \
             np.gradient(z_locations, axis=2)
 
+        ti_initial = flow_field.turbulence_intensity
+
+        # turbulence intensity parameters stored in floris.json
+        ti_i          = self.ti_initial
+        ti_constant   = self.ti_constant
+        ti_ai         = self.ti_ai
+        ti_downstream = self.ti_downstream
+
         for i in range(idx + 1, len(x)):
 
             # compute the change in x
@@ -466,10 +475,16 @@ class Curl(WakeVelocity):
             lm = kappa * z / (1 + kappa * z / lmda)
             nu = lm**2 * np.abs(dudz_initial[i - 1, :, :])
 
+            # turbulence intensity calculation based on Crespo et. al.
+            ti_local = 10*ti_constant \
+                           * turbine.aI**ti_ai \
+                           * ti_initial**ti_i \
+                           * ((x[i] - turbine_coord.x1) / turbine.rotor_diameter)**ti_downstream
+
             # solve the marching problem for u, v, and w
             # uw[i,:,:] = uw[i-1,:,:] + (dx / (U[i-1,:,:])) * (-V[i-1,:,:]*dudy - W[i-1,:,:]*dudz + dissipation*D*(np.arctan(1/375*dx - np.pi/1.5)/(np.pi/2)+1)/2*nu*gradU)
             uw[i, :, :] = uw[i - 1, :, :] + (dx / (U[i - 1, :, :])) * (-V[i - 1, :, :]
-                                                                       * dudy - W[i - 1, :, :] * dudz + dissipation * D * nu * gradU)
+                                                                       * dudy - W[i - 1, :, :] * dudz + dissipation * D * nu * ti_local * gradU)
             # enforce boundary conditions
             uw[i, :, 0] = np.zeros(len(y))
             uw[i, 0, :] = np.zeros(len(z))

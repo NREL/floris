@@ -53,13 +53,6 @@ class Turbine():
 
     def __init__(self, instance_dictionary):
 
-        # constants
-        self.grid_point_count = 5*5
-        if np.sqrt(self.grid_point_count) % 1 != 0.0:
-            raise ValueError("Turbine.grid_point_count must be the square of a number")
-
-        self.velocities = [0] * self.grid_point_count
-
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
         self.rotor_diameter = properties["rotor_diameter"]
@@ -72,6 +65,13 @@ class Turbine():
         self.yaw_angle = properties["yaw_angle"]
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
+
+        # constants
+        self.grid_point_count = 5*5
+        if np.sqrt(self.grid_point_count) % 1 != 0.0:
+            raise ValueError("Turbine.grid_point_count must be the square of a number")
+
+        self.reinitialize_turbine()
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
@@ -189,6 +189,10 @@ class Turbine():
             rotated_y,
             rotated_z
         )
+
+    def reinitialize_turbine(self):
+        self.velocities = [0] * self.grid_point_count            
+
 
     # Getters & Setters
     @property
