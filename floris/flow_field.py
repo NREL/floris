@@ -155,6 +155,33 @@ class FlowField():
             np.cos(angle) + center_of_rotation.x2
         return rotated_x, rotated_y, self.z
 
+    def _rotated_dir(self, angle, center_of_rotation, rotated_map):
+
+        # get new boundaries for the wind farm once rotated
+        x_coord = []
+        y_coord = []
+        for coord in rotated_map.coords:
+            x_coord.append(coord.x1)
+            y_coord.append(coord.x2)
+
+        if str(self.wake.velocity_model) == 'curl':
+            # re-setup the grid for the curl model
+            xmin = np.min(x_coord) - 2 * self.max_diameter
+            xmax = np.max(x_coord) + 10 * self.max_diameter
+            ymin = np.min(y_coord) - 2 * self.max_diameter
+            ymax = np.max(y_coord) + 2 * self.max_diameter
+            zmin = 0.1
+            zmax = 6 * self.specified_wind_height
+            resolution = self.wake.velocity_model.model_grid_resolution
+            self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, resolution)
+            rotated_x, rotated_y, rotated_z = self._rotated_grid(
+                0.0, center_of_rotation)
+        else:
+            rotated_x, rotated_y, rotated_z = self._rotated_grid(
+                self.wind_direction, center_of_rotation)
+
+        return rotated_x, rotated_y, rotated_z
+
     def _calculate_area_overlap(self, wake_velocities, freestream_velocities, turbine):
         """
         compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
@@ -213,13 +240,15 @@ class FlowField():
     def calculate_wake(self, no_wake=False, with_resolution=None):
         self.reinitialize_flow_field(with_resolution=with_resolution)
 
-        # rotate the discrete grid and turbine map
+        # define the center of rotation with reference to 270 deg
         center_of_rotation = Vec3(0, 0, 0)
-        rotated_x, rotated_y, rotated_z = self._rotated_grid(self.wind_direction, center_of_rotation)
-
+        
         # Rotate the turbines such that they are now in the frame of reference 
         # of the wind direction simpifying computing the wakes and wake overlap
         rotated_map = self.turbine_map.rotated(self.wind_direction, center_of_rotation)
+
+        # rotate the discrete grid and turbine map
+        rotated_x, rotated_y, rotated_z = self._rotated_dir(self.wind_direction, center_of_rotation, rotated_map)
 
         # sort the turbine map
         sorted_map = rotated_map.sorted_in_x_as_list()
@@ -287,6 +316,11 @@ class FlowField():
             self.u = self.u_initial - u_wake
             self.v = self.v_initial + v_wake
             self.w = self.w_initial + w_wake
+
+        # rotate the grid if it is curl
+        if str(self.wake.velocity_model) == 'curl':
+            print('here')
+            self.x, self.y, self.z = self._rotated_grid(-self.wind_direction, center_of_rotation)
 
 
     # Getters & Setters
