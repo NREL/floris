@@ -319,7 +319,6 @@ class FlowField():
 
         # rotate the grid if it is curl
         if str(self.wake.velocity_model) == 'curl':
-            print('here')
             self.x, self.y, self.z = self._rotated_grid(-self.wind_direction, center_of_rotation)
 
 

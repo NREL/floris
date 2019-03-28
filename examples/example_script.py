@@ -14,6 +14,7 @@ specific language governing permissions and limitations under the License.
 import sys
 from floris import Floris
 import copy
+import matplotlib.pyplot as plt
 
 # Initialize the floris object with a json input file
 if len(sys.argv) > 1:
