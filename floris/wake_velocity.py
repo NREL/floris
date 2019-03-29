@@ -94,8 +94,7 @@ class Floris(WakeVelocity):
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
         
-        mu = self.mU / np.cos((self.aU + self.bU * np.degrees(turbine.yaw_angle)) * np.pi / 180.0)
-        # mu = self.mU / cosd((self.aU + self.bU * turbine.yaw_angle) * np.pi / 180.0)
+        mu = self.mU / cosd(self.aU + self.bU * turbine.yaw_angle)
 
         # distance from wake centerline
         rY = abs(y_locations - (turbine_coord.x2 + deflection_field))
