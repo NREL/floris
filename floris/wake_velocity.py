@@ -102,9 +102,9 @@ class Floris(WakeVelocity):
         dx = x_locations - turbine_coord.x1
 
         # wake zone diameters
-        nearwake = (turbine.rotor_radius + self.we * self.me[0] * dx)
-        farwake = (turbine.rotor_radius + self.we * self.me[1] * dx)
-        mixing = (turbine.rotor_radius + self.we * self.me[2] * dx)
+        nearwake = turbine.rotor_radius + self.we * self.me[0] * dx
+        farwake = turbine.rotor_radius + self.we * self.me[1] * dx
+        mixing = turbine.rotor_radius + self.we * self.me[2] * dx
 
         # initialize the wake field
         c = np.zeros(x_locations.shape)
@@ -187,10 +187,7 @@ class Gauss(WakeVelocity):
 
         # veer (degrees)
         veer = flow_field.wind_veer
-        
-        # TODO: placeholder for now, should be computed with turbine
-        #TI = flow_field.turbulence_intensity
-	
+
 	    # added turbulence model
         TI = turbine.turbulence_intensity	
 

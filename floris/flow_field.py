@@ -113,7 +113,7 @@ class FlowField():
 
     def _compute_initialized_domain(self, with_resolution=None):
         if with_resolution is not None:
-            xmin, xmax, ymin, ymax, zmin, zmax = self._get_domain_bounds()
+            xmin, xmax, ymin, ymax, zmin, zmax = self.domain_bounds
             self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, with_resolution)
         else:
             self.x, self.y, self.z = self._discretize_turbine_domain()
@@ -125,19 +125,6 @@ class FlowField():
         self.u = self.u_initial.copy()
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
-
-    def _get_domain_bounds(self):
-        coords = self.turbine_map.coords
-        x = [coord.x1 for coord in coords]
-        y = [coord.x2 for coord in coords]
-        eps = 0.1
-        xmin = min(x) - 2 * self.max_diameter
-        xmax = max(x) + 10 * self.max_diameter
-        ymin = min(y) - 2 * self.max_diameter
-        ymax = max(y) + 2 * self.max_diameter
-        zmin = 0 + eps 
-        zmax = 6 * self.specified_wind_height
-        return xmin, xmax, ymin, ymax, zmin, zmax
 
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flow_field):
         return self.wake.velocity_function(x, y, z, turbine, coord, deflection, wake, flow_field)
@@ -190,7 +177,7 @@ class FlowField():
         count = np.sum(freestream_velocities - wake_velocities <= 0.05)
         return (turbine.grid_point_count - count) / turbine.grid_point_count
 
-    # Public methods    
+    # Public methods
     def reinitialize_flow_field(self,
                                 wind_speed=None,
                                 wind_direction=None,
@@ -278,7 +265,7 @@ class FlowField():
                     if coord_ti.x1 > coord.x1 and np.abs(coord.x2 - coord_ti.x2) < 2*turbine.rotor_diameter:
                         # only assess the effects of the current wake
                         
-                        freestream_velocities = turbine_ti._calculate_swept_area_velocities(
+                        freestream_velocities = turbine_ti.calculate_swept_area_velocities(
                             self.wind_direction,
                             self.u_initial,
                             coord_ti,
@@ -286,7 +273,7 @@ class FlowField():
                             rotated_y,
                             rotated_z)
 
-                        wake_velocities = turbine_ti._calculate_swept_area_velocities(
+                        wake_velocities = turbine_ti.calculate_swept_area_velocities(
                             self.wind_direction,
                             self.u_initial - turb_u_wake,
                             coord_ti,
@@ -319,8 +306,8 @@ class FlowField():
             self.w = self.w_initial + w_wake
 
         # rotate the grid if it is curl
-        if str(self.wake.velocity_model) == 'curl':
-            self.x, self.y, self.z = self._rotated_grid(-self.wind_direction, center_of_rotation)
+        if self.wake.velocity_model.model_string == 'curl':
+            self.x, self.y, self.z = self._rotated_grid(-1 * self.wind_direction, center_of_rotation)
 
 
     # Getters & Setters
@@ -332,3 +319,17 @@ class FlowField():
     def wind_direction(self, value):
         # frame of reference is west
         self._wind_direction = value - 270
+
+    @property
+    def domain_bounds(self):
+        coords = self.turbine_map.coords
+        x = [coord.x1 for coord in coords]
+        y = [coord.x2 for coord in coords]
+        eps = 0.1
+        xmin = min(x) - 2 * self.max_diameter
+        xmax = max(x) + 10 * self.max_diameter
+        ymin = min(y) - 2 * self.max_diameter
+        ymax = max(y) + 2 * self.max_diameter
+        zmin = 0 + eps
+        zmax = 6 * self.specified_wind_height
+        return xmin, xmax, ymin, ymax, zmin, zmax

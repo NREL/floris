@@ -32,7 +32,7 @@ minimum_yaw, maximum_yaw = 0.0, 25.0
 opt_yaw_angles = flopt.wake_steering(floris, minimum_yaw, maximum_yaw)
 print('Optimal yaw angles for:')
 for i, yaw in enumerate(opt_yaw_angles):
-    print('Turbine ', i, ' yaw angle = ', np.degrees(yaw))
+    print('Turbine ', i, ' yaw angle = ', yaw)
 
 # Calculate power gain with new yaw angles
 floris.farm.set_yaw_angles(opt_yaw_angles, calculate_wake=True)

@@ -131,7 +131,9 @@ class Turbine():
                 _ct = _ct[0]
             return float(_ct)
 
-    def _calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
+    # Public methods
+
+    def calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
         """
         Initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
@@ -148,8 +150,6 @@ class Turbine():
         idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
         data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
         return np.array(data)
-
-    # Public methods
 
     def calculate_turbulence_intensity(self, flow_field_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
         """
@@ -181,7 +181,7 @@ class Turbine():
         """
         # reset the waked velocities
         local_wind_speed = flow_field.u_initial - u_wake
-        self.velocities = self._calculate_swept_area_velocities(
+        self.velocities = self.calculate_swept_area_velocities(
             flow_field.wind_direction,
             local_wind_speed,
             coord,
