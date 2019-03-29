@@ -112,3 +112,24 @@ class Vec3():
 
     def __hash__(self):
         return hash((self.x1, self.x2, self.x3))
+
+
+def cosd(angle):
+    """
+    cosine of an angle with the angle given in degrees
+    """
+    return np.cos(np.radians(angle))
+
+
+def sind(angle):
+    """
+    sine of an angle with the angle given in degrees
+    """
+    return np.sin(np.radians(angle))
+
+
+def tand(angle):
+    """
+    tangent of an angle with the angle given in degrees
+    """
+    return np.tan(np.radians(angle))
