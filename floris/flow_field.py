@@ -150,10 +150,10 @@ class FlowField():
         yoffset = self.y - center_of_rotation.x2
         rotated_x = xoffset * \
             cosd(angle) - yoffset * \
-            cosd(angle) + center_of_rotation.x1
+            sind(angle) + center_of_rotation.x1
         rotated_y = xoffset * \
             sind(angle) + yoffset * \
-            sind(angle) + center_of_rotation.x2
+            cosd(angle) + center_of_rotation.x2
         return rotated_x, rotated_y, self.z
 
     def _rotated_dir(self, angle, center_of_rotation, rotated_map):
