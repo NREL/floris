@@ -65,7 +65,7 @@ def test_rotated():
     sample map is rotated by pi about (0, 0).
     """
     test_class = TurbineMapTest()
-    rotated_map = test_class.instance.rotated(np.pi, Vec3(0, 0, 0))
+    rotated_map = test_class.instance.rotated(180, Vec3(0, 0, 0))
     baseline_coordinates = [
         Vec3(0.0, 0.0, 0.0),
         Vec3(-100.0, 0.0, 0.0)

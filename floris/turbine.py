@@ -12,7 +12,7 @@
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
-
+from .types import cosd, sind, tand
 
 class Turbine():
     """
@@ -225,18 +225,18 @@ class Turbine():
 
     @property
     def Ct(self):
-        return self._fCt(self.average_velocity) * np.cos(self.yaw_angle)**self.pP
+        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)**self.pP
 
     @property
     def power(self):
         cptmp = self.Cp \
-                * np.cos(self.yaw_angle)**self.pP \
-                * np.cos(self.tilt_angle)**self.pT
+                * cosd(self.yaw_angle)**self.pP \
+                * cosd(self.tilt_angle)**self.pT
         return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
                 * cptmp * self.generator_efficiency \
                 * self.average_velocity**3
 
     @property
     def aI(self):
-        return 0.5 / np.cos(self.yaw_angle) \
-            * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle)))
+        return 0.5 / cosd(self.yaw_angle) \
+            * (1 - np.sqrt(1 - self.Ct * cosd(self.yaw_angle)))

@@ -53,14 +53,14 @@ def test_instantiation_with_list():
 
 def test_rotation_on_origin():
     """
-    The class should rotate by pi on the 3rd (z) axis at the origin like so:
+    The class should rotate by 180 on the 3rd (z) axis at the origin like so:
         < 1, 2, 3 > becomes < -1, -2, ,3 >
     """
     test_class = Vec3Test()
 
     baseline = Vec3(-1, -2, 3)
     vec3 = Vec3(test_class.x, test_class.y, test_class.z)
-    vec3.rotate_on_x3(np.pi)
+    vec3.rotate_on_x3(180)
     assert \
         vec3.x1prime == pytest.approx(baseline.x1) and \
         vec3.x2prime == pytest.approx(baseline.x2) and \
@@ -69,7 +69,7 @@ def test_rotation_on_origin():
 
 def test_rotation_off_origin():
     """    
-    The class should rotate by pi on the 3rd (z) axis about center of rotation at <0, 10, 0> like so:
+    The class should rotate by 180 on the 3rd (z) axis about center of rotation at <0, 10, 0> like so:
         < 1, 2, 3 > becomes < -1, -2, ,3 >
     """
     test_class = Vec3Test()
@@ -77,7 +77,7 @@ def test_rotation_off_origin():
     baseline = Vec3(5, 4, 3)
     center_of_rotation = Vec3(3, 3, 0)
     vec3 = Vec3(test_class.x, test_class.y, test_class.z)
-    vec3.rotate_on_x3(np.pi, center_of_rotation)
+    vec3.rotate_on_x3(180, center_of_rotation)
     assert \
         vec3.x1prime == pytest.approx(baseline.x1) and \
         vec3.x2prime == pytest.approx(baseline.x2) and \

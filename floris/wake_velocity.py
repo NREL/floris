@@ -12,6 +12,7 @@
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 from .types import Vec3
+from .types import cosd, sind, tand
 import copy
 
 class WakeVelocity():
@@ -87,13 +88,14 @@ class Floris(WakeVelocity):
         model_dictionary = parameter_dictionary[self.model_string]
         self.me = [float(n) for n in model_dictionary["me"]]
         self.we = float(model_dictionary["we"])
-        self.aU = np.radians(float(model_dictionary["aU"]))
-        self.bU = np.radians(float(model_dictionary["bU"]))
+        self.aU = float(model_dictionary["aU"])
+        self.bU = float(model_dictionary["bU"])
         self.mU = [float(n) for n in model_dictionary["mU"]]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
         
         mu = self.mU / np.cos((self.aU + self.bU * np.degrees(turbine.yaw_angle)) * np.pi / 180.0)
+        # mu = self.mU / cosd((self.aU + self.bU * turbine.yaw_angle) * np.pi / 180.0)
 
         # distance from wake centerline
         rY = abs(y_locations - (turbine_coord.x2 + deflection_field))
@@ -184,8 +186,7 @@ class Gauss(WakeVelocity):
 
         """
 
-        # veer (radians)
-        # TODO: should be deg in the input file and then converted internally
+        # veer (degrees)
         veer = flow_field.wind_veer
         
         # TODO: placeholder for now, should be computed with turbine
@@ -198,7 +199,6 @@ class Gauss(WakeVelocity):
         D = turbine.rotor_diameter
         HH = turbine.hub_height
         yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
-        tilt = turbine.tilt_angle
         Ct = turbine.Ct
         U_local = flow_field.u_initial
 
@@ -211,10 +211,10 @@ class Gauss(WakeVelocity):
 
         # initial Gaussian wake expansion
         sigma_z0 = D * 0.5 * np.sqrt(uR / (U_local + u0))
-        sigma_y0 = sigma_z0 * (np.cos((yaw))) * (np.cos(veer))
+        sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
 
         # quantity that determines when the far wake starts
-        x0 = D * (np.cos(yaw) * (1 + np.sqrt(1 - Ct))) / (np.sqrt(2) * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) + turbine_coord.x1
+        x0 = D * (cosd(yaw) * (1 + np.sqrt(1 - Ct))) / (np.sqrt(2) * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) + turbine_coord.x1
 
         # wake expansion parameters
         ky = self.ka * TI + self.kb
@@ -222,7 +222,7 @@ class Gauss(WakeVelocity):
 
         # compute velocity deficit
         yR = y_locations - turbine_coord.x2
-        xR = yR * np.tan(yaw) + turbine_coord.x1
+        xR = yR * tand(yaw) + turbine_coord.x1
 
         # velocity deficit in the near wake
         sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(Ct / 2.) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
@@ -231,12 +231,12 @@ class Gauss(WakeVelocity):
         sigma_y[x_locations < xR] = 0.5 * D
         sigma_z[x_locations < xR] = 0.5 * D
 
-        a = (np.cos(veer)**2) / (2 * sigma_y**2) + (np.sin(veer)**2) / (2 * sigma_z**2)
-        b = -(np.sin(2 * veer)) / (4 * sigma_y**2) + (np.sin(2 * veer)) / (4 * sigma_z**2)
-        c = (np.sin(veer)**2) / (2 * sigma_y**2) + (np.cos(veer)**2) / (2 * sigma_z**2)
+        a = (cosd(veer)**2) / (2 * sigma_y**2) + (sind(veer)**2) / (2 * sigma_z**2)
+        b = -(sind(2 * veer)) / (4 * sigma_y**2) + (sind(2 * veer)) / (4 * sigma_z**2)
+        c = (sind(veer)**2) / (2 * sigma_y**2) + (cosd(veer)**2) / (2 * sigma_z**2)
         totGauss = np.exp(-(a * ((y_locations - turbine_coord.x2) - delta)**2 - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2))
 
-        velDef = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
+        velDef = (U_local * (1 - np.sqrt(1 - ((Ct * cosd(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
         velDef[x_locations < xR] = 0
         velDef[x_locations > x0] = 0
 
@@ -248,13 +248,13 @@ class Gauss(WakeVelocity):
         sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         # velocity deficit outside the near wake
-        a = (np.cos(veer)**2) / (2 * sigma_y**2) + (np.sin(veer)**2) / (2 * sigma_z**2)
-        b = -(np.sin(2 * veer)) / (4 * sigma_y**2) + (np.sin(2 * veer)) / (4 * sigma_z**2)
-        c = (np.sin(veer)**2) / (2 * sigma_y**2) + (np.cos(veer)**2) / (2 * sigma_z**2)
+        a = (cosd(veer)**2) / (2 * sigma_y**2) + (sind(veer)**2) / (2 * sigma_z**2)
+        b = -(sind(2 * veer)) / (4 * sigma_y**2) + (sind(2 * veer)) / (4 * sigma_z**2)
+        c = (sind(veer)**2) / (2 * sigma_y**2) + (cosd(veer)**2) / (2 * sigma_z**2)
         totGauss = np.exp(-(a * ((y_locations - turbine_coord.x2) - delta)**2 - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2))
 
         # compute velocities in the far wake
-        velDef1 = (U_local * (1 - np.sqrt(1 - ((Ct * np.cos(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
+        velDef1 = (U_local * (1 - np.sqrt(1 - ((Ct * cosd(yaw)) / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
         velDef1[x_locations < x0] = 0
 
         return np.sqrt(velDef**2 + velDef1**2), np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
@@ -338,13 +338,13 @@ class Curl(WakeVelocity):
 
         # calculate the curled wake effects due to the yaw and tilt of the turbine
         Gamma_Yaw = vortex_strength * np.pi * D / 2 * Ct * \
-            turbine.average_velocity * np.sin(yaw)
+            turbine.average_velocity * sind(yaw)
         if turbine.yaw_angle != 0.0:
             YawFlag = 1
         else:
             YawFlag = 0
-        Gamma_Tilt = np.pi * D / 2 * Ct * turbine.average_velocity * np.sin(tilt) * \
-            np.cos(tilt)**2
+        Gamma_Tilt = np.pi * D / 2 * Ct * turbine.average_velocity * sind(tilt) * \
+            cosd(tilt)**2
         if turbine.tilt_angle != 0.0:
             TiltFlag = 1
         else:

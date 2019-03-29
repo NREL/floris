@@ -110,7 +110,7 @@ def test_regression_yaw():
 
     # yaw the upstream turbine 5 degrees
     rotation_angle = 5.0
-    floris.farm.set_yaw_angles([np.radians(rotation_angle), 0.0])
+    floris.farm.set_yaw_angles([rotation_angle, 0.0])
     floris.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:

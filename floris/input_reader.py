@@ -169,8 +169,8 @@ class InputReader():
             turbine: Turbine - instantiated Turbine object
         """
         propertyDict = self._validateJSON(json_dict, self._turbine_properties)
-        propertyDict["properties"]["yaw_angle"] = np.radians(propertyDict["properties"]["yaw_angle"])
-        propertyDict["properties"]["tilt_angle"] = np.radians(propertyDict["properties"]["tilt_angle"])
+        propertyDict["properties"]["yaw_angle"] = propertyDict["properties"]["yaw_angle"]
+        propertyDict["properties"]["tilt_angle"] = propertyDict["properties"]["tilt_angle"]
         return Turbine(propertyDict)
 
     def _build_wake(self, json_dict):

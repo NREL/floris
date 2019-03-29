@@ -10,6 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
+from .types import cosd, sind, tand
 
 class WakeDeflection():
 
@@ -29,14 +30,15 @@ class Jimenez(WakeDeflection):
         self.bd = float(model_dictionary["bd"])
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
-        # this function defines the angle at which the wake deflects in relation to the yaw of the turbine
-        # this is coded as defined in the Jimenez et. al. paper
+        """
+        This function defines the angle at which the wake deflects in relation
+        to the yaw of the turbine. This is coded as defined in the
+        Jimenez et. al. paper.
+        """
 
         # angle of deflection
-        xi_init = (1. / 2.) * np.cos(turbine.yaw_angle) * \
-            np.sin(turbine.yaw_angle) * turbine.Ct
-        # xi = xi_init / (1 + 2 * self.kd * x_locations / turbine.rotor_diameter)**2
-        
+        xi_init = cosd(turbine.yaw_angle) * sind(turbine.yaw_angle) * turbine.Ct / 2.0
+
         x_locations = x_locations - coord.x1
 
         # yaw displacement
@@ -92,11 +94,11 @@ class Gauss(WakeDeflection):
         U_local = flow_field.u_initial
 
         # initial velocity deficits
-        uR          = U_local*Ct*np.cos(tilt)*np.cos(yaw)/(2.*(1-np.sqrt(1-(Ct*np.cos(tilt)*np.cos(yaw)))))
+        uR          = U_local*Ct*cosd(tilt)*cosd(yaw)/(2.*(1-np.sqrt(1-(Ct*cosd(tilt)*cosd(yaw)))))
         u0          = U_local*np.sqrt(1-Ct)
 
         # length of near wake
-        x0      = D*(np.cos(yaw)*(1+np.sqrt(1-Ct*np.cos(yaw)))) / (np.sqrt(2)*(4*alpha*TI + 2*beta*(1-np.sqrt(1-Ct)))) + coord.x1
+        x0      = D*(cosd(yaw)*(1+np.sqrt(1-Ct*cosd(yaw)))) / (np.sqrt(2)*(4*alpha*TI + 2*beta*(1-np.sqrt(1-Ct)))) + coord.x1
 
         # wake expansion parameters
         ky      = ka*TI + kb 
@@ -108,14 +110,14 @@ class Gauss(WakeDeflection):
 
         # initial Gaussian wake expansion
         sigma_z0    = D*0.5*np.sqrt( uR/(U_local + u0) )
-        sigma_y0    = sigma_z0*np.cos(yaw)*np.cos(veer)
+        sigma_y0    = sigma_z0*cosd(yaw)*cosd(veer)
 
         yR = y_locations - coord.x2
-        xR = yR*np.tan(yaw) + coord.x1
+        xR = yR*tand(yaw) + coord.x1
 
         # yaw parameters (skew angle and distance from centerline)  
-        theta_c0    = ((0.3*yaw)/np.cos(yaw))*(1-np.sqrt(1-Ct*np.cos(yaw)))    # skew angle   
-        delta0      = np.tan(theta_c0)*(x0-coord.x1)                            # initial wake deflection
+        theta_c0    = ((0.3*yaw)/cosd(yaw))*(1-np.sqrt(1-Ct*cosd(yaw)))    # skew angle   
+        delta0      = tand(theta_c0)*(x0-coord.x1)                            # initial wake deflection
 
         # deflection in the near wake
         delta_near_wake = ((x_locations-xR)/(x0-xR))*delta0 + ( ad + bd*(x_locations-coord.x1) )                               

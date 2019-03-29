@@ -11,6 +11,7 @@
 
 import numpy as np
 from .types import Vec3
+from .types import cosd, sind, tand
 from scipy.interpolate import griddata
 
 
@@ -95,8 +96,8 @@ class FlowField():
 
                     xoffset = x_grid[i,j,k] - coord.x1
                     yoffset = y_grid[i,j,k] - coord.x2
-                    x_grid[i,j,k] = xoffset * np.cos(-1 * self.wind_direction) - yoffset * np.sin(-1 * self.wind_direction) + coord.x1
-                    y_grid[i,j,k] = yoffset * np.cos(-1 * self.wind_direction) + xoffset * np.sin(-1 * self.wind_direction) + coord.x2
+                    x_grid[i,j,k] = xoffset * cosd(-1 * self.wind_direction) - yoffset * sind(-1 * self.wind_direction) + coord.x1
+                    y_grid[i,j,k] = yoffset * cosd(-1 * self.wind_direction) + xoffset * sind(-1 * self.wind_direction) + coord.x2
         
         return x_grid, y_grid, z_grid
 
@@ -148,11 +149,11 @@ class FlowField():
         xoffset = self.x - center_of_rotation.x1
         yoffset = self.y - center_of_rotation.x2
         rotated_x = xoffset * \
-            np.cos(angle) - yoffset * \
-            np.sin(angle) + center_of_rotation.x1
+            cosd(angle) - yoffset * \
+            cosd(angle) + center_of_rotation.x1
         rotated_y = xoffset * \
-            np.sin(angle) + yoffset * \
-            np.cos(angle) + center_of_rotation.x2
+            sind(angle) + yoffset * \
+            sind(angle) + center_of_rotation.x2
         return rotated_x, rotated_y, self.z
 
     def _rotated_dir(self, angle, center_of_rotation, rotated_map):
@@ -330,4 +331,4 @@ class FlowField():
     @wind_direction.setter
     def wind_direction(self, value):
         # frame of reference is west
-        self._wind_direction = np.radians(value - 270)
+        self._wind_direction = value - 270
