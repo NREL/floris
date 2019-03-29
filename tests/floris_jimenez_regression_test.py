@@ -26,19 +26,19 @@ class FlorisJimenezRegressionTest():
         sample_inputs.floris["wake"]["properties"]["velocity_model"] = "floris"
         sample_inputs.floris["wake"]["properties"]["deflection_model"] = "jimenez"
         self.input_dict = sample_inputs.floris
-        self.debug = False
+        self.debug = True
 
     def baseline(self, turbine_index):
         baseline = [
             (0.4632706, 0.7655828, 1793661.6494183, 0.2579167, 7.9736330),
-            (0.4393791, 0.8699828,  510284.5989879, 0.3197105, 5.3375917)
+            (0.4401803, 0.8684703,  517959.7342513, 0.3186649, 5.3609625)
         ]
         return baseline[turbine_index]
 
     def yawed_baseline(self, turbine_index):
         baseline = [
             (0.4632706, 0.7601150, 1780851.3400887, 0.2546066, 7.9736330),
-            (0.4405382, 0.8677947,  521415.0646325, 0.3181998, 5.3714017)
+            (0.4424493, 0.8641873,  540150.0346539, 0.3157361, 5.4271430)
         ]
         return baseline[turbine_index]
 
