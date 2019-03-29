@@ -61,61 +61,44 @@ def test_regression_tandem():
         assert pytest.approx(turbine.average_velocity) == baseline[4]
 
 
-def test_regression_triangle_farm():
+def test_regression_rotation():
     """
-    Triangle farm where wind direction of 270 and 360 should result in the same power
+    Turbines in tandem and rotated.
+    The result from 270 degrees should match the results from 360 degrees.
     """
     test_class = FlorisJimenezRegressionTest()
-    distance = 5 * \
-        test_class.input_dict["turbine"]["properties"]["rotor_diameter"]
-    test_class.input_dict["farm"]["properties"]["layout_x"] = [
-        0.0, distance, 0.0]
-    test_class.input_dict["farm"]["properties"]["layout_y"] = [
-        distance, distance, 0.0]
     floris = Floris(input_dict=test_class.input_dict)
 
     ### unrotated
     floris.farm.flow_field.calculate_wake()
-
-    # turbine 1 - unwaked
     turbine = floris.farm.turbine_map.turbines[0]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
-    assert pytest.approx(local) == test_class.baseline(0)
-
-    # turbine 2 - waked
+    unwaked_baseline = (turbine.Cp, turbine.Ct, turbine.power,
+                        turbine.aI, turbine.average_velocity)
     turbine = floris.farm.turbine_map.turbines[1]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
-    assert pytest.approx(local) == test_class.baseline(1)
-
-    # turbine 3 - unwaked
-    turbine = floris.farm.turbine_map.turbines[2]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
-    assert pytest.approx(local) == test_class.baseline(0)
+    waked_baseline = (turbine.Cp, turbine.Ct, turbine.power,
+                      turbine.aI, turbine.average_velocity)
 
     ### rotated
     floris.farm.flow_field.reinitialize_flow_field(wind_direction=360)
+    floris.farm.set_turbine_locations(
+        [0.0, 0.0],
+        [5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"], 0.0]
+    )
     floris.calculate_wake()
 
-    # turbine 1 - unwaked
     turbine = floris.farm.turbine_map.turbines[0]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
-    assert pytest.approx(local) == test_class.baseline(0)
+    assert pytest.approx(turbine.Cp) == unwaked_baseline[0]
+    assert pytest.approx(turbine.Ct) == unwaked_baseline[1]
+    assert pytest.approx(turbine.power) == unwaked_baseline[2]
+    assert pytest.approx(turbine.aI) == unwaked_baseline[3]
+    assert pytest.approx(turbine.average_velocity) == unwaked_baseline[4]
 
-    # turbine 2 - unwaked
     turbine = floris.farm.turbine_map.turbines[1]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
-    assert pytest.approx(local) == test_class.baseline(0)
-
-    # turbine 3 - waked
-    turbine = floris.farm.turbine_map.turbines[2]
-    local = (turbine.Cp, turbine.Ct, turbine.power,
-             turbine.aI, turbine.average_velocity)
-    assert pytest.approx(local) == test_class.baseline(1)
+    assert pytest.approx(turbine.Cp) == waked_baseline[0]
+    assert pytest.approx(turbine.Ct) == waked_baseline[1]
+    assert pytest.approx(turbine.power) == waked_baseline[2]
+    assert pytest.approx(turbine.aI) == waked_baseline[3]
+    assert pytest.approx(turbine.average_velocity) == waked_baseline[4]
 
 
 def test_regression_yaw():
