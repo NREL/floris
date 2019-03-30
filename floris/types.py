@@ -48,7 +48,7 @@ class Vec3():
     def rotate_on_x3(self, theta, center_of_rotation=None):
         """
         Rotate about the x3 coordinate axis by a given angle and center of rotation.
-        The angle theta should be given in radians.
+        The angle theta should be given in degrees.
 
         Sets the rotated components on this object and returns 
         """
@@ -56,8 +56,8 @@ class Vec3():
             center_of_rotation = Vec3(0.0, 0.0, 0.0)
         x1offset = self.x1 - center_of_rotation.x1
         x2offset = self.x2 - center_of_rotation.x2
-        self.x1prime = x1offset * np.cos(theta) - x2offset * np.sin(theta) + center_of_rotation.x1
-        self.x2prime = x2offset * np.cos(theta) + x1offset * np.sin(theta) + center_of_rotation.x2
+        self.x1prime = x1offset * cosd(theta) - x2offset * sind(theta) + center_of_rotation.x1
+        self.x2prime = x2offset * cosd(theta) + x1offset * sind(theta) + center_of_rotation.x2
         self.x3prime = self.x3
 
     def __str__(self):
@@ -112,3 +112,24 @@ class Vec3():
 
     def __hash__(self):
         return hash((self.x1, self.x2, self.x3))
+
+
+def cosd(angle):
+    """
+    cosine of an angle with the angle given in degrees
+    """
+    return np.cos(np.radians(angle))
+
+
+def sind(angle):
+    """
+    sine of an angle with the angle given in degrees
+    """
+    return np.sin(np.radians(angle))
+
+
+def tand(angle):
+    """
+    tangent of an angle with the angle given in degrees
+    """
+    return np.tan(np.radians(angle))

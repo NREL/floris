@@ -12,7 +12,7 @@
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
-
+from .types import cosd, sind, tand
 
 class Turbine():
     """
@@ -131,7 +131,9 @@ class Turbine():
                 _ct = _ct[0]
             return float(_ct)
 
-    def _calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
+    # Public methods
+
+    def calculate_swept_area_velocities(self, wind_direction, local_wind_speed, coord, x, y, z):
         """
         Initialize the turbine disk velocities used in the 3D model based on shear using the power log law.
         """
@@ -148,8 +150,6 @@ class Turbine():
         idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
         data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
         return np.array(data)
-
-    # Public methods
 
     def calculate_turbulence_intensity(self, flow_field_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
         """
@@ -181,7 +181,7 @@ class Turbine():
         """
         # reset the waked velocities
         local_wind_speed = flow_field.u_initial - u_wake
-        self.velocities = self._calculate_swept_area_velocities(
+        self.velocities = self.calculate_swept_area_velocities(
             flow_field.wind_direction,
             local_wind_speed,
             coord,
@@ -225,18 +225,18 @@ class Turbine():
 
     @property
     def Ct(self):
-        return self._fCt(self.average_velocity) * np.cos(self.yaw_angle)**self.pP
+        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)**self.pP
 
     @property
     def power(self):
         cptmp = self.Cp \
-                * np.cos(self.yaw_angle)**self.pP \
-                * np.cos(self.tilt_angle)**self.pT
+                * cosd(self.yaw_angle)**self.pP \
+                * cosd(self.tilt_angle)**self.pT
         return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
                 * cptmp * self.generator_efficiency \
                 * self.average_velocity**3
 
     @property
     def aI(self):
-        return 0.5 / np.cos(self.yaw_angle) \
-            * (1 - np.sqrt(1 - self.Ct * np.cos(self.yaw_angle)))
+        return 0.5 / cosd(self.yaw_angle) \
+            * (1 - np.sqrt(1 - self.Ct * cosd(self.yaw_angle)))
