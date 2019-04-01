@@ -18,6 +18,21 @@ Git and GitHub
 ==============
 Coming soon.
 
+Building documentation locally
+==============================
+This documentation is generated with Sphinx and hosted on readthedocs. However,
+it can be build locally by running this command in the `docs/` directory:
+
+::
+
+    make html
+
+This will create a file at `docs/build/index.html` which can be opened in any web 
+browser. Note that a few dependencies are required to build the documentation locally:
+
+- Sphinx==1.6.6
+- readthedocs-sphinx-ext==0.5.17
+
 Deploying to pip
 ================
 Generally, only NREL developers will have appropriate permissions to deploy FLORIS updates.
