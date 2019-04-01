@@ -27,9 +27,11 @@ it can be build locally by running this command in the `docs/` directory:
 
     make html
 
-This will create a file at `docs/build/index.html` which can be opened in any web 
-browser. Note that a few additional dependencies required to build the documentation
-locally are listed at `docs/requirements.txt`.
+This will create a file at ``docs/build/index.html`` which can be opened in any web 
+browser.
+
+**Note** that a few additional dependencies required to build the documentation
+locally are listed at ``docs/requirements.txt``.
 
 Deploying to pip
 ================
