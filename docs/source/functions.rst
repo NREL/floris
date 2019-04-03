@@ -60,6 +60,7 @@ Wake Combination
 These functions return u_field with u_wake incorporated
 
     u_field: the modified flow field without u_wake
+    
     u_wake: the wake to add into the rest of the flow field
 
 
