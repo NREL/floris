@@ -8,8 +8,7 @@ to provide instruction on the use of most of the underlying codes.
 
 For questions not covered in the examples, or to request additional examples, please first search for or 
 submit your questions to stackoverflow.com using the tag FLORIS.  Additionally you can contact 
- `Jen King <mailto:jennifer.king@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
+ `Jen King <mailto:jennifer.king@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
 
 
@@ -65,48 +64,65 @@ The results is shown below
 
 .. image:: ../doxygen/images/hh_plane.png
 
-example_script.py
-=================
-This script provides an example of how to execute Floris.  In particular, this script:
 
-1. Loads the input file ``example_input.json`` and initializes Floris:
 
-::
+example_0005_adjust_floris.py
+=============================
 
-    floris = Floris("example_input.json")
+In this example, the FLORIS model is adjusted within the code and provides examples of how to make various adjustments.
 
-2. Computes the local power coefficient, thrust coefficients, power, axial induction,
-   and wind speeds at each turbine. Here is an example of how to get the local wind speeds at a turbine:
+The floris model and interface are initially instantiated as before but then the number of turbines and their locations are changed 
+via the line
 
 ::
 
-    turbine.get_average_velocity())
+    fi.floris.farm.set_turbine_locations(layout_x, layout_y, calculate_wake=True)
 
-3. Plot the flow field at a horizontal slice. In this example, the flow field
-   is plotted at 50% (0.5) of the total z domain, which is 2x the hub height:
-
-::
-
-    floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])
-
-example_optimization.py
-=======================
-The Annotated Usage goes into detail on how to run Floris as well as how to set up
-an optimization. The ``example_optimization.py`` script allows a user to run an 
-optimization in Python rather than through an interactive console.  
-
-The optimial yaw angles are computed using:
+Note that by setting the turbine locations using the function set_turbine_locations, the flow_field is automatically reinitialized
+because the turbine points need to be re-assigned.  Calculate_wake is optionally run (equivalent to running fi.run() or 
+fi.floris.farm.flow_field.calculate_wake() later)  This run is considered the baseline and the initial farm power is computed in the line
 
 ::
 
-	opt_yaw_angles = OptModules.wake_steering(floris, minimum_yaw_angle, maximum_yaw_angle)
+    power_initial = np.sum(fi.get_turbine_power())
 
-This script will write out the optimal yaw angles as well as plot the resulting
-flow field for the given direction.
 
-Future work
-===========
-Coming soon.
+The next block cycles through wind speed and wind directions and updates the FLORIS model by first reinitlizing the flow-field and 
+then recalculating the wakes
+
+::
+
+    for i,speed in enumerate(ws):
+        for j,wdir in enumerate(wd):
+            print('Calculating wake: wind direction = ', wdir, 'and wind speed = ', speed)
+
+            fi.floris.farm.flow_field.reinitialize_flow_field(wind_speed=speed,
+                                                                            wind_direction=wdir,
+
+                                                                            # keep these the same
+                                                                            wind_shear=fi.floris.farm.flow_field.wind_shear,
+                                                                            wind_veer=fi.floris.farm.flow_field.wind_veer,
+                                                                            turbulence_intensity=fi.floris.farm.flow_field.turbulence_intensity,
+                                                                            air_density=fi.floris.farm.flow_field.air_density,
+                                                                            wake=fi.floris.farm.flow_field.wake,
+                                                                            turbine_map=fi.floris.farm.flow_field.turbine_map)
+            # recalculate the wake
+            fi.run_floris()
+
+
+These individual runs are visualized in sub plots.
+
+The final block of code looks changes the turbine yaw angles
+
+::
+
+    fi.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
+    power_yaw = np.sum(fi.get_turbine_power())
+
+
+Note that if only changing yaw angles it is not necessary to reinitialize the flow field, however, before collecting the power
+it is necessary either to recalulate the wake within the update to the yaw angles (as is done here), or through a call to fi.run() or 
+fi.floris.farm.flow_field.calculate_wake()
 
 License
 =======
