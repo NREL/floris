@@ -3,13 +3,13 @@
     :hidden:
     :glob:
 
-    functions/farm
-    functions/flow_field
-    functions/turbine
-    functions/wake_deflection
-    functions/wake_velocity
-    functions/wake
-    functions/wake_combination
+    source/functions/farm
+    source/functions/flow_field
+    source/functions/turbine
+    source/functions/wake_deflection
+    source/functions/wake_velocity
+    source/functions/wake
+    source/functions/wake_combination
 
 Functions
 ---------
