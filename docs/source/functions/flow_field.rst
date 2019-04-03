@@ -34,9 +34,7 @@ self: FlowField - an instantiated FlowField object
 Members
 =========
 
-``reinitialize_flow_field``
-
-floris.farm.flow_field.reinitialize_flow_field(self,
+``floris.farm.flow_field.reinitialize_flow_field(self,
                                 wind_speed=None,
                                 wind_direction=None,
                                 wind_shear=None,
@@ -45,7 +43,7 @@ floris.farm.flow_field.reinitialize_flow_field(self,
                                 air_density=None,
                                 wake=None,
                                 turbine_map=None,
-                                with_resolution=None):
+                                with_resolution=None)``
 
 ``calculate_wake``
 
