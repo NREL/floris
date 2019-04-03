@@ -22,7 +22,7 @@ doxname = os.path.join(sourcedir, 'Doxyfile')
 doxygen_directory = os.path.join('_build', 'html', 'doxygen')
 if not os.path.exists(doxygen_directory):
     os.makedirs(doxygen_directory)
-doxproc = subprocess.call(('doxygen', doxname))
+# doxproc = subprocess.call(('doxygen', doxname))
 
 # -- General configuration ------------------------------------------------
 
