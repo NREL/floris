@@ -14,6 +14,7 @@ Classes
     functions/wake_deflection 
     functions/wake_velocity 
     functions/wake
+    functions/type
 
 
 The following classes are used in the FLORIS controls-oriented modeling tool to evaluate a wind farm.  Check out the links for more details on each of the classes contained in FLORIS.
