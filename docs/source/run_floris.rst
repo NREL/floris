@@ -18,7 +18,7 @@ Classes
     :hidden:
     :glob:
     
-    function/index
+    functions/index
 
 Examples
 ========
