@@ -1,18 +1,30 @@
+Input File 
+-----------
 
 .. toctree::
     :hidden:
     :glob:
-
-    source/functions/farm
-    source/functions/flow_field
-    source/functions/turbine
-    source/functions/wake_deflection
-    source/functions/wake_velocity
-    source/functions/wake
-    source/functions/wake_combination
+    
+    input_file/index
 
 Classes
 ---------
+
+.. toctree::
+    :hidden:
+    :glob:
+    
+    function/index
+
+Examples
+---------
+
+.. toctree::
+    :hidden:
+    :glob:
+    
+    examples/index
+
 
 The following classes are used in the FLORIS controls-oriented modeling tool to evaluate a wind farm.
 

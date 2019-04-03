@@ -14,7 +14,7 @@ Outputs
 
 XXX 
 
-Members
+Methods
 =========
 
 ``rotated``
