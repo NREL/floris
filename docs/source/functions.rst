@@ -1,41 +1,59 @@
 
+.. toctree::
+    :hidden:
+    :glob:
+
+    functions/farm
+    functions/flow_field
+    functions/turbine
+    functions/wake_deflection
+    functions/wake_velocity
+    functions/wake
+    functions/wake_combination
+
 Functions
 ---------
 
-In order to maintain a level of confidence in the software, FLORIS is expected to
-maintain a reasonable level of test coverage. To that end, there are unit, integration,
-and regression tests included in the package.
+XXX.  Should we call them classes?  Check out farm.py, each function has inputs/outputs, should we be consistent?
 
-Unit Tests
+Farm
 ==========
 
-Unit tests are currently included in FLORIS and integrated with the `pytest <https://docs.pytest.org/en/latest/>`_
-framework. These can be executed by simply running the command
-``pytest`` from the highest directory in the repository.
+XXX
 
-The currently tested modules are:
-
-- coordinate.py
-
-- flow_field.py
-
-- wake.py
-
-A testing-only class is included to provide consistent and convenient inputs 
-to modules at ``sample_inputs.py``.
-
-Integration Tests
+Flow Field
 =================
-Coming soon.
 
-Regression Tests
+XXX
+
+Turbine Map 
+==============
+
+XXX
+
+Turbine
 ================
-Coming soon.
 
-Continuous Integration
+XXX
+
+Wake Velocity 
 ======================
-Continuous integration is configured with `TravisCI <https://travis-ci.org>`_ and executes all of the existing tests
-for every commit. The configuration file is located in the top directory at ``.travis.yml``.
 
-If forked, continuous integration can be included with TravisCI by simply creating an account, 
-linking to a GitHub account, and turning on the switch to test the FLORIS fork.
+XXX
+
+Wake Deflection 
+======================
+
+XXX
+
+Wake 
+======================
+
+XXX
+
+Wake Combination
+======================
+
+XXX
+
+

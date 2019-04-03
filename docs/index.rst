@@ -4,6 +4,7 @@
     :glob:
 
     source/functions
+    source/inputs
     source/examples
     source/tests
     source/for_developers
