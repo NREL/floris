@@ -22,7 +22,7 @@ doxname = os.path.join(sourcedir, 'Doxyfile')
 doxygen_directory = os.path.join('_build', 'html', 'doxygen')
 if not os.path.exists(doxygen_directory):
     os.makedirs(doxygen_directory)
-doxproc = subprocess.call(('doxygen', doxname))
+# doxproc = subprocess.call(('doxygen', doxname))
 
 # -- General configuration ------------------------------------------------
 
@@ -140,10 +140,10 @@ htmlhelp_basename = 'FLORISdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'FLORIS.tex', 'FLORIS Documentation',
-     'NREL', 'manual'),
-]
+# latex_documents = [
+#     (master_doc, 'FLORIS.tex', 'FLORIS Documentation',
+#      'NREL', 'manual'),
+# ]
 
 
 # -- Options for manual page output ---------------------------------------

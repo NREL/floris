@@ -1,11 +1,3 @@
-Input File 
------------
-
-.. toctree::
-    :hidden:
-    :glob:
-    
-    input_file/index
 
 Classes
 ---------
@@ -14,21 +6,19 @@ Classes
     :hidden:
     :glob:
     
-    function/index
-
-Examples
----------
-
-.. toctree::
-    :hidden:
-    :glob:
-    
-    examples/index
+    functions/farm
+    functions/flow_field
+    functions/turbine_map
+    functions/turbine 
+    functions/wake_combination
+    functions/wake_deflection 
+    functions/wake_velocity 
+    functions/wake
 
 
-The following classes are used in the FLORIS controls-oriented modeling tool to evaluate a wind farm.
+The following classes are used in the FLORIS controls-oriented modeling tool to evaluate a wind farm.  Check out the links for more details on each of the classes contained in FLORIS.
 
-Farm...
+Farm
 ==========
 
 Farm is the container class of the FLORIS package. It brings together all of the component objects after input (ie Turbine, Wake, FlowField) and packages everything into the appropriate data type. Farm should also be used as an entry point to probe objects for generating output.
@@ -51,12 +41,12 @@ Turbine is model object representing a particular wind turbine. It is largely a 
 Wake Velocity 
 ======================
 
-XXX
+Wake velocity is a container class for the various wake velocity models.  This includes the Jensen model, the multi-zone (original FLORIS) model, the Gaussian  model, and the curl model. 
 
 Wake Deflection 
 ======================
 
-XXX
+Wake deflection is a container class for the various wake deflection models.  This includes the Jimenez model and the Gaussian deflection model.
 
 Wake 
 ======================
@@ -66,6 +56,9 @@ Wake is a container class for the various wake model objects. In particular, Wak
 Wake Combination
 ======================
 
-XXX
+These functions return u_field with u_wake incorporated
+
+    u_field: the modified flow field without u_wake
+    u_wake: the wake to add into the rest of the flow field
 
 
