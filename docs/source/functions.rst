@@ -16,7 +16,7 @@ Classes
 
 The following classes are used in the FLORIS controls-oriented modeling tool to evaluate a wind farm.
 
-Farm
+Farm...
 ==========
 
 Farm is the container class of the FLORIS package. It brings together all of the component objects after input (ie Turbine, Wake, FlowField) and packages everything into the appropriate data type. Farm should also be used as an entry point to probe objects for generating output.
