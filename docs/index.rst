@@ -2,6 +2,7 @@
 .. toctree::
     :hidden:
     :glob:
+    :titlesonly:
 
     source/functions
     source/inputs
