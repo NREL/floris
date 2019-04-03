@@ -3,9 +3,9 @@
     :hidden:
     :glob:
 
-    run_floris
-    tests
-    sfor_developers
+    source/run_floris
+    source/tests
+    source/for_developers
     source/changelog
 
 
