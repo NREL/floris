@@ -1,6 +1,6 @@
 
-Inputs
----------
+Input File
+------------
 
 XXX.  
 
