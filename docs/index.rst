@@ -3,6 +3,7 @@
     :hidden:
     :glob:
 
+    source/functions
     source/examples
     source/tests
     source/for_developers
