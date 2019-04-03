@@ -3,7 +3,9 @@
     :hidden:
     :glob:
 
-    source/run_floris
+    source/functions
+    source/inputs
+    source/examples
     source/tests
     source/for_developers
     source/changelog

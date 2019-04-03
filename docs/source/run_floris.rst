@@ -20,7 +20,7 @@ Classes
     
     functions/index
 
-Examples
+Tools
 ========
 
 .. toctree::
