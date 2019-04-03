@@ -1,29 +1,27 @@
 
-WFC Tools
+Examples
 ---------
 
-As FLORIS is a versatile, standalone wake analysis tool, it can be used effectively
-in a variety of ways. Some example cases are provided in ``examples/``.
+The FLORIS code includes wake models, and a number of related analysis and visualization tools to be used in
+connection with wind farm controls research.  A number of examples are provided in the directory ``examples/``
+to provide instruction on the use of most of the underlying codes.
 
-For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_,
+For questions not covered in the examples, or to request additional examples, please first search for or 
+submit your questions to stackoverflow.com using the tag FLORIS.  Additionally you can contact 
+ `Jen King <mailto:jennifer.king@nrel.gov>`_,
 `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
-Input
+
+
+FLORIS Input
 =====
-A sample input file to the Floris model is provided at ``examples/example_inputs.json``.
+A sample input file to the Floris model is provided in ``examples/example_input.json``.
 This example case uses the NREL 5MW turbine and the Gaussian wake model as a reference.
 All model parameters provided have been published in previous work, but the inputs to
 in the example input file can be changed as needed. However, be aware that changing these parameters
-may result in an unphysical solution.
+may result in an unphysical solution.  Many of the example files will make use of this example input.
 
-Annotated Usage
-===============
-``FLORIS_Run_Notebook.ipynb`` is an interactive python notebook with useful notes that details the
-execution of FLORIS in normal operating conditions. It also demonstrates how to perform an example
-optimization for wake steering with the optimization tools at ``examples/OptModules.py``.
-The results of the optimization are based on pre-tuned parameters and the NREL 5MW turbine. 
 
-There is no warranty on the optimization results.
 
 example_script.py
 =================
