@@ -1,3 +1,11 @@
+Inputs
+------
+
+.. toctree::
+    :hidden:
+    :glob:
+    
+    input_file/index
 
 JSON File
 ------------
