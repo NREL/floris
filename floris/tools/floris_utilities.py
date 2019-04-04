@@ -11,7 +11,6 @@
 # specific language governing permissions and limitations under the License.
 #
 
-import pandas as pd
 import numpy as np
 from floris import Floris
 from .flow_field import FlowField
