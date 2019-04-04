@@ -5,7 +5,6 @@ Submodules
 ----------
 
 .. toctree::
-    :hidden:
     :glob:
 
     floris.simulation.farm
