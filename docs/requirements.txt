@@ -1,4 +1,4 @@
-Sphinx==1.6.6
+Sphinx==2.0
 readthedocs-sphinx-ext==0.5.15
 doxypypy==0.8.8.6
 sphinxcontrib-doxylink==1.3
