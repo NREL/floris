@@ -30,9 +30,9 @@ class FlowField():
         wind_shear: A float that is the wind shear coefficient.
         wind_veer: A float that is the amount of veer across the rotor.
         turbulence_intensity: A float that is the decimal percentage of turbulence.
-        wake: A container class with wake model information used to calculate the flow field.
-        wake_combination: A container class with wake combination information.
-        turbine_map: An object that holds turbine information.
+        wake: A container class :py:class:`floris.simulation.wake` with wake model information used to calculate the flow field.
+        wake_combination: A container class :py:class:`floris.simulation.wake_combination` with wake combination information.
+        turbine_map: A :py:obj:`floris.simulation.turbine_map` object that holds turbine information.
 
     Returns:
         An instantiated FlowField object.
@@ -198,14 +198,14 @@ class FlowField():
             wind_veer: A float that is the amount of veer across the rotor (default is *None*).
             turbulence_intensity: A float that is a decimal percentage of turbulence (default is *None*).
             air_density: A float that is the air density (default is *None*).
-            wake: A container class with wake model information used to calculate the flow field 
+            wake: A container class :py:class:`floris.simulation.wake` with wake model information used to calculate the flow field 
                 (default is *None*).
-            turbine_map: An object that holds turbine information (default is *None*).
-            with_resolution: A :py:class:`floris.types.Vec3` object that defines the flow field resolution
+            turbine_map: A :py:obj:`floris.simulation.turbine_map` object that holds turbine information (default is *None*).
+            with_resolution: A :py:class:`floris.simulation.types.Vec3` object that defines the flow field resolution
                 at which to calculate the wake (default is *None*).
         
         Returns:
-            *None* -- The flow field is updated directly in the :py:class:`floris.floris` object.
+            *None* -- The flow field is updated directly in the :py:class:`floris.simulation.floris` object.
         """
         # reset the given parameters
         if turbine_map is not None:
@@ -254,11 +254,11 @@ class FlowField():
         Parameters:
             no_wake: A bool that when *True* updates the turbine quantities without
                 calculating the wake or adding the wake to the flow field.
-            with_resolution: A :py:class:`floris.types.Vec3` object that defines the flow field resolution
+            with_resolution: A :py:class:`floris.simulation.types.Vec3` object that defines the flow field resolution
                 at which to calculate the wake (default is *False*).
         
         Returns:
-            *None* -- The flow field and turbine properties are updated directly in the :py:class:`floris.floris` object.
+            *None* -- The flow field and turbine properties are updated directly in the :py:class:`floris.simulation.floris` object.
         """
         self.reinitialize_flow_field(with_resolution=with_resolution)
 
@@ -348,13 +348,16 @@ class FlowField():
     @property
     def wind_direction(self):
         """
-        Get or set the wind direction (float).
+        The wind direction in degrees.
 
-        Parameters:
-            value: If supplied, a float that sets the wind direction.
-        
-        Returns:
-            float: If called without an argument, returns the wind direction.
+        Examples:
+            To set the wind direction you could do:
+            
+            >>> floris.farm.flow_field.wind_direction(35.0)
+
+            To get the wind direction, simply call:
+
+            >>> wind_direction = floris.farm.flow_field.wind_direction()
         """
         return self._wind_direction
     
@@ -369,7 +372,7 @@ class FlowField():
         Get the bounds of the flow field domain.
 
         Returns:
-            float: xmin, xmax, ymin, ymax, zmin, zmax
+            floats: xmin, xmax, ymin, ymax, zmin, zmax
 
             The mininmum and maxmimum values of the domain in the x, y, and z directions.
 
