@@ -12,9 +12,9 @@
 #
 
 import numpy as np
-from floris import Floris
+from floris.simulation import Floris
 from .flow_field import FlowField
-from .types import Vec3
+from ..utilities import Vec3
 
 class FlorisInterface():
     """

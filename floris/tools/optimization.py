@@ -14,7 +14,8 @@ specific language governing permissions and limitations under the License.
 import numpy as np
 from scipy.optimize import minimize
 
-
+# import warnings
+# warnings.simplefilter('ignore', RuntimeWarning)
 
 def optimize_yaw(fi,minimum_yaw_angle=0.0,maximum_yaw_angle=25.0):
 
