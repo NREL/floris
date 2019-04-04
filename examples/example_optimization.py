@@ -11,8 +11,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from floris import Floris
-import floris.optimization as flopt
+from floris.simulation import Floris
+import floris.simulation.optimization as flopt
 import numpy as np
 
 # Setup floris with the Gauss velocity and deflection models
