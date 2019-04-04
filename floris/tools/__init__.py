@@ -1,10 +1,13 @@
-# -*- coding: utf-8 -*-
+# Copyright 2017 NREL
 
-"""Top-level package for Wind Farm Controls Tools."""
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
 
-__author__ = """Paul Fleming"""
-__email__ = 'paul.fleming@nrel.gov'
-__version__ = '0.1.0'
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
 
 from . import analysis
 from . import cut_plane
@@ -15,4 +18,3 @@ from . import sowfa_utilities
 from . import types
 from . import visualization
 from . import wind_rose
-

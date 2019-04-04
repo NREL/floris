@@ -10,3 +10,8 @@
 # specific language governing permissions and limitations under the License.
 
 from .floris import Floris
+from .flow_field import FlowField
+from .turbine import Turbine
+from .turbine_map import TurbineMap
+from .wake import Wake
+from .wake_combination import WakeCombination
