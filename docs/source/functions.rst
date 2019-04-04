@@ -6,6 +6,10 @@ Classes
     :hidden:
     :glob:
     
+    functions/floris.farm
+    functions/floris.floris
+    functions/floris.flow_field
+    functions/floris.types
     functions/farm
     functions/flow_field
     functions/turbine_map
