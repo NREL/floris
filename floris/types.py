@@ -15,18 +15,17 @@ import numpy as np
 
 
 class Vec3():
+    """
+    Object containing vector information for coordinates.
+
+    Parameters:
+        x1: [float, float, float] or float -- The first argument can be a list 
+            of the three vector components or simply the first component of the vector.
+        x2: float (optional) -- The second component of the vector.
+        x3: float (optional) -- The third component of the vector.
+        string_format: str (optional) -- The string format to use in the overloaded __str__ function.
+    """
     def __init__(self, x1, x2=None, x3=None, string_format=None):
-        """
-        x1: [float, float, float] or float
-            the first argument can be a list of the three vector components
-            or simply the first component of the vector
-        x2: float (optional)
-            the second component of the vector
-        x3: float (optional)
-            the third component of the vector
-        string_format: str (optional)
-            the string format to use in the overloaded __str__ function
-        """
         if isinstance(x1, list):
             self.x1, self.x2, self.x3 = [float(x) for x in x1]
         else:
