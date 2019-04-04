@@ -1,7 +1,7 @@
-floris\.wake\_deflection module
+floris\.simulation\.wake module
 ===============================
 
-.. automodule:: floris.wake_deflection
+.. automodule:: floris.simulation.wake
     :members:
     :undoc-members:
     :show-inheritance:

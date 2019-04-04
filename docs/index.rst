@@ -4,7 +4,7 @@
     :glob:
     :titlesonly:
 
-    source/functions
+    source/classes
     source/inputs
     source/examples
     source/tests

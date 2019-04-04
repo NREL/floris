@@ -1,7 +1,7 @@
-floris\.wake\_combination module
+floris\.tools\.cut\_plane module
 ================================
 
-.. automodule:: floris.wake_combination
+.. automodule:: floris.tools.cut_plane
     :members:
     :undoc-members:
     :show-inheritance:
