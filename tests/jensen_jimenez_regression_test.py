@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 import pytest
 import numpy as np
-from floris import Floris
+from floris.simulation import Floris
 from .sample_inputs import SampleInputs
 
 

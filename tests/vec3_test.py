@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 import numpy as np
 import pytest
-from floris.types import Vec3
+from floris import Vec3
 
 
 class Vec3Test():

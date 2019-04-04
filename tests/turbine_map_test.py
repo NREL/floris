@@ -15,9 +15,9 @@ import numpy as np
 import copy
 import pytest
 from .sample_inputs import SampleInputs
-from floris.types import Vec3
-from floris.turbine import Turbine
-from floris.turbine_map import TurbineMap
+from floris import Vec3
+from floris.simulation import Turbine, TurbineMap
+
 
 class TurbineMapTest():
     def __init__(self):
