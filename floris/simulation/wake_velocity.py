@@ -11,8 +11,8 @@
 
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
-from .utilities import Vec3
-from .utilities import cosd, sind, tand
+from ..utilities import Vec3
+from ..utilities import cosd, sind, tand
 import copy
 
 class WakeVelocity():
