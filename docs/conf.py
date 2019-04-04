@@ -34,8 +34,12 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.autodoc',
-    'readthedocs_ext.readthedocs'
+    'readthedocs_ext.readthedocs',
+    'sphinx.ext.napoleon'
 ]
+
+# Napoleon settings
+napoleon_google_docstring = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -51,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'FLORIS'
-copyright = '2018, NREL'
+copyright = '2019, NREL'
 author = 'NREL'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -166,3 +170,8 @@ texinfo_documents = [
      author, 'FLORIS', 'One line description of project.',
      'Miscellaneous'),
 ]
+
+
+# -- Options for autodoc --------------------------------------------------
+
+autodoc_member_order = 'groupwise'
