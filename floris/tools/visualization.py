@@ -9,11 +9,10 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-from .types import Vec3
+from ..utilities import Vec3
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import numpy as np
-
 
 
 def plot_turbines(ax, layout_x, layout_y, yaw_angles, D):

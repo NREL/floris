@@ -13,8 +13,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 import numpy as np
-from .types import Output
-from .types import Vec3
+from ..utilities import Vec3, Output
 
 class FlowField():
     #TODO handle none case, maybe defaul values apply like 0 origin and auto determine spacing and dimensions

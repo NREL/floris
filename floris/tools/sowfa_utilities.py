@@ -13,7 +13,7 @@
 
 import numpy as np
 from .flow_field import FlowField
-from .types import Vec3
+from ..utilities import Vec3
 import pandas as pd
 import os
 import re
