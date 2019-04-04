@@ -17,30 +17,25 @@ from scipy.interpolate import griddata
 
 class FlowField():
     """
+    Object containing flow field information.
+
     FlowField is at the core of the FLORIS package. This class handles the domain
     creation and initialization and computes the flow field based on the input
     wake model and turbine map. It also contains helper functions for quick flow
     field visualization.
         
-    inputs:
-        wind_speed: float - atmospheric condition
+    Parameters:
+        wind_speed: A float that is the wind speed.
+        wind_direction: A float that is the wind direction.
+        wind_shear: A float that is the wind shear coefficient.
+        wind_veer: A float that is the amount of veer across the rotor.
+        turbulence_intensity: A float that is the decimal percentage of turbulence.
+        wake: A container class with wake model information used to calculate the flow field.
+        wake_combination: A container class with wake combination information.
+        turbine_map: An object that holds turbine information.
 
-        wind_direction - atmospheric condition
-        
-        wind_shear - atmospheric condition
-        
-        wind_veer - atmospheric condition
-        
-        turbulence_intensity - atmospheric condition
-        
-        wake: Wake - used to calculate the flow field
-        
-        wake_combination: WakeCombination - used to combine turbine wakes into the flow field
-        
-        turbine_map: TurbineMap - locates turbines in space
-
-    outputs:
-        self: FlowField - an instantiated FlowField object
+    Returns:
+        An instantiated FlowField object.
     """
 
     def __init__(self,
@@ -189,6 +184,28 @@ class FlowField():
                                 turbine_map=None,
                                 with_resolution=None):
         """
+        Reiniaitilzies the flow field when a parameter needs to be updated.
+
+        This function allows for changing/updating a variety of flow related 
+        parameters. This would typically be used in loops or optimizations
+        where the user is calculating AEP over a wind rose or investigating 
+        wind farm performance at different conditions.
+
+        Parameters:
+            wind_speed: A float that is the wind speed (default is *None*).
+            wind_direction: A float that is the wind direction (default is *None*).
+            wind_shear: A float that is the wind shear coefficient (default is *None*).
+            wind_veer: A float that is the amount of veer across the rotor (default is *None*).
+            turbulence_intensity: A float that is a decimal percentage of turbulence (default is *None*).
+            air_density: A float that is the air density (default is *None*).
+            wake: A container class with wake model information used to calculate the flow field 
+                (default is *None*).
+            turbine_map: An object that holds turbine information (default is *None*).
+            with_resolution: A :py:class:`floris.types.Vec3` object that defines the flow field resolution
+                at which to calculate the wake (default is *None*).
+        
+        Returns:
+            *None* -- The flow field is updated directly in the :py:class:`floris.floris` object.
         """
         # reset the given parameters
         if turbine_map is not None:
@@ -226,6 +243,23 @@ class FlowField():
             turbine.reinitialize_turbine()
 
     def calculate_wake(self, no_wake=False, with_resolution=None):
+        """
+        Updates the flow field based on turbine activity.
+
+        This method rotates the turbine farm such that the wind direction is 
+        coming from 270 degrees. It then loops over the turbines, updating
+        their velocities, calculating the wake deflection/deficit, and combines
+        the wake with the flow field.
+
+        Parameters:
+            no_wake: A bool that when *True* updates the turbine quantities without
+                calculating the wake or adding the wake to the flow field.
+            with_resolution: A :py:class:`floris.types.Vec3` object that defines the flow field resolution
+                at which to calculate the wake (default is *False*).
+        
+        Returns:
+            *None* -- The flow field and turbine properties are updated directly in the :py:class:`floris.floris` object.
+        """
         self.reinitialize_flow_field(with_resolution=with_resolution)
 
         # define the center of rotation with reference to 270 deg
@@ -313,6 +347,15 @@ class FlowField():
     # Getters & Setters
     @property
     def wind_direction(self):
+        """
+        Get or set the wind direction (float).
+
+        Parameters:
+            value: If supplied, a float that sets the wind direction.
+        
+        Returns:
+            float: If called without an argument, returns the wind direction.
+        """
         return self._wind_direction
     
     @wind_direction.setter
@@ -322,6 +365,15 @@ class FlowField():
 
     @property
     def domain_bounds(self):
+        """
+        Get the bounds of the flow field domain.
+
+        Returns:
+            float: xmin, xmax, ymin, ymax, zmin, zmax
+
+            The mininmum and maxmimum values of the domain in the x, y, and z directions.
+
+        """
         coords = self.turbine_map.coords
         x = [coord.x1 for coord in coords]
         y = [coord.x2 for coord in coords]
