@@ -5,6 +5,10 @@ Classes
     :hidden:
     :glob:
     
+    floris.farm
+    floris.floris
+    floris.flow_field
+    floris.types
     farm
     flow_field
     turbine_map
