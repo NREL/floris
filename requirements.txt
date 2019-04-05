@@ -4,4 +4,3 @@ numpy==1.16.1
 pickleshare==0.7.5
 pytest==4.3.0
 scipy==1.1.0
-Sphinx==1.6.6

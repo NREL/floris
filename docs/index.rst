@@ -2,12 +2,15 @@
 .. toctree::
     :hidden:
     :glob:
+    :titlesonly:
 
+    source/classes
+    source/inputs
     source/examples
     source/tests
     source/for_developers
     source/changelog
-
+    
 
 FLORIS Wake Modeling Utility
 ----------------------------
@@ -137,7 +140,7 @@ Coming soon
 License
 =======
 
-Copyright 2017 NREL
+Copyright 2019 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

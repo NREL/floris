@@ -22,7 +22,7 @@ doxname = os.path.join(sourcedir, 'Doxyfile')
 doxygen_directory = os.path.join('_build', 'html', 'doxygen')
 if not os.path.exists(doxygen_directory):
     os.makedirs(doxygen_directory)
-doxproc = subprocess.call(('doxygen', doxname))
+# doxproc = subprocess.call(('doxygen', doxname))
 
 # -- General configuration ------------------------------------------------
 
@@ -34,8 +34,15 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.autodoc',
-    'readthedocs_ext.readthedocs'
+    'readthedocs_ext.readthedocs',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.autosummary'
 ]
+
+autosummary_generate = True
+
+# Napoleon settings
+napoleon_google_docstring = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -51,7 +58,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'FLORIS'
-copyright = '2018, NREL'
+copyright = '2019, NREL'
 author = 'NREL'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -71,7 +78,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -140,10 +147,10 @@ htmlhelp_basename = 'FLORISdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'FLORIS.tex', 'FLORIS Documentation',
-     'NREL', 'manual'),
-]
+# latex_documents = [
+#     (master_doc, 'FLORIS.tex', 'FLORIS Documentation',
+#      'NREL', 'manual'),
+# ]
 
 
 # -- Options for manual page output ---------------------------------------
@@ -166,3 +173,8 @@ texinfo_documents = [
      author, 'FLORIS', 'One line description of project.',
      'Miscellaneous'),
 ]
+
+
+# -- Options for autodoc --------------------------------------------------
+
+autodoc_member_order = 'groupwise'

@@ -1,72 +1,144 @@
 
 Examples
---------
+---------
 
-As FLORIS is a versatile, standalone wake analysis tool, it can be used effectively
-in a variety of ways. Some example cases are provided in ``examples/``.
+The FLORIS code includes wake models, and a number of related analysis and visualization tools to be used in
+connection with wind farm controls research.  A number of examples are provided in the directory ``examples/``
+to provide instruction on the use of most of the underlying codes.
 
-For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
+For questions not covered in the examples, or to request additional examples, please first search for or 
+submit your questions to stackoverflow.com using the tag FLORIS.  Additionally you can contact 
+ `Jen King <mailto:jennifer.king@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
-Input
+
+
+FLORIS Input
 =====
-A sample input file to the Floris model is provided at ``examples/example_inputs.json``.
+A sample input file to the Floris model is provided in ``examples/example_input.json``.
 This example case uses the NREL 5MW turbine and the Gaussian wake model as a reference.
 All model parameters provided have been published in previous work, but the inputs to
 in the example input file can be changed as needed. However, be aware that changing these parameters
-may result in an unphysical solution.
+may result in an unphysical solution.  Many of the example files will make use of this example input.
 
-Annotated Usage
-===============
-``FLORIS_Run_Notebook.ipynb`` is an interactive python notebook with useful notes that details the
-execution of FLORIS in normal operating conditions. It also demonstrates how to perform an example
-optimization for wake steering with the optimization tools at ``examples/OptModules.py``.
-The results of the optimization are based on pre-tuned parameters and the NREL 5MW turbine. 
 
-There is no warranty on the optimization results.
 
-example_script.py
+example_0000_open_and_vis_floris.py
 =================
-This script provides an example of how to execute Floris.  In particular, this script:
+This first example provides an essential introduction to using FLORIS.  A floris model is instantiated,
+and a floris interface setup using the example_input.json file.  The model is run using only the 
+wind speed and direction specified in the input file and a hub-height visualization is produced.
 
-1. Loads the input file ``example_input.json`` and initializes Floris:
-
-::
-
-    floris = Floris("example_input.json")
-
-2. Computes the local power coefficient, thrust coefficients, power, axial induction,
-   and wind speeds at each turbine. Here is an example of how to get the local wind speeds at a turbine:
+The first block of code reads in the input file and runs the model without modification
 
 ::
 
-    turbine.get_average_velocity())
+    fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+    fi.run_floris()
 
-3. Plot the flow field at a horizontal slice. In this example, the flow field
-   is plotted at 50% (0.5) of the total z domain, which is 2x the hub height:
+TODO ADD LINKS
+Note that run_floris is a wrapper to the calculate_wake function, and so only computes the wakes assuming that changes
+since instantation are limited to changes in turbine yaw angle or other control function.  Changes to wind speed, wind direction,
+or turbine location require an additional call to reinitialize_flow_field
 
-::
-
-    floris.farm.flow_field.plot_z_planes([0.2, 0.5, 0.8])
-
-example_optimization.py
-=======================
-The Annotated Usage goes into detail on how to run Floris as well as how to set up
-an optimization. The ``example_optimization.py`` script allows a user to run an 
-optimization in Python rather than through an interactive console.  
-
-The optimial yaw angles are computed using:
+The second block of code extracts a slice of flow at hub_height using the cut_plane tools
 
 ::
 
-	opt_yaw_angles = OptModules.wake_steering(floris, minimum_yaw_angle, maximum_yaw_angle)
+    hor_plane = wfct.cut_plane.HorPlane(
+        fi.get_flow_field(),
+        fi.floris.farm.turbines[0].hub_height
+    )
 
-This script will write out the optimal yaw angles as well as plot the resulting
-flow field for the given direction.
 
-Future work
-===========
-Coming soon.
+The final block of code visualizes the hub-height plane
+
+::
+
+    # Plot and show
+    fig, ax = plt.subplots()
+    wfct.visualization.visualize_cut_plane(hor_plane,ax=ax)
+    plt.show()
+
+
+The results is shown below
+
+.. image:: ../doxygen/images/hh_plane.png
+
+
+
+example_0005_adjust_floris.py
+=============================
+
+In this example, the FLORIS model is adjusted within the code and provides examples of how to make various adjustments.
+
+The floris model and interface are initially instantiated as before but then the number of turbines and their locations are changed 
+via the line
+
+::
+
+    fi.floris.farm.set_turbine_locations(layout_x, layout_y, calculate_wake=True)
+
+Note that by setting the turbine locations using the function set_turbine_locations, the flow_field is automatically reinitialized
+because the turbine points need to be re-assigned.  Calculate_wake is optionally run (equivalent to running fi.run() or 
+fi.floris.farm.flow_field.calculate_wake() later)  This run is considered the baseline and the initial farm power is computed in the line
+
+::
+
+    power_initial = np.sum(fi.get_turbine_power())
+
+
+The next block cycles through wind speed and wind directions and updates the FLORIS model by first reinitlizing the flow-field and 
+then recalculating the wakes
+
+::
+
+    for i,speed in enumerate(ws):
+        for j,wdir in enumerate(wd):
+            print('Calculating wake: wind direction = ', wdir, 'and wind speed = ', speed)
+
+            fi.floris.farm.flow_field.reinitialize_flow_field(wind_speed=speed,
+                                                                            wind_direction=wdir,
+
+                                                                            # keep these the same
+                                                                            wind_shear=fi.floris.farm.flow_field.wind_shear,
+                                                                            wind_veer=fi.floris.farm.flow_field.wind_veer,
+                                                                            turbulence_intensity=fi.floris.farm.flow_field.turbulence_intensity,
+                                                                            air_density=fi.floris.farm.flow_field.air_density,
+                                                                            wake=fi.floris.farm.flow_field.wake,
+                                                                            turbine_map=fi.floris.farm.flow_field.turbine_map)
+            # recalculate the wake
+            fi.run_floris()
+
+
+These individual runs are visualized in sub plots.
+
+The final block of code looks changes the turbine yaw angles
+
+::
+
+    fi.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
+    power_yaw = np.sum(fi.get_turbine_power())
+
+
+Note that if only changing yaw angles it is not necessary to reinitialize the flow field, however, before collecting the power
+it is necessary either to recalulate the wake within the update to the yaw angles (as is done here), or through a call to fi.run() or 
+fi.floris.farm.flow_field.calculate_wake()
+
+
+example_0010_optimize_yaw.py
+============================
+
+This function uses the optimize_yaw function to determine the optimial yaw angles for a given wind farm for a single wind speed and
+direction.  The optimization function accepts the floris interface instance, and bounds and yaw angles, and returns the optimal angles
+
+::
+
+    min_yaw = 0.0
+    max_yaw = 25.0
+    yaw_angles = optimize_yaw(fi,min_yaw,max_yaw)
+
+
+To determine the gain, the power is read using the initial angles and the optimal angles
 
 License
 =======

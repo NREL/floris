@@ -1,3 +1,8 @@
-doxypypy==0.8.8.6
+Sphinx==2.0
 readthedocs-sphinx-ext==0.5.15
+doxypypy==0.8.8.6
 sphinxcontrib-doxylink==1.3
+numpy==1.16.1
+scipy>=1.1.0
+sphinxcontrib-napoleon==0.7
+pandas==0.24.2
