@@ -68,6 +68,7 @@ class Gauss(WakeDeflection):
         self.bd = float(model_dictionary["bd"])
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
+        self.deflection_multiplier = 1.0
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
         # =======================================================================================================
@@ -116,7 +117,7 @@ class Gauss(WakeDeflection):
         xR = yR*tand(yaw) + coord.x1
 
         # yaw parameters (skew angle and distance from centerline)  
-        theta_c0 = (0.3 * np.radians(yaw) / cosd(yaw)) * (1 - np.sqrt(1 - Ct * cosd(yaw)))  # skew angle in radians
+        theta_c0 = self.deflection_multiplier * (0.3 * np.radians(yaw) / cosd(yaw)) * (1 - np.sqrt(1 - Ct * cosd(yaw)))  # skew angle in radians
         delta0 = np.tan(theta_c0) * (x0 - coord.x1)  # initial wake deflection; NOTE: use np.tan here since theta_c0 is radians
 
         # deflection in the near wake
