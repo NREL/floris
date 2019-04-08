@@ -1,0 +1,95 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+  application       ABLSolver;
+
+  libs              ("libuserfiniteVolume.so" "libuserincompressibleLESModels.so");
+
+  startFrom         startTime;
+
+  startTime         20000.0;
+
+  stopAt            endTime;
+
+  endTime           22000.0;
+
+  deltaT            0.4;
+
+  writeControl      adjustableRunTime;
+
+  writeInterval     50.0; 
+
+  purgeWrite        0;
+
+  writeFormat       binary;
+
+  writePrecision    12;
+
+  writeCompression  compressed;
+
+  timeFormat        general;
+
+  timePrecision     12;
+
+  runTimeModifiable yes;
+
+  adjustTimeStep    no;
+
+  maxCo             0.75;
+
+  maxDeltaT         25.0;
+
+  functions
+  {
+    #include "sampling/sliceDataInstantaneous"
+    array.mean
+    {
+          type                sets;
+          functionObjectLibs ("libusersampling.so" "libuserfileFormats.so");
+          enabled             true;
+          interpolationScheme cellPoint;
+          outputControl       timeStep;
+          outputInterval      250;
+          setFormat           vtkStructured;
+          fields
+          (
+              UAvg
+          );
+
+          sets
+          (
+              array.mean0D
+              {
+                  type                 arrayStructured;
+                  axis                 xyz;
+                  origin              (748.0005 350.001 0.001);
+                  coordinateRotation
+                  {
+                        type           axesRotation;
+                        e1            (1 0 0);
+                        e2            (0 1 0);
+                  }
+                  pointsDensity       (401 101 31);
+                  spanBox             (4000 1000 300);
+              }
+          );
+    }
+
+  }
+
+// ************************************************************************* //
+
