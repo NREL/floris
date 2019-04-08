@@ -19,6 +19,12 @@ import numpy as np
 
 sowfa_case = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
 
+# Summarize self
+print(sowfa_case)
+
+
+# Demonstrate flow field visualizations
+
 # # Get the horizontal cut plane
 hor_plane = wfct.cut_plane.HorPlane(sowfa_case.flow_field, 90)
 
@@ -64,5 +70,26 @@ wfct.visualization.visualize_cut_plane(hor_plane,ax=ax)
 wfct.visualization.reverse_cut_plane_x_axis_in_plot(ax=ax)
 ax.set_title('Invert x axis')
 
+# Access and plot SOWFA outputs
+
+# Local copy of output dataframe
+df_out = sowfa_case.turbine_output
+
+# Limit to first turbine (not needed but shown for example)
+df_out = df_out[df_out.turbine==0]
+
+# Display available columns
+print(df_out.columns)
+
+fig, axarr = plt.subplots(2,1,sharex=True)
+
+ax = axarr[0]
+ax.plot(df_out.time,df_out.powerGenerator/1E3)
+ax.set_title('Generator Power (kW)')
+
+ax = axarr[1]
+ax.plot(df_out.time,df_out.rotSpeedFiltered)
+ax.set_title('Rotor Speed (RPM)')
+ax.set_xlabel('Time (s)')
 
 plt.show()

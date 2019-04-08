@@ -54,6 +54,9 @@ class SowfaInterface():
         self.turbine_name = turbine_array_dict['turbineType'].replace('"', '')  # TODO Assuming only one type
         self.layout_x, self.layout_y = get_turbine_locations(os.path.join(self.case_folder, self.turbine_array_sub_path))
 
+        # Save the number of turbines
+        self.num_turbines = len(self.layout_x)
+
         # if SC input exists, use it for yaw and pitch as it will over-ride
         # if it does not exist, assume the values in turbineArray Properties
         if os.path.exists(os.path.join(self.case_folder, 'SC_INPUT.txt')):
@@ -119,7 +122,7 @@ class SowfaInterface():
         print('==Turbine Info==')
         print('Turbine: %s' % self.turbine_name)
         print('Diameter: %dm' % self.D)
-        print('Num Turbines = %d' % len(self.layout_x))
+        print('Num Turbines = %d' % self.num_turbines)
         print('==Control Settings==')
         print('Yaw Angels, ', self.yaw_angles)
         print('Pitch Angels, ', self.pitch_angles)
