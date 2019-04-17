@@ -1,3 +1,29 @@
+class PlotDefaults():
+    def __init__(self):
+        """
+        This class sets journal-ready styles for plots.
+        """
+        
+        sns.set_style("ticks")
+        sns.set_context("paper", font_scale=1.5)
+
+        # color palette from colorbrewer (up to 4 colors, good for print and black&white printing)
+        # color_brewer_palette = ['#e66101', '#5e3c99', '#fdb863', '#b2abd2']
+
+        #most journals: 300dpi
+        plt.rcParams['savefig.dpi'] = 300
+
+        #most journals: 9 cm (or 3.5 inch) for single column width and 18.5 cm (or 7.3 inch) for double column width.
+        plt.rcParams['figure.autolayout'] = False
+        plt.rcParams['figure.figsize'] = 7.3, 4
+        plt.rcParams['axes.labelsize'] = 16
+        plt.rcParams['axes.titlesize'] = 16
+        plt.rcParams['xtick.labelsize'] = 16
+        plt.rcParams['ytick.labelsize'] = 16
+        plt.rcParams['font.size'] = 32
+        plt.rcParams['lines.linewidth'] = 2.0
+        plt.rcParams['lines.markersize'] = 8
+        plt.rcParams['legend.fontsize'] = 14
 
 def data_plot(x,y,color='b',label='_nolegend_',x_bins=None,x_radius=None,ax=None,show_scatter=True,show_bin_points=True,show_confidence=True,min_vals=1,seaborn=False,show_80=False):
 
