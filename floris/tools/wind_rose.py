@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-import wind_tools.geometry as geo
+import floris.utilities as geo
 # from windrose import WindroseAxes
 import matplotlib.cm as cm
 import h5pyd
