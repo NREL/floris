@@ -1,5 +1,5 @@
 example_0000_open_and_vis_floris.py
-=================
+===================================
 This first example provides an essential introduction to using FLORIS.  A floris model is instantiated,
 and a floris interface setup using the example_input.json file.  The model is run using only the 
 wind speed and direction specified in the input file and a hub-height visualization is produced.

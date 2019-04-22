@@ -6,14 +6,20 @@ The FLORIS code includes wake models, and a number of related analysis and visua
 connection with wind farm controls research.  A number of examples are provided in the directory ``examples/``
 to provide instruction on the use of most of the underlying codes.
 
+.. toctree::
+    :glob:
+    
+    examples/example_0000.rst
+    examples/example_0005.rst
+    examples/example_0010.rst
+    examples/example_0015.rst
+
 For questions not covered in the examples, or to request additional examples, please first search for or 
 submit your questions to stackoverflow.com using the tag FLORIS.  Additionally you can contact 
- `Jen King <mailto:jennifer.king@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
-
-
+`Jen King <mailto:jennifer.king@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
 FLORIS Input
-=====
+============
 A sample input file to the Floris model is provided in ``examples/example_input.json``.
 This example case uses the NREL 5MW turbine and the Gaussian wake model as a reference.
 All model parameters provided have been published in previous work, but the inputs to
@@ -24,7 +30,7 @@ may result in an unphysical solution.  Many of the example files will make use o
 License
 =======
 
-Copyright 2017 NREL
+Copyright 2019 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
