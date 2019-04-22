@@ -96,7 +96,10 @@ html_theme_options = {
     "travis_button": True,
     "fixed_sidebar": True,
     "github_user": "WISDEM",
-    "github_repo": "FLORIS"
+    "github_repo": "FLORIS",
+    "sidebar_width": '300px',
+    "page_width": '75%',
+    "show_relbars": True
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
