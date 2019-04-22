@@ -263,9 +263,9 @@ def plot_energy_ratio(reference_power_baseline,
         # ax.plot(wind_direction_bins, ratio_array_con, label=label, color='g', ls='--')
         # plt.show()
         ax = axarr[0]
-        ax.plot(wind_direction_bins, ratio_array_base, label='Baseline', color=base_color,ls='--',marker='x')
+        ax.plot(wind_direction_bins, ratio_array_base, label='Baseline', color=base_color,ls='--')
         # ax.fill_between(wind_direction_bins,lower_ratio_array_base,upper_ratio_array_base,alpha=0.3,color=base_color,label='_nolegend_')
-        ax.plot(wind_direction_bins, ratio_array_con, label='Controlled', color=con_color,ls='--',marker='x')
+        ax.plot(wind_direction_bins, ratio_array_con, label='Controlled', color=con_color,ls='--')
         # ax.fill_between(wind_direction_bins,lower_ratio_array_con,upper_ratio_array_con,alpha=0.3,color=con_color,label='_nolegend_')
         ax.axhline(1,color='k')
         ax.set_ylabel('Energy Ratio (-)')
@@ -279,7 +279,7 @@ def plot_energy_ratio(reference_power_baseline,
         # ax.set_ylabel('Difference (-)')
         # ax.grid(True)
         ax = axarr[1]
-        ax.plot(wind_direction_bins, p_change_array, label='Percent Change', color=con_color,ls='--',marker='x')
+        ax.plot(wind_direction_bins, p_change_array, label='Percent Change', color=con_color,ls='--')
         # ax.fill_between(wind_direction_bins,lower_p_change_array,upper_p_change_array,alpha=0.3,color=con_color,label='_nolegend_')
         ax.axhline(0,color='k')
         ax.set_ylabel('Percent Change (%)')
