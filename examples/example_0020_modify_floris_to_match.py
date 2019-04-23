@@ -13,10 +13,10 @@
 
 # See read the https://floris.readthedocs.io for documentation
 
-import wfc_tools as wfct
-import wfc_tools.visualization as vis
-import wfc_tools.cut_plane as cp
-from wfc_tools.types import Vec3
+import floris.tools as wfct
+import floris.tools.visualization as vis
+import floris.tools.cut_plane as cp
+from floris import Vec3
 import matplotlib.pyplot as plt
 import numpy as np
 
