@@ -230,17 +230,22 @@ def plot_energy_ratio(reference_power_baseline,
                             axarr=None, 
                             base_color='b',
                             con_color='g',
-                            label='_nolegend_', 
+                            label_array = None, 
+                            label_pchange = None,
                             y_lim=None,
-                            # indicate_all_ratios=False,
                             plot_simple=False,
                             plot_ratio_scatter=False,
-                            marker_scale=1.,
-                            alt=False):
+                            marker_scale=1.
+                            ):
 
     if axarr is None:
         fig, axarr = plt.subplots(3,1,sharex=True)
 
+    if label_array is None:
+        label_array = ['Baseline', 'Controlled']
+
+    if label_pchange is None:
+        label_pchange = 'Percent Change'
 
     ratio_array_base,lower_ratio_array_base, upper_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con,  diff_array, lower_diff_array, upper_diff_array, p_change_array, lower_p_change_array, upper_p_change_array = calculate_balanced_energy_ratio(reference_power_baseline,
                             test_power_baseline,
@@ -253,62 +258,46 @@ def plot_energy_ratio(reference_power_baseline,
                             wind_direction_bins,
                             confidence=95,
                             n_boostrap=None,
-                            wind_direction_bin_p_overlap=None,
+                            wind_direction_bin_p_overlap=wind_direction_bin_p_overlap,
                             )
 
 
 
     if plot_simple:
-        # ax.plot(wind_direction_bins, ratio_array_base, label=label, color=color, ls='--')
-        # ax.plot(wind_direction_bins, ratio_array_con, label=label, color='g', ls='--')
-        # plt.show()
         ax = axarr[0]
-        ax.plot(wind_direction_bins, ratio_array_base, label='Baseline', color=base_color,ls='--')
-        # ax.fill_between(wind_direction_bins,lower_ratio_array_base,upper_ratio_array_base,alpha=0.3,color=base_color,label='_nolegend_')
-        ax.plot(wind_direction_bins, ratio_array_con, label='Controlled', color=con_color,ls='--')
-        # ax.fill_between(wind_direction_bins,lower_ratio_array_con,upper_ratio_array_con,alpha=0.3,color=con_color,label='_nolegend_')
+        ax.plot(wind_direction_bins, ratio_array_base, label=label_array[0], color=base_color,ls='--')
+        ax.plot(wind_direction_bins, ratio_array_con, label=label_array[1], color=con_color,ls='--')
         ax.axhline(1,color='k')
         ax.set_ylabel('Energy Ratio (-)')
         ax.grid(True)
-        # ax.scatter(wind_direction_bins, ratio_array, label='_nolegend_', edgecolors=color, s=counts_array/marker_scale,facecolors='none',linewidth=2)
-        # ax.scatter(wind_direction_bins, ratio_array, label='_nolegend_', color=color,marker='^')
-        # ax = axarr[1]
-        # ax.plot(wind_direction_bins, diff_array, label='Difference', color=con_color,ls='-',marker='.')
-        # ax.fill_between(wind_direction_bins,lower_diff_array,upper_diff_array,alpha=0.3,color=con_color,label='_nolegend_')
-        # ax.axhline(0,color='k')
-        # ax.set_ylabel('Difference (-)')
-        # ax.grid(True)
         ax = axarr[1]
-        ax.plot(wind_direction_bins, p_change_array, label='Percent Change', color=con_color,ls='--')
-        # ax.fill_between(wind_direction_bins,lower_p_change_array,upper_p_change_array,alpha=0.3,color=con_color,label='_nolegend_')
+        # ax.plot(wind_direction_bins, p_change_array, label=label_pchange, color=con_color,ls='--')
+        # ax.axhline(0,color='k')
+        # ax.set_ylabel('Percent Change (%)')
+        # ax.grid(True)
+        ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='--')
         ax.axhline(0,color='k')
         ax.set_ylabel('Percent Change (%)')
         ax.grid(True)
     else:
 
         ax = axarr[0]
-        ax.plot(wind_direction_bins, ratio_array_base, label='Baseline', color=base_color,ls='-',marker='.')
+        ax.plot(wind_direction_bins, ratio_array_base, label=label_array[0], color=base_color,ls='-',marker='.')
         ax.fill_between(wind_direction_bins,lower_ratio_array_base,upper_ratio_array_base,alpha=0.3,color=base_color,label='_nolegend_')
-        ax.plot(wind_direction_bins, ratio_array_con, label='Controlled', color=con_color,ls='-',marker='.')
+        ax.plot(wind_direction_bins, ratio_array_con, label=label_array[1], color=con_color,ls='-',marker='.')
         ax.fill_between(wind_direction_bins,lower_ratio_array_con,upper_ratio_array_con,alpha=0.3,color=con_color,label='_nolegend_')
         ax.axhline(1,color='k')
         ax.set_ylabel('Energy Ratio (-)')
         ax.grid(True)
-        # ax.scatter(wind_direction_bins, ratio_array, label='_nolegend_', edgecolors=color, s=counts_array/marker_scale,facecolors='none',linewidth=2)
-        # ax.scatter(wind_direction_bins, ratio_array, label='_nolegend_', color=color,marker='^')
-        # ax = axarr[1]
-        # ax.plot(wind_direction_bins, diff_array, label='Difference', color=con_color,ls='-',marker='.')
-        # ax.fill_between(wind_direction_bins,lower_diff_array,upper_diff_array,alpha=0.3,color=con_color,label='_nolegend_')
-        # ax.axhline(0,color='k')
-        # ax.set_ylabel('Difference (-)')
-        # ax.grid(True)
+
         ax = axarr[1]
-        ax.plot(wind_direction_bins, p_change_array, label='Percent Change', color=con_color,ls='-',marker='.')
-        ax.fill_between(wind_direction_bins,lower_p_change_array,upper_p_change_array,alpha=0.3,color=con_color,label='_nolegend_')
+        # ax.plot(wind_direction_bins, p_change_array, label=label_pchange, color=con_color,ls='-',marker='.')
+        # ax.fill_between(wind_direction_bins,lower_p_change_array,upper_p_change_array,alpha=0.3,color=con_color,label='_nolegend_')
+        ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='-',marker='.')
+        ax.fill_between(wind_direction_bins,lower_diff_array,upper_diff_array,alpha=0.3,color=con_color,label='_nolegend_')
         ax.axhline(0,color='k')
         ax.set_ylabel('Percent Change (%)')
         ax.grid(True)
-        # plt.show()
-    #     ax.set_ylim(y_lim)
+
 
     # return ratio_array, lower_array, upper_array, counts_array
