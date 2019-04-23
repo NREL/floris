@@ -26,6 +26,9 @@ class FlorisInterface():
         self.floris = Floris(input_file=input_file)
 
     def run_floris(self):
+        """
+        This method runs the FLORIS model with the current model parameters.
+        """
         self.floris.calculate_wake()
 
     def get_flow_field(self, resolution=None, grid_spacing=10):
