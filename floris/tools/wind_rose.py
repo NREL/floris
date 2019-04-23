@@ -15,19 +15,16 @@
 ## 3: Plotting
 ## 4: FLORIS return
 
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import os
-import floris.utilities as geo
-# from windrose import WindroseAxes
-import matplotlib.cm as cm
-import h5pyd
 import dateutil
-from pyproj import Proj
+import h5pyd
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import numpy as np
+import pandas as pd
 import pickle
+from pyproj import Proj
+import floris.utilities as geo
 
 class WindRose():
 
