@@ -90,6 +90,7 @@ todo_include_todos = False
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = 'alabaster'
+html_static_path = ['_static/custom.css']
 html_theme_options = {
     # "logo": "logo.png",
     # "logo_name": True,
@@ -97,7 +98,7 @@ html_theme_options = {
     "fixed_sidebar": True,
     "github_user": "WISDEM",
     "github_repo": "FLORIS",
-    "sidebar_width": '300px',
+    "sidebar_width": '350px',
     "page_width": '75%',
     "show_relbars": True
 }

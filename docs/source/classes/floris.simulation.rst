@@ -12,8 +12,7 @@ Submodules
     floris.simulation.flow_field
     floris.simulation.input_reader
     floris.simulation.turbine
-    floris.simulation.turbine_map
-    floris.simulation.types
+    floris.simulation.turbine_map    
     floris.simulation.wake
     floris.simulation.wake_combination
     floris.simulation.wake_deflection
