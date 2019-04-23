@@ -22,17 +22,17 @@ import numpy as np
 
 
 # Load the SOWFA case in
-sowfa_case = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
+si = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
 
 # Plot the SOWFA flow and turbines using the input information
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(5,8.5))
-sowfa_flow_field = sowfa_case.flow_field
-hor_plane = wfct.cut_plane.HorPlane(sowfa_case.flow_field, 90)
+sowfa_flow_field = si.flow_field
+hor_plane = wfct.cut_plane.HorPlane(si.flow_field, 90)
 wfct.visualization.visualize_cut_plane(hor_plane,ax=ax2)
-vis.plot_turbines(ax2, sowfa_case.layout_x, sowfa_case.layout_y, sowfa_case.yaw_angles, sowfa_case.D)
+vis.plot_turbines(ax2, si.layout_x, si.layout_y, si.yaw_angles, si.D)
 ax2.set_title('SOWFA')
-# ax2.set_xlabel('x location [m]')
 ax2.set_ylabel('y location [m]')
+
 
 # Load the FLORIS case in
 floris_interface = wfct.floris_utilities.FlorisInterface("example_input.json")
@@ -59,10 +59,10 @@ ax1.set_title('FLORIS - Original')
 ax1.set_ylabel('y location [m]')
 
 # Set the relevant FLORIS parameters to equal the SOWFA case
-floris_interface.floris.farm.flow_field.reinitialize_flow_field(wind_speed=sowfa_case.precursor_wind_speed,wind_direction=sowfa_case.precursor_wind_dir)
+floris_interface.floris.farm.flow_field.reinitialize_flow_field(wind_speed=si.precursor_wind_speed,wind_direction=si.precursor_wind_dir)
 
-floris_interface.floris.farm.set_turbine_locations(sowfa_case.layout_x, sowfa_case.layout_y, calculate_wake=False)
-floris_interface.floris.farm.set_yaw_angles(sowfa_case.yaw_angles, calculate_wake=False)
+floris_interface.floris.farm.set_turbine_locations(si.layout_x, si.layout_y, calculate_wake=False)
+floris_interface.floris.farm.set_yaw_angles(si.yaw_angles, calculate_wake=False)
 
 # Generate and get a flow from original FLORIS file
 floris_interface.run_floris()
