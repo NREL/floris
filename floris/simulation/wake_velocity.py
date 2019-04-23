@@ -333,14 +333,14 @@ class Curl(WakeVelocity):
         tilt = turbine.tilt_angle
 
         # calculate the curled wake effects due to the yaw and tilt of the turbine
-        Gamma_Yaw = vortex_strength * np.pi * D / 2 * Ct * \
+        Gamma_Yaw = flow_field.air_density * np.pi * D / 8 * Ct * \
             turbine.average_velocity * sind(yaw)
         if turbine.yaw_angle != 0.0:
             YawFlag = 1
         else:
             YawFlag = 0
-        Gamma_Tilt = np.pi * D / 2 * Ct * turbine.average_velocity * sind(tilt) * \
-            cosd(tilt)**2
+        Gamma_Tilt = flow_field.air_density * np.pi * D / 8 * Ct * \
+            turbine.average_velocity * sind(tilt)
         if turbine.tilt_angle != 0.0:
             TiltFlag = 1
         else:
@@ -404,9 +404,11 @@ class Curl(WakeVelocity):
 
         # add wake rotation
         v5, w5 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.x2, flow_field.z[idx, :, :] -
-                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma_wake_rotation, 0.2 * D, Uinf)
+                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma_wake_rotation, 0.2 * D, Uinf)*\
+                                  (np.sqrt((flow_field.y[idx, :, :] - turbine_coord.x2)**2 + (flow_field.z[idx, :, :] - turbine.hub_height)**2) <= D/2)
         v6, w6 = self._vortex(flow_field.y[idx, :, :] - turbine_coord.x2, flow_field.z[idx, :, :] +
-                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma_wake_rotation, 0.2 * D, Uinf)
+                              turbine.hub_height, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma_wake_rotation, 0.2 * D, Uinf)*\
+                                  (np.sqrt((flow_field.y[idx, :, :] - turbine_coord.x2)**2 + (flow_field.z[idx, :, :] - turbine.hub_height)**2) <= D/2)
         V[idx, :, :] += v5 + v6
         W[idx, :, :] += w5 + w6
 
