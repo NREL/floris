@@ -90,7 +90,7 @@ todo_include_todos = False
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = 'alabaster'
-html_static_path = ['source\_static\custom.css']
+html_static_path = ['source/_static/custom.css']
 html_theme_options = {
     # "logo": "logo.png",
     # "logo_name": True,
