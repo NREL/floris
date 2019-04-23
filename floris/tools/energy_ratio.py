@@ -40,9 +40,6 @@ def _get_confidence_bounds(confidence):
 def energy_ratio(ref_pow_base,test_pow_base, ws_base,
                 ref_pow_con,test_pow_con, ws_con):
 
-    """
-
-    """
 
     # First derive the weighting functions by wind speed
     ws_unique_base = np.unique(ws_base)
@@ -277,7 +274,7 @@ def plot_energy_ratio(reference_power_baseline,
         # ax.grid(True)
         ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='--')
         ax.axhline(0,color='k')
-        ax.set_ylabel('Percent Change (%)')
+        ax.set_ylabel('Change in Energy Ratio (-)')
         ax.grid(True)
     else:
 
@@ -293,10 +290,11 @@ def plot_energy_ratio(reference_power_baseline,
         ax = axarr[1]
         # ax.plot(wind_direction_bins, p_change_array, label=label_pchange, color=con_color,ls='-',marker='.')
         # ax.fill_between(wind_direction_bins,lower_p_change_array,upper_p_change_array,alpha=0.3,color=con_color,label='_nolegend_')
+        # ax.set_ylabel('Percent Change (%)')
         ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='-',marker='.')
         ax.fill_between(wind_direction_bins,lower_diff_array,upper_diff_array,alpha=0.3,color=con_color,label='_nolegend_')
         ax.axhline(0,color='k')
-        ax.set_ylabel('Percent Change (%)')
+        ax.set_ylabel('Change in Energy Ratio (-)')
         ax.grid(True)
 
 
