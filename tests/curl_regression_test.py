@@ -26,19 +26,19 @@ class CurlRegressionTest():
         sample_inputs.floris["wake"]["properties"]["velocity_model"] = "curl"
         sample_inputs.floris["wake"]["properties"]["deflection_model"] = "curl"
         self.input_dict = sample_inputs.floris
-        self.debug = False
+        self.debug = True
 
     def baseline(self, turbine_index):
         baseline = [
             (0.4632707, 0.7655868, 1793046.5944261, 0.2579188, 7.9727208),
-            (0.4533197, 0.8350614,  740195.2123000, 0.2969368, 5.9795460)
+            (0.4531780, 0.8356084, 735600.0517466, 0.2972739, 5.9677685)
         ]
         return baseline[turbine_index]
 
     def yawed_baseline(self, turbine_index):
         baseline = [
             (0.4632707, 0.7601190, 1780240.6778116, 0.2546086, 7.9727208),
-            (0.4542411, 0.8315045,  770561.3253515, 0.2947590, 6.0561213)
+            (0.4540433, 0.8322682, 763969.7396448, 0.2952246, 6.0396802)
         ]
         return baseline[turbine_index]
 
