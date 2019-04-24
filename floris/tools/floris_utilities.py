@@ -11,6 +11,7 @@
 
 import numpy as np
 from floris.simulation import Floris
+from floris.simulation import TurbineMap
 from .flow_field import FlowField
 from ..utilities import Vec3
 
@@ -24,11 +25,46 @@ class FlorisInterface():
         self.input_file = input_file
         self.floris = Floris(input_file=input_file)
 
-    def run_floris(self):
+    def calculate_wake(self, yaw_angles=None):
         """
-        This method runs the FLORIS model with the current model parameters.
+        Convience wrapper to the floris flow field calculate_wake method
         """
-        self.floris.calculate_wake()
+
+        if yaw_angles is not None:
+            self.floris.farm.set_yaw_angles(yaw_angles)
+
+        self.floris.farm.flow_field.calculate_wake()
+
+    def reinitialize_flow_field(self,
+                                wind_speed=None,
+                                wind_direction=None,
+                                wind_shear=None,
+                                wind_veer=None,
+                                turbulence_intensity=None,
+                                air_density=None,
+                                wake=None,
+                                layout_array = None,
+                                with_resolution=None):
+        """
+        Convience wrapper to the floris flow field reinitialize_flow_field method
+        """
+
+        # Build turbine map (convenience layer for user)
+        if layout_array is not None:
+            turbine_map = TurbineMap(layout_array[0], layout_array[1], self.floris.farm.turbines[0]) # TODO Assumes one turbine type
+        else:
+            turbine_map = None
+
+        self.floris.farm.flow_field.reinitialize_flow_field(
+                                wind_speed=wind_speed,
+                                wind_direction=wind_direction,
+                                wind_shear=wind_shear,
+                                wind_veer=wind_veer,
+                                turbulence_intensity=turbulence_intensity,
+                                air_density=air_density,
+                                wake=wake,
+                                turbine_map=turbine_map,
+                                with_resolution=with_resolution)
 
     def get_flow_field(self, resolution=None, grid_spacing=10):
         if resolution is None:
@@ -50,7 +86,8 @@ class FlorisInterface():
             print("WARNING: The current wake velocity model contains a required grid resolution;")
             print("    The Resolution given to FlorisInterface.get_flow_field is ignored.")
             resolution = flow_field.wake.velocity_model.model_grid_resolution
-        flow_field.calculate_wake(with_resolution=resolution)
+        flow_field.reinitialize_flow_field(with_resolution=resolution)
+        flow_field.calculate_wake()
 
         order = "f"
         x = flow_field.x.flatten(order=order)

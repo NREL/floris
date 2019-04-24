@@ -242,7 +242,7 @@ class FlowField():
         for turbine in self.turbine_map.turbines:
             turbine.reinitialize_turbine()
 
-    def calculate_wake(self, no_wake=False, with_resolution=None):
+    def calculate_wake(self, no_wake=False):
         """
         Updates the flow field based on turbine activity.
 
@@ -254,13 +254,10 @@ class FlowField():
         Parameters:
             no_wake: A bool that when *True* updates the turbine quantities without
                 calculating the wake or adding the wake to the flow field.
-            with_resolution: A :py:class:`floris.utilities.Vec3` object that defines the flow field resolution
-                at which to calculate the wake (default is *False*).
         
         Returns:
             *None* -- The flow field and turbine properties are updated directly in the :py:class:`floris.simulation.floris` object.
         """
-        self.reinitialize_flow_field(with_resolution=with_resolution)
 
         # define the center of rotation with reference to 270 deg
         center_of_rotation = Vec3(0, 0, 0)

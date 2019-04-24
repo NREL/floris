@@ -17,7 +17,9 @@ from floris import Vec3
 
 # Initialize the FLORIS interface fi
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-fi.run_floris()
+
+# Calculate wake
+fi.calculate_wake()
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
