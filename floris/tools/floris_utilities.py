@@ -51,7 +51,7 @@ class FlorisInterface():
 
         # Build turbine map (convenience layer for user)
         if layout_array is not None:
-            turbine_map = TurbineMap(layout_array[0], layout_array[1], self.floris.farm.turbines[0]) # TODO Assumes one turbine type
+            turbine_map = TurbineMap(layout_array[0], layout_array[1], self.floris.farm.turbines) 
         else:
             turbine_map = None
 

@@ -127,8 +127,12 @@ class Farm():
         if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
             yaw_angles = [yaw_angles] * len(self.turbines)
 
-        for yaw_angle, turbine in zip(yaw_angles, self.turbines):
+        for yaw_angle, turbine in zip(yaw_angles, self.flow_field.turbine_map.turbines):
             turbine.yaw_angle = yaw_angle
+            print('set yaw,',turbine.yaw_angle )
+
+        for turbine in self.flow_field.turbine_map.turbines:
+            print('from ff,',turbine.yaw_angle )
 
 
     # Getters & Setters
