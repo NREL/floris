@@ -265,7 +265,6 @@ class Curl(WakeVelocity):
         self.model_string = "curl"
         model_dictionary = parameter_dictionary[self.model_string]
         self.model_grid_resolution = Vec3(model_dictionary["model_grid_resolution"])
-        self.vortex_strength = float(model_dictionary["vortex_strength"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])
         self.dissipation = float(model_dictionary["dissipation"])
         self.veer_linear = float(model_dictionary["veer_linear"])
@@ -276,7 +275,6 @@ class Curl(WakeVelocity):
         """
 
         # parameters available for tuning to match high-fidelity data
-        vortex_strength = self.vortex_strength  # scaling parameter that adjusts strength of vortexes
         intial_deficit = self.initial_deficit   # parameter for defining initial velocity deficity in the flow field at a turbine
         dissipation = self.dissipation          # scaling parameter that adjusts the amount of dissipation of the vortexes
         veer_linear = self.veer_linear          # parameter that defines the wind velocity of veer at 0 meters height
