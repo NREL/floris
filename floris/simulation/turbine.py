@@ -217,7 +217,6 @@ class Turbine():
 
     @property
     def average_velocity(self):
-        print(self.velocities)
         return np.cbrt(np.mean(self.velocities**3))
 
     @property

@@ -65,7 +65,10 @@ class Farm():
             wind_veer=properties["wind_veer"],
             turbulence_intensity=properties["turbulence_intensity"],
             air_density=properties["air_density"],
-            turbine_map=TurbineMap(self.layout_x, self.layout_y, turbine),
+            turbine_map=TurbineMap(
+                self.layout_x,
+                self.layout_y,
+                len(self.layout_x)*[copy.deepcopy(turbine)]),
             wake=wake
         )
 
