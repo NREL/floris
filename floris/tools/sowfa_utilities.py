@@ -10,7 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
-from .flow_field import FlowField
+from .flow_data import FlowData
 from ..utilities import Vec3
 import pandas as pd
 import os
@@ -22,7 +22,7 @@ class SowfaInterface():
     """
 
     def __init__(self, case_folder,
-                 flow_field_sub_path='array_mean/array.mean0D_UAvg.vtk',
+                 flow_data_sub_path='array_mean/array.mean0D_UAvg.vtk',
                  setup_sub_path='setUp',
                  turbine_array_sub_path='constant/turbineArrayProperties',
                  turbine_sub_path='constant/turbineProperties',
@@ -89,7 +89,6 @@ class SowfaInterface():
         # Get the wind direction
         self.precursor_wind_dir = setup_dict['dir']
 
-
         # Read the outputs
         self.turbine_output = read_sowfa_df(os.path.join(self.case_folder, self.turbine_output_sub_path))
 
@@ -99,17 +98,17 @@ class SowfaInterface():
         # Get the sim_time
         self.sim_time_length = self.turbine_output.time.max()
 
-        # Read the flow field
+        # Read the flow data
         try:
-            self.flow_field = self.read_flow_frame_SOWFA(os.path.join(case_folder, flow_field_sub_path))
+            self.flow_data = self.read_flow_frame_SOWFA(os.path.join(case_folder, flow_data_sub_path))
 
             # Re-set turbine positions to flow_field origin
-            self.layout_x = self.layout_x - self.flow_field.origin.x1
-            self.layout_y = self.layout_y - self.flow_field.origin.x2
+            self.layout_x = self.layout_x - self.flow_data.origin.x1
+            self.layout_y = self.layout_y - self.flow_data.origin.x2
 
         except FileNotFoundError:
             print('No flow field found, setting NULL, origin at 0')
-            self.flow_field = None #TODO might need a null flow-field
+            self.flow_data = None #TODO might need a null flow-field
 
 
 
@@ -184,7 +183,7 @@ class SowfaInterface():
         y = pts[:, 1]
         z = pts[:, 2]
 
-        return FlowField(x, y, z, df.u.values, df.v.values, df.w.values, spacing, dimensions, origin)
+        return FlowData(x, y, z, df.u.values, df.v.values, df.w.values, spacing, dimensions, origin)
 
 
 def read_sc_input(case_folder, wind_direction=270.):
