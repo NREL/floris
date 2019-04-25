@@ -70,6 +70,7 @@ def test_regression_rotation():
     """
     test_class = CurlRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
+    fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
 
     ### unrotated
     floris.farm.flow_field.calculate_wake()
@@ -84,7 +85,7 @@ def test_regression_rotation():
     new_map = TurbineMap(
         [0.0, 0.0],
         [5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"], 0.0],
-        [copy.deepcopy(turbine), copy.deepcopy(turbine)]
+        [copy.deepcopy(fresh_turbine), copy.deepcopy(fresh_turbine)]
     )
     floris.farm.flow_field.reinitialize_flow_field(
         wind_direction=360,
