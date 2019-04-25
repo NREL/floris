@@ -23,7 +23,7 @@ fi.calculate_wake()
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_field(),
+    fi.get_flow_data(),
     fi.floris.farm.turbines[0].hub_height
 )
 

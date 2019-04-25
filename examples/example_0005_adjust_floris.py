@@ -38,7 +38,7 @@ print('Plotting the FLORIS flowfield...')
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_field(),
+    fi.get_flow_data(),
     fi.floris.farm.turbines[0].hub_height
 )
 
@@ -74,7 +74,7 @@ for i,speed in enumerate(ws):
         # Visualize the changes
         # Initialize the horizontal cut
         hor_plane = wfct.cut_plane.HorPlane(
-            fi.get_flow_field(),
+            fi.get_flow_data(),
             fi.floris.farm.turbines[0].hub_height
         )
         im = wfct.visualization.visualize_cut_plane(hor_plane,ax=ax[i,j])
@@ -106,7 +106,7 @@ print('Plotting the FLORIS flowfield with yaw...')
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_field(),
+    fi.get_flow_data(),
     fi.floris.farm.turbines[0].hub_height
 )
 
