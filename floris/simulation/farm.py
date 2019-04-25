@@ -54,8 +54,8 @@ class Farm():
     def __init__(self, instance_dictionary, turbine, wake):
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
-        self.layout_x = properties["layout_x"]
-        self.layout_y = properties["layout_y"]
+        layout_x = properties["layout_x"]
+        layout_y = properties["layout_y"]
         self.wake = wake
 
         self.flow_field = FlowField(
@@ -66,9 +66,10 @@ class Farm():
             turbulence_intensity=properties["turbulence_intensity"],
             air_density=properties["air_density"],
             turbine_map=TurbineMap(
-                self.layout_x,
-                self.layout_y,
-                len(self.layout_x)*[copy.deepcopy(turbine)]),
+                layout_x,
+                layout_y,
+                [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
+                # len(self.layout_x)*[copy.deepcopy(turbine)]),
             wake=wake
         )
 
@@ -127,12 +128,8 @@ class Farm():
         if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
             yaw_angles = [yaw_angles] * len(self.turbines)
 
-        for yaw_angle, turbine in zip(yaw_angles, self.flow_field.turbine_map.turbines):
+        for yaw_angle, turbine in zip(yaw_angles, self.turbines):
             turbine.yaw_angle = yaw_angle
-            print('set yaw,',turbine.yaw_angle )
-
-        for turbine in self.flow_field.turbine_map.turbines:
-            print('from ff,',turbine.yaw_angle )
 
 
     # Getters & Setters

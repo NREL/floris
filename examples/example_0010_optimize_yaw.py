@@ -28,8 +28,8 @@ fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 D = fi.floris.farm.turbines[0].rotor_diameter
 layout_x = [0,7*D,14*D]
 layout_y = [0,0,0]
-fi.floris.farm.set_turbine_locations(layout_x, layout_y)
-fi.run_floris()
+fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
+fi.calculate_wake()
 
 # initial power output
 power_initial = np.sum(fi.get_turbine_power())
@@ -61,7 +61,7 @@ for i in range(len(yaw_angles)):
     print('Turbine ', i, '=', yaw_angles[i],' deg')
 
 # assign yaw angles to turbines and calculate wake
-fi.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
+fi.calculate_wake(yaw_angles=yaw_angles)
 power_opt = np.sum(fi.get_turbine_power())
 
 print('==========================================')

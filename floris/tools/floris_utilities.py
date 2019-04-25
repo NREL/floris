@@ -43,7 +43,7 @@ class FlorisInterface():
                                 turbulence_intensity=None,
                                 air_density=None,
                                 wake=None,
-                                layout_array = None,
+                                layout_array=None,
                                 with_resolution=None):
         """
         Convience wrapper to the floris flow field reinitialize_flow_field method
@@ -51,7 +51,7 @@ class FlorisInterface():
 
         # Build turbine map (convenience layer for user)
         if layout_array is not None:
-            turbine_map = TurbineMap(layout_array[0], layout_array[1], self.floris.farm.turbines) 
+            turbine_map = TurbineMap(layout_array[0], layout_array[1], self.floris.farm.flow_field.turbine_map.turbines) 
         else:
             turbine_map = None
 
@@ -120,15 +120,32 @@ class FlorisInterface():
         return np.sum(turb_powers)
 
     def get_turbine_power(self):
-        turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
+        turb_powers = [turbine.power for turbine in self.floris.farm.flow_field.turbine_map.turbines]
         return turb_powers
 
         # calculate the power under different yaw angles
-    def get_power_with_yaw_angles(self,yaw_angles):    
+    def get_power_for_yaw_angle_opt(self,yaw_angles):    
         
         # assign yaw angles to turbines and calculate wake
-        self.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
+        self.calculate_wake(yaw_angles=yaw_angles)
+        # self.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
         
         power = -1 * np.sum([turbine.power for turbine in self.floris.farm.turbines]) 
 
         return power/(10**3)
+
+    @property
+    def layout_x(self):
+        coords = self.floris.farm.flow_field.turbine_map.coords
+        layout_x = np.zeros(len(coords))
+        for i, coord in enumerate(coords):
+            layout_x[i] = coord.x1prime
+        return layout_x
+
+    @property
+    def layout_y(self):
+        coords = self.floris.farm.flow_field.turbine_map.coords
+        layout_y = np.zeros(len(coords))
+        for i, coord in enumerate(coords):
+            layout_y[i] = coord.x2prime
+        return layout_y

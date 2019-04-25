@@ -261,9 +261,6 @@ class FlowField():
 
         # define the center of rotation with reference to 270 deg
         center_of_rotation = Vec3(0, 0, 0)
-        
-        for turbine in self.turbine_map.turbines:
-            print('enter calc,',turbine.yaw_angle )
 
         # Rotate the turbines such that they are now in the frame of reference 
         # of the wind direction simpifying computing the wakes and wake overlap
@@ -280,8 +277,6 @@ class FlowField():
         v_wake = np.zeros(np.shape(self.u))
         w_wake = np.zeros(np.shape(self.u))
         for coord, turbine in sorted_map:
-
-            print('sorted,',turbine.yaw_angle )
 
             # update the turbine based on the velocity at its hub
             turbine.update_velocities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
