@@ -1,7 +1,10 @@
 example_0000_open_and_vis_floris.py
 ===================================
+
+The code for this example can be found here: `example_0000_open_and_vis_floris.py <https://github.com/NREL/floris/blob/develop/examples/example_0000_open_and_vis_floris.py>`_
+
 This first example provides an essential introduction to using FLORIS.  A floris model is instantiated,
-and a floris interface setup using the example_input.json file.  The model is run using only the 
+and a floris interface setup using the :ref:`example_input.json<inputs>` file.  The model is run using only the 
 wind speed and direction specified in the input file and a hub-height visualization is produced.
 
 The first block of code reads in the input file and runs the model without modification
@@ -11,12 +14,13 @@ The first block of code reads in the input file and runs the model without modif
     fi = wfct.floris_utilities.FlorisInterface("example_input.json")
     fi.run_floris()
 
-TODO ADD LINKS
-Note that run_floris is a wrapper to the calculate_wake function, and so only computes the wakes assuming that changes
-since instantation are limited to changes in turbine yaw angle or other control function.  Changes to wind speed, wind direction,
-or turbine location require an additional call to reinitialize_flow_field
+Note that :py:meth:`run_floris()<floris.tools.floris_utilities.FlorisInterface.run_floris>` is a wrapper 
+to the :py:meth:`calculate_wake()<floris.simulation.flow_field.FlowField.calculate_wake>` function, 
+and so only computes the wakes assuming that changes since instantation are limited to changes in turbine 
+yaw angle or other control function.  Changes to wind speed, wind direction, or turbine location require 
+an additional call to :py:meth:`reinitialize_flow_field()<floris.simulation.flow_field.FlowField.reinitialize_flow_field>`.
 
-The second block of code extracts a slice of flow at hub_height using the cut_plane tools
+The second block of code extracts a slice of flow at hub_height using the :py:mod:`cut_plane<floris.tools.cut_plane>` tools:
 
 ::
 
@@ -26,7 +30,7 @@ The second block of code extracts a slice of flow at hub_height using the cut_pl
     )
 
 
-The final block of code visualizes the hub-height plane
+The final block of code visualizes the hub-height plane:
 
 ::
 
@@ -36,6 +40,6 @@ The final block of code visualizes the hub-height plane
     plt.show()
 
 
-The results is shown below
+The result is shown below.
 
 .. image:: ../../doxygen/images/hh_plane.png

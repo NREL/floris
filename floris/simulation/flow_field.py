@@ -1,4 +1,4 @@
-# Copyright 2017 NREL
+# Copyright 2019 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 # this file except in compliance with the License. You may obtain a copy of the
@@ -201,7 +201,7 @@ class FlowField():
             wake: A container class :py:class:`floris.simulation.wake` with wake model information used to calculate the flow field 
                 (default is *None*).
             turbine_map: A :py:obj:`floris.simulation.turbine_map` object that holds turbine information (default is *None*).
-            with_resolution: A :py:class:`floris.simulation.types.Vec3` object that defines the flow field resolution
+            with_resolution: A :py:class:`floris.utilities.Vec3` object that defines the flow field resolution
                 at which to calculate the wake (default is *None*).
         
         Returns:
@@ -254,7 +254,7 @@ class FlowField():
         Parameters:
             no_wake: A bool that when *True* updates the turbine quantities without
                 calculating the wake or adding the wake to the flow field.
-            with_resolution: A :py:class:`floris.simulation.types.Vec3` object that defines the flow field resolution
+            with_resolution: A :py:class:`floris.utilities.Vec3` object that defines the flow field resolution
                 at which to calculate the wake (default is *False*).
         
         Returns:

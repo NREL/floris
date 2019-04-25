@@ -1,14 +1,16 @@
 example_0015_open_and_vis_sowfa.py
 ==================================
 
+The code for this example can be found here: `example_0015_open_and_vis_sowfa.py <https://github.com/NREL/floris/blob/develop/examples/example_0015_open_and_vis_sowfa.py>`_
+
 SOWFA (https://github.com/NREL/SOWFA) is an NREL LES-code which is used to explore wind farm controls in high-fidelity and compare FLORIS results to.
 This repository therefore includes some tools for interacting with SOWFA in a way that standardizes the interface to FLORIS and SOWFA and allows
-a commen set of analysis functions to be applied to the outputs of each.  This first example shows a basic example of working with a saved SOWFA run
+a commen set of analysis functions to be applied to the outputs of each.  This first example shows a basic example of working with a saved SOWFA run.
 
 Note that an example saved SOWFA run is included with this repository.  It is anticipated that as SOWFA (or NALU) evolves, these utilities may well
 need to evolve with them.
 
-The first section of the code imports the saved run by naming the case directory and using the print method to summarize the case
+The first section of the code imports the saved run by naming the case directory and using the print method to summarize the case.
 
 ::
 

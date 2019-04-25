@@ -1,4 +1,4 @@
-# Copyright 2017 NREL
+# Copyright 2019 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 # this file except in compliance with the License. You may obtain a copy of the
@@ -14,16 +14,18 @@ from .input_reader import InputReader
 
 class Floris():
     """
+    Top-level object that contains a FLORIS model.
+
     Floris is the highest level class of the Floris package. Import this class
     and instantiate it with a path to an input file to begin running Floris. Use
     the ``farm`` attribute to access other objects within the model.
 
-    inputs:
-        input_file: str - path to the json input file
-        input_dict: dict - dictionary of appropriate inputs
+    Parameters:
+        input_file: A string that is the path to the json input file.
+        input_dict: A dictionary of appropriate inputs.
 
-    outputs:
-        self: Floris - an instantiated Floris object
+    Returns:
+        An instantiated Floris object.
     """
 
     def __init__(self, input_file=None, input_dict=None):
@@ -38,6 +40,9 @@ class Floris():
 
     @property
     def farm(self):
+        """
+        Property of the FLORIS object that returns the farm(s) contained within the object.
+        """
         if len(self._farm) == 1:
             return self._farm[0]
         else:
@@ -64,6 +69,9 @@ class Floris():
             print(farm)
 
     def calculate_wake(self):
+        """
+        Calculates the wake of the FLORIS model with the stored parameters.
+        """
         self.farm.flow_field.calculate_wake()
 
     def calculate_with_conditions(self, wind_speed, wind_direction, ti):
@@ -79,7 +87,13 @@ class Floris():
         self.calculate_wake()
 
     def export_pickle(self, pickle_file):
+        """
+        Exports a farm to a pickle file.
+        """
         pickle.dump(self.farm, open(pickle_file, "wb"))
 
     def import_pickle(self, pickle_file):
+        """
+        Imports a farm from a pickle file.
+        """
         self.farm = pickle.load(open(pickle_file, "rb"))

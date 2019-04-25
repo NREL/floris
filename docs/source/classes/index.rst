@@ -13,7 +13,6 @@ Classes
     floris.simulation.rst
     floris.simulation.turbine.rst
     floris.simulation.turbine_map.rst
-    floris.simulation.types.rst
     floris.simulation.wake.rst
     floris.simulation.wake_combination.rst
     floris.simulation.wake_deflection.rst

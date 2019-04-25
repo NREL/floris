@@ -1,9 +1,18 @@
+# Copyright 2019 NREL
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
 
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
-
 
 
 def _convert_to_numpy_array(series):
@@ -40,9 +49,6 @@ def _get_confidence_bounds(confidence):
 def energy_ratio(ref_pow_base,test_pow_base, ws_base,
                 ref_pow_con,test_pow_con, ws_con):
 
-    """
-
-    """
 
     # First derive the weighting functions by wind speed
     ws_unique_base = np.unique(ws_base)
@@ -50,7 +56,7 @@ def energy_ratio(ref_pow_base,test_pow_base, ws_base,
     ws_unique = np.intersect1d(ws_unique_base,ws_unique_con )
 
     if len(ws_unique)==0:
-        return np.nan, np.nan, np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     # Mask down to the items in both sides
     base_mask = np.isin(ws_base,ws_unique)
@@ -90,7 +96,13 @@ def energy_ratio(ref_pow_base,test_pow_base, ws_base,
     ratio_diff = ratio_con - ratio_base
     p_change= 100. * ratio_diff / ratio_base
 
-    return ratio_base, ratio_con, ratio_diff, p_change
+    # Get the counts
+    counts_base = len(ref_pow_base)
+    counts_con = len(ref_pow_con)
+    counts_diff= np.min([counts_base,counts_con])
+    counts_pchange = counts_diff
+
+    return ratio_base, ratio_con, ratio_diff, p_change, counts_base, counts_con, counts_diff, counts_pchange
 
 
 def calculate_balanced_energy_ratio(reference_power_baseline,
@@ -173,7 +185,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         wind_speed_array_controlled_wd = wind_speed_array_controlled_wd.astype(int)
 
         # compute the energy ratio
-        ratio_array_base[i], ratio_array_con[i], diff_array[i],p_change_array[i]   = energy_ratio(reference_power_baseline_wd,test_power_baseline_wd,wind_speed_array_baseline_wd,
+        ratio_array_base[i], ratio_array_con[i], diff_array[i],p_change_array[i], counts_ratio_array_base[i],counts_ratio_array_con[i], counts_diff_array[i], counts_p_change_array[i]    = energy_ratio(reference_power_baseline_wd,test_power_baseline_wd,wind_speed_array_baseline_wd,
                                            reference_power_controlled_wd, test_power_controlled_wd, wind_speed_array_controlled_wd     )
 
 
@@ -200,7 +212,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             wind_speed_binned_controlled = wind_speed_array_controlled_wd[ind_bs]
         
             # compute the energy ratio
-            ratio_base_bs[i_bs], ratio_con_bs[i_bs], diff_bs[i_bs],p_change_bs[i_bs]   = energy_ratio(reference_power_binned_baseline,test_power_binned_baseline,wind_speed_binned_baseline,
+            ratio_base_bs[i_bs], ratio_con_bs[i_bs], diff_bs[i_bs],p_change_bs[i_bs], _, _, _, _   = energy_ratio(reference_power_binned_baseline,test_power_binned_baseline,wind_speed_binned_baseline,
                                            reference_power_binned_controlled, test_power_binned_controlled, wind_speed_binned_controlled     )
 
 
@@ -213,7 +225,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         lower_p_change_array[i], upper_p_change_array[i] = _calculate_lower_and_upper_bound(p_change_bs, percentiles, central_estimate=p_change_array[i],method='simple_percentile')
 
 
-    return ratio_array_base,lower_ratio_array_base, upper_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, diff_array, lower_diff_array, upper_diff_array, p_change_array, lower_p_change_array, upper_p_change_array
+    return ratio_array_base,lower_ratio_array_base, upper_ratio_array_base,counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array,counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array
        
 def plot_energy_ratio(reference_power_baseline,
                             test_power_baseline,
@@ -247,7 +259,7 @@ def plot_energy_ratio(reference_power_baseline,
     if label_pchange is None:
         label_pchange = 'Percent Change'
 
-    ratio_array_base,lower_ratio_array_base, upper_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con,  diff_array, lower_diff_array, upper_diff_array, p_change_array, lower_p_change_array, upper_p_change_array = calculate_balanced_energy_ratio(reference_power_baseline,
+    ratio_array_base,lower_ratio_array_base, upper_ratio_array_base,counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array,counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array = calculate_balanced_energy_ratio(reference_power_baseline,
                             test_power_baseline,
                             wind_speed_array_baseline,
                             wind_direction_array_baseline,
@@ -277,15 +289,17 @@ def plot_energy_ratio(reference_power_baseline,
         # ax.grid(True)
         ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='--')
         ax.axhline(0,color='k')
-        ax.set_ylabel('Percent Change (%)')
+        ax.set_ylabel('Change in Energy Ratio (-)')
         ax.grid(True)
     else:
 
         ax = axarr[0]
         ax.plot(wind_direction_bins, ratio_array_base, label=label_array[0], color=base_color,ls='-',marker='.')
         ax.fill_between(wind_direction_bins,lower_ratio_array_base,upper_ratio_array_base,alpha=0.3,color=base_color,label='_nolegend_')
+        ax.scatter(wind_direction_bins, ratio_array_base,s=counts_ratio_array_base, label='_nolegend_', color=base_color,marker='o',alpha=0.4)
         ax.plot(wind_direction_bins, ratio_array_con, label=label_array[1], color=con_color,ls='-',marker='.')
         ax.fill_between(wind_direction_bins,lower_ratio_array_con,upper_ratio_array_con,alpha=0.3,color=con_color,label='_nolegend_')
+        ax.scatter(wind_direction_bins, ratio_array_con,s=counts_ratio_array_con, label='_nolegend_', color=con_color,marker='o',alpha=0.4)
         ax.axhline(1,color='k')
         ax.set_ylabel('Energy Ratio (-)')
         ax.grid(True)
@@ -293,10 +307,12 @@ def plot_energy_ratio(reference_power_baseline,
         ax = axarr[1]
         # ax.plot(wind_direction_bins, p_change_array, label=label_pchange, color=con_color,ls='-',marker='.')
         # ax.fill_between(wind_direction_bins,lower_p_change_array,upper_p_change_array,alpha=0.3,color=con_color,label='_nolegend_')
+        # ax.set_ylabel('Percent Change (%)')
         ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='-',marker='.')
         ax.fill_between(wind_direction_bins,lower_diff_array,upper_diff_array,alpha=0.3,color=con_color,label='_nolegend_')
+        ax.scatter(wind_direction_bins, diff_array,s=counts_diff_array, label='_nolegend_', color=con_color,marker='o',alpha=0.4)
         ax.axhline(0,color='k')
-        ax.set_ylabel('Percent Change (%)')
+        ax.set_ylabel('Change in Energy Ratio (-)')
         ax.grid(True)
 
 
