@@ -24,37 +24,40 @@ class Turbine():
         instance_dictionary: A dictionary that is generated from the input_reader;
             it should have the following key-value pairs:
                 {
-        
-                    **rotor_diameter**: A float that is the rotor diameter (m/s).
-        
-                    **hub_height**: A float that is the hub height (m).
-        
-                    **blade_count**: An integer that is the number of blades.
-        
-                    **pP**: A float that is the cosine exponent relating the yaw misalignment angle to power.
-        
-                    **pT**: A float that is the cosine exponent relating the rotor tilt angle to power.
-        
-                    **generator_efficiency**: A float that is the generator efficiency factor used to scale the power production.
+                    **description**: A string containing a description of the turbine.
 
-                    **power_thrust_table**: A dictionary containing the following key-value pairs:
+                    **properties**: A dictionary containing the following key-value pairs:
                         {
-                            **power**: A list of floats describing the coefficient of power at different wind speeds.
+                            **rotor_diameter**: A float that is the rotor diameter (m/s).
+                
+                            **hub_height**: A float that is the hub height (m).
+                
+                            **blade_count**: An integer that is the number of blades.
+                
+                            **pP**: A float that is the cosine exponent relating the yaw misalignment angle to power.
+                
+                            **pT**: A float that is the cosine exponent relating the rotor tilt angle to power.
+                
+                            **generator_efficiency**: A float that is the generator efficiency factor used to scale the power production.
 
-                            **thrust**: A list of floats describing the coefficient of thrust at different wind speeds.
+                            **power_thrust_table**: A dictionary containing the following key-value pairs:
+                                {
+                                    **power**: A list of floats describing the coefficient of power at different wind speeds.
 
-                            **wind_speed**: A list of floats containing the wind speeds for which the power and thrust values are provided (m/s).
-    
+                                    **thrust**: A list of floats describing the coefficient of thrust at different wind speeds.
+
+                                    **wind_speed**: A list of floats containing the wind speeds for which the power and thrust values are provided (m/s).
+            
+                                }
+                
+                            **yaw_angle**: A float that is the yaw angle of the turbine relative to the wind direction (deg). A positive value represents a 
+                            counter-clockwise rotation relative to the wind direction. 
+                
+                            **tilt_angle**: A float that is the tilt angle of the turbine (deg). Positive values correspond to a downward rotation of the rotor for an 
+                            upstream turbine. 
+                
+                            **TSR**: A float that is the tip-speed ratio of the turbine. This parameter is used in the "curl" wake model.
                         }
-        
-                    **yaw_angle**: A float that is the yaw angle of the turbine relative to the wind direction (deg). A positive value represents a 
-                    counter-clockwise rotation relative to the wind direction. 
-        
-                    **tilt_angle**: A float that is the tilt angle of the turbine (deg). Positive values correspond to a downward rotation of the rotor for an 
-                    upstream turbine. 
-        
-                    **TSR**: A float that is the tip-speed ratio of the turbine. This parameter is used in the "curl" wake model.
-        
                 }
 
     Returns:

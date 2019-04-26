@@ -28,21 +28,26 @@ class Farm():
         instance_dictionary: A dictionary as generated from the input_reader;
             it should have the following key-value pairs:
                 {
-                    **wind_speed**: A float that is the wind speed at hub height (m/s).
+                    **description**: A string containing a description of the wind farm.
 
-                    **wind_direction**: A float that is the wind direction (deg).
+                    **properties**: A dictionary containing the following key-value pairs:
+                        {
+                            **wind_speed**: A float that is the wind speed at hub height (m/s).
 
-                    **turbulence_intensity**: A float that is the turbulence intensity (expressed as a decimal fraction).
+                            **wind_direction**: A float that is the wind direction (deg).
 
-                    **wind_shear**: A float that is the power law wind shear exponent.
+                            **turbulence_intensity**: A float that is the turbulence intensity (expressed as a decimal fraction).
 
-                    **wind_veer**: A float that is the vertical change in wind direction across the rotor.
+                            **wind_shear**: A float that is the power law wind shear exponent.
 
-                    **air_density**: A float that is the air density (kg/m^3).
+                            **wind_veer**: A float that is the vertical change in wind direction across the rotor.
 
-                    **layout_x**: A list that contains the x coordinates of the turbines.
+                            **air_density**: A float that is the air density (kg/m^3).
 
-                    **layout_y**: A list that contains the y coordinates of the turbines.
+                            **layout_x**: A list that contains the x coordinates of the turbines.
+
+                            **layout_y**: A list that contains the y coordinates of the turbines.
+                        }
                 }
         turbine: The Turbine object used in Farm.
         wake: The Wake object used in Farm.
@@ -80,12 +85,11 @@ class Farm():
 
     def set_wake_model(self, wake_model):
         """
-        This method sets the wake model used. It will optionally calculate the new 
-        wake velocities and updates them in the flow field.
+        This method sets the wake model used.
 
         Parameters:
             wake_model: A string containing the wake model used to calculate the wake; Valid wake model 
-            options are: "curl", "gauss", "jensen", and "floris".
+                options are: "curl", "gauss", "jensen", and "floris".
 
         Returns:
             *None* -- The wake model and flow field are updated in the :py:obj:`floris.simulation.flow_field` object.
