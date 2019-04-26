@@ -28,7 +28,7 @@ layout_x = [0,7*D,0, 7*D]
 layout_y = [0,0,5*D,5*D]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
-# Change yaw angles
+# Calculate wake
 fi.calculate_wake()
 
 
