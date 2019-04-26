@@ -54,7 +54,7 @@ fi.reinitialize_flow_field(wind_speed=si.precursor_wind_speed,
                 wind_direction=si.precursor_wind_dir,
                 layout_array=(si.layout_x, si.layout_y)
                 )
-# fi.floris.farm.set_turbine_locations(si.layout_x, si.layout_y, calculate_wake=False)
+
 # Set the yaw angles
 fi.calculate_wake(yaw_angles=si.yaw_angles)
 
