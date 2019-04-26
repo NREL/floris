@@ -24,11 +24,13 @@ The second block of code extracts a slice of flow at hub_height using the :py:mo
 
 ::
 
+    # Initialize the horizontal cut
     hor_plane = wfct.cut_plane.HorPlane(
-        fi.get_flow_field(),
+        fi.get_flow_data(),
         fi.floris.farm.turbines[0].hub_height
     )
 
+Note that flow data is a saved flow information in a form of x,y,z,u,v,w
 
 The final block of code visualizes the hub-height plane:
 
