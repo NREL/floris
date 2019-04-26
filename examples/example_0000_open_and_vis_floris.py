@@ -17,11 +17,13 @@ from floris import Vec3
 
 # Initialize the FLORIS interface fi
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-fi.run_floris()
+
+# Calculate wake
+fi.calculate_wake()
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_field(),
+    fi.get_flow_data(),
     fi.floris.farm.turbines[0].hub_height
 )
 

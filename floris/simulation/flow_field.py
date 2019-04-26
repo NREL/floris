@@ -60,6 +60,8 @@ class FlowField():
             with_resolution=wake.velocity_model.model_grid_resolution
         )
 
+
+
     def _discretize_turbine_domain(self):
         """
         Create grid points at each turbine
@@ -155,6 +157,15 @@ class FlowField():
             ymax = np.max(y_coord) + 2 * self.max_diameter
             zmin = 0.1
             zmax = 6 * self.specified_wind_height
+
+            # Save these bounds
+            self._xmin = xmin
+            self._xmax = xmax
+            self._ymin = ymin
+            self._ymax = ymax
+            self._zmin = zmin
+            self._zmax = zmax
+
             resolution = self.wake.velocity_model.model_grid_resolution
             self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, resolution)
             rotated_x, rotated_y, rotated_z = self._rotated_grid(
@@ -173,6 +184,44 @@ class FlowField():
         return (turbine.grid_point_count - count) / turbine.grid_point_count
 
     # Public methods
+
+    def set_bounds(self, bounds_to_set=None):
+
+        # For the curl model, bounds are hard coded
+        if self.wake.velocity_model.model_string == 'curl':
+            coords = self.turbine_map.coords
+            x = [coord.x1 for coord in coords]
+            y = [coord.x2 for coord in coords]
+            eps = 0.1
+            self._xmin = min(x) - 2 * self.max_diameter
+            self._xmax = max(x) + 10 * self.max_diameter
+            self._ymin = min(y) - 2 * self.max_diameter
+            self._ymax = max(y) + 2 * self.max_diameter
+            self._zmin = 0 + eps
+            self._zmax = 6 * self.specified_wind_height
+
+        # Else, if none provided, use a shorter boundary for other models
+        elif bounds_to_set is None:
+            coords = self.turbine_map.coords
+            x = [coord.x1 for coord in coords]
+            y = [coord.x2 for coord in coords]
+            eps = 0.1
+            self._xmin = min(x) - 2 * self.max_diameter
+            self._xmax = max(x) + 10 * self.max_diameter
+            self._ymin = min(y) - 2 * self.max_diameter
+            self._ymax = max(y) + 2 * self.max_diameter
+            self._zmin = 0 + eps
+            self._zmax = 2 * self.specified_wind_height
+
+        else: # Set the boundaries
+            self._xmin = bounds_to_set[0]
+            self._xmax = bounds_to_set[1]
+            self._ymin = bounds_to_set[2]
+            self._ymax = bounds_to_set[3]
+            self._zmin = bounds_to_set[4]
+            self._zmax = bounds_to_set[5]
+
+
     def reinitialize_flow_field(self,
                                 wind_speed=None,
                                 wind_direction=None,
@@ -235,6 +284,9 @@ class FlowField():
         self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
 
+        # Set the domain bounds
+        self.set_bounds()
+
         # reinitialize the flow field
         self._compute_initialized_domain(with_resolution=with_resolution)
 
@@ -242,7 +294,7 @@ class FlowField():
         for turbine in self.turbine_map.turbines:
             turbine.reinitialize_turbine()
 
-    def calculate_wake(self, no_wake=False, with_resolution=None):
+    def calculate_wake(self, no_wake=False):
         """
         Updates the flow field based on turbine activity.
 
@@ -254,17 +306,14 @@ class FlowField():
         Parameters:
             no_wake: A bool that when *True* updates the turbine quantities without
                 calculating the wake or adding the wake to the flow field.
-            with_resolution: A :py:class:`floris.utilities.Vec3` object that defines the flow field resolution
-                at which to calculate the wake (default is *False*).
         
         Returns:
             *None* -- The flow field and turbine properties are updated directly in the :py:class:`floris.simulation.floris` object.
         """
-        self.reinitialize_flow_field(with_resolution=with_resolution)
 
         # define the center of rotation with reference to 270 deg
         center_of_rotation = Vec3(0, 0, 0)
-        
+
         # Rotate the turbines such that they are now in the frame of reference 
         # of the wind direction simpifying computing the wakes and wake overlap
         rotated_map = self.turbine_map.rotated(self.wind_direction, center_of_rotation)
@@ -377,14 +426,4 @@ class FlowField():
             The mininmum and maxmimum values of the domain in the x, y, and z directions.
 
         """
-        coords = self.turbine_map.coords
-        x = [coord.x1 for coord in coords]
-        y = [coord.x2 for coord in coords]
-        eps = 0.1
-        xmin = min(x) - 2 * self.max_diameter
-        xmax = max(x) + 10 * self.max_diameter
-        ymin = min(y) - 2 * self.max_diameter
-        ymax = max(y) + 2 * self.max_diameter
-        zmin = 0 + eps
-        zmax = 6 * self.specified_wind_height
-        return xmin, xmax, ymin, ymax, zmin, zmax
+        return self._xmin, self._xmax, self._ymin, self._ymax, self._zmin, self._zmax

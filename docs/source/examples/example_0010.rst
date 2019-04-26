@@ -8,6 +8,22 @@ to determine the optimial yaw angles for a given wind farm for a single wind spe
 The optimization function accepts the floris interface instance, and bounds and yaw angles, and 
 returns the optimal angles.
 
+The initial setup and power output are computed here
+
+::
+
+    # set turbine locations to 3 turbines in a row
+    D = fi.floris.farm.turbines[0].rotor_diameter
+    layout_x = [0,7*D,14*D]
+    layout_y = [0,0,0]
+    fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
+    fi.calculate_wake()
+
+    # initial power output
+    power_initial = np.sum(fi.get_turbine_power())
+
+The optimization is then called here:
+
 ::
 
     min_yaw = 0.0

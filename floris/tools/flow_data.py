@@ -14,7 +14,7 @@ import numpy as np
 from ..utilities import Vec3, Output
 
 
-class FlowField():
+class FlowData():
     #TODO handle none case, maybe defaul values apply like 0 origin and auto determine spacing and dimensions
     def __init__(self, x, y, z, u, v, w, spacing=None, dimensions=None, origin=None):
         """
@@ -74,7 +74,7 @@ class FlowField():
             ff.origin.x3+np.min(z),
         )
 
-        return FlowField(
+        return FlowData(
             x-np.min(x),
             y-np.min(y),
             z-np.min(z),

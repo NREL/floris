@@ -12,9 +12,9 @@ The first block of code reads in the input file and runs the model without modif
 ::
 
     fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-    fi.run_floris()
+    fi.calculate_wake()
 
-Note that :py:meth:`run_floris()<floris.tools.floris_utilities.FlorisInterface.run_floris>` is a wrapper 
+Note that :py:meth:`run_floris()<floris.tools.floris_utilities.FlorisInterface.calculate_wake>` is a wrapper 
 to the :py:meth:`calculate_wake()<floris.simulation.flow_field.FlowField.calculate_wake>` function, 
 and so only computes the wakes assuming that changes since instantation are limited to changes in turbine 
 yaw angle or other control function.  Changes to wind speed, wind direction, or turbine location require 
@@ -24,11 +24,13 @@ The second block of code extracts a slice of flow at hub_height using the :py:mo
 
 ::
 
+    # Initialize the horizontal cut
     hor_plane = wfct.cut_plane.HorPlane(
-        fi.get_flow_field(),
+        fi.get_flow_data(),
         fi.floris.farm.turbines[0].hub_height
     )
 
+Note that flow data is a saved flow information in a form of x,y,z,u,v,w
 
 The final block of code visualizes the hub-height plane:
 

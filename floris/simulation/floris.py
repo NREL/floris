@@ -68,24 +68,6 @@ class Floris():
             print('Farm {}'.format(num))
             print(farm)
 
-    def calculate_wake(self):
-        """
-        Calculates the wake of the FLORIS model with the stored parameters.
-        """
-        self.farm.flow_field.calculate_wake()
-
-    def calculate_with_conditions(self, wind_speed, wind_direction, ti):
-        """
-        wind_speed: Float - Updated wind speed
-        wind_direction: Float - Updated wind direction in degrees
-        ti: Float - Updated turbulence intensity
-        """
-        self.farm.flow_field.reinitialize_flow_field(
-            wind_speed=wind_speed,
-            wind_direction=wind_direction
-        )
-        self.calculate_wake()
-
     def export_pickle(self, pickle_file):
         """
         Exports a farm to a pickle file.

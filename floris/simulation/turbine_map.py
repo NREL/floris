@@ -12,6 +12,7 @@
 from ..utilities import Vec3
 from .turbine import Turbine
 import numpy as np
+import copy
 
 
 class TurbineMap():
@@ -38,8 +39,16 @@ class TurbineMap():
         self: TurbineMap - an instantiated TurbineMap object
     """
 
-    def __init__(self, turbine_map_dict):
-        self._turbine_map_dict = turbine_map_dict
+    def __init__(self, layout_x, layout_y, turbines):
+        """
+        all are lists
+        """
+        turbine_dict = {}
+        hub_height = turbines[0].hub_height
+        coordinates = list(zip(layout_x, layout_y))
+        for i, c in enumerate(coordinates):
+            turbine_dict[Vec3(c[0], c[1], hub_height)] = turbines[i]
+        self._turbine_map_dict = turbine_dict
 
     def rotated(self, angle, center_of_rotation):
         """
@@ -47,11 +56,13 @@ class TurbineMap():
         of rotation. This function returns a new TurbineMap object whose turbines
         are rotated. The original TurbineMap is not modified.
         """
-        rotated = {}
-        for coord, turbine in self.items:
+        layout_x = np.zeros(len(self.coords))
+        layout_y = np.zeros(len(self.coords))
+        for i, coord in enumerate(self.coords):
             coord.rotate_on_x3(angle, center_of_rotation)
-            rotated[Vec3(coord.x1prime, coord.x2prime, coord.x3prime)] = turbine
-        return TurbineMap(rotated)
+            layout_x[i] = coord.x1prime
+            layout_y[i] = coord.x2prime
+        return TurbineMap(layout_x, layout_y, self.turbines)
 
     def sorted_in_x_as_list(self):
         coords = sorted(self._turbine_map_dict, key=lambda coord: coord.x1)

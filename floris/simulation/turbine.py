@@ -191,7 +191,10 @@ class Turbine():
         )
 
     def reinitialize_turbine(self):
-        self.velocities = [0] * self.grid_point_count            
+        self.velocities = [0] * self.grid_point_count   
+
+    def set_yaw_angle(self,yaw_angle):
+        self._yaw_angle=yaw_angle
 
 
     # Getters & Setters

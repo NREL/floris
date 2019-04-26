@@ -24,7 +24,7 @@ print(sowfa_case)
 # Demonstrate flow field visualizations
 
 # # Get the horizontal cut plane
-hor_plane = wfct.cut_plane.HorPlane(sowfa_case.flow_field, 90)
+hor_plane = wfct.cut_plane.HorPlane(sowfa_case.flow_data, 90)
 
 # Show the views in different permutations
 fig,axarr = plt.subplots(3,2,figsize=(10,10))

@@ -17,7 +17,7 @@ from scipy.interpolate import griddata
 class _CutPlane():
 
     def __init__(self,
-                 flow_field,
+                 flow_data,
                  x1='x',
                  x2='y',
                  x3_value=None
@@ -31,9 +31,9 @@ class _CutPlane():
         self.x3_name = [x3 for x3 in ['x', 'y', 'z'] if x3 not in [x1, x2]][0]
 
         # Get x1, x2 and x3 arrays
-        x1_array = getattr(flow_field, self.x1_name)
-        x2_array = getattr(flow_field, self.x2_name)
-        x3_array = getattr(flow_field, self.x3_name)
+        x1_array = getattr(flow_data, self.x1_name)
+        x2_array = getattr(flow_data, self.x2_name)
+        x3_array = getattr(flow_data, self.x3_name)
 
         search_values = np.array(sorted(np.unique(x3_array)))
         nearest_idx = (np.abs(search_values-x3_value)).argmin()
@@ -47,9 +47,9 @@ class _CutPlane():
         # Store the un-interpolated input arrays at this slice 
         self.x1_in = x1_array[x3_select_mask]
         self.x2_in = x2_array[x3_select_mask]
-        self.u_in = flow_field.u[x3_select_mask]
-        self.v_in = flow_field.v[x3_select_mask]
-        self.w_in = flow_field.w[x3_select_mask]
+        self.u_in = flow_data.u[x3_select_mask]
+        self.v_in = flow_data.v[x3_select_mask]
+        self.w_in = flow_data.w[x3_select_mask]
 
         # Initially, x1_lin, x2_lin are unique values of input
         self.x1_lin = np.unique(self.x1_in)
@@ -87,18 +87,18 @@ class _CutPlane():
 # Define horizontal subclass
 class HorPlane(_CutPlane):
 
-    def __init__(self, flow_field, z_value):
+    def __init__(self, flow_data, z_value):
 
         # Set up call super
-        super().__init__(flow_field, x1='x', x2='y', x3_value=z_value)
+        super().__init__(flow_data, x1='x', x2='y', x3_value=z_value)
 
 # Define cross plane subclass
 class CrossPlane(_CutPlane):
 
-    def __init__(self, flow_field, x_value):
+    def __init__(self, flow_data, x_value):
 
         # Set up call super
-        super().__init__(flow_field, x1='y', x2='z', x3_value=x_value)
+        super().__init__(flow_data, x1='y', x2='z', x3_value=x_value)
 
 
 

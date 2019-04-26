@@ -54,13 +54,9 @@ class Farm():
     def __init__(self, instance_dictionary, turbine, wake):
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
-        self.layout_x = properties["layout_x"]
-        self.layout_y = properties["layout_y"]
+        layout_x = properties["layout_x"]
+        layout_y = properties["layout_y"]
         self.wake = wake
-
-        turbine_dict = {}
-        for c in list(zip(self.layout_x, self.layout_y)):
-            turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
 
         self.flow_field = FlowField(
             wind_speed=properties["wind_speed"],
@@ -69,7 +65,10 @@ class Farm():
             wind_veer=properties["wind_veer"],
             turbulence_intensity=properties["turbulence_intensity"],
             air_density=properties["air_density"],
-            turbine_map=TurbineMap(turbine_dict),
+            turbine_map=TurbineMap(
+                layout_x,
+                layout_y,
+                [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
             wake=wake
         )
 
@@ -79,7 +78,7 @@ class Farm():
             "Wake Model: {}\n".format(self.flow_field.wake.velocity_model) + \
             "Deflection Model: {}\n".format(self.flow_field.wake.deflection_model)
 
-    def set_wake_model(self, wake_model, calculate_wake=False):
+    def set_wake_model(self, wake_model):
         """
         This method sets the wake model used. It will optionally calculate the new 
         wake velocities and updates them in the flow field.
@@ -87,9 +86,6 @@ class Farm():
         Parameters:
             wake_model: A string containing the wake model used to calculate the wake; Valid wake model 
             options are: "curl", "gauss", "jensen", and "floris".
-            calculate_wake: A boolean that provides the option to calculate the wake after the wake model is set. This 
-            loops over the turbines, updating their velocities, calculating the wake deflection/deficit, and 
-            combines the wake with the flow field. 
 
         Returns:
             *None* -- The wake model and flow field are updated in the :py:obj:`floris.simulation.flow_field` object.
@@ -114,10 +110,8 @@ class Farm():
 
         self.flow_field.reinitialize_flow_field(with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution)
 
-        if calculate_wake:
-            self.flow_field.calculate_wake()
 
-    def set_yaw_angles(self, yaw_angles, calculate_wake=False):
+    def set_yaw_angles(self, yaw_angles):
         """
         This method sets yaw angles for all turbines and optionally calculates the new wake velocities 
         and updates them in the flow field.
@@ -125,9 +119,6 @@ class Farm():
         Parameters:
             yaw_angles: A float of list of floats containing a constant yaw angle for all turbines 
             or list of unique yaw angles for each turbine in degrees.
-            calculate_wake: A boolean that provides the option to calculate the wake after the wake model is set. This 
-            loops over the turbines, updating their velocities, calculating the wake deflection/deficit, and 
-            combines the wake with the flow field. 
             
         Returns:
             *None* -- The turbines are updated directly and the flow field is updated in the 
@@ -139,53 +130,12 @@ class Farm():
         for yaw_angle, turbine in zip(yaw_angles, self.turbines):
             turbine.yaw_angle = yaw_angle
 
-        if calculate_wake:
-            self.flow_field.calculate_wake()
-
-    def set_turbine_locations(self, layout_x, layout_y, calculate_wake=False):
-        """
-        This method sets the locations for all turbines and optionally calculates the wake velocities 
-        and updates them in the flow field.
-
-        Parameters:
-            layout_x: A list of floats that contains the x coordinate(s) for the turbine(s).
-            layout_y: A list of floats that contains the y coordinate(s) for the turbine(s).
-            calculate_wake: A boolean that provides the option to calculate the wake after the wake model is set. This 
-            loops over the turbines, updating their velocities, calculating the wake deflection/deficit, and 
-            combines the wake with the flow field.
-
-        Returns:
-            *None* -- The turbine locations and flow field are updated in the 
-            :py:obj:`floris.simulation.flow_field` object.
-        """
-
-        # TODO: this function requires all turbines to be the same.
-        # Is it reasonable to require the user to give a TurbineMap-like object
-        # where the turbines are instantiated and located externally?
-
-        # assign coordinates to turbines      
-        self.layout_x = layout_x
-        self.layout_y = layout_y
-
-        turbine_dict = {}
-        turbine = self.turbines[0]
-        for c in list(zip(self.layout_x, self.layout_y)):
-            turbine_dict[Vec3(c[0], c[1], turbine.hub_height)] = copy.deepcopy(turbine)
-
-        #update relevant farm and flow_field values
-        self.flow_field.reinitialize_flow_field(
-            turbine_map=TurbineMap(turbine_dict),
-            with_resolution=self.wake.velocity_model.model_grid_resolution
-        )
-
-        if calculate_wake:
-            self.flow_field.calculate_wake()
 
     # Getters & Setters
     @property
     def wind_speed(self):
         """
-        This method gets or sets the wind speed.
+        This method gets the wind speed.
 
         Parameters:
             wind_speed: A float that is the new wind speed for the wind farm in m/s.
@@ -204,14 +154,11 @@ class Farm():
         """
         return self.flow_field.wind_speed
 
-    @wind_speed.setter
-    def wind_speed(self, value):
-        self.flow_field.wind_speed = value
 
     @property
     def wind_direction(self):
         """
-        This method gets or sets the wind direction.
+        This method gets the wind direction.
 
         Parameters:
             wind_direction: A float that is the new wind direction for the wind farm in degrees.
@@ -230,14 +177,11 @@ class Farm():
         """
         return self.flow_field.wind_direction
 
-    @wind_direction.setter
-    def wind_direction(self, value):
-        self.flow_field.wind_direction = value
 
     @property
     def wind_shear(self):
         """
-        This method gets or sets the wind shear power law exponent.
+        This method gets the wind shear power law exponent.
 
         Parameters:
             wind_shear: A float that is the new wind shear power law exponent for the wind farm.
@@ -256,14 +200,11 @@ class Farm():
         """
         return self.flow_field.wind_shear
 
-    @wind_shear.setter
-    def wind_shear(self, value):
-        self.flow_field.wind_shear = value
 
     @property
     def wind_veer(self):
         """
-        This method gets or sets the wind veer -- the vertical change in wind direction across the rotor.
+        This method gets the wind veer -- the vertical change in wind direction across the rotor.
 
         Parameters:
             wind_veer: A float that is the new vertical change in wind direction across the rotor in degrees.
@@ -282,14 +223,11 @@ class Farm():
         """
         return self.flow_field.wind_veer
 
-    @wind_veer.setter
-    def wind_veer(self, value):
-        self.flow_field.wind_veer = value
 
     @property
     def turbulence_intensity(self):
         """
-        This method gets or sets the turbulence intensity.
+        This method gets the turbulence intensity.
 
         Parameters:
             turbulence_intensity: A float that is the new turbulence intensity expressed as a decimal fraction.
@@ -308,14 +246,11 @@ class Farm():
         """
         return self.flow_field.turbulence_intensity
 
-    @turbulence_intensity.setter
-    def turbulence_intensity(self, value):
-        self.flow_field.turbulence_intensity = value
 
     @property
     def air_density(self):
         """
-        This method gets or sets the air density.
+        This method gets the air density.
 
         Parameters:
             air_density: A float that is the new air density in kg/m^3.
@@ -334,14 +269,11 @@ class Farm():
         """
         return self.flow_field.air_density
 
-    @air_density.setter
-    def air_density(self, value):
-        self.flow_field.air_density = value
 
     @property
     def turbine_map(self):
         """
-        This method gets or sets the turbine map property of the :py:obj:`floris.simulation.flow_field` object.
+        This method gets the turbine map property of the :py:obj:`floris.simulation.flow_field` object.
 
         Parameters:
             turbine_map: A :py:obj:`floris.simulation.turbine_map` object that holds turbine information for the farm.
@@ -360,9 +292,6 @@ class Farm():
         """
         return self.flow_field.turbine_map
     
-    @turbine_map.setter
-    def turbine_map(self, value):
-        self.flow_field.turbine_map = value
 
     @property
     def turbines(self):
