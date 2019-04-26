@@ -19,8 +19,8 @@ The first section of the code imports the saved run by naming the case directory
     # Summarize self
     print(sowfa_case)
 
-The second section uses the same visualization applied previously to FLORIS, now applied to the saved time-averaged SOWFA flow-field.  This flow
-field was generated using OpenFoam output functions which can be observed in examples/sowfa_example/system/controlDict
+The second section uses the same visualization applied previously to FLORIS, now applied to the saved time-averaged SOWFA flow-field.  The flow
+data was generated using OpenFoam output functions which can be observed in examples/sowfa_example/system/controlDict
 
 The third case access and plots the outputs of the turbines in the flow.  In this example there is only one turbine, but the syntax for selecting
 between turbines is still provided to illustrate that the turbines are identified using a column within the output dataframe.
