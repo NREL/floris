@@ -244,8 +244,16 @@ class Turbine():
             Returns:
                 *None* -- The velocities are updated directly in the :py:class:`floris.simulation.turbine` object.
         """
+        self.velocities = [0] * self.grid_point_count   
 
-        self.velocities = [0] * self.grid_point_count            
+    def set_yaw_angle(self,yaw_angle):
+        """
+        This method sets the turbine's yaw angle.
+
+        Parameters:
+            yaw_angle: A float that is the new yaw angle (deg).
+        """
+        self._yaw_angle=yaw_angle
 
 
     # Getters & Setters

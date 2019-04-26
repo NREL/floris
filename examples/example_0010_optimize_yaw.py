@@ -28,8 +28,8 @@ fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 D = fi.floris.farm.turbines[0].rotor_diameter
 layout_x = [0,7*D,14*D]
 layout_y = [0,0,0]
-fi.floris.farm.set_turbine_locations(layout_x, layout_y)
-fi.run_floris()
+fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
+fi.calculate_wake()
 
 # initial power output
 power_initial = np.sum(fi.get_turbine_power())
@@ -40,7 +40,7 @@ print('Plotting the FLORIS flowfield...')
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_field(),
+    fi.get_hub_height_flow_data(),
     fi.floris.farm.turbines[0].hub_height
 )
 
@@ -61,11 +61,11 @@ for i in range(len(yaw_angles)):
     print('Turbine ', i, '=', yaw_angles[i],' deg')
 
 # assign yaw angles to turbines and calculate wake
-fi.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
+fi.calculate_wake(yaw_angles=yaw_angles)
 power_opt = np.sum(fi.get_turbine_power())
 
 print('==========================================')
-print('Total Power Gain = ', 100*(power_opt - power_initial)/power_initial,'%')
+print('Total Power Gain = %.1f%%' % (100.*(power_opt - power_initial)/power_initial))
 print('==========================================')  
 # ================================================================================
 print('Plotting the FLORIS flowfield with yaw...')
@@ -73,7 +73,7 @@ print('Plotting the FLORIS flowfield with yaw...')
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_field(),
+    fi.get_hub_height_flow_data(),
     fi.floris.farm.turbines[0].hub_height
 )
 

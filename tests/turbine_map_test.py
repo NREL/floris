@@ -23,20 +23,17 @@ class TurbineMapTest():
     def __init__(self):
         self.sample_inputs = SampleInputs()
         self.coordinates = [
-            Vec3(0.0, 0.0, 0.0),
-            Vec3(100.0, 0.0, 0.0)
+            [0.0, 0.0],   # layout x
+            [10.0, 20.0]  # layout y
         ]
-        self.turbine_map_dict = self._build_turbine_map_dict()
+        self.turbines = [
+            copy.deepcopy(Turbine(self.sample_inputs.turbine)),
+            copy.deepcopy(Turbine(self.sample_inputs.turbine))
+        ]
         self.instance = self._build_instance()
 
-    def _build_turbine_map_dict(self):
-        return {
-            self.coordinates[0]: Turbine(self.sample_inputs.turbine),
-            self.coordinates[1]: Turbine(self.sample_inputs.turbine)
-        }
-
     def _build_instance(self):
-        return TurbineMap(self.turbine_map_dict)
+        return TurbineMap(self.coordinates[0], self.coordinates[1], self.turbines)
 
 
 def test_instantiation():
@@ -47,15 +44,32 @@ def test_instantiation():
     assert test_class.instance is not None
 
 
-def test_items():
+def test_turbines():
     """
     The class should return a dict_items containing all items
     """
     test_class = TurbineMapTest()
-    items = test_class.instance.items
-    for i, item in enumerate(items):
-        assert test_class.coordinates[i] is item[0]
-        assert test_class.turbine_map_dict[test_class.coordinates[i]] is item[1]
+    baseline_turbines = test_class.turbines
+    test_turbines = test_class.instance.turbines
+    for (test, baseline) in zip(test_turbines, baseline_turbines):
+        assert test == baseline
+
+
+def test_coordinates():
+    """
+    The class should return a dict_items containing all items
+    """
+    test_class = TurbineMapTest()
+    hub_height = test_class.turbines[0].hub_height
+    coordinates = [
+        [test_class.coordinates[0][0], test_class.coordinates[1][0], hub_height],
+        [test_class.coordinates[0][1], test_class.coordinates[1][1], hub_height]
+    ]
+    baseline_coordinates = [Vec3(c) for c in coordinates]
+    test_coordinates = test_class.instance.coords
+    for (test, baseline) in zip(test_coordinates, baseline_coordinates):
+        print(test, baseline)
+        assert test == baseline
 
 
 def test_rotated():

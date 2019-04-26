@@ -27,10 +27,11 @@ class FlowFieldTest():
     def _build_input_dict(self):
         wake = Wake(self.sample_inputs.wake)
         turbine = Turbine(self.sample_inputs.turbine)
-        turbine_map = TurbineMap({
-            Vec3(0.0, 0.0, 0.0): copy.deepcopy(turbine),
-            Vec3(100.0, 0.0, 0.0): copy.deepcopy(turbine)
-        })
+        turbine_map = TurbineMap(
+            [0.0, 100.0],
+            [0.0, 0.0],
+            [copy.deepcopy(turbine), copy.deepcopy(turbine)]
+        )
         return {
             "wind_direction": 270.0,
             "wind_speed": 8.0,

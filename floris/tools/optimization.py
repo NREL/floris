@@ -33,7 +33,7 @@ def optimize_yaw(fi,minimum_yaw_angle=0.0,maximum_yaw_angle=25.0):
     print('Number of parameters to optimize = ', len(x0))
     print('=====================================================================')
 
-    residual_plant = minimize(fi.get_power_with_yaw_angles,x0,method='SLSQP',bounds=bnds,options={'eps':np.radians(5.0)})
+    residual_plant = minimize(fi.get_power_for_yaw_angle_opt,x0,method='SLSQP',bounds=bnds,options={'eps':np.radians(5.0)})
 
     if np.sum(residual_plant.x) == 0:
         print('No change in controls suggested for this inflow condition...')

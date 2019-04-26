@@ -11,7 +11,7 @@
 
 from . import cut_plane
 from . import floris_utilities
-from . import flow_field
+from . import flow_data
 from . import optimization
 from . import sowfa_utilities
 from . import visualization

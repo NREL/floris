@@ -13,7 +13,9 @@ specific language governing permissions and limitations under the License.
 
 import pytest
 import numpy as np
+import copy
 from floris.simulation import Floris
+from floris.simulation import TurbineMap
 from .sample_inputs import SampleInputs
 
 
@@ -26,7 +28,7 @@ class CurlRegressionTest():
         sample_inputs.floris["wake"]["properties"]["velocity_model"] = "curl"
         sample_inputs.floris["wake"]["properties"]["deflection_model"] = "curl"
         self.input_dict = sample_inputs.floris
-        self.debug = True
+        self.debug = False
 
     def baseline(self, turbine_index):
         baseline = [
@@ -49,7 +51,7 @@ def test_regression_tandem():
     """
     test_class = CurlRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
-    floris.calculate_wake()
+    floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
             print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
@@ -68,6 +70,7 @@ def test_regression_rotation():
     """
     test_class = CurlRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
+    fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
 
     ### unrotated
     floris.farm.flow_field.calculate_wake()
@@ -79,12 +82,16 @@ def test_regression_rotation():
                       turbine.aI, turbine.average_velocity)
 
     ### rotated
-    floris.farm.flow_field.reinitialize_flow_field(wind_direction=360)
-    floris.farm.set_turbine_locations(
+    new_map = TurbineMap(
         [0.0, 0.0],
-        [5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"], 0.0]
+        [5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"], 0.0],
+        [copy.deepcopy(fresh_turbine), copy.deepcopy(fresh_turbine)]
     )
-    floris.calculate_wake()
+    floris.farm.flow_field.reinitialize_flow_field(
+        wind_direction=360,
+        turbine_map=new_map
+    )
+    floris.farm.flow_field.calculate_wake()
 
     turbine = floris.farm.turbine_map.turbines[0]
     assert pytest.approx(turbine.Cp) == unwaked_baseline[0]
@@ -111,7 +118,7 @@ def test_regression_yaw():
     # yaw the upstream turbine 5 degrees
     rotation_angle = 5.0
     floris.farm.set_yaw_angles([rotation_angle, 0.0])
-    floris.calculate_wake()
+    floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
             print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))

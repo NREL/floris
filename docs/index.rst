@@ -38,7 +38,7 @@ Citation
 
 If FLORIS played a role in your research, please cite it. This software can be cited as::
 
-   FLORIS. Version X.Y.Z (2018). Available at https://github.com/wisdem/floris.
+   FLORIS. Version X.Y.Z (2018). Available at https://github.com/nrel/floris.
 
 Architecture
 ============
@@ -88,7 +88,7 @@ The alternative is to constantly update python paths within the package to match
 
 Before doing the local install, the source code repository must be cloned directly from GitHub:
 
-``git clone https://github.com/wisdem/floris``
+``git clone https://github.com/nrel/floris``
 
 Then, using the local editable installation is as simple as running the following command from the parent directory of the
 cloned repository:

@@ -11,8 +11,10 @@
 
 import numpy as np
 from floris.simulation import Floris
-from .flow_field import FlowField
+from floris.simulation import TurbineMap
+from .flow_data import FlowData
 from ..utilities import Vec3
+import copy
 
 
 class FlorisInterface():
@@ -24,33 +26,80 @@ class FlorisInterface():
         self.input_file = input_file
         self.floris = Floris(input_file=input_file)
 
-    def run_floris(self):
+    def calculate_wake(self, yaw_angles=None):
         """
-        This method runs the FLORIS model with the current model parameters.
+        Convience wrapper to the floris flow field calculate_wake method
         """
-        self.floris.calculate_wake()
 
-    def get_flow_field(self, resolution=None, grid_spacing=10):
-        if resolution is None:
-            if not self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
-                print('Assuming grid with spacing %d' % grid_spacing)
-                xmin, xmax, ymin, ymax, zmin, zmax = self.floris.farm.flow_field.domain_bounds
-                resolution = Vec3(
-                    1 + (xmax - xmin) / grid_spacing,
-                    1 + (ymax - ymin) / grid_spacing,
-                    1 + (zmax - zmin) / grid_spacing
-                )
-            else:
-                print('Assuming model resolution')
-                resolution = self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
+        if yaw_angles is not None:
+            self.floris.farm.set_yaw_angles(yaw_angles)
 
-        flow_field = self.floris.farm.flow_field
-        if flow_field.wake.velocity_model.requires_resolution and \
-            flow_field.wake.velocity_model.model_grid_resolution != resolution:
-            print("WARNING: The current wake velocity model contains a required grid resolution;")
-            print("    The Resolution given to FlorisInterface.get_flow_field is ignored.")
-            resolution = flow_field.wake.velocity_model.model_grid_resolution
-        flow_field.calculate_wake(with_resolution=resolution)
+        self.floris.farm.flow_field.calculate_wake()
+
+    def reinitialize_flow_field(self,
+                                wind_speed=None,
+                                wind_direction=None,
+                                wind_shear=None,
+                                wind_veer=None,
+                                turbulence_intensity=None,
+                                air_density=None,
+                                wake=None,
+                                layout_array=None,
+                                with_resolution=None):
+        """
+        Convience wrapper to the floris flow field reinitialize_flow_field method
+        """
+
+        # Build turbine map (convenience layer for user)
+        if layout_array is not None:
+            turbine_map = TurbineMap(layout_array[0], layout_array[1], self.floris.farm.flow_field.turbine_map.turbines) 
+        else:
+            turbine_map = None
+
+        self.floris.farm.flow_field.reinitialize_flow_field(
+                                wind_speed=wind_speed,
+                                wind_direction=wind_direction,
+                                wind_shear=wind_shear,
+                                wind_veer=wind_veer,
+                                turbulence_intensity=turbulence_intensity,
+                                air_density=air_density,
+                                wake=wake,
+                                turbine_map=turbine_map,
+                                with_resolution=with_resolution)
+
+    # Special case function for quick visualization of hub height
+    def get_hub_height_flow_data(self, x_resolution=100,y_resolution=100, x_bounds=None, y_bounds=None):
+        
+        if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
+            raise('Not allowed for wake model %s ' % self.floris.farm.flow_field.wake.velocity_model.model_string)
+
+        # Get a copy for the flow field so don't change underlying grid points
+        flow_field = copy.deepcopy(self.floris.farm.flow_field)
+
+        # If x and y bounds are not provided, use rules of thumb
+        if x_bounds is None:
+            coords = self.floris.farm.flow_field.turbine_map.coords
+            max_diameter = self.floris.farm.flow_field.max_diameter
+            x = [coord.x1 for coord in coords]
+            x_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
+        if y_bounds is None:
+            coords = self.floris.farm.flow_field.turbine_map.coords
+            max_diameter = self.floris.farm.flow_field.max_diameter
+            y = [coord.x2 for coord in coords]
+            y_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
+
+        # Z_bounds is always hub-height
+        hub_height = self.floris.farm.flow_field.turbine_map.turbines[0].hub_height
+        bounds_to_set = (x_bounds[0],x_bounds[1],y_bounds[0],y_bounds[1],hub_height-5., hub_height+5.)
+
+        # Set new bounds
+        flow_field.set_bounds(bounds_to_set=bounds_to_set)
+
+        # Change the resolution
+        flow_field.reinitialize_flow_field(with_resolution=Vec3(x_resolution,y_resolution,3))
+
+        # Calculate the wakes
+        flow_field.calculate_wake()
 
         order = "f"
         x = flow_field.x.flatten(order=order)
@@ -72,7 +121,55 @@ class FlorisInterface():
         )
         dimensions = Vec3(len(unique_x), len(unique_y), len(unique_z))
         origin = Vec3(0.0, 0.0, 0.0)
-        return FlowField(x, y, z, u, v, w, spacing=spacing, dimensions=dimensions, origin=origin)
+        return FlowData(x, y, z, u, v, w, spacing=spacing, dimensions=dimensions, origin=origin)
+
+    def get_flow_data(self, resolution=None, grid_spacing=10):
+        if resolution is None:
+            if not self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
+                print('Assuming grid with spacing %d' % grid_spacing)
+                xmin, xmax, ymin, ymax, zmin, zmax = self.floris.farm.flow_field.domain_bounds
+                resolution = Vec3(
+                    1 + (xmax - xmin) / grid_spacing,
+                    1 + (ymax - ymin) / grid_spacing,
+                    1 + (zmax - zmin) / grid_spacing
+                )
+            else:
+                print('Assuming model resolution')
+                resolution = self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
+
+        # Get a copy for the flow field so don't change underlying grid points
+        flow_field = copy.deepcopy(self.floris.farm.flow_field)
+
+        if flow_field.wake.velocity_model.requires_resolution and \
+            flow_field.wake.velocity_model.model_grid_resolution != resolution:
+            print("WARNING: The current wake velocity model contains a required grid resolution;")
+            print("    The Resolution given to FlorisInterface.get_flow_field is ignored.")
+            resolution = flow_field.wake.velocity_model.model_grid_resolution
+        flow_field.reinitialize_flow_field(with_resolution=resolution)
+        print(resolution)
+        flow_field.calculate_wake()
+
+        order = "f"
+        x = flow_field.x.flatten(order=order)
+        y = flow_field.y.flatten(order=order)
+        z = flow_field.z.flatten(order=order)
+
+        u = flow_field.u.flatten(order=order)
+        v = flow_field.v.flatten(order=order)
+        w = flow_field.w.flatten(order=order)
+
+        # Determine spacing, dimensions and origin
+        unique_x = np.sort(np.unique(x))
+        unique_y = np.sort(np.unique(y))
+        unique_z = np.sort(np.unique(z))
+        spacing = Vec3(
+            unique_x[1] - unique_x[0],
+            unique_y[1] - unique_y[0],
+            unique_z[1] - unique_z[0]
+        )
+        dimensions = Vec3(len(unique_x), len(unique_y), len(unique_z))
+        origin = Vec3(0.0, 0.0, 0.0)
+        return FlowData(x, y, z, u, v, w, spacing=spacing, dimensions=dimensions, origin=origin)
 
     def get_yaw_angles(self):
         yaw_angles = [turbine.yaw_angle for turbine in self.floris.farm.turbine_map.turbines]
@@ -83,15 +180,32 @@ class FlorisInterface():
         return np.sum(turb_powers)
 
     def get_turbine_power(self):
-        turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
+        turb_powers = [turbine.power for turbine in self.floris.farm.flow_field.turbine_map.turbines]
         return turb_powers
 
         # calculate the power under different yaw angles
-    def get_power_with_yaw_angles(self,yaw_angles):    
+    def get_power_for_yaw_angle_opt(self,yaw_angles):    
         
         # assign yaw angles to turbines and calculate wake
-        self.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
+        self.calculate_wake(yaw_angles=yaw_angles)
+        # self.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
         
         power = -1 * np.sum([turbine.power for turbine in self.floris.farm.turbines]) 
 
         return power/(10**3)
+
+    @property
+    def layout_x(self):
+        coords = self.floris.farm.flow_field.turbine_map.coords
+        layout_x = np.zeros(len(coords))
+        for i, coord in enumerate(coords):
+            layout_x[i] = coord.x1prime
+        return layout_x
+
+    @property
+    def layout_y(self):
+        coords = self.floris.farm.flow_field.turbine_map.coords
+        layout_y = np.zeros(len(coords))
+        for i, coord in enumerate(coords):
+            layout_y[i] = coord.x2prime
+        return layout_y
