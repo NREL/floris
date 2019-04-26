@@ -185,11 +185,10 @@ class FlowField():
 
     # Public methods
 
-
     def set_bounds(self, bounds_to_set=None):
 
         # For the curl model, bounds are hard coded
-        if str(self.wake.velocity_model) == 'curl':
+        if self.wake.velocity_model.model_string == 'curl':
             coords = self.turbine_map.coords
             x = [coord.x1 for coord in coords]
             y = [coord.x2 for coord in coords]
@@ -415,29 +414,6 @@ class FlowField():
     def wind_direction(self, value):
         # frame of reference is west
         self._wind_direction = value - 270
-
-    # @property
-    # def domain_bounds(self):
-    #     """
-    #     Get the bounds of the flow field domain.
-
-    #     Returns:
-    #         floats: xmin, xmax, ymin, ymax, zmin, zmax
-
-    #         The mininmum and maxmimum values of the domain in the x, y, and z directions.
-
-    #     """
-    #     coords = self.turbine_map.coords
-    #     x = [coord.x1 for coord in coords]
-    #     y = [coord.x2 for coord in coords]
-    #     eps = 0.1
-    #     xmin = min(x) - 2 * self.max_diameter
-    #     xmax = max(x) + 10 * self.max_diameter
-    #     ymin = min(y) - 2 * self.max_diameter
-    #     ymax = max(y) + 2 * self.max_diameter
-    #     zmin = 0 + eps
-    #     zmax = 6 * self.specified_wind_height
-    #     return xmin, xmax, ymin, ymax, zmin, zmax
 
     @property
     def domain_bounds(self):
