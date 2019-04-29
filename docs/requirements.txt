@@ -1,8 +1,7 @@
-Sphinx==2.0
-readthedocs-sphinx-ext==0.5.15
-doxypypy==0.8.8.6
+# Requirements list for floris documentation
+doxypypy>=0.8
+readthedocs-sphinx-ext>=0.5
+Sphinx>=2.0
 sphinxcontrib-doxylink==1.3
-numpy==1.16.1
-scipy>=1.1.0
 sphinxcontrib-napoleon==0.7
-pandas==0.24.2
+-r ../requirements.txt

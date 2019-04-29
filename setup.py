@@ -35,11 +35,12 @@ VERSION = '0.4.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'matplotlib==3.0.2',
-    'numpy==1.16.1',
-    'pickleshare==0.7.5',
-    'pytest==4.3.0',
-    'scipy==1.1.0',
+    'h5pyd==0.3.3',
+    'matplotlib>=3',
+    'numpy==1.16.3',
+    'pyproj==2.1.3',
+    'pytest>=4',
+    'scipy==1.1.0'
 ]
 
 # What packages are optional?
@@ -47,7 +48,9 @@ EXTRAS = {
     'docs': {
         'doxypypy==0.8.8.6',
         'readthedocs-sphinx-ext==0.5.15',
-        'sphinxcontrib-doxylink==1.3'
+        'Sphinx==2.0',
+        'sphinxcontrib-doxylink==1.3',
+        'sphinxcontrib-napoleon==0.7'
     }
 }
 
