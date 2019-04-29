@@ -13,10 +13,9 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 import os
 import pickle
-from wind_tools import geometry as geo
+from floris.utilities import wrap_180
 
 class PowerRose():
 
@@ -150,7 +149,7 @@ class PowerRose():
 
         # Choose the nearest direction
         # Find nearest wind direction
-        df['dist'] = np.abs(geo.wrap_180(df.wd - wd))
+        df['dist'] = np.abs(wrap_180(df.wd - wd))
         wd_select = df[df.dist == df.dist.min()]['wd'].unique()[0]
         print('Nearest wd to %.1f is %.1f' % (wd, wd_select))
         df = df[df.wd==wd_select]
