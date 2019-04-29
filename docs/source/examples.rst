@@ -22,10 +22,10 @@ submit your questions to stackoverflow.com using the tag FLORIS.  Additionally y
 
 FLORIS Input
 ============
-A sample input file to the Floris model is provided in ``examples/example_input.json``.
+A sample input file to the Floris model is provided :ref:`here <sample_input_file_ref>`.
 This example case uses the NREL 5MW turbine and the Gaussian wake model as a reference.
 All model parameters provided have been published in previous work, but the inputs to
-in the example input file can be changed as needed. However, be aware that changing these parameters
+the example input file can be changed as needed. However, be aware that changing these parameters
 may result in an unphysical solution.  Many of the example files will make use of this example input.
 
 

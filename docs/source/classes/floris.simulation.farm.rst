@@ -1,5 +1,5 @@
-floris\.simulation\.farm module
-===============================
+floris.simulation.farm module
+=============================
 
 .. automodule:: floris.simulation.farm
     :members:

@@ -5,8 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
-    :glob:
-    
+
     floris.simulation
     floris.tools
 
@@ -14,9 +13,8 @@ Submodules
 ----------
 
 .. toctree::
-    :glob:
 
-    floris.utilities
+   floris.utilities
 
 Module contents
 ---------------

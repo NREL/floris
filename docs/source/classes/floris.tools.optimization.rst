@@ -1,5 +1,5 @@
-floris\.tools\.optimization module
-==================================
+floris.tools.optimization module
+================================
 
 .. automodule:: floris.tools.optimization
     :members:

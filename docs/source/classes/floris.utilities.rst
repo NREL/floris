@@ -1,5 +1,5 @@
-floris\.utilities module
-========================
+floris.utilities module
+=======================
 
 .. automodule:: floris.utilities
     :members:

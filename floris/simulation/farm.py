@@ -27,11 +27,14 @@ class Farm():
     Parameters:
         instance_dictionary: A dictionary as generated from the input_reader;
             it should have the following key-value pairs:
+
                 {
                     **description**: A string containing a description of the wind farm.
 
                     **properties**: A dictionary containing the following key-value pairs:
+
                         {
+                            
                             **wind_speed**: A float that is the wind speed at hub height (m/s).
 
                             **wind_direction**: A float that is the wind direction (deg).
@@ -47,8 +50,11 @@ class Farm():
                             **layout_x**: A list that contains the x coordinates of the turbines.
 
                             **layout_y**: A list that contains the y coordinates of the turbines.
+
                         }
+
                 }
+
         turbine: The Turbine object used in Farm.
         wake: The Wake object used in Farm.
 

@@ -4,11 +4,9 @@
     :glob:
     :titlesonly:
 
-    source/classes
+    source/code
     source/inputs
     source/examples
-    source/tests
-    source/for_developers
     source/changelog
     
 
@@ -38,7 +36,20 @@ Citation
 
 If FLORIS played a role in your research, please cite it. This software can be cited as::
 
-   FLORIS. Version X.Y.Z (2018). Available at https://github.com/nrel/floris.
+   FLORIS. Version X.Y.Z (2019). Available at https://github.com/nrel/floris.
+
+For LaTeX users:
+
+::
+
+    @misc{FLORIS_2019,
+    author = {NREL},
+    title = {{FLORIS. Version X.Y.Z}},
+    year = {2019},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    url = {https://github.com/NREL/floris}
+    }
 
 Architecture
 ============

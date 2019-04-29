@@ -1,5 +1,5 @@
 example_0006_floris_demonstrate_hh_plot.py
-==================================
+==========================================
 
 This example demonstrates two methods for getting flow data from a FLORIS model.  The code uses the python time module to indicate the difference
 in required time involved.

@@ -1,5 +1,5 @@
-floris\.simulation\.turbine module
-==================================
+floris.simulation.turbine module
+================================
 
 .. automodule:: floris.simulation.turbine
     :members:

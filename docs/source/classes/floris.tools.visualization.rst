@@ -1,5 +1,5 @@
-floris\.tools\.visualization module
-===================================
+floris.tools.visualization module
+=================================
 
 .. automodule:: floris.tools.visualization
     :members:

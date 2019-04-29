@@ -1,5 +1,5 @@
-floris\.simulation\.wake\_velocity module
-=========================================
+floris.simulation.wake\_velocity module
+=======================================
 
 .. automodule:: floris.simulation.wake_velocity
     :members:

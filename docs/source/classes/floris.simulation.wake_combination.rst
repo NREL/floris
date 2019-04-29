@@ -1,5 +1,5 @@
-floris\.simulation\.wake\_combination module
-============================================
+floris.simulation.wake\_combination module
+==========================================
 
 .. automodule:: floris.simulation.wake_combination
     :members:

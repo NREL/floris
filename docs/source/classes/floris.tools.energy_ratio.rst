@@ -1,7 +1,7 @@
-floris\.tools\.flow\_field module
+floris.tools.energy\_ratio module
 =================================
 
-.. automodule:: floris.tools.flow_field
+.. automodule:: floris.tools.energy_ratio
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,5 +1,5 @@
-floris\.simulation\.flow\_field module
-======================================
+floris.simulation.flow\_field module
+====================================
 
 .. automodule:: floris.simulation.flow_field
     :members:

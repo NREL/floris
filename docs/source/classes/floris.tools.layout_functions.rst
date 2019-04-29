@@ -1,7 +1,7 @@
-floris.simulation.turbine\_map module
+floris.tools.layout\_functions module
 =====================================
 
-.. automodule:: floris.simulation.turbine_map
+.. automodule:: floris.tools.layout_functions
     :members:
     :undoc-members:
     :show-inheritance:

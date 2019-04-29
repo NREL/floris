@@ -1,7 +1,7 @@
-floris.tools.cut\_plane module
+floris.tools.wind\_rose module
 ==============================
 
-.. automodule:: floris.tools.cut_plane
+.. automodule:: floris.tools.wind_rose
     :members:
     :undoc-members:
     :show-inheritance:

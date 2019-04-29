@@ -98,7 +98,7 @@ html_theme_options = {
     "fixed_sidebar": True,
     "github_user": "WISDEM",
     "github_repo": "FLORIS",
-    "sidebar_width": '350px',
+    "sidebar_width": '375px',
     "page_width": '75%',
     "show_relbars": True
 }
@@ -117,7 +117,7 @@ html_sidebars = {
     '**': [
         'about.html',
         'navigation.html',
-        'searchbox.html',
+        'searchbox.html'        
     ]
 }
 
