@@ -5,7 +5,7 @@ The `FLORIS API documentation <../doxygen/html/index.html>`_ is auto-generated
 with Doxygen. It is a work in progress and continuously update, so please feel free to contribute!
 
 FLORIS is currently maintained at NREL's National Wind Technology Center by
-`Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_,
+`Jen King <mailto:jennifer.king@nrel.gov>`_,
 `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, and
 `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_. However, we are excited about
 outside contribution, and this page outlines processes and procedures we'd like to follow

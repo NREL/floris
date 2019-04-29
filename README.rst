@@ -4,7 +4,7 @@ FLORIS Wake Modeling Utility
 
 **Further documentation is available at http://floris.readthedocs.io/.**
 
-For questions regarding FLORIS, please contact `Jen Annoni <mailto:jennifer.annoni@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_,
+For questions regarding FLORIS, please contact `Jen King <mailto:jennifer.king@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_,
 or join the conversation on our `Slack team <https://join.slack.com/t/floris-nwtc/shared_invite/enQtMzMzODczNzE2NTAwLTYyZTcyZDVmODA5NDFmYzNmZmY0YzNjZTQwNTYxMzkyMGE1YWE0ZTBmNWRmNGI3NTZmZjFjMTljYWMxNzM4MmI>`_.
 
 Citation
