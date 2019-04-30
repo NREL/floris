@@ -19,13 +19,13 @@ from floris.simulation import TurbineMap
 from .sample_inputs import SampleInputs
 
 
-class FlorisJimenezRegressionTest():
+class MultiZoneJimenezRegressionTest():
     """
     """
 
     def __init__(self):
         sample_inputs = SampleInputs()
-        sample_inputs.floris["wake"]["properties"]["velocity_model"] = "floris"
+        sample_inputs.floris["wake"]["properties"]["velocity_model"] = "multizone"
         sample_inputs.floris["wake"]["properties"]["deflection_model"] = "jimenez"
         self.input_dict = sample_inputs.floris
         self.debug = False
@@ -49,7 +49,7 @@ def test_regression_tandem():
     """
     Tandem turbines
     """
-    test_class = FlorisJimenezRegressionTest()
+    test_class = MultiZoneJimenezRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
@@ -68,7 +68,7 @@ def test_regression_rotation():
     Turbines in tandem and rotated.
     The result from 270 degrees should match the results from 360 degrees.
     """
-    test_class = FlorisJimenezRegressionTest()
+    test_class = MultiZoneJimenezRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
 
@@ -112,7 +112,7 @@ def test_regression_yaw():
     """
     Tandem turbines with the upstream turbine yawed
     """
-    test_class = FlorisJimenezRegressionTest()
+    test_class = MultiZoneJimenezRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
 
     # yaw the upstream turbine 5 degrees

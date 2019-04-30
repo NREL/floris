@@ -63,7 +63,7 @@ class SampleInputs():
             "description": "wake",
             "properties": {
                 "velocity_model": "gauss",
-                "deflection_model": "gauss_deflection",
+                "deflection_model": "gauss",
                 "combination_model": "sosfs",
                 "parameters": {
                     "turbulence_intensity": {
@@ -75,7 +75,7 @@ class SampleInputs():
                     "jensen": {
                         "we": 0.05
                     },
-                    "floris": {
+                    "multizone": {
                         "me": [
                             -0.05,
                             0.3,
@@ -90,18 +90,12 @@ class SampleInputs():
                             5.5
                         ]
                     },
-                    "gauss": {
-                        "ka": 0.3,
-                        "kb": 0.004,
-                        "alpha": 0.58,
-                        "beta": 0.077
-                    },
                     "jimenez": {
                         "kd": 0.17,
                         "ad": 0.0,
                         "bd": 0.0
                     },
-                    "gauss_deflection": {
+                    "gauss": {
                         "ka": 0.3,
                         "kb": 0.004,
                         "alpha": 0.58,

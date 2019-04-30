@@ -60,7 +60,7 @@ class Jimenez(WakeDeflection):
 class Gauss(WakeDeflection):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        self.model_string = "gauss_deflection"
+        self.model_string = "gauss"
         model_dictionary = parameter_dictionary[self.model_string]
         self.ka = float(model_dictionary["ka"])
         self.kb = float(model_dictionary["kb"])

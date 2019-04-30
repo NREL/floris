@@ -96,7 +96,7 @@ class Farm():
         Parameters:
             wake_model: A string containing the wake model used to 
                 calculate the wake; Valid wake model options are: 
-                "curl", "gauss", "jensen", and "floris".
+                "curl", "gauss", "jensen", and "multizone".
 
         Returns:
             *None* -- The wake model and flow field are updated in 
@@ -108,7 +108,7 @@ class Farm():
             >>> floris.farm.set_wake_model('curl')
         """
 
-        valid_wake_models = ['curl', 'gauss', 'jensen', 'floris']
+        valid_wake_models = ['curl', 'gauss', 'jensen', 'multizone']
         if wake_model not in valid_wake_models:
             raise Exception("Invalid wake model. Valid options include: {}.".format(
                 ", ".join(valid_wake_models)))
@@ -116,12 +116,12 @@ class Farm():
         if wake_model == 'jensen':
             self.flow_field.wake.velocity_model = 'jensen'
             self.flow_field.wake.deflection_model = 'jimenez'
-        elif wake_model == 'floris':
-            self.flow_field.wake.velocity_model = 'floris'
-            self.flow_field.wake.deflection_model = 'floris'
+        elif wake_model == 'multizone':
+            self.flow_field.wake.velocity_model = 'multizone'
+            self.flow_field.wake.deflection_model = 'jimenez'
         elif wake_model == 'gauss':
             self.flow_field.wake.velocity_model = 'gauss'
-            self.flow_field.wake.deflection_model = 'gauss_deflection'
+            self.flow_field.wake.deflection_model = 'gauss'
         elif wake_model == 'curl':
             self.flow_field.wake.velocity_model = 'curl'
             self.flow_field.wake.deflection_model = 'curl'
@@ -268,8 +268,8 @@ class Farm():
         the wind farm.
 
         Returns:
-            TurbineMap: A :py:obj:`floris.simulation.turbine_map` object that 
-            holds turbine information for the farm.
+            TurbineMap: A :py:obj:`floris.simulation.turbine_map` 
+            object that holds turbine information for the farm.
 
         Examples:
             To get the turbine map for the wind farm:
@@ -286,8 +286,8 @@ class Farm():
         :py:obj:`floris.simulation.turbine_map` object.
 
         Returns:
-            [Turbine]: A list of :py:obj:`floris.simulation.turbine` objects that 
-            hold the turbine information for the wind farm.
+            [Turbine]: A list of :py:obj:`floris.simulation.turbine` 
+            objects that hold the turbine information for the wind farm.
 
         Examples:
             To get a list of turbine objects from the wind farm:
