@@ -46,10 +46,8 @@ REQUIRED = [
 # What packages are optional?
 EXTRAS = {
     'docs': {
-        'doxypypy==0.8.8.6',
         'readthedocs-sphinx-ext==0.5.15',
         'Sphinx==2.0',
-        'sphinxcontrib-doxylink==1.3',
         'sphinxcontrib-napoleon==0.7'
     }
 }

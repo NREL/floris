@@ -16,14 +16,6 @@ florispath = os.path.dirname(cwd)
 sys.path.insert(0, florispath)
 import subprocess
 
-builddir = sys.argv[-1]
-sourcedir = sys.argv[-2]
-doxname = os.path.join(sourcedir, 'Doxyfile')
-doxygen_directory = os.path.join('_build', 'html', 'doxygen')
-if not os.path.exists(doxygen_directory):
-    os.makedirs(doxygen_directory)
-# doxproc = subprocess.call(('doxygen', doxname))
-
 # -- General configuration ------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
