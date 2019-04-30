@@ -15,7 +15,7 @@ feel free to contribute!
 
 FLORIS Initialization
 =====================
-The primary object in FLORIS is the \link floris.floris.Floris \endlink class.
+The primary object in FLORIS is the :py:class:`floris.simulation.floris` class.
 A call-graph of the classes and functions used in the FLORIS init method is
 included below.
 
@@ -24,8 +24,8 @@ included below.
 Calculate Wake
 ==============
 After the wind farm, turbine, and wake models are well established, the flow
-field is actually calculated by calling the `calculate_wake` function in
-\link floris.flow_field.FlowField \endlink. A call-graph of the classes and
-functions used in this process is included below.
+field is actually calculated by calling
+:py:meth:`floris.simulation.flow_field.calculate_wake`. A call-graph of the
+classes and functions used in this process is included below.
 
 .. image:: ../_static/images/calculate_wake.png
