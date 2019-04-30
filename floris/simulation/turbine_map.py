@@ -70,7 +70,7 @@ class TurbineMap():
                 turbines.
             center_of_rotation: The center of rotation. If not supplied 
                 the default is ``Vec3(0.0, 0.0, 0.0)``.
-        
+
         Returns:
             TurbineMap: A rotated TurbineMap.
         """
@@ -86,7 +86,7 @@ class TurbineMap():
         """
         Returns a sorted list of turbine coordinates and turbines from 
         smallest x1 coordinate to largest x1 coordinate.
-        
+
         Returns:
             [Vec3, Turbine]: A sorted list of turbine coordinates and 
             turbines.
@@ -98,7 +98,7 @@ class TurbineMap():
     def turbines(self):
         """
         Property that returns list of Turbine objects in wind farm.
-        
+
         Returns:
             [Turbine]: A list of Turbine objects.
         """
@@ -120,7 +120,7 @@ class TurbineMap():
         """
         Property that returns a list with dictionary pairs of 
         coordinates and Turbine objects.
-        
+
         Returns:
             dict_items: List of dictionary key and value pairs of 
             coordinates and Turbine objects.
