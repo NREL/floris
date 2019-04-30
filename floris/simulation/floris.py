@@ -14,10 +14,10 @@ from .input_reader import InputReader
 
 class Floris():
     """
-    Top-level object that contains a FLORIS model.
+    Top-level class that contains a Floris model.
 
     Floris is the highest level class of the Floris package. Import this class
-    and instantiate it with a path to an input file to begin running Floris. Use
+    and instantiate it with a path to an input file to create a Floris model. Use
     the ``farm`` attribute to access other objects within the model.
 
     Parameters:
@@ -41,7 +41,10 @@ class Floris():
     @property
     def farm(self):
         """
-        Property of the FLORIS object that returns the farm(s) contained within the object.
+        Property of the Floris object that returns the farm(s) contained within the object.
+
+        Returns:
+            A Farm object, or if multiple farms, a list of Farm objects.
         """
         if len(self._farm) == 1:
             return self._farm[0]
@@ -55,14 +58,20 @@ class Floris():
 
     def add_farm(self, input_file=None, input_dict=None):
         """
-        Adds a farm with user-defined input file to the FLORIS object
+        A method that adds a farm with user-defined input file to the Floris object.
+
+        Returns:
+            *None* -- The :py:class:`floris.simulation.floris` object is updated directly.
         """
         self._farm.append(self.input_reader.read(input_file=input_file,
                                                 input_dict=input_dict))
 
     def list_farms(self):
         """
-        Lists the farms and relevant farm details stored in FLORIS object
+        A method that lists the farms and relevant farm details stored in Floris object.
+
+        Returns:
+            *None* -- The farm infomation is printed to the console.
         """
         for num, farm in enumerate(self._farm):
             print('Farm {}'.format(num))
@@ -70,12 +79,18 @@ class Floris():
 
     def export_pickle(self, pickle_file):
         """
-        Exports a farm to a pickle file.
+        A method that exports a farm to a pickle file.
+
+        Returns:
+            *None* -- Creates a pickle file.
         """
         pickle.dump(self.farm, open(pickle_file, "wb"))
 
     def import_pickle(self, pickle_file):
         """
-        Imports a farm from a pickle file.
+        A method that imports a farm from a pickle file.
+
+        Returns:
+            *None* - Loads the farm into the :py:class:`floris.simulation.floris.farm` object.
         """
         self.farm = pickle.load(open(pickle_file, "rb"))

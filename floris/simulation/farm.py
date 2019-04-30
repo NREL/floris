@@ -19,41 +19,27 @@ import numpy as np
 
 class Farm():
     """
+    Farm is a class containing the objects that make up a FLORIS model.
+
     Farm is the container class of the FLORIS package. It brings together all
     of the component objects after input (i.e., Turbine, Wake, FlowField) and
     packages everything into the appropriate data type. Farm should also be used
     as an entry point to probe objects for generating output.
 
     Parameters:
-        instance_dictionary: A dictionary as generated from the input_reader;
-            it should have the following key-value pairs:
+        instance_dictionary: A dictionary as generated from the input_reader; it should have the following key-value pairs:
 
-                {
-                    **description**: A string containing a description of the wind farm.
+            - **description**: A string containing a description of the wind farm.
+            - **properties**: A dictionary containing the following key-value pairs:
 
-                    **properties**: A dictionary containing the following key-value pairs:
-
-                        {
-                            
-                            **wind_speed**: A float that is the wind speed at hub height (m/s).
-
-                            **wind_direction**: A float that is the wind direction (deg).
-
-                            **turbulence_intensity**: A float that is the turbulence intensity (expressed as a decimal fraction).
-
-                            **wind_shear**: A float that is the power law wind shear exponent.
-
-                            **wind_veer**: A float that is the vertical change in wind direction across the rotor.
-
-                            **air_density**: A float that is the air density (kg/m^3).
-
-                            **layout_x**: A list that contains the x coordinates of the turbines.
-
-                            **layout_y**: A list that contains the y coordinates of the turbines.
-
-                        }
-
-                }
+                - **wind_speed**: A float that is the wind speed at hub height (m/s).
+                - **wind_direction**: A float that is the wind direction (deg).
+                - **turbulence_intensity**: A float that is the turbulence intensity (expressed as a decimal fraction).
+                - **wind_shear**: A float that is the power law wind shear exponent.
+                - **wind_veer**: A float that is the vertical change in wind direction across the rotor.
+                - **air_density**: A float that is the air density (kg/m^3).
+                - **layout_x**: A list that contains the x coordinates of the turbines.
+                - **layout_y**: A list that contains the y coordinates of the turbines.
 
         turbine: The Turbine object used in Farm.
         wake: The Wake object used in Farm.
@@ -145,7 +131,7 @@ class Farm():
     @property
     def wind_speed(self):
         """
-        This method returns the wind speed for the wind farm.
+        This property returns the wind speed for the wind farm.
 
         Returns:
             A float that is the current wind speed in the wind farm in m/s.
@@ -156,7 +142,7 @@ class Farm():
     @property
     def wind_direction(self):
         """
-        This method returns the wind direction for the wind farm.
+        This property returns the wind direction for the wind farm.
 
         Returns:
             A float that is the current wind direction in the wind farm in degrees.
@@ -167,7 +153,7 @@ class Farm():
     @property
     def wind_shear(self):
         """
-        This method returns the wind shear power law exponent for the wind farm.
+        This property returns the wind shear power law exponent for the wind farm.
 
         Returns:
             A float that is the current wind shear power law exponent in the wind farm.
@@ -178,7 +164,7 @@ class Farm():
     @property
     def wind_veer(self):
         """
-        This method returns the wind veer -- the vertical change in wind direction across the rotor.
+        This property returns the wind veer -- the vertical change in wind direction across the rotor.
 
         Returns:
             A float that is the current vertical change in wind direction across the rotor in degrees.
@@ -189,7 +175,7 @@ class Farm():
     @property
     def turbulence_intensity(self):
         """
-        This method returns the turbulence intensity for the wind farm.
+        This property returns the turbulence intensity for the wind farm.
 
         Returns:
             A float that is the current turbulence intensity expressed as a decimal fraction.
@@ -200,7 +186,7 @@ class Farm():
     @property
     def air_density(self):
         """
-        This method returns the air density for the wind farm.
+        This property returns the air density for the wind farm.
 
         Returns:
             A float that is the current air density in kg/m^3.
@@ -211,7 +197,7 @@ class Farm():
     @property
     def turbine_map(self):
         """
-        This method returns the turbine map property of the :py:obj:`floris.simulation.flow_field` object associated with the wind farm.
+        This property returns the turbine map of the :py:obj:`floris.simulation.flow_field` object associated with the wind farm.
 
         Returns:
             A :py:obj:`floris.simulation.turbine_map` object that holds turbine information for the farm.
@@ -222,7 +208,7 @@ class Farm():
     @property
     def turbines(self):
         """
-        This method returns the list of :py:obj:`floris.simulation.turbine` objects contained in 
+        This property returns the list of :py:obj:`floris.simulation.turbine` objects contained in 
         the :py:obj:`floris.simulation.turbine_map` object.
 
         Returns:

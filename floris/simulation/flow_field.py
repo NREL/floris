@@ -186,6 +186,21 @@ class FlowField():
     # Public methods
 
     def set_bounds(self, bounds_to_set=None):
+        """
+        A method that will set the domain bounds for the wake model.
+
+        This method allows a user to customzie the domain bounds for the current wake model being used, 
+        unless the wake model is the Curl model, then a predefined domain is specified and used. If the 
+        bounds are not specified, then a pre-defined set of bounds will be used. The bounds consist of 
+        the minimum and maximum values in the x-, y-, and z-directions.
+
+        Parameters:
+            bounds_to_set: A list of values representing the mininum and maximum values for the domain 
+                [xmin, xmax, ymin, ymax, zmin, zmax] (default is *None*).
+
+        Returns:
+            *None* -- The flow field is updated directly in the :py:class:`floris.simulation.floris.flow_field` object.
+        """
 
         # For the curl model, bounds are hard coded
         if self.wake.velocity_model.model_string == 'curl':
@@ -235,7 +250,7 @@ class FlowField():
         """
         Reiniaitilzies the flow field when a parameter needs to be updated.
 
-        This function allows for changing/updating a variety of flow related 
+        This method allows for changing/updating a variety of flow related 
         parameters. This would typically be used in loops or optimizations
         where the user is calculating AEP over a wind rose or investigating 
         wind farm performance at different conditions.
@@ -397,13 +412,9 @@ class FlowField():
     @property
     def wind_direction(self):
         """
-        The wind direction in degrees.
+        Property that returns the wind direction in degrees.
 
         Examples:
-            To set the wind direction you could do:
-            
-            >>> floris.farm.flow_field.wind_direction(35.0)
-
             To get the wind direction, simply call:
 
             >>> wind_direction = floris.farm.flow_field.wind_direction()
@@ -418,12 +429,16 @@ class FlowField():
     @property
     def domain_bounds(self):
         """
-        Get the bounds of the flow field domain.
+        Property that returns the bounds of the flow field domain.
 
         Returns:
             floats: xmin, xmax, ymin, ymax, zmin, zmax
 
             The mininmum and maxmimum values of the domain in the x, y, and z directions.
 
+        Examples:
+            To get the domain bounds:
+
+            >>> domain_bounds = floris.farm.flow_field.domain_bounds()
         """
         return self._xmin, self._xmax, self._ymin, self._ymax, self._zmin, self._zmax

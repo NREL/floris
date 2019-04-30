@@ -17,10 +17,10 @@ the number of turbines and their locations are changed via the line:
     # Calculate wake
     fi.calculate_wake()
 
-Note that since changing the turbine layout requires calling the simulation
-function
+Note that since changing the turbine layout requires calling the simulation 
+function 
 :py:meth:`Calculate_wake<floris.simulation.flow_field.FlowField.reinitialize_flow_field>`
-the interface function to change the layout (as well as wind speed,
+the interface function to change the layout (as well as wind speed, 
 direction, TI...) is made through this function's wrapper.
 
 The next block cycles through wind speed and wind directions and updates the
