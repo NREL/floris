@@ -70,6 +70,8 @@ For LaTeX users:
     url = {https://github.com/NREL/floris}
     }
 
+.. _installation:
+
 Installation
 ============
 Using ``pip``, FLORIS can be installed in two ways
