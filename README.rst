@@ -1,38 +1,63 @@
-
 FLORIS Wake Modeling Utility
 ----------------------------
-
 **Further documentation is available at http://floris.readthedocs.io/.**
 
-For questions regarding FLORIS, please contact `Jen King <mailto:jennifer.king@nrel.gov>`_, `Paul Fleming <mailto:paul.fleming@nrel.gov>`_, or `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_,
-or join the conversation on our `Slack team <https://join.slack.com/t/floris-nwtc/shared_invite/enQtMzMzODczNzE2NTAwLTYyZTcyZDVmODA5NDFmYzNmZmY0YzNjZTQwNTYxMzkyMGE1YWE0ZTBmNWRmNGI3NTZmZjFjMTljYWMxNzM4MmI>`_.
+For technical questions regarding FLORIS usage please first search for or post
+your questions to
+`stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
+the **floris** tag. Alternatively, please contact
+`Jen King <mailto:jennifer.king@nrel.gov>`_,
+`Paul Fleming <mailto:paul.fleming@nrel.gov>`_,
+`Chris Bay <mailto:chris.bay@nrel.gov>`_, and
+`Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
+
+Background and objectives
+=========================
+This FLORIS model is designed to provide a computationally inexpensive,
+controls-oriented model of the steady-state wake characteristics in a wind
+farm. This can be used for real-time optimization and control. This version of
+FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al.
+2016), Gaussian, and Curl wake model.
+
+Literature on the Gaussian model can be found in the following papers:
+
+1. Niayifar, A. and Porté-Agel, F.: A new 15 analytical model for wind farm
+   power prediction, in: Journal of Physics: Conference Series, vol. 625,
+   p. 012039, IOP Publishing, 2015.
+
+2. Dilip, D. and Porté-Agel, F.: Wind Turbine Wake Mitigation through Blade
+   Pitch Offset, Energies, 10, 757, 2017.
+
+3. Abkar, M. and Porté-Agel, F.: Influence of atmospheric stability on
+   wind-turbine wakes: A large-eddy simulation study, Physics of Fluids,
+   27, 035 104, 2015.
+
+4. Bastankhah, M. and Porté-Agel, F.: A new analytical model for
+   wind-turbine wakes, Renewable Energy, 70, 116–123, 2014.
+
+5. Bastankhah, M. and Porté-Agel, 5 F.: Experimental and theoretical study of
+   wind turbine wakes in yawed conditions, Journal of FluidMechanics, 806,
+   506–541, 2016.
 
 Citation
 ========
 
 If FLORIS played a role in your research, please cite it. This software can be cited as::
 
-   FLORIS. Version X.Y.Z (2018). Available at https://github.com/nrel/floris.
+   FLORIS. Version X.Y.Z (2019). Available at https://github.com/nrel/floris.
 
-Dependencies
-============
-The following packages are used in FLORIS
+For LaTeX users:
 
-- Python3
+.. code-block:: latex
 
-- NumPy v1.12.1
-
-- SciPy v0.19.1
-
-- matplotlib v2.1.0
-
-- pytest v3.3.1 (optional)
-
-- Sphinx v1.6.6 (optional)
-
-After installing Python3, the remaining required dependencies can be installed with ``pip`` referencing the requirements list using this command:
-
-``pip install -r requirements.txt``
+    @misc{FLORIS_2019,
+    author = {NREL},
+    title = {{FLORIS. Version X.Y.Z}},
+    year = {2019},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    url = {https://github.com/NREL/floris}
+    }
 
 Installation
 ============
@@ -42,55 +67,72 @@ Using ``pip``, FLORIS can be installed in two ways
 
 - using a tagged release version from the ``pip`` repo
 
-For consistency between all developers, it is recommended to use Python virtual environments;
-`this link <https://realpython.com/blog/python/python-virtual-environments-a-primer/>`_  provides a great introduction. Using virtual environments in a Jupyter Notebook is described `here <https://help.pythonanywhere.com/pages/IPythonNotebookVirtualenvs/>`_.
+For consistency between all developers, it is recommended to use Python
+virtual environments;
+`this link <https://realpython.com/blog/python/python-virtual-environments-a-primer/>`_
+provides a great introduction. Using virtual environments in a Jupyter Notebook
+is described `here <https://help.pythonanywhere.com/pages/IPythonNotebookVirtualenvs/>`_.
 
 Local editable installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The local editable installation allows developers maintain an importable
+instance of FLORIS while continuing to extend it. The alternative is to
+constantly update python paths within the package to match the local
+environment.
 
-The local editable installation allows developers maintain an importable instance of FLORIS while continuing to extend it.
-The alternative is to constantly update python paths within the package to match the local environment.
+Before doing the local install, the source code repository must be cloned
+directly from GitHub:
 
-Before doing the local install, the source code repository must be cloned directly from GitHub:
+.. code-block:: bash
 
-``git clone https://github.com/nrel/floris``
+    git clone https://github.com/nrel/floris
 
-Then, using the local editable installation is as simple as running the following command from the parent directory of the
+Then, using the local editable installation is as simple as running the
+following command from the parent directory of the
 cloned repository:
 
-``pip install -e FLORIS/``
+.. code-block:: bash
 
-Finally, test the installation by starting a python terminal and importing FLORIS:
+    pip install -e floris
 
-``import floris``
+Finally, test the installation by starting a python terminal and importing
+FLORIS:
+
+.. code-block:: bash
+
+    import floris
 
 pip repo installation
 ~~~~~~~~~~~~~~~~~~~~~
-The Floris version available through the pip repository is always the latest tagged and released version.
-This version represents the most recent stable, tested, and validated code.
+The FLORIS version available through the pip repository is typically the latest
+tagged and released major version. This version represents the most recent
+stable, tested, and validated code.
 
-In this case, there is no need to download the source code directly. FLORIS and its dependencies can be installed with:
+In this case, there is no need to download the source code directly. FLORIS
+and its dependencies can be installed with:
 
-``pip install floris``
+.. code-block:: bash
 
-Executing FLORIS
-================
-``floris`` is an importable package and should be driven by a custom script. We have
-provided an example driver script at ``example/example_script.py`` and a Jupyter notebook
-detailing a real world use case at ``example/FLORIS_Run_Notebook.ipynb``.
+    pip install floris
 
-Generally, a ``Floris`` class should be instantiated with a path to an input file
-as the sole argument:
+Dependencies
+============
+FLORIS has dependencies on various math, statistics, and plotting libraries in
+addition to other general purpose packages. For the simulation and tool
+modules, the dependencies are listed in ``floris/requirements.txt``. The
+documentation has additional requirements listed in
+``floris/docs/requirements.txt``.
 
-``Floris("path/to/example_input.json")``
+The requirements files can be used to install everything with:
 
-Then, driver programs can calculate the flow field, produce flow field plots,
-and incorporate the wake estimation into an optimization routine or other functionality.
+.. code-block:: bash
+
+    pip install -r requirements.txt
 
 License
 =======
 
-Copyright 2017 NREL
+Copyright 2019 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
