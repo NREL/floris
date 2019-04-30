@@ -19,23 +19,28 @@ class FlowField():
     """
     Object containing flow field information.
 
-    FlowField is at the core of the FLORIS package. This class handles the domain
-    creation and initialization and computes the flow field based on the input
-    wake model and turbine map. It also contains helper functions for quick flow
-    field visualization.
-        
+    FlowField is at the core of the FLORIS package. This class handles 
+    the domain creation and initialization and computes the flow field 
+    based on the input wake model and turbine map. It also contains 
+    helper functions for quick flow field visualization.
+
     Parameters:
         wind_speed: A float that is the wind speed.
         wind_direction: A float that is the wind direction.
         wind_shear: A float that is the wind shear coefficient.
         wind_veer: A float that is the amount of veer across the rotor.
-        turbulence_intensity: A float that is the decimal percentage of turbulence.
-        wake: A container class :py:class:`floris.simulation.wake` with wake model information used to calculate the flow field.
-        wake_combination: A container class :py:class:`floris.simulation.wake_combination` with wake combination information.
-        turbine_map: A :py:obj:`floris.simulation.turbine_map` object that holds turbine information.
+        turbulence_intensity: A float that is the decimal percentage of 
+            turbulence.
+        wake: A container class :py:class:`floris.simulation.wake` with 
+            wake model information used to calculate the flow field.
+        wake_combination: A container class 
+            :py:class:`floris.simulation.wake_combination` with wake 
+            combination information.
+        turbine_map: A :py:obj:`floris.simulation.turbine_map` object 
+            that holds turbine information.
 
     Returns:
-        An instantiated FlowField object.
+        FlowField: An instantiated FlowField object.
     """
 
     def __init__(self,
@@ -60,14 +65,13 @@ class FlowField():
             with_resolution=wake.velocity_model.model_grid_resolution
         )
 
-
-
     def _discretize_turbine_domain(self):
         """
         Create grid points at each turbine
         """
         xt = [coord.x1 for coord in self.turbine_map.coords]
-        rotor_points = int(np.sqrt(self.turbine_map.turbines[0].grid_point_count))
+        rotor_points = int(
+            np.sqrt(self.turbine_map.turbines[0].grid_point_count))
         x_grid = np.zeros((len(xt), rotor_points, rotor_points))
         y_grid = np.zeros((len(xt), rotor_points, rotor_points))
         z_grid = np.zeros((len(xt), rotor_points, rotor_points))
@@ -87,15 +91,17 @@ class FlowField():
 
             for j in range(len(yt)):
                 for k in range(len(zt)):
-                    x_grid[i,j,k] = xt[i]
-                    y_grid[i,j,k] = yt[j]
-                    z_grid[i,j,k] = zt[k]
+                    x_grid[i, j, k] = xt[i]
+                    y_grid[i, j, k] = yt[j]
+                    z_grid[i, j, k] = zt[k]
 
-                    xoffset = x_grid[i,j,k] - coord.x1
-                    yoffset = y_grid[i,j,k] - coord.x2
-                    x_grid[i,j,k] = xoffset * cosd(-1 * self.wind_direction) - yoffset * sind(-1 * self.wind_direction) + coord.x1
-                    y_grid[i,j,k] = yoffset * cosd(-1 * self.wind_direction) + xoffset * sind(-1 * self.wind_direction) + coord.x2
-        
+                    xoffset = x_grid[i, j, k] - coord.x1
+                    yoffset = y_grid[i, j, k] - coord.x2
+                    x_grid[i, j, k] = xoffset * cosd(-1 * self.wind_direction) - \
+                        yoffset * sind(-1 * self.wind_direction) + coord.x1
+                    y_grid[i, j, k] = yoffset * cosd(-1 * self.wind_direction) + \
+                        xoffset * sind(-1 * self.wind_direction) + coord.x2
+
         return x_grid, y_grid, z_grid
 
     def _discretize_freestream_domain(self, xmin, xmax, ymin, ymax, zmin, zmax, resolution):
@@ -111,11 +117,13 @@ class FlowField():
     def _compute_initialized_domain(self, with_resolution=None):
         if with_resolution is not None:
             xmin, xmax, ymin, ymax, zmin, zmax = self.domain_bounds
-            self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, with_resolution)
+            self.x, self.y, self.z = self._discretize_freestream_domain(
+                xmin, xmax, ymin, ymax, zmin, zmax, with_resolution)
         else:
             self.x, self.y, self.z = self._discretize_turbine_domain()
 
-        self.u_initial = self.wind_speed * (self.z / self.specified_wind_height)**self.wind_shear
+        self.u_initial = self.wind_speed * \
+            (self.z / self.specified_wind_height)**self.wind_shear
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
@@ -167,7 +175,8 @@ class FlowField():
             self._zmax = zmax
 
             resolution = self.wake.velocity_model.model_grid_resolution
-            self.x, self.y, self.z = self._discretize_freestream_domain(xmin, xmax, ymin, ymax, zmin, zmax, resolution)
+            self.x, self.y, self.z = self._discretize_freestream_domain(
+                xmin, xmax, ymin, ymax, zmin, zmax, resolution)
             rotated_x, rotated_y, rotated_z = self._rotated_grid(
                 0.0, center_of_rotation)
         else:
@@ -189,17 +198,22 @@ class FlowField():
         """
         A method that will set the domain bounds for the wake model.
 
-        This method allows a user to customzie the domain bounds for the current wake model being used, 
-        unless the wake model is the Curl model, then a predefined domain is specified and used. If the 
-        bounds are not specified, then a pre-defined set of bounds will be used. The bounds consist of 
-        the minimum and maximum values in the x-, y-, and z-directions.
+        This method allows a user to customzie the domain bounds for 
+        the current wake model being used, unless the wake model is the 
+        Curl model, then a predefined domain is specified and used. If 
+        the bounds are not specified, then a pre-defined set of bounds 
+        will be used. The bounds consist of the minimum and maximum 
+        values in the x-, y-, and z-directions.
 
         Parameters:
-            bounds_to_set: A list of values representing the mininum and maximum values for the domain 
-                [xmin, xmax, ymin, ymax, zmin, zmax] (default is *None*).
+            bounds_to_set: A list of values representing the mininum 
+                and maximum values for the domain 
+                [xmin, xmax, ymin, ymax, zmin, zmax] 
+                (default is *None*).
 
         Returns:
-            *None* -- The flow field is updated directly in the :py:class:`floris.simulation.floris.flow_field` object.
+            *None* -- The flow field is updated directly in the 
+            :py:class:`floris.simulation.floris.flow_field` object.
         """
 
         # For the curl model, bounds are hard coded
@@ -228,14 +242,13 @@ class FlowField():
             self._zmin = 0 + eps
             self._zmax = 2 * self.specified_wind_height
 
-        else: # Set the boundaries
+        else:  # Set the boundaries
             self._xmin = bounds_to_set[0]
             self._xmax = bounds_to_set[1]
             self._ymin = bounds_to_set[2]
             self._ymax = bounds_to_set[3]
             self._zmin = bounds_to_set[4]
             self._zmax = bounds_to_set[5]
-
 
     def reinitialize_flow_field(self,
                                 wind_speed=None,
@@ -248,26 +261,38 @@ class FlowField():
                                 turbine_map=None,
                                 with_resolution=None):
         """
-        Reiniaitilzies the flow field when a parameter needs to be updated.
+        Reiniaitilzies the flow field when a parameter needs to be 
+        updated.
 
-        This method allows for changing/updating a variety of flow related 
-        parameters. This would typically be used in loops or optimizations
-        where the user is calculating AEP over a wind rose or investigating 
-        wind farm performance at different conditions.
+        This method allows for changing/updating a variety of flow 
+        related parameters. This would typically be used in loops or 
+        optimizations where the user is calculating AEP over a wind 
+        rose or investigating wind farm performance at different 
+        conditions.
 
         Parameters:
-            wind_speed: A float that is the wind speed (default is *None*).
-            wind_direction: A float that is the wind direction (default is *None*).
-            wind_shear: A float that is the wind shear coefficient (default is *None*).
-            wind_veer: A float that is the amount of veer across the rotor (default is *None*).
-            turbulence_intensity: A float that is a decimal percentage of turbulence (default is *None*).
-            air_density: A float that is the air density (default is *None*).
-            wake: A container class :py:class:`floris.simulation.wake` with wake model information used to calculate the flow field 
+            wind_speed: A float that is the wind speed (default is 
+                *None*).
+            wind_direction: A float that is the wind direction (default 
+                is *None*).
+            wind_shear: A float that is the wind shear coefficient 
                 (default is *None*).
-            turbine_map: A :py:obj:`floris.simulation.turbine_map` object that holds turbine information (default is *None*).
-            with_resolution: A :py:class:`floris.utilities.Vec3` object that defines the flow field resolution
-                at which to calculate the wake (default is *None*).
-        
+            wind_veer: A float that is the amount of veer across the 
+                rotor (default is *None*).
+            turbulence_intensity: A float that is a decimal percentage 
+                of turbulence (default is *None*).
+            air_density: A float that is the air density (default is 
+                *None*).
+            wake: A container class :py:class:`floris.simulation.wake` 
+                with wake model information used to calculate the flow 
+                field (default is *None*).
+            turbine_map: A :py:obj:`floris.simulation.turbine_map` 
+                object that holds turbine information (default is 
+                *None*).
+            with_resolution: A :py:class:`floris.utilities.Vec3` object 
+                that defines the flow field resolution at which to 
+                calculate the wake (default is *None*).
+
         Returns:
             *None* -- The flow field is updated directly in the :py:class:`floris.simulation.floris` object.
         """
@@ -296,7 +321,8 @@ class FlowField():
             with_resolution = self.wake.velocity_model.model_grid_resolution
 
         # initialize derived attributes and constants
-        self.max_diameter = max([turbine.rotor_diameter for turbine in self.turbine_map.turbines])
+        self.max_diameter = max(
+            [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
 
         # Set the domain bounds
@@ -313,28 +339,32 @@ class FlowField():
         """
         Updates the flow field based on turbine activity.
 
-        This method rotates the turbine farm such that the wind direction is 
-        coming from 270 degrees. It then loops over the turbines, updating
-        their velocities, calculating the wake deflection/deficit, and combines
-        the wake with the flow field.
+        This method rotates the turbine farm such that the wind 
+        direction is coming from 270 degrees. It then loops over the 
+        turbines, updating their velocities, calculating the wake 
+        deflection/deficit, and combines the wake with the flow field.
 
         Parameters:
-            no_wake: A bool that when *True* updates the turbine quantities without
-                calculating the wake or adding the wake to the flow field.
-        
+            no_wake: A bool that when *True* updates the turbine 
+                quantities without calculating the wake or adding the 
+                wake to the flow field.
+
         Returns:
-            *None* -- The flow field and turbine properties are updated directly in the :py:class:`floris.simulation.floris` object.
+            *None* -- The flow field and turbine properties are updated 
+            directly in the :py:class:`floris.simulation.floris` object.
         """
 
         # define the center of rotation with reference to 270 deg
         center_of_rotation = Vec3(0, 0, 0)
 
-        # Rotate the turbines such that they are now in the frame of reference 
+        # Rotate the turbines such that they are now in the frame of reference
         # of the wind direction simpifying computing the wakes and wake overlap
-        rotated_map = self.turbine_map.rotated(self.wind_direction, center_of_rotation)
+        rotated_map = self.turbine_map.rotated(
+            self.wind_direction, center_of_rotation)
 
         # rotate the discrete grid and turbine map
-        rotated_x, rotated_y, rotated_z = self._rotated_dir(self.wind_direction, center_of_rotation, rotated_map)
+        rotated_x, rotated_y, rotated_z = self._rotated_dir(
+            self.wind_direction, center_of_rotation, rotated_map)
 
         # sort the turbine map
         sorted_map = rotated_map.sorted_in_x_as_list()
@@ -346,15 +376,18 @@ class FlowField():
         for coord, turbine in sorted_map:
 
             # update the turbine based on the velocity at its hub
-            turbine.update_velocities(u_wake, coord, self, rotated_x, rotated_y, rotated_z)
-            
+            turbine.update_velocities(
+                u_wake, coord, self, rotated_x, rotated_y, rotated_z)
+
             # get the wake deflecton field
-            deflection = self._compute_turbine_wake_deflection(rotated_x, rotated_y, turbine, coord, self)
+            deflection = self._compute_turbine_wake_deflection(
+                rotated_x, rotated_y, turbine, coord, self)
 
             # get the velocity deficit accounting for the deflection
-            turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
+            turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(
+                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
 
-            # include turbulence model for the gaussian wake model from Porte-Agel 
+            # include turbulence model for the gaussian wake model from Porte-Agel
             if self.wake.velocity_model.model_string == 'gauss':
 
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
@@ -362,7 +395,7 @@ class FlowField():
 
                     if coord_ti.x1 > coord.x1 and np.abs(coord.x2 - coord_ti.x2) < 2*turbine.rotor_diameter:
                         # only assess the effects of the current wake
-                        
+
                         freestream_velocities = turbine_ti.calculate_swept_area_velocities(
                             self.wind_direction,
                             self.u_initial,
@@ -379,7 +412,8 @@ class FlowField():
                             rotated_y,
                             rotated_z)
 
-                        area_overlap = self._calculate_area_overlap(wake_velocities, freestream_velocities, turbine)
+                        area_overlap = self._calculate_area_overlap(
+                            wake_velocities, freestream_velocities, turbine)
                         if area_overlap > 0.0:
                             turbine_ti.turbulence_intensity = turbine_ti.calculate_turbulence_intensity(
                                 self.turbulence_intensity,
@@ -405,14 +439,18 @@ class FlowField():
 
         # rotate the grid if it is curl
         if self.wake.velocity_model.model_string == 'curl':
-            self.x, self.y, self.z = self._rotated_grid(-1 * self.wind_direction, center_of_rotation)
-
+            self.x, self.y, self.z = self._rotated_grid(
+                -1 * self.wind_direction, center_of_rotation)
 
     # Getters & Setters
+
     @property
     def wind_direction(self):
         """
         Property that returns the wind direction in degrees.
+
+        Returns:
+            float: The current wind direction in degrees.
 
         Examples:
             To get the wind direction, simply call:
@@ -420,7 +458,7 @@ class FlowField():
             >>> wind_direction = floris.farm.flow_field.wind_direction()
         """
         return self._wind_direction
-    
+
     @wind_direction.setter
     def wind_direction(self, value):
         # frame of reference is west
