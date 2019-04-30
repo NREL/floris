@@ -58,7 +58,7 @@ class Farm():
         wake: The Wake object used in Farm.
 
     Returns:
-        An instantiated Farm object.
+        Farm: An instantiated Farm object.
     """
 
     def __init__(self, instance_dictionary, turbine, wake):
@@ -220,6 +220,11 @@ class Farm():
         Returns:
             float: The current vertical change in wind direction 
             across the rotor in degrees.
+
+        Examples:
+            To get the wind veer for the wind farm:
+
+            >>> wind_veer = floris.farm.wind_veer()
         """
         return self.flow_field.wind_veer
 
@@ -232,6 +237,11 @@ class Farm():
         Returns:
             float: The current turbulence intensity expressed as a 
             decimal fraction.
+
+        Examples:
+            To get the turbulence intensity for the wind farm:
+
+            >>> TI = floris.farm.turbulence_intensity()
         """
         return self.flow_field.turbulence_intensity
 
@@ -242,6 +252,11 @@ class Farm():
 
         Returns:
             float: The current air density in kg/m^3.
+
+        Examples:
+            To get the air density for the wind farm:
+
+            >>> air_density = floris.farm.air_density()
         """
         return self.flow_field.air_density
 
@@ -253,8 +268,13 @@ class Farm():
         the wind farm.
 
         Returns:
-            A :py:obj:`floris.simulation.turbine_map` object that 
+            TurbineMap: A :py:obj:`floris.simulation.turbine_map` object that 
             holds turbine information for the farm.
+
+        Examples:
+            To get the turbine map for the wind farm:
+
+            >>> turbine_map = floris.farm.turbine_map()
         """
         return self.flow_field.turbine_map
 
@@ -266,7 +286,12 @@ class Farm():
         :py:obj:`floris.simulation.turbine_map` object.
 
         Returns:
-            A list of :py:obj:`floris.simulation.turbine` objects that 
+            [Turbine]: A list of :py:obj:`floris.simulation.turbine` objects that 
             hold the turbine information for the wind farm.
+
+        Examples:
+            To get a list of turbine objects from the wind farm:
+
+            >>> turbines = floris.farm.turbines()
         """
         return self.turbine_map.turbines
