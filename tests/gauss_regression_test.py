@@ -26,7 +26,7 @@ class GaussRegressionTest():
     def __init__(self):
         sample_inputs = SampleInputs()
         sample_inputs.floris["wake"]["properties"]["velocity_model"] = "gauss"
-        sample_inputs.floris["wake"]["properties"]["deflection_model"] = "gauss_deflection"
+        sample_inputs.floris["wake"]["properties"]["deflection_model"] = "gauss"
         self.input_dict = sample_inputs.floris
         self.debug = False
 

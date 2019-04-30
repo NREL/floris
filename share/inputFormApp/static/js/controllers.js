@@ -4,8 +4,8 @@
 
 function InputsController($scope, $http, $log) {
 
-    $scope.velocityModels = ['floris', 'gauss', 'jensen'];
-    $scope.deflectionModels = ['gauss_deflection', 'jimenez'];
+    $scope.velocityModels = ['multizone', 'gauss', 'jensen'];
+    $scope.deflectionModels = ['gauss', 'jimenez'];
     $scope.wakeCombinations = ['sosfs'];
 
 	$scope.inputs = {name: 'floris_input_file_Example', type: "floris input", description: 'Example FLORIS Input file'};
@@ -66,7 +66,7 @@ function InputsController($scope, $http, $log) {
                 jensen: {
                     we: 0.05
                 },
-                floris: {
+                multizone: {
                     me: [
                         -0.05,
                         0.3,

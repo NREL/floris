@@ -144,7 +144,7 @@
     "description": "wake",
     "properties": {
       "velocity_model": "gauss",
-      "deflection_model": "gauss_deflection",
+      "deflection_model": "gauss",
       "parameters": {
         "turbulence_intensity": {
           "initial": 0.1,
@@ -155,7 +155,7 @@
         "jensen": {
           "we": 0.05
         },
-        "floris": {
+        "mutlizone": {
           "me": [
             -0.5,
             0.3,
@@ -169,18 +169,12 @@
             5.5
           ]
         },
-        "gauss": {
-          "ka": 0.38,
-          "kb": 0.004,
-          "alpha": 0.58,
-          "beta": 0.077
-        },
         "jimenez": {
           "kd": 0.05,
           "ad": 0.0,
           "bd": 0.0
         },
-        "gauss_deflection": {
+        "gauss": {
           "ka": 0.38,
           "kb": 0.004,
           "alpha": 0.58,

@@ -177,7 +177,7 @@ class MultiZone(WakeVelocity):
     """
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        self.model_string = "floris"
+        self.model_string = "multizone"
         model_dictionary = parameter_dictionary[self.model_string]
         self.me = [float(n) for n in model_dictionary["me"]]
         self.we = float(model_dictionary["we"])
