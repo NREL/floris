@@ -1,28 +1,35 @@
 example_0000_open_and_vis_floris.py
 ===================================
 
-The code for this example can be found here: `example_0000_open_and_vis_floris.py <https://github.com/NREL/floris/blob/develop/examples/example_0000_open_and_vis_floris.py>`_
+The code for this example can be found here: `example_0000_open_and_vis_floris.py
+<https://github.com/NREL/floris/blob/develop/examples/example_0000_open_and_vis_floris.py>`_
 
-This first example provides an essential introduction to using FLORIS.  A floris model is instantiated,
-and a floris interface setup using the :ref:`example_input.json<inputs>` file.  The model is run using only the 
-wind speed and direction specified in the input file and a hub-height visualization is produced.
+This first example provides an essential introduction to using FLORIS. A floris
+model is instantiated, and a floris interface setup using the
+:ref:`example_input.json<inputs>` file. The model is run using only the wind
+speed and direction specified in the input file and a hub-height visualization
+is produced.
 
-The first block of code reads in the input file and runs the model without modification
+The first block of code reads in the input file and runs the model without
+modification
 
-::
+.. code-block:: python3
 
     fi = wfct.floris_utilities.FlorisInterface("example_input.json")
     fi.calculate_wake()
 
-Note that :py:meth:`run_floris()<floris.tools.floris_utilities.FlorisInterface.calculate_wake>` is a wrapper 
-to the :py:meth:`calculate_wake()<floris.simulation.flow_field.FlowField.calculate_wake>` function, 
-and so only computes the wakes assuming that changes since instantation are limited to changes in turbine 
-yaw angle or other control function.  Changes to wind speed, wind direction, or turbine location require 
-an additional call to :py:meth:`reinitialize_flow_field()<floris.simulation.flow_field.FlowField.reinitialize_flow_field>`.
+Note that :py:meth:`run_floris()<floris.tools.floris_utilities.FlorisInterface.calculate_wake>`
+is a wrapper to the :py:meth:`calculate_wake()<floris.simulation.flow_field.FlowField.calculate_wake>`
+function, and so only computes the wakes assuming that changes since
+instantation are limited to changes in turbine yaw angle or other control
+function. Changes to wind speed, wind direction, or turbine location require an
+additional call to
+:py:meth:`reinitialize_flow_field()<floris.simulation.flow_field.FlowField.reinitialize_flow_field>`.
 
-The second block of code extracts a slice of flow at hub_height using the :py:mod:`cut_plane<floris.tools.cut_plane>` tools:
+The second block of code extracts a slice of flow at hub_height using the
+:py:mod:`cut_plane<floris.tools.cut_plane>` tools:
 
-::
+.. code-block:: python3
 
     # Initialize the horizontal cut
     hor_plane = wfct.cut_plane.HorPlane(
@@ -30,11 +37,11 @@ The second block of code extracts a slice of flow at hub_height using the :py:mo
         fi.floris.farm.turbines[0].hub_height
     )
 
-Note that flow data is a saved flow information in a form of x,y,z,u,v,w
+Note that flow data is a saved flow information in a form of x,y,z,u,v,w.
 
 The final block of code visualizes the hub-height plane:
 
-::
+.. code-block:: python3
 
     # Plot and show
     fig, ax = plt.subplots()

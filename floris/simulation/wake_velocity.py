@@ -23,19 +23,19 @@ class WakeVelocity():
 
     Parameters:
         parameter_dictionary: A dictionary as generated from the input_reader;
+
             it should have the following key-value pairs:
                 {
                     **turbulence_intensity**: A dictionary containing the following key-value pairs:
                         {
                             **initial**: A float that is the initial ambient turbulence intensity, expressed as a decimal fraction.
-
                             **constant**: A float that is the constant used to scale the wake-added turbulence intensity.
-
                             **ai**: A float that is the axial induction factor exponent used in in the calculation of wake-added turbulence.
-
                             **downstream**: A float that is the exponent applied to the distance downtream of an upstream turbine normalized 
                             by the rotor diameter used in the calculation of wake-added turbulence.
+
                         }
+
                 }
 
     Returns:
@@ -64,26 +64,29 @@ class Jensen(WakeVelocity):
 
     Parameters:
         parameter_dictionary: A dictionary as generated from the input_reader;
+
             it should have the following key-value pairs:
                 {
                     **turbulence_intensity**: A dictionary containing the following key-value pairs used to calculate wake-added turbulence 
                     intensity from an upstream turbine, using the approach of Crespo, A. and Herna, J. "Turbulence characteristics 
                     in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*. 1996.:
+
                         {
                             **initial**: A float that is the initial ambient turbulence intensity, expressed as a decimal fraction.
-
                             **constant**: A float that is the constant used to scale the wake-added turbulence intensity.
-
                             **ai**: A float that is the axial induction factor exponent used in in the calculation of wake-added turbulence.
-
                             **downstream**: A float that is the exponent applied to the distance downtream of an upstream turbine normalized 
                             by the rotor diameter used in the calculation of wake-added turbulence.
+
                         }
+
                     **jensen**: A dictionary containing the following key-value pairs:
                         {
                             **we**: A float that is the linear wake decay constant that defines the cone boundary for the wake as well as 
                             the velocity deficit. D/2 +/- we*x is the cone boundary for the wake
+
                         }
+
                 }
 
     Returns:
@@ -156,36 +159,35 @@ class Floris(WakeVelocity):
     Parameters:
         parameter_dictionary: A dictionary as generated from the input_reader;
             it should have the following key-value pairs:
+
                 {
                     **turbulence_intensity**: A dictionary containing the following key-value pairs used to calculate wake-added turbulence 
                     intensity from an upstream turbine, using the approach of Crespo, A. and Herna, J. "Turbulence characteristics 
                     in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*. 1996.:
+
                         {
                             **initial**: A float that is the initial ambient turbulence intensity, expressed as a decimal fraction.
-
                             **constant**: A float that is the constant used to scale the wake-added turbulence intensity.
-
                             **ai**: A float that is the axial induction factor exponent used in in the calculation of wake-added turbulence.
-
                             **downstream**: A float that is the exponent applied to the distance downtream of an upstream turbine normalized 
                             by the rotor diameter used in the calculation of wake-added turbulence.
+
                         }
+
                     **floris**: A dictionary containing the following key-value pairs:
                         {
                             **me**: A list of three floats that help determine the slope of the diameters of the three wake zones 
                             (near wake, far wake, mixing zone) as a function of downstream distance.
-
                             **we**: A float that is the scaling parameter used to adjust the wake expansion, helping to determine the slope of the diameters 
                             of the three wake zones as a function of downstream distance, as well as the recovery of the velocity deficits in the wake 
                             as a function of downstream distance.
-
                             **aU**: A float that is a parameter used to determine the dependence of the wake velocity deficit decay rate on the rotor yaw angle.
-
                             **bU**: A float that is another parameter used to determine the dependence of the wake velocity deficit decay rate on the rotor yaw angle.
-
                             **mU**: A list of three floats that are parameters used to determine the dependence of the wake velocity deficit decay rate for each of 
                             the three wake zones on the rotor yaw angle.
+
                         }
+
                 }
 
     Returns:
@@ -290,32 +292,32 @@ class Gauss(WakeVelocity):
     Parameters:
         parameter_dictionary: A dictionary as generated from the input_reader;
             it should have the following key-value pairs:
+
                 {
                     **turbulence_intensity**: A dictionary containing the following key-value pairs used to calculate wake-added turbulence 
                     intensity from an upstream turbine, using the approach of Crespo, A. and Herna, J. "Turbulence characteristics 
                     in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*. 1996.:
+
                         {
                             **initial**: A float that is the initial ambient turbulence intensity, expressed as a decimal fraction.
-
                             **constant**: A float that is the constant used to scale the wake-added turbulence intensity.
-
                             **ai**: A float that is the axial induction factor exponent used in in the calculation of wake-added turbulence.
-
                             **downstream**: A float that is the exponent applied to the distance downtream of an upstream turbine normalized 
                             by the rotor diameter used in the calculation of wake-added turbulence.
+
                         }
+
                     **gauss**: A dictionary containing the following key-value pairs:
                         {
                             **ka**: A float that is a parameter used to determine the linear relationship between the turbulence intensity and the width of the Gaussian wake shape.
-
                             **kb**: A float that is a second parameter used to determine the linear relationship between the turbulence intensity and the width of the Gaussian wake shape.
-
                             **alpha**: A float that is a parameter that determines the dependence of the downstream boundary between the near wake and far wake region 
                             on the turbulence intensity.
-
                             **beta**: A float that is a parameter that determines the dependence of the downstream boundary between the near wake and far wake region 
                             on the turbine's induction factor.
+
                         }
+
                 }
 
     Returns:
@@ -435,32 +437,33 @@ class Curl(WakeVelocity):
     Parameters:
         parameter_dictionary: A dictionary as generated from the input_reader;
             it should have the following key-value pairs:
+
                 {
                     **turbulence_intensity**: A dictionary containing the following key-value pairs used to calculate wake-added turbulence 
                     intensity from an upstream turbine, using the approach of Crespo, A. and Herna, J. "Turbulence characteristics 
                     in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*. 1996.:
+
                         {
                             **initial**: A float that is the initial ambient turbulence intensity, expressed as a decimal fraction.
-
                             **constant**: A float that is the constant used to scale the wake-added turbulence intensity.
-
                             **ai**: A float that is the axial induction factor exponent used in in the calculation of wake-added turbulence.
-
                             **downstream**: A float that is the exponent applied to the distance downtream of an upstream turbine normalized 
                             by the rotor diameter used in the calculation of wake-added turbulence.
+
                         }
+
                     **curl**: A dictionary containing the following key-value pairs:
+
                         {
                             **model_grid_resolution**: A list of three floats that define the flow field grid resolution in the x, y, and z directions used for the curl wake model calculations. The grid 
                             resolution is specified as the number of grid points in the flow field domain in the x, y, and z directions. 
-
                             **initial_deficit**: A float that, along with the freestream velocity and the turbine's induction factor, is used to determine the initial wake velocity deficit immediately downstream of the rotor.
-
                             **dissipation**: A float that is a scaling parameter that determines the amount of dissipation of the vortices with downstream distance.
-
                             **veer_linear**: A float that describes the amount of linear wind veer. This parameter defines the linear change in the V velocity between the ground and hub height, 
                             and therefore determines the slope of the change in the V velocity with height. 
+
                         }
+
                 }
 
     Returns:

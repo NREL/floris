@@ -1,33 +1,38 @@
 example_0005_adjust_floris.py
 =============================
 
-The code for this example can be found here: `example_0005_adjust_floris.py <https://github.com/NREL/floris/blob/develop/examples/example_0005_adjust_floris.py>`_
+The code for this example can be found here: `example_0005_adjust_floris.py
+<https://github.com/NREL/floris/blob/develop/examples/example_0005_adjust_floris.py>`_
 
-In this example, the FLORIS model is adjusted within the code and provides examples of how to make various adjustments.
+In this example, the FLORIS model is adjusted within the code and provides
+examples of how to make various adjustments.
 
-The floris model and interface are initially instantiated as before but then the number of turbines and their locations are changed 
-via the line:
+The floris model and interface are initially instantiated as before but then
+the number of turbines and their locations are changed via the line:
 
-::
+.. code-block:: python3
 
     fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
     # Calculate wake
     fi.calculate_wake()
 
-Note that since changing the turbine layout requires calling the simulation function :py:meth:`Calculate_wake<floris.simulation.flow_field.FlowField.reinitialize_flow_field>
-the interface function to change the layout (as well as wind speed, direction, TI...) is made through this function's wrapper
+Note that since changing the turbine layout requires calling the simulation
+function
+:py:meth:`Calculate_wake<floris.simulation.flow_field.FlowField.reinitialize_flow_field>`
+the interface function to change the layout (as well as wind speed,
+direction, TI...) is made through this function's wrapper.
 
+The next block cycles through wind speed and wind directions and updates the
+FLORIS model by first reinitializing the flow field and then recalculating the
+wakes.
 
-
-The next block cycles through wind speed and wind directions and updates the FLORIS model by first reinitlizing the flow field and 
-then recalculating the wakes.
-
-::
+.. code-block:: python3
 
     for i,speed in enumerate(ws):
         for j,wdir in enumerate(wd):
-            print('Calculating wake: wind direction = ', wdir, 'and wind speed = ', speed)
+            print('Calculating wake: wind direction = ', wdir, 'and wind
+            speed = ', speed)
 
             fi.reinitialize_flow_field(wind_speed=speed,wind_direction=wdir)
 
@@ -42,7 +47,7 @@ These individual runs are visualized in sub plots.
 
 The final block of code changes the turbine yaw angles.
 
-::
+.. code-block:: python3
 
     fi.calculate_wake()
     power_initial = np.sum(fi.get_turbine_power())
@@ -57,4 +62,5 @@ The final block of code changes the turbine yaw angles.
     print('Power yawed: %.1f' % power_yaw)
 
 
-Note that if only changing yaw angles it is not necessary to reinitialize the flow field; therefore the update is made through the calculate_wake function.
+Note that if only changing yaw angles it is not necessary to reinitialize the
+flow field; therefore the update is made through the calculate_wake function.
