@@ -42,7 +42,8 @@ Literature on the Gaussian model can be found in the following papers:
 Citation
 ========
 
-If FLORIS played a role in your research, please cite it. This software can be cited as::
+If FLORIS played a role in your research, please cite it. This software can be
+cited as:
 
    FLORIS. Version X.Y.Z (2019). Available at https://github.com/nrel/floris.
 
@@ -130,22 +131,6 @@ The requirements files can be used to install everything with:
 .. code-block:: bash
 
     pip install -r requirements.txt
-
-Testing
-=======
-
-In order to maintain a level of confidence in the software, FLORIS is expected to
-maintain a reasonable level of test coverage. To that end, there are unit, integration,
-and regression tests included in the package.
-
-Unit tests are currently included in FLORIS and integrated with the `pytest <https://docs.pytest.org/en/latest/>`_
-framework.
-
-See the testing documentation at ``tests/README.rst`` for more information.
-
-Future work
-===========
-Coming soon
 
 License
 =======
