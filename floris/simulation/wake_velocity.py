@@ -136,7 +136,7 @@ class Jensen(WakeVelocity):
         return 2 * turbine.aI * c * flow_field.u_initial, np.zeros(np.shape(flow_field.u_initial)), np.zeros(np.shape(flow_field.u_initial))
 
 
-class Floris(WakeVelocity):
+class MultiZone(WakeVelocity):
     """
     Floris is a derived class of :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is used to compute the wake velocity deficit based on the original 
     multi-zone FLORIS model. See: 

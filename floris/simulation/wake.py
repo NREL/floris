@@ -53,7 +53,7 @@ class Wake():
 
         self.velocity_models = {
             "jensen": wake_velocity.Jensen(parameters),
-            "floris": wake_velocity.Floris(parameters),
+            "multizone": wake_velocity.MultiZone(parameters),
             "gauss": wake_velocity.Gauss(parameters),
             "curl": wake_velocity.Curl(parameters)
         }
@@ -61,7 +61,7 @@ class Wake():
 
         self.deflection_models = {
             "jimenez": wake_deflection.Jimenez(parameters),
-            "gauss_deflection": wake_deflection.Gauss(parameters),
+            "gauss": wake_deflection.Gauss(parameters),
             "curl": wake_deflection.Curl(parameters)
         }
         self._deflection_model = self.deflection_models[properties["deflection_model"]]
