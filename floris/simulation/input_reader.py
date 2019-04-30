@@ -18,16 +18,16 @@ import numpy as np
 
 class InputReader():
     """
-    InputReader is a helper class which parses json input files and provides an
-    interface to instantiate model objects in FLORIS. This class handles input
-    validation regarding input type, but does not enforce value checking. It is
-    designed to function as a singleton object, but that is not enforced or required.
+    InputReader parses json input files into inputs for FLORIS objects.
 
-    inputs:
-        None
+    InputReader is a helper class which parses json input files and 
+    provides an interface to instantiate model objects in FLORIS. This 
+    class handles input validation regarding input type, but does not 
+    enforce value checking. It is designed to function as a singleton 
+    object, but that is not enforced or required.
 
-    outputs:
-        self: InputReader - an instantiated InputReader object
+    Returns:
+        InputReader:  An instantiated InputReader object
     """
 
     def __init__(self):
@@ -67,13 +67,15 @@ class InputReader():
 
     def _parseJSON(self, filename):
         """
-        Opens the input json file and parses the contents into a python dict
+        Opens the input json file and parses the contents into a python 
+        dict.
 
-        inputs:
-            filename: str - path to the json input file
+        Parameters:
+            filename:  A string that is the path to the json input file.
 
-        outputs:
-            data: dict - contents of the json input file
+        Returns:
+            dict:  A dictionary *data* that contains the json input 
+            file.
         """
         with open(filename) as jsonfile:
             data = json.load(jsonfile)
@@ -81,24 +83,18 @@ class InputReader():
 
     def _validateJSON(self, json_dict, type_map):
         """
-        Verifies that the expected fields exist in the json input file and
-        validates the type of the input data by casting the fields to
-        appropriate values based on the predefined type maps in
+        Verifies that the expected fields exist in the json input file 
+        and validates the type of the input data by casting the fields 
+        to appropriate values based on the predefined type maps in.
 
-        _turbineProperties
+        Parameters:
+            json_dict: Input dictionary with all elements of type str.
+            type_map: Predefined type map dictionary for type checking 
+                inputs structured as {"property": type}.
 
-        _wakeProperties
-
-        _farmProperties
-
-        inputs:
-            json_dict: dict - Input dictionary with all elements of type str
-
-            type_map: dict - Predefined type map for type checking inputs
-                             structured as {"property": type}
-        outputs:
-            validated: dict - Validated and correctly typed input property
-                              dictionary
+        Returns:
+            dict: Validated and correctly typed input property 
+            dictionary.
         """
 
         validated = {}
@@ -108,7 +104,8 @@ class InputReader():
             raise KeyError("'type' key is required")
 
         if json_dict["type"] not in self._validObjects:
-            raise ValueError("'type' must be one of {}".format(", ".join(self._validObjects)))
+            raise ValueError("'type' must be one of {}".format(
+                ", ".join(self._validObjects)))
 
         validated["type"] = json_dict["type"]
 
@@ -127,11 +124,14 @@ class InputReader():
         properties = json_dict["properties"]
         for element in type_map:
             if element not in properties:
-                raise KeyError("'{}' is required for object type '{}'".format(element, validated["type"]))
+                raise KeyError("'{}' is required for object type '{}'".format(
+                    element, validated["type"]))
 
-            value,error = self._cast_to_type(type_map[element], properties[element])
+            value, error = self._cast_to_type(
+                type_map[element], properties[element])
             if error is not None:
-                raise error("'{}' must be of type '{}'".format(element, type_map[element]))
+                raise error("'{}' must be of type '{}'".format(
+                    element, type_map[element]))
 
             propDict[element] = value
 
@@ -141,17 +141,15 @@ class InputReader():
 
     def _cast_to_type(self, typecast, value):
         """
-        Casts the string input to the type in typecast
+        Casts the string input to the type in typecast.
 
-        inputs:
-            typcast: type - the type class to use on value
+        Parameters:
+            typcast: type - the type class to use on value.
+            value: str - the input string to cast to 'typecast'.
 
-            value: str - the input string to cast to 'typecast'
-
-        outputs:
-            position 0: type or None - the casted value
-
-            position 1: None or Error - the caught error
+        Returns:
+            type or None: position 0 - the casted value.
+            None or Error: position 1 - the caught error.
         """
         try:
             return typecast(value), None
@@ -160,13 +158,13 @@ class InputReader():
 
     def _build_turbine(self, json_dict):
         """
-        Instantiates a Turbine object from a given input file
+        Instantiates a Turbine object from a given input file.
 
-        inputs:
-            json_dict: dict - Input dictionary describing a turbine model
+        Parameters:
+            json_dict: Input dictionary describing a turbine model.
 
-        outputs:
-            turbine: Turbine - instantiated Turbine object
+        Returns:
+            Turbine: An instantiated Turbine object.
         """
         propertyDict = self._validateJSON(json_dict, self._turbine_properties)
         propertyDict["properties"]["yaw_angle"] = propertyDict["properties"]["yaw_angle"]
@@ -175,43 +173,44 @@ class InputReader():
 
     def _build_wake(self, json_dict):
         """
-        Instantiates a Wake object from a given input file
+        Instantiates a Wake object from a given input file.
 
-        inputs:
-            json_dict: dict - Input dictionary describing a wake model
+        Parameters:
+            json_dict: dict - Input dictionary describing a wake model.
 
-        outputs:
-            wake: Wake - instantiated Wake object
+        Returns:
+            Wake: An instantiated Wake object.
         """
         propertyDict = self._validateJSON(json_dict, self._wake_properties)
         return Wake(propertyDict)
 
     def _build_farm(self, json_dict, turbine, wake):
         """
-        Instantiates a Farm object from a given input file
+        Instantiates a Farm object from a given input file.
 
-        inputs:
-            json_dict: dict - Input dictionary describing a farm model
+        Parameters:
+            json_dict: Input dictionary describing a farm model.
+            turbine: :py:class:`floris.simulation.turbine.Turbine` 
+                instance used in 
+                :py:class:`floris.simulation.farm.Farm`.
+            wake: :py:class:`floris.simulation.wake.Wake` instance used 
+                in :py:class:`floris.simulation.farm.Farm`.
 
-            turbine: Turbine - Turbine instance used in Farm
-
-            wake: Wake - Wake instance used in Farm
-
-        outputs:
-            farm: Farm - instantiated Farm object
+        Returns:
+            Farm: An instantiated Farm object.
         """
         propertyDict = self._validateJSON(json_dict, self._farm_properties)
         return Farm(propertyDict, turbine, wake)
 
     def read(self, input_file=None, input_dict=None):
         """
-        Parses main input file and instantiates floris objects
+        Parses main input file and instantiates floris objects.
 
-        inputs:
-            input_file: str - path to the json input file
+        Parameters:
+            input_file: A string path to the json input file.
 
-        outputs:
-            farm: instantiated FLORIS model of wind farm
+        Returns:
+            Farm: An instantiated FLORIS model of wind farm.
         """
         if input_file is not None:
             json_dict = self._parseJSON(input_file)

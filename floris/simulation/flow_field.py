@@ -294,7 +294,8 @@ class FlowField():
                 calculate the wake (default is *None*).
 
         Returns:
-            *None* -- The flow field is updated directly in the :py:class:`floris.simulation.floris` object.
+            *None* -- The flow field is updated directly in the 
+            :py:class:`floris.simulation.floris` object.
         """
         # reset the given parameters
         if turbine_map is not None:
@@ -477,6 +478,7 @@ class FlowField():
         Examples:
             To get the domain bounds:
 
-            >>> domain_bounds = floris.farm.flow_field.domain_bounds()
+            >>> xmin, xmax, ymin, ymax, zmin, zmax = 
+            ... floris.farm.flow_field.domain_bounds()
         """
         return self._xmin, self._xmax, self._ymin, self._ymax, self._zmin, self._zmax
