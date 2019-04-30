@@ -50,4 +50,4 @@ The final block of code visualizes the hub-height plane:
 
 The result is shown below.
 
-.. image:: ../../doxygen/images/hh_plane.png
+.. image:: ../../_static/images/hh_plane.png
