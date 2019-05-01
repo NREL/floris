@@ -15,7 +15,7 @@ import numpy as np
 import copy
 import pytest
 from .sample_inputs import SampleInputs
-from floris import Vec3
+from floris.utilities import Vec3
 from floris.simulation import Turbine, TurbineMap
 
 

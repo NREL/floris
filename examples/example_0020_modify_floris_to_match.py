@@ -16,7 +16,7 @@
 import floris.tools as wfct
 import floris.tools.visualization as vis
 import floris.tools.cut_plane as cp
-from floris import Vec3
+from floris.utilities import Vec3
 import matplotlib.pyplot as plt
 import numpy as np
 

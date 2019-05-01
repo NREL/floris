@@ -13,7 +13,7 @@ specific language governing permissions and limitations under the License.
 
 import numpy as np
 from floris.simulation import Floris, FlowField, Turbine, TurbineMap, Wake, WakeCombination
-from floris import Vec3
+from floris.utilities import Vec3
 from .sample_inputs import SampleInputs
 import copy
 

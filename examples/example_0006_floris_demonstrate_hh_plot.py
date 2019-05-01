@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
 import floris.tools.cut_plane as cp
-from floris import Vec3
+from floris.utilities import Vec3
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 import time
