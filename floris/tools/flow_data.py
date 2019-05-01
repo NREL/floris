@@ -15,11 +15,40 @@ from ..utilities import Vec3, Output
 
 
 class FlowData():
+    """
+    Generate a FlowData object to handle data I/O
+    """
+
     #TODO handle none case, maybe defaul values apply like 0 origin and auto determine spacing and dimensions
-    def __init__(self, x, y, z, u, v, w, spacing=None, dimensions=None, origin=None):
+    def __init__(self,
+                 x,
+                 y,
+                 z,
+                 u,
+                 v,
+                 w,
+                 spacing=None,
+                 dimensions=None,
+                 origin=None):
         """
-        x, y, z, u, v, w are numpy arrays
+        Initialize FLowData object with coordinates, velocity fields,
+        and meta data.
+
+        Args:
+            x (np.array): Cartesian coordinate data.
+            y (np.array): Cartesian coordinate data.
+            z (np.array): Cartesian coordinate data.
+            u (np.array): x-component of velocity.
+            v (np.array): y-component of velocity.
+            w (np.array): z-component of velocity.
+            spacing (float, optional): Spatial resolution.
+                Defaults to None.
+            dimensions (iterable, optional): named dimensions
+                (e.g. x1, x2, x3). Defaults to None.
+            origin (iterable, optional): Coordinates of origin.
+                Defaults to None.
         """
+
         self.x = x
         self.y = y
         self.z = z
@@ -33,9 +62,16 @@ class FlowData():
         self.origin = origin
 
         # Technically resolution is a restating of above, but it is useful to have
-        self.resolution = Vec3(len(np.unique(x)), len(np.unique(y)),len(np.unique(z)))
+        self.resolution = Vec3(len(np.unique(x)), len(np.unique(y)),
+                               len(np.unique(z)))
 
     def save_as_vtk(self, filename):
+        """
+        Save FlowData Object to vtk
+
+        Args:
+            filename (str): Write-to path for vtk file
+        """
         n_points = self.dimensions.x1 * self.dimensions.x2 * self.dimensions.x3
         vtk_file = Output(filename)
         vtk_file.write_line('# vtk DataFile Version 3.0')
@@ -45,7 +81,7 @@ class FlowData():
         vtk_file.write_line('DIMENSIONS {}'.format(self.dimensions))
         vtk_file.write_line('ORIGIN {}'.format(self.origin))
         vtk_file.write_line('SPACING {}'.format(self.spacing))
-        vtk_file.write_line('POINT_DATA {}' .format(n_points))
+        vtk_file.write_line('POINT_DATA {}'.format(n_points))
         vtk_file.write_line('FIELD attributes 1')
         vtk_file.write_line('UAvg 3 {} float'.format(n_points))
         for u, v, w in zip(self.u, self.v, self.w):
@@ -54,11 +90,21 @@ class FlowData():
     @staticmethod
     def crop(ff, x_bnds, y_bnds, z_bnds):
         """
-        Return a croped version of the flow field
+        Crop FlowData object to within stated bounds.
+
+        Args:
+            ff (floris.tools.flow_data.FlowData): FlowData object.
+            x_bnds (iterable): min and max of x-coordinate.
+            y_bnds (iterable): min and max of y-coordinate.
+            z_bnds (iterable): min and max of z-coordinate.
+
+        Returns:
+            (floris.tools.flow_data.FlowData): cropped FlowData object.
         """
 
-        map_values = (ff.x > x_bnds[0]) & (ff.x < x_bnds[1]) & (ff.y > y_bnds[0]) & (
-            ff.y < y_bnds[1]) & (ff.z > z_bnds[0]) & (ff.z < z_bnds[1])
+        map_values = (ff.x > x_bnds[0]) & (ff.x < x_bnds[1]) & (
+            ff.y > y_bnds[0]) & (ff.y < y_bnds[1]) & (ff.z > z_bnds[0]) & (
+                ff.z < z_bnds[1])
 
         x = ff.x[map_values]
         y = ff.y[map_values]
@@ -69,19 +115,18 @@ class FlowData():
 
         # Work out origin
         origin = (
-            ff.origin.x1+np.min(x),
-            ff.origin.x2+np.min(y),
-            ff.origin.x3+np.min(z),
+            ff.origin.x1 + np.min(x),
+            ff.origin.x2 + np.min(y),
+            ff.origin.x3 + np.min(z),
         )
 
         return FlowData(
-            x-np.min(x),
-            y-np.min(y),
-            z-np.min(z),
+            x - np.min(x),
+            y - np.min(y),
+            z - np.min(z),
             ff.u[map_values],
             ff.v[map_values],
             ff.w[map_values],
             spacing=ff.spacing,  # doesn't change
             dimensions=dimensions,
-            origin=origin
-        )
+            origin=origin)
