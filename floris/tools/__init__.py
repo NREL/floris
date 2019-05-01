@@ -23,6 +23,7 @@ package so any additional modules should be included there.
 
 Examples:
     >>> import floris.tools
+    
     >>> dir(floris.tools)
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',

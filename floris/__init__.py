@@ -27,14 +27,17 @@ package so any additional modules should be included there.
 
 Examples:
     >>> import floris
+    
     >>> dir(floris)
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'simulation',
     'tools', 'utilities']
+
     >>> dir(floris.utilities)
     ['Output', 'Vec3', '__builtins__', '__cached__', '__doc__',
     '__file__', '__loader__', '__name__', '__package__', '__spec__',
     'cosd', 'np', 'sind', 'tand', 'wrap_180', 'wrap_360']
+
     >>> dir(floris.simulation)
     ['Farm', 'Floris', 'FlowField', 'InputReader', 'Turbine',
     'TurbineMap', 'Wake', 'WakeCombination', 'WakeDeflection',
@@ -43,6 +46,7 @@ Examples:
     '__spec__', 'farm', 'floris', 'flow_field', 'input_reader',
     'turbine', 'turbine_map', 'wake', 'wake_combination',
     'wake_deflection', 'wake_velocity']
+
     >>> dir(floris.tools)
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',

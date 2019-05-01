@@ -23,6 +23,7 @@ package so any additional modules should be included there.
 
 Examples:
     >>> import floris.simulation
+    
     >>> dir(floris.simulation)
     ['Farm', 'Floris', 'FlowField', 'InputReader', 'Turbine',
     'TurbineMap', 'Wake', 'WakeCombination', 'WakeDeflection',
