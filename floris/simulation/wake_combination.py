@@ -14,9 +14,10 @@ import numpy as np
 
 class WakeCombination():
     """
-    these functions return u_field with u_wake incorporated
-    u_field: the modified flow field without u_wake
-    u_wake: the wake to add into the rest of the flow field
+    The WakeCombination class provides methods for combining the base flow field with the velocity deficits from the wake models.
+
+    Returns:
+        WakeCombination: An instantiated WakeCombination object.
     """
 
     def __init__(self):
@@ -28,7 +29,17 @@ class WakeCombination():
 
 class FLS(WakeCombination):
     """
-    freestream linear superposition
+    FLS is a derived class of 
+    :py:class:`floris.simulation.wake_combination.WakeCombination` 
+    which uses freestream linear superposition to combine the base flow 
+    field with the wake velocity deficits.
+
+    Parameters:
+        WakeCombination: A WakeCombination object.
+
+    Returns:
+        array: A linear combination of the base flow field and the 
+        velocity deficits.
     """
 
     def __init__(self):
@@ -41,7 +52,17 @@ class FLS(WakeCombination):
 
 class SOSFS(WakeCombination):
     """
-    sum of squares freestream superposition
+    SOSFS is a derived class of 
+    :py:class:`floris.simulation.wake_combination.WakeCombination` 
+    which uses sum of squares freestream superposition to combine the 
+    base flow field with the wake velocity deficits.
+
+    Parameters:
+        WakeCombination: A WakeCombination object.
+
+    Returns:
+        array: A sum of squares combination of the base flow field and 
+        the velocity deficits.
     """
 
     def __init__(self):
