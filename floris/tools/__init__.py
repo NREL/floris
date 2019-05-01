@@ -9,10 +9,37 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+"""
+The :py:obj:`floris.tools` package contains the modules used to drive
+FLORIS simulations and perform studies in various areas of research and
+analysis.
+
+All modules can be imported with
+
+    >>> import floris.tools
+
+The ``__init__.py`` file enables the import of all modules in this
+package so any additional modules should be included there.
+
+Examples:
+    >>> import floris.tools
+    >>> dir(floris.tools)
+    ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
+    '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
+    'energy_ratio', 'floris_utilities', 'flow_data',
+    'layout_functions', 'optimization', 'plotting', 'power_rose',
+    'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
+"""
+
 from . import cut_plane
+from . import energy_ratio
 from . import floris_utilities
 from . import flow_data
+from . import layout_functions
 from . import optimization
+from . import plotting
+from . import power_rose
+from . import rews
 from . import sowfa_utilities
 from . import visualization
 from . import wind_rose
