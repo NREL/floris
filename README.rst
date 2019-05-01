@@ -1,5 +1,8 @@
 FLORIS Wake Modeling Utility
 ----------------------------
+
+**Further documentation is available at http://floris.readthedocs.io/.**
+
 For technical questions regarding FLORIS usage please first search for or post
 your questions to
 `stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
@@ -11,31 +14,25 @@ the **floris** tag. Alternatively, please contact
 
 Background and objectives
 =========================
-This FLORIS model is designed to provide a computationally inexpensive,
-controls-oriented model of the steady-state wake characteristics in a wind
-farm. This can be used for real-time optimization and control. This version of
-FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al.
-2016), Gaussian, and Curl wake model.
+This FLORIS framework is designed to provide a computationally inexpensive,
+controls-oriented modeling tool of the steady-state wake characteristics in
+a wind farm. The wake models implement in this version of FLORIS are:
 
-Literature on the Gaussian model can be found in the following papers:
+- Jensen model for velocity deficit
+- Jimenez model for wake deflection
+- Gauss model for wake deflection and velocity deficit
+- Multi zone model for wake deflection and velocity deficit
+- Curl  model for wake deflection and velocity deficit
 
-1. Niayifar, A. and Porté-Agel, F.: A new 15 analytical model for wind farm
-   power prediction, in: Journal of Physics: Conference Series, vol. 625,
-   p. 012039, IOP Publishing, 2015.
+More information on all of these models can be found in the
+`theory <https://floris.readthedocs.io/en/develop/source/theory.html>`_
+section of the online documentation.
 
-2. Dilip, D. and Porté-Agel, F.: Wind Turbine Wake Mitigation through Blade
-   Pitch Offset, Energies, 10, 757, 2017.
+A couple of publications with practical information on using floris as a
+modeling and simulation tool for controls research are
 
-3. Abkar, M. and Porté-Agel, F.: Influence of atmospheric stability on
-   wind-turbine wakes: A large-eddy simulation study, Physics of Fluids,
-   27, 035 104, 2015.
-
-4. Bastankhah, M. and Porté-Agel, F.: A new analytical model for
-   wind-turbine wakes, Renewable Energy, 70, 116–123, 2014.
-
-5. Bastankhah, M. and Porté-Agel, 5 F.: Experimental and theoretical study of
-   wind turbine wakes in yawed conditions, Journal of FluidMechanics, 806,
-   506–541, 2016.
+- Jen paper
+- Chris paper
 
 Citation
 ========
