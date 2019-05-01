@@ -29,7 +29,7 @@ import floris.utilities as geo
 
 class WindRose():
     """
-    WIndRose object class used to generate figures.
+    WindRose object class used to parse data and generate figures.
     """
 
     def __init__(self, ):
@@ -52,7 +52,7 @@ class WindRose():
         Method for pickling WIndRose objects.
 
         Args:
-            filename (str): Write-to path for pickle.
+            filename (str): Write-to path for WindRose pickle.
         """
         pickle.dump([
             self.num_wd, self.num_ws, self.wd_step, self.ws_step, self.wd,
