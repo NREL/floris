@@ -15,8 +15,23 @@ from scipy.optimize import minimize
 # import warnings
 # warnings.simplefilter('ignore', RuntimeWarning)
 
-def optimize_yaw(fi,minimum_yaw_angle=0.0,maximum_yaw_angle=25.0):
 
+def optimize_yaw(fi, minimum_yaw_angle=0.0, maximum_yaw_angle=25.0):
+    """
+    Find optimum setting of turbine yaw angles for power production
+    given fixed atmospheric conditins (wind speed, direction, etc.)
+
+    Args:
+        fi (floris.tools.floris_utilities.FlorisInterface):
+            Interface from FLORIS to the wfc tools
+        minimum_yaw_angle (float, optional): minimum constraint on yaw.
+            Defaults to 0.0.
+        maximum_yaw_angle (float, optional): maximum constraint on yaw.
+            Defaults to 25.0.
+
+    Returns:
+        opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+    """
     # initialize floris without the full flow domain; only points assigned at the turbine
     fi.floris.farm.flow_field.reinitialize_flow_field()
 
@@ -24,16 +39,20 @@ def optimize_yaw(fi,minimum_yaw_angle=0.0,maximum_yaw_angle=25.0):
     x0 = []
     bnds = []
 
-    turbines    = fi.floris.farm.turbine_map.turbines
-    x0          = [turbine.yaw_angle for turbine in turbines]
-    bnds        = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in turbines]
+    turbines = fi.floris.farm.turbine_map.turbines
+    x0 = [turbine.yaw_angle for turbine in turbines]
+    bnds = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in turbines]
 
-    print('=====================================================================')
+    print('=====================================================')
     print('Optimizing wake redirection control...')
     print('Number of parameters to optimize = ', len(x0))
-    print('=====================================================================')
+    print('=====================================================')
 
-    residual_plant = minimize(fi.get_power_for_yaw_angle_opt,x0,method='SLSQP',bounds=bnds,options={'eps':np.radians(5.0)})
+    residual_plant = minimize(fi.get_power_for_yaw_angle_opt,
+                              x0,
+                              method='SLSQP',
+                              bounds=bnds,
+                              options={'eps': np.radians(5.0)})
 
     if np.sum(residual_plant.x) == 0:
         print('No change in controls suggested for this inflow condition...')
