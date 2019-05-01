@@ -82,8 +82,8 @@ def energy_ratio(ref_pow_base,test_pow_base, ws_base,
     lut_con = np.zeros(np.max(ws_unique)+1)
     lut_con[ws_unique] = weights_con
     weight_array_con = lut_con[ws_con]
-    
-    # Weighted sums 
+
+    # Weighted sums
     weight_sum_ref_base = np.sum(ref_pow_base * weight_array_base)
     weight_sum_test_base = np.sum(test_pow_base * weight_array_base)
     weight_sum_ref_con = np.sum(ref_pow_con * weight_array_con)
@@ -140,7 +140,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     lower_ratio_array_base = np.zeros(len(wind_direction_bins))* np.nan
     upper_ratio_array_base = np.zeros(len(wind_direction_bins))* np.nan
     counts_ratio_array_base = np.zeros(len(wind_direction_bins))* np.nan
-    
+
     ratio_array_con = np.zeros(len(wind_direction_bins))* np.nan
     lower_ratio_array_con = np.zeros(len(wind_direction_bins))* np.nan
     upper_ratio_array_con = np.zeros(len(wind_direction_bins))* np.nan
@@ -155,7 +155,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     lower_p_change_array = np.zeros(len(wind_direction_bins))* np.nan
     upper_p_change_array = np.zeros(len(wind_direction_bins))* np.nan
     counts_p_change_array = np.zeros(len(wind_direction_bins))* np.nan
-    
+
 
 
 
@@ -171,7 +171,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         reference_power_baseline_wd = reference_power_baseline[wind_dir_mask_baseline]
         test_power_baseline_wd = test_power_baseline[wind_dir_mask_baseline]
         wind_speed_array_baseline_wd = wind_speed_array_baseline[wind_dir_mask_baseline]
-        
+
         reference_power_controlled_wd = reference_power_controlled[wind_dir_mask_controlled]
         test_power_controlled_wd = test_power_controlled[wind_dir_mask_controlled]
         wind_speed_array_controlled_wd = wind_speed_array_controlled[wind_dir_mask_controlled]
@@ -209,7 +209,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             reference_power_binned_controlled = reference_power_controlled_wd[ind_bs]
             test_power_binned_controlled = test_power_controlled_wd[ind_bs]
             wind_speed_binned_controlled = wind_speed_array_controlled_wd[ind_bs]
-        
+
             # compute the energy ratio
             ratio_base_bs[i_bs], ratio_con_bs[i_bs], diff_bs[i_bs],p_change_bs[i_bs], _, _, _, _   = energy_ratio(reference_power_binned_baseline,test_power_binned_baseline,wind_speed_binned_baseline,
                                            reference_power_binned_controlled, test_power_binned_controlled, wind_speed_binned_controlled     )
@@ -225,7 +225,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
 
 
     return ratio_array_base,lower_ratio_array_base, upper_ratio_array_base,counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array,counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array
-       
+
 def plot_energy_ratio(reference_power_baseline,
                             test_power_baseline,
                             wind_speed_array_baseline,
@@ -238,10 +238,10 @@ def plot_energy_ratio(reference_power_baseline,
                             confidence=95,
                             n_boostrap=None,
                             wind_direction_bin_p_overlap=None,
-                            axarr=None, 
+                            axarr=None,
                             base_color='b',
                             con_color='g',
-                            label_array = None, 
+                            label_array = None,
                             label_pchange = None,
                             y_lim=None,
                             plot_simple=False,
