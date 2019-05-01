@@ -16,12 +16,17 @@ import pandas as pd
 import os
 import re
 
+
 class SowfaInterface():
     """
-    - handle data averaging
+    Object to facilitate interaction with flow data output by SOWFA.
+
+    Returns:
+        floris.tools.sowfa_utilities.SowfaInterface: object
     """
 
-    def __init__(self, case_folder,
+    def __init__(self,
+                 case_folder,
                  flow_data_sub_path='array_mean/array.mean0D_UAvg.vtk',
                  setup_sub_path='setUp',
                  turbine_array_sub_path='constant/turbineArrayProperties',
@@ -29,7 +34,26 @@ class SowfaInterface():
                  controlDict_sub_path='system/controlDict',
                  turbine_output_sub_path='turbineOutput/20000',
                  assumed_settling_time=None):
+        """
+        SowfaInterface object init method.
 
+        Args:
+            case_folder (str): path to folder containing SOWFA data
+            flow_data_sub_path (str, optional): path to mean data.
+                Defaults to 'array_mean/array.mean0D_UAvg.vtk'.
+            setup_sub_path (str, optional): path to setup info.
+                Defaults to 'setUp'.
+            turbine_array_sub_path (str, optional): path to wind plant
+                info. Defaults to 'constant/turbineArrayProperties'.
+            turbine_sub_path (str, optional): path to wind turbine
+                info. Defaults to 'constant/turbineProperties'.
+            controlDict_sub_path (str, optional): path to turbine
+                controls info. Defaults to 'system/controlDict'.
+            turbine_output_sub_path (str, optional): path to turbine
+                operational data. Defaults to 'turbineOutput/20000'.
+            assumed_settling_time ([type], optional): Time to account
+                for startup transients in simulation. Defaults to None.
+        """
         print(case_folder)
 
         # Save the case_folder and sub_paths
@@ -40,7 +64,6 @@ class SowfaInterface():
         self.controlDict_sub_path = controlDict_sub_path
         self.turbine_output_sub_path = turbine_output_sub_path
 
-
         # Read in the input files
 
         # Get control settings from sc input file
@@ -48,9 +71,12 @@ class SowfaInterface():
         #TODO If not using the super controller sowfa variant, need alternative
 
         # Get the turbine name and locations
-        turbine_array_dict = read_foam_file(os.path.join(self.case_folder, self.turbine_array_sub_path))
-        self.turbine_name = turbine_array_dict['turbineType'].replace('"', '')  # TODO Assuming only one type
-        self.layout_x, self.layout_y = get_turbine_locations(os.path.join(self.case_folder, self.turbine_array_sub_path))
+        turbine_array_dict = read_foam_file(
+            os.path.join(self.case_folder, self.turbine_array_sub_path))
+        self.turbine_name = turbine_array_dict['turbineType'].replace(
+            '"', '')  # TODO Assuming only one type
+        self.layout_x, self.layout_y = get_turbine_locations(
+            os.path.join(self.case_folder, self.turbine_array_sub_path))
 
         # Save the number of turbines
         self.num_turbines = len(self.layout_x)
@@ -62,25 +88,33 @@ class SowfaInterface():
             self.yaw_angles = df_SC.yaw.values
             self.pitch_angles = df_SC.pitch.values
         else:
-            print('No SC_INPUT.txt, getting pitch and yaw from turbine array props')
-            self.yaw_angles = get_turbine_yaw_angles(os.path.join(self.case_folder, self.turbine_array_sub_path))
-            self.pitch_angles = get_turbine_pitch_angles(os.path.join(self.case_folder, self.turbine_array_sub_path))
+            print(
+                'No SC_INPUT.txt, getting pitch and yaw from turbine array props'
+            )
+            self.yaw_angles = get_turbine_yaw_angles(
+                os.path.join(self.case_folder, self.turbine_array_sub_path))
+            self.pitch_angles = get_turbine_pitch_angles(
+                os.path.join(self.case_folder, self.turbine_array_sub_path))
             print(self.yaw_angles)
             print(self.pitch_angles)
-        
 
         # Get the turbine rotor diameter and hub height
-        turbine_dict = read_foam_file(os.path.join(self.case_folder, self.turbine_sub_path, self.turbine_name))
+        turbine_dict = read_foam_file(
+            os.path.join(self.case_folder, self.turbine_sub_path,
+                         self.turbine_name))
         self.D = 2 * turbine_dict['TipRad']
 
         # Use the setup file and control file to determine the precursor wind speed
         # And the time flow averaging begins (settling time)
-        setup_dict = read_foam_file(os.path.join(self.case_folder, self.setup_sub_path))
-        controlDict_dict = read_foam_file(os.path.join(self.case_folder, self.controlDict_sub_path))
+        setup_dict = read_foam_file(
+            os.path.join(self.case_folder, self.setup_sub_path))
+        controlDict_dict = read_foam_file(
+            os.path.join(self.case_folder, self.controlDict_sub_path))
         start_run_time = controlDict_dict['startTime']
         averaging_start_time = setup_dict['meanStartTime']
         if assumed_settling_time is not None:
-            print('Using assumed settling time of %.1f s' % assumed_settling_time)
+            print('Using assumed settling time of %.1f s' %
+                  assumed_settling_time)
             self.settling_time = assumed_settling_time
         else:
             self.settling_time = averaging_start_time - start_run_time
@@ -90,17 +124,20 @@ class SowfaInterface():
         self.precursor_wind_dir = setup_dict['dir']
 
         # Read the outputs
-        self.turbine_output = read_sowfa_df(os.path.join(self.case_folder, self.turbine_output_sub_path))
+        self.turbine_output = read_sowfa_df(
+            os.path.join(self.case_folder, self.turbine_output_sub_path))
 
         # Remove the settling time
-        self.turbine_output = self.turbine_output[self.turbine_output.time > self.settling_time]
+        self.turbine_output = self.turbine_output[
+            self.turbine_output.time > self.settling_time]
 
         # Get the sim_time
         self.sim_time_length = self.turbine_output.time.max()
 
         # Read the flow data
         try:
-            self.flow_data = self.read_flow_frame_SOWFA(os.path.join(case_folder, flow_data_sub_path))
+            self.flow_data = self.read_flow_frame_SOWFA(
+                os.path.join(case_folder, flow_data_sub_path))
 
             # Re-set turbine positions to flow_field origin
             self.layout_x = self.layout_x - self.flow_data.origin.x1
@@ -108,9 +145,7 @@ class SowfaInterface():
 
         except FileNotFoundError:
             print('No flow field found, setting NULL, origin at 0')
-            self.flow_data = None #TODO might need a null flow-field
-
-
+            self.flow_data = None  #TODO might need a null flow-field
 
     def __str__(self):
 
@@ -133,16 +168,16 @@ class SowfaInterface():
         return ' '
 
     def read_flow_frame_SOWFA(self, filename):
-        """Read flow array output from SOWFA
+        """
+        Read flow array output from SOWFA
 
+        Args:
+            filename (str): name of file containing flow data.
 
-        input: filename: name of flow array to open
-
-        output:
-            df: a pandas table with the columns, x,y,z,u,v,w of all relavent flow info
-            origin: the origin of the flow field, for reconstructing turbine coords
-
-        Paul Fleming, 2018 """
+        Returns:
+            FlowData (pd.DataFrame): a pandas table with the columns,
+                of all relavent flow info (e.g. x, y, z, u, v, w).
+        """
 
         # Read the dimension info from the file
         with open(filename, 'r') as f:
@@ -150,53 +185,63 @@ class SowfaInterface():
                 read_data = f.readline()
                 if 'SPACING' in read_data:
                     splitstring = read_data.rstrip().split(' ')
-                    spacing = Vec3(float(splitstring[1]), float(splitstring[2]), float(splitstring[3]))
+                    spacing = Vec3(float(splitstring[1]),
+                                   float(splitstring[2]),
+                                   float(splitstring[3]))
                 if 'DIMENSIONS' in read_data:
                     splitstring = read_data.rstrip().split(' ')
-                    dimensions = Vec3(int(splitstring[1]), int(splitstring[2]), int(splitstring[3]))
+                    dimensions = Vec3(int(splitstring[1]), int(splitstring[2]),
+                                      int(splitstring[3]))
                 if 'ORIGIN' in read_data:
                     splitstring = read_data.rstrip().split(' ')
-                    origin = Vec3(float(splitstring[1]), float(splitstring[2]), float(splitstring[3]))
+                    origin = Vec3(float(splitstring[1]), float(splitstring[2]),
+                                  float(splitstring[3]))
 
         # Set up x, y, z as lists
         if dimensions.x1 > 1.0:
-            xRange = np.arange(0, dimensions.x1*spacing.x1, spacing.x1)
+            xRange = np.arange(0, dimensions.x1 * spacing.x1, spacing.x1)
         else:
             xRange = np.array([0.0])
 
         if dimensions.x2 > 1.0:
-            yRange = np.arange(0, dimensions.x2*spacing.x2, spacing.x2)
+            yRange = np.arange(0, dimensions.x2 * spacing.x2, spacing.x2)
         else:
             yRange = np.array([0.0])
 
         if dimensions.x3 > 1.0:
-            zRange = np.arange(0, dimensions.x3*spacing.x3, spacing.x3)
+            zRange = np.arange(0, dimensions.x3 * spacing.x3, spacing.x3)
         else:
             zRange = np.array([0.0])
 
-        pts = np.array([(x, y, z)
-                        for z in zRange for y in yRange for x in xRange])
+        pts = np.array([(x, y, z) for z in zRange for y in yRange
+                        for x in xRange])
 
-        df = pd.read_csv(filename, skiprows=10, sep='\t',
-                         header=None, names=['u', 'v', 'w'])
+        df = pd.read_csv(filename,
+                         skiprows=10,
+                         sep='\t',
+                         header=None,
+                         names=['u', 'v', 'w'])
         x = pts[:, 0]
         y = pts[:, 1]
         z = pts[:, 2]
 
-        return FlowData(x, y, z, df.u.values, df.v.values, df.w.values, spacing, dimensions, origin)
+        return FlowData(x, y, z, df.u.values, df.v.values, df.w.values,
+                        spacing, dimensions, origin)
 
 
 def read_sc_input(case_folder, wind_direction=270.):
-    """Read the SC input file to get the wind farm control settings
+    """
+    Read the super controller (SC) input file to get the wind farm
+    control settings.
 
+    Args:
+        case_folder (str): path to folder containing SC data.
+        wind_direction (float, optional): Wind direction.
+            Defaults to 270..
 
-    input: case_folder: name of case folder
-            filename: name of the SC file
-            wind_direction: wind direction to subtract from to get relative yaw error
-
-    output: df_SC: Data frame of SC settings
-
-    Paul Fleming, 2018 """
+    Returns:
+        df_SC (pd.DataFrame): dataframe containing SC info.
+    """
 
     sc_file = os.path.join(case_folder, 'SC_INPUT.txt')
 
@@ -212,29 +257,38 @@ def read_sc_input(case_folder, wind_direction=270.):
 
 
 def read_sowfa_df(folder_name, channels=[]):
-    """New function to use pandas to read in files using pandas
+    """
+    New function to use pandas to read in files using pandas
 
-    input: folder_name, where to find the outputs of AL
-            channels, not really used for now, but could be a list of desired channels to only read
-    output:
-		df: a pandas table
-
-
-    Paul Fleming, 2018 based on 
-    Pieter Gebraad, 2015"""
+    Args:
+        folder_name (str): where to find the outputs of ALL channels,
+            not really used for now, but could be a list of desired
+            channels to only read.
+        channels (list, optional): list of specific channels to read.
+            Defaults to [].
+    """
 
     # Get the availble outputs
-    outputNames = [f for f in os.listdir(folder_name) if os.path.isfile(os.path.join(folder_name, f))]
+    outputNames = [
+        f for f in os.listdir(folder_name)
+        if os.path.isfile(os.path.join(folder_name, f))
+    ]
 
     # Remove the harder input files for now (undo someday)
-    hardFiles = ['Vtangential', 'Cl', 'Cd', 'Vradial', 'x', 'y', 'z', 'alpha', 'axialForce']
-    simpleFiles = ['nacYaw', 'rotSpeedFiltered', 'rotSpeed', 'thrust', 'torqueGen', 'powerRotor', 'powerGenerator', 'torqueRotor', 'azimuth', 'pitch']
+    hardFiles = [
+        'Vtangential', 'Cl', 'Cd', 'Vradial', 'x', 'y', 'z', 'alpha',
+        'axialForce'
+    ]
+    simpleFiles = [
+        'nacYaw', 'rotSpeedFiltered', 'rotSpeed', 'thrust', 'torqueGen',
+        'powerRotor', 'powerGenerator', 'torqueRotor', 'azimuth', 'pitch'
+    ]
 
     # Limit to files
     if len(channels) == 0:
-    	outputNames = [o for o in outputNames if o in simpleFiles]
+        outputNames = [o for o in outputNames if o in simpleFiles]
     else:
-    	outputNames = channels
+        outputNames = channels
 
     # Get the number of channels
     num_channels = len(outputNames)
@@ -254,7 +308,8 @@ def read_sowfa_df(folder_name, channels=[]):
         df_inner.columns = ['turbine', 'time', 'dt', chan]
 
         # Drop dt
-        df_inner = df_inner[['time', 'turbine', chan]].set_index(['time', 'turbine'])
+        df_inner = df_inner[['time', 'turbine',
+                             chan]].set_index(['time', 'turbine'])
 
         # On first run declare the new frame
         if c_idx == 0:
@@ -275,10 +330,17 @@ def read_sowfa_df(folder_name, channels=[]):
 
 
 def read_foam_file(filename):
-    '''
-    Note that this function only reads scalar and boolean/string inputs from
-    an OpenFOAM  input file
-    '''
+    """
+    Method to read scalar and boolean/string inputs from an OpenFOAM
+    input file.
+
+    Args:
+        filename (str): path to file to read.
+
+    Returns:
+        data (dict): dictionary with OpenFOAM inputs
+    """
+
     data = {}
 
     with open(filename, 'r') as fid:
@@ -297,7 +359,8 @@ def read_foam_file(filename):
             if raw[i].strip()[0:2] == '//' or raw[i].strip()[0:1] == '#':
                 pass
 
-            elif len(raw[i].strip()) == 0:  # Check if the string is empty and skip line
+            elif len(raw[i].strip()
+                     ) == 0:  # Check if the string is empty and skip line
                 pass
 
             else:
@@ -317,7 +380,17 @@ def read_foam_file(filename):
 
 
 def get_turbine_locations(turbine_array_file):
+    """
+    Extract wind turbine locations from SOWFA data.
 
+    Args:
+        turbine_array_file (str): path to file containing wind plant
+            layout data.
+
+    Returns:
+        layout_x (np.array): wind plant layout coodinates (east-west).
+        layout_y (np.array): wind plant layout coodinates (north-south).
+    """
 
     x = list()
     y = list()
@@ -337,8 +410,17 @@ def get_turbine_locations(turbine_array_file):
 
     return layout_x, layout_y
 
-def get_turbine_pitch_angles(turbine_array_file):
 
+def get_turbine_pitch_angles(turbine_array_file):
+    """
+    Extract wind turbine blade pitch information from SOWFA data.
+
+    Args:
+        turbine_array_file (str): path to file containing pitch info.
+
+    Returns:
+        np.array: blade pitch info.
+    """
     p = list()
 
     with open(turbine_array_file, 'r') as f:
@@ -354,7 +436,17 @@ def get_turbine_pitch_angles(turbine_array_file):
 
 
 def get_turbine_yaw_angles(turbine_array_file, wind_direction=270.):
+    """
+    Extract wind turbine yaw angle information from SOWFA data.
 
+    Args:
+        turbine_array_file (str): path to file containing yaw info.
+        wind_direction (float, optional): Wind direction.
+            Defaults to 270..
+
+    Returns:
+        np.array: wind turbine yaw info.
+    """
     y = list()
 
     with open(turbine_array_file, 'r') as f:
