@@ -1,9 +1,32 @@
-
 Change Log
 ----------
 
 FLORIS follows semantic versioning. For download and installation instructions,
 see the :ref:`installation <installation>` section.
+
+v0.4.0
+======
+Released on 2018-10-19
+
+- Add a web app for generating input files
+- Improvements to visualization
+- Documentation updates
+- Improvements to the module naming and general project organization
+
+v0.3.1
+======
+Released on 2018-04-03
+
+- Bug fix in unit tests
+
+v0.3.0
+======
+Released on 2018-04-03
+
+- Connects the air density input to the models
+- Improve the documentation and readme
+- Move the visualization tools out of the main package
+- Add examples on AEP calculation
 
 v0.2.0
 ======
