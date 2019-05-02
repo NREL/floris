@@ -88,7 +88,9 @@ def data_plot(x,
             #TODO generalize to show_percentile?
 
     Returns:
-    Only returns values if `show_confidence` flag is active (True), otherwise returns (np.nan).
+    Only returns values if `show_confidence` flag is active (True), 
+    otherwise returns (np.nan).
+    
         x_bins (np.array): bin limits
         median_vals (np.array): median values of data in bins
         lower (np.array): lower limit of data in bins

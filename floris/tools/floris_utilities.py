@@ -183,6 +183,7 @@ class FlorisInterface():
         Generate FlowData object corresponding to the floris instance.
 
         #TODO disambiguate between resolution and grid spacing.
+        
         Args:
             resolution (float, optional): resolution of output data.
                 Only used for wake models that require spatial
