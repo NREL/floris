@@ -13,39 +13,32 @@ from . import wake_deflection
 from . import wake_velocity
 from . import wake_combination
 
+
 class Wake():
     """
-    Wake is a container class for the various wake model objects. In particular,
-    Wake holds references to the velocity and deflection models as well as their
-    parameters.
-
-    inputs:
-        instance_dictionary: dict - the input dictionary;
-            it should have the following key-value pairs:
-                {
-                    "description": str,
-
-                    "properties": dict({
-
-                        velocity_model: WakeVelocity
-
-                        deflection_model: WakeDeflection
-
-                        parameters: dict({
-
-                            see WakeVelocity, WakeDeflection
-
-                        })
-
-                    }),
-
-                }
-
-    outputs:
-        self: Wake - an instantiated Wake object
+    Wake is a container class for the various wake model objects. In
+    particular, Wake holds references to the velocity and deflection
+    models as well as their parameters.
     """
 
     def __init__(self, instance_dictionary):
+        """
+        Init method for Wake objects.
+
+        Args:
+            instance_dictionary (dict): the input dictionary with the
+            following key-value pairs:
+                {
+                    "description": str,
+                    "properties": dict({
+                        velocity_model: WakeVelocity
+                        deflection_model: WakeDeflection
+                        parameters: dict({
+                            see WakeVelocity, WakeDeflection
+                        })
+                    }),
+                }
+        """
 
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
@@ -57,24 +50,35 @@ class Wake():
             "gauss": wake_velocity.Gauss(parameters),
             "curl": wake_velocity.Curl(parameters)
         }
-        self._velocity_model = self.velocity_models[properties["velocity_model"]]
+        self._velocity_model = self.velocity_models[
+            properties["velocity_model"]]
 
         self.deflection_models = {
             "jimenez": wake_deflection.Jimenez(parameters),
             "gauss": wake_deflection.Gauss(parameters),
             "curl": wake_deflection.Curl(parameters)
         }
-        self._deflection_model = self.deflection_models[properties["deflection_model"]]
+        self._deflection_model = self.deflection_models[
+            properties["deflection_model"]]
 
         self.combination_models = {
             "fls": wake_combination.FLS(),
             "sosfs": wake_combination.SOSFS()
         }
-        self._combination_model = self.combination_models[properties["combination_model"]]
+        self._combination_model = self.combination_models[
+            properties["combination_model"]]
 
     # Getters & Setters
     @property
     def velocity_model(self):
+        """
+        Print or re-assign the velocity model. Recognized types:
+
+         - jensen
+         - multizone
+         - gauss
+         - curl
+        """
         return self._velocity_model
 
     @velocity_model.setter
@@ -83,6 +87,13 @@ class Wake():
 
     @property
     def deflection_model(self):
+        """
+        Print or re-assign the deflection model. Recognized types:
+
+         - jimenez
+         - gauss
+         - curl
+        """
         return self._deflection_model
 
     @deflection_model.setter
@@ -91,6 +102,12 @@ class Wake():
 
     @property
     def combination_model(self):
+        """
+        Print or re-assign the combination model. Recognized types:
+
+         - fls
+         - sosfs
+        """
         return self._combination_model
 
     @combination_model.setter
@@ -99,12 +116,21 @@ class Wake():
 
     @property
     def deflection_function(self):
+        """
+        Return the underlying function of the deflection model.
+        """
         return self._deflection_model.function
 
     @property
     def velocity_function(self):
+        """
+        Return the underlying function of the velocity model.
+        """
         return self._velocity_model.function
 
     @property
     def combination_function(self):
+        """
+        Return the underlying function of the combination model.
+        """
         return self._combination_model.function
