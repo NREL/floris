@@ -22,7 +22,7 @@ def optimize_yaw(fi, minimum_yaw_angle=0.0, maximum_yaw_angle=25.0):
     given fixed atmospheric conditins (wind speed, direction, etc.)
 
     Args:
-        fi (floris.tools.floris_utilities.FlorisInterface):
+        fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`):
             Interface from FLORIS to the wfc tools
         minimum_yaw_angle (float, optional): minimum constraint on yaw.
             Defaults to 0.0.

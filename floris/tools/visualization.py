@@ -82,7 +82,7 @@ def visualize_cut_plane(cut_plane,
     Generate pseudocolor mesh plot of the scan.
 
     Args:
-        cut_plane (floris.tools.cutplane): 2D plane through wind plant.
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane'): 2D plane through wind plant.
         ax (plt.axes): figure axes. Defaults to None.
         minSpeed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.

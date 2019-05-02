@@ -150,14 +150,15 @@ def set_origin(cut_plane, center_x1=0.0, center_x2=0.0):
     Establish the origin of a CutPlane object.
 
     Args:
-        cut_plane (floris.tools.cut_plane._CutPlane): plane of data.
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data.
         center_x1 (float, optional): x1-coordinate of orign.
                 Defaults to 0.0.
         center_x2 (float, optional): x2-coordinate of orign.
                 Defaults to 0.0.
 
     Returns:
-        cut_plane (floris.tools.cut_plane._CutPlane):
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
                 updated plane of data.
     """
     # Store the un-interpolated input arrays at this slice
@@ -177,12 +178,13 @@ def change_resolution(cut_plane, resolution=(100, 100)):
     Modify default resolution of a CutPlane object.
 
     Args:
-        cut_plane (floris.tools.cut_plane._CutPlane): plane of data.
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data.
         resolution (tuple, optional): Desired resolution in x1 and x2.
             Defaults to (100, 100).
 
     Returns:
-        cut_plane (floris.tools.cut_plane._CutPlane):
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
                 updated plane of data.
     """
     # Grid the data
@@ -206,12 +208,13 @@ def interpolate_onto_array(cut_plane, x1_array, x2_array):
     Interpolate a CutPlane object onto specified coordinate arrays.
 
     Args:
-        cut_plane (floris.tools.cut_plane._CutPlane): plane of data.
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data.
         x1_array (np.array): specified x1-coordinate.
         x2_array (np.array): specified x2-coordinate.
 
     Returns:
-        cut_plane (floris.tools.cut_plane._CutPlane):
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
                 updated plane of data.
     """
     # Grid the data given array
@@ -234,12 +237,13 @@ def rescale_axis(cut_plane, x1_factor=1.0, x2_factor=1.0):
     Stretch or compress CutPlane coordinates.
 
     Args:
-        cut_plane (floris.tools.cut_plane._CutPlane): plane of data.
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data.
         x1_factor (float): scaling factor for x1-coordinate.
         x2_factor (float): scaling factor for x2-coordinate.
 
     Returns:
-        cut_plane (floris.tools.cut_plane._CutPlane):
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
                 updated plane of data.
     """
     # Store the un-interpolated input arrays at this slice
@@ -259,7 +263,8 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
     Calculate effective wind speed within specified range of a point.
 
     Args:
-        cross_plane floris.tools.cut_plane.CrossPlane): plane of data.
+        cross_plane :py:class:`floris.tools.cut_plane.CrossPlane`):
+            plane of data.
         x1_loc (float): x1-coordinate of point of interst.
         x2_loc (float): x2-coordinate of point of interst.
         R (float): radius from point of interst to consider
@@ -286,7 +291,8 @@ def calculate_power(cross_plane,
     Calculate maximum power available in a given cross plane.
 
     Args:
-        cross_plane floris.tools.cut_plane.CrossPlane): plane of data.
+        cross_plane :py:class:`floris.tools.cut_plane.CrossPlane`):
+            plane of data.
         x1_loc (float): x1-coordinate of point of interst.
         x2_loc (float): x2-coordinate of point of interst.
         R (float): [description]

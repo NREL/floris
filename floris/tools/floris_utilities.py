@@ -51,7 +51,8 @@ class FlorisInterface():
                                 layout_array=None,
                                 with_resolution=None):
         """
-        Wrapper to floris.farm.flow_field.reinitialize_flow_field().
+        Wrapper to
+        :py:meth:`floris.farm.flow_field.reinitialize_flow_field()`.
         All input values are used to update the flow_field instance.
 
         Args:
@@ -183,7 +184,7 @@ class FlorisInterface():
         Generate FlowData object corresponding to the floris instance.
 
         #TODO disambiguate between resolution and grid spacing.
-        
+
         Args:
             resolution (float, optional): resolution of output data.
                 Only used for wake models that require spatial
@@ -192,7 +193,7 @@ class FlorisInterface():
                 Defaults to 10.
 
         Returns:
-            floris.tools.flow_data.FlowData: FlowData object
+            :py:class:`floris.tools.flow_data.FlowData`: FlowData object
         """
 
         if resolution is None:

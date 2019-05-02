@@ -31,7 +31,7 @@ class FlowData():
                  dimensions=None,
                  origin=None):
         """
-        Initialize FLowData object with coordinates, velocity fields,
+        Initialize FlowData object with coordinates, velocity fields,
         and meta data.
 
         Args:
@@ -93,13 +93,15 @@ class FlowData():
         Crop FlowData object to within stated bounds.
 
         Args:
-            ff (floris.tools.flow_data.FlowData): FlowData object.
+            ff (:py:class:`floris.tools.flow_data.FlowData`):
+                FlowData object.
             x_bnds (iterable): min and max of x-coordinate.
             y_bnds (iterable): min and max of y-coordinate.
             z_bnds (iterable): min and max of z-coordinate.
 
         Returns:
-            (floris.tools.flow_data.FlowData): cropped FlowData object.
+            (:py:class:`floris.tools.flow_data.FlowData'):
+                cropped FlowData object.
         """
 
         map_values = (ff.x > x_bnds[0]) & (ff.x < x_bnds[1]) & (

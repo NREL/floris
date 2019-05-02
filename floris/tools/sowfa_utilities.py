@@ -22,7 +22,7 @@ class SowfaInterface():
     Object to facilitate interaction with flow data output by SOWFA.
 
     Returns:
-        floris.tools.sowfa_utilities.SowfaInterface: object
+        :py:class:`floris.tools.sowfa_utilities.SowfaInterface`: object
     """
 
     def __init__(self,

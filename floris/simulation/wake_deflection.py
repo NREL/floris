@@ -34,7 +34,8 @@ class WakeDeflection():
 
 class Jimenez(WakeDeflection):
     """
-    Subclass of the floris.simulation.wake_deflection.WakeDeflection()
+    Subclass of the
+    :py:class:`floris.simulation.wake_deflection.WakeDeflection`
     object class. Parameters required for Jimenez wake model:
 
      - ad: #TODO What is this parameter for?
@@ -71,10 +72,14 @@ class Jimenez(WakeDeflection):
         Args:
             x_locations (np.array): streamwise locations in wake
             y_locations (np.array): spanwise locations in wake
-            turbine (floris.simulation.turbine.Turbine): Turbine object
-            coord (floris.simulation.turbine_map.TurbineMap.coords):
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object
+            coord
+                (:py:class:`floris.simulation.turbine_map.
+                    TurbineMap`.coords):
                 Spatial coordinates of wind turbine.
-            flow_field (floris.simulation.flow_field.FlowField):
+            flow_field
+                (:py:class:`floris.simulation.flow_field.FlowField`):
                 Flow field object.
 
         Returns:
@@ -106,8 +111,9 @@ class Jimenez(WakeDeflection):
 
 class Gauss(WakeDeflection):
     """
-    Subclass of the floris.simulation.wake_deflection.WakeDeflection()
-    object class. Parameters required for Gauss wake model:
+    Subclass of the
+    :py:class:`floris.simulation.wake_deflection.WakeDeflection`
+    object. Parameters required for Gauss wake model:
 
      - ka: #TODO What is this parameter for?
      - kb: #TODO What is this parameter for?
@@ -153,16 +159,20 @@ class Gauss(WakeDeflection):
         Args:
             x_locations (np.array): streamwise locations in wake
             y_locations (np.array): spanwise locations in wake
-            turbine (floris.simulation.turbine.Turbine): Turbine object
-            coord (floris.simulation.turbine_map.TurbineMap.coords):
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object
+            coord
+                (:py:class:`:py:class:`floris.simulation.turbine_map.
+                    TurbineMap.coords`):
                 Spatial coordinates of wind turbine.
-            flow_field (floris.simulation.flow_field.FlowField):
+            flow_field
+                (:py:class:`floris.simulation.flow_field.FlowField`):
                 Flow field object.
 
         Returns:
             deflection (np.array): Deflected wake centerline.
         """
-        # =======================================================================================================
+        # ==============================================================
         wind_speed = flow_field.wind_speed  # free-stream velocity (m/s)
         TI_0 = flow_field.turbulence_intensity  # turbulence intensity (%/100)
         veer = flow_field.wind_veer  # veer (degrees)
@@ -250,8 +260,9 @@ class Gauss(WakeDeflection):
 
 class Curl(WakeDeflection):
     """
-    Subclass of the floris.simulation.wake_deflection.WakeDeflection()
-    object class. Parameters required for Curl wake model:
+    Subclass of the
+    :py:class:`floris.simulation.wake_deflection.WakeDeflection`()`
+    object. Parameters required for Curl wake model:
 
      - model_grid_resolution: #TODO What does this do?
     """
