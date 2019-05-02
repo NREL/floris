@@ -29,17 +29,10 @@ class WakeCombination():
 
 class FLS(WakeCombination):
     """
-    FLS is a derived class of 
+    FLS is a subclass of 
     :py:class:`floris.simulation.wake_combination.WakeCombination` 
     which uses freestream linear superposition to combine the base flow 
     field with the wake velocity deficits.
-
-    Parameters:
-        WakeCombination: A WakeCombination object.
-
-    Returns:
-        array: A linear combination of the base flow field and the 
-        velocity deficits.
     """
 
     def __init__(self):
@@ -47,22 +40,28 @@ class FLS(WakeCombination):
         self.model_string = "fls"
 
     def function(self, u_field, u_wake):
+        """
+        This method combines the base flow field with the velocity 
+        defecits using freestream linear superpostion.
+
+        Parameters:
+            u_field (np.array): The base flow field.
+            u_wake (np.array): The wake to add to the rest of the flow 
+                field.
+
+        Returns:
+            array: A linear combination of the base flow field and the 
+            velocity deficits.
+        """
         return u_field + u_wake
 
 
 class SOSFS(WakeCombination):
     """
-    SOSFS is a derived class of 
+    SOSFS is a subclass of 
     :py:class:`floris.simulation.wake_combination.WakeCombination` 
     which uses sum of squares freestream superposition to combine the 
     base flow field with the wake velocity deficits.
-
-    Parameters:
-        WakeCombination: A WakeCombination object.
-
-    Returns:
-        array: A sum of squares combination of the base flow field and 
-        the velocity deficits.
     """
 
     def __init__(self):
@@ -70,4 +69,17 @@ class SOSFS(WakeCombination):
         self.model_string = "sosfs"
 
     def function(self, u_field, u_wake):
+        """
+        This method combines the base flow field with the velocity 
+        defecits using sum of squares.
+
+        Parameters:
+            u_field (np.array): The base flow field.
+            u_wake (np.array): The wake to add to the rest of the flow 
+                field.
+
+        Returns:
+            array: A sum of squares combination of the base flow field 
+            and the velocity deficits.
+        """
         return np.hypot(u_wake, u_field)
