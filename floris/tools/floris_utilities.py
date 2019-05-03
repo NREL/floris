@@ -52,7 +52,7 @@ class FlorisInterface():
                                 with_resolution=None):
         """
         Wrapper to
-        :py:meth:`floris.farm.flow_field.reinitialize_flow_field`.
+        :py:meth:`floris.flow_field.reinitialize_flow_field`.
         All input values are used to update the flow_field instance.
 
         Args:
