@@ -178,7 +178,7 @@ def change_resolution(cut_plane, resolution=(100, 100)):
     Modify default resolution of a CutPlane object.
 
     Args:
-        cut_plane (:py:class:`_CutPlane`):
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
             plane of data.
         resolution (tuple, optional): Desired resolution in x1 and x2.
             Defaults to (100, 100).

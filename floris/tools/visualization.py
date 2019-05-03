@@ -44,7 +44,7 @@ def line_contour_cut_plane(cut_plane,
     Visualize the scan as a simple contour.
 
     Args:
-        cut_plane ([type]): [description]
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): CutPlane Object.
         ax (plt.axes): figure axes. Defaults to None.
         levels (np.array, optional): contour levels for plot.
             Defaults to None.

@@ -243,8 +243,7 @@ class WindRose():
         Modifies data within WindRose Object without explicit return.
 
         Args:
-            wd (np.arange, optional): [description]. Vector of wind
-                direction bins for WindRose.
+            wd (np.arange, optional): Wind direction bins limists.
                 Defaults to np.arange(0, 360, 5.).
         """
         # Update ws and wd binning
@@ -343,10 +342,13 @@ class WindRose():
         Load and
 
         Args:
-            folder_name ([type]): [description]
-            wd ([type], optional): [description]. Defaults to np.arange(0, 360, 5.).
-            ws ([type], optional): [description]. Defaults to np.arange(0, 26, 1.).
-            limit_month ([type], optional): [description]. Defaults to None.
+            folder_name (str): path to wind toolkit input data.
+            wd (np.array, optional): Wind direction bin limits.
+                Defaults to np.arange(0, 360, 5.).
+            ws (np.array, optional): Wind speed bin limits.
+                Defaults to np.arange(0, 26, 1.).
+            limit_month (str, optional): name of month(s) to consider.
+                Defaults to None.
 
         Returns:
             df (pd.DataFrame): DataFrame updated with wind toolkit info.
@@ -473,9 +475,9 @@ class WindRose():
             lon (float): coordinates in degrees
             ht (int, optional): height above ground where wind information is obtained (m).
                 Defaults to 100.
-            wd (np.array, optional): [description].
+            wd (np.array, optional): Wind direction bin limits.
                 Defaults to np.arange(0, 360, 5.).
-            ws (np.array, optional): [description].
+            ws (np.array, optional): Wind speed bin limits.
                 Defaults to np.arange(0, 26, 1.).
             limit_month (str, optional): limit loaded data to specified
                 month. Defaults to None.
@@ -700,9 +702,9 @@ class WindRose():
         Generate wind rose plot. If no axis is provided, make a new one.
 
         Args:
-            ax (plt.axes, optional): Figure axes to which data should
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes to which data should
                 be plotted. Defaults to None.
-            color_map (str, optional): [description].
+            color_map (str, optional): name of colormap.
                 Defaults to 'viridis_r'.
             ws_right_edges (np.array, optional): upper bounds of wind
                 speed bins. Defaults to np.array([5, 10, 15, 20, 25]).

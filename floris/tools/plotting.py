@@ -69,7 +69,7 @@ def data_plot(x,
             Defaults to '_nolegend_'.
         x_bins (np.array, optional): bin limits for abscissa data.
             Defaults to None.
-        x_radius ([type], optional): bin width.
+        x_radius (float, optional): bin width.
             Defaults to None.
         ax (plt.axes, optional): axes handle for plotting.
             Defaults to None.
@@ -88,9 +88,9 @@ def data_plot(x,
             #TODO generalize to show_percentile?
 
     Returns:
-    Only returns values if `show_confidence` flag is active (True), 
+    Only returns values if `show_confidence` flag is active (True),
     otherwise returns (np.nan).
-    
+
         x_bins (np.array): bin limits
         median_vals (np.array): median values of data in bins
         lower (np.array): lower limit of data in bins

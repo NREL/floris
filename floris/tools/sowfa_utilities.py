@@ -51,7 +51,7 @@ class SowfaInterface():
                 controls info. Defaults to 'system/controlDict'.
             turbine_output_sub_path (str, optional): path to turbine
                 operational data. Defaults to 'turbineOutput/20000'.
-            assumed_settling_time ([type], optional): Time to account
+            assumed_settling_time (float, optional): Time to account
                 for startup transients in simulation. Defaults to None.
         """
         print(case_folder)
