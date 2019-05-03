@@ -58,7 +58,9 @@ def data_plot(x,
               seaborn=False,
               show_80=False):
     """
-    Plot data to a single axis (no subfigrures). Method includes flags to provide additional statistical context in plot (e.g. scatter, confidnece, etc.)
+    Plot data to a single axis (no subfigrures). Method includes flags
+    to provide additional statistical context in plot (e.g. scatter,
+    confidnece, etc.)
 
     Args:
         x (np.array): abscissa data.
@@ -71,8 +73,8 @@ def data_plot(x,
             Defaults to None.
         x_radius (float, optional): bin width.
             Defaults to None.
-        ax (plt.axes, optional): axes handle for plotting.
-            Defaults to None.
+        ax (:py:class:`matplotlib.pyplot.axes`, optional):
+            axes handle for plotting. Defaults to None.
         show_scatter (bool, optional): flag to control scatter plot.
             Defaults to True.
         show_bin_points (bool, optional): flag to control plot of bins.
@@ -225,8 +227,8 @@ def stacked_plot(x, groups, x_bins, ax, color_array=None):
             #TODO right?
         x_bins (np.array, optional): bin limits for abscissa data.
             Defaults to None.
-        ax (plt.axes, optional): axes handle for plotting.
-            Defaults to None.
+        ax (:py:class:`matplotlib.pyplot.axes`, optional):
+            axes handle for plotting. Defaults to None.
         color_array (list, optional): list of color specifiers.
             Defaults to None.
     """
@@ -294,8 +296,8 @@ def stacked_percent_plot(x, groups, x_bins, ax, color_array=None):
             #TODO right?
         x_bins (np.array, optional): bin limits for abscissa data.
             Defaults to None.
-        ax (plt.axes, optional): axes handle for plotting.
-            Defaults to None.
+        ax (:py:class:`matplotlib.pyplot.axes`, optional):
+            axes handle for plotting. Defaults to None.
         color_array (list, optional): list of color specifiers.
             Defaults to None.
     """

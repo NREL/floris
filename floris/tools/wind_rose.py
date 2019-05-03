@@ -239,7 +239,8 @@ class WindRose():
 
     def internal_resample_average_ws_by_wd(self, wd=np.arange(0, 360, 5.)):
         """
-        Internal method for re-established counts of wind speed observations in wind direction bins.
+        Internal method for re-established counts of wind speed
+        observations in wind direction bins.
         Modifies data within WindRose Object without explicit return.
 
         Args:
@@ -287,7 +288,7 @@ class WindRose():
 
         Returns:
             df (pd.DataFrame): updated wind speed and direction bins.
-            #TODO should these be returned or updated internally or both?
+            #TODO should these be returned or updated internally, both?
         """
         # Use an assumed wind-direction for dir frequency
         wind_dir = [
@@ -384,7 +385,8 @@ class WindRose():
         Args:
             folder_name (str): path to folder containing wind toolikit
                 data
-            limit_month (str, optional): limit loaded data to specified     month. Defaults to None.
+            limit_month (str, optional): limit loaded data to specified
+                month. Defaults to None.
 
         Returns:
             df (pd.DataFrame): DataFrame containing wind data from each
@@ -473,8 +475,8 @@ class WindRose():
         Args:
             lat (float): coordinates in degrees
             lon (float): coordinates in degrees
-            ht (int, optional): height above ground where wind information is obtained (m).
-                Defaults to 100.
+            ht (int, optional): height above ground where wind
+                information is obtained (m). Defaults to 100.
             wd (np.array, optional): Wind direction bin limits.
                 Defaults to np.arange(0, 360, 5.).
             ws (np.array, optional): Wind speed bin limits.
@@ -663,8 +665,8 @@ class WindRose():
         provided, make a new one.
 
         Args:
-            ax (plt.axes, optional): Figure axes to which data should
-                be plotted. Defaults to None.
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure
+                axes to which data should be plotted. Defaults to None.
         """
         if ax is None:
             _, ax = plt.subplots()
@@ -679,8 +681,8 @@ class WindRose():
 
         Args:
             dirs (np.array): vector of wind direction bins.
-            ax (plt.axes, optional): Figure axes to which data should
-                be plotted. Defaults to None.
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure
+                axes to which data should be plotted. Defaults to None.
         """
         # Get a downsampled frame
         df_plot = self.resample_wind_direction(self.df, wd=dirs)
@@ -712,7 +714,8 @@ class WindRose():
                 Defaults to np.arange(0, 360, 15.).
 
         Returns:
-            ax (plt.axes): Figure axes containing wind rose plot.
+            ax (:py:class:`matplotlib.pyplot.axes`): Figure axes
+                containing wind rose plot.
         """
         # Based on code provided by Patrick Murphy
 

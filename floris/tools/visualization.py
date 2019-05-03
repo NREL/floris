@@ -20,7 +20,7 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, D):
     Plot wind plant layout from turbine locations.
 
     Args:
-        ax (plt.axes): figure axes.
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.
         layout_x (np.array): wind turbine locations (east-west).
         layout_y (np.array): wind turbine locations (north-south).
         yaw_angles (np.array): yaw angles of each wind turbine.
@@ -45,7 +45,7 @@ def line_contour_cut_plane(cut_plane,
 
     Args:
         cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): CutPlane Object.
-        ax (plt.axes): figure axes. Defaults to None.
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults to None.
         levels (np.array, optional): contour levels for plot.
             Defaults to None.
         colors (list, optional): strings of color specification info.
@@ -83,7 +83,7 @@ def visualize_cut_plane(cut_plane,
 
     Args:
         cut_plane (:py:class:`floris.tools.cut_plane._CutPlane'): 2D plane through wind plant.
-        ax (plt.axes): figure axes. Defaults to None.
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults to None.
         minSpeed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
         maxSpeed (float, optional): Maximum value of wind speed for
@@ -135,6 +135,6 @@ def reverse_cut_plane_x_axis_in_plot(ax):
     Shortcut method to reverse direction of x-axis.
 
     Args:
-        ax (plt.axes): figure axes.
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.
     """
     ax.invert_xaxis()

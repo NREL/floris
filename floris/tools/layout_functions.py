@@ -48,7 +48,8 @@ def visualize_layout(turbineLoc,
     Args:
         turbineLoc (pd.DataFrame): turbine location data
         D (float): wind turbine rotor diameter.
-        ax (plt.axes optional): figure axes. Defaults to None.
+        ax (:py:class:`matplotlib.pyplot.axes` optional):
+            figure axes. Defaults to None.
         show_wake_lines (bool, optional): flag to control plotting of
             wake boundaries. Defaults to False.
         limit_dist (float, optional): Downstream limit to plot wakes. D
@@ -249,7 +250,7 @@ def label_line(line,
     Args:
         line (matplotlib.lines.Line2D): line to label.
         label_text (str): label to add to line.
-        ax (plt.axes optional): figure axes.
+        ax (:py:class:`matplotlib.pyplot.axes` optional): figure axes.
         near_i (int, optional): Catch line near index i.
             Defaults to None.
         near_x (float, optional): Catch line near coordinate x.
