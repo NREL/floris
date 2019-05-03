@@ -178,7 +178,7 @@ def change_resolution(cut_plane, resolution=(100, 100)):
     Modify default resolution of a CutPlane object.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
+        cut_plane (:py:class:`._CutPlane`):
             plane of data.
         resolution (tuple, optional): Desired resolution in x1 and x2.
             Defaults to (100, 100).
@@ -263,7 +263,7 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
     Calculate effective wind speed within specified range of a point.
 
     Args:
-        cross_plane :py:class:`floris.tools.cut_plane.CrossPlane`):
+        cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
             plane of data.
         x1_loc (float): x1-coordinate of point of interst.
         x2_loc (float): x2-coordinate of point of interst.
@@ -291,13 +291,13 @@ def calculate_power(cross_plane,
     Calculate maximum power available in a given cross plane.
 
     Args:
-        cross_plane :py:class:`floris.tools.cut_plane.CrossPlane`):
+        cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
             plane of data.
         x1_loc (float): x1-coordinate of point of interst.
         x2_loc (float): x2-coordinate of point of interst.
-        R (float): [description]
-        ws_array (np.array): reference wind speed for cp curve
-        cp_array (np.array): cp curve at reference wind speeds
+        R (float): Radius of wind turbine rotor.
+        ws_array (np.array): reference wind speed for cp curve.
+        cp_array (np.array): cp curve at reference wind speeds.
         air_density (float, optional): air density. Defaults to 1.225.
 
     Returns:

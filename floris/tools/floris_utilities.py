@@ -107,9 +107,9 @@ class FlorisInterface():
                 Defaults to 100.
             y_resolution (float, optional): output array resolution.
                 Defaults to 100.
-            x_bounds (float, optional): limits of output array.
+            x_bounds (tuple, optional): limits of output array.
                 Defaults to None.
-            y_bounds ([type], optional): limits of output array.
+            y_bounds (tuple, optional): limits of output array.
                 Defaults to None.
 
         Returns:
