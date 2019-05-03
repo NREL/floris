@@ -75,8 +75,8 @@ class Jimenez(WakeDeflection):
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord
-                (:py:class:`floris.simulation.turbine_map.
-                    TurbineMap`.coords):
+                (:py:meth:`floris.simulation.turbine_map.
+                    TurbineMap.coords`):
                 Spatial coordinates of wind turbine.
             flow_field
                 (:py:class:`floris.simulation.flow_field.FlowField`):
@@ -162,7 +162,7 @@ class Gauss(WakeDeflection):
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord
-                (:py:class:`:py:class:`floris.simulation.turbine_map.
+                (:py:meth:`floris.simulation.turbine_map.
                     TurbineMap.coords`):
                 Spatial coordinates of wind turbine.
             flow_field
@@ -261,7 +261,7 @@ class Gauss(WakeDeflection):
 class Curl(WakeDeflection):
     """
     Subclass of the
-    :py:class:`floris.simulation.wake_deflection.WakeDeflection`()`
+    :py:class:`floris.simulation.wake_deflection.WakeDeflection`
     object. Parameters required for Curl wake model:
 
      - model_grid_resolution: #TODO What does this do?
