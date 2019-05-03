@@ -123,7 +123,7 @@ class Gauss(WakeDeflection):
      - bd: #TODO What is this parameter for?
     """
 
-    def __init__(self, parameter_dictionary):∂
+    def __init__(self, parameter_dictionary):
         """
         Instantiate Gauss object and pass function paramter values.
 
