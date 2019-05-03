@@ -52,7 +52,7 @@ class FlorisInterface():
                                 with_resolution=None):
         """
         Wrapper to
-        :py:meth:`floris.flow_field.reinitialize_flow_field`.
+        :py:meth:`floris.simlulation.flow_field.reinitialize_flow_field`.
         All input values are used to update the flow_field instance.
 
         Args:
@@ -113,7 +113,7 @@ class FlorisInterface():
                 Defaults to None.
 
         Returns:
-            floris.tools.flow_data.FlowData: FlowData object at hub
+            :py:class:`floris.tools.flow_data.FlowData`: FlowData object at hub
                 height.
         """
         if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
