@@ -100,8 +100,8 @@ class FlowData():
             z_bnds (iterable): min and max of z-coordinate.
 
         Returns:
-            (:py:class:`floris.tools.flow_data.FlowData'):
-                cropped FlowData object.
+            (:py:class:`floris.tools.flow_data.FlowData`):
+            cropped FlowData object.
         """
 
         map_values = (ff.x > x_bnds[0]) & (ff.x < x_bnds[1]) & (

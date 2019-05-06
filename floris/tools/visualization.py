@@ -44,8 +44,10 @@ def line_contour_cut_plane(cut_plane,
     Visualize the scan as a simple contour.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): CutPlane Object.
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults to None.
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 
+            CutPlane Object.
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults 
+            to None.
         levels (np.array, optional): contour levels for plot.
             Defaults to None.
         colors (list, optional): strings of color specification info.
@@ -82,14 +84,16 @@ def visualize_cut_plane(cut_plane,
     Generate pseudocolor mesh plot of the scan.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane'): 2D plane through wind plant.
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults to None.
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 2D 
+            plane through wind plant.
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults 
+            to None.
         minSpeed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
         maxSpeed (float, optional): Maximum value of wind speed for
             contours. Defaults to None.
-        cmap (str, optional): Colormap specifier.
-            Defaults to 'coolwarm'.
+        cmap (str, optional): Colormap specifier. Defaults to 
+            'coolwarm'.
 
     Returns:
         im (plt.pcolormesh): image handle
