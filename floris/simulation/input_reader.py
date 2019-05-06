@@ -70,7 +70,7 @@ class InputReader():
         Opens the input json file and parses the contents into a python 
         dict.
 
-        Parameters:
+        Args:
             filename:  A string that is the path to the json input file.
 
         Returns:
@@ -87,7 +87,7 @@ class InputReader():
         and validates the type of the input data by casting the fields 
         to appropriate values based on the predefined type maps in.
 
-        Parameters:
+        Args:
             json_dict: Input dictionary with all elements of type str.
             type_map: Predefined type map dictionary for type checking 
                 inputs structured as {"property": type}.
@@ -143,7 +143,7 @@ class InputReader():
         """
         Casts the string input to the type in typecast.
 
-        Parameters:
+        Args:
             typcast: type - the type class to use on value.
             value: str - the input string to cast to 'typecast'.
 
@@ -160,7 +160,7 @@ class InputReader():
         """
         Instantiates a Turbine object from a given input file.
 
-        Parameters:
+        Args:
             json_dict: Input dictionary describing a turbine model.
 
         Returns:
@@ -175,7 +175,7 @@ class InputReader():
         """
         Instantiates a Wake object from a given input file.
 
-        Parameters:
+        Args:
             json_dict: dict - Input dictionary describing a wake model.
 
         Returns:
@@ -188,7 +188,7 @@ class InputReader():
         """
         Instantiates a Farm object from a given input file.
 
-        Parameters:
+        Args:
             json_dict: Input dictionary describing a farm model.
             turbine: :py:class:`floris.simulation.turbine.Turbine` 
                 instance used in 
@@ -206,7 +206,7 @@ class InputReader():
         """
         Parses main input file and instantiates floris objects.
 
-        Parameters:
+        Args:
             input_file: A string path to the json input file.
 
         Returns:

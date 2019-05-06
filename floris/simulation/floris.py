@@ -22,7 +22,7 @@ class Floris():
     create a Floris model. Use the ``farm`` attribute to access other 
     objects within the model.
 
-    Parameters:
+    Args:
         input_file: A string that is the path to the json input file.
         input_dict: A dictionary as generated from the input_reader.
 

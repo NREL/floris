@@ -44,7 +44,7 @@ class FLS(WakeCombination):
         This method combines the base flow field with the velocity 
         defecits using freestream linear superpostion.
 
-        Parameters:
+        Args:
             u_field (np.array): The base flow field.
             u_wake (np.array): The wake to add to the rest of the flow 
                 field.
@@ -73,7 +73,7 @@ class SOSFS(WakeCombination):
         This method combines the base flow field with the velocity 
         defecits using sum of squares.
 
-        Parameters:
+        Args:
             u_field (np.array): The base flow field.
             u_wake (np.array): The wake to add to the rest of the flow 
                 field.

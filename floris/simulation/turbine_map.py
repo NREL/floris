@@ -23,7 +23,7 @@ class TurbineMap():
     :py:class:`floris.utilities.Vec3` object. This class also provides 
     some helper methods for sorting and manipulating the turbine layout.
 
-    Parameters:
+    Args:
         turbine_map_dict: A dictionary mapping of 
             :py:class:`floris.simulation.turbine.Turbine` to 
             :py:class:`floris.utilities.Vec3`; it should have the 
@@ -65,7 +65,7 @@ class TurbineMap():
         object whose turbines are rotated. The original TurbineMap is 
         not modified.
 
-        Parameters:
+        Args:
             angle: The angle, in degrees, of which to rotate the 
                 turbines.
             center_of_rotation: The center of rotation. If not supplied 

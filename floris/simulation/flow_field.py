@@ -24,7 +24,7 @@ class FlowField():
     based on the input wake model and turbine map. It also contains 
     helper functions for quick flow field visualization.
 
-    Parameters:
+    Args:
         wind_speed: A float that is the wind speed.
         wind_direction: A float that is the wind direction.
         wind_shear: A float that is the wind shear coefficient.
@@ -205,7 +205,7 @@ class FlowField():
         will be used. The bounds consist of the minimum and maximum 
         values in the x-, y-, and z-directions.
 
-        Parameters:
+        Args:
             bounds_to_set: A list of values representing the mininum 
                 and maximum values for the domain 
                 [xmin, xmax, ymin, ymax, zmin, zmax] 
@@ -270,7 +270,7 @@ class FlowField():
         rose or investigating wind farm performance at different 
         conditions.
 
-        Parameters:
+        Args:
             wind_speed: A float that is the wind speed (default is 
                 *None*).
             wind_direction: A float that is the wind direction (default 
@@ -345,7 +345,7 @@ class FlowField():
         turbines, updating their velocities, calculating the wake 
         deflection/deficit, and combines the wake with the flow field.
 
-        Parameters:
+        Args:
             no_wake: A bool that when *True* updates the turbine 
                 quantities without calculating the wake or adding the 
                 wake to the flow field.

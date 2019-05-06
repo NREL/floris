@@ -27,7 +27,7 @@ class WakeVelocity():
     characteristics in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*. 
     1996.
 
-    Parameters:
+    Args:
         parameter_dictionary: A dictionary as generated from the 
             input_reader; it should have the following key-value pairs:
 
@@ -76,7 +76,7 @@ class Jensen(WakeVelocity):
     Jensen/Park model. See Jensen, N. O., "A note on wind generator 
     interaction." Tech. Rep. Risø-M-2411, Risø, 1983.
 
-    Parameters:
+    Args:
         parameter_dictionary: A dictionary as generated from the 
             input_reader; it should have the following key-value pairs:
 
@@ -125,7 +125,7 @@ class Jensen(WakeVelocity):
         relative to the freestream velocities at the grid of points 
         comprising the wind farm flow field.
 
-        Parameters:
+        Args:
             x_locations: An array of floats that contains the 
                 streamwise direction grid coordinates of the flow field 
                 domain (m).
@@ -200,7 +200,7 @@ class MultiZone(WakeVelocity):
     yaw control using a parametric model for wake effects - a CFD 
     simulation study." *Wind Energy*, 2016.
 
-    Parameters:
+    Args:
         parameter_dictionary: A dictionary as generated from the 
             input_reader; it should have the following key-value pairs:
 
@@ -269,7 +269,7 @@ class MultiZone(WakeVelocity):
         the specified turbine, relative to the freestream velocities at 
         the grid of points comprising the wind farm flow field.
 
-        Parameters:
+        Args:
             x_locations: An array of floats that contains the 
                 streamwise direction grid coordinates of the flow field 
                 domain (m).
@@ -386,7 +386,7 @@ class Gauss(WakeVelocity):
     Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through 
     blade pitch offset." *Energies*, 2017.
 
-    Parameters:
+    Args:
         parameter_dictionary: A dictionary as generated from the 
             input_reader; it should have the following key-value pairs:
 
@@ -452,7 +452,7 @@ class Gauss(WakeVelocity):
         turbine, relative to the freestream velocities at the grid of 
         points comprising the wind farm flow field.
 
-        Parameters:
+        Args:
             x_locations: An array of floats that contains the 
                 streamwise direction grid coordinates of the flow field 
                 domain (m).
@@ -595,7 +595,7 @@ class Curl(WakeVelocity):
     demonstreating the importance of large-scale trailing vortices in 
     wake steering." *Wind Energy Science*, 2018. 
 
-    Parameters:
+    Args:
         parameter_dictionary: A dictionary as generated from the 
             input_reader; it should have the following key-value pairs:
 
@@ -664,7 +664,7 @@ class Curl(WakeVelocity):
         relative to the freestream velocities at the grid of points 
         comprising the wind farm flow field.
 
-        Parameters:
+        Args:
             x_locations: An array of floats that contains the 
                 streamwise direction grid coordinates of the flow field 
                 domain (m).

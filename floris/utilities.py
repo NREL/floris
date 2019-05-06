@@ -17,7 +17,7 @@ class Vec3():
         """
         Object containing vector information for coordinates.
 
-        Parameters:
+        Args:
             x1: [float, float, float] or float -- The first argument
             can be a list of the three vector components or simply the
             first component of the vector.

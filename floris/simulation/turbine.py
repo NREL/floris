@@ -24,7 +24,7 @@ class Turbine():
     is largely a container of data and parameters, but also contains 
     methods to probe properties for output.
 
-    Parameters:
+    Args:
         instance_dictionary: A dictionary that is generated from the 
             input_reader; it should have the following key-value pairs:
 
@@ -165,7 +165,7 @@ class Turbine():
         rotor swept area grid point for the turbine, interpolated from 
         the flow field grid.
 
-        Parameters:
+        Args:
             wind_direction: A float that is the wind farm wind 
                 direction (deg).
             local_wind_speed: An array of floats that contains the wind 
@@ -209,7 +209,7 @@ class Turbine():
         characteristics in wind-turbine wakes." *J. Wind Eng Ind 
         Aerodyn*. 1996.
 
-        Parameters:
+        Args:
             flow_field_ti: A float that is the ambient turbulence 
                 intensity in the flow field expressed as a decimal 
                 fraction.
@@ -251,7 +251,7 @@ class Turbine():
         points based on the flow field freestream velocities and wake 
         velocities.
 
-        Parameters:
+        Args:
             u_wake: An array of floats containing the wake deficit 
                 velocities at all grid points in the flow field (m/s).
             coord: A :py:obj:`floris.utilities.Vec3` object containing 
@@ -299,7 +299,7 @@ class Turbine():
         """
         This method sets the turbine's yaw angle.
 
-        Parameters:
+        Args:
             yaw_angle: A float that is the new yaw angle (deg).
 
         Returns:
@@ -335,7 +335,7 @@ class Turbine():
         """
         This method gets or sets the turbine's yaw angle.
 
-        Parameters:
+        Args:
             value: A float that is the new yaw angle (deg).
 
         Returns:
@@ -367,7 +367,7 @@ class Turbine():
         """
         This method gets the turbine's tilt angle.
 
-        Parameters:
+        Args:
             value: A float that is the new tilt angle (deg).
 
         Returns:

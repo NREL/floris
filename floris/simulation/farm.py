@@ -27,7 +27,7 @@ class Farm():
     type. Farm should also be used as an entry point to probe objects 
     for generating output.
 
-    Parameters:
+    Args:
         instance_dictionary: A dictionary as generated from the 
             input_reader; it should have the following key-value pairs:
 
@@ -93,7 +93,7 @@ class Farm():
         """
         This method sets the wake model used.
 
-        Parameters:
+        Args:
             wake_model: A string containing the wake model used to 
                 calculate the wake; Valid wake model options are: 
                 "curl", "gauss", "jensen", and "multizone".
@@ -135,7 +135,7 @@ class Farm():
         calculates the new wake velocities and updates them in the 
         flow field.
 
-        Parameters:
+        Args:
             yaw_angles: A single float that sets a constant yaw angle 
                 for all turbines or a list of floats that are unique 
                 yaw angles for each turbine in degrees.
