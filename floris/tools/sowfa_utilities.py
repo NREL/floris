@@ -175,7 +175,7 @@ class SowfaInterface():
         Return the average power from the simulation per turbine
 
         Args:
-            filename (str): name of file containing flow data.
+
 
         Returns:
             pow_list (numpy array): an array of powers per turbine
@@ -193,7 +193,7 @@ class SowfaInterface():
         Return the average thrust from the simulation per turbine
 
         Args:
-            filename (str): name of file containing flow data.
+
 
         Returns:
             pow_list (numpy array): an array of thrust per turbine
