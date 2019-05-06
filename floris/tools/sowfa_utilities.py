@@ -188,6 +188,23 @@ class SowfaInterface():
             pow_list.append(df_sub.powerGenerator.mean())
         return np.array(pow_list)
 
+    def get_average_thrust(self):
+        """
+        Return the average thrust from the simulation per turbine
+
+        Args:
+            filename (str): name of file containing flow data.
+
+        Returns:
+            pow_list (numpy array): an array of thrust per turbine
+        """
+
+
+        thrust_list = list()
+        for t in range(self.num_turbines):
+            df_sub = self.turbine_output[self.turbine_output.turbine==t]
+            thrust_list.append(df_sub.thrust.mean())
+        return np.array(thrust_list)
 
     def read_flow_frame_SOWFA(self, filename):
         """
