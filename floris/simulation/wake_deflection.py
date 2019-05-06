@@ -75,11 +75,10 @@ class Jimenez(WakeDeflection):
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord
-                (:py:meth:`floris.simulation.turbine_map.
-                    TurbineMap.coords`):
+                (:py:meth:`floris.simulation.turbine_map.TurbineMap.coords`): 
                 Spatial coordinates of wind turbine.
             flow_field
-                (:py:class:`floris.simulation.flow_field.FlowField`):
+                (:py:class:`floris.simulation.flow_field.FlowField`): 
                 Flow field object.
 
         Returns:
@@ -161,9 +160,8 @@ class Gauss(WakeDeflection):
             y_locations (np.array): spanwise locations in wake
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
-            coord
-                (:py:meth:`floris.simulation.turbine_map.
-                    TurbineMap.coords`):
+            coord 
+                (:py:meth:`floris.simulation.turbine_map.TurbineMap.coords`):
                 Spatial coordinates of wind turbine.
             flow_field
                 (:py:class:`floris.simulation.flow_field.FlowField`):
