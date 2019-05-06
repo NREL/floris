@@ -26,13 +26,12 @@ maxSpeed = 8.
 
 # Initialize FLORIS model
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-fi_curl = wfct.floris_utilities.FlorisInterface("example_input_curl.json")
 
 # Calculate the time to run wake
 start = time.time()
 fi.calculate_wake()
 finish = time.time()
-print('Time to calculate flow field',finish - start)
+print('Time to calculate flow field', finish - start)
 
 # Get a horizontal cut from default flow field
 start = time.time()
@@ -42,7 +41,7 @@ hor_plane_1 = wfct.cut_plane.HorPlane(
 )
 fi.calculate_wake()
 finish = time.time()
-print('Time to extract default flow field',finish - start)
+print('Time to extract default flow field', finish - start)
 
 # Get a horizontal cut from horizontal methods
 start = time.time()
@@ -52,10 +51,12 @@ hor_plane_2 = wfct.cut_plane.HorPlane(
 )
 fi.calculate_wake()
 finish = time.time()
-print('Time to extract horizontal flow field',finish - start)
+print('Time to extract horizontal flow field', finish - start)
 
 # Plot and show they are the same
-fig, axarr = plt.subplots(1,2)
-wfct.visualization.visualize_cut_plane(hor_plane_1,ax=axarr[0],minSpeed=minSpeed,maxSpeed=maxSpeed)
-wfct.visualization.visualize_cut_plane(hor_plane_2,ax=axarr[1],minSpeed=minSpeed,maxSpeed=maxSpeed)
+fig, axarr = plt.subplots(1, 2)
+wfct.visualization.visualize_cut_plane(
+    hor_plane_1, ax=axarr[0], minSpeed=minSpeed, maxSpeed=maxSpeed)
+wfct.visualization.visualize_cut_plane(
+    hor_plane_2, ax=axarr[1], minSpeed=minSpeed, maxSpeed=maxSpeed)
 plt.show()

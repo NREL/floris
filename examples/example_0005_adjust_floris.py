@@ -24,8 +24,8 @@ fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 
 # set turbine locations to 4 turbines in a row - demonstrate how to change coordinates
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
-layout_x = [0,7*D,0, 7*D]
-layout_y = [0,0,5*D,5*D]
+layout_x = [0, 7*D, 0, 7*D]
+layout_y = [0, 0, 5*D, 5*D]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
 # Calculate wake
@@ -44,29 +44,30 @@ hor_plane = wfct.cut_plane.HorPlane(
 
 # Plot and show
 fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane,ax=ax)
+wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 
 # ================================================================================
 print('Changing wind direction and wind speed...')
 # ================================================================================
 
-ws = np.linspace(6,8,3)
+ws = np.linspace(6, 8, 3)
 wd = [45.0, 170.0, 270.]
 
 # Plot and show
-fig, ax = plt.subplots(3,3, figsize=(15,15))
-power = np.zeros((len(ws),len(wd)))
-for i,speed in enumerate(ws):
-    for j,wdir in enumerate(wd):
-        print('Calculating wake: wind direction = ', wdir, 'and wind speed = ', speed)
+fig, ax = plt.subplots(3, 3, figsize=(15, 15))
+power = np.zeros((len(ws), len(wd)))
+for i, speed in enumerate(ws):
+    for j, wdir in enumerate(wd):
+        print('Calculating wake: wind direction = ',
+              wdir, 'and wind speed = ', speed)
 
-        fi.reinitialize_flow_field(wind_speed=speed,wind_direction=wdir)
+        fi.reinitialize_flow_field(wind_speed=speed, wind_direction=wdir)
 
         # recalculate the wake
         fi.calculate_wake()
 
         # record powers
-        power[i,j] = np.sum(fi.get_turbine_power())
+        power[i, j] = np.sum(fi.get_turbine_power())
 
         # ============================================
         # not necessary if you only want the powers
@@ -77,10 +78,11 @@ for i,speed in enumerate(ws):
             fi.get_flow_data(),
             fi.floris.farm.turbines[0].hub_height
         )
-        im = wfct.visualization.visualize_cut_plane(hor_plane,ax=ax[i,j])
-        strTitle = 'Wind Dir = ' + str(wdir) + 'deg' + ' Speed = ' + str(speed) + 'm/s'
-        ax[i,j].set_title(strTitle)
-        fig.colorbar(im,ax=ax[i,j],fraction=0.025, pad=0.04)
+        im = wfct.visualization.visualize_cut_plane(hor_plane, ax=ax[i, j])
+        strTitle = 'Wind Dir = ' + \
+            str(wdir) + 'deg' + ' Speed = ' + str(speed) + 'm/s'
+        ax[i, j].set_title(strTitle)
+        fig.colorbar(im, ax=ax[i, j], fraction=0.025, pad=0.04)
 
 # ================================================================================
 # print('Set yaw angles...')
@@ -92,7 +94,7 @@ fi.calculate_wake()
 power_initial = np.sum(fi.get_turbine_power())
 
 # Set the yaw angles
-yaw_angles = [25.0,0,25.0,0]
+yaw_angles = [25.0, 0, 25.0, 0]
 fi.calculate_wake(yaw_angles=yaw_angles)
 
 # Check the new power
@@ -112,6 +114,6 @@ hor_plane = wfct.cut_plane.HorPlane(
 
 # Plot and show
 fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane,ax=ax)
+wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Flow with yawed front turbines')
 plt.show()

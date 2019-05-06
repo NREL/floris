@@ -26,8 +26,8 @@ fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 
 # set turbine locations to 3 turbines in a row
 D = fi.floris.farm.turbines[0].rotor_diameter
-layout_x = [0,7*D,14*D]
-layout_y = [0,0,0]
+layout_x = [0, 7*D, 14*D]
+layout_y = [0, 0, 0]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 fi.calculate_wake()
 
@@ -46,7 +46,7 @@ hor_plane = wfct.cut_plane.HorPlane(
 
 # Plot and show
 fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane,ax=ax)
+wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 
 # ================================================================================
 print('Finding optimal yaw angles in FLORIS...')
@@ -54,19 +54,20 @@ print('Finding optimal yaw angles in FLORIS...')
 # set bounds for allowable wake steering
 min_yaw = 0.0
 max_yaw = 25.0
-yaw_angles = optimize_yaw(fi,min_yaw,max_yaw)
+yaw_angles = optimize_yaw(fi, min_yaw, max_yaw)
 
 print('yaw angles = ')
 for i in range(len(yaw_angles)):
-    print('Turbine ', i, '=', yaw_angles[i],' deg')
+    print('Turbine ', i, '=', yaw_angles[i], ' deg')
 
 # assign yaw angles to turbines and calculate wake
 fi.calculate_wake(yaw_angles=yaw_angles)
 power_opt = np.sum(fi.get_turbine_power())
 
 print('==========================================')
-print('Total Power Gain = %.1f%%' % (100.*(power_opt - power_initial)/power_initial))
-print('==========================================')  
+print('Total Power Gain = %.1f%%' %
+      (100.*(power_opt - power_initial)/power_initial))
+print('==========================================')
 # ================================================================================
 print('Plotting the FLORIS flowfield with yaw...')
 # ================================================================================
@@ -79,5 +80,5 @@ hor_plane = wfct.cut_plane.HorPlane(
 
 # Plot and show
 fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane,ax=ax)
+wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 plt.show()

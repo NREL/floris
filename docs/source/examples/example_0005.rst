@@ -7,7 +7,7 @@ The code for this example can be found here: `example_0005_adjust_floris.py
 In this example, the FLORIS model is adjusted within the code and provides
 examples of how to make various adjustments.
 
-The floris model and interface are initially instantiated as before, but then
+The FLORIS model and interface are initially instantiated as before, but then
 the number of turbines and their locations are changed via the line:
 
 .. code-block:: python3
@@ -19,7 +19,7 @@ the number of turbines and their locations are changed via the line:
     fi.calculate_wake()
 
 Note that since changing the turbine layout requires calling the simulation 
-function :py:meth:`Calculate_wake 
+function :py:meth:`calculate_wake() 
 <floris.simulation.flow_field.FlowField.reinitialize_flow_field>`,
 the interface function to change the layout (as well as wind speed, 
 direction, TI...) is made through this function's wrapper.
