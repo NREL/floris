@@ -25,7 +25,7 @@ to prevent remote changes from blocking your local development. The Git Flow
 process is detailed nicely
 `here <http://nvie.com/posts/a-successful-git-branching-model>`__.
 
-Building documentation locally
+Building Documentation Locally
 ==============================
 This documentation is generated with Sphinx and hosted on readthedocs. However,
 it can be built locally by running this command in the ``floris/docs/``
