@@ -123,6 +123,9 @@ class SowfaInterface():
         # Get the wind direction
         self.precursor_wind_dir = setup_dict['dir']
 
+        # Get the surface roughness
+        self.z0 = setup_dict['z0']
+
         # Read the outputs
         self.turbine_output = read_sowfa_df(
             os.path.join(self.case_folder, self.turbine_output_sub_path))
