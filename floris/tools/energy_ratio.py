@@ -28,38 +28,56 @@ def _convert_to_numpy_array(series):
 #     """
 #     return np.mean(x) / np.mean(y)
 
+
 def _calculate_bootstrap_iterations(n):
     maximum = 10000
     minimum = 2000
     return int(np.round(max(min(n * np.log10(n), maximum), minimum)))
 
-def _calculate_lower_and_upper_bound(bootstrap_array, percentiles, central_estimate=None,method='simple_percentile'):
+
+def _calculate_lower_and_upper_bound(bootstrap_array, percentiles, central_estimate=None, method='simple_percentile'):
     if method is 'simple_percentile':
         lower, upper = np.percentile(bootstrap_array, percentiles)
     else:
-        lower, upper = (2 * central_estimate - np.percentile(bootstrap_array, percentiles))
+        lower, upper = (2 * central_estimate -
+                        np.percentile(bootstrap_array, percentiles))
     return lower, upper
 
 
 def _get_confidence_bounds(confidence):
-        return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
+    return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
 
 
-def energy_ratio(ref_pow_base,test_pow_base, ws_base,
-                ref_pow_con,test_pow_con, ws_con):
+def energy_ratio(ref_pow_base, test_pow_base, ws_base,
+                 ref_pow_con, test_pow_con, ws_con):
+    """
+    [summary]
 
+    [extended_summary]
+
+    Args:
+        ref_pow_base ([type]): [description]
+        test_pow_base ([type]): [description]
+        ws_base ([type]): [description]
+        ref_pow_con ([type]): [description]
+        test_pow_con ([type]): [description]
+        ws_con ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
 
     # First derive the weighting functions by wind speed
     ws_unique_base = np.unique(ws_base)
     ws_unique_con = np.unique(ws_con)
-    ws_unique = np.intersect1d(ws_unique_base,ws_unique_con )
+    ws_unique = np.intersect1d(ws_unique_base, ws_unique_con)
 
-    if len(ws_unique)==0:
+    if len(ws_unique) == 0:
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     # Mask down to the items in both sides
-    base_mask = np.isin(ws_base,ws_unique)
-    con_mask = np.isin(ws_con,ws_unique)
+    base_mask = np.isin(ws_base, ws_unique)
+    con_mask = np.isin(ws_con, ws_unique)
     ref_pow_base = ref_pow_base[base_mask]
     test_pow_base = test_pow_base[base_mask]
     ws_base = ws_base[base_mask]
@@ -93,71 +111,97 @@ def energy_ratio(ref_pow_base,test_pow_base, ws_base,
     ratio_base = weight_sum_test_base / weight_sum_ref_base
     ratio_con = weight_sum_test_con / weight_sum_ref_con
     ratio_diff = ratio_con - ratio_base
-    p_change= 100. * ratio_diff / ratio_base
+    p_change = 100. * ratio_diff / ratio_base
 
     # Get the counts
     counts_base = len(ref_pow_base)
     counts_con = len(ref_pow_con)
-    counts_diff= np.min([counts_base,counts_con])
+    counts_diff = np.min([counts_base, counts_con])
     counts_pchange = counts_diff
 
     return ratio_base, ratio_con, ratio_diff, p_change, counts_base, counts_con, counts_diff, counts_pchange
 
 
 def calculate_balanced_energy_ratio(reference_power_baseline,
-                            test_power_baseline,
-                            wind_speed_array_baseline,
-                            wind_direction_array_baseline,
-                            reference_power_controlled,
-                            test_power_controlled,
-                            wind_speed_array_controlled,
-                            wind_direction_array_controlled,
-                            wind_direction_bins,
-                            confidence=95,
-                            n_boostrap=None,
-                            wind_direction_bin_p_overlap=None,
-                            ):
+                                    test_power_baseline,
+                                    wind_speed_array_baseline,
+                                    wind_direction_array_baseline,
+                                    reference_power_controlled,
+                                    test_power_controlled,
+                                    wind_speed_array_controlled,
+                                    wind_direction_array_controlled,
+                                    wind_direction_bins,
+                                    confidence=95,
+                                    n_boostrap=None,
+                                    wind_direction_bin_p_overlap=None,
+                                    ):
+    """
+    [summary]
+
+    [extended_summary]
+
+    Args:
+        reference_power_baseline ([type]): [description]
+        test_power_baseline ([type]): [description]
+        wind_speed_array_baseline ([type]): [description]
+        wind_direction_array_baseline ([type]): [description]
+        reference_power_controlled ([type]): [description]
+        test_power_controlled ([type]): [description]
+        wind_speed_array_controlled ([type]): [description]
+        wind_direction_array_controlled ([type]): [description]
+        wind_direction_bins ([type]): [description]
+        confidence (int, optional): [description]. Defaults to 95.
+        n_boostrap ([type], optional): [description]. Defaults to None.
+        wind_direction_bin_p_overlap ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        [type]: [description]
+    """
 
     # Ensure that input arrays are np.ndarray
-    reference_power_baseline = _convert_to_numpy_array(reference_power_baseline)
+    reference_power_baseline = _convert_to_numpy_array(
+        reference_power_baseline)
     test_power_baseline = _convert_to_numpy_array(test_power_baseline)
-    wind_speed_array_baseline = _convert_to_numpy_array(wind_speed_array_baseline)
-    wind_direction_array_baseline = _convert_to_numpy_array(wind_direction_array_baseline)
+    wind_speed_array_baseline = _convert_to_numpy_array(
+        wind_speed_array_baseline)
+    wind_direction_array_baseline = _convert_to_numpy_array(
+        wind_direction_array_baseline)
 
-    reference_power_controlled = _convert_to_numpy_array(reference_power_controlled)
+    reference_power_controlled = _convert_to_numpy_array(
+        reference_power_controlled)
     test_power_controlled = _convert_to_numpy_array(test_power_controlled)
-    wind_speed_array_controlled = _convert_to_numpy_array(wind_speed_array_controlled)
-    wind_direction_array_controlled = _convert_to_numpy_array(wind_direction_array_controlled)
+    wind_speed_array_controlled = _convert_to_numpy_array(
+        wind_speed_array_controlled)
+    wind_direction_array_controlled = _convert_to_numpy_array(
+        wind_direction_array_controlled)
 
     # Handle no overlap specificed (assume non-overlap)
     if wind_direction_bin_p_overlap is None:
         wind_direction_bin_p_overlap = 0
 
     # Compute binning radius (is this right?)
-    wind_direction_bin_radius = (1.0 + wind_direction_bin_p_overlap / 100.) *  (wind_direction_bins[1]-wind_direction_bins[0])/2.0
+    wind_direction_bin_radius = (1.0 + wind_direction_bin_p_overlap / 100.) * (
+        wind_direction_bins[1]-wind_direction_bins[0])/2.0
 
     ratio_array_base = np.zeros(len(wind_direction_bins)) * np.nan
-    lower_ratio_array_base = np.zeros(len(wind_direction_bins))* np.nan
-    upper_ratio_array_base = np.zeros(len(wind_direction_bins))* np.nan
-    counts_ratio_array_base = np.zeros(len(wind_direction_bins))* np.nan
+    lower_ratio_array_base = np.zeros(len(wind_direction_bins)) * np.nan
+    upper_ratio_array_base = np.zeros(len(wind_direction_bins)) * np.nan
+    counts_ratio_array_base = np.zeros(len(wind_direction_bins)) * np.nan
 
-    ratio_array_con = np.zeros(len(wind_direction_bins))* np.nan
-    lower_ratio_array_con = np.zeros(len(wind_direction_bins))* np.nan
-    upper_ratio_array_con = np.zeros(len(wind_direction_bins))* np.nan
-    counts_ratio_array_con = np.zeros(len(wind_direction_bins))* np.nan
+    ratio_array_con = np.zeros(len(wind_direction_bins)) * np.nan
+    lower_ratio_array_con = np.zeros(len(wind_direction_bins)) * np.nan
+    upper_ratio_array_con = np.zeros(len(wind_direction_bins)) * np.nan
+    counts_ratio_array_con = np.zeros(len(wind_direction_bins)) * np.nan
 
-    diff_array = np.zeros(len(wind_direction_bins))* np.nan
-    lower_diff_array = np.zeros(len(wind_direction_bins))* np.nan
-    upper_diff_array = np.zeros(len(wind_direction_bins))* np.nan
-    counts_diff_array = np.zeros(len(wind_direction_bins))* np.nan
+    diff_array = np.zeros(len(wind_direction_bins)) * np.nan
+    lower_diff_array = np.zeros(len(wind_direction_bins)) * np.nan
+    upper_diff_array = np.zeros(len(wind_direction_bins)) * np.nan
+    counts_diff_array = np.zeros(len(wind_direction_bins)) * np.nan
 
-    p_change_array = np.zeros(len(wind_direction_bins))* np.nan
-    lower_p_change_array = np.zeros(len(wind_direction_bins))* np.nan
-    upper_p_change_array = np.zeros(len(wind_direction_bins))* np.nan
-    counts_p_change_array = np.zeros(len(wind_direction_bins))* np.nan
-
-
-
+    p_change_array = np.zeros(len(wind_direction_bins)) * np.nan
+    lower_p_change_array = np.zeros(len(wind_direction_bins)) * np.nan
+    upper_p_change_array = np.zeros(len(wind_direction_bins)) * np.nan
+    counts_p_change_array = np.zeros(len(wind_direction_bins)) * np.nan
 
     for i, wind_direction_bin in enumerate(wind_direction_bins):
 
@@ -167,7 +211,6 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         wind_dir_mask_controlled = (wind_direction_array_controlled >= wind_direction_bin - wind_direction_bin_radius) \
             & (wind_direction_array_controlled < wind_direction_bin + wind_direction_bin_radius)
 
-
         reference_power_baseline_wd = reference_power_baseline[wind_dir_mask_baseline]
         test_power_baseline_wd = test_power_baseline[wind_dir_mask_baseline]
         wind_speed_array_baseline_wd = wind_speed_array_baseline[wind_dir_mask_baseline]
@@ -176,22 +219,23 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         test_power_controlled_wd = test_power_controlled[wind_dir_mask_controlled]
         wind_speed_array_controlled_wd = wind_speed_array_controlled[wind_dir_mask_controlled]
 
-        if (len(reference_power_baseline_wd)==0) or (len(reference_power_controlled_wd)==0):
+        if (len(reference_power_baseline_wd) == 0) or (len(reference_power_controlled_wd) == 0):
             continue
 
         # Convert wind speed to integers
         wind_speed_array_baseline_wd = wind_speed_array_baseline_wd.astype(int)
-        wind_speed_array_controlled_wd = wind_speed_array_controlled_wd.astype(int)
+        wind_speed_array_controlled_wd = wind_speed_array_controlled_wd.astype(
+            int)
 
         # compute the energy ratio
-        ratio_array_base[i], ratio_array_con[i], diff_array[i],p_change_array[i], counts_ratio_array_base[i],counts_ratio_array_con[i], counts_diff_array[i], counts_p_change_array[i]    = energy_ratio(reference_power_baseline_wd,test_power_baseline_wd,wind_speed_array_baseline_wd,
-                                           reference_power_controlled_wd, test_power_controlled_wd, wind_speed_array_controlled_wd     )
-
+        ratio_array_base[i], ratio_array_con[i], diff_array[i], p_change_array[i], counts_ratio_array_base[i], counts_ratio_array_con[i], counts_diff_array[i], counts_p_change_array[i] = energy_ratio(reference_power_baseline_wd, test_power_baseline_wd, wind_speed_array_baseline_wd,
+                                                                                                                                                                                                        reference_power_controlled_wd, test_power_controlled_wd, wind_speed_array_controlled_wd)
 
         # Get the bounds through boot strapping
         # determine the number of bootstrap iterations if not given
         if n_boostrap is None:
-            n_boostrap = _calculate_bootstrap_iterations(len(reference_power_baseline_wd))
+            n_boostrap = _calculate_bootstrap_iterations(
+                len(reference_power_baseline_wd))
 
         ratio_base_bs = np.zeros(n_boostrap)
         ratio_con_bs = np.zeros(n_boostrap)
@@ -200,57 +244,93 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         for i_bs in range(n_boostrap):
 
             # random resampling w/ replacement
-            ind_bs = np.random.randint(len(reference_power_baseline_wd), size=len(reference_power_baseline_wd))
+            ind_bs = np.random.randint(
+                len(reference_power_baseline_wd), size=len(reference_power_baseline_wd))
             reference_power_binned_baseline = reference_power_baseline_wd[ind_bs]
             test_power_binned_baseline = test_power_baseline_wd[ind_bs]
             wind_speed_binned_baseline = wind_speed_array_baseline_wd[ind_bs]
 
-            ind_bs = np.random.randint(len(reference_power_controlled_wd), size=len(reference_power_controlled_wd))
+            ind_bs = np.random.randint(
+                len(reference_power_controlled_wd), size=len(reference_power_controlled_wd))
             reference_power_binned_controlled = reference_power_controlled_wd[ind_bs]
             test_power_binned_controlled = test_power_controlled_wd[ind_bs]
             wind_speed_binned_controlled = wind_speed_array_controlled_wd[ind_bs]
 
             # compute the energy ratio
-            ratio_base_bs[i_bs], ratio_con_bs[i_bs], diff_bs[i_bs],p_change_bs[i_bs], _, _, _, _   = energy_ratio(reference_power_binned_baseline,test_power_binned_baseline,wind_speed_binned_baseline,
-                                           reference_power_binned_controlled, test_power_binned_controlled, wind_speed_binned_controlled     )
-
+            ratio_base_bs[i_bs], ratio_con_bs[i_bs], diff_bs[i_bs], p_change_bs[i_bs], _, _, _, _ = energy_ratio(reference_power_binned_baseline, test_power_binned_baseline, wind_speed_binned_baseline,
+                                                                                                                 reference_power_binned_controlled, test_power_binned_controlled, wind_speed_binned_controlled)
 
         # Get the confidence bounds
         percentiles = _get_confidence_bounds(confidence)
 
-        lower_ratio_array_base[i], upper_ratio_array_base[i] = _calculate_lower_and_upper_bound(ratio_base_bs, percentiles, central_estimate=ratio_array_base[i],method='simple_percentile')
-        lower_ratio_array_con[i], upper_ratio_array_con[i] = _calculate_lower_and_upper_bound(ratio_con_bs, percentiles, central_estimate=ratio_array_con[i],method='simple_percentile')
-        lower_diff_array[i], upper_diff_array[i] = _calculate_lower_and_upper_bound(diff_bs, percentiles, central_estimate=diff_array[i],method='simple_percentile')
-        lower_p_change_array[i], upper_p_change_array[i] = _calculate_lower_and_upper_bound(p_change_bs, percentiles, central_estimate=p_change_array[i],method='simple_percentile')
+        lower_ratio_array_base[i], upper_ratio_array_base[i] = _calculate_lower_and_upper_bound(
+            ratio_base_bs, percentiles, central_estimate=ratio_array_base[i], method='simple_percentile')
+        lower_ratio_array_con[i], upper_ratio_array_con[i] = _calculate_lower_and_upper_bound(
+            ratio_con_bs, percentiles, central_estimate=ratio_array_con[i], method='simple_percentile')
+        lower_diff_array[i], upper_diff_array[i] = _calculate_lower_and_upper_bound(
+            diff_bs, percentiles, central_estimate=diff_array[i], method='simple_percentile')
+        lower_p_change_array[i], upper_p_change_array[i] = _calculate_lower_and_upper_bound(
+            p_change_bs, percentiles, central_estimate=p_change_array[i], method='simple_percentile')
 
+    return ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array, counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array
 
-    return ratio_array_base,lower_ratio_array_base, upper_ratio_array_base,counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array,counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array
 
 def plot_energy_ratio(reference_power_baseline,
-                            test_power_baseline,
-                            wind_speed_array_baseline,
-                            wind_direction_array_baseline,
-                            reference_power_controlled,
-                            test_power_controlled,
-                            wind_speed_array_controlled,
-                            wind_direction_array_controlled,
-                            wind_direction_bins,
-                            confidence=95,
-                            n_boostrap=None,
-                            wind_direction_bin_p_overlap=None,
-                            axarr=None,
-                            base_color='b',
-                            con_color='g',
-                            label_array = None,
-                            label_pchange = None,
-                            y_lim=None,
-                            plot_simple=False,
-                            plot_ratio_scatter=False,
-                            marker_scale=1.
-                            ):
+                      test_power_baseline,
+                      wind_speed_array_baseline,
+                      wind_direction_array_baseline,
+                      reference_power_controlled,
+                      test_power_controlled,
+                      wind_speed_array_controlled,
+                      wind_direction_array_controlled,
+                      wind_direction_bins,
+                      confidence=95,
+                      n_boostrap=None,
+                      wind_direction_bin_p_overlap=None,
+                      axarr=None,
+                      base_color='b',
+                      con_color='g',
+                      label_array=None,
+                      label_pchange=None,
+                      y_lim=None,
+                      plot_simple=False,
+                      plot_ratio_scatter=False,
+                      marker_scale=1.
+                      ):
+    """
+    [summary]
+
+    [extended_summary]
+
+    Args:
+        reference_power_baseline ([type]): [description]
+        test_power_baseline ([type]): [description]
+        wind_speed_array_baseline ([type]): [description]
+        wind_direction_array_baseline ([type]): [description]
+        reference_power_controlled ([type]): [description]
+        test_power_controlled ([type]): [description]
+        wind_speed_array_controlled ([type]): [description]
+        wind_direction_array_controlled ([type]): [description]
+        wind_direction_bins ([type]): [description]
+        confidence (int, optional): [description]. Defaults to 95.
+        n_boostrap ([type], optional): [description]. Defaults to None.
+        wind_direction_bin_p_overlap ([type], optional): [description]. Defaults to None.
+        axarr ([type], optional): [description]. Defaults to None.
+        base_color (str, optional): [description]. Defaults to 'b'.
+        con_color (str, optional): [description]. Defaults to 'g'.
+        label_array ([type], optional): [description]. Defaults to None.
+        label_pchange ([type], optional): [description]. Defaults to None.
+        y_lim ([type], optional): [description]. Defaults to None.
+        plot_simple (bool, optional): [description]. Defaults to False.
+        plot_ratio_scatter (bool, optional): [description]. Defaults to False.
+        marker_scale ([type], optional): [description]. Defaults to 1..
+
+    Returns:
+        [type]: [description]
+    """
 
     if axarr is None:
-        fig, axarr = plt.subplots(3,1,sharex=True)
+        fig, axarr = plt.subplots(3, 1, sharex=True)
 
     if label_array is None:
         label_array = ['Baseline', 'Controlled']
@@ -258,27 +338,27 @@ def plot_energy_ratio(reference_power_baseline,
     if label_pchange is None:
         label_pchange = 'Percent Change'
 
-    ratio_array_base,lower_ratio_array_base, upper_ratio_array_base,counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array,counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array = calculate_balanced_energy_ratio(reference_power_baseline,
-                            test_power_baseline,
-                            wind_speed_array_baseline,
-                            wind_direction_array_baseline,
-                            reference_power_controlled,
-                            test_power_controlled,
-                            wind_speed_array_controlled,
-                            wind_direction_array_controlled,
-                            wind_direction_bins,
-                            confidence=95,
-                            n_boostrap=None,
-                            wind_direction_bin_p_overlap=wind_direction_bin_p_overlap,
-                            )
-
-
+    ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array, counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array = calculate_balanced_energy_ratio(reference_power_baseline,
+                                                                                                                                                                                                                                                                                                                                                                             test_power_baseline,
+                                                                                                                                                                                                                                                                                                                                                                             wind_speed_array_baseline,
+                                                                                                                                                                                                                                                                                                                                                                             wind_direction_array_baseline,
+                                                                                                                                                                                                                                                                                                                                                                             reference_power_controlled,
+                                                                                                                                                                                                                                                                                                                                                                             test_power_controlled,
+                                                                                                                                                                                                                                                                                                                                                                             wind_speed_array_controlled,
+                                                                                                                                                                                                                                                                                                                                                                             wind_direction_array_controlled,
+                                                                                                                                                                                                                                                                                                                                                                             wind_direction_bins,
+                                                                                                                                                                                                                                                                                                                                                                             confidence=95,
+                                                                                                                                                                                                                                                                                                                                                                             n_boostrap=None,
+                                                                                                                                                                                                                                                                                                                                                                             wind_direction_bin_p_overlap=wind_direction_bin_p_overlap,
+                                                                                                                                                                                                                                                                                                                                                                             )
 
     if plot_simple:
         ax = axarr[0]
-        ax.plot(wind_direction_bins, ratio_array_base, label=label_array[0], color=base_color,ls='--')
-        ax.plot(wind_direction_bins, ratio_array_con, label=label_array[1], color=con_color,ls='--')
-        ax.axhline(1,color='k')
+        ax.plot(wind_direction_bins, ratio_array_base,
+                label=label_array[0], color=base_color, ls='--')
+        ax.plot(wind_direction_bins, ratio_array_con,
+                label=label_array[1], color=con_color, ls='--')
+        ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
         ax.grid(True)
         ax = axarr[1]
@@ -286,20 +366,27 @@ def plot_energy_ratio(reference_power_baseline,
         # ax.axhline(0,color='k')
         # ax.set_ylabel('Percent Change (%)')
         # ax.grid(True)
-        ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='--')
-        ax.axhline(0,color='k')
+        ax.plot(wind_direction_bins, diff_array,
+                label=label_pchange, color=con_color, ls='--')
+        ax.axhline(0, color='k')
         ax.set_ylabel('Change in Energy Ratio (-)')
         ax.grid(True)
     else:
 
         ax = axarr[0]
-        ax.plot(wind_direction_bins, ratio_array_base, label=label_array[0], color=base_color,ls='-',marker='.')
-        ax.fill_between(wind_direction_bins,lower_ratio_array_base,upper_ratio_array_base,alpha=0.3,color=base_color,label='_nolegend_')
-        ax.scatter(wind_direction_bins, ratio_array_base,s=counts_ratio_array_base, label='_nolegend_', color=base_color,marker='o',alpha=0.2)
-        ax.plot(wind_direction_bins, ratio_array_con, label=label_array[1], color=con_color,ls='-',marker='.')
-        ax.fill_between(wind_direction_bins,lower_ratio_array_con,upper_ratio_array_con,alpha=0.3,color=con_color,label='_nolegend_')
-        ax.scatter(wind_direction_bins, ratio_array_con,s=counts_ratio_array_con, label='_nolegend_', color=con_color,marker='o',alpha=0.2)
-        ax.axhline(1,color='k')
+        ax.plot(wind_direction_bins, ratio_array_base,
+                label=label_array[0], color=base_color, ls='-', marker='.')
+        ax.fill_between(wind_direction_bins, lower_ratio_array_base,
+                        upper_ratio_array_base, alpha=0.3, color=base_color, label='_nolegend_')
+        ax.scatter(wind_direction_bins, ratio_array_base, s=counts_ratio_array_base,
+                   label='_nolegend_', color=base_color, marker='o', alpha=0.2)
+        ax.plot(wind_direction_bins, ratio_array_con,
+                label=label_array[1], color=con_color, ls='-', marker='.')
+        ax.fill_between(wind_direction_bins, lower_ratio_array_con,
+                        upper_ratio_array_con, alpha=0.3, color=con_color, label='_nolegend_')
+        ax.scatter(wind_direction_bins, ratio_array_con, s=counts_ratio_array_con,
+                   label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+        ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
         ax.grid(True)
 
@@ -307,12 +394,14 @@ def plot_energy_ratio(reference_power_baseline,
         # ax.plot(wind_direction_bins, p_change_array, label=label_pchange, color=con_color,ls='-',marker='.')
         # ax.fill_between(wind_direction_bins,lower_p_change_array,upper_p_change_array,alpha=0.3,color=con_color,label='_nolegend_')
         # ax.set_ylabel('Percent Change (%)')
-        ax.plot(wind_direction_bins, diff_array, label=label_pchange, color=con_color,ls='-',marker='.')
-        ax.fill_between(wind_direction_bins,lower_diff_array,upper_diff_array,alpha=0.3,color=con_color,label='_nolegend_')
-        ax.scatter(wind_direction_bins, diff_array,s=counts_diff_array, label='_nolegend_', color=con_color,marker='o',alpha=0.2)
-        ax.axhline(0,color='k')
+        ax.plot(wind_direction_bins, diff_array, label=label_pchange,
+                color=con_color, ls='-', marker='.')
+        ax.fill_between(wind_direction_bins, lower_diff_array,
+                        upper_diff_array, alpha=0.3, color=con_color, label='_nolegend_')
+        ax.scatter(wind_direction_bins, diff_array, s=counts_diff_array,
+                   label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+        ax.axhline(0, color='k')
         ax.set_ylabel('Change in Energy Ratio (-)')
         ax.grid(True)
-
 
     # return ratio_array, lower_array, upper_array, counts_array
