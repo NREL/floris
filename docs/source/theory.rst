@@ -8,9 +8,9 @@ FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al.
 
 Literature on the Gaussian model can be found in the following papers:
 
-1. Niayifar, A. and Porté-Agel, F.: A new 15 analytical model for wind farm
+1. Niayifar, A. and Porté-Agel, F.: A new analytical model for wind farm
    power prediction, in: Journal of Physics: Conference Series, vol. 625,
-   p. 012039, IOP Publishing, 2015.
+   012039, IOP Publishing, 2015.
 
 2. Dilip, D. and Porté-Agel, F.: Wind Turbine Wake Mitigation through Blade
    Pitch Offset, Energies, 10, 757, 2017.
