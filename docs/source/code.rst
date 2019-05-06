@@ -2,7 +2,7 @@ Code Reference
 --------------
 
 The FLORIS source code documentation is auto-generated from in-source
-docstrings. It is always a work in progress and continuously update, so please
+docstrings. It is always a work in progress and continuously updated, so please
 feel free to contribute!
 
 .. toctree::

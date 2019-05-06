@@ -23,7 +23,7 @@ the **floris** tag. Alternatively, please contact
 `Chris Bay <mailto:chris.bay@nrel.gov>`_, and
 `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
-Background and objectives
+Background and Objectives
 =========================
 This FLORIS framework is designed to provide a computationally inexpensive,
 controls-oriented modeling tool of the steady-state wake characteristics in
@@ -54,7 +54,7 @@ Citation
 ========
 
 If FLORIS played a role in your research, please cite it. This software can be
-cited as (with *X.Y.Z* as the appropriate version number):
+cited as (with "X.Y.Z" as the appropriate version number):
 
    FLORIS. Version X.Y.Z (2019). Available at https://github.com/nrel/floris.
 
@@ -87,7 +87,7 @@ virtual environments;
 provides a great introduction. Using virtual environments in a Jupyter Notebook
 is described `here <https://help.pythonanywhere.com/pages/IPythonNotebookVirtualenvs/>`_.
 
-Local editable installation
+Local Editable Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The local editable installation allows developers to maintain an importable
 instance of FLORIS while continuing to extend it. The alternative is to
@@ -116,7 +116,7 @@ FLORIS:
 
     import floris
 
-pip repo installation
+pip Repo Installation
 ~~~~~~~~~~~~~~~~~~~~~
 The FLORIS version available through the pip repository is typically the latest
 tagged and released major version. This version represents the most recent
