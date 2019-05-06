@@ -170,6 +170,25 @@ class SowfaInterface():
         print('---------------------')
         return ' '
 
+    def get_average_powers(self):
+        """
+        Return the average power from the simulation per turbine
+
+        Args:
+            filename (str): name of file containing flow data.
+
+        Returns:
+            pow_list (numpy array): an array of powers per turbine
+        """
+
+
+        pow_list = list()
+        for t in range(self.num_turbines):
+            df_sub = self.turbine_output[self.turbine_output.turbine==t]
+            pow_list.append(df_sub.powerGenerator.mean())
+        return np.array(pow_list)
+
+
     def read_flow_frame_SOWFA(self, filename):
         """
         Read flow array output from SOWFA
