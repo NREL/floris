@@ -12,6 +12,14 @@ Released on 2018-10-19
 - Improvements to visualization
 - Documentation updates
 - Improvements to the module naming and general project organization
+v0.4.0
+======
+Released on 2018-10-19
+
+- Adds a web app for generating input files
+- Improves visualization
+- Documentation updates
+- Improves the module naming and general project organization
 
 v0.3.1
 ======
@@ -24,27 +32,27 @@ v0.3.0
 Released on 2018-04-03
 
 - Connects the air density input to the models
-- Improve the documentation and readme
-- Move the visualization tools out of the main package
-- Add examples on AEP calculation
+- Improves the documentation and readme
+- Moves the visualization tools out of the main package
+- Adds examples on AEP calculation
 
 v0.2.0
 ======
 Released on 2018-03-20
 
-- Add user-specified turbulence intensity parameters to the gaussian model
-- Use a smaller grid for general wake calculations
-- Add visualization support in post processing
+- Adds user-specified turbulence intensity parameters to the gaussian model
+- Uses a smaller grid for general wake calculations
+- Adds visualization support in post processing
 - Bug fixes for the example scripts
-- Update and improved the documentation
-- Improve module imports
-- Move the tests directory in /floris to avoid global namespace conflicts
+- Updates and improved the documentation
+- Improves module imports
+- Moves the tests directory in /floris to avoid global namespace conflicts
 
 v0.1.1
 ======
 Released on 2018-01-25
 
-- Remove the requirement for unit tests to pass in Floris instantiation
+- Removes the requirement for unit tests to pass in Floris instantiation
 
 v0.1.0
 ======
