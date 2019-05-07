@@ -187,8 +187,10 @@ class PowerRose():
         Bin Power data by direction and plot.
 
         Returns:
-            fig (plt.figure): Figure handle.
-            axarr (list): list of axis handles.
+            tuple: tuple containing:
+
+                -   **fig** (*plt.figure*): Figure handle.
+                -   **axarr** (*list*): list of axis handles.
         """
 
         df = self.df_power.copy(deep=True)
@@ -237,8 +239,10 @@ class PowerRose():
             wd (float): Wind direction of interest.
 
         Returns:
-            fig (plt.figure): Figure handle.
-            axarr (list): list of axis handles.
+            tuple: tuple containing:
+
+                -   **fig** (*plt.figure*): Figure handle.
+                -   **axarr** (*list*): list of axis handles.
         """
 
         df = self.df_power.copy(deep=True)
