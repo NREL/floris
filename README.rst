@@ -45,6 +45,9 @@ modeling and simulation tool for controls research are
 Citation
 ========
 
+.. image:: https://zenodo.org/badge/178914781.svg
+  :target: https://zenodo.org/badge/latestdoi/178914781
+
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
