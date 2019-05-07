@@ -51,20 +51,29 @@ def _get_confidence_bounds(confidence):
 def energy_ratio(ref_pow_base, test_pow_base, ws_base,
                  ref_pow_con, test_pow_con, ws_con):
     """
-    [summary]
+    Compute the balanced energy ratio
 
-    [extended_summary]
+    This function is typically called to compute a single balanced energy ratio calculation for a particular wind direction bin.  Note the
+    reference turbine should not be the turbine implementing control, but should be an unaffected nearby turbine, or a synthetic power
+    estimate from a measurement.
 
     Args:
-        ref_pow_base ([type]): [description]
-        test_pow_base ([type]): [description]
-        ws_base ([type]): [description]
-        ref_pow_con ([type]): [description]
-        test_pow_con ([type]): [description]
-        ws_con ([type]): [description]
+        ref_pow_base (np.array): Array of baseline reference turbine power
+        test_pow_base (np.array): Array of baseline test turbine power
+        ws_base (np.array): Array of wind speeds for basline
+        ref_pow_con (np.array): Array of controlled reference turbine power
+        test_pow_con (np.array): Array of controlled test turbine power
+        ws_con (np.array): Array of wind speeds in control
 
     Returns:
-        [type]: [description]
+        ratio_base (float): Baseline energy ratio 
+        ratio_con (float): Controlled enery ratio
+        ratio_diff (float): Difference in energy ratios
+        p_change (float): Percent change in energy ratios
+        counts_base (float): Number of points in baseline
+        counts_con (float): Number of points in controlled
+        counts_diff (float): Number of points in diff (min(baseline,controlled))
+        counts_pchange (float): Number of points in pchange (min(baseline,controlled))
     """
 
     # First derive the weighting functions by wind speed
@@ -136,26 +145,47 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
                                     wind_direction_bin_p_overlap=None,
                                     ):
     """
-    [summary]
+    Calculate a balanced energy ratio for each wind direction bin
 
-    [extended_summary]
+    Calculate a balanced energy ratio for each wind direction bin.  A reference and test turbine are provided for the ratio, as well as wind speed and wind directions
+    These data are further divided into baseline and controlled conditions.  The balanced energy ratio function is called and used to ensure a similar
+    distribution of wind speeds is used in the computation, per wind direction bin, for baseline and controlled results.  Resulting arrays, including 
+    upper and lower uncertaintity bounds computed through bootstrapping, are returned.  Note the
+    reference turbine should not be the turbine implementing control, but should be an unaffected nearby turbine, or a synthetic power
+    estimate from a measurement
 
     Args:
-        reference_power_baseline ([type]): [description]
-        test_power_baseline ([type]): [description]
-        wind_speed_array_baseline ([type]): [description]
-        wind_direction_array_baseline ([type]): [description]
-        reference_power_controlled ([type]): [description]
-        test_power_controlled ([type]): [description]
-        wind_speed_array_controlled ([type]): [description]
-        wind_direction_array_controlled ([type]): [description]
-        wind_direction_bins ([type]): [description]
-        confidence (int, optional): [description]. Defaults to 95.
-        n_boostrap ([type], optional): [description]. Defaults to None.
-        wind_direction_bin_p_overlap ([type], optional): [description]. Defaults to None.
+        reference_power_baseline (np.array): Array of power of reference turbine in baseline conditions
+        test_power_baseline (np.array): Array of power of test turbine in baseline conditions
+        wind_speed_array_baseline (np.array): Array of wind speeds in baseline conditions
+        wind_direction_array_baseline (np.array): Array of wind directions in baseline case
+        reference_power_controlled (np.array): Array of power of reference turbine in controlled conditions
+        test_power_controlled (np.array): Array of power of test turbine in controlled conditions
+        wind_speed_array_controlled (np.array): Array of wind speeds in controlled conditions
+        wind_direction_array_controlled (np.array): Array of wind directions in controlled case
+        wind_direction_bins (np.array): Wind directions bins
+        confidence (int, optional): Confidence level to use.  Defaults to 95.
+        n_boostrap (int, optional): Number of bootstaps, if none, _calculate_bootstrap_iterations is called.  Defaults to None.
+        wind_direction_bin_p_overlap (np.array, optional): Percentage overlap between wind direction bin. Defaults to None.
 
     Returns:
-        [type]: [description]
+        ratio_array_base (np.array): Baseline energy ratio at each wind direction bin
+        lower_ratio_array_base (np.array): Lower confidence bound of baseline energy ratio at each wind direction bin
+        upper_ratio_array_base (np.array): Upper confidence bound of baseline energy ratio at each wind direction bin
+        counts_ratio_array_base (np.array): Counts per wind direction bin in baseline
+        ratio_array_con (np.array): Controlled energy ratio at each wind direction bin
+        lower_ratio_array_con (np.array): Lower confidence bound of controlled energy ratio at each wind direction bin
+        upper_ratio_array_con (np.array): Upper confidence bound of controlled energy ratio at each wind direction bin
+        counts_ratio_array_con (np.array): Counts per wind direction bin in controlled
+        diff_array (np.array): Difference in baseline and controlled energy ratio per wind direction bin
+        lower_diff_array (np.array): Lower confidence bound of difference in baseline and controlled energy ratio per wind direction bin
+        upper_diff_array (np.array): Upper confidence bound of difference in baseline and controlled energy ratio per wind direction bin
+        counts_diff_array (np.array): Counts in difference (minimum of baseline and controlled)
+        p_change_array (np.array): Percent change in baseline and controlled energy ratio per wind direction bin
+        lower_p_change_array (np.array): Lower confidence bound of percent change in baseline and controlled energy ratio per wind direction bin
+        upper_p_change_array (np.array): Upper confidence bound of percent change in baseline and controlled energy ratio per wind direction bin
+        counts_p_change_array (np.array): Counts in percent change bins (minimum of baseline and controlled)
+
     """
 
     # Ensure that input arrays are np.ndarray
@@ -292,41 +322,39 @@ def plot_energy_ratio(reference_power_baseline,
                       con_color='g',
                       label_array=None,
                       label_pchange=None,
-                      y_lim=None,
                       plot_simple=False,
                       plot_ratio_scatter=False,
                       marker_scale=1.
                       ):
     """
-    [summary]
+    Plot the balanced energy ratio
 
-    [extended_summary]
+    Function mainly acts as a wrapper to call calculate_balanced_energy_ratio and plot the results
 
     Args:
-        reference_power_baseline ([type]): [description]
-        test_power_baseline ([type]): [description]
-        wind_speed_array_baseline ([type]): [description]
-        wind_direction_array_baseline ([type]): [description]
-        reference_power_controlled ([type]): [description]
-        test_power_controlled ([type]): [description]
-        wind_speed_array_controlled ([type]): [description]
-        wind_direction_array_controlled ([type]): [description]
-        wind_direction_bins ([type]): [description]
-        confidence (int, optional): [description]. Defaults to 95.
-        n_boostrap ([type], optional): [description]. Defaults to None.
-        wind_direction_bin_p_overlap ([type], optional): [description]. Defaults to None.
-        axarr ([type], optional): [description]. Defaults to None.
-        base_color (str, optional): [description]. Defaults to 'b'.
-        con_color (str, optional): [description]. Defaults to 'g'.
-        label_array ([type], optional): [description]. Defaults to None.
-        label_pchange ([type], optional): [description]. Defaults to None.
-        y_lim ([type], optional): [description]. Defaults to None.
-        plot_simple (bool, optional): [description]. Defaults to False.
-        plot_ratio_scatter (bool, optional): [description]. Defaults to False.
-        marker_scale ([type], optional): [description]. Defaults to 1..
+        reference_power_baseline (np.array): Array of power of reference turbine in baseline conditions
+        test_power_baseline (np.array): Array of power of test turbine in baseline conditions
+        wind_speed_array_baseline (np.array): Array of wind speeds in baseline conditions
+        wind_direction_array_baseline (np.array): Array of wind directions in baseline case
+        reference_power_controlled (np.array): Array of power of reference turbine in controlled conditions
+        test_power_controlled (np.array): Array of power of test turbine in controlled conditions
+        wind_speed_array_controlled (np.array): Array of wind speeds in controlled conditions
+        wind_direction_array_controlled (np.array): Array of wind directions in controlled case
+        wind_direction_bins (np.array): Wind directions bins
+        confidence (int, optional): Confidence level to use.  Defaults to 95.
+        n_boostrap (int, optional): Number of bootstaps, if none, _calculate_bootstrap_iterations is called.  Defaults to None.
+        wind_direction_bin_p_overlap (np.array, optional): Percentage overlap between wind direction bin. Defaults to None.
+        axarr ([axes], optional): list of axes to plot to, Defaults to None
+        base_color (str, optional): Color of baseline in plots. Defaults to 'b'.
+        con_color (str, optional): Color of controlled in plots. Defaults to 'g'.
+        label_array ([str], optional): List of labels to apply Defaults to None.
+        label_pchange ([type], optional): Label for percentage change. Defaults to None.
+        plot_simple (bool, optional): Plot only the ratio, no confidence. Defaults to False.
+        plot_ratio_scatter (bool, optional): Include scatter plot of values, sized to indicate counts. Defaults to False.
+        marker_scale ([type], optional): Marker scale Defaults to 1..
 
     Returns:
-        [type]: [description]
+
     """
 
     if axarr is None:
