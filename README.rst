@@ -12,11 +12,11 @@ the **floris** tag. Alternatively, please contact
 `Chris Bay <mailto:chris.bay@nrel.gov>`_, and
 `Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
 
-Background and objectives
+Background and Objectives
 =========================
 This FLORIS framework is designed to provide a computationally inexpensive,
 controls-oriented modeling tool of the steady-state wake characteristics in
-a wind farm. The wake models implement in this version of FLORIS are:
+a wind farm. The wake models implemented in this version of FLORIS are:
 
 - Jensen model for velocity deficit
 - Jimenez model for wake deflection
@@ -31,8 +31,16 @@ section of the online documentation.
 A couple of publications with practical information on using floris as a
 modeling and simulation tool for controls research are
 
-- Jen paper
-- Chris paper
+1. Annoni, J., Fleming, P., Scholbrock, A., Roadman, J., Dana, S., Adcock, C.,
+   Porté-Agel, F, Raach, S., Haizmann, F., and Schlipf, D.: `Analysis of
+   control-oriented wake modeling tools using lidar field results <https://www.wind-energ-sci.net/3/819/2018/>`__,
+   in: Wind Energy Science, vol. 3, pp. 819-831, Copernicus Publications,
+   2018.
+2. Bay, C.J., King, J., Fleming, P., Mudafort, R., and Martínez-Tossas, L.A.:
+   `Unlocking the Full Potential of Wake Steering: Implementation and
+   Assessment of a Controls-Oriented Model <https://www.wind-energ-sci-discuss.net/wes-2019-19/>`__,
+   submitted to Wind Energy Science Discussions, Copernicus Publications,
+   2019.
 
 Citation
 ========
@@ -40,7 +48,7 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version X.Y.Z (2019). Available at https://github.com/nrel/floris.
+   FLORIS. Version 1.0.0 (2019). Available at https://github.com/nrel/floris.
 
 For LaTeX users:
 
@@ -48,7 +56,7 @@ For LaTeX users:
 
     @misc{FLORIS_2019,
     author = {NREL},
-    title = {{FLORIS. Version X.Y.Z}},
+    title = {{FLORIS. Version 1.0.0}},
     year = {2019},
     publisher = {GitHub},
     journal = {GitHub repository},
@@ -71,9 +79,9 @@ virtual environments;
 provides a great introduction. Using virtual environments in a Jupyter Notebook
 is described `here <https://help.pythonanywhere.com/pages/IPythonNotebookVirtualenvs/>`_.
 
-Local editable installation
+Local Editable Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The local editable installation allows developers maintain an importable
+The local editable installation allows developers to maintain an importable
 instance of FLORIS while continuing to extend it. The alternative is to
 constantly update python paths within the package to match the local
 environment.
@@ -100,7 +108,7 @@ FLORIS:
 
     import floris
 
-pip repo installation
+pip Repo Installation
 ~~~~~~~~~~~~~~~~~~~~~
 The FLORIS version available through the pip repository is typically the latest
 tagged and released major version. This version represents the most recent

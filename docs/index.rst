@@ -41,22 +41,24 @@ More information on all of these models can be found in the
 A couple of publications with practical information on using floris as a
 modeling and simulation tool for controls research are
 
-1. Annoni, J., Fleming, P., Scholbrock, A., Roadman, J., Dana, S., Adcock, C., 
-    Porté-Agel, F, Raach, S., Haizmann, F., and Schlipf, D.: Analysis of 
-    control-oriented wake modeling tools using lidar field results, in: Wind 
-    Energy Science, vol. 3, pp. 819-831, Copernicus Publications, 2018.
-2. Bay, C.J., King, J., Fleming, P., Mudafort, R., and Martínez-Tossas, L.A.: 
-    Unlocking the Full Potential of Wake Steering: Implementation and 
-    Assessment of a Controls-Oriented Model, submitted to Wind Energy Science 
-    Discussions, Copernicus Publications, 2019.
+1. Annoni, J., Fleming, P., Scholbrock, A., Roadman, J., Dana, S., Adcock, C.,
+    Porté-Agel, F, Raach, S., Haizmann, F., and Schlipf, D.: `Analysis of
+    control-oriented wake modeling tools using lidar field results <https://www.wind-energ-sci.net/3/819/2018/>`__,
+    in: Wind Energy Science, vol. 3, pp. 819-831, Copernicus Publications,
+    2018.
+2. Bay, C.J., King, J., Fleming, P., Mudafort, R., and Martínez-Tossas, L.A.:
+    `Unlocking the Full Potential of Wake Steering: Implementation and
+    Assessment of a Controls-Oriented Model <https://www.wind-energ-sci-discuss.net/wes-2019-19/>`__,
+    submitted to Wind Energy Science Discussions, Copernicus Publications,
+    2019.
 
 Citation
 ========
 
 If FLORIS played a role in your research, please cite it. This software can be
-cited as (with "X.Y.Z" as the appropriate version number):
+cited as:
 
-   FLORIS. Version X.Y.Z (2019). Available at https://github.com/nrel/floris.
+   FLORIS. Version 1.0.0 (2019). Available at https://github.com/nrel/floris.
 
 For LaTeX users:
 
@@ -64,7 +66,7 @@ For LaTeX users:
 
     @misc{FLORIS_2019,
     author = {NREL},
-    title = {{FLORIS. Version X.Y.Z}},
+    title = {{FLORIS. Version 1.0.0}},
     year = {2019},
     publisher = {GitHub},
     journal = {GitHub repository},
