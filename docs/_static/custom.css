@@ -1,0 +1,50 @@
+/* dl.class, dl.method, dl.attribute {
+    display: inline-block;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+dl.class, dl.method, dl.attribute {
+    border-top: groove;
+    border-top-color: darkgrey;
+} */
+
+dl.class::before {
+    content: ' ';
+    width: auto;
+    display: block;
+    border-top: 4px solid black;
+    margin-top: 35px;
+    margin-left: -30px;
+    padding-bottom: 35px;
+}
+
+dl.method::before {
+    content: ' ';
+    width: auto;
+    display: block;
+    border-top: 1px solid black;
+    margin-top: 15px;
+    margin-left: -30px;
+    padding-bottom: 15px;
+}
+
+dl.function::before {
+    content: ' ';
+    width: auto;
+    display: block;
+    border-top: 1px solid black;
+    margin-top: 15px;
+    margin-left: -30px;
+    padding-bottom: 15px;
+}
+
+dl.attribute::before {
+    content: ' ';
+    width: auto;
+    display: block;
+    border-top: 1px solid black;
+    margin-top: 15px;
+    margin-left: -30px;
+    padding-bottom: 15px;
+}

@@ -1,82 +1,31 @@
-
 Code Reference
 --------------
 
+The FLORIS source code documentation is auto-generated from in-source
+docstrings. It is always a work in progress and continuously updated, so please
+feel free to contribute!
 
-Main Classes
-============
+.. toctree::
+    :glob:
+    :maxdepth: 1
 
-``floris`` module
-~~~~~~~~~~~~~~~~~
+    classes/floris
+    classes/floris.simulation
+    classes/floris.tools
 
-This is the fundamental object class of the package. 
+FLORIS Initialization
+=====================
+The primary object in FLORIS is the :py:class:`floris.simulation.floris` class.
+A call-graph of the classes and functions used in the FLORIS init method is
+included below.
 
-.. automodule:: floris.floris
-    :members:
+.. image:: ../_static/images/initialization.png
 
-
-User Input Classes
-==================
-
-These classes are instantiated directly from the input file.
-
-``farm`` module
-~~~~~~~~~~~~~~~
-
-.. automodule:: floris.farm
-    :members: 
-
-``turbine`` module
-~~~~~~~~~~~~~~~~~~
-
-.. automodule:: floris.turbine
-    :members:
-
-``wake`` module
-~~~~~~~~~~~~~~~
-
-.. automodule:: floris.wake
-    :members:
-
-
-System Classes
+Calculate Wake
 ==============
+After the wind farm, turbine, and wake models are well established, the flow
+field is actually calculated by calling
+:py:meth:`floris.simulation.flow_field.FlowField.calculate_wake`. A call-graph
+of the classes and functions used in this process is included below.
 
-These classes do the work behind the scenes.
-
-``flow_field`` module
-~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: floris.flow_field
-    :members:
-
-``turbine_map`` module
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: floris.turbine_map
-    :members:
-
-``coordinate`` module
-~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: floris.coordinate
-    :members:
-
-
-Helper Classes
-==============
-
-These classes provide functionality and an interface to some aspects of the 
-FLORIS objects.
-
-``visualization`` module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: floris.visualization
-    :members:
-
-``input_reader`` module
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: floris.input_reader
-    :members:
+.. image:: ../_static/images/calculate_wake.png
