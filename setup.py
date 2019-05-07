@@ -35,12 +35,17 @@ VERSION = '0.4.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'h5pyd==0.3.3',
+    # simulation
     'matplotlib>=3',
     'numpy==1.16.3',
-    'pyproj==2.1.3',
     'pytest>=4',
-    'scipy==1.1.0'
+    'scipy==1.1.0',
+
+    # tools
+    'h5pyd==0.3.3',
+    'pandas==0.24.2',
+    'pyproj==2.1.3',
+    'seaborn==0.9.0'
 ]
 
 # What packages are optional?
