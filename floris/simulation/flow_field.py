@@ -303,7 +303,8 @@ class FlowField():
         if wind_speed is not None:
             self.wind_speed = wind_speed
         if wind_direction is not None:
-            self.wind_direction = wind_direction
+            # frame of reference is west
+            self.wind_direction = wind_direction - 270
         if wind_shear is not None:
             self.wind_shear = wind_shear
         if wind_veer is not None:
@@ -444,27 +445,6 @@ class FlowField():
                 -1 * self.wind_direction, center_of_rotation)
 
     # Getters & Setters
-
-    @property
-    def wind_direction(self):
-        """
-        Property that returns the wind direction in degrees.
-
-        Returns:
-            float: The current wind direction in degrees.
-
-        Examples:
-            To get the wind direction, simply call:
-
-            >>> wind_direction = floris.farm.flow_field.wind_direction()
-        """
-        return self._wind_direction
-
-    @wind_direction.setter
-    def wind_direction(self, value):
-        # frame of reference is west
-        self._wind_direction = value - 270
-
     @property
     def domain_bounds(self):
         """
