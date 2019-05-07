@@ -1,17 +1,24 @@
 Change Log
 ----------
 
-FLORIS follows semantic versioning. For download and installation instructions,
-see the :ref:`installation <installation>` section.
+For download and installation instructions, see the
+:ref:`installation <installation>` section.
 
-v0.4.0
+v1.0.0
 ======
-Released on 2018-10-19
+Released on 2019-05-07
 
-- Add a web app for generating input files
-- Improvements to visualization
-- Documentation updates
-- Improvements to the module naming and general project organization
+**This update introduces breaking changes to the FLORIS API.**
+See the `code reference documentation <https://floris.readthedocs.io/en/develop/source/code.html>`__
+for detailed information.
+
+- Adds the Curl wake model (Martinez-Tossas et al)
+- Improves the FLORIS object hierarchy
+- Incorporates an analysis tools package alongside the simulation package
+- Adds examples demonstrating using the ``simulation`` and ``tools`` packages
+- Adds in-code documentation via doc strings
+- Reworks and expands the online documentation
+
 v0.4.0
 ======
 Released on 2018-10-19
