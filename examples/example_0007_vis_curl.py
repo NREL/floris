@@ -39,13 +39,15 @@ wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 
 
 # Get the vertical cut through and visualize
-cp = wfct.cut_plane.CrossPlane(fi.get_flow_data(),10*D)
+cp = wfct.cut_plane.CrossPlane(fi.get_flow_data(),5*D)
 fig, ax = plt.subplots(figsize=(10,10))
-wfct.visualization.visualize_cut_plane(cp, ax=ax)
-wfct.visualization.visualize_quiver(cp,ax=ax,downSamp=1)
+wfct.visualization.visualize_cut_plane(cp, ax=ax,minSpeed=6.0,maxSpeed=8)
+wfct.visualization.visualize_quiver(cp,ax=ax,downSamp=2)
 ax.set_ylim([15,300])
 
 # Save the flow data as vtk
-fi.get_flow_data().save_as_vtk('for_3d_viz.vtk')
+flow_data = fi.get_flow_data()
+flow_data = flow_data.crop(flow_data,[0,20*D],[-300,300],[50,300])
+flow_data.save_as_vtk('for_3d_viz.vtk')
 
 plt.show()
