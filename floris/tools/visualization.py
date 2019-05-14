@@ -175,7 +175,7 @@ def visualize_quiver(cut_plane,ax=None,minSpeed=None,maxSpeed=None,downSamp=1,**
                    (cut_plane.x2_mesh[::downSamp,::downSamp]),
                    v_mesh[::downSamp,::downSamp],
                    w_mesh[::downSamp,::downSamp],
-                   scale=100.0,
+                   scale=80.0,alpha=0.75,
                    **kw)
 
         ax.quiverkey(QV1, -.75, -0.4, 1, '1 m/s', coordinates='data')
