@@ -134,6 +134,58 @@ def visualize_cut_plane(cut_plane,
     return im
 
 
+def visualize_quiver(cut_plane,ax=None,minSpeed=None,maxSpeed=None,downSamp=1,**kw):
+        """ Visualize the scan
+        
+        Args:
+            ax: axes for plotting, if none, create a new one  
+            minSpeed, maxSpeed, values used for plotting, if not provide assume to data max min
+        """
+
+        """
+        Visualize the in-plane flows in a cut_plane
+
+        Args:
+            cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 2D 
+                plane through wind plant.
+            ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults 
+                to None.
+            minSpeed (float, optional): Minimum value of wind speed for
+                contours. Defaults to None.
+            maxSpeed (float, optional): Maximum value of wind speed for
+                contours. Defaults to None.
+            downSamp (int, optional): downSamp the number of quiver arrows from underlying grid
+
+        Returns:
+            im (plt.pcolormesh): image handle
+        """
+        if not ax:
+            fig, ax = plt.subplots()
+
+
+        # # Reshape UMesh internally
+        v_mesh = cut_plane.v_mesh.reshape(cut_plane.resolution[1],
+                                      cut_plane.resolution[0])
+        w_mesh = cut_plane.w_mesh.reshape(cut_plane.resolution[1],
+                                      cut_plane.resolution[0])
+        # Zm = np.ma.masked_where(np.isnan(uMesh),uMesh)
+
+        # plot the stream plot
+        QV1 = ax.quiver( (cut_plane.x1_mesh[::downSamp,::downSamp]),
+                   (cut_plane.x2_mesh[::downSamp,::downSamp]),
+                   v_mesh[::downSamp,::downSamp],
+                   w_mesh[::downSamp,::downSamp],
+                   scale=100.0,
+                   **kw)
+
+        ax.quiverkey(QV1, -.75, -0.4, 1, '1 m/s', coordinates='data')
+        # ax.quiverkey(QV1, -3, 1.2, 1, '1 m/s', coordinates='data')
+
+        #print(minSpeed,maxSpeed)
+        
+        # Make equal axis
+        ax.set_aspect('equal')
+
 def reverse_cut_plane_x_axis_in_plot(ax):
     """
     Shortcut method to reverse direction of x-axis.
