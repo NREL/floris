@@ -13,7 +13,6 @@
 
 import matplotlib.pyplot as plt
 import floris.tools as wfct
-from floris.utilities import Vec3
 
 # Initialize the FLORIS interface fi
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
