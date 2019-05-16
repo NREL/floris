@@ -23,17 +23,22 @@ class Vec3():
             first component of the vector.
             x2: float (optional) -- The second component of the vector.
             x3: float (optional) -- The third component of the vector.
-            string_format: str (optional) -- The string format to use in the overloaded __str__ function.
+            string_format: str (optional) -- The string format to use in the
+                overloaded __str__ function.
         """
         if isinstance(x1, list):
-            self.x1, self.x2, self.x3 = [float(x) for x in x1]
+            self.x1, self.x2, self.x3 = [x for x in x1]
         else:
-            self.x1 = float(x1)
-            self.x2 = float(x2)
-            self.x3 = float(x3)
+            self.x1 = x1
+            self.x2 = x2
+            self.x3 = x3
 
-        # TODO: checks:
-        # - x1, x2, x3 are all of the same type
+        if not (type(self.x1) == type(self.x2) and
+                type(self.x1) == type(self.x3) and
+                type(self.x2) == type(self.x3)):
+                target_type = type(self.x1)
+                self.x2 = target_type(self.x2)
+                self.x3 = target_type(self.x3)
 
         if string_format is not None:
             self.string_format = string_format
