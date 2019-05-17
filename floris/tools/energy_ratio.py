@@ -70,6 +70,7 @@ def energy_ratio_region(ref_pow_base, test_pow_base, ws_base,wd_base,
         test_pow_con (np.array): Array of controlled test turbine power.
         ws_con (np.array): Array of wind speeds in control.
         wd_con (np.array): Array of wind directions in control.
+        wd_step (int, optional): Step size for wind direction bining
 
     Returns:
         tuple: tuple containing:
@@ -86,6 +87,8 @@ def energy_ratio_region(ref_pow_base, test_pow_base, ws_base,wd_base,
             -   **counts_pchange** (*float*): Number of points in 
                 pchange (min(baseline,controlled)).
     """
+
+    # Combine the ws/wd into tuples
 
     # First derive the weighting functions by wind speed
     ws_unique_base = np.unique(ws_base)
