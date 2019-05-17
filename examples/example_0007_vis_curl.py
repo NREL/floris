@@ -16,7 +16,10 @@ import floris.tools as wfct
 from floris.utilities import Vec3
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_utilities.FlorisInterface("example_input_curl.json")
+fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+
+# Change the model to curl
+fi.floris.farm.set_wake_model('curl')
 
 # Change the layout
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
