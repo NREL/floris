@@ -48,6 +48,99 @@ def _get_confidence_bounds(confidence):
     return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
 
 
+def energy_ratio_region(ref_pow_base, test_pow_base, ws_base,wd_base,
+                 ref_pow_con, test_pow_con, ws_con, wd_con, wd_step=1):
+    """
+    Compute the balanced energy ratio over a region of directions
+
+    This function is typically called to compute a single balanced 
+    energy ratio calculation for a particular wind direction bin.  Note 
+    the reference turbine should not be the turbine implementing 
+    control, but should be an unaffected nearby turbine, or a synthetic 
+    power estimate from a measurement.
+
+    Args:
+        ref_pow_base (np.array): Array of baseline reference turbine 
+            power.
+        test_pow_base (np.array): Array of baseline test turbine power.
+        ws_base (np.array): Array of wind speeds for baseline.
+        wd_base (np.array): Array of wind directions for baseline.
+        ref_pow_con (np.array): Array of controlled reference turbine 
+            power.
+        test_pow_con (np.array): Array of controlled test turbine power.
+        ws_con (np.array): Array of wind speeds in control.
+        wd_con (np.array): Array of wind directions in control.
+
+    Returns:
+        tuple: tuple containing:
+
+            -   **ratio_base** (*float*): Baseline energy ratio.
+            -   **ratio_con** (*float*): Controlled enery ratio.
+            -   **ratio_diff** (*float*): Difference in energy ratios.
+            -   **p_change** (*float*): Percent change in energy ratios.
+            -   **counts_base** (*float*): Number of points in baseline.
+            -   **counts_con** (*float*): Number of points in 
+                controlled.
+            -   **counts_diff** (*float*): Number of points in diff (min
+                (baseline,controlled)).
+            -   **counts_pchange** (*float*): Number of points in 
+                pchange (min(baseline,controlled)).
+    """
+
+    # First derive the weighting functions by wind speed
+    ws_unique_base = np.unique(ws_base)
+    ws_unique_con = np.unique(ws_con)
+    ws_unique = np.intersect1d(ws_unique_base, ws_unique_con)
+
+    if len(ws_unique) == 0:
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
+
+    # Mask down to the items in both sides
+    base_mask = np.isin(ws_base, ws_unique)
+    con_mask = np.isin(ws_con, ws_unique)
+    ref_pow_base = ref_pow_base[base_mask]
+    test_pow_base = test_pow_base[base_mask]
+    ws_base = ws_base[base_mask]
+    ref_pow_con = ref_pow_con[con_mask]
+    test_pow_con = test_pow_con[con_mask]
+    ws_con = ws_con[con_mask]
+
+    ws_unique_base, counts_base = np.unique(ws_base, return_counts=True)
+    ws_unique_con, counts_con = np.unique(ws_con, return_counts=True)
+    total_counts = counts_base + counts_con
+
+    # Make the weights per wind speed
+    weights_base = counts_con.astype(float) / total_counts.astype(float)
+    weights_con = counts_base.astype(float) / total_counts.astype(float)
+
+    # Make a weighting array
+    lut_base = np.zeros(np.max(ws_unique)+1)
+    lut_base[ws_unique] = weights_base
+    weight_array_base = lut_base[ws_base]
+    lut_con = np.zeros(np.max(ws_unique)+1)
+    lut_con[ws_unique] = weights_con
+    weight_array_con = lut_con[ws_con]
+
+    # Weighted sums
+    weight_sum_ref_base = np.sum(ref_pow_base * weight_array_base)
+    weight_sum_test_base = np.sum(test_pow_base * weight_array_base)
+    weight_sum_ref_con = np.sum(ref_pow_con * weight_array_con)
+    weight_sum_test_con = np.sum(test_pow_con * weight_array_con)
+
+    # Ratio and diff
+    ratio_base = weight_sum_test_base / weight_sum_ref_base
+    ratio_con = weight_sum_test_con / weight_sum_ref_con
+    ratio_diff = ratio_con - ratio_base
+    p_change = 100. * ratio_diff / ratio_base
+
+    # Get the counts
+    counts_base = len(ref_pow_base)
+    counts_con = len(ref_pow_con)
+    counts_diff = np.min([counts_base, counts_con])
+    counts_pchange = counts_diff
+
+    return ratio_base, ratio_con, ratio_diff, p_change, counts_base, counts_con, counts_diff, counts_pchange
+
 def energy_ratio(ref_pow_base, test_pow_base, ws_base,
                  ref_pow_con, test_pow_con, ws_con):
     """
