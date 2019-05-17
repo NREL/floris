@@ -112,15 +112,16 @@ class FlowData():
         y = ff.y[map_values]
         z = ff.z[map_values]
 
-        #  Work out new dimensions
-        dimensions = (len(np.unique(x)), len(np.unique(y)), len(np.unique(z)))
+        
+        dimensions = Vec3(len(np.unique(x)), len(np.unique(y)), len(np.unique(z)))
 
         # Work out origin
-        origin = (
+        origin = Vec3(
             ff.origin.x1 + np.min(x),
             ff.origin.x2 + np.min(y),
             ff.origin.x3 + np.min(z),
         )
+
 
         return FlowData(
             x - np.min(x),
