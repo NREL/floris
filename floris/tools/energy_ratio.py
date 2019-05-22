@@ -217,34 +217,32 @@ def calculate_balanced_energy_ratio_region(reference_power_baseline,
             controlled conditions.
         wind_direction_array_controlled (np.array): Array of wind 
             directions in controlled case.
-        wind_direction_bins (np.array): Wind directions bins.
         confidence (int, optional): Confidence level to use.  Defaults 
             to 95.
         n_boostrap (int, optional): Number of bootstaps, if none, 
             _calculate_bootstrap_iterations is called.  Defaults to 
             None.
-        wind_direction_bin_p_overlap (np.array, optional): Percentage 
-            overlap between wind direction bin. Defaults to None.
+
 
     Returns:
         tuple: tuple containing:
 
-            **ratio_array_base** (*np.array*): Baseline energy ratio at each wind direction bin.
-            **lower_ratio_array_base** (*np.array*): Lower confidence bound of baseline energy ratio at each wind direction bin.
-            **upper_ratio_array_base** (*np.array*): Upper confidence bound of baseline energy ratio at each wind direction bin.
-            **counts_ratio_array_base** (*np.array*): Counts per wind direction bin in baseline.
-            **ratio_array_con** (*np.array*): Controlled energy ratio at each wind direction bin.
-            **lower_ratio_array_con** (*np.array*): Lower confidence bound of controlled energy ratio at each wind direction bin.
-            **upper_ratio_array_con** (*np.array*): Upper confidence bound of controlled energy ratio at each wind direction bin.
-            **counts_ratio_array_con** (*np.array*): Counts per wind direction bin in controlled.
-            **diff_array** (*np.array*): Difference in baseline and controlled energy ratio per wind direction bin.
-            **lower_diff_array** (*np.array*): Lower confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
-            **upper_diff_array** (*np.array*): Upper confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
-            **counts_diff_array** (*np.array*): Counts in difference (minimum of baseline and controlled).
-            **p_change_array** (*np.array*): Percent change in baseline and controlled energy ratio per wind direction bin.
-            **lower_p_change_array** (*np.array*): Lower confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
-            **upper_p_change_array** (*np.array*): Upper confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
-            **counts_p_change_array** (*np.array*): Counts in percent change bins (minimum of baseline and controlled).
+            **ratio_base** (*np.array*): Baseline energy ratio.
+            **lower_ratio_base** (*np.array*): Lower confidence bound of baseline energy ratio.
+            **upper_ratio_base** (*np.array*): Upper confidence bound of baseline energy ratio.
+            **counts_ratio_base** (*np.array*): Counts bin in baseline.
+            **ratio_con** (*np.array*): Controlled energy ratio.
+            **lower_ratio_con** (*np.array*): Lower confidence bound of controlled energy ratio.
+            **upper_ratio_con** (*np.array*): Upper confidence bound of controlled energy ratio.
+            **counts_ratio_con** (*np.array*): Counts bin in controlled.
+            **diff** (*np.array*): Difference in baseline and controlled energy ratio bin.
+            **lower_diff** (*np.array*): Lower confidence bound of difference in baseline and controlled energy ratio bin.
+            **upper_diff** (*np.array*): Upper confidence bound of difference in baseline and controlled energy ratio bin.
+            **counts_diff** (*np.array*): Counts in difference (minimum of baseline and controlled).
+            **p_change** (*np.array*): Percent change in baseline and controlled energy ratio bin.
+            **lower_p_change** (*np.array*): Lower confidence bound of percent change in baseline and controlled energy ratio bin.
+            **upper_p_change** (*np.array*): Upper confidence bound of percent change in baseline and controlled energy ratio bin.
+            **counts_p_change** (*np.array*): Counts in percent change bins (minimum of baseline and controlled).
 
     """
 
@@ -773,7 +771,7 @@ def energy_ratio_ws(ref_pow_base, test_pow_base, wd_base,
     Compute the balanced energy ratio
 
     This function is typically called to compute a single balanced 
-    energy ratio calculation for a particular wind direction bin.  Note 
+    energy ratio calculation for a particular wind speed bin.  Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
     power estimate from a measurement.
@@ -782,11 +780,14 @@ def energy_ratio_ws(ref_pow_base, test_pow_base, wd_base,
         ref_pow_base (np.array): Array of baseline reference turbine 
             power.
         test_pow_base (np.array): Array of baseline test turbine power.
-        wd_base (np.array): Array of wind speeds for basline.
+        wd_base (np.array): Array of wind directions for basline.
         ref_pow_con (np.array): Array of controlled reference turbine 
             power.
         test_pow_con (np.array): Array of controlled test turbine power.
-        wd_con (np.array): Array of wind speeds in control.
+        wd_con (np.array): Array of wind directions in control.
+        use_absolutes (boolean): Should use ratios or absolute energy values
+        use_mean (boolean): If using absolutes, use the mean (power), or the sum (energy)
+
 
     Returns:
         tuple: tuple containing:
@@ -804,7 +805,7 @@ def energy_ratio_ws(ref_pow_base, test_pow_base, wd_base,
                 pchange (min(baseline,controlled)).
     """
 
-    # First derive the weighting functions by wind speed
+    # First derive the weighting functions by wind direction
     wd_unique_base = np.unique(wd_base)
     wd_unique_con = np.unique(wd_con)
     wd_unique = np.intersect1d(wd_unique_base, wd_unique_con)
@@ -884,14 +885,14 @@ def calculate_balanced_energy_ratio_ws(reference_power_baseline,
                                     use_mean=False
                                     ):
     """
-    Calculate a balanced energy ratio for each wind direction bin.
+    Calculate a balanced energy ratio for each wind speed bin.
 
-    Calculate a balanced energy ratio for each wind direction bin.  A 
+    Calculate a balanced energy ratio for each wind speed bin.  A 
     reference and test turbine are provided for the ratio, as well as 
     wind speed and wind directions. These data are further divided into 
     baseline and controlled conditions.  The balanced energy ratio 
     function is called and used to ensure a similar distribution of 
-    wind speeds is used in the computation, per wind direction bin, for 
+    wind speeds is used in the computation, per wind speed bin, for 
     baseline and controlled results.  Resulting arrays, including upper 
     and lower uncertaintity bounds computed through bootstrapping, are 
     returned.  Note the reference turbine should not be the turbine 
@@ -915,33 +916,35 @@ def calculate_balanced_energy_ratio_ws(reference_power_baseline,
             controlled conditions.
         wind_direction_array_controlled (np.array): Array of wind 
             directions in controlled case.
-        wind_direction_bins (np.array): Wind directions bins.
+        wind_speed_bins (np.array): Wind speed bins.
         confidence (int, optional): Confidence level to use.  Defaults 
             to 95.
         n_boostrap (int, optional): Number of bootstaps, if none, 
             _calculate_bootstrap_iterations is called.  Defaults to 
             None.
-        wind_direction_bin_p_overlap (np.array, optional): Percentage 
+        wind_speed_bin_p_overlap (np.array, optional): Percentage 
             overlap between wind direction bin. Defaults to None.
+        use_absolutes (boolean): Should use ratios or absolute energy values
+        use_mean (boolean): If using absolutes, use the mean (power), or the sum (energy)
 
     Returns:
         tuple: tuple containing:
 
-            **ratio_array_base** (*np.array*): Baseline energy ratio at each wind direction bin.
-            **lower_ratio_array_base** (*np.array*): Lower confidence bound of baseline energy ratio at each wind direction bin.
-            **upper_ratio_array_base** (*np.array*): Upper confidence bound of baseline energy ratio at each wind direction bin.
-            **counts_ratio_array_base** (*np.array*): Counts per wind direction bin in baseline.
-            **ratio_array_con** (*np.array*): Controlled energy ratio at each wind direction bin.
-            **lower_ratio_array_con** (*np.array*): Lower confidence bound of controlled energy ratio at each wind direction bin.
-            **upper_ratio_array_con** (*np.array*): Upper confidence bound of controlled energy ratio at each wind direction bin.
-            **counts_ratio_array_con** (*np.array*): Counts per wind direction bin in controlled.
-            **diff_array** (*np.array*): Difference in baseline and controlled energy ratio per wind direction bin.
-            **lower_diff_array** (*np.array*): Lower confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
-            **upper_diff_array** (*np.array*): Upper confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
+            **ratio_array_base** (*np.array*): Baseline energy ratio at each wind speed bin.
+            **lower_ratio_array_base** (*np.array*): Lower confidence bound of baseline energy ratio at each wind speed bin.
+            **upper_ratio_array_base** (*np.array*): Upper confidence bound of baseline energy ratio at each wind speed bin.
+            **counts_ratio_array_base** (*np.array*): Counts per wind speed bin in baseline.
+            **ratio_array_con** (*np.array*): Controlled energy ratio at each wind speed bin.
+            **lower_ratio_array_con** (*np.array*): Lower confidence bound of controlled energy ratio at each wind speed bin.
+            **upper_ratio_array_con** (*np.array*): Upper confidence bound of controlled energy ratio at each wind speed bin.
+            **counts_ratio_array_con** (*np.array*): Counts per wind speed bin in controlled.
+            **diff_array** (*np.array*): Difference in baseline and controlled energy ratio per wind speed bin.
+            **lower_diff_array** (*np.array*): Lower confidence bound of difference in baseline and controlled energy ratio per wind speed bin.
+            **upper_diff_array** (*np.array*): Upper confidence bound of difference in baseline and controlled energy ratio per wind speed bin.
             **counts_diff_array** (*np.array*): Counts in difference (minimum of baseline and controlled).
-            **p_change_array** (*np.array*): Percent change in baseline and controlled energy ratio per wind direction bin.
-            **lower_p_change_array** (*np.array*): Lower confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
-            **upper_p_change_array** (*np.array*): Upper confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
+            **p_change_array** (*np.array*): Percent change in baseline and controlled energy ratio per wind speed bin.
+            **lower_p_change_array** (*np.array*): Lower confidence bound of percent change in baseline and controlled energy ratio per wind speed bin.
+            **upper_p_change_array** (*np.array*): Upper confidence bound of percent change in baseline and controlled energy ratio per wind speed bin.
             **counts_p_change_array** (*np.array*): Counts in percent change bins (minimum of baseline and controlled).
 
     """
@@ -1010,7 +1013,7 @@ def calculate_balanced_energy_ratio_ws(reference_power_baseline,
         if (len(reference_power_baseline_ws) == 0) or (len(reference_power_controlled_ws) == 0):
             continue
 
-        # Convert wind directions to integers
+        # Convert wind speeds to integers
         wind_dir_array_baseline_ws = wind_dir_array_baseline_ws.round().astype(int)
         wind_dir_array_controlled_ws = wind_dir_array_controlled_ws.round().astype(int)
 
@@ -1109,7 +1112,7 @@ def plot_energy_ratio_ws(reference_power_baseline,
             speeds in controlled conditions.
         wind_direction_array_controlled (np.array): Array of 
             wind directions in controlled case.
-        wind_direction_bins (np.array): Wind directions bins.
+        wind_speed_bins (np.array): Wind speed bins.
         confidence (int, optional): Confidence level to use.  
             Defaults to 95.
         n_boostrap (int, optional): Number of bootstaps, if 
@@ -1134,7 +1137,8 @@ def plot_energy_ratio_ws(reference_power_baseline,
             plot of values, sized to indicate counts. Defaults to False.
         marker_scale ([type], optional): Marker scale. 
             Defaults to 1.
-
+        use_absolutes (boolean): Should use ratios or absolute energy values
+        show_power (boolean): If using absolutes, use the mean (power), or the sum (energy)
     """
 
     if axarr is None:
