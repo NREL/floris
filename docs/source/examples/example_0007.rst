@@ -1,5 +1,5 @@
-example_0006_floris_demonstrate_hh_plot.py
-==========================================
+example_0007_vis_curl.py
+========================
 
 The code for this example can be found here: `example_0007_vis_curl.py
 <https://github.com/NREL/floris/blob/develop/examples/example_0007_vis_curl.py>`_
