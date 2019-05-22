@@ -88,7 +88,7 @@ html_theme_options = {
     # "logo_name": True,
     "travis_button": True,
     "fixed_sidebar": True,
-    "github_user": "WISDEM",
+    "github_user": "NREL",
     "github_repo": "FLORIS",
     "sidebar_width": '375px',
     "page_width": '75%',
