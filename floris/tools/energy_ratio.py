@@ -49,7 +49,7 @@ def _get_confidence_bounds(confidence):
 
 
 def energy_ratio_region(ref_pow_base, test_pow_base, ws_base,wd_base,
-                 ref_pow_con, test_pow_con, ws_con, wd_con, wd_step=1):
+                 ref_pow_con, test_pow_con, ws_con, wd_con):
     """
     Compute the balanced energy ratio over a region of directions
 
@@ -70,7 +70,6 @@ def energy_ratio_region(ref_pow_base, test_pow_base, ws_base,wd_base,
         test_pow_con (np.array): Array of controlled test turbine power.
         ws_con (np.array): Array of wind speeds in control.
         wd_con (np.array): Array of wind directions in control.
-        wd_step (int, optional): Step size for wind direction bining
 
     Returns:
         tuple: tuple containing:
@@ -93,12 +92,10 @@ def energy_ratio_region(ref_pow_base, test_pow_base, ws_base,wd_base,
     
     # base_set = set(base_tuples)
     con_tuples = np.array(list(zip(ws_con,wd_con)))
-    con_tuples[0,:] = [4,333]
 
     # First derive the weighting functions by wind speed
     tuple_unique_base = np.unique(base_tuples,axis=0)
     tuple_unique_con = np.unique(con_tuples,axis=0)
-    # ws_unique = np.intersect1d(ws_unique_base, ws_unique_con)
     tuple_unique = np.array([x for x in set(tuple(x) for x in tuple_unique_base) & set(tuple(x) for x in tuple_unique_con)])
 
     if len(tuple_unique) == 0:
