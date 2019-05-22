@@ -20,7 +20,7 @@ import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 
 # Parameters
-n_sim = 1 # number of simulations to use
+n_sim = 1000 # number of simulations to use
 wd_var_scale = 10
 wd_bins = np.arange(265,365,1.)
 
