@@ -1207,18 +1207,18 @@ def plot_energy_ratio_ws(reference_power_baseline,
     if use_absolutes: #show the references as well
         if plot_simple: 
             ax.plot(wind_speed_bins, r_ratio_array_base,
-                    label='Ref', color='k', ls='--')
+                    label='_nolegend_', color='k', ls='--')
             ax.plot(wind_speed_bins, r_ratio_array_con,
-                    label='Ref', color='k', ls='--')
+                    label='_nolegend_', color='k', ls='--')
         else:
             ax.plot(wind_speed_bins, r_ratio_array_base,
-                    label='Ref', color='k', ls='-', marker='.')
+                    label='_nolegend_', color='k', ls='-', marker='.')
             ax.fill_between(wind_speed_bins, r_lower_ratio_array_base,
                             r_upper_ratio_array_base, alpha=0.3, color='k', label='_nolegend_')
             ax.scatter(wind_speed_bins, r_ratio_array_base, s=counts_ratio_array_base,
                     label='_nolegend_', color='k', marker='o', alpha=0.2)
             ax.plot(wind_speed_bins, r_ratio_array_con,
-                    label='Ref', color='k', ls='-', marker='.')
+                    label='_nolegend_', color='k', ls='-', marker='.')
             ax.fill_between(wind_speed_bins, r_lower_ratio_array_con,
                             r_upper_ratio_array_con, alpha=0.3, color='k', label='_nolegend_')
             ax.scatter(wind_speed_bins, r_ratio_array_con, s=counts_ratio_array_con,
