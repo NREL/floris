@@ -16,48 +16,104 @@ from scipy.optimize import minimize
 # warnings.simplefilter('ignore', RuntimeWarning)
 
 
-def optimize_yaw(fi, minimum_yaw_angle=0.0, maximum_yaw_angle=25.0):
+class Optimization():
     """
-    Find optimum setting of turbine yaw angles for power production
-    given fixed atmospheric conditins (wind speed, direction, etc.)
-
-    Args:
-        fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`):
-            Interface from FLORIS to the wfc tools
-        minimum_yaw_angle (float, optional): minimum constraint on yaw.
-            Defaults to 0.0.
-        maximum_yaw_angle (float, optional): maximum constraint on yaw.
-            Defaults to 25.0.
-
-    Returns:
-        opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+    Base optimization class.
     """
-    # initialize floris without the full flow domain; only points assigned at the turbine
-    fi.floris.farm.flow_field.reinitialize_flow_field()
 
-    # set initial conditions
-    x0 = []
-    bnds = []
+    def __init__(self):
+        self.blank = None
 
-    turbines = fi.floris.farm.turbine_map.turbines
-    x0 = [turbine.yaw_angle for turbine in turbines]
-    bnds = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in turbines]
 
-    print('=====================================================')
-    print('Optimizing wake redirection control...')
-    print('Number of parameters to optimize = ', len(x0))
-    print('=====================================================')
+class YawOptimization(Optimization):
+    """
+    Sub class of the :py:class`floris.tools.optimization.Optimization`
+    object class that performs yaw optimization.
+    """
 
-    residual_plant = minimize(fi.get_power_for_yaw_angle_opt,
-                              x0,
-                              method='SLSQP',
-                              bounds=bnds,
-                              options={'eps': np.radians(5.0)})
+    def __init__(self):
+        """
+        Instantiate YawOptimization object and parameter values.
+        """
+        super().__init__()
+        self.minimum_yaw_angle = 0.0
+        self.minimum_yaw_angle = 25.0
 
-    if np.sum(residual_plant.x) == 0:
-        print('No change in controls suggested for this inflow condition...')
 
-    # %%
-    opt_yaw_angles = residual_plant.x
+    def function(self, fi, minimum_yaw_angle=None, 
+                           maximum_yaw_angle=None,
+                           x0=None):
+        """
+        Find optimum setting of turbine yaw angles for power production
+        given fixed atmospheric conditins (wind speed, direction, etc.).
 
-    return opt_yaw_angles
+        Args:
+            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`):
+                Interface from FLORIS to the tools package.
+            minimum_yaw_angle (float, optional): minimum constraint on yaw.
+                Defaults to 0.0.
+            maximum_yaw_angle (float, optional): maximum constraint on yaw.
+                Defaults to 25.0.
+            x0 (np.array, optional): initial yaw conditions. Defaults to 
+                current turbine yaw settings.
+
+        Returns:
+            opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+        """
+        if minimum_yaw_angle is not None:
+            self.minimum_yaw_angle = minimum_yaw_angle
+        if maximum_yaw_angle is not None:
+            self.maximum_yaw_angle = maximum_yaw_angle
+        if x0 is None:
+            self.x0 = [turbine.yaw_angle for turbine in fi.floris.farm.turbine_map.turbines]
+        else:
+            self.x0 = x0
+        
+        # initialize floris without the full flow domain; only points assigned at the turbine
+        fi.floris.farm.flow_field.reinitialize_flow_field()
+
+        # set bounds for optimization
+        bnds = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in fi.floris.farm.turbine_map.turbines]
+
+        print('=====================================================')
+        print('Optimizing wake redirection control...')
+        print('Number of parameters to optimize = ', len(x0))
+        print('=====================================================')
+
+        self.residual_plant = minimize(fi.get_power_for_yaw_angle_opt,
+                                self.x0,
+                                method='SLSQP',
+                                bounds=bnds,
+                                options={'eps': np.radians(5.0)})
+
+        if np.sum(self.residual_plant.x) == 0:
+            print('No change in controls suggested for this inflow condition...')
+
+        opt_yaw_angles = self.residual_plant.x
+
+        return opt_yaw_angles
+
+
+class LayoutOptimization(Optimization):
+    """
+    Sub class of the :py:class`floris.tools.optimization.Optimization`
+    object class that performs layout optimization.
+    """
+
+    def __init__(self):
+        """
+        Instantiate LayoutOptimization object and parameter values.
+        """
+        super().__init__()
+        self.epsilon = np.finfo(float).eps
+
+
+    def function(self, fi):
+        """
+        Find optimal layout of wind turbines for power production given
+        fixed atmospheric conditins (wind speed, direction, etc.).
+
+        Args:
+            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`):
+                Interface from FLORIS to the tools package.
+        """
