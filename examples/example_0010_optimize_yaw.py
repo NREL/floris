@@ -23,8 +23,6 @@ import numpy as np
 print('Running FLORIS with no yaw...')
 # Instantiate the FLORIS object
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-# Instantiate the Optimization object
-yaw_opt = YawOptimization()
 
 # Set turbine locations to 3 turbines in a row
 D = fi.floris.farm.turbines[0].rotor_diameter
@@ -56,6 +54,8 @@ print('Finding optimal yaw angles in FLORIS...')
 # Set bounds for allowable wake steering
 min_yaw = 0.0
 max_yaw = 25.0
+# Instantiate the Optimization object
+yaw_opt = YawOptimization(fi)
 # Perform optimization
 yaw_angles = yaw_opt.optimize(fi, 
                             minimum_yaw_angle=min_yaw, 

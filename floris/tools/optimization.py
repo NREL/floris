@@ -33,14 +33,74 @@ class YawOptimization(Optimization):
     object class that performs yaw optimization.
     """
 
-    def __init__(self):
+    def __init__(self, fi, minimum_yaw_angle=None,
+                           maximum_yaw_angle=None,
+                           x0=None,
+                           bnds=None,
+                           opt_method=None):
         """
         Instantiate YawOptimization object and parameter values.
         """
         super().__init__()
-        self.minimum_yaw_angle = 0.0
-        self.minimum_yaw_angle = 25.0
+        
+        if minimum_yaw_angle is not None:
+            self.minimum_yaw_angle = minimum_yaw_angle
+        else:
+            self.minimum_yaw_angle = 0.0
+        if maximum_yaw_angle is not None:
+            self.maximum_yaw_angle = maximum_yaw_angle
+        else:
+            self.maximum_yaw_angle = 25.0
+        if x0 is not None:
+            self.x0 = x0
+        else:
+            self.x0 = [turbine.yaw_angle for turbine in \
+                       fi.floris.farm.turbine_map.turbines]
+        if bnds is not None:
+            self.bnds = bnds
+        else:
+            self._set_opt_bounds(fi, self.minimum_yaw_angle, 
+                                     self.maximum_yaw_angle)
+        if opt_method is not None:
+            self.opt_method = opt_method
+        else:
+            self.opt_method = 'SLSQP'
+            
+    # Private methods
 
+    def _optimize(self, fi):
+        """
+        Find optimum setting of turbine yaw angles for power production
+        given fixed atmospheric conditins (wind speed, direction, etc.).
+
+        Args:
+            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`):
+                Interface from FLORIS to the tools package.
+            minimum_yaw_angle (float, optional): minimum constraint on yaw.
+                Defaults to 0.0.
+            maximum_yaw_angle (float, optional): maximum constraint on yaw.
+                Defaults to 25.0.
+            x0 (np.array, optional): initial yaw conditions. Defaults to 
+                current turbine yaw settings.
+
+        Returns:
+            opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+        """
+        self.residual_plant = minimize(fi.get_power_for_yaw_angle_opt,
+                                self.x0,
+                                method=self.opt_method,
+                                bounds=self.bnds,
+                                options={'eps': np.radians(5.0)})
+
+        opt_yaw_angles = self.residual_plant.x
+
+        return opt_yaw_angles
+
+    def _set_opt_bounds(self, fi, minimum_yaw_angle, maximum_yaw_angle):
+        self.bnds = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in \
+                fi.floris.farm.turbine_map.turbines]
+
+    # Public methods
 
     def optimize(self, fi, minimum_yaw_angle=None, 
                            maximum_yaw_angle=None,
@@ -62,42 +122,74 @@ class YawOptimization(Optimization):
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
         """
-        if minimum_yaw_angle is not None:
-            self.minimum_yaw_angle = minimum_yaw_angle
-        if maximum_yaw_angle is not None:
-            self.maximum_yaw_angle = maximum_yaw_angle
-        if x0 is None:
-            self.x0 = [turbine.yaw_angle for turbine in \
-                       fi.floris.farm.turbine_map.turbines]
-        else:
-            self.x0 = x0
-        
-        # initialize floris without the full flow domain; only points assigned 
-        # at the turbine
-        fi.floris.farm.flow_field.reinitialize_flow_field()
-
-        # set bounds for optimization
-        bnds = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in \
-                fi.floris.farm.turbine_map.turbines]
-
         print('=====================================================')
         print('Optimizing wake redirection control...')
         print('Number of parameters to optimize = ', len(self.x0))
         print('=====================================================')
 
-        self.residual_plant = minimize(fi.get_power_for_yaw_angle_opt,
-                                self.x0,
-                                method='SLSQP',
-                                bounds=bnds,
-                                options={'eps': np.radians(5.0)})
+        yaw_angles = self._optimize(fi)
 
-        if np.sum(self.residual_plant.x) == 0:
-            print('No change in controls suggested for this inflow condition...')
+        if np.sum(yaw_angles) == 0:
+            print('No change in controls suggested for this inflow \
+                   condition...')
 
-        opt_yaw_angles = self.residual_plant.x
+        return yaw_angles
 
-        return opt_yaw_angles
+    # Properties
 
+    @property
+    def minimum_yaw_angle(self):
+        """
+        This property gets or sets the minimum yaw angle for the 
+        optimization.
+        
+        Args:
+            value (float): The minimum yaw angle (deg).
+
+        Returns:
+            minimum_yaw_angle (float): The minimum yaw angle (deg).
+        """
+        return self._minimum_yaw_angle
+
+    @minimum_yaw_angle.setter
+    def minimum_yaw_angle(self, value):
+        self._minimum_yaw_angle = value
+
+    @property
+    def maximum_yaw_angle(self):
+        """
+        This property gets or sets the maximum yaw angle for the 
+        optimization.
+        
+        Args:
+            value (float): The maximum yaw angle (deg).
+
+        Returns:
+            minimum_yaw_angle (float): The maximum yaw angle (deg).
+        """
+        return self._maximum_yaw_angle
+
+    @maximum_yaw_angle.setter
+    def maximum_yaw_angle(self, value):
+        self._maximum_yaw_angle = value
+
+    @property
+    def x0(self):
+        """
+        This property gets or sets the initial yaw angles for the 
+        optimization.
+        
+        Args:
+            value (float): The initial yaw angles (deg).
+
+        Returns:
+            x0 (float): The initial yaw angles (deg).
+        """
+        return self._x0
+
+    @x0.setter
+    def x0(self, value):
+        self._x0 = value
 
 class LayoutOptimization(Optimization):
     """
