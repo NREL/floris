@@ -24,6 +24,8 @@ class Optimization():
     def __init__(self):
         self.blank = None
 
+    def _reinitialize(self):
+        pass
 
 class YawOptimization(Optimization):
     """
@@ -40,7 +42,7 @@ class YawOptimization(Optimization):
         self.minimum_yaw_angle = 25.0
 
 
-    def function(self, fi, minimum_yaw_angle=None, 
+    def optimize(self, fi, minimum_yaw_angle=None, 
                            maximum_yaw_angle=None,
                            x0=None):
         """
@@ -65,19 +67,22 @@ class YawOptimization(Optimization):
         if maximum_yaw_angle is not None:
             self.maximum_yaw_angle = maximum_yaw_angle
         if x0 is None:
-            self.x0 = [turbine.yaw_angle for turbine in fi.floris.farm.turbine_map.turbines]
+            self.x0 = [turbine.yaw_angle for turbine in \
+                       fi.floris.farm.turbine_map.turbines]
         else:
             self.x0 = x0
         
-        # initialize floris without the full flow domain; only points assigned at the turbine
+        # initialize floris without the full flow domain; only points assigned 
+        # at the turbine
         fi.floris.farm.flow_field.reinitialize_flow_field()
 
         # set bounds for optimization
-        bnds = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in fi.floris.farm.turbine_map.turbines]
+        bnds = [(minimum_yaw_angle, maximum_yaw_angle) for turbine in \
+                fi.floris.farm.turbine_map.turbines]
 
         print('=====================================================')
         print('Optimizing wake redirection control...')
-        print('Number of parameters to optimize = ', len(x0))
+        print('Number of parameters to optimize = ', len(self.x0))
         print('=====================================================')
 
         self.residual_plant = minimize(fi.get_power_for_yaw_angle_opt,
@@ -108,7 +113,7 @@ class LayoutOptimization(Optimization):
         self.epsilon = np.finfo(float).eps
 
 
-    def function(self, fi):
+    def optimize(self, fi):
         """
         Find optimal layout of wind turbines for power production given
         fixed atmospheric conditins (wind speed, direction, etc.).
