@@ -81,6 +81,29 @@ class YawOptimization(Optimization):
                            x0=None,
                            bnds=None,
                            opt_method=None):
+        """
+        Reintializes parameter values for the optimization.
+        
+        This method reinitializes the optimization parameters and 
+        bounds to the supplied values or uses what is currently stored.
+        
+        Args:
+            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+                Interface from FLORIS to the tools package.
+            minimum_yaw_angle (float, optional): Minimum constraint on 
+                yaw. Defaults to None.
+            maximum_yaw_angle (float, optional): Maximum constraint on 
+                yaw. Defaults to None.
+            x0 (iterable, optional): The initial yaw conditions. 
+                Defaults to None. Initializes to the current turbine 
+                yaw settings.
+            bnds (iterable, optional): Bounds for the optimization 
+                variables (pairs of min/max values for each variable). 
+                Defaults to None. Initializes to [(0.0, 25.0)].
+            opt_method (str, optional): The optimization method for 
+                scipy.optimize.minize to use. Defaults to None. 
+                Initializes to 'SLSQP'.
+        """
         self.fi = fi
         if minimum_yaw_angle is not None:
             self.minimum_yaw_angle = minimum_yaw_angle
@@ -115,12 +138,12 @@ class YawOptimization(Optimization):
         Args:
             fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`):
                 Interface from FLORIS to the tools package.
-            minimum_yaw_angle (float, optional): minimum constraint on yaw.
-                Defaults to 0.0.
-            maximum_yaw_angle (float, optional): maximum constraint on yaw.
-                Defaults to 25.0.
-            x0 (np.array, optional): initial yaw conditions. Defaults to 
-                current turbine yaw settings.
+            minimum_yaw_angle (float, optional): Minimum constraint on yaw.
+                Default to None. Initializes to 0.0.
+            maximum_yaw_angle (float, optional): Maximum constraint on yaw.
+                Defaults to None. Initializes to 25.0.
+            x0 (iterable, optional): Initial yaw conditions. Defaults to 
+                None. Initializes to current turbine yaw settings.
 
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
@@ -205,14 +228,11 @@ class YawOptimization(Optimization):
     @property
     def nturbs(self):
         """
-        This property gets or sets the initial yaw angles for the 
-        optimization.
-        
-        Args:
-            value (float): The initial yaw angles (deg).
+        This property returns the number of turbines in the FLORIS 
+        object.
 
         Returns:
-            x0 (float): The initial yaw angles (deg).
+            nturbs (int): The number of turbines in the FLORIS object.
         """
         self._nturbs = len(self.fi.floris.farm.turbine_map.turbines)
         return self._nturbs
