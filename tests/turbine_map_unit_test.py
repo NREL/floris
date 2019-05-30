@@ -23,7 +23,7 @@ class TurbineMapTest():
     def __init__(self):
         self.sample_inputs = SampleInputs()
         self.coordinates = [
-            [0.0, 0.0],   # layout x
+            [0.0, 10.0],   # layout x
             [10.0, 20.0]  # layout y
         ]
         self.turbines = [
@@ -68,7 +68,6 @@ def test_coordinates():
     baseline_coordinates = [Vec3(c) for c in coordinates]
     test_coordinates = test_class.instance.coords
     for (test, baseline) in zip(test_coordinates, baseline_coordinates):
-        print(test, baseline)
         assert test == baseline
 
 
@@ -79,13 +78,15 @@ def test_rotated():
     sample map is rotated by pi about (0, 0).
     """
     test_class = TurbineMapTest()
-    rotated_map = test_class.instance.rotated(180, Vec3(0, 0, 0))
+    rotated_map = test_class.instance.rotated(180, Vec3(0.0, 0.0, 0.0))
     baseline_coordinates = [
-        Vec3(0.0, 0.0, 0.0),
-        Vec3(-100.0, 0.0, 0.0)
+        Vec3(0.0, -10.0, 90.0),
+        Vec3(-10.0, -20.0, 90.0)
     ]
     for i, coordinate in enumerate(rotated_map.coords):
-        assert pytest.approx(coordinate == baseline_coordinates[i])
+        assert pytest.approx(coordinate.x1) == baseline_coordinates[i].x1
+        assert pytest.approx(coordinate.x2) == baseline_coordinates[i].x2
+        assert pytest.approx(coordinate.x3) == baseline_coordinates[i].x3
 
 
 def test_sorted_in_x_as_list():
@@ -99,9 +100,14 @@ def test_sorted_in_x_as_list():
     test_class = TurbineMapTest()
     sorted_map = test_class.instance.sorted_in_x_as_list()
     baseline_coordinates = [
-        Vec3(0.0, 0.0, 0.0),
-        Vec3(-100.0, 0.0, 0.0)
+        Vec3(0.0, 10.0, 90.0),
+        Vec3(10.0, 20.0, 90.0)
     ]
     for i, element in enumerate(sorted_map):
         coordinate = element[0]
-        assert pytest.approx(coordinate == baseline_coordinates[i])
+        print(coordinate.x1, baseline_coordinates[i].x1)
+        print(coordinate.x2, baseline_coordinates[i].x2)
+        print(coordinate.x3, baseline_coordinates[i].x3)
+        assert pytest.approx(coordinate.x1) == baseline_coordinates[i].x1
+        assert pytest.approx(coordinate.x2) == baseline_coordinates[i].x2
+        assert pytest.approx(coordinate.x3) == baseline_coordinates[i].x3

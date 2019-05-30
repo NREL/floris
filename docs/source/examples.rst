@@ -12,9 +12,11 @@ to provide instruction on the use of most of the underlying codes.
     examples/example_0000.rst
     examples/example_0005.rst
     examples/example_0006.rst
+    examples/example_0007.rst
     examples/example_0010.rst
     examples/example_0015.rst
     examples/example_0020.rst
+    examples/example_0030.rst
 
 For questions not covered in the examples, or to request additional examples, please first search for or 
 submit your questions to stackoverflow.com using the tag FLORIS.  Additionally you can contact 
