@@ -4,6 +4,35 @@ Change Log
 For download and installation instructions, see the
 :ref:`installation <installation>` section.
 
+v1.1.0
+======
+Released on 2019-05-31
+
+Visualization:
+
+- Add quiver plot function to show in-plane flows
+- Adds example 7 which visualizes curl in the wake
+
+Energy Ratio
+
+- Adds additional functions for computing energy ratio as a function of wind
+  speed
+- Adds an example which uses FLORIS simulation to demonstrate the energy ratio
+  methods
+
+Wake Model changes
+
+- Set deflection multiplier in gauss deflection to 1.2 (was 1.0) to better
+  match SOWFA and field results
+- Update regression test to match
+
+Small Changes
+
+- Removal of unnecessary imports in some files
+- Update of the CP/CT tables for example NREL 5MW ref to better model above
+  rated
+- Fix VEC3 print method to print ints without decimal values
+
 v1.0.0
 ======
 Released on 2019-05-07

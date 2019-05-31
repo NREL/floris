@@ -28,7 +28,7 @@ class GaussRegressionTest():
         sample_inputs.floris["wake"]["properties"]["velocity_model"] = "gauss"
         sample_inputs.floris["wake"]["properties"]["deflection_model"] = "gauss"
         self.input_dict = sample_inputs.floris
-        self.debug = False
+        self.debug = True
 
     def baseline(self, turbine_index):
         baseline = [
@@ -40,7 +40,7 @@ class GaussRegressionTest():
     def yawed_baseline(self, turbine_index):
         baseline = [
             (0.4632706, 0.7601150, 1780851.3400887, 0.2546066, 7.9736330),
-            (0.4518814, 0.8406133,  694479.0590082, 0.3003837, 5.8600213)
+            (0.4519988, 0.8401604,  698132.6969425, 0.3001003, 5.8697719)
         ]
         return baseline[turbine_index]
 
