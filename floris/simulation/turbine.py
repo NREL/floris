@@ -155,6 +155,9 @@ class Turbine():
             _ct = fCtInterp(at_wind_speed)
             if _ct.size > 1:
                 _ct = _ct[0]
+
+            if _ct > 1.0:
+                _ct = 0.99
             return float(_ct)
 
     # Public methods
