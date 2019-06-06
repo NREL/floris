@@ -458,7 +458,7 @@ def get_turbine_pitch_angles(turbine_array_file):
         turbine_array_file (str): path to file containing pitch info.
 
     Returns:
-        np.array: blade pitch info.
+        p (np.array): blade pitch info.
     """
     p = list()
 
@@ -484,7 +484,7 @@ def get_turbine_yaw_angles(turbine_array_file, wind_direction=270.):
             Defaults to 270..
 
     Returns:
-        np.array: wind turbine yaw info.
+        y (np.array): wind turbine yaw info.
     """
     y = list()
 
