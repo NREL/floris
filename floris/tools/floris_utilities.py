@@ -286,6 +286,19 @@ class FlorisInterface():
         ]
         return turb_powers
 
+    def get_turbine_ct(self):
+        """
+        Report thrust coefficient from each wind turbine from instance of floris.
+
+        Returns:
+            turb_ct_array (np.array): thrust coefficient for each wind turbine.
+        """
+        turb_ct_array = [
+            turbine.Ct
+            for turbine in self.floris.farm.flow_field.turbine_map.turbines
+        ]
+        return turb_ct_array
+
         # calculate the power under different yaw angles
     def get_power_for_yaw_angle_opt(self, yaw_angles):
         """
