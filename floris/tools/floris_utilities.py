@@ -78,7 +78,8 @@ class FlorisInterface():
         if layout_array is not None:
             turbine_map = TurbineMap(
                 layout_array[0], layout_array[1],
-                self.floris.farm.flow_field.turbine_map.turbines)
+                [copy.deepcopy(self.floris.farm.turbines[0]) for ii in range(len(layout_array[0]))])
+                # self.floris.farm.flow_field.turbine_map.turbines)
         else:
             turbine_map = None
 
@@ -305,6 +306,17 @@ class FlorisInterface():
             [turbine.power for turbine in self.floris.farm.turbines])
 
         return power / (10**3)
+
+    def get_farm_AEP(self, wd, ws, freq):
+        AEP_sum = 0
+
+        for i in range(len(wd)):
+            self.reinitialize_flow_field(
+                wind_direction=wd[i], wind_speed=ws[i])
+            self.calculate_wake()
+            
+            AEP_sum = AEP_sum + self.get_farm_power()*freq[i]*8760
+        return AEP_sum
 
     @property
     def layout_x(self):
