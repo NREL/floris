@@ -624,7 +624,8 @@ def plot_energy_ratio(reference_power_baseline,
                       label_pchange=None,
                       plot_simple=False,
                       plot_ratio_scatter=False,
-                      marker_scale=1.
+                      marker_scale=1.,
+                      hide_controlled_case=False
                       ):
     """
     Plot the balanced energy ratio.
@@ -674,6 +675,7 @@ def plot_energy_ratio(reference_power_baseline,
             plot of values, sized to indicate counts. Defaults to False.
         marker_scale ([type], optional): Marker scale. 
             Defaults to 1.
+        hide_controlled_case (bool, optional): Option to hide the control case from plots, for demonstration
 
     """
 
@@ -704,8 +706,9 @@ def plot_energy_ratio(reference_power_baseline,
         ax = axarr[0]
         ax.plot(wind_direction_bins, ratio_array_base,
                 label=label_array[0], color=base_color, ls='--')
-        ax.plot(wind_direction_bins, ratio_array_con,
-                label=label_array[1], color=con_color, ls='--')
+        if not hide_controlled_case:
+            ax.plot(wind_direction_bins, ratio_array_con,
+                    label=label_array[1], color=con_color, ls='--')
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
 
@@ -730,12 +733,13 @@ def plot_energy_ratio(reference_power_baseline,
                         upper_ratio_array_base, alpha=0.3, color=base_color, label='_nolegend_')
         ax.scatter(wind_direction_bins, ratio_array_base, s=counts_ratio_array_base,
                    label='_nolegend_', color=base_color, marker='o', alpha=0.2)
-        ax.plot(wind_direction_bins, ratio_array_con,
-                label=label_array[1], color=con_color, ls='-', marker='.')
-        ax.fill_between(wind_direction_bins, lower_ratio_array_con,
-                        upper_ratio_array_con, alpha=0.3, color=con_color, label='_nolegend_')
-        ax.scatter(wind_direction_bins, ratio_array_con, s=counts_ratio_array_con,
-                   label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+        if not hide_controlled_case:
+            ax.plot(wind_direction_bins, ratio_array_con,
+                    label=label_array[1], color=con_color, ls='-', marker='.')
+            ax.fill_between(wind_direction_bins, lower_ratio_array_con,
+                            upper_ratio_array_con, alpha=0.3, color=con_color, label='_nolegend_')
+            ax.scatter(wind_direction_bins, ratio_array_con, s=counts_ratio_array_con,
+                    label='_nolegend_', color=con_color, marker='o', alpha=0.2)
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
 
