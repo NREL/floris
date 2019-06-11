@@ -71,7 +71,6 @@ class YawOptimizationOneWD(Optimization):
         """
         super().__init__(fi)
         
-        print(minimum_yaw_angle)
         self.reinitialize_opt(
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,

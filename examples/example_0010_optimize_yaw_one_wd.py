@@ -54,11 +54,12 @@ print('Finding optimal yaw angles in FLORIS...')
 # Set bounds for allowable wake steering
 min_yaw = 0.0
 max_yaw = 25.0
+
 # Instantiate the Optimization object
 yaw_opt = YawOptimizationOneWD(fi,
                                minimum_yaw_angle=min_yaw, 
                                maximum_yaw_angle=max_yaw)
-                               
+
 # Perform optimization
 yaw_angles = yaw_opt.optimize()
 
@@ -80,7 +81,8 @@ print('Plotting the FLORIS flowfield with yaw...')
 
 # Initialize the horizontal cut
 hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_hub_height_flow_data(),
+    fi.get_hub_height_flow_data(x_resolution=400,
+                                 y_resolution=100),
     fi.floris.farm.turbines[0].hub_height
 )
 
