@@ -138,7 +138,7 @@ class Turbine():
         wind_speed = self.power_thrust_table["wind_speed"]
         fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
         if at_wind_speed < min(wind_speed):
-            return max(cp)
+            return 0.
         else:
             _cp = fCpInterp(at_wind_speed)
             if _cp.size > 1:
@@ -150,7 +150,7 @@ class Turbine():
         wind_speed = self.power_thrust_table["wind_speed"]
         fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
         if at_wind_speed < min(wind_speed):
-            return 0.99
+            return 0.
         else:
             _ct = fCtInterp(at_wind_speed)
             if _ct.size > 1:
