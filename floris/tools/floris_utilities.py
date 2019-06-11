@@ -288,7 +288,7 @@ class FlorisInterface():
         return turb_powers
 
         # calculate the power under different yaw angles
-    def get_power_for_yaw_angle_opt(self, yaw_angles):
+    def get_farm_power_for_yaw_angle(self, yaw_angles):
         """
         Assign yaw angles to turbines, calculate wake, report power
 
@@ -300,12 +300,8 @@ class FlorisInterface():
         """
 
         self.calculate_wake(yaw_angles=yaw_angles)
-        # self.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
 
-        power = -1 * np.sum(
-            [turbine.power for turbine in self.floris.farm.turbines])
-
-        return power / (10**3)
+        return self.get_farm_power()
 
     def get_farm_AEP(self, wd, ws, freq):
         AEP_sum = 0
@@ -329,7 +325,7 @@ class FlorisInterface():
         coords = self.floris.farm.flow_field.turbine_map.coords
         layout_x = np.zeros(len(coords))
         for i, coord in enumerate(coords):
-            layout_x[i] = coord.x1prime
+            layout_x[i] = coord.x1
         return layout_x
 
     @property
@@ -343,5 +339,5 @@ class FlorisInterface():
         coords = self.floris.farm.flow_field.turbine_map.coords
         layout_y = np.zeros(len(coords))
         for i, coord in enumerate(coords):
-            layout_y[i] = coord.x2prime
+            layout_y[i] = coord.x2
         return layout_y

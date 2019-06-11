@@ -55,7 +55,7 @@ class Optimization():
         self._nturbs = len(self.fi.floris.farm.turbine_map.turbines)
         return self._nturbs
 
-class YawOptimization(Optimization):
+class YawOptimizationOneWD(Optimization):
     """
     Sub class of the :py:class`floris.tools.optimization.Optimization`
     object class that performs yaw optimization.
@@ -71,6 +71,7 @@ class YawOptimization(Optimization):
         """
         super().__init__(fi)
         
+        print(minimum_yaw_angle)
         self.reinitialize_opt(
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
@@ -81,7 +82,10 @@ class YawOptimization(Optimization):
 
     # Private methods
 
-    def _optimize(self, fi):
+    def _yaw_power_opt(self, yaw_angles):
+        return -1 * self.fi.get_farm_power_for_yaw_angle(yaw_angles)
+
+    def _optimize(self):
         """
         Find optimum setting of turbine yaw angles for power production
         given fixed atmospheric conditins (wind speed, direction, etc.).
@@ -93,7 +97,7 @@ class YawOptimization(Optimization):
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
         """
-        self.residual_plant = minimize(fi.get_power_for_yaw_angle_opt,
+        self.residual_plant = minimize(self._yaw_power_opt,
                                 self.x0,
                                 method=self.opt_method,
                                 bounds=self.bnds,
@@ -109,9 +113,7 @@ class YawOptimization(Optimization):
 
     # Public methods
 
-    def optimize(self, fi, minimum_yaw_angle=None, 
-                           maximum_yaw_angle=None,
-                           x0=None):
+    def optimize(self):
         """
         Find optimum setting of turbine yaw angles for power production
         given fixed atmospheric conditins (wind speed, direction, etc.).
@@ -134,7 +136,7 @@ class YawOptimization(Optimization):
         print('Number of parameters to optimize = ', len(self.x0))
         print('=====================================================')
 
-        opt_yaw_angles = self._optimize(fi)
+        opt_yaw_angles = self._optimize()
 
         if np.sum(opt_yaw_angles) == 0:
             print('No change in controls suggested for this inflow \
@@ -250,6 +252,148 @@ class YawOptimization(Optimization):
     @x0.setter
     def x0(self, value):
         self._x0 = value
+
+class YawOptimizationWindRose(Optimization):
+    """
+    Sub class of the :py:class`floris.tools.optimization.Optimization`
+    object class that performs yaw optimization.
+    """
+
+    def __init__(self, fi, wd,
+                           ws,
+                           freq,
+                           minimum_yaw_angle=0.0,
+                           maximum_yaw_angle=25.0,
+                           x0=None,
+                           bnds=None,
+                           opt_method='SLSQP'):
+        """
+        Instantiate YawOptimization object and parameter values.
+        """
+        super().__init__(fi)
+        
+        print(type(minimum_yaw_angle))
+        self.reinitialize_opt_wind_rose(
+            wd=wd,
+            ws=ws,
+            freq=freq,
+            minimum_yaw_angle=minimum_yaw_angle,
+            maximum_yaw_angle=maximum_yaw_angle,
+            x0=x0,
+            bnds=bnds,
+            opt_method=opt_method
+        )
+
+    def _yaw_power_opt(self, yaw_angles):
+        AEP_tmp = []
+        for i in range(len(self.wd)):
+            self.fi.floris.farm.set_yaw_angles(yaw_angles)
+            AEP_tmp.append(self.fi.get_farm_AEP(self.wd[i], \
+                                                self.ws[i], \
+                                                self.freq[i]))
+
+        return -1 * AEP_tmp.sum()
+
+    def reinitialize_opt_wind_rose(self,
+            wd=None,
+            ws=None,
+            freq=None,
+            minimum_yaw_angle=None,
+            maximum_yaw_angle=None,
+            x0=None,
+            bnds=None,
+            opt_method=None):
+        """
+        Reintializes parameter values for the optimization.
+        
+        This method reinitializes the optimization parameters and 
+        bounds to the supplied values or uses what is currently stored.
+        
+        Args:
+            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+                Interface from FLORIS to the tools package.
+            minimum_yaw_angle (float, optional): Minimum constraint on 
+                yaw. Defaults to None.
+            maximum_yaw_angle (float, optional): Maximum constraint on 
+                yaw. Defaults to None.
+            wd (np.array) : The wind directions for the AEP optimization.
+            ws (np.array): The wind speeds for the AEP optimization.
+            freq (np.array): The wind frequencies for the AEP optimizaiton.
+            x0 (iterable, optional): The initial yaw conditions. 
+                Defaults to None. Initializes to the current turbine 
+                yaw settings.
+            bnds (iterable, optional): Bounds for the optimization 
+                variables (pairs of min/max values for each variable). 
+                Defaults to None. Initializes to [(0.0, 25.0)].
+            opt_method (str, optional): The optimization method for 
+                scipy.optimize.minize to use. Defaults to None. 
+                Initializes to 'SLSQP'.
+        """
+
+        self.wd = wd
+        self.ws = ws
+        self.freq = freq
+
+        if minimum_yaw_angle is not None:
+            self.minimum_yaw_angle = minimum_yaw_angle
+        if maximum_yaw_angle is not None:
+            self.maximum_yaw_angle = maximum_yaw_angle
+        if opt_method is not None:
+            self.opt_method = opt_method
+        if x0 is not None:
+            self.x0 = x0
+        else:
+            self.x0 = [turbine.yaw_angle for turbine in \
+                       self.fi.floris.farm.turbine_map.turbines] * len(self.wd)
+        if bnds is not None:
+            self.bnds = bnds
+        else:
+            self._set_opt_bounds(self.minimum_yaw_angle, 
+                                 self.maximum_yaw_angle)
+
+    def _set_opt_bounds(self, minimum_yaw_angle, maximum_yaw_angle):
+        self.bnds = [(minimum_yaw_angle, maximum_yaw_angle) for _ in \
+                     range(self.nturbs*len(wd))]
+
+    def _optimize(self):
+        """
+        Find optimum setting of turbine yaw angles for power production
+        given fixed atmospheric conditins (wind speed, direction, etc.).
+
+        Returns:
+            opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+        """
+        self.residual_plant = minimize(self._yaw_power_opt,
+                                self.x0,
+                                method=self.opt_method,
+                                bounds=self.bnds,
+                                options={'eps': np.radians(5.0)})
+
+        opt_yaw_angles = self.residual_plant.x
+
+        return opt_yaw_angles
+
+    def optimize(self):
+        """
+        Find optimum setting of turbine yaw angles for power production
+        given fixed atmospheric conditins (wind speed, direction, etc.).
+
+        Returns:
+            opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+        """
+        print('=====================================================')
+        print('Optimizing wake redirection control...')
+        print('Number of parameters to optimize = ', len(self.x0))
+        print('=====================================================')
+
+        opt_yaw_angles = self._optimize()
+
+        if np.sum(opt_yaw_angles) == 0:
+            print('No change in controls suggested for this inflow \
+                condition...')
+
+        return opt_yaw_angles
+
 
 class LayoutOptimization(Optimization):
     """
@@ -681,6 +825,8 @@ class LayoutHeightOptimization(LayoutOptimization):
 
         self.COE_model = BaseCOE(self)
         
+
+        print('init: ', opt_options)
         self.reinitialize_opt_height(
             boundaries=boundaries,
             height_lims=height_lims,
@@ -737,6 +883,7 @@ class LayoutHeightOptimization(LayoutOptimization):
                            opt_method=None,
                            opt_options=None):
 
+        print('reinit: ', opt_options)
         LayoutOptimization.reinitialize_opt(self, boundaries=boundaries,
                            wd=wd,
                            ws=ws,
@@ -867,7 +1014,7 @@ class BaseCOE():
         TCC = 831 + tower_mass * 3.08 / 1e5 \
             * self.opt_obj.nturbs / self.opt_obj.plant_kw
 
-        print('TCC: ', '{:.2f}'.format(TCC))
+        # print('TCC: ', '{:.2f}'.format(TCC))
         return TCC
 
     def BOS(self):
@@ -880,12 +1027,12 @@ class BaseCOE():
         return 52 # $/kW - Taken from 2016 Cost of Wind Energy Review
 
     def COE(self, height, AEP_sum):
-        print('Height and COE: ', '{:.2f}'.format(height), '{:.4f}'.format((self.FCR()*(self.TCC(height) + self.BOS() + self.FC()) \
-                + self.O_M()) / (AEP_sum/1000/self.opt_obj.plant_kw)))
-        print('AEP_sum: ', AEP_sum)
-        for turb in self.opt_obj.fi.floris.farm.turbines:
-                print('hub_height: ', turb.hub_height)
-        print('farm layout: ', self.opt_obj.fi.layout_x, self.opt_obj.fi.layout_y)
+        # print('Height and COE: ', '{:.2f}'.format(height), '{:.4f}'.format((self.FCR()*(self.TCC(height) + self.BOS() + self.FC()) \
+                # + self.O_M()) / (AEP_sum/1000/self.opt_obj.plant_kw)))
+        # print('AEP_sum: ', AEP_sum)
+        # for turb in self.opt_obj.fi.floris.farm.turbines:
+        #         print('hub_height: ', turb.hub_height)
+        # print('farm layout: ', self.opt_obj.fi.layout_x, self.opt_obj.fi.layout_y)
         return (self.FCR()*(self.TCC(height) + self.BOS() + self.FC()) \
                 + self.O_M()) / (AEP_sum/1000/self.opt_obj.plant_kw)
         
