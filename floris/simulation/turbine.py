@@ -138,7 +138,7 @@ class Turbine():
         wind_speed = self.power_thrust_table["wind_speed"]
         fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
         if at_wind_speed < min(wind_speed):
-            return max(cp)
+            return 0.
         else:
             _cp = fCpInterp(at_wind_speed)
             if _cp.size > 1:
@@ -155,6 +155,8 @@ class Turbine():
             _ct = fCtInterp(at_wind_speed)
             if _ct.size > 1:
                 _ct = _ct[0]
+            if _ct > 1.0:
+                _ct = 0.99
             return float(_ct)
 
     # Public methods
@@ -442,7 +444,7 @@ class Turbine():
 
             >>> Ct = floris.farm.turbines[0].Ct()
         """
-        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)**self.pP
+        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)# **self.pP
 
     @property
     def power(self):

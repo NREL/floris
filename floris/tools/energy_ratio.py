@@ -624,7 +624,8 @@ def plot_energy_ratio(reference_power_baseline,
                       label_pchange=None,
                       plot_simple=False,
                       plot_ratio_scatter=False,
-                      marker_scale=1.
+                      marker_scale=1.,
+                      hide_controlled_case=False
                       ):
     """
     Plot the balanced energy ratio.
@@ -674,6 +675,7 @@ def plot_energy_ratio(reference_power_baseline,
             plot of values, sized to indicate counts. Defaults to False.
         marker_scale ([type], optional): Marker scale. 
             Defaults to 1.
+        hide_controlled_case (bool, optional): Option to hide the control case from plots, for demonstration
 
     """
 
@@ -704,8 +706,9 @@ def plot_energy_ratio(reference_power_baseline,
         ax = axarr[0]
         ax.plot(wind_direction_bins, ratio_array_base,
                 label=label_array[0], color=base_color, ls='--')
-        ax.plot(wind_direction_bins, ratio_array_con,
-                label=label_array[1], color=con_color, ls='--')
+        if not hide_controlled_case:
+            ax.plot(wind_direction_bins, ratio_array_con,
+                    label=label_array[1], color=con_color, ls='--')
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
 
@@ -730,12 +733,13 @@ def plot_energy_ratio(reference_power_baseline,
                         upper_ratio_array_base, alpha=0.3, color=base_color, label='_nolegend_')
         ax.scatter(wind_direction_bins, ratio_array_base, s=counts_ratio_array_base,
                    label='_nolegend_', color=base_color, marker='o', alpha=0.2)
-        ax.plot(wind_direction_bins, ratio_array_con,
-                label=label_array[1], color=con_color, ls='-', marker='.')
-        ax.fill_between(wind_direction_bins, lower_ratio_array_con,
-                        upper_ratio_array_con, alpha=0.3, color=con_color, label='_nolegend_')
-        ax.scatter(wind_direction_bins, ratio_array_con, s=counts_ratio_array_con,
-                   label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+        if not hide_controlled_case:
+            ax.plot(wind_direction_bins, ratio_array_con,
+                    label=label_array[1], color=con_color, ls='-', marker='.')
+            ax.fill_between(wind_direction_bins, lower_ratio_array_con,
+                            upper_ratio_array_con, alpha=0.3, color=con_color, label='_nolegend_')
+            ax.scatter(wind_direction_bins, ratio_array_con, s=counts_ratio_array_con,
+                    label='_nolegend_', color=con_color, marker='o', alpha=0.2)
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
 
@@ -1087,7 +1091,8 @@ def plot_energy_ratio_ws(reference_power_baseline,
                       plot_ratio_scatter=False,
                       marker_scale=1.,
                       use_absolutes=False,
-                      show_power=False
+                      show_power=False,
+                      show_percent_change=True
                       ):
     """
     Plot the balanced energy ratio.
@@ -1139,6 +1144,7 @@ def plot_energy_ratio_ws(reference_power_baseline,
             Defaults to 1.
         use_absolutes (boolean): Should use ratios or absolute energy values
         show_power (boolean): If using absolutes, use the mean (power), or the sum (energy)
+        show_percent_change (boolean): Should percent change be shown on 3rd axis
     """
 
     if axarr is None:
@@ -1263,29 +1269,30 @@ def plot_energy_ratio_ws(reference_power_baseline,
     
     
     # Percent Change plot PLOT
-    ax = axarr[2]
-    if plot_simple: 
-        ax.plot(wind_speed_bins, p_change_array,
-                label=label_pchange, color=con_color, ls='--')
+    if show_percent_change:
+        ax = axarr[2]
+        if plot_simple: 
+            ax.plot(wind_speed_bins, p_change_array,
+                    label=label_pchange, color=con_color, ls='--')
 
-    else:
-        ax.plot(wind_speed_bins, p_change_array, label=label_pchange,
-                color=con_color, ls='-', marker='.')
-        ax.fill_between(wind_speed_bins, lower_p_change_array,
-                        upper_p_change_array, alpha=0.3, color=con_color, label='_nolegend_')
-        ax.scatter(wind_speed_bins, p_change_array, s=counts_p_change_array,
-                   label='_nolegend_', color=con_color, marker='o', alpha=0.2)
-
-
-    if not use_absolutes:
-        ax.axhline(0, color='k')
-        ax.set_ylabel('%% Change in Energy Ratio (-)')
-    else:
-        if show_power:
-            ax.set_ylabel('%% Change in Power (kW)')
         else:
-            ax.set_ylabel('%% Change in Energy (kW-min)')
-    
+            ax.plot(wind_speed_bins, p_change_array, label=label_pchange,
+                    color=con_color, ls='-', marker='.')
+            ax.fill_between(wind_speed_bins, lower_p_change_array,
+                            upper_p_change_array, alpha=0.3, color=con_color, label='_nolegend_')
+            ax.scatter(wind_speed_bins, p_change_array, s=counts_p_change_array,
+                    label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+
+
+        if not use_absolutes:
+            ax.axhline(0, color='k')
+            ax.set_ylabel('%% Change in Energy Ratio (-)')
+        else:
+            if show_power:
+                ax.set_ylabel('%% Change in Power (kW)')
+            else:
+                ax.set_ylabel('%% Change in Energy (kW-min)')
+        
     for ax in axarr:
         ax.grid(True)
         ax.set_xlabel('Wind Speed (m/s)')
