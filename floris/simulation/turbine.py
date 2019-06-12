@@ -402,6 +402,28 @@ class Turbine():
         """
         return np.cbrt(np.mean(self.velocities**3))
 
+    # @property
+    # def Cp(self):
+    #     """
+    #     This property returns the power coeffcient of a turbine.
+
+    #     This property returns the coefficient of power of the turbine 
+    #     using the rotor swept area average velocity, interpolated from 
+    #     the coefficient of power table. The average velocity is 
+    #     calculated as the cube root of the mean cubed velocity in the 
+    #     rotor area.
+
+    #     Returns:
+    #         float: The power coefficient of a turbine at the current 
+    #         operating conditions.
+
+    #     Examples:
+    #         To get the power coefficient value for a turbine:
+
+    #         >>> Cp = floris.farm.turbines[0].Cp()
+    #     """
+    #     return self._fCp(self.average_velocity)
+
     @property
     def Cp(self):
         """
@@ -422,30 +444,11 @@ class Turbine():
 
             >>> Cp = floris.farm.turbines[0].Cp()
         """
-        return self._fCp(self.average_velocity)
+        # Compute the yaw effective velocity
+        p_w = self.pP / 2.88 # Convert from pP to w
+        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** p_w
 
-    # @property
-    def Cp_new(self, scaled_velocity):
-        """
-        This property returns the power coeffcient of a turbine.
-
-        This property returns the coefficient of power of the turbine 
-        using the rotor swept area average velocity, interpolated from 
-        the coefficient of power table. The average velocity is 
-        calculated as the cube root of the mean cubed velocity in the 
-        rotor area.
-
-        Returns:
-            float: The power coefficient of a turbine at the current 
-            operating conditions.
-
-        Examples:
-            To get the power coefficient value for a turbine:
-
-            >>> Cp = floris.farm.turbines[0].Cp()
-        """
-    
-        return self._fCp(scaled_velocity)
+        return self._fCp(yaw_effective_velocity)
 
     @property
     def Ct(self):
@@ -483,33 +486,24 @@ class Turbine():
 
             >>> power = floris.farm.turbines[0].power()
         """
-        cptmp = self.Cp \
-            * cosd(self.yaw_angle)**self.pP \
-            * cosd(self.tilt_angle)**self.pT
+
+        # Update to power calculation which replaces the fixed pP exponent with
+        # an exponent w, that changes the effective wind speed input to the power 
+        # calculation, rather than scaling the power.  This better handles power
+        # loss to yaw in above rated conditions
+        # 
+        # based on the paper Optimising yaw control at wind farm level by
+        # Ervin Bossanyi
+
+        # Compute the yaw effective velocity
+        p_w = self.pP / 2.88 # Convert from pP to w
+        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** p_w
+        
+        # Now compute the power
+        cptmp = self.Cp #Note Cp is also now based on yaw effective velocity
         return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
             * cptmp * self.generator_efficiency \
-            * self.average_velocity**3
-
-    @property
-    def power_new(self):
-        """
-        This property returns the power produced by turbine (W), 
-        adjusted for yaw and tilt.
-
-        Returns:
-            float: Power of a turbine in watts.
-
-        Examples:
-            To get the power for a turbine:
-
-            >>> power = floris.farm.turbines[0].power()
-        """
-        p_w = 0.6 # Based on Optimising yaw control at wind farm level
-        scaled_velocity = self.average_velocity * cosd(self.yaw_angle) ** p_w
-        cptmp = self.Cp_new(scaled_velocity)
-        return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
-            * cptmp * self.generator_efficiency \
-            * scaled_velocity**3
+            * yaw_effective_velocity**3
 
     @property
     def aI(self):

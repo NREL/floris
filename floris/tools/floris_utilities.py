@@ -287,19 +287,6 @@ class FlorisInterface():
         ]
         return turb_powers
 
-    def get_turbine_power_new(self):
-        """
-        Report power from each wind turbine from instance of floris.
-
-        Returns:
-            turb_powers (np.array): power produced by each wind turbine.
-        """
-        turb_powers = [
-            turbine.power_new
-            for turbine in self.floris.farm.flow_field.turbine_map.turbines
-        ]
-        return turb_powers
-
     def get_turbine_ct(self):
         """
         Report thrust coefficient from each wind turbine from instance of floris.
