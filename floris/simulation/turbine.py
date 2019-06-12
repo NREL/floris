@@ -402,27 +402,6 @@ class Turbine():
         """
         return np.cbrt(np.mean(self.velocities**3))
 
-    # @property
-    # def Cp(self):
-    #     """
-    #     This property returns the power coeffcient of a turbine.
-
-    #     This property returns the coefficient of power of the turbine 
-    #     using the rotor swept area average velocity, interpolated from 
-    #     the coefficient of power table. The average velocity is 
-    #     calculated as the cube root of the mean cubed velocity in the 
-    #     rotor area.
-
-    #     Returns:
-    #         float: The power coefficient of a turbine at the current 
-    #         operating conditions.
-
-    #     Examples:
-    #         To get the power coefficient value for a turbine:
-
-    #         >>> Cp = floris.farm.turbines[0].Cp()
-    #     """
-    #     return self._fCp(self.average_velocity)
 
     @property
     def Cp(self):
