@@ -39,7 +39,7 @@ class CurlRegressionTest():
 
     def yawed_baseline(self, turbine_index):
         baseline = [
-            (0.4632707, 0.7626735 , 1780240.6778116, 0.2559082, 7.9727208),
+            (0.4632734, 0.7626735, 1780250.9240069, 0.2559082, 7.9727208),
             (0.4539774, 0.8325224, 761784.3584749, 0.2953798, 6.0342075)
         ]
         return baseline[turbine_index]
