@@ -402,6 +402,7 @@ class Turbine():
         """
         return np.cbrt(np.mean(self.velocities**3))
 
+
     @property
     def Cp(self):
         """
@@ -413,6 +414,8 @@ class Turbine():
         calculated as the cube root of the mean cubed velocity in the 
         rotor area.
 
+        Note, the velocity is scalled to an effective velocity by the yaw
+
         Returns:
             float: The power coefficient of a turbine at the current 
             operating conditions.
@@ -422,7 +425,11 @@ class Turbine():
 
             >>> Cp = floris.farm.turbines[0].Cp()
         """
-        return self._fCp(self.average_velocity)
+        # Compute the yaw effective velocity
+        pW = self.pP / 3.0 # Convert from pP to pW
+        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
+
+        return self._fCp(yaw_effective_velocity)
 
     @property
     def Ct(self):
@@ -460,12 +467,24 @@ class Turbine():
 
             >>> power = floris.farm.turbines[0].power()
         """
-        cptmp = self.Cp \
-            * cosd(self.yaw_angle)**self.pP \
-            * cosd(self.tilt_angle)**self.pT
+
+        # Update to power calculation which replaces the fixed pP exponent with
+        # an exponent pW, that changes the effective wind speed input to the power 
+        # calculation, rather than scaling the power.  This better handles power
+        # loss to yaw in above rated conditions
+        # 
+        # based on the paper "Optimising yaw control at wind farm level" by
+        # Ervin Bossanyi
+
+        # Compute the yaw effective velocity
+        pW = self.pP / 3.0 # Convert from pP to w
+        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
+        
+        # Now compute the power
+        cptmp = self.Cp #Note Cp is also now based on yaw effective velocity
         return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
             * cptmp * self.generator_efficiency \
-            * self.average_velocity**3
+            * yaw_effective_velocity**3
 
     @property
     def aI(self):

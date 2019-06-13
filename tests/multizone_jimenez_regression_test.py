@@ -39,7 +39,7 @@ class MultiZoneJimenezRegressionTest():
 
     def yawed_baseline(self, turbine_index):
         baseline = [
-            (0.4632706, 0.7626695, 1780851.3400887, 0.2559061, 7.9736330),
+            (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
             (0.4420041, 0.8650277, 535742.2576472, 0.3163071, 5.4141570)
         ]
         return baseline[turbine_index]
