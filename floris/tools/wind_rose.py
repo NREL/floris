@@ -544,7 +544,7 @@ class WindRose():
         self.internal_resample_wind_speed(ws=ws)
         self.internal_resample_wind_direction(wd=wd)
 
-        return df
+        return self.df
 
     def load_wind_toolkit_hsds(self,
                                lat,
