@@ -657,6 +657,10 @@ class Curl(WakeVelocity):
         self.dissipation = float(model_dictionary["dissipation"])
         self.veer_linear = float(model_dictionary["veer_linear"])
         self.requires_resolution = True
+        self.ti_initial = float(model_dictionary["initial"])
+        self.ti_constant = float(model_dictionary["constant"])
+        self.ti_ai = float(model_dictionary["ai"])
+        self.ti_downstream = float(model_dictionary["downstream"])
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, wake, flow_field):
