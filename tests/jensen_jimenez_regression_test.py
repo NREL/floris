@@ -39,7 +39,7 @@ class JensenJimenezRegressionTest():
 
     def yawed_baseline(self, turbine_index):
         baseline = [
-            (0.4632706, 0.7626695, 1780851.3400887, 0.2559061, 7.9736330),
+            (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
             (0.4554894, 0.8266861, 813067.4207660, 0.2918451, 6.1598540)
         ]
         return baseline[turbine_index]
