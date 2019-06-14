@@ -290,3 +290,6 @@ class Curl(WakeDeflection):
         defined in the Martinez-Tossas et al. paper.
         """
         return np.zeros(np.shape(x_locations))
+
+
+#TODO add Ishihara deflection class? No such model exists in the orginal paper, but it would be a good feature.

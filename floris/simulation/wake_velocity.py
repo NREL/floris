@@ -657,6 +657,12 @@ class Curl(WakeVelocity):
         self.dissipation = float(model_dictionary["dissipation"])
         self.veer_linear = float(model_dictionary["veer_linear"])
         self.requires_resolution = True
+        #TODO @chrisbay The turbulence model is used explicitly in Curl, but as
+        # a separate calculation in the Gauss and Ishihara models. This could b
+        # be considered as a step forward in fidelity, where velocity and
+        # turbulence are coupled, but the formating of the code may need
+        # attention in the future if we wish to add the "mix and match"
+        # capability
         self.ti_initial = float(model_dictionary["initial"])
         self.ti_constant = float(model_dictionary["constant"])
         self.ti_ai = float(model_dictionary["ai"])

@@ -11,7 +11,6 @@
 
 # See read the https://floris.readthedocs.io for documentation
 
-
 import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
@@ -19,13 +18,12 @@ import floris.tools.cut_plane as cp
 from floris.tools.optimization import optimize_yaw
 import numpy as np
 
-
 print('Running FLORIS with no yaw...')
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 
 # set turbine locations to 3 turbines in a row
 D = fi.floris.farm.turbines[0].rotor_diameter
-layout_x = [0, 7*D, 14*D]
+layout_x = [0, 7 * D, 14 * D]
 layout_y = [0, 0, 0]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 fi.calculate_wake()
@@ -38,10 +36,8 @@ print('Plotting the FLORIS flowfield...')
 # ================================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_hub_height_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+hor_plane = wfct.cut_plane.HorPlane(fi.get_hub_height_flow_data(),
+                                    fi.floris.farm.turbines[0].hub_height)
 
 # Plot and show
 fig, ax = plt.subplots()
@@ -65,17 +61,15 @@ power_opt = np.sum(fi.get_turbine_power())
 
 print('==========================================')
 print('Total Power Gain = %.1f%%' %
-      (100.*(power_opt - power_initial)/power_initial))
+      (100. * (power_opt - power_initial) / power_initial))
 print('==========================================')
 # ================================================================================
 print('Plotting the FLORIS flowfield with yaw...')
 # ================================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_hub_height_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+hor_plane = wfct.cut_plane.HorPlane(fi.get_hub_height_flow_data(),
+                                    fi.floris.farm.turbines[0].hub_height)
 
 # Plot and show
 fig, ax = plt.subplots()
