@@ -445,6 +445,10 @@ class LayoutOptimization(Optimization):
         """
         super().__init__(fi)
         self.epsilon = np.finfo(float).eps
+
+        if opt_options is None:
+            self.opt_options = {'maxiter': 100, 'disp': True, \
+                         'iprint': 2, 'ftol': 1e-9}
         
         self.reinitialize_opt(
             boundaries=boundaries,
@@ -716,9 +720,6 @@ class LayoutOptimization(Optimization):
             self.opt_method = opt_method
         if opt_options is not None:
             self.opt_options = opt_options
-        else:
-            self.opt_options = {'maxiter': 100, 'disp': True, \
-                         'iprint': 2, 'ftol': 1e-9}
 
         self._generate_constraints()
 
@@ -824,8 +825,6 @@ class LayoutHeightOptimization(LayoutOptimization):
 
         self.COE_model = BaseCOE(self)
         
-
-        print('init: ', opt_options)
         self.reinitialize_opt_height(
             boundaries=boundaries,
             height_lims=height_lims,
@@ -882,7 +881,6 @@ class LayoutHeightOptimization(LayoutOptimization):
                            opt_method=None,
                            opt_options=None):
 
-        print('reinit: ', opt_options)
         LayoutOptimization.reinitialize_opt(self, boundaries=boundaries,
                            wd=wd,
                            ws=ws,
