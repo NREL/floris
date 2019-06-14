@@ -11,6 +11,7 @@
 
 from . import wake_deflection
 from . import wake_velocity
+from . import wake_turbulence
 from . import wake_combination
 
 
@@ -43,20 +44,32 @@ class Wake():
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
         parameters = properties["parameters"]
+        wake_velocity_parameters = parameters["wake_velocity_parameters"]
+        wake_deflection_parameters = parameters["wake_deflection_parameters"]
+        wake_turbulence_parameters = parameters["wake_turbulence_parameters"]
 
         self.velocity_models = {
-            "jensen": wake_velocity.Jensen(parameters),
-            "multizone": wake_velocity.MultiZone(parameters),
-            "gauss": wake_velocity.Gauss(parameters),
-            "curl": wake_velocity.Curl(parameters)
+            "jensen": wake_velocity.Jensen(wake_velocity_parameters),
+            "multizone": wake_velocity.MultiZone(wake_velocity_parameters),
+            "gauss": wake_velocity.Gauss(wake_velocity_parameters),
+            "curl": wake_velocity.Curl(wake_velocity_parameters),
+            "ishihara": wake_velocity.Ishihara(wake_velocity_parameters)
         }
         self._velocity_model = self.velocity_models[
             properties["velocity_model"]]
 
+        self.turbulence_models = {
+            "gauss": wake_turbulence.Gauss(wake_turbulence_parameters),
+            "ishihara": wake_turbulence.Ishihara(wake_turbulence_parameters),
+            "None": wake_turbulence.WakeTurbulence()
+        }
+        self._turbulence_model = self.turbulence_models[
+            properties["turbulence_model"]]
+
         self.deflection_models = {
-            "jimenez": wake_deflection.Jimenez(parameters),
-            "gauss": wake_deflection.Gauss(parameters),
-            "curl": wake_deflection.Curl(parameters)
+            "jimenez": wake_deflection.Jimenez(wake_deflection_parameters),
+            "gauss": wake_deflection.Gauss(wake_deflection_parameters),
+            "curl": wake_deflection.Curl(wake_deflection_parameters)
         }
         self._deflection_model = self.deflection_models[
             properties["deflection_model"]]
@@ -84,6 +97,20 @@ class Wake():
     @velocity_model.setter
     def velocity_model(self, value):
         self._velocity_model = self.velocity_models[value]
+
+    @property
+    def turbulence_model(self):
+        """
+        Print or re-assign the wake turbulence model. Recognized types:
+
+         - gauss
+         - ishihara
+        """
+        return self._turbulence_model
+
+    @turbulence_model.setter
+    def turbulence_model(self, value):
+        self._turbulence_model = self.turbulence_models[value]
 
     @property
     def deflection_model(self):
@@ -127,6 +154,13 @@ class Wake():
         Return the underlying function of the velocity model.
         """
         return self._velocity_model.function
+
+    @property
+    def turbulence_function(self):
+        """
+        Return the underlying function of the velocity model.
+        """
+        return self._turbulence_model.function
 
     @property
     def combination_function(self):

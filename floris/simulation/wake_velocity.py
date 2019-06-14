@@ -18,33 +18,33 @@ import copy
 
 class WakeVelocity():
     """
-    WakeVelocity is the base class of the different wake velocity model 
+    WakeVelocity is the base class of the different wake velocity model
     classes.
 
-    An instantiated WakeVelocity object will import parameters used to 
-    calculate wake-added turbulence intensity from an upstream turbine, 
-    using the approach of Crespo, A. and Herna, J., "Turbulence 
-    characteristics in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*. 
+    An instantiated WakeVelocity object will import parameters used to
+    calculate wake-added turbulence intensity from an upstream turbine,
+    using the approach of Crespo, A. and Herna, J., "Turbulence
+    characteristics in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*.
     1996.
 
     Args:
-        parameter_dictionary: A dictionary as generated from the 
+        parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
 
-            -   **turbulence_intensity**: A dictionary containing the 
+            -   **turbulence_intensity**: A dictionary containing the
                 following key-value pairs:
 
-                -   **initial**: A float that is the initial ambient 
-                    turbulence intensity, expressed as a decimal 
+                -   **initial**: A float that is the initial ambient
+                    turbulence intensity, expressed as a decimal
                     fraction.
-                -   **constant**: A float that is the constant used to 
+                -   **constant**: A float that is the constant used to
                     scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor 
-                    exponent used in in the calculation of wake-added 
+                -   **ai**: A float that is the axial induction factor
+                    exponent used in in the calculation of wake-added
                     turbulence.
-                -   **downstream**: A float that is the exponent 
-                    applied to the distance downtream of an upstream 
-                    turbine normalized by the rotor diameter used in 
+                -   **downstream**: A float that is the exponent
+                    applied to the distance downtream of an upstream
+                    turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
 
     Returns:
@@ -56,13 +56,6 @@ class WakeVelocity():
         self.model_string = None
         self.model_grid_resolution = None
 
-        # turbulence parameters
-        turbulence_intensity = parameter_dictionary["turbulence_intensity"]
-        self.ti_initial = float(turbulence_intensity["initial"])
-        self.ti_constant = float(turbulence_intensity["constant"])
-        self.ti_ai = float(turbulence_intensity["ai"])
-        self.ti_downstream = float(turbulence_intensity["downstream"])
-
     def __str__(self):
         return self.model_string
 
@@ -71,45 +64,45 @@ class Jensen(WakeVelocity):
     """
     Wake velocity deficit model based on the Jensen model.
 
-    Jensen is a subclass of :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is 
-    used to compute the wake velocity deficit based on the classic 
-    Jensen/Park model. See Jensen, N. O., "A note on wind generator 
+    Jensen is a subclass of :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
+    used to compute the wake velocity deficit based on the classic
+    Jensen/Park model. See Jensen, N. O., "A note on wind generator
     interaction." Tech. Rep. Risø-M-2411, Risø, 1983.
 
     Args:
-        parameter_dictionary: A dictionary as generated from the 
+        parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
 
-            -   **turbulence_intensity**: A dictionary containing the 
-                following key-value pairs used to calculate wake-added 
-                turbulence intensity from an upstream turbine, using 
-                the approach of Crespo, A. and Herna, J. "Turbulence 
-                characteristics in wind-turbine wakes." *J. Wind Eng 
+            -   **turbulence_intensity**: A dictionary containing the
+                following key-value pairs used to calculate wake-added
+                turbulence intensity from an upstream turbine, using
+                the approach of Crespo, A. and Herna, J. "Turbulence
+                characteristics in wind-turbine wakes." *J. Wind Eng
                 Ind Aerodyn*. 1996.:
 
-                -   **initial**: A float that is the initial ambient 
-                    turbulence intensity, expressed as a decimal 
+                -   **initial**: A float that is the initial ambient
+                    turbulence intensity, expressed as a decimal
                     fraction.
-                -   **constant**: A float that is the constant used to 
+                -   **constant**: A float that is the constant used to
                     scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor 
-                    exponent used in in the calculation of wake-added 
+                -   **ai**: A float that is the axial induction factor
+                    exponent used in in the calculation of wake-added
                     turbulence.
-                -   **downstream**: A float that is the exponent 
-                    applied to the distance downtream of an upstream 
-                    turbine normalized by the rotor diameter used in 
+                -   **downstream**: A float that is the exponent
+                    applied to the distance downtream of an upstream
+                    turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
 
-            -   **jensen**: A dictionary containing the following 
+            -   **jensen**: A dictionary containing the following
                 key-value pairs:
 
-                -   **we**: A float that is the linear wake decay 
-                    constant that defines the cone boundary for the 
-                    wake as well as the velocity deficit. D/2 +/- we*x 
+                -   **we**: A float that is the linear wake decay
+                    constant that defines the cone boundary for the
+                    wake as well as the velocity deficit. D/2 +/- we*x
                     is the cone boundary for the wake.
 
     Returns:
-        An instantiated Jensen object.
+        An instantiated Jensen(WaveVelocity) object.
     """
 
     def __init__(self, parameter_dictionary):
@@ -118,44 +111,45 @@ class Jensen(WakeVelocity):
         model_dictionary = parameter_dictionary[self.model_string]
         self.we = float(model_dictionary["we"])
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, deflection_field, wake, flow_field):
         """
-        Using the Jensen wake model, this method calculates and returns 
-        the wake velocity deficits, caused by the specified turbine, 
-        relative to the freestream velocities at the grid of points 
+        Using the Jensen wake model, this method calculates and returns
+        the wake velocity deficits, caused by the specified turbine,
+        relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
 
         Args:
-            x_locations: An array of floats that contains the 
-                streamwise direction grid coordinates of the flow field 
+            x_locations: An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
                 domain (m).
-            y_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the direction 
+            y_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the direction
                 normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the vertical 
+            z_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
                 direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that 
+            turbine: A :py:obj:`floris.simulation.turbine` object that
                 represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the turbine creating the 
+            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
+                containing the coordinate of the turbine creating the
                 wake (m).
-            deflection_field: An array of floats that contains the 
-                amount of wake deflection in meters in the y direction 
+            deflection_field: An array of floats that contains the
+                amount of wake deflection in meters in the y direction
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
+            wake: A :py:obj:`floris.simulation.wake` object containing
                 the wake model used.
-            flow_field: A :py:class:`floris.simulation.flow_field` 
-                object containing the flow field information for the 
+            flow_field: A :py:class:`floris.simulation.flow_field`
+                object containing the flow field information for the
                 wind farm.
 
         Returns:
-            Three arrays of floats that contain the wake velocity 
-            deficit in m/s created by the turbine relative to the 
-            freestream velocities for the u, v, and w components, 
-            aligned with the x, y, and z directions, respectively. The 
-            three arrays contain the velocity deficits at each grid 
-            point in the flow field. 
+            Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the
+            freestream velocities for the u, v, and w components,
+            aligned with the x, y, and z directions, respectively. The
+            three arrays contain the velocity deficits at each grid
+            point in the flow field.
         """
 
         # define the boundary of the wake model ... y = mx + b
@@ -173,7 +167,8 @@ class Jensen(WakeVelocity):
 
         # calculate the wake velocity
         c = (turbine.rotor_diameter /
-             (2 * self.we * (x_locations - turbine_coord.x1) + turbine.rotor_diameter))**2
+             (2 * self.we *
+              (x_locations - turbine_coord.x1) + turbine.rotor_diameter))**2
 
         # filter points upstream and beyond the upper and lower bounds of the wake
         c[x_locations - turbine_coord.x1 < 0] = 0
@@ -182,74 +177,76 @@ class Jensen(WakeVelocity):
         c[z_locations > z_upper] = 0
         c[z_locations < z_lower] = 0
 
-        return 2 * turbine.aI * c * flow_field.u_initial, np.zeros(np.shape(flow_field.u_initial)), np.zeros(np.shape(flow_field.u_initial))
+        return 2 * turbine.aI * c * flow_field.u_initial, np.zeros(
+            np.shape(flow_field.u_initial)), np.zeros(
+                np.shape(flow_field.u_initial))
 
 
 class MultiZone(WakeVelocity):
     """
-    Floris is a subclass of 
-    :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is 
-    used to compute the wake velocity deficit based on the original 
-    multi-zone FLORIS model. See: 
+    Floris is a subclass of
+    :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
+    used to compute the wake velocity deficit based on the original
+    multi-zone FLORIS model. See:
 
-    Gebraad, P. M. O. et al., "A Data-driven model for wind plant power 
-    optimization by yaw control." *Proc. American Control Conference*, 
+    Gebraad, P. M. O. et al., "A Data-driven model for wind plant power
+    optimization by yaw control." *Proc. American Control Conference*,
     Portland, OR, 2014.
 
-    Gebraad, P. M. O. et al., "Wind plant power optimization through 
-    yaw control using a parametric model for wake effects - a CFD 
+    Gebraad, P. M. O. et al., "Wind plant power optimization through
+    yaw control using a parametric model for wake effects - a CFD
     simulation study." *Wind Energy*, 2016.
 
     Args:
-        parameter_dictionary: A dictionary as generated from the 
+        parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
 
-            -   **turbulence_intensity**: A dictionary containing the 
-                following key-value pairs used to calculate wake-added 
-                turbulence intensity from an upstream - turbine, using 
-                the approach of Crespo, A. and Herna, J. "Turbulence 
-                characteristics in wind-turbine wakes." *J. Wind Eng 
+            -   **turbulence_intensity**: A dictionary containing the
+                following key-value pairs used to calculate wake-added
+                turbulence intensity from an upstream - turbine, using
+                the approach of Crespo, A. and Herna, J. "Turbulence
+                characteristics in wind-turbine wakes." *J. Wind Eng
                 Ind Aerodyn*. 1996.:
 
-                -   **initial**: A float that is the initial ambient 
-                    turbulence intensity, expressed as a decimal 
+                -   **initial**: A float that is the initial ambient
+                    turbulence intensity, expressed as a decimal
                     fraction.
-                -   **constant**: A float that is the constant used to 
+                -   **constant**: A float that is the constant used to
                     scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor 
-                    exponent used in in the calculation of wake-added 
+                -   **ai**: A float that is the axial induction factor
+                    exponent used in in the calculation of wake-added
                     turbulence.
-                -   **downstream**: A float that is the exponent 
-                    applied to the distance downtream of an upstream 
-                    turbine normalized by the rotor diameter used in 
+                -   **downstream**: A float that is the exponent
+                    applied to the distance downtream of an upstream
+                    turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
 
-            - **floris**: A dictionary containing the following 
+            - **floris**: A dictionary containing the following
                 key-value pairs:
 
-                -   **me**: A list of three floats that help determine 
-                    the slope of the diameters of the three wake zones 
-                    (near wake, far wake, mixing zone) as a function of 
+                -   **me**: A list of three floats that help determine
+                    the slope of the diameters of the three wake zones
+                    (near wake, far wake, mixing zone) as a function of
                     downstream distance.
-                -   **we**: A float that is the scaling parameter used 
-                    to adjust the wake expansion, helping to determine 
-                    the slope of the diameters of the three wake zones 
-                    as a function of downstream distance, as well as 
-                    the recovery of the velocity deficits in the wake 
+                -   **we**: A float that is the scaling parameter used
+                    to adjust the wake expansion, helping to determine
+                    the slope of the diameters of the three wake zones
+                    as a function of downstream distance, as well as
+                    the recovery of the velocity deficits in the wake
                     as a function of downstream distance.
-                -   **aU**: A float that is a parameter used to 
-                    determine the dependence of the wake velocity 
+                -   **aU**: A float that is a parameter used to
+                    determine the dependence of the wake velocity
                     deficit decay rate on the rotor yaw angle.
-                -   **bU**: A float that is another parameter used to 
-                    determine the dependence of the wake velocity 
+                -   **bU**: A float that is another parameter used to
+                    determine the dependence of the wake velocity
                     deficit decay rate on the rotor yaw angle.
-                -   **mU**: A list of three floats that are parameters 
-                    used to determine the dependence of the wake 
-                    velocity deficit decay rate for each of the three 
+                -   **mU**: A list of three floats that are parameters
+                    used to determine the dependence of the wake
+                    velocity deficit decay rate for each of the three
                     wake zones on the rotor yaw angle.
 
     Returns:
-        An instantiated Floris object.
+        An instantiated Floris(WaveVelocity) object.
     """
 
     def __init__(self, parameter_dictionary):
@@ -262,44 +259,45 @@ class MultiZone(WakeVelocity):
         self.bU = float(model_dictionary["bU"])
         self.mU = [float(n) for n in model_dictionary["mU"]]
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, deflection_field, wake, flow_field):
         """
-        Using the original FLORIS multi-zone wake model, this method 
-        calculates and returns the wake velocity deficits, caused by 
-        the specified turbine, relative to the freestream velocities at 
+        Using the original FLORIS multi-zone wake model, this method
+        calculates and returns the wake velocity deficits, caused by
+        the specified turbine, relative to the freestream velocities at
         the grid of points comprising the wind farm flow field.
 
         Args:
-            x_locations: An array of floats that contains the 
-                streamwise direction grid coordinates of the flow field 
+            x_locations: An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
                 domain (m).
-            y_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the direction 
+            y_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the direction
                 normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the vertical 
+            z_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
                 direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that 
+            turbine: A :py:obj:`floris.simulation.turbine` object that
                 represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the turbine creating the 
+            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
+                containing the coordinate of the turbine creating the
                 wake (m).
-            deflection_field: An array of floats that contains the 
-                amount of wake deflection in meters in the y direction 
+            deflection_field: An array of floats that contains the
+                amount of wake deflection in meters in the y direction
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
+            wake: A :py:obj:`floris.simulation.wake` object containing
                 the wake model used.
-            flow_field: A :py:class:`floris.simulation.flow_field` 
-                object containing the flow field information for the 
+            flow_field: A :py:class:`floris.simulation.flow_field`
+                object containing the flow field information for the
                 wind farm.
 
         Returns:
-            Three arrays of floats that contain the wake velocity 
-            deficit in m/s created by the turbine relative to the 
-            freestream velocities for the u, v, and w components, 
-            aligned with the x, y, and z directions, respectively. The 
-            three arrays contain the velocity deficits at each grid 
-            point in the flow field. 
+            Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the
+            freestream velocities for the u, v, and w components,
+            aligned with the x, y, and z directions, respectively. The
+            three arrays contain the velocity deficits at each grid
+            point in the flow field.
         """
 
         mu = self.mU / cosd(self.aU + self.bU * turbine.yaw_angle)
@@ -352,86 +350,87 @@ class MultiZone(WakeVelocity):
         # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
 
-        return 2 * turbine.aI * c * flow_field.wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
+        return 2 * turbine.aI * c * flow_field.wind_speed, np.zeros(
+            np.shape(c)), np.zeros(np.shape(c))
 
 
 class Gauss(WakeVelocity):
     """
-    Gauss is a wake velocity subclass that contains objects related to the 
+    Gauss is a wake velocity subclass that contains objects related to the
     Gaussian wake model.
 
-    Gauss is a subclass of 
-    :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is 
-    used to compute the wake velocity deficit based on the Gaussian 
-    wake model with self-similarity. The Gaussian wake model includes a 
-    Gaussian wake velocity deficit profile in the y and z directions 
-    and includes the effects of ambient turbulence, added turbulence 
-    from upstream wakes, as well as wind shear and wind veer. For more 
-    information about the Gauss wake model theory, see: 
+    Gauss is a subclass of
+    :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
+    used to compute the wake velocity deficit based on the Gaussian
+    wake model with self-similarity. The Gaussian wake model includes a
+    Gaussian wake velocity deficit profile in the y and z directions
+    and includes the effects of ambient turbulence, added turbulence
+    from upstream wakes, as well as wind shear and wind veer. For more
+    information about the Gauss wake model theory, see:
 
-    Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on 
-    wind-turbine wakes: A large-eddy simulation study." *Physics of 
-    Fluids*, 2015. 
+    Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
+    wind-turbine wakes: A large-eddy simulation study." *Physics of
+    Fluids*, 2015.
 
-    Bastankhah, M. and Porte-Agel, F. "A new analytical model for 
+    Bastankhah, M. and Porte-Agel, F. "A new analytical model for
     wind-turbine wakes." *Renewable Energy*, 2014.
 
-    Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical 
-    study of wind turbine wakes in yawed conditions." *J. Fluid 
+    Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
+    study of wind turbine wakes in yawed conditions." *J. Fluid
     Mechanics*, 2016.
 
-    Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms: 
+    Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
     A new approach for power prediction." *Energies*, 2016.
 
-    Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through 
+    Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
     blade pitch offset." *Energies*, 2017.
 
     Args:
-        parameter_dictionary: A dictionary as generated from the 
+        parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
 
-            -   **turbulence_intensity**: A dictionary containing the 
-                following key-value pairs used to calculate wake-added 
-                turbulence intensity from an upstream turbine, using 
-                the approach of Crespo, A. and Herna, J. "Turbulence 
-                characteristics in wind-turbine wakes." *J. Wind Eng 
+            -   **turbulence_intensity**: A dictionary containing the
+                following key-value pairs used to calculate wake-added
+                turbulence intensity from an upstream turbine, using
+                the approach of Crespo, A. and Herna, J. "Turbulence
+                characteristics in wind-turbine wakes." *J. Wind Eng
                 Ind Aerodyn*. 1996.:
 
-                -   **initial**: A float that is the initial ambient 
-                    turbulence intensity, expressed as a decimal 
+                -   **initial**: A float that is the initial ambient
+                    turbulence intensity, expressed as a decimal
                     fraction.
-                -   **constant**: A float that is the constant used to 
+                -   **constant**: A float that is the constant used to
                     scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor 
-                    exponent used in in the calculation of wake-added 
+                -   **ai**: A float that is the axial induction factor
+                    exponent used in in the calculation of wake-added
                     turbulence.
-                -   **downstream**: A float that is the exponent 
-                    applied to the distance downtream of an upstream 
-                    turbine normalized by the rotor diameter used in 
+                -   **downstream**: A float that is the exponent
+                    applied to the distance downtream of an upstream
+                    turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
 
-            -   **gauss**: A dictionary containing the following 
+            -   **gauss**: A dictionary containing the following
                 key-value pairs:
 
-                -   **ka**: A float that is a parameter used to 
-                    determine the linear relationship between the 
-                    turbulence intensity and the width of the Gaussian 
+                -   **ka**: A float that is a parameter used to
+                    determine the linear relationship between the
+                    turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **kb**: A float that is a second parameter used to 
-                    determine the linear relationship between the 
-                    turbulence intensity and the width of the Gaussian 
+                -   **kb**: A float that is a second parameter used to
+                    determine the linear relationship between the
+                    turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **alpha**: A float that is a parameter that 
-                    determines the dependence of the downstream 
-                    boundary between the near wake and far wake region 
+                -   **alpha**: A float that is a parameter that
+                    determines the dependence of the downstream
+                    boundary between the near wake and far wake region
                     on the turbulence intensity.
-                -   **beta**: A float that is a parameter that 
-                    determines the dependence of the downstream 
-                    boundary between the near wake and far wake region 
+                -   **beta**: A float that is a parameter that
+                    determines the dependence of the downstream
+                    boundary between the near wake and far wake region
                     on the turbine's induction factor.
 
     Returns:
-        An instantiated Gauss object.
+        An instantiated Gauss(WaveVelocity) object.
     """
 
     def __init__(self, parameter_dictionary):
@@ -443,46 +442,47 @@ class Gauss(WakeVelocity):
         # wake expansion parameter
         self.kb = float(model_dictionary["kb"])
         self.alpha = float(model_dictionary["alpha"])  # near wake parameter
-        self.beta = float(model_dictionary["beta"])    # near wake parameter
+        self.beta = float(model_dictionary["beta"])  # near wake parameter
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, deflection_field, wake, flow_field):
         """
-        Using the Gaussian wake model, this method calculates and 
-        returns the wake velocity deficits, caused by the specified 
-        turbine, relative to the freestream velocities at the grid of 
+        Using the Gaussian wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified
+        turbine, relative to the freestream velocities at the grid of
         points comprising the wind farm flow field.
 
         Args:
-            x_locations: An array of floats that contains the 
-                streamwise direction grid coordinates of the flow field 
+            x_locations: An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
                 domain (m).
-            y_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the direction 
+            y_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the direction
                 normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the vertical 
+            z_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
                 direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that 
+            turbine: A :py:obj:`floris.simulation.turbine` object that
                 represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the turbine creating the 
+            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
+                containing the coordinate of the turbine creating the
                 wake (m).
-            deflection_field: An array of floats that contains the 
-                amount of wake deflection in meters in the y direction 
+            deflection_field: An array of floats that contains the
+                amount of wake deflection in meters in the y direction
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
+            wake: A :py:obj:`floris.simulation.wake` object containing
                 the wake model used.
-            flow_field: A :py:class:`floris.simulation.flow_field` 
-                object containing the flow field information for the 
+            flow_field: A :py:class:`floris.simulation.flow_field`
+                object containing the flow field information for the
                 wind farm.
 
         Returns:
-            Three arrays of floats that contain the wake velocity 
-            deficit in m/s created by the turbine relative to the 
-            freestream velocities for the u, v, and w components, 
-            aligned with the x, y, and z directions, respectively. The 
-            three arrays contain the velocity deficits at each grid 
-            point in the flow field. 
+            Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the
+            freestream velocities for the u, v, and w components,
+            aligned with the x, y, and z directions, respectively. The
+            three arrays contain the velocity deficits at each grid
+            point in the flow field.
         """
 
         # veer (degrees)
@@ -569,81 +569,82 @@ class Gauss(WakeVelocity):
                 / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
         velDef1[x_locations < x0] = 0
 
-        return np.sqrt(velDef**2 + velDef1**2), np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
+        return np.sqrt(velDef**2 + velDef1**2), np.zeros(
+            np.shape(velDef)), np.zeros(np.shape(velDef))
 
 
 class Curl(WakeVelocity):
     """
-    Curl is a wake velocity subclass that contains objects related to 
+    Curl is a wake velocity subclass that contains objects related to
     the Curled Wake model.
 
-    Curl is a subclass of 
-    :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is 
-    used to compute the wake velocity deficit based on the curled wake 
-    model developed by Martinez-Tossas et al. The curled wake model 
-    includes the change in the shape of the wake profile under yawed 
-    conditions due to vortices that are shed from the rotor plane of a 
-    yawed turbine. The model includes the impact of turbulence 
-    intensity, wind veer, and the tip-speed ratio of the turbine. For 
-    more information about the curled wake model theory, see: 
-    Martinez-Tossas, L. A. et al. "The aerodynamics of the curled wake: 
-    a simplified model in view of flow control." *Wind Energy Science*, 
-    2019. 
+    Curl is a subclass of
+    :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
+    used to compute the wake velocity deficit based on the curled wake
+    model developed by Martinez-Tossas et al. The curled wake model
+    includes the change in the shape of the wake profile under yawed
+    conditions due to vortices that are shed from the rotor plane of a
+    yawed turbine. The model includes the impact of turbulence
+    intensity, wind veer, and the tip-speed ratio of the turbine. For
+    more information about the curled wake model theory, see:
+    Martinez-Tossas, L. A. et al. "The aerodynamics of the curled wake:
+    a simplified model in view of flow control." *Wind Energy Science*,
+    2019.
 
-    For more information about the impact of the curled wake behavior 
-    on wake steering, see: Fleming, P. et al. "A simulation study 
-    demonstreating the importance of large-scale trailing vortices in 
-    wake steering." *Wind Energy Science*, 2018. 
+    For more information about the impact of the curled wake behavior
+    on wake steering, see: Fleming, P. et al. "A simulation study
+    demonstreating the importance of large-scale trailing vortices in
+    wake steering." *Wind Energy Science*, 2018.
 
     Args:
-        parameter_dictionary: A dictionary as generated from the 
+        parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
 
-            -   **turbulence_intensity**: A dictionary containing the 
-                following key-value pairs used to calculate wake-added 
-                turbulence intensity from an upstream turbine, using 
-                the approach of Crespo, A. and Herna, J. "Turbulence 
-                characteristics in wind-turbine wakes." *J. Wind Eng 
+            -   **turbulence_intensity**: A dictionary containing the
+                following key-value pairs used to calculate wake-added
+                turbulence intensity from an upstream turbine, using
+                the approach of Crespo, A. and Herna, J. "Turbulence
+                characteristics in wind-turbine wakes." *J. Wind Eng
                 Ind Aerodyn*. 1996.:
 
-                -   **initial**: A float that is the initial ambient 
-                    turbulence intensity, expressed as a decimal 
+                -   **initial**: A float that is the initial ambient
+                    turbulence intensity, expressed as a decimal
                     fraction.
-                -   **constant**: A float that is the constant used to 
+                -   **constant**: A float that is the constant used to
                     scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor 
-                    exponent used in in the calculation of wake-added 
+                -   **ai**: A float that is the axial induction factor
+                    exponent used in in the calculation of wake-added
                     turbulence.
-                -   **downstream**: A float that is the exponent 
-                    applied to the distance downtream of an upstream 
-                    turbine normalized by the rotor diameter used in 
+                -   **downstream**: A float that is the exponent
+                    applied to the distance downtream of an upstream
+                    turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
 
-            -   **curl**: A dictionary containing the following 
+            -   **curl**: A dictionary containing the following
                 key-value pairs:
 
-                -   **model_grid_resolution**: A list of three floats 
+                -   **model_grid_resolution**: A list of three floats
                     that define the flow field grid resolution in the x,
-                    y, and z directions used for the curl wake model 
-                    calculations. The grid resolution is specified as 
-                    the number of grid points in the flow field domain 
-                    in the x, y, and z directions. 
-                -   **initial_deficit**: A float that, along with the 
-                    freestream velocity and the turbine's induction 
-                    factor, is used to determine the initial wake 
-                    velocity deficit immediately downstream of the 
+                    y, and z directions used for the curl wake model
+                    calculations. The grid resolution is specified as
+                    the number of grid points in the flow field domain
+                    in the x, y, and z directions.
+                -   **initial_deficit**: A float that, along with the
+                    freestream velocity and the turbine's induction
+                    factor, is used to determine the initial wake
+                    velocity deficit immediately downstream of the
                     rotor.
-                -   **dissipation**: A float that is a scaling 
-                    parameter that determines the amount of dissipation 
+                -   **dissipation**: A float that is a scaling
+                    parameter that determines the amount of dissipation
                     of the vortices with downstream distance.
-                -   **veer_linear**: A float that describes the amount 
-                    of linear wind veer. This parameter defines the 
-                    linear change in the V velocity between the ground 
-                    and hub height, and therefore determines the slope 
-                    of the change in the V velocity with height. 
+                -   **veer_linear**: A float that describes the amount
+                    of linear wind veer. This parameter defines the
+                    linear change in the V velocity between the ground
+                    and hub height, and therefore determines the slope
+                    of the change in the V velocity with height.
 
     Returns:
-        An instantiated Curl object.
+        An instantiated Curl(WaveVelocity) object.
     """
 
     def __init__(self, parameter_dictionary):
@@ -657,44 +658,45 @@ class Curl(WakeVelocity):
         self.veer_linear = float(model_dictionary["veer_linear"])
         self.requires_resolution = True
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, deflection_field, wake, flow_field):
         """
-        Using the Curl wake model, this method calculates and returns 
-        the wake velocity deficits, caused by the specified turbine, 
-        relative to the freestream velocities at the grid of points 
+        Using the Curl wake model, this method calculates and returns
+        the wake velocity deficits, caused by the specified turbine,
+        relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
 
         Args:
-            x_locations: An array of floats that contains the 
-                streamwise direction grid coordinates of the flow field 
+            x_locations: An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
                 domain (m).
-            y_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the direction 
+            y_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the direction
                 normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the vertical 
+            z_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
                 direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that 
+            turbine: A :py:obj:`floris.simulation.turbine` object that
                 represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the turbine creating the 
+            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
+                containing the coordinate of the turbine creating the
                 wake (m).
-            deflection_field: An array of floats that contains the 
-                amount of wake deflection in meters in the y direction 
+            deflection_field: An array of floats that contains the
+                amount of wake deflection in meters in the y direction
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
+            wake: A :py:obj:`floris.simulation.wake` object containing
                 the wake model used.
-            flow_field: A :py:class:`floris.simulation.flow_field` 
-                object containing the flow field information for the 
+            flow_field: A :py:class:`floris.simulation.flow_field`
+                object containing the flow field information for the
                 wind farm.
 
         Returns:
-            Three arrays of floats that contain the wake velocity 
-            deficit in m/s created by the turbine relative to the 
-            freestream velocities for the u, v, and w components, 
-            aligned with the x, y, and z directions, respectively. The 
-            three arrays contain the velocity deficits at each grid 
-            point in the flow field. 
+            Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the
+            freestream velocities for the u, v, and w components,
+            aligned with the x, y, and z directions, respectively. The
+            three arrays contain the velocity deficits at each grid
+            point in the flow field.
         """
 
         # parameters available for tuning to match high-fidelity data
@@ -706,22 +708,18 @@ class Curl(WakeVelocity):
         veer_linear = self.veer_linear
 
         # setup x and y grid information
-        x = np.linspace(np.min(x_locations), np.max(
-            x_locations), int(self.model_grid_resolution.x1))
-        y = np.linspace(np.min(y_locations), np.max(
-            y_locations), int(self.model_grid_resolution.x2))
+        x = np.linspace(np.min(x_locations), np.max(x_locations),
+                        int(self.model_grid_resolution.x1))
+        y = np.linspace(np.min(y_locations), np.max(y_locations),
+                        int(self.model_grid_resolution.x2))
 
         # find the x-grid location closest to the current turbine
         idx = np.min(np.where(x >= turbine_coord.x1))
 
         # initialize the flow field
-        uw = np.zeros(
-            (
-                int(self.model_grid_resolution.x1),
-                int(self.model_grid_resolution.x2),
-                int(self.model_grid_resolution.x3)
-            )
-        )
+        uw = np.zeros((int(self.model_grid_resolution.x1),
+                       int(self.model_grid_resolution.x2),
+                       int(self.model_grid_resolution.x3)))
 
         # determine values to create a rotor mask for velocities
         y1 = y_locations[idx, :, :] - turbine_coord.x2
@@ -730,12 +728,13 @@ class Curl(WakeVelocity):
 
         # add initial velocity deficit at the rotor to the flow field
         uw_initial = -1 * (flow_field.wind_speed * intial_deficit * turbine.aI)
-        uw[idx, :, :] = gaussian_filter(
-            uw_initial * (r1 <= turbine.rotor_diameter / 2), sigma=1)
+        uw[idx, :, :] = gaussian_filter(uw_initial *
+                                        (r1 <= turbine.rotor_diameter / 2),
+                                        sigma=1)
 
         # enforce the boundary conditions
-        uw[idx,  0, :] = 0.0
-        uw[idx, :,  0] = 0.0
+        uw[idx, 0, :] = 0.0
+        uw[idx, :, 0] = 0.0
         uw[idx, -1, :] = 0.0
         uw[idx, :, -1] = 0.0
 
@@ -745,9 +744,9 @@ class Curl(WakeVelocity):
         # parameters to simplify the code
         # diameter of the turbine rotor from the input file
         D = turbine.rotor_diameter
-        Ct = turbine.Ct                                 # thrust coefficient of the turbine
-        yaw = turbine.yaw_angle                         # yaw angle of the turbine
-        HH = turbine.hub_height                         # hub height of the turbine
+        Ct = turbine.Ct  # thrust coefficient of the turbine
+        yaw = turbine.yaw_angle  # yaw angle of the turbine
+        HH = turbine.hub_height  # hub height of the turbine
         # the free-stream velocity of the flow field
         Uinf = flow_field.wind_speed
         # the tip-speed ratior of the turbine
@@ -800,8 +799,8 @@ class Curl(WakeVelocity):
         for z in z_vector[:-1]:
 
             # Compute the non-dimensional circulation
-            Gamma = (-4 * Gamma0 * z * dz /
-                     (D**2 * np.sqrt(1 - (2 * z / D)**2)))
+            Gamma = (-4 * Gamma0 * z * dz / (D**2 * np.sqrt(1 -
+                                                            (2 * z / D)**2)))
 
             # locations of the tip vortices
             # top
@@ -814,17 +813,25 @@ class Curl(WakeVelocity):
 
             # vortex velocities
             # top
-            v1, w1 = self._vortex(flow_field.y[idx, :, :] - y_vortex_1, flow_field.z[idx, :, :]
-                                  - z_vortex_1, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma, eps, Uinf)
+            v1, w1 = self._vortex(flow_field.y[idx, :, :] - y_vortex_1,
+                                  flow_field.z[idx, :, :] - z_vortex_1,
+                                  flow_field.x[idx, :, :] - turbine_coord.x1,
+                                  -Gamma, eps, Uinf)
             # bottom
-            v2, w2 = self._vortex(flow_field.y[idx, :, :] - y_vortex_2, flow_field.z[idx, :, :]
-                                  - z_vortex_2, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma, eps, Uinf)
+            v2, w2 = self._vortex(flow_field.y[idx, :, :] - y_vortex_2,
+                                  flow_field.z[idx, :, :] - z_vortex_2,
+                                  flow_field.x[idx, :, :] - turbine_coord.x1,
+                                  Gamma, eps, Uinf)
 
             # add ground effects
-            v3, w3 = self._vortex(flow_field.y[idx, :, :] - y_vortex_1, flow_field.z[idx, :, :]
-                                  + z_vortex_1, flow_field.x[idx, :, :] - turbine_coord.x1, Gamma, eps, Uinf)
-            v4, w4 = self._vortex(flow_field.y[idx, :, :] - y_vortex_2, flow_field.z[idx, :, :]
-                                  + z_vortex_2, flow_field.x[idx, :, :] - turbine_coord.x1, -Gamma, eps, Uinf)
+            v3, w3 = self._vortex(flow_field.y[idx, :, :] - y_vortex_1,
+                                  flow_field.z[idx, :, :] + z_vortex_1,
+                                  flow_field.x[idx, :, :] - turbine_coord.x1,
+                                  Gamma, eps, Uinf)
+            v4, w4 = self._vortex(flow_field.y[idx, :, :] - y_vortex_2,
+                                  flow_field.z[idx, :, :] + z_vortex_2,
+                                  flow_field.x[idx, :, :] - turbine_coord.x1,
+                                  -Gamma, eps, Uinf)
 
             V[idx, :, :] += v1 + v2 + v3 + v4
             W[idx, :, :] += w1 + w2 + w3 + w4
@@ -859,11 +866,8 @@ class Curl(WakeVelocity):
                              - turbine_coord.x1) / Uinf + eps**2)
 
         # simple implementation of linear veer, added to the V component of the flow field
-        z = np.linspace(
-            np.min(z_locations),
-            np.max(z_locations),
-            int(self.model_grid_resolution.x3)
-        )
+        z = np.linspace(np.min(z_locations), np.max(z_locations),
+                        int(self.model_grid_resolution.x3))
         z_min = HH
         b_veer = veer_linear
         m_veer = -b_veer / z_min
@@ -931,3 +935,143 @@ class Curl(WakeVelocity):
             * (1 - np.exp(-(x**2 + y**2) / eps**2))
 
         return v, w
+
+
+class Ishihara(WakeVelocity):
+    """
+    Ishihara is a wake velocity subclass that contains objects related to the
+    Gaussian wake model that include a near-wake correction.
+
+    Ishihara is a subclass of
+    :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
+    used to compute the wake velocity deficit based on the Gaussian
+    wake model with self-similarity and a near wake correction. The Ishihara
+    wake model includes a Gaussian wake velocity deficit profile in the y and z
+    directions and includes the effects of ambient turbulence, added turbulence
+    from upstream wakes, as well as wind shear and wind veer. For more info,
+    see:
+
+    Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based analytical wake
+    model for wind turbines considering ambient turbulence intensities and
+    thrust coefficient effects." Journal of Wind Engineering and Industrial
+    Aerodynamics 177 (2018): 275-292.
+
+   Args:
+        parameter_dictionary: A dictionary as generated from the
+            input_reader; it should have the following key-value pairs:
+            -   **ishihara**: A dictionary containing the following
+                key-value pairs:
+
+                -   **kstar**: A float that is a parameter used to
+                    determine the linear relationship between the
+                    turbulence intensity and the width of the Gaussian
+                    wake shape.
+                -   **epsilon**: A float that is a second parameter used to
+                    determine the linear relationship between the
+                    turbulence intensity and the width of the Gaussian
+                    wake shape.
+                -   **d**: constant coefficient used in calculation of              wake-added turbulence.
+                -   **e**: linear coefficient used in calculation of                wake-added turbulence.
+                -   **f**: near-wake coefficient used in calculation of             wake-added turbulence.
+
+    Returns:
+        An instantiated Ishihara(WaveVelocity) object.
+    """
+
+    def __init__(self, parameter_dictionary):
+        super().__init__(parameter_dictionary)
+        self.model_string = "ishihara"
+        model_dictionary = parameter_dictionary[self.model_string]
+        # wake model parameter
+        self.kstar = model_dictionary["kstar"]
+        self.epsilon = model_dictionary["epsilon"]
+        self.a = model_dictionary["a"]
+        self.b = model_dictionary["b"]
+        self.c = model_dictionary["c"]
+
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, deflection_field, wake, flow_field):
+        """
+        Using the Gaussian wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified
+        turbine, relative to the freestream velocities at the grid of
+        points comprising the wind farm flow field.
+
+        Args:
+            x_locations: An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
+                domain (m).
+            y_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the direction
+                normal to x and parallel to the ground (m).
+            z_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
+                direction (m).
+            turbine: A :py:obj:`floris.simulation.turbine` object that
+                represents the turbine creating the wake.
+            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
+                containing the coordinate of the turbine creating the
+                wake (m).
+            deflection_field: #TODO not yet integrated into the ishihara model
+            wake: Not used in the current model, included for consistency of        function call.
+            flow_field: A :py:class:`floris.simulation.flow_field`
+                object containing the flow field information for the
+                wind farm.
+
+        Returns:
+            Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the
+            freestream velocities for the u, v, and w components,
+            aligned with the x, y, and z directions, respectively. The
+            three arrays contain the velocity deficits at each grid
+            point in the flow field.
+        """
+        # added turbulence model
+        TI = turbine.turbulence_intensity
+
+        # turbine parameters
+        D = turbine.rotor_diameter
+
+        yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
+        Ct = turbine.Ct
+        U_local = flow_field.u_initial
+        local_x = x_locations - turbine_coord.x1
+        local_y = y_locations - turbine_coord.x2
+        local_z = z_locations - turbine_coord.x3  # adjust for hub height
+
+        # coordinate info
+        r = np.sqrt(local_y**2 + (local_z)**2)
+
+        def parameter_value_from_dict(pdict, Ct, TI):
+            return pdict['const'] * Ct**(pdict['Ct']) * TI**(pdict['TI'])
+
+        kstar = parameter_value_from_dict(self.kstar, Ct, TI)
+        epsilon = parameter_value_from_dict(self.epsilon, Ct, TI)
+        a = parameter_value_from_dict(self.a, Ct, TI)
+        b = parameter_value_from_dict(self.b, Ct, TI)
+        c = parameter_value_from_dict(self.c, Ct, TI)
+
+        k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
+        k1[r / D > 0.5] = 1.0
+
+        k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
+        k2[r / D > 0.5] = 1.0
+
+        # Representative wake width = \sigma / D
+        wake_width = kstar * (local_x / D) + epsilon
+
+        # wake velocity deficit = \Delta U (x,y,z) / U_h
+        velDef = 1 / (a + b * (local_x / D) + c *
+                      (1 +
+                       (local_x / D))**(-2))**2 * np.exp(-(r)**2 /
+                                                         (2 *
+                                                          (wake_width * D)**2))
+
+        # trim wakes to 1 D upstream to avoid artifacts
+        yR = y_locations - turbine_coord.x2
+        xR = yR * tand(yaw) + turbine_coord.x1 - D
+        velDef[x_locations < xR] = 0
+
+        velDef = U_local * (velDef)
+
+        return velDef, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))

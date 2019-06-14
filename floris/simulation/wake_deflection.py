@@ -25,7 +25,7 @@ class WakeDeflection():
     each WakeDeflection subclass for further detail.
     """
 
-    def __init__(self, parameter_dictionary):
+    def __init__(self, ):
         self.model_string = None
 
     def __str__(self):
@@ -56,7 +56,7 @@ class Jimenez(WakeDeflection):
                         "bd": 0.0
                     }
         """
-        super().__init__(parameter_dictionary)
+        super().__init__()
         self.model_string = "jimenez"
         model_dictionary = parameter_dictionary[self.model_string]
         self.ad = float(model_dictionary["ad"])
@@ -75,10 +75,10 @@ class Jimenez(WakeDeflection):
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord
-                (:py:meth:`floris.simulation.turbine_map.TurbineMap.coords`): 
+                (:py:meth:`floris.simulation.turbine_map.TurbineMap.coords`):
                 Spatial coordinates of wind turbine.
             flow_field
-                (:py:class:`floris.simulation.flow_field.FlowField`): 
+                (:py:class:`floris.simulation.flow_field.FlowField`):
                 Flow field object.
 
         Returns:
@@ -138,7 +138,7 @@ class Gauss(WakeDeflection):
                         "bd": 0.0
                     }
         """
-        super().__init__(parameter_dictionary)
+        super().__init__()
         self.model_string = "gauss"
         model_dictionary = parameter_dictionary[self.model_string]
         self.ka = float(model_dictionary["ka"])
@@ -147,7 +147,7 @@ class Gauss(WakeDeflection):
         self.bd = float(model_dictionary["bd"])
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
-        self.deflection_multiplier = 1.2
+        self.deflection_multiplier = 1.0
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
         """
@@ -160,7 +160,7 @@ class Gauss(WakeDeflection):
             y_locations (np.array): spanwise locations in wake
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
-            coord 
+            coord
                 (:py:meth:`floris.simulation.turbine_map.TurbineMap.coords`):
                 Spatial coordinates of wind turbine.
             flow_field
@@ -280,7 +280,7 @@ class Curl(WakeDeflection):
                                                 ],
                     }
         """
-        super().__init__(parameter_dictionary)
+        super().__init__()
         self.model_string = "curl"
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):

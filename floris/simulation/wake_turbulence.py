@@ -10,10 +10,6 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
-from scipy.ndimage.filters import gaussian_filter
-from ..utilities import Vec3
-from ..utilities import cosd, sind, tand
-import copy
 
 
 class WakeTurbulence():
@@ -23,29 +19,7 @@ class WakeTurbulence():
 
     An instantiated WakeTurbulence object will import parameters used to
     calculate wake-added turbulence intensity from an upstream turbine,
-    using the approach of Crespo, A. and Herna, J., "Turbulence
-    characteristics in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*.
-    1996.
-
-    Args:
-        parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
-
-            -   **turbulence_intensity**: A dictionary containing the
-                following key-value pairs:
-
-                -   **initial**: A float that is the initial ambient
-                    turbulence intensity, expressed as a decimal
-                    fraction.
-                -   **constant**: A float that is the constant used to
-                    scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor
-                    exponent used in in the calculation of wake-added
-                    turbulence.
-                -   **downstream**: A float that is the exponent
-                    applied to the distance downtream of an upstream
-                    turbine normalized by the rotor diameter used in
-                    the calculation of wake-added turbulence.
+    using one of several approaches.
 
     Returns:
         An instantiated WakeTurbulence object.
@@ -95,12 +69,8 @@ class Gauss(WakeTurbulence):
         parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
 
-            -   **turbulence_intensity**: A dictionary containing the
-                following key-value pairs used to calculate wake-added
-                turbulence intensity from an upstream turbine, using
-                the approach of Crespo, A. and Herna, J. "Turbulence
-                characteristics in wind-turbine wakes." *J. Wind Eng
-                Ind Aerodyn*. 1996.:
+            -   **gauss**: A dictionary containing the following
+                key-value pairs:
 
                 -   **initial**: A float that is the initial ambient
                     turbulence intensity, expressed as a decimal
@@ -115,28 +85,9 @@ class Gauss(WakeTurbulence):
                     turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
 
-            -   **gauss**: A dictionary containing the following
-                key-value pairs:
-
-                -   **ka**: A float that is a parameter used to
-                    determine the linear relationship between the
-                    turbulence intensity and the width of the Gaussian
-                    wake shape.
-                -   **kb**: A float that is a second parameter used to
-                    determine the linear relationship between the
-                    turbulence intensity and the width of the Gaussian
-                    wake shape.
-                -   **alpha**: A float that is a parameter that
-                    determines the dependence of the downstream
-                    boundary between the near wake and far wake region
-                    on the turbulence intensity.
-                -   **beta**: A float that is a parameter that
-                    determines the dependence of the downstream
-                    boundary between the near wake and far wake region
-                    on the turbine's induction factor.
 
     Returns:
-        An instantiated Gauss object.
+        An instantiated Gauss(WakeTurbulence) object.
     """
 
     def __init__(self, parameter_dictionary):
@@ -150,8 +101,8 @@ class Gauss(WakeTurbulence):
         self.ti_ai = float(model_dictionary["ai"])
         self.ti_downstream = float(model_dictionary["downstream"])
 
-    def function(self, x_locations, y_locations, z_locations, turbine,
-                 turbine_coord, deflection_field, wake, flow_field):
+    def function(self, turb_u_wake, sorted_map, x_locations, y_locations,
+                 z_locations, turbine, turbine_coord, flow_field):
         """
         Using the Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified
@@ -159,6 +110,8 @@ class Gauss(WakeTurbulence):
         points comprising the wind farm flow field.
 
         Args:
+            turb_u_wake (np.array): u-component of turbine wake field
+            sorted_map (list): sorted turbine_map (coord, turbine)
             x_locations: An array of floats that contains the
                 streamwise direction grid coordinates of the flow field
                 domain (m).
@@ -173,48 +126,43 @@ class Gauss(WakeTurbulence):
             turbine_coord: A :py:obj:`floris.utilities.Vec3` object
                 containing the coordinate of the turbine creating the
                 wake (m).
-            deflection_field: An array of floats that contains the
-                amount of wake deflection in meters in the y direction
-                at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field`
                 object containing the flow field information for the
                 wind farm.
-
-        Returns:
-            Three arrays of floats that contain the wake velocity
-            deficit in m/s created by the turbine relative to the
-            freestream velocities for the u, v, and w components,
-            aligned with the x, y, and z directions, respectively. The
-            three arrays contain the velocity deficits at each grid
-            point in the flow field.
         """
 
-        # include turbulence model for the gaussian wake model from Porte-Agel
-        if (self.wake.velocity_model.model_string == 'gauss'):
+        # compute area overlap of wake on other turbines and update downstream
+        # turbine turbulence intensities
+        for coord_ti, turbine_ti in sorted_map:
 
-            # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
-            for coord_ti, turbine_ti in sorted_map:
+            if coord_ti.x1 > turbine_coord.x1 and np.abs(
+                    turbine_coord.x2 -
+                    coord_ti.x2) < 2 * turbine.rotor_diameter:
+                # only assess the effects of the current wake
 
-                if coord_ti.x1 > coord.x1 and np.abs(
-                        coord.x2 - coord_ti.x2) < 2 * turbine.rotor_diameter:
-                    # only assess the effects of the current wake
+                freestream_velocities = turbine_ti.calculate_swept_area_velocities(
+                    flow_field.wind_direction, flow_field.u_initial, coord_ti,
+                    x_locations, y_locations, z_locations)
 
-                    freestream_velocities = turbine_ti.calculate_swept_area_velocities(
-                        self.wind_direction, self.u_initial, coord_ti,
-                        rotated_x, rotated_y, rotated_z)
+                wake_velocities = turbine_ti.calculate_swept_area_velocities(
+                    flow_field.wind_direction,
+                    flow_field.u_initial - turb_u_wake, coord_ti, x_locations,
+                    y_locations, z_locations)
 
-                    wake_velocities = turbine_ti.calculate_swept_area_velocities(
-                        self.wind_direction, self.u_initial - turb_u_wake,
-                        coord_ti, rotated_x, rotated_y, rotated_z)
+                area_overlap = flow_field._calculate_area_overlap(
+                    wake_velocities, freestream_velocities, turbine)
+                if area_overlap > 0.0:
+                    ti_initial = flow_field.turbulence_intensity
 
-                    area_overlap = self._calculate_area_overlap(
-                        wake_velocities, freestream_velocities, turbine)
-                    if area_overlap > 0.0:
-                        turbine_ti.turbulence_intensity = turbine_ti.calculate_turbulence_intensity(
-                            self.turbulence_intensity,
-                            self.wake.velocity_model, coord_ti, coord, turbine)
+                    # turbulence intensity calculation based on Crespo et. al.
+                    ti_calculation = self.ti_constant \
+                        * turbine.aI**self.ti_ai \
+                        * ti_initial**self.ti_initial \
+                        * ((coord_ti.x1 - turbine_coord.x1) / turbine_ti.rotor_diameter)**self.ti_downstream
+
+                    # Update turbulence intensity of downstream turbines
+                    turbine_ti.turbulence_intensity = np.sqrt(
+                        ti_calculation**2 + flow_field.turbulence_intensity**2)
 
 
 class Ishihara(WakeTurbulence):
@@ -239,49 +187,23 @@ class Ishihara(WakeTurbulence):
     Args:
         parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
-
-            -   **turbulence_intensity**: A dictionary containing the
-                following key-value pairs used to calculate wake-added
-                turbulence intensity from an upstream turbine, using
-                the approach of Crespo, A. and Herna, J. "Turbulence
-                characteristics in wind-turbine wakes." *J. Wind Eng
-                Ind Aerodyn*. 1996.:
-
-                -   **initial**: A float that is the initial ambient
-                    turbulence intensity, expressed as a decimal
-                    fraction.
-                -   **constant**: A float that is the constant used to
-                    scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor
-                    exponent used in in the calculation of wake-added
-                    turbulence.
-                -   **downstream**: A float that is the exponent
-                    applied to the distance downtream of an upstream
-                    turbine normalized by the rotor diameter used in
-                    the calculation of wake-added turbulence.
-
-            -   **gauss**: A dictionary containing the following
+            -   **ishihara**: A dictionary containing the following
                 key-value pairs:
 
-                -   **ka**: A float that is a parameter used to
+                -   **kstar**: A float that is a parameter used to
                     determine the linear relationship between the
                     turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **kb**: A float that is a second parameter used to
+                -   **epsilon**: A float that is a second parameter used to
                     determine the linear relationship between the
                     turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **alpha**: A float that is a parameter that
-                    determines the dependence of the downstream
-                    boundary between the near wake and far wake region
-                    on the turbulence intensity.
-                -   **beta**: A float that is a parameter that
-                    determines the dependence of the downstream
-                    boundary between the near wake and far wake region
-                    on the turbine's induction factor.
+                -   **d**: constant coefficient used in calculation of              wake-added turbulence.
+                -   **e**: linear coefficient used in calculation of                wake-added turbulence.
+                -   **f**: near-wake coefficient used in calculation of             wake-added turbulence.
 
     Returns:
-        An instantiated Gauss object.
+        An instantiated Ishihara(WakeTurbulence) object.
     """
 
     def __init__(self, parameter_dictionary):
@@ -296,8 +218,8 @@ class Ishihara(WakeTurbulence):
         self.e = model_dictionary["e"]
         self.f = model_dictionary["f"]
 
-    def function(self, x_locations, y_locations, z_locations, turbine,
-                 turbine_coord, deflection_field, wake, flow_field):
+    def function(self, turb_u_wake, sorted_map, x_locations, y_locations,
+                 z_locations, turbine, turbine_coord, flow_field):
         """
         Using the Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified
@@ -305,6 +227,8 @@ class Ishihara(WakeTurbulence):
         points comprising the wind farm flow field.
 
         Args:
+            turb_u_wake (np.array): not used for the current turbulence model,      included for consistency of function form
+            sorted_map (list): sorted turbine_map (coord, turbine)
             x_locations: An array of floats that contains the
                 streamwise direction grid coordinates of the flow field
                 domain (m).
@@ -315,70 +239,72 @@ class Ishihara(WakeTurbulence):
                 coordinates of the flow field domain in the vertical
                 direction (m).
             turbine: A :py:obj:`floris.simulation.turbine` object that
-                represents the turbine creating the wake.
+                represents the turbine creating the wake (i.e. the 
+                upstream turbine).
             turbine_coord: A :py:obj:`floris.utilities.Vec3` object
                 containing the coordinate of the turbine creating the
                 wake (m).
             deflection_field: An array of floats that contains the
                 amount of wake deflection in meters in the y direction
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field`
                 object containing the flow field information for the
                 wind farm.
-
-        Returns:
-            Three arrays of floats that contain the wake velocity
-            deficit in m/s created by the turbine relative to the
-            freestream velocities for the u, v, and w components,
-            aligned with the x, y, and z directions, respectively. The
-            three arrays contain the velocity deficits at each grid
-            point in the flow field.
         """
-        # veer (degrees)
-        veer = flow_field.wind_veer
+        # compute area overlap of wake on other turbines and update downstream
+        # turbine turbulence intensities
+        for coord_ti, turbine_ti in sorted_map:
 
-        # added turbulence model
-        TI = turbine.turbulence_intensity
+            if coord_ti.x1 > turbine_coord.x1 and np.abs(
+                    turbine_coord.x2 -
+                    coord_ti.x2) < 2 * turbine.rotor_diameter:
+                # only assess the effects of the current wake
 
-        # turbine parameters
-        D = turbine.rotor_diameter
-        HH = turbine.hub_height
-        yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
-        Ct = turbine.Ct
-        U_local = flow_field.u_initial
-        local_x = x_locations - turbine_coord.x1
-        local_y = y_locations - turbine_coord.x2
-        local_z = z_locations - turbine_coord.x3  # adjust for hub height
+                # added turbulence model
+                ti_initial = turbine.turbulence_intensity
 
-        # coordinate info
-        r = np.sqrt(local_y**2 + (local_z)**2)
+                # turbine parameters
+                D = turbine.rotor_diameter
+                HH = turbine.hub_height
+                Ct = turbine.Ct
 
-        def parameter_value_from_dict(pdict, Ct, TI):
-            return pdict['const'] * Ct**(pdict['Ct']) * TI**(pdict['TI'])
+                local_x = x_locations - turbine_coord.x1
+                local_y = y_locations - turbine_coord.x2
+                local_z = z_locations - turbine_coord.x3
+                # coordinate info
+                r = np.sqrt(local_y**2 + (local_z)**2)
 
-        kstar = parameter_value_from_dict(self.kstar, Ct, TI)
-        epsilon = parameter_value_from_dict(self.epsilon, Ct, TI)
+                def parameter_value_from_dict(pdict, Ct, ti_initial):
+                    return pdict['const'] * Ct**(pdict['Ct']) * ti_initial**(
+                        pdict['TI'])
 
-        d = parameter_value_from_dict(self.d, Ct, TI)
-        e = parameter_value_from_dict(self.e, Ct, TI)
-        f = parameter_value_from_dict(self.f, Ct, TI)
+                kstar = parameter_value_from_dict(self.kstar, Ct, ti_initial)
+                epsilon = parameter_value_from_dict(self.epsilon, Ct,
+                                                    ti_initial)
 
-        k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
-        k1[r / D > 0.5] = 1.0
+                d = parameter_value_from_dict(self.d, Ct, ti_initial)
+                e = parameter_value_from_dict(self.e, Ct, ti_initial)
+                f = parameter_value_from_dict(self.f, Ct, ti_initial)
 
-        k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
-        k2[r / D > 0.5] = 1.0
+                k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
+                k1[r / D > 0.5] = 1.0
 
-        # Representative wake width = \sigma / D
-        wake_width = kstar * (local_x / D) + epsilon
+                k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
+                k2[r / D > 0.5] = 0.0
 
-        # Added turbulence intensity = \Delta I_1 (x,y,z)
-        delta = Ia * np.sin(np.pi * (HH - local_z) / H)**2
-        delta[z_llocal_zocations >= HH] = 0.0
-        dI1 =  1 / (d + e * (local_x/D) + f * (1 + (local_x/D))**(-2))**2 * \
-            ((k1 * np.exp(-(r + D/2)**2 / (2* (wake_width*D **2)))) +
-            (k2 * np.exp(-(r + D/2)**2 / (2* (wake_width*D **2))))) - delta
+                # Representative wake width = \sigma / D
+                wake_width = kstar * (local_x / D) + epsilon
 
-        return delta_T
+                # Added turbulence intensity = \Delta I_1 (x,y,z)
+                delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH)**2
+                delta[local_z >= HH] = 0.0
+                ti_calculation = 1 / (
+                    d + e * (local_x / D) + f * (1 + (local_x / D))**(-2)) * (
+                        (k1 * np.exp(-(r - D / 2)**2 /
+                                     (2 * (wake_width * D)**2))) +
+                        (k2 * np.exp(-(r + D / 2)**2 /
+                                     (2 * (wake_width * D)**2)))) - delta
+
+                # Update turbulence intensity of downstream turbines
+                turbine_ti.turbulence_intensity = np.sqrt(
+                    ti_calculation**2 + flow_field.turbulence_intensity**2)

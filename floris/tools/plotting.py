@@ -217,7 +217,7 @@ def data_plot(x,
         return np.nan, np.nan, np.nan, np.nan
 
 
-def stacked_plot(x, groups, x_bins, ax, color_array=None, use_percent=False):
+def stacked_plot(x, groups, x_bins, ax, color_array=None):
     """
     Plot stacked histograms of data according to specified groups.
 
@@ -253,12 +253,8 @@ def stacked_plot(x, groups, x_bins, ax, color_array=None, use_percent=False):
 
         if num_points > 0:
             for g_idx, g in enumerate(group_vals):
-                if use_percent:
-                    p_array[g_idx, x_idx] = np.sum(
-                        g_bin == g)   / float(num_points)
-                else:
-                    p_array[g_idx, x_idx] = np.sum(
-                        g_bin == g)  
+                p_array[g_idx, x_idx] = np.sum(
+                    g_bin == g)  # / float(num_points)
     p = list()
 
     if not color_array is None:

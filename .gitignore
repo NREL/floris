@@ -18,3 +18,5 @@ _build
 
 # Other
 .pytest_cache
+
+dev_notes/
