@@ -28,7 +28,7 @@ layout_y = [200, 1000, 200]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
 # Define the boundary for the wind farm
-boundaries = [[2000.1, 4000.], [2000., 0.1], [0., 0.], [0.1, 2000.]]
+boundaries = [[2000., 4000.], [2000., 0.1], [0., 0.], [0., 2000.]]
 
 # Generate random wind rose data
 wd = np.arange(0., 360., 5.)

@@ -166,7 +166,7 @@ class Gauss(WakeDeflection):
             flow_field
                 (:py:class:`floris.simulation.flow_field.FlowField`):
                 Flow field object.
-
+        
         Returns:
             deflection (np.array): Deflected wake centerline.
         """
@@ -190,8 +190,8 @@ class Gauss(WakeDeflection):
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
 
-        # U_local = flow_field.wind_speed # just a placeholder for now, should be initialized with the flow_field
-        U_local = flow_field.u_initial
+        U_local = flow_field.wind_speed*np.ones(np.shape(flow_field.u_initial)) # just a placeholder for now, should be initialized with the flow_field
+        # U_local = flow_field.u_initial
 
         # initial velocity deficits
         uR = U_local * Ct * cosd(tilt) * cosd(yaw) / (
