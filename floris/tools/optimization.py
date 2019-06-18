@@ -10,6 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 import numpy as np
+import pandas as pd
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from abc import ABCMeta, abstractmethod
@@ -266,6 +267,8 @@ class YawOptimizationWindRose(Optimization):
                            freq,
                            minimum_yaw_angle=0.0,
                            maximum_yaw_angle=25.0,
+                           minimum_ws=0.0,
+                           maximum_ws=25.0,
                            x0=None,
                            bnds=None,
                            opt_method='SLSQP'):
@@ -281,6 +284,8 @@ class YawOptimizationWindRose(Optimization):
             freq=freq,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
+            minimum_ws=minimum_ws,
+            maximum_ws=maximum_ws,
             x0=x0,
             bnds=bnds,
             opt_method=opt_method
@@ -321,6 +326,8 @@ class YawOptimizationWindRose(Optimization):
             freq=None,
             minimum_yaw_angle=None,
             maximum_yaw_angle=None,
+            minimum_ws=0.0,
+            maximum_ws=0.0,
             x0=None,
             bnds=None,
             opt_method=None):
@@ -337,6 +344,10 @@ class YawOptimizationWindRose(Optimization):
                 yaw. Defaults to None.
             maximum_yaw_angle (float, optional): Maximum constraint on 
                 yaw. Defaults to None.
+            minimum_ws (float, optional): Minimum wind speed at which optimization is performed. 
+                Assume zero power generated below this value. Defaults to zero.
+            maximum_ws (float, optional): Maximum wind speed at which optimization is performed. 
+                Defaults to zero.
             wd (np.array) : The wind directions for the AEP optimization.
             ws (np.array): The wind speeds for the AEP optimization.
             freq (np.array): The wind frequencies for the AEP optimizaiton.
@@ -354,6 +365,8 @@ class YawOptimizationWindRose(Optimization):
         self.wd = wd
         self.ws = ws
         self.freq = freq
+        self.minimum_ws = minimum_ws
+        self.maximum_ws = maximum_ws
 
         if minimum_yaw_angle is not None:
             self.minimum_yaw_angle = minimum_yaw_angle
@@ -412,22 +425,38 @@ class YawOptimizationWindRose(Optimization):
 
         for i in range(len(self.wd)):
             print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
-                +': wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
-            self.fi.reinitialize_flow_field(
-                wind_direction=self.wd[i], wind_speed=self.ws[i])
+                +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            if (self.ws[i] >= self.minimum_ws) & (self.ws[i] <= self.maximum_ws):
+                self.fi.reinitialize_flow_field(
+                    wind_direction=self.wd[i], wind_speed=self.ws[i])
 
-            opt_yaw_angles = self._optimize()
+                opt_yaw_angles = self._optimize()
 
-            if np.sum(opt_yaw_angles) == 0:
+                if np.sum(opt_yaw_angles) == 0:
+                    print('No change in controls suggested for this inflow \
+                        condition...')
+
+                # optimized power
+                self.fi.calculate_wake(yaw_angles=opt_yaw_angles)
+                power_opt = self.fi.get_turbine_power()
+            elif self.ws[i] >= self.minimum_ws:
                 print('No change in controls suggested for this inflow \
-                    condition...')
-
-            # optimized power
-            fi.calculate_wake(yaw_angles=opt_yaw_angles)
-            power_opt = fi.get_turbine_power()
+                        condition...')
+                self.fi.reinitialize_flow_field(
+                    wind_direction=self.wd[i], wind_speed=self.ws[i])
+                self.fi.calculate_wake(yaw_angles=0.0)
+                opt_yaw_angles = len(self.x0)*[0.0]
+                power_opt = self.fi.get_turbine_power()
+            else:
+                print('No change in controls suggested for this inflow \
+                        condition...')
+                opt_yaw_angles = len(self.x0)*[0.0]
+                power_opt = len(self.x0)*[0.0]
 
             # add variables to dataframe
-            df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]],'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
+            df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
+        df_opt.reset_index(inplace=True)
 
         return df_opt
 

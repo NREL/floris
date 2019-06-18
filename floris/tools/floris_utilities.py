@@ -26,7 +26,7 @@ class FlorisInterface():
         self.input_file = input_file
         self.floris = Floris(input_file=input_file)
 
-    def calculate_wake(self, yaw_angles=None):
+    def calculate_wake(self, yaw_angles=None, no_wake=False):
         """
         Wrapper to the floris flow field calculate_wake method
 
@@ -38,7 +38,7 @@ class FlorisInterface():
         if yaw_angles is not None:
             self.floris.farm.set_yaw_angles(yaw_angles)
 
-        self.floris.farm.flow_field.calculate_wake()
+        self.floris.farm.flow_field.calculate_wake(no_wake=no_wake)
 
     def reinitialize_flow_field(self,
                                 wind_speed=None,

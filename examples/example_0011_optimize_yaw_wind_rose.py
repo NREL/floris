@@ -17,51 +17,136 @@ import floris.tools as wfct
 import floris.tools.visualization as vis
 import floris.tools.cut_plane as cp
 from floris.tools.optimization import YawOptimizationWindRose
+import floris.tools.wind_rose as rose
+import floris.tools.power_rose as pr
 import numpy as np
+import pandas as pd
 
 # Instantiate the FLORIS object
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 
-# Generate random wind rose data
-wd = np.arange(0., 360., 5.)
-np.random.seed(1)
-ws = 8.0 + np.random.randn(len(wd))*0.5
-freq = np.abs(np.sort(np.random.randn(len(wd))))
-freq = freq/freq.sum()
+# Define wind farm coordinates and layout
+wf_coordinate = [39.8283, -98.5795]
 
-# Set turbine locations to 3 turbines in a row
+# Set wind farm to N_row x N_row grid with constant spacing 
+# (2 x 2 grid, 5 D spacing)
 D = fi.floris.farm.turbines[0].rotor_diameter
-layout_x = [0, 7*D, 14*D]
-layout_y = [0, 0, 0]
+N_row = 2
+spc = 5
+layout_x = []
+layout_y = []
+for i in range(N_row):
+	for k in range(N_row):
+		layout_x.append(i*spc*D)
+		layout_y.append(k*spc*D)
+N_turb = len(layout_x)
+
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 fi.calculate_wake()
 
-# Initial power output
-AEP_initial = fi.get_farm_AEP(wd, ws, freq)
+# set min and max yaw offsets for optimization
+min_yaw = 0.0
+max_yaw = 25.0
+
+# Define minimum and maximum wind speed for optimizing power. 
+# Below minimum wind speed, assumes power is zero.
+minimum_ws = 3.0
+maximum_ws = 15.0
+
+# ================================================================================
+print('Importing wind rose data...')
+# ================================================================================
+
+# Create wind rose object and import wind rose dataframe using WIND Toolkit HSDS API.
+# Alternatively, load existing .csv file with wind rose information.
+calculate_wind_rose = True
+
+if calculate_wind_rose:
+
+	wd_list = np.arange(0,360,5)
+	ws_list = np.arange(0,26,1)
+
+	wind_rose = rose.WindRose()
+	df = wind_rose.import_from_wind_toolkit_hsds(wf_coordinate[0],
+	                                                    wf_coordinate[1],
+	                                                    ht = 100,
+	                                                    wd = wd_list,
+	                                                    ws = ws_list,
+	                                                    limit_month = None,
+	                                                    st_date = None,
+	                                                    en_date = None)
+
+	# plot wind rose
+	wind_rose.plot_wind_rose()
+else:
+	df = pd.read_csv('windtoolkit_geo_center_us.csv')
+
+# =============================================================================
+print('Finding baseline power in FLORIS...')
+# =============================================================================
+
+df_base = pd.DataFrame()
+
+for i in range(len(df.wd)):
+
+    if df.ws[i] >= minimum_ws:
+        fi.reinitialize_flow_field(wind_direction=df.wd[i], wind_speed=df.ws[i])
+        # calculate baseline power
+        fi.calculate_wake()
+        power_base = fi.get_turbine_power()
+
+        # calculate power for no wake case
+        fi.calculate_wake(no_wake=True)
+        power_no_wake = fi.get_turbine_power()
+    else:
+        power_base = N_turb*[0.0]
+        power_no_wake = N_turb*[0.0]
+
+    # add variables to dataframe
+    df_base = df_base.append(pd.DataFrame({'ws':[df.ws[i]],'wd':[df.wd[i]], \
+        'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+        'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
+df_base.reset_index(inplace=True)
 
 # =============================================================================
 print('Finding optimal yaw angles in FLORIS...')
 # =============================================================================
-# Set bounds for allowable wake steering
-min_yaw = 0.0
-max_yaw = 25.0
+
 # Instantiate the Optimization object
-yaw_opt = YawOptimizationWindRose(fi, wd, ws, freq,
+yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws, df.freq_val,
                                minimum_yaw_angle=min_yaw, 
-                               maximum_yaw_angle=max_yaw)
+                               maximum_yaw_angle=max_yaw,
+                               minimum_ws=minimum_ws,
+                               maximum_ws=maximum_ws)
 
 # Perform optimization
-yaw_angles = yaw_opt.optimize()
+df_opt = yaw_opt.optimize()
 
-print('yaw angles = ')
-for i in range(len(yaw_angles)):
-    print('Turbine ', i, '=', yaw_angles[i], ' deg')
+# Summarize using the power rose module
+power_rose = pr.PowerRose()
+case_name = 'Example '+str(N_row)+' x '+str(N_row)+ 'Wind Farm'
 
-# Assign yaw angles to turbines and calculate wake
-fi.calculate_wake(yaw_angles=yaw_angles)
-AEP_opt = fi.get_farm_AEP(wd, ws, freq)
+# combine wind farm-level power into one dataframe
+df_power = pd.DataFrame({'ws':df.ws,'wd':df.wd, \
+    'freq_val':df.freq_val,'power_no_wake':df_base.power_no_wake, \
+    'power_baseline':df_base.power_baseline,'power_opt':df_opt.power_opt})
 
-print('==========================================')
-print('Total AEP Gain = %.1f%%' %
-      (100.*(AEP_opt - AEP_initial)/AEP_initial))
-print('==========================================')
+# initialize power rose
+df_yaw = pd.DataFrame([list(row) for row in df_opt['yaw_angles']],columns=[str(i) for i in range(1,N_turb+1)])
+df_yaw['ws'] = df.ws
+df_yaw['wd'] = df.wd
+df_turbine_power_no_wake = pd.DataFrame([list(row) for row in df_base['turbine_power_no_wake']],columns=[str(i) for i in range(1,N_turb+1)])
+df_turbine_power_no_wake['ws'] = df.ws
+df_turbine_power_no_wake['wd'] = df.wd
+df_turbine_power_baseline = pd.DataFrame([list(row) for row in df_base['turbine_power_baseline']],columns=[str(i) for i in range(1,N_turb+1)])
+df_turbine_power_baseline['ws'] = df.ws
+df_turbine_power_baseline['wd'] = df.wd
+df_turbine_power_opt = pd.DataFrame([list(row) for row in df_opt['turbine_power_opt']],columns=[str(i) for i in range(1,N_turb+1)])
+df_turbine_power_opt['ws'] = df.ws
+df_turbine_power_opt['wd'] = df.wd
+
+power_rose.initialize(case_name, df_power, df_yaw, df_turbine_power_no_wake, df_turbine_power_baseline, df_turbine_power_opt)
+
+power_rose.plot_by_direction()
+power_rose.report()
+plt.show()
