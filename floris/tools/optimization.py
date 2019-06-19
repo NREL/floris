@@ -315,8 +315,7 @@ class YawOptimizationWindRose(Optimization):
         self.fi.calculate_wake(yaw_angles=yaw_angles)
         # self.floris.farm.set_yaw_angles(yaw_angles, calculate_wake=True)
 
-        power = -1 * np.sum(
-            [turbine.power for turbine in self.fi.floris.farm.turbines])
+        power = -1 * np.sum(self.fi.get_turbine_power())
 
         return power / (10**3)
 

@@ -65,9 +65,15 @@ class WindRose():
 
         Args:
             filename (str): Read-from path for pickled WindRose Object
+
+        Returns:
+            df (pd.DataFrame): DataFrame containing wind data from the
+                specified file.
         """
         self.num_wd, self.num_ws, self.wd_step, self.ws_step, self.wd, self.ws, self.df = pickle.load(
             open(filename, "rb"))
+
+        return self.df
 
     def resample_wind_speed(self, df, ws=np.arange(0, 26, 1.)):
         """

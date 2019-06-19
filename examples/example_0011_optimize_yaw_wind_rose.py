@@ -41,7 +41,7 @@ for i in range(N_row):
 		layout_y.append(k*spc*D)
 N_turb = len(layout_x)
 
-fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
+fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
 fi.calculate_wake()
 
 # set min and max yaw offsets for optimization
@@ -54,6 +54,21 @@ minimum_ws = 3.0
 maximum_ws = 15.0
 
 # ================================================================================
+print('Plotting the FLORIS flowfield...')
+# ================================================================================
+
+# Initialize the horizontal cut
+hor_plane = wfct.cut_plane.HorPlane(
+    fi.get_flow_data(),
+    fi.floris.farm.turbines[0].hub_height
+)
+
+# Plot and show
+fig, ax = plt.subplots()
+wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+ax.set_title('Baseline flow for U = 8 m/s, Wind Direction = 270$^\circ$')
+
+# ================================================================================
 print('Importing wind rose data...')
 # ================================================================================
 
@@ -61,12 +76,13 @@ print('Importing wind rose data...')
 # Alternatively, load existing .csv file with wind rose information.
 calculate_wind_rose = True
 
+wind_rose = rose.WindRose()
+
 if calculate_wind_rose:
 
 	wd_list = np.arange(0,360,5)
 	ws_list = np.arange(0,26,1)
 
-	wind_rose = rose.WindRose()
 	df = wind_rose.import_from_wind_toolkit_hsds(wf_coordinate[0],
 	                                                    wf_coordinate[1],
 	                                                    ht = 100,
@@ -76,10 +92,11 @@ if calculate_wind_rose:
 	                                                    st_date = None,
 	                                                    en_date = None)
 
-	# plot wind rose
-	wind_rose.plot_wind_rose()
 else:
-	df = pd.read_csv('windtoolkit_geo_center_us.csv')
+	df = wind_rose.load('windtoolkit_geo_center_us.p')
+
+# plot wind rose
+wind_rose.plot_wind_rose()
 
 # =============================================================================
 print('Finding baseline power in FLORIS...')
@@ -106,6 +123,7 @@ for i in range(len(df.wd)):
     df_base = df_base.append(pd.DataFrame({'ws':[df.ws[i]],'wd':[df.wd[i]], \
         'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
         'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
+
 df_base.reset_index(inplace=True)
 
 # =============================================================================
@@ -124,7 +142,7 @@ df_opt = yaw_opt.optimize()
 
 # Summarize using the power rose module
 power_rose = pr.PowerRose()
-case_name = 'Example '+str(N_row)+' x '+str(N_row)+ 'Wind Farm'
+case_name = 'Example '+str(N_row)+' x '+str(N_row)+ ' Wind Farm'
 
 # combine wind farm-level power into one dataframe
 df_power = pd.DataFrame({'ws':df.ws,'wd':df.wd, \
@@ -149,4 +167,5 @@ power_rose.initialize(case_name, df_power, df_yaw, df_turbine_power_no_wake, df_
 
 power_rose.plot_by_direction()
 power_rose.report()
+
 plt.show()

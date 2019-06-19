@@ -81,10 +81,10 @@ class PowerRose():
         df = self.df_power.copy(deep=True)
         df = df.sum()
 
-        # Get total energy amounts
-        self.total_no_wake = df.energy_no_wake
-        self.total_baseline = df.energy_baseline
-        self.total_opt = df.energy_opt
+        # Get total annual energy amounts
+        self.total_no_wake = (8760/1E9)*df.energy_no_wake
+        self.total_baseline = (8760/1E9)*df.energy_baseline
+        self.total_opt = (8760/1E9)*df.energy_opt
 
         # Get wake loss amounts
         self.baseline_percent = self.total_baseline / self.total_no_wake
@@ -109,7 +109,7 @@ class PowerRose():
         print('=============================================')
         print('-\tNo-Wake\t\tBaseline\tOpt ')
         print('---------------------------------------------')
-        print('Energy\t%.1E\t\t%.1E\t\t%.1E' %
+        print('AEP (GWh)\t%.1E\t\t%.1E\t\t%.1E' %
               (self.total_no_wake, self.total_baseline, self.total_opt))
         print('%%\t--\t\t%.1f%%\t\t%.1f%%' %
               (100. * self.baseline_percent, 100. * self.opt_percent))
@@ -212,7 +212,7 @@ class PowerRose():
         ax.axhline(np.mean(df.energy_opt) / np.mean(df.energy_no_wake),
                    color='r',
                    ls='--')
-        ax.set_ylabel('Wake Loss')
+        ax.set_ylabel('Normalized Wind Farm Power')
         ax.grid(True)
         ax.legend()
 
