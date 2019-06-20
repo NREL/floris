@@ -93,7 +93,7 @@ class Turbine():
             raise ValueError(
                 "Turbine.grid_point_count must be the square of a number")
 
-        self.reinitialize_turbine(turbulence_intensity=0.0)
+        self.reinitialize_turbine(turbulence_intensity=None)
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
