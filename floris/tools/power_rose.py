@@ -212,7 +212,7 @@ class PowerRose():
         ax.axhline(np.mean(df.energy_opt) / np.mean(df.energy_no_wake),
                    color='r',
                    ls='--')
-        ax.set_ylabel('Normalized Wind Farm Power')
+        ax.set_ylabel('Normalized Wind Farm Energy')
         ax.grid(True)
         ax.legend()
 
