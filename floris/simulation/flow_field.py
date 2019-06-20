@@ -311,8 +311,6 @@ class FlowField():
             self.wind_veer = wind_veer
         if turbulence_intensity is not None:
             self.turbulence_intensity = turbulence_intensity
-            for turbine in self.turbine_map.turbines:
-                turbine.turbulence_intensity = self.turbulence_intensity
         if air_density is not None:
             self.air_density = air_density
             for turbine in self.turbine_map.turbines:
@@ -335,7 +333,7 @@ class FlowField():
 
         # reinitialize the turbines
         for turbine in self.turbine_map.turbines:
-            turbine.reinitialize_turbine()
+            turbine.reinitialize_turbine(self.turbulence_intensity)
 
     def calculate_wake(self, no_wake=False):
         """

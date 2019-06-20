@@ -93,7 +93,7 @@ class Turbine():
             raise ValueError(
                 "Turbine.grid_point_count must be the square of a number")
 
-        self.reinitialize_turbine()
+        self.reinitialize_turbine(turbulence_intensity=0.0)
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
@@ -286,7 +286,7 @@ class Turbine():
             rotated_z
         )
 
-    def reinitialize_turbine(self):
+    def reinitialize_turbine(self, turbulence_intensity):
         """
         This method sets the velocities at the turbine's rotor swept 
         area grid points to zero.
@@ -295,7 +295,8 @@ class Turbine():
             *None* -- The velocities are updated directly in the 
             :py:class:`floris.simulation.turbine` object.
         """
-        self.velocities = [0] * self.grid_point_count
+        self.velocities = [0.0] * self.grid_point_count
+        self.turbulence_intensity = turbulence_intensity
 
     def set_yaw_angle(self, yaw_angle):
         """
