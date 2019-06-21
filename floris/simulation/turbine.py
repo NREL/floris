@@ -287,7 +287,7 @@ class Turbine():
             rotated_z
         )
 
-    def reinitialize_turbine(self, turbulence_intensity=None):
+    def reinitialize_turbine(self, turbulence_intensity):
         """
         This method sets the velocities at the turbine's rotor swept 
         area grid points to zero.

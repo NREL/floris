@@ -165,7 +165,8 @@ df_turbine_power_opt['wd'] = df.wd
 
 power_rose.initialize(case_name, df_power, df_yaw, df_turbine_power_no_wake, df_turbine_power_baseline, df_turbine_power_opt)
 
-power_rose.plot_by_direction()
+fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(6.4, 6.5))
+power_rose.plot_by_direction(axarr)
 power_rose.report()
 
 plt.show()

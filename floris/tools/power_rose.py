@@ -182,22 +182,46 @@ class PowerRose():
             self.df_turbine_power_opt, self.df_combine
         ], open(filename, "wb"))
 
-    def plot_by_direction(self):
+    def plot_by_direction(self,axarr=None):
         """
-        Bin Power data by direction and plot.
+        Bin energy data by direction and plot.
+
+        Args:
+            axarr (numpy.ndarray of matplotlib.axes._subplots.AxesSubplot objects, optional): 
+                array of 3 figure axes to which data should be plotted. Default is None. 
 
         Returns:
-            tuple: tuple containing:
-
-                -   **fig** (*plt.figure*): Figure handle.
-                -   **axarr** (*list*): list of axis handles.
+            axarr (numpy.ndarray of matplotlib.axes._subplots.AxesSubplot objects): 
+                list of axis handles to which the data is plotted.
         """
 
         df = self.df_power.copy(deep=True)
         df = df.groupby('wd').sum().reset_index()
 
-        fig, axarr = plt.subplots(2, 1, sharex=True)
+        if axarr is None:
+            fig, axarr = plt.subplots(3, 1, sharex=True)
+
         ax = axarr[0]
+        ax.plot(df.wd,
+                df.energy_baseline / np.max(df.energy_opt),
+                label='Baseline',
+                color='k')
+        ax.axhline(np.mean(df.energy_baseline / np.max(df.energy_opt)),
+                   color='r',
+                   ls='--')
+        ax.plot(df.wd,
+                df.energy_opt / np.max(df.energy_opt),
+                label='Optimized',
+                color='r')
+        ax.axhline(np.mean(df.energy_opt / np.max(df.energy_opt)),
+                   color='r',
+                   ls='--')
+        ax.set_ylabel('Normalized Energy')
+        ax.grid(True)
+        ax.legend()
+        ax.set_title(self.name)
+
+        ax = axarr[1]
         ax.plot(df.wd,
                 df.energy_baseline / df.energy_no_wake,
                 label='Baseline',
@@ -212,11 +236,11 @@ class PowerRose():
         ax.axhline(np.mean(df.energy_opt) / np.mean(df.energy_no_wake),
                    color='r',
                    ls='--')
-        ax.set_ylabel('Normalized Wind Farm Energy')
+        ax.set_ylabel('Wind Farm Efficiency')
         ax.grid(True)
         ax.legend()
 
-        ax = axarr[1]
+        ax = axarr[2]
         ax.plot(
             df.wd,
             100. * (df.energy_opt - df.energy_baseline) / df.energy_baseline,
@@ -226,8 +250,9 @@ class PowerRose():
                    color='r',
                    ls='--')
         ax.set_ylabel('Percent Gain')
+        ax.set_xlabel('Wind Direction (deg)')
 
-        return fig, axarr
+        return axarr
 
     def wake_loss_at_direction(self, wd):
         """
