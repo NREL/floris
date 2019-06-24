@@ -70,15 +70,15 @@ class _CutPlane():
         # Mesh and interpolate u, v and w
         self.x1_mesh, self.x2_mesh = np.meshgrid(self.x1_lin, self.x2_lin)
         self.u_mesh = griddata(
-            np.column_stack([self.x1_in, self.x2_in]),
+            np.column_stack([(1+np.finfo(float).eps) * self.x1_in, (1+np.finfo(float).eps) * self.x2_in]),
             self.u_in, (self.x1_mesh.flatten(), self.x2_mesh.flatten()),
             method='cubic')
         self.v_mesh = griddata(
-            np.column_stack([self.x1_in, self.x2_in]),
+            np.column_stack([(1+np.finfo(float).eps) * self.x1_in, (1+np.finfo(float).eps) * self.x2_in]),
             self.v_in, (self.x1_mesh.flatten(), self.x2_mesh.flatten()),
             method='cubic')
         self.w_mesh = griddata(
-            np.column_stack([self.x1_in, self.x2_in]),
+            np.column_stack([(1+np.finfo(float).eps) * self.x1_in, (1+np.finfo(float).eps) * self.x2_in]),
             self.w_in, (self.x1_mesh.flatten(), self.x2_mesh.flatten()),
             method='cubic')
 
