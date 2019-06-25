@@ -13,6 +13,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
+def nudge_outward(x):
+    """
+    Avoid numerical issue in grid data by sligly expanding input x,y
+
+    Args:
+        x (np.arraym float): Vector to be slightly expanded
+    """
+    nudge_val = 0.001
+    min_x = np.min(x)
+    max_x = np.max(x)
+    x = np.where(x==min_x, min_x-nudge_val, x) 
+    x = np.where(x==max_x, max_x+nudge_val, x) 
+    return x
 
 class _CutPlane():
     def __init__(self, flow_data, x1='x', x2='y', x3_value=None):
@@ -70,15 +83,15 @@ class _CutPlane():
         # Mesh and interpolate u, v and w
         self.x1_mesh, self.x2_mesh = np.meshgrid(self.x1_lin, self.x2_lin)
         self.u_mesh = griddata(
-            np.column_stack([self.x1_in, self.x2_in]),
+            np.column_stack([nudge_outward(self.x1_in), nudge_outward(self.x2_in)]),
             self.u_in, (self.x1_mesh.flatten(), self.x2_mesh.flatten()),
             method='cubic')
         self.v_mesh = griddata(
-            np.column_stack([self.x1_in, self.x2_in]),
+            np.column_stack([nudge_outward(self.x1_in), nudge_outward(self.x2_in)]),
             self.v_in, (self.x1_mesh.flatten(), self.x2_mesh.flatten()),
             method='cubic')
         self.w_mesh = griddata(
-            np.column_stack([self.x1_in, self.x2_in]),
+            np.column_stack([nudge_outward(self.x1_in), nudge_outward(self.x2_in)]),
             self.w_in, (self.x1_mesh.flatten(), self.x2_mesh.flatten()),
             method='cubic')
 
