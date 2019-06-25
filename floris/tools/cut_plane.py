@@ -15,11 +15,11 @@ from scipy.interpolate import griddata
 
 def nudge_outward(x):
     """
-        Avoid numerical issue in grid data by sligly expanding input x,y
+    Avoid numerical issue in grid data by sligly expanding input x,y
 
-        Args:
-            x (np.arraym float): Vector to be slightly expanded
-        """
+    Args:
+        x (np.arraym float): Vector to be slightly expanded
+    """
     nudge_val = 0.001
     min_x = np.min(x)
     max_x = np.max(x)
@@ -83,8 +83,6 @@ class _CutPlane():
         # Mesh and interpolate u, v and w
         self.x1_mesh, self.x2_mesh = np.meshgrid(self.x1_lin, self.x2_lin)
         self.u_mesh = griddata(
-            # np.column_stack([self.x1_in, self.x2_in]), # Uncomment to show issue
-            # np.column_stack([(1+np.finfo(float).eps) * self.x1_in, (1+np.finfo(float).eps) * self.x2_in]),
             np.column_stack([nudge_outward(self.x1_in), nudge_outward(self.x2_in)]),
             self.u_in, (self.x1_mesh.flatten(), self.x2_mesh.flatten()),
             method='cubic')
