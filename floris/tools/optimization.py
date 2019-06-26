@@ -78,7 +78,7 @@ class YawOptimizationOneWD(Optimization):
 
         if opt_options is None:
             self.opt_options = {'maxiter': 100, 'disp': True, \
-                        'iprint': 2, 'ftol': 1e-9, 'eps': np.radians(5.0)}
+                        'iprint': 2, 'ftol': 1e-7}
         
         self.reinitialize_opt(
             minimum_yaw_angle=minimum_yaw_angle,
