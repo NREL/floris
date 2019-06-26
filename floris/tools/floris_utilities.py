@@ -77,9 +77,9 @@ class FlorisInterface():
         # Build turbine map (convenience layer for user)
         if layout_array is not None:
             turbine_map = TurbineMap(
-                layout_array[0], layout_array[1],
-                [copy.deepcopy(self.floris.farm.turbines[0]) for ii in range(len(layout_array[0]))])
-                # self.floris.farm.flow_field.turbine_map.turbines)
+                layout_array[0], layout_array[1], \
+                [copy.deepcopy(self.floris.farm.turbines[0]) \
+                for ii in range(len(layout_array[0]))])
         else:
             turbine_map = None
 
@@ -286,6 +286,19 @@ class FlorisInterface():
             for turbine in self.floris.farm.flow_field.turbine_map.turbines
         ]
         return turb_powers
+
+    def get_turbine_ct(self):
+        """
+        Report thrust coefficient from each wind turbine from instance of floris.
+
+        Returns:
+            turb_ct_array (np.array): thrust coefficient for each wind turbine.
+        """
+        turb_ct_array = [
+            turbine.Ct
+            for turbine in self.floris.farm.flow_field.turbine_map.turbines
+        ]
+        return turb_ct_array
 
         # calculate the power under different yaw angles
     def get_farm_power_for_yaw_angle(self, yaw_angles):
