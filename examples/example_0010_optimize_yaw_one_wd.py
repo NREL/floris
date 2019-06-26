@@ -32,7 +32,7 @@ fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 fi.calculate_wake()
 
 # Initial power output
-power_initial = np.sum(fi.get_turbine_power())
+power_initial = fi.get_farm_power()
 
 # =============================================================================
 print('Plotting the FLORIS flowfield...')
@@ -63,13 +63,14 @@ yaw_opt = YawOptimizationOneWD(fi,
 # Perform optimization
 yaw_angles = yaw_opt.optimize()
 
+print('==========================================')
 print('yaw angles = ')
 for i in range(len(yaw_angles)):
     print('Turbine ', i, '=', yaw_angles[i], ' deg')
 
 # Assign yaw angles to turbines and calculate wake
 fi.calculate_wake(yaw_angles=yaw_angles)
-power_opt = np.sum(fi.get_turbine_power())
+power_opt = fi.get_farm_power()
 
 print('==========================================')
 print('Total Power Gain = %.1f%%' %
