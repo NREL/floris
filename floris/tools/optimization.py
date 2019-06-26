@@ -69,18 +69,24 @@ class YawOptimizationOneWD(Optimization):
                            maximum_yaw_angle=25.0,
                            x0=None,
                            bnds=None,
-                           opt_method='SLSQP'):
+                           opt_method='SLSQP',
+                           opt_options=None):
         """
         Instantiate YawOptimization object and parameter values.
         """
         super().__init__(fi)
+
+        if opt_options is None:
+            self.opt_options = {'maxiter': 100, 'disp': True, \
+                        'iprint': 2, 'ftol': 1e-9, 'eps': np.radians(5.0)}
         
         self.reinitialize_opt(
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
             x0=x0,
             bnds=bnds,
-            opt_method=opt_method
+            opt_method=opt_method,
+            opt_options=opt_options
         )
 
     # Private methods
@@ -104,7 +110,7 @@ class YawOptimizationOneWD(Optimization):
                                 self.x0,
                                 method=self.opt_method,
                                 bounds=self.bnds,
-                                options={'eps': np.radians(5.0)})
+                                options=self.opt_options)
 
         opt_yaw_angles = self.residual_plant.x
 
@@ -151,7 +157,8 @@ class YawOptimizationOneWD(Optimization):
                            maximum_yaw_angle=None,
                            x0=None,
                            bnds=None,
-                           opt_method=None):
+                           opt_method=None,
+                           opt_options=None):
         """
         Reintializes parameter values for the optimization.
         
@@ -179,8 +186,6 @@ class YawOptimizationOneWD(Optimization):
             self.minimum_yaw_angle = minimum_yaw_angle
         if maximum_yaw_angle is not None:
             self.maximum_yaw_angle = maximum_yaw_angle
-        if opt_method is not None:
-            self.opt_method = opt_method
         if x0 is not None:
             self.x0 = x0
         else:
@@ -191,6 +196,10 @@ class YawOptimizationOneWD(Optimization):
         else:
             self._set_opt_bounds(self.minimum_yaw_angle, 
                                  self.maximum_yaw_angle)
+        if opt_method is not None:
+            self.opt_method = opt_method
+        if opt_options is not None:
+            self.opt_options = opt_options
 
     # Properties
 
