@@ -19,9 +19,7 @@ import floris.tools.cut_plane as cp
 import numpy as np
 
 # Instantiate the FLORIS object
-input_file = '../../../Goldwind/matrix_input_files/jiangsu_108_D_2000_rating.json'
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-# fi = wfct.floris_utilities.FlorisInterface(input_file)
 
 # Set turbine locations to 3 turbines in a triangle
 D = fi.floris.farm.turbines[0].rotor_diameter
@@ -31,10 +29,6 @@ fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
 # Define the boundary for the wind farm
 boundaries = [[2000.1, 4000.], [2000., 0.1], [0., 0.], [0.1, 2000.]]
-# boundaries = [[40570267., 3655048.],
-#               [40570267., 3647082.],
-#               [40563398., 3647082.],
-#               [40563398., 3655048.]]
 
 # Define the limits for the turbine height
 height_lims = [85., 115.]
@@ -50,7 +44,7 @@ freq = np.abs(np.sort(np.random.randn(len(wd))))
 freq = freq/freq.sum()
 
 # Set optimization options
-opt_options = {'maxiter': 2, 'disp': True, 'iprint': 2, 'ftol': 1e-8}
+opt_options = {'maxiter': 50, 'disp': True, 'iprint': 2, 'ftol': 1e-8}
 
 AEP_initial = fi.get_farm_AEP(wd, ws, freq)
 

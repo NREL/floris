@@ -655,8 +655,8 @@ class LayoutOptimization(Optimization):
         return inside
 
     def _generate_constraints(self):
-        grad_constraint1 = grad(self._space_constraint)
-        grad_constraint2 = grad(self._distance_from_boundaries)
+        # grad_constraint1 = grad(self._space_constraint)
+        # grad_constraint2 = grad(self._distance_from_boundaries)
 
         tmp1 = {'type': 'ineq','fun' : lambda x,*args: \
                 self._space_constraint(x, self.min_dist), \
@@ -948,7 +948,7 @@ class LayoutHeightOptimization(LayoutOptimization):
 
         opt_results = self.residual_plant.x
         
-        return opt_resultss
+        return opt_results
     
     def _COE_layout_height_opt(self, opt_vars):
         locs = self._unnorm(opt_vars[0:2*self.nturbs], self.bndx_min, self.bndx_max)
