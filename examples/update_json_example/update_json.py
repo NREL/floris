@@ -52,6 +52,12 @@ def update_json(filename, template_filename='template_input.json', output_filena
 
             data['wake']['properties']['parameters']['wake_velocity_parameters']['curl'] = data_old['wake']['properties']['parameters']['curl']
 
+            # Add turbulence terms to curl
+            data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['initial'] = data_old['wake']['properties']['parameters']['turbulence_intensity']['initial']
+            data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['constant'] = data_old['wake']['properties']['parameters']['turbulence_intensity']['constant']
+            data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['ai'] = data_old['wake']['properties']['parameters']['turbulence_intensity']['ai']
+            data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['downstream'] = data_old['wake']['properties']['parameters']['turbulence_intensity']['downstream']
+
             # Set the turbulence terms
             data['wake']['properties']['parameters']['wake_turbulence_parameters']['gauss'] = data_old['wake']['properties']['parameters']['turbulence_intensity']
 
