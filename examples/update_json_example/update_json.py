@@ -2,6 +2,8 @@ import json
 import glob
 import copy
 
+# This needs a proper home, but for now leaving here until we do the final pull to develop...
+
 def update_json(filename, template_filename='template_input.json', output_filename=None):
 
     # If the output filename not given, just append out
@@ -50,12 +52,6 @@ def update_json(filename, template_filename='template_input.json', output_filena
 
             data['wake']['properties']['parameters']['wake_velocity_parameters']['curl'] = data_old['wake']['properties']['parameters']['curl']
 
-            # Remove turbulence terms
-            # del data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['initial']
-            # del data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['constant']
-            # del data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['ai']
-            # del data['wake']['properties']['parameters']['wake_velocity_parameters']['curl']['downstream']
-
             # Set the turbulence terms
             data['wake']['properties']['parameters']['wake_turbulence_parameters']['gauss'] = data_old['wake']['properties']['parameters']['turbulence_intensity']
 
@@ -63,8 +59,6 @@ def update_json(filename, template_filename='template_input.json', output_filena
             data['wake']['properties']['parameters']['wake_deflection_parameters']['gauss'] = data_old['wake']['properties']['parameters']['gauss']
 
             data['wake']['properties']['parameters']['wake_deflection_parameters']['jimenez'] = data_old['wake']['properties']['parameters']['jimenez']
-
-
 
             #Save the new file
             with open(output_filename, 'w') as outfile:  
