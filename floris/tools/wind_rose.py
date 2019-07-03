@@ -25,6 +25,8 @@ import pandas as pd
 import pickle
 from pyproj import Proj
 import floris.utilities as geo
+import math
+
 
 
 class WindRose():
@@ -451,6 +453,7 @@ class WindRose():
                                       limit_month=None,
                                       st_date=None,
                                       en_date=None):
+   
         """
         Given a lat/long coordinate in the continental US return a
         dataframe containing the normalized frequency of each pair of
@@ -498,8 +501,13 @@ class WindRose():
             df (pd.DataFrame): DataFrame with wind speed and direction
                 data.
         """
+         
 
-        # check inputs
+        # Check inputs
+        
+        # Array of hub height data avaliable on Toolkit
+        h_range = [10, 40, 60, 80, 100, 120, 140, 160, 200]
+        
         if st_date is not None:
             if dateutil.parser.parse(st_date) > dateutil.parser.parse(
                     '12-13-2013 23:00'):
@@ -507,6 +515,7 @@ class WindRose():
                     'Error, invalid date range. Valid range: 01-01-2007 - 12/31/2013'
                 )
                 return None
+        
         if en_date is not None:
             if dateutil.parser.parse(en_date) < dateutil.parser.parse(
                     '01-01-2007 00:00'):
@@ -515,42 +524,102 @@ class WindRose():
                 )
                 return None
 
-        if ht not in [10, 40, 60, 80, 100, 120, 140, 160, 200]:
-            print(
-                'Error, invalid height. Valid heights: 10, 40, 60, 80, 100, 120, 140, 160, 200'
-            )
+        if (h_range[0] > ht):
+            print('Error, height is not in the range of avaliable WindToolKit data. Minimum height = 10m')
             return None
-
-        # load wind speeds and directions from WIND Toolkit
-        df = self.load_wind_toolkit_hsds(lat,
-                                         lon,
-                                         ht=ht,
-                                         limit_month=limit_month,
-                                         st_date=st_date,
-                                         en_date=en_date)
-
-        # check for errors in loading wind toolkit data
-        if df is None:
+        
+        if (h_range[-1] < ht):
+            print('Error, height is not in the range of avaliable WindToolKit data. Maxiumum height = 200m')
             return None
+         
+    
+          
+        # Load wind speeds and directions from WimdToolkit 
 
+        # Case for turbine height (ht) matching discrete avaliable height (h_range) 
+        if ht in h_range:
+             
+            d = self.load_wind_toolkit_hsds(lat, 
+                                                lon, 
+                                                ht, 
+                                                limit_month=limit_month, 
+                                                st_date=st_date, 
+                                                en_date=en_date)
+        
+            ws_new = d['ws']
+            wd_new = d['wd']
+            
+        # Case for ht not matching discete height
+        else: 
+            h_range_up = next(x[0] for x in enumerate(h_range) if x[1] > ht)
+            h_range_low = h_range_up - 1
+            hub_up = h_range[h_range_up]
+            hub_low = h_range[h_range_low]
+        
+        # Load data for boundary cases of ht 
+            d_low = self.load_wind_toolkit_hsds(lat, 
+                                            lon, 
+                                            hub_low, 
+                                            limit_month=limit_month, 
+                                            st_date=st_date, 
+                                            en_date=en_date)
+            
+            d_up = self.load_wind_toolkit_hsds(lat, 
+                                            lon, 
+                                            hub_up, 
+                                            limit_month=limit_month, 
+                                            st_date=st_date, 
+                                            en_date=en_date)
+           
+            # Wind Speed interpolation
+            ws_low = d_low['ws']
+            ws_high = d_up['ws']
+            
+            ws_new = np.array(ws_low) * (1-((ht - hub_low)/(hub_up - hub_low)))+ np.array(ws_high) * ((ht - hub_low)/(hub_up - hub_low))
+            
+            # Wind Direction interpolation using Circular Mean method 
+            wd_low = d_low['wd']
+            wd_high = d_up['wd']
+
+            sin0 = np.sin(np.array(wd_low) * (math.pi/180))
+            cos0 = np.cos(np.array(wd_low) * (math.pi/180))
+            sin1= np.sin(np.array(wd_high) * (math.pi/180))
+            cos1 = np.cos(np.array(wd_high) * (math.pi/180))
+
+
+            sin_wd = sin0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ sin1 * ((ht - hub_low)/(hub_up - hub_low))
+            cos_wd = cos0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ cos1 * ((ht - hub_low)/(hub_up - hub_low))
+
+               
+            # Interpolated wind direction 
+            wd_new = 180/math.pi * np.arctan2(sin_wd, cos_wd)
+            
+        
+                                      
+        # Create a dataframe named df
+        df= pd.DataFrame({'ws': ws_new,
+                          'wd': wd_new})
+        df[df['wd'] < 0] = df[df['wd'] < 0] +360
+        
         # Start by simply round and wrapping the wind direction and wind speed columns
         df['wd'] = geo.wrap_360(df.wd.round())
         df['ws'] = geo.wrap_360(df.ws.round())
-
+        
         # Now group up
         df['freq_val'] = 1.
         df = df.groupby(['ws', 'wd']).sum()
         df['freq_val'] = df.freq_val.astype(float) / df.freq_val.sum()
         df = df.reset_index()
-
+        
         # Save the df at this point
         self.df = df
-
+        
         # Resample onto the provided wind speed and wind direction binnings
         self.internal_resample_wind_speed(ws=ws)
         self.internal_resample_wind_direction(wd=wd)
-
+        
         return self.df
+        
 
     def load_wind_toolkit_hsds(self,
                                lat,
@@ -724,7 +793,7 @@ class WindRose():
                 containing wind rose plot.
         """
         # Based on code provided by Patrick Murphy
-
+         
         # Resample data onto bins
         # df_plot = self.resample_wind_speed(self.df,ws=ws_bins)
         df_plot = self.resample_wind_direction(self.df, wd=wd_bins)
