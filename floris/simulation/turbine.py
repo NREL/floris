@@ -155,7 +155,6 @@ class Turbine():
             _ct = fCtInterp(at_wind_speed)
             if _ct.size > 1:
                 _ct = _ct[0]
-
             if _ct > 1.0:
                 _ct = 0.99
             return float(_ct)
@@ -404,6 +403,7 @@ class Turbine():
         """
         return np.cbrt(np.mean(self.velocities**3))
 
+
     @property
     def Cp(self):
         """
@@ -452,7 +452,7 @@ class Turbine():
 
             >>> Ct = floris.farm.turbines[0].Ct()
         """
-        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)**self.pP
+        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)# **self.pP
 
     @property
     def power(self):
@@ -468,7 +468,6 @@ class Turbine():
 
             >>> power = floris.farm.turbines[0].power()
         """
-        
         # Update to power calculation which replaces the fixed pP exponent with
         # an exponent pW, that changes the effective wind speed input to the power 
         # calculation, rather than scaling the power.  This better handles power

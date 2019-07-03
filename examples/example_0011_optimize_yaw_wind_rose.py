@@ -50,6 +50,7 @@ max_yaw = 25.0
 
 # Define minimum and maximum wind speed for optimizing power. 
 # Below minimum wind speed, assumes power is zero.
+# Above maximum_ws, assume optimal yaw offsets are 0 degrees
 minimum_ws = 3.0
 maximum_ws = 15.0
 
@@ -74,11 +75,11 @@ print('Importing wind rose data...')
 
 # Create wind rose object and import wind rose dataframe using WIND Toolkit HSDS API.
 # Alternatively, load existing .csv file with wind rose information.
-calculate_wind_rose = True
+calculate_new_wind_rose = True
 
 wind_rose = rose.WindRose()
 
-if calculate_wind_rose:
+if calculate_new_wind_rose:
 
 	wd_list = np.arange(0,360,5)
 	ws_list = np.arange(0,26,1)
@@ -99,46 +100,18 @@ else:
 wind_rose.plot_wind_rose()
 
 # =============================================================================
-print('Finding baseline power in FLORIS...')
-# =============================================================================
-
-df_base = pd.DataFrame()
-
-for i in range(len(df.wd)):
-
-    if df.ws[i] >= minimum_ws:
-        fi.reinitialize_flow_field(wind_direction=df.wd[i], wind_speed=df.ws[i])
-        # calculate baseline power
-        fi.calculate_wake()
-        power_base = fi.get_turbine_power()
-
-        # calculate power for no wake case
-        fi.calculate_wake(no_wake=True)
-        power_no_wake = fi.get_turbine_power()
-    else:
-        power_base = N_turb*[0.0]
-        power_no_wake = N_turb*[0.0]
-
-    # add variables to dataframe
-    df_base = df_base.append(pd.DataFrame({'ws':[df.ws[i]],'wd':[df.wd[i]], \
-        'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
-        'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
-
-df_base.reset_index(inplace=True)
-
-# =============================================================================
-print('Finding optimal yaw angles in FLORIS...')
+print('Finding baseline and optimal yaw angles in FLORIS...')
 # =============================================================================
 
 # Instantiate the Optimization object
-yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws, df.freq_val,
+yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws, 
                                minimum_yaw_angle=min_yaw, 
                                maximum_yaw_angle=max_yaw,
                                minimum_ws=minimum_ws,
                                maximum_ws=maximum_ws)
 
 # Perform optimization
-df_opt = yaw_opt.optimize()
+df_base, df_opt = yaw_opt.optimize()
 
 # Summarize using the power rose module
 power_rose = pr.PowerRose()
