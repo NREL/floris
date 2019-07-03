@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
 import floris.tools.cut_plane as cp
-from floris.tools.optimization import YawOptimizationOneWD
+from floris.tools.optimization import YawOptimization
 import numpy as np
 
 
@@ -47,6 +47,7 @@ hor_plane = wfct.cut_plane.HorPlane(
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+ax.set_title('Baseline Case for U = 8 m/s, Wind Direction = 270$^\circ$')
 
 # =============================================================================
 print('Finding optimal yaw angles in FLORIS...')
@@ -56,7 +57,7 @@ min_yaw = 0.0
 max_yaw = 25.0
 
 # Instantiate the Optimization object
-yaw_opt = YawOptimizationOneWD(fi,
+yaw_opt = YawOptimization(fi,
                                minimum_yaw_angle=min_yaw, 
                                maximum_yaw_angle=max_yaw)
 
@@ -90,4 +91,5 @@ hor_plane = wfct.cut_plane.HorPlane(
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+ax.set_title('Optimal Wake Steering for U = 8 m/s, Wind Direction = 270$^\circ$')
 plt.show()

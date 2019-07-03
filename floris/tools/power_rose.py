@@ -184,7 +184,12 @@ class PowerRose():
 
     def plot_by_direction(self,axarr=None):
         """
-        Bin energy data by direction and plot.
+        Bin energy data by direction and plot. Plots include: 
+        1) The normalized energy production by wind direction for the baseline and 
+        optimal wake steering cases. 
+        2) The wind farm efficiency (energy production relative to energy production 
+        without wake losses) by wind direction for the baseline and optimal wake steering cases. 
+        3) Percent gain in energy production with optimal wake steering by wind direction.
 
         Args:
             axarr (numpy.ndarray of matplotlib.axes._subplots.AxesSubplot objects, optional): 

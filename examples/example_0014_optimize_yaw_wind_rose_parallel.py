@@ -52,6 +52,7 @@ if __name__ == '__main__':
 
     # Define minimum and maximum wind speed for optimizing power. 
     # Below minimum wind speed, assumes power is zero.
+    # Above maximum_ws, assume optimal yaw offsets are 0 degrees
     minimum_ws = 3.0
     maximum_ws = 15.0
 
@@ -76,11 +77,11 @@ if __name__ == '__main__':
 
     # Create wind rose object and import wind rose dataframe using WIND Toolkit HSDS API.
     # Alternatively, load existing .csv file with wind rose information.
-    calculate_wind_rose = True
+    calculate_new_wind_rose = True
 
     wind_rose = rose.WindRose()
 
-    if calculate_wind_rose:
+    if calculate_new_wind_rose:
 
     	wd_list = np.arange(0,360,5)
     	ws_list = np.arange(0,26,1)
@@ -104,8 +105,8 @@ if __name__ == '__main__':
     print('Finding baseline and optimal wake steering power in FLORIS...')
     # =============================================================================
 
-    # Instantiate the Optimization object
-    yaw_opt = YawOptimizationWindRoseParallel(fi, df.wd, df.ws, df.freq_val,
+    # Instantiate the parallel optimization object
+    yaw_opt = YawOptimizationWindRoseParallel(fi, df.wd, df.ws, 
                                    minimum_yaw_angle=min_yaw, 
                                    maximum_yaw_angle=max_yaw,
                                    minimum_ws=minimum_ws,
