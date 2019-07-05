@@ -13,6 +13,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# From https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function
+def gaussian(x, mu, sig):
+    return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
 def _convert_to_numpy_array(series):
     if hasattr(series, 'values'):
@@ -513,6 +516,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     wind_direction_bin_radius = (1.0 + wind_direction_bin_p_overlap / 100.) * (
         wind_direction_bins[1]-wind_direction_bins[0])/2.0
 
+
     ratio_array_base = np.zeros(len(wind_direction_bins)) * np.nan
     lower_ratio_array_base = np.zeros(len(wind_direction_bins)) * np.nan
     upper_ratio_array_base = np.zeros(len(wind_direction_bins)) * np.nan
@@ -544,10 +548,18 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         reference_power_baseline_wd = reference_power_baseline[wind_dir_mask_baseline]
         test_power_baseline_wd = test_power_baseline[wind_dir_mask_baseline]
         wind_speed_array_baseline_wd = wind_speed_array_baseline[wind_dir_mask_baseline]
+        wind_dir_array_baseline_wd = wind_direction_array_baseline[wind_dir_mask_baseline]
+        # wd_baseline_dist = (wind_dir_array_baseline_wd - wind_direction_bin)**2
+        baseline_weight = gaussian(wind_dir_array_baseline_wd, wind_direction_bin,wind_direction_bin_radius/2.0 )
+        baseline_weight = baseline_weight / np.sum(baseline_weight)
 
         reference_power_controlled_wd = reference_power_controlled[wind_dir_mask_controlled]
         test_power_controlled_wd = test_power_controlled[wind_dir_mask_controlled]
         wind_speed_array_controlled_wd = wind_speed_array_controlled[wind_dir_mask_controlled]
+        wind_dir_array_controlled_wd = wind_direction_array_controlled[wind_dir_mask_controlled]
+        controlled_weight = gaussian(wind_dir_array_controlled_wd, wind_direction_bin,wind_direction_bin_radius/2.0 )
+        controlled_weight = controlled_weight / np.sum(controlled_weight)
+        # wd_controlled_dist = (wind_dir_array_controlled_wd - wind_direction_bin)**2
 
         if (len(reference_power_baseline_wd) == 0) or (len(reference_power_controlled_wd) == 0):
             continue
@@ -574,14 +586,18 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         for i_bs in range(n_boostrap):
 
             # random resampling w/ replacement
-            ind_bs = np.random.randint(
-                len(reference_power_baseline_wd), size=len(reference_power_baseline_wd))
+            #ind_bs = np.random.randint(
+            #     len(reference_power_baseline_wd), size=len(reference_power_baseline_wd))
+            ind_bs = np.random.choice(
+                len(reference_power_baseline_wd), size=len(reference_power_baseline_wd),p=baseline_weight)
             reference_power_binned_baseline = reference_power_baseline_wd[ind_bs]
             test_power_binned_baseline = test_power_baseline_wd[ind_bs]
             wind_speed_binned_baseline = wind_speed_array_baseline_wd[ind_bs]
 
-            ind_bs = np.random.randint(
-                len(reference_power_controlled_wd), size=len(reference_power_controlled_wd))
+            # ind_bs = np.random.randint(
+            #     len(reference_power_controlled_wd), size=len(reference_power_controlled_wd))
+            ind_bs = np.random.choice(
+                len(reference_power_controlled_wd), size=len(reference_power_controlled_wd),p=controlled_weight)
             reference_power_binned_controlled = reference_power_controlled_wd[ind_bs]
             test_power_binned_controlled = test_power_controlled_wd[ind_bs]
             wind_speed_binned_controlled = wind_speed_array_controlled_wd[ind_bs]
@@ -592,6 +608,13 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
 
         # Get the confidence bounds
         percentiles = _get_confidence_bounds(confidence)
+
+        # Compute the central over from the bootstrap runs
+        ratio_array_base[i] = np.mean(ratio_base_bs)
+        ratio_array_con[i] = np.mean(ratio_con_bs)
+        diff_array[i] = np.mean(diff_bs)
+        p_change_array[i] = np.mean(p_change_bs)
+
 
         lower_ratio_array_base[i], upper_ratio_array_base[i] = _calculate_lower_and_upper_bound(
             ratio_base_bs, percentiles, central_estimate=ratio_array_base[i], method='simple_percentile')
@@ -625,6 +648,7 @@ def plot_energy_ratio(reference_power_baseline,
                       plot_simple=False,
                       plot_ratio_scatter=False,
                       marker_scale=1.,
+                      show_count=True,
                       hide_controlled_case=False
                       ):
     """
@@ -675,6 +699,7 @@ def plot_energy_ratio(reference_power_baseline,
             plot of values, sized to indicate counts. Defaults to False.
         marker_scale ([type], optional): Marker scale. 
             Defaults to 1.
+        show_count (bool, optional): Show the counts as scatter plot
         hide_controlled_case (bool, optional): Option to hide the control case from plots, for demonstration
 
     """
@@ -731,15 +756,17 @@ def plot_energy_ratio(reference_power_baseline,
                 label=label_array[0], color=base_color, ls='-', marker='.')
         ax.fill_between(wind_direction_bins, lower_ratio_array_base,
                         upper_ratio_array_base, alpha=0.3, color=base_color, label='_nolegend_')
-        ax.scatter(wind_direction_bins, ratio_array_base, s=counts_ratio_array_base,
-                   label='_nolegend_', color=base_color, marker='o', alpha=0.2)
+        if show_count:
+            ax.scatter(wind_direction_bins, ratio_array_base, s=counts_ratio_array_base,
+                    label='_nolegend_', color=base_color, marker='o', alpha=0.2)
         if not hide_controlled_case:
             ax.plot(wind_direction_bins, ratio_array_con,
                     label=label_array[1], color=con_color, ls='-', marker='.')
             ax.fill_between(wind_direction_bins, lower_ratio_array_con,
                             upper_ratio_array_con, alpha=0.3, color=con_color, label='_nolegend_')
-            ax.scatter(wind_direction_bins, ratio_array_con, s=counts_ratio_array_con,
-                    label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+            if show_count:
+                ax.scatter(wind_direction_bins, ratio_array_con, s=counts_ratio_array_con,
+                        label='_nolegend_', color=con_color, marker='o', alpha=0.2)
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
 
@@ -748,8 +775,9 @@ def plot_energy_ratio(reference_power_baseline,
                 color=con_color, ls='-', marker='.')
         ax.fill_between(wind_direction_bins, lower_diff_array,
                         upper_diff_array, alpha=0.3, color=con_color, label='_nolegend_')
-        ax.scatter(wind_direction_bins, diff_array, s=counts_diff_array,
-                   label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+        if show_count:
+            ax.scatter(wind_direction_bins, diff_array, s=counts_diff_array,
+                    label='_nolegend_', color=con_color, marker='o', alpha=0.2)
         ax.axhline(0, color='k')
         ax.set_ylabel('Change in Energy Ratio (-)')
 
@@ -758,8 +786,9 @@ def plot_energy_ratio(reference_power_baseline,
                 color=con_color, ls='-', marker='.')
         ax.fill_between(wind_direction_bins, lower_p_change_array,
                         upper_p_change_array, alpha=0.3, color=con_color, label='_nolegend_')
-        ax.scatter(wind_direction_bins, p_change_array, s=counts_p_change_array,
-                   label='_nolegend_', color=con_color, marker='o', alpha=0.2)
+        if show_count:
+            ax.scatter(wind_direction_bins, p_change_array, s=counts_p_change_array,
+                    label='_nolegend_', color=con_color, marker='o', alpha=0.2)
         ax.axhline(0, color='k')
         ax.set_ylabel('% Change in Energy Ratio (-)')
 
