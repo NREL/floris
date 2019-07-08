@@ -4,6 +4,37 @@ Change Log
 For download and installation instructions, see the
 :ref:`installation <installation>` section.
 
+v1.1.4
+======
+Released on 2019-06-25
+
+Corrects an issue plotting cut-through planes where nans occured on boundary of
+plane.
+
+v1.1.3
+======
+Released on 2019-06-20
+
+A bug was identified where a turbine's turbulence intensity (TI) was retained
+even after reinitializing the flow field. Code was changed to correctly reset
+the TI using the reinitialize_turbines() method.
+
+This was described fully in this pull request:
+https://github.com/NREL/floris/pull/16
+
+v1.1.2
+======
+Released on 2019-06-13
+
+Updates power loss in yaw for above rated according to method in Optimising yaw
+control at wind farm level by Ervin Bossanyi.
+
+v1.1.1
+======
+Released on 2019-06-11
+
+Small fixes to ct calculation, and cp in low wind speeds.
+
 v1.1.0
 ======
 Released on 2019-05-31
