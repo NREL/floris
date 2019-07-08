@@ -25,7 +25,7 @@ import pandas as pd
 import pickle
 from pyproj import Proj
 import floris.utilities as geo
-import math
+
 
 
 
@@ -501,9 +501,8 @@ class WindRose():
             df (pd.DataFrame): DataFrame with wind speed and direction
                 data.
         """
-         
 
-        # Check inputs
+         # Check inputs
         
         # Array of hub height data avaliable on Toolkit
         h_range = [10, 40, 60, 80, 100, 120, 140, 160, 200]
@@ -531,9 +530,7 @@ class WindRose():
         if (h_range[-1] < ht):
             print('Error, height is not in the range of avaliable WindToolKit data. Maxiumum height = 200m')
             return None
-         
-    
-          
+                
         # Load wind speeds and directions from WimdToolkit 
 
         # Case for turbine height (ht) matching discrete avaliable height (h_range) 
@@ -575,32 +572,30 @@ class WindRose():
             ws_low = d_low['ws']
             ws_high = d_up['ws']
             
-            ws_new = np.array(ws_low) * (1-((ht - hub_low)/(hub_up - hub_low)))+ np.array(ws_high) * ((ht - hub_low)/(hub_up - hub_low))
+            ws_new = np.array(ws_low) * (1-((ht - hub_low)/(hub_up - hub_low))) \
+                + np.array(ws_high) * ((ht - hub_low)/(hub_up - hub_low))
             
             # Wind Direction interpolation using Circular Mean method 
             wd_low = d_low['wd']
             wd_high = d_up['wd']
 
-            sin0 = np.sin(np.array(wd_low) * (math.pi/180))
-            cos0 = np.cos(np.array(wd_low) * (math.pi/180))
-            sin1= np.sin(np.array(wd_high) * (math.pi/180))
-            cos1 = np.cos(np.array(wd_high) * (math.pi/180))
+            sin0 = np.sin(np.array(wd_low) * (np.pi/180))
+            cos0 = np.cos(np.array(wd_low) * (np.pi/180))
+            sin1= np.sin(np.array(wd_high) * (np.pi/180))
+            cos1 = np.cos(np.array(wd_high) * (np.pi/180))
 
-
-            sin_wd = sin0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ sin1 * ((ht - hub_low)/(hub_up - hub_low))
-            cos_wd = cos0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ cos1 * ((ht - hub_low)/(hub_up - hub_low))
-
-               
+            sin_wd = sin0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ sin1 * \
+                ((ht - hub_low)/(hub_up - hub_low))
+            cos_wd = cos0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ cos1 * \
+                ((ht - hub_low)/(hub_up - hub_low))
+                
             # Interpolated wind direction 
-            wd_new = 180/math.pi * np.arctan2(sin_wd, cos_wd)
-            
+            wd_new = 180/np.pi * np.arctan2(sin_wd, cos_wd)
         
-                                      
         # Create a dataframe named df
         df= pd.DataFrame({'ws': ws_new,
                           'wd': wd_new})
-        df[df['wd'] < 0] = df[df['wd'] < 0] +360
-        
+                
         # Start by simply round and wrapping the wind direction and wind speed columns
         df['wd'] = geo.wrap_360(df.wd.round())
         df['ws'] = geo.wrap_360(df.ws.round())
