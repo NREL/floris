@@ -118,7 +118,7 @@ class FlorisInterface():
                 height.
         """
         if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
-            raise (
+            raise Exception(
                 'Not allowed for wake model %s ' %
                 self.floris.farm.flow_field.wake.velocity_model.model_string)
 
