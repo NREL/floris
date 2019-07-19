@@ -158,7 +158,9 @@ class YawOptimization(Optimization):
             self.opt_options = {'maxiter': 100, 'disp': False, \
                         'iprint': 1, 'ftol': 1e-7, 'eps': 0.01}
 
-        if (unc_options is None) & (unc_pmfs is None):
+        self.unc_pmfs = unc_pmfs
+
+        if unc_options is None:
             self.unc_options = {'std_wd': 5.0, 'std_yaw': 0.0, \
                         'pmf_res': 1.0, 'pdf_cutoff': 0.995}
         
@@ -329,7 +331,7 @@ class YawOptimization(Optimization):
         if unc_options is not None:
             self.unc_options = unc_options
 
-        if self.include_unc & (self.unc_pmfs is None):
+        if include_unc & (self.unc_pmfs is None):
             if self.unc_options is None:
                 self.unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
                             'pmf_res': 1.0, 'pdf_cutoff': 0.995}
