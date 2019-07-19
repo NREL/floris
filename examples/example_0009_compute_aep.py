@@ -104,22 +104,14 @@ print('Finding baseline and optimal yaw angles in FLORIS...')
 # =============================================================================
 
 # Instantiate the Optimization object
-yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws, 
-                               minimum_yaw_angle=min_yaw, 
+yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws,
+                               minimum_yaw_angle=min_yaw,
                                maximum_yaw_angle=max_yaw,
                                minimum_ws=minimum_ws,
                                maximum_ws=maximum_ws)
 
-# Perform optimization
-# df_base, df_opt = yaw_opt.optimize()
-
-# Temp short cut to above
-df_base = pd.read_pickle('base_temp.p')
-df_opt = None
-# df_base.to_pickle('base_temp.p')
-#
-
-
+# Determine baseline power with and without wakes
+df_base = yaw_opt.calc_baseline_power()
 
 
 # combine wind farm-level power into one dataframe
@@ -127,28 +119,18 @@ df_power = pd.DataFrame({'ws':df.ws,'wd':df.wd, \
     'freq_val':df.freq_val,'power_no_wake':df_base.power_no_wake, \
     'power_baseline':df_base.power_baseline})
 
-# initialize power rose
-if df_opt is not None:
-    df_yaw = pd.DataFrame([list(row) for row in df_opt['yaw_angles']],columns=[str(i) for i in range(1,N_turb+1)])
-    df_yaw['ws'] = df.ws
-    df_yaw['wd'] = df.wd
-
+# Set up the power rose
 df_turbine_power_no_wake = pd.DataFrame([list(row) for row in df_base['turbine_power_no_wake']],columns=[str(i) for i in range(1,N_turb+1)])
 df_turbine_power_no_wake['ws'] = df.ws
 df_turbine_power_no_wake['wd'] = df.wd
 df_turbine_power_baseline = pd.DataFrame([list(row) for row in df_base['turbine_power_baseline']],columns=[str(i) for i in range(1,N_turb+1)])
 df_turbine_power_baseline['ws'] = df.ws
 df_turbine_power_baseline['wd'] = df.wd
-if df_opt is not None:
-    df_turbine_power_opt = pd.DataFrame([list(row) for row in df_opt['turbine_power_opt']],columns=[str(i) for i in range(1,N_turb+1)])
-    df_turbine_power_opt['ws'] = df.ws
-    df_turbine_power_opt['wd'] = df.wd
 
 case_name = 'Example '+str(N_row)+' x '+str(N_row)+ ' Wind Farm'
-# Summarize using the power rose module
 power_rose = pr.PowerRose(case_name, df_power, df_turbine_power_no_wake, df_turbine_power_baseline)
-# power_rose.initialize(case_name, df_power, df_yaw, df_turbine_power_no_wake, df_turbine_power_baseline, df_turbine_power_opt)
 
+# Display AEP analysis
 fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(6.4, 6.5))
 power_rose.plot_by_direction(axarr)
 power_rose.report()
