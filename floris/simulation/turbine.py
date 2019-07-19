@@ -138,7 +138,7 @@ class Turbine():
         wind_speed = self.power_thrust_table["wind_speed"]
         fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
         if at_wind_speed < min(wind_speed):
-            return 0.
+            return 0.0
         else:
             _cp = fCpInterp(at_wind_speed)
             if _cp.size > 1:
@@ -468,7 +468,6 @@ class Turbine():
 
             >>> power = floris.farm.turbines[0].power()
         """
-
         # Update to power calculation which replaces the fixed pP exponent with
         # an exponent pW, that changes the effective wind speed input to the power 
         # calculation, rather than scaling the power.  This better handles power
