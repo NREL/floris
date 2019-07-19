@@ -22,11 +22,21 @@ import floris.tools.power_rose as pr
 import numpy as np
 import pandas as pd
 
-# Instantiate the FLORIS object
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-
 # Define wind farm coordinates and layout
 wf_coordinate = [39.8283, -98.5795]
+
+# set min and max yaw offsets for optimization
+min_yaw = 0.0
+max_yaw = 25.0
+
+# Define minimum and maximum wind speed for optimizing power. 
+# Below minimum wind speed, assumes power is zero.
+# Above maximum_ws, assume optimal yaw offsets are 0 degrees
+minimum_ws = 3.0
+maximum_ws = 15.0
+
+# Instantiate the FLORIS object
+fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 
 # Set wind farm to N_row x N_row grid with constant spacing 
 # (2 x 2 grid, 5 D spacing)
@@ -43,16 +53,6 @@ N_turb = len(layout_x)
 
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
 fi.calculate_wake()
-
-# set min and max yaw offsets for optimization
-min_yaw = 0.0
-max_yaw = 25.0
-
-# Define minimum and maximum wind speed for optimizing power. 
-# Below minimum wind speed, assumes power is zero.
-# Above maximum_ws, assume optimal yaw offsets are 0 degrees
-minimum_ws = 3.0
-maximum_ws = 15.0
 
 # ================================================================================
 print('Plotting the FLORIS flowfield...')
@@ -74,7 +74,7 @@ print('Importing wind rose data...')
 # ================================================================================
 
 # Create wind rose object and import wind rose dataframe using WIND Toolkit HSDS API.
-# Alternatively, load existing .csv file with wind rose information.
+# Alternatively, load existing file with wind rose information.
 calculate_new_wind_rose = True
 
 wind_rose = rose.WindRose()
