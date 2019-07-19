@@ -75,7 +75,7 @@ print('Importing wind rose data...')
 
 # Create wind rose object and import wind rose dataframe using WIND Toolkit HSDS API.
 # Alternatively, load existing file with wind rose information.
-calculate_new_wind_rose = True
+calculate_new_wind_rose = False
 
 wind_rose = rose.WindRose()
 
@@ -140,7 +140,7 @@ df_turbine_power_opt['wd'] = df.wd
 # Summarize using the power rose module
 case_name = 'Example '+str(N_row)+' x '+str(N_row)+ ' Wind Farm'
 power_rose = pr.PowerRose(case_name, df_power, df_turbine_power_no_wake, df_turbine_power_baseline,df_yaw, df_turbine_power_opt)
-power_rose.initialize()
+
 
 fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(6.4, 6.5))
 power_rose.plot_by_direction(axarr)
