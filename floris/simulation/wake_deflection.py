@@ -147,7 +147,7 @@ class Gauss(WakeDeflection):
         self.bd = float(model_dictionary["bd"])
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
-        self.deflection_multiplier = 2.0
+        self.deflection_multiplier = 1.2
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
         """
