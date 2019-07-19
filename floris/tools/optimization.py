@@ -12,6 +12,7 @@
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
+from scipy.stats import norm
 import matplotlib.pyplot as plt
 from abc import ABCMeta, abstractmethod
 from itertools import repeat
@@ -94,6 +95,46 @@ class YawOptimization(Optimization):
             scipy.optimize.minize to use. Defaults to None. 
             Initializes to {'maxiter': 100, 'disp': False,
             'iprint': 1, 'ftol': 1e-7, 'eps': 0.01}.
+        include_unc (bool): If True, uncertainty in wind direction 
+            and/or yaw position is included when determining wind farm power. 
+            Uncertainty is included by computing the mean wind farm power for 
+            a distribution of wind direction and yaw position deviations from 
+            the original wind direction and yaw angles. Defaults to False.
+        unc_pmfs (dictionary, optional): A dictionary containing optional 
+            probability mass functions describing the distribution of wind 
+            direction and yaw position deviations when wind direction and/or 
+            yaw position uncertainty is included in the power calculations. 
+            Contains the following key-value pairs:  
+
+            -   **wd_unc**: A numpy array containing wind direction deviations 
+                from the original wind direction. 
+            -   **wd_unc_pmf**: A numpy array containing the probability of 
+                each wind direction deviation in **wd_unc** occuring. 
+            -   **yaw_unc**: A numpy array containing yaw angle deviations 
+                from the original yaw angles. 
+            -   **yaw_unc_pmf**: A numpy array containing the probability of 
+                each yaw angle deviation in **yaw_unc** occuring.
+
+            Defaults to None, in which case default PMFs are calculated using 
+            values provided in **unc_options**.
+        unc_options (disctionary, optional): A dictionary containing values used 
+            to create normally-distributed, zero-mean probability mass functions 
+            describing the distribution of wind direction and yaw position 
+            deviations when wind direction and/or yaw position uncertainty is 
+            included. This argument is only used when **unc_pmfs** is None and 
+            contains the following key-value pairs:
+
+            -   **std_wd**: A float containing the standard deviation of the wind 
+                    direction deviations from the original wind direction.
+            -   **std_yaw**: A float containing the standard deviation of the yaw 
+                    angle deviations from the original yaw angles.
+            -   **pmf_res**: A float containing the resolution in degrees of the 
+                    wind direction and yaw angle PMFs.
+            -   **pdf_cutoff**: A float containing the cumulative distribution 
+                function value at which the tails of the PMFs are truncated. 
+
+            Defaults to None. Initializes to {'std_wd': 5.0, 'std_yaw': 0.0, 
+            'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
 
     Returns:
         YawOptimization: An instantiated YawOptimization object.
@@ -104,7 +145,10 @@ class YawOptimization(Optimization):
                            x0=None,
                            bnds=None,
                            opt_method='SLSQP',
-                           opt_options=None):
+                           opt_options=None,
+                           include_unc=False,
+                           unc_pmfs=None,
+                           unc_options=None):
         """
         Instantiate YawOptimization object and parameter values.
         """
@@ -113,6 +157,10 @@ class YawOptimization(Optimization):
         if opt_options is None:
             self.opt_options = {'maxiter': 100, 'disp': False, \
                         'iprint': 1, 'ftol': 1e-7, 'eps': 0.01}
+
+        if (unc_options is None) & (unc_pmfs is None):
+            self.unc_options = {'std_wd': 5.0, 'std_yaw': 0.0, \
+                        'pmf_res': 1.0, 'pdf_cutoff': 0.995}
         
         self.reinitialize_opt(
             minimum_yaw_angle=minimum_yaw_angle,
@@ -120,13 +168,17 @@ class YawOptimization(Optimization):
             x0=x0,
             bnds=bnds,
             opt_method=opt_method,
-            opt_options=opt_options
+            opt_options=opt_options,
+            include_unc=include_unc,
+            unc_pmfs=unc_pmfs,
+            unc_options=unc_options
         )
 
     # Private methods
 
     def _yaw_power_opt(self, yaw_angles):
-        return -1 * self.fi.get_farm_power_for_yaw_angle(yaw_angles)
+        return -1 * self.fi.get_farm_power_for_yaw_angle(yaw_angles, include_unc=self.include_unc, \
+            unc_pmfs=self.unc_pmfs, unc_options=self.unc_options)
 
     def _optimize(self):
         """
@@ -136,6 +188,7 @@ class YawOptimization(Optimization):
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
         """
+
         self.residual_plant = minimize(self._yaw_power_opt,
                                 self.x0,
                                 method=self.opt_method,
@@ -178,7 +231,10 @@ class YawOptimization(Optimization):
                            x0=None,
                            bnds=None,
                            opt_method=None,
-                           opt_options=None):
+                           opt_options=None,
+                           include_unc=None,
+                           unc_pmfs=None,
+                           unc_options=None):
         """
         Reintializes parameter values for the optimization.
         
@@ -205,6 +261,48 @@ class YawOptimization(Optimization):
                 scipy.optimize.minize to use. Defaults to None. 
                 Initializes to {'maxiter': 100, 'disp': False,
                 'iprint': 1, 'ftol': 1e-7, 'eps': 0.01}.
+            include_unc (bool): If True, uncertainty in wind direction 
+                and/or yaw position is included when determining wind farm power. 
+                Uncertainty is included by computing the mean wind farm power for 
+                a distribution of wind direction and yaw position deviations from 
+                the original wind direction and yaw angles. Defaults to None.
+            unc_pmfs (dictionary, optional): A dictionary containing optional 
+                probability mass functions describing the distribution of wind 
+                direction and yaw position deviations when wind direction and/or 
+                yaw position uncertainty is included in the power calculations. 
+                Contains the following key-value pairs:  
+
+                -   **wd_unc**: A numpy array containing wind direction deviations 
+                    from the original wind direction. 
+                -   **wd_unc_pmf**: A numpy array containing the probability of 
+                    each wind direction deviation in **wd_unc** occuring. 
+                -   **yaw_unc**: A numpy array containing yaw angle deviations 
+                    from the original yaw angles. 
+                -   **yaw_unc_pmf**: A numpy array containing the probability of 
+                    each yaw angle deviation in **yaw_unc** occuring.
+
+                Defaults to None. If the object's **include_unc** parameter is True 
+                and **unc_pmfs** has not been initialized, initializes using 
+                normally-distributed, zero-mean PMFs based on the values in 
+                **unc_options**.
+            unc_options (disctionary, optional): A dictionary containing values used 
+                to create normally-distributed, zero-mean probability mass functions 
+                describing the distribution of wind direction and yaw position 
+                deviations when wind direction and/or yaw position uncertainty is 
+                included. This argument is only used when **unc_pmfs** is None and 
+                contains the following key-value pairs:
+
+                -   **std_wd**: A float containing the standard deviation of the wind 
+                        direction deviations from the original wind direction.
+                -   **std_yaw**: A float containing the standard deviation of the yaw 
+                        angle deviations from the original yaw angles.
+                -   **pmf_res**: A float containing the resolution in degrees of the 
+                        wind direction and yaw angle PMFs.
+                -   **pdf_cutoff**: A float containing the cumulative distribution 
+                    function value at which the tails of the PMFs are truncated. 
+
+                Defaults to None. Initializes to {'std_wd': 5.0, 'std_yaw': 0.0, 
+                'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
         """
         if minimum_yaw_angle is not None:
             self.minimum_yaw_angle = minimum_yaw_angle
@@ -224,6 +322,35 @@ class YawOptimization(Optimization):
             self.opt_method = opt_method
         if opt_options is not None:
             self.opt_options = opt_options
+        if include_unc is not None:
+            self.include_unc = include_unc
+        if unc_pmfs is not None:
+            self.unc_pmfs = unc_pmfs
+        if unc_options is not None:
+            self.unc_options = unc_options
+
+        if self.include_unc & (self.unc_pmfs is None):
+            if self.unc_options is None:
+                self.unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
+                            'pmf_res': 1.0, 'pdf_cutoff': 0.995}
+
+            # create normally distributed wd and yaw uncertaitny pmfs
+            wd_bnd = int(np.ceil(norm.ppf(self.unc_options['pdf_cutoff'], \
+                            scale=self.unc_options['std_wd'])/self.unc_options['pmf_res']))
+            wd_unc = np.linspace(-1*wd_bnd*self.unc_options['pmf_res'],wd_bnd*self.unc_options['pmf_res'],2*wd_bnd+1)
+            wd_unc_pmf = norm.pdf(wd_unc,scale=self.unc_options['std_wd'])
+            wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf) # normalize so sum = 1.0
+
+            yaw_bnd = int(np.ceil(norm.ppf(self.unc_options['pdf_cutoff'], \
+                            scale=self.unc_options['std_yaw'])/self.unc_options['pmf_res']))
+            yaw_unc = np.linspace(-1*yaw_bnd*self.unc_options['pmf_res'],yaw_bnd*self.unc_options['pmf_res'],2*yaw_bnd+1)
+            yaw_unc_pmf = norm.pdf(yaw_unc,scale=self.unc_options['std_yaw'])
+            yaw_unc_pmf = yaw_unc_pmf / np.sum(yaw_unc_pmf) # normalize so sum = 1.0
+
+            self.unc_pmfs = {'wd_unc': wd_unc, 'wd_unc_pmf': wd_unc_pmf, \
+                        'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
+        else:
+            self.unc_pmfs = unc_pmfs
 
     # Properties
 
@@ -477,10 +604,10 @@ class YawOptimizationWindRose(Optimization):
             self._set_opt_bounds(self.minimum_yaw_angle, 
                                  self.maximum_yaw_angle)
 
-    def optimize(self):
+    def calc_baseline_power(self):
         """
-        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm, 
-        the ideal power without wake losses, and the power resulting from optimal wake steering. 
+        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm and 
+        the ideal power without wake losses. 
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -496,27 +623,13 @@ class YawOptimizationWindRose(Optimization):
                   without wake steering for each wind turbine (W).
                 - **turbine_power_no_wake** (*list* of *float* values) - A list containing the ideal power 
                   without wake losses for each wind turbine (W).
-
-            - **df_opt** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
-              and ws arrays, containing the following columns:
-
-                - **ws** (*float*) - The wind speed value for the row.
-                - **wd** (*float*) - The wind direction value for the row.
-                - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
-                  yaw offsets (W).
-                - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
-                  each wind turbine with optimal yaw offsets (W).
-                - **yaw_angles** (*list* of *float* values) - A list containing the optimal yaw offsets for maximizing 
-                  total wind farm power for each wind turbine (deg).
         """
         print('=====================================================')
-        print('Optimizing wake redirection control...')
-        print('Number of wind speed, wind direction pairs to optimize = ', len(self.wd))
-        print('Number of yaw angles to optimize = ', len(self.x0))
+        print('Calculating baseline power...')
+        print('Number of wind speed, wind direction pairs to calculate = ', len(self.wd))
         print('=====================================================')
 
         df_base = pd.DataFrame()
-        df_opt = pd.DataFrame()
 
         for i in range(len(self.wd)):
             print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
@@ -543,6 +656,39 @@ class YawOptimizationWindRose(Optimization):
             df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
                 'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
                 'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
+
+        df_base.reset_index(drop=True,inplace=True)
+
+        return df_base
+
+    def optimize(self):
+        """
+        For a series of (wind speed, direction) pairs, finds the power resulting from optimal wake steering. 
+
+        Returns:
+            - **df_opt** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
+              and ws arrays, containing the following columns:
+
+                - **ws** (*float*) - The wind speed value for the row.
+                - **wd** (*float*) - The wind direction value for the row.
+                - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
+                  yaw offsets (W).
+                - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
+                  each wind turbine with optimal yaw offsets (W).
+                - **yaw_angles** (*list* of *float* values) - A list containing the optimal yaw offsets for maximizing 
+                  total wind farm power for each wind turbine (deg).
+        """
+        print('=====================================================')
+        print('Optimizing wake redirection control...')
+        print('Number of wind speed, wind direction pairs to optimize = ', len(self.wd))
+        print('Number of yaw angles to optimize = ', len(self.x0))
+        print('=====================================================')
+
+        df_opt = pd.DataFrame()
+
+        for i in range(len(self.wd)):
+            print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
+                +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
 
             # Optimizing wake redirection control
 
@@ -577,10 +723,9 @@ class YawOptimizationWindRose(Optimization):
             df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
                 'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
 
-        df_base.reset_index(drop=True,inplace=True)
         df_opt.reset_index(drop=True,inplace=True)
 
-        return df_base, df_opt
+        return df_opt
 
 
 class YawOptimizationWindRoseParallel(YawOptimizationWindRose):

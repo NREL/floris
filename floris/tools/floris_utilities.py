@@ -15,6 +15,7 @@ from floris.simulation import TurbineMap
 from .flow_data import FlowData
 from ..utilities import Vec3
 import copy
+from scipy.stats import norm
 
 
 class FlorisInterface():
@@ -264,15 +265,100 @@ class FlorisInterface():
         ]
         return yaw_angles
 
-    def get_farm_power(self):
+    def get_farm_power(self, include_unc=False, unc_pmfs=None, unc_options=None):
         """
-        Report wind plant power from instance of floris.
+        Report wind plant power from instance of floris. Optionally includes uncertainty 
+        in wind direction and yaw position when determining power. Uncertainty is included 
+        by computing the mean wind farm power for a distribution of wind direction and yaw 
+        position deviations from the original wind direction and yaw angles.
+
+        Args:
+            include_unc (bool): If True, uncertainty in wind direction 
+                and/or yaw position is included when determining wind farm power. 
+                Defaults to False.
+            unc_pmfs (dictionary, optional): A dictionary containing optional 
+                probability mass functions describing the distribution of wind 
+                direction and yaw position deviations when wind direction and/or 
+                yaw position uncertainty is included in the power calculations. 
+                Contains the following key-value pairs:  
+
+                -   **wd_unc**: A numpy array containing wind direction deviations 
+                    from the original wind direction. 
+                -   **wd_unc_pmf**: A numpy array containing the probability of 
+                    each wind direction deviation in **wd_unc** occuring. 
+                -   **yaw_unc**: A numpy array containing yaw angle deviations 
+                    from the original yaw angles. 
+                -   **yaw_unc_pmf**: A numpy array containing the probability of 
+                    each yaw angle deviation in **yaw_unc** occuring.
+
+                Defaults to None, in which case default PMFs are calculated using 
+                values provided in **unc_options**.
+            unc_options (disctionary, optional): A dictionary containing values used 
+                to create normally-distributed, zero-mean probability mass functions 
+                describing the distribution of wind direction and yaw position 
+                deviations when wind direction and/or yaw position uncertainty is 
+                included. This argument is only used when **unc_pmfs** is None and 
+                contains the following key-value pairs:
+
+                -   **std_wd**: A float containing the standard deviation of the wind 
+                        direction deviations from the original wind direction.
+                -   **std_yaw**: A float containing the standard deviation of the yaw 
+                        angle deviations from the original yaw angles.
+                -   **pmf_res**: A float containing the resolution in degrees of the 
+                        wind direction and yaw angle PMFs.
+                -   **pdf_cutoff**: A float containing the cumulative distribution 
+                    function value at which the tails of the PMFs are truncated. 
+
+                Defaults to None. Initializes to {'std_wd': 5.0, 'std_yaw': 0.0, 
+                'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
 
         Returns:
             plant_power (float): sum of wind turbine powers.
         """
-        turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
-        return np.sum(turb_powers)
+        if include_unc:
+            if (unc_options is None) & (unc_pmfs is None):
+                unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
+                            'pmf_res': 1.0, 'pdf_cutoff': 0.999}
+
+            if unc_pmfs is None:
+                # create normally distributed wd and yaw uncertaitny pmfs
+                wd_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
+                                scale=unc_options['std_wd'])/unc_options['pmf_res']))
+                wd_unc = np.linspace(-1*wd_bnd*unc_options['pmf_res'], \
+                                wd_bnd*unc_options['pmf_res'],2*wd_bnd+1)
+                wd_unc_pmf = norm.pdf(wd_unc,scale=unc_options['std_wd'])
+                wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf) # normalize so sum = 1.0
+
+                yaw_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
+                                scale=unc_options['std_yaw'])/unc_options['pmf_res']))
+                yaw_unc = np.linspace(-1*yaw_bnd*unc_options['pmf_res'], \
+                                yaw_bnd*unc_options['pmf_res'],2*yaw_bnd+1)
+                yaw_unc_pmf = norm.pdf(yaw_unc,scale=unc_options['std_yaw'])
+                yaw_unc_pmf = yaw_unc_pmf / np.sum(yaw_unc_pmf) # normalize so sum = 1.0
+
+                unc_pmfs = {'wd_unc': wd_unc, 'wd_unc_pmf': wd_unc_pmf, \
+                            'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
+
+            mean_farm_power = 0.
+            wd_orig = self.floris.farm.wind_direction
+
+            yaw_angles = self.get_yaw_angles()
+
+            for i_wd,delta_wd in enumerate(unc_pmfs['wd_unc']):
+                self.reinitialize_flow_field(wind_direction=wd_orig+delta_wd)
+
+                for i_yaw,delta_yaw in enumerate(unc_pmfs['yaw_unc']):
+                    mean_farm_power = mean_farm_power + unc_pmfs['wd_unc_pmf'][i_wd] \
+                        * unc_pmfs['yaw_unc_pmf'][i_yaw] \
+                        * self.get_farm_power_for_yaw_angle(list(np.array(yaw_angles)+delta_yaw))
+
+            # reinitialize with original values
+            self.calculate_wake(yaw_angles=yaw_angles)
+            self.reinitialize_flow_field(wind_direction=wd_orig)
+            return mean_farm_power
+        else:
+            turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
+            return np.sum(turb_powers)
 
     def get_turbine_power(self):
         """
@@ -301,7 +387,7 @@ class FlorisInterface():
         return turb_ct_array
 
         # calculate the power under different yaw angles
-    def get_farm_power_for_yaw_angle(self, yaw_angles):
+    def get_farm_power_for_yaw_angle(self, yaw_angles, include_unc=False, unc_pmfs=None, unc_options=None):
         """
         Assign yaw angles to turbines, calculate wake, report power
 
@@ -314,7 +400,7 @@ class FlorisInterface():
 
         self.calculate_wake(yaw_angles=yaw_angles)
 
-        return self.get_farm_power()
+        return self.get_farm_power(include_unc=include_unc, unc_pmfs=unc_pmfs, unc_options=unc_options)
 
     def get_farm_AEP(self, wd, ws, freq):
         AEP_sum = 0

@@ -104,14 +104,17 @@ print('Finding baseline and optimal yaw angles in FLORIS...')
 # =============================================================================
 
 # Instantiate the Optimization object
-yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws, 
-                               minimum_yaw_angle=min_yaw, 
+yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws,
+                               minimum_yaw_angle=min_yaw,
                                maximum_yaw_angle=max_yaw,
                                minimum_ws=minimum_ws,
                                maximum_ws=maximum_ws)
 
+# Determine baseline power with and without wakes
+df_base = yaw_opt.calc_baseline_power()
+
 # Perform optimization
-df_base, df_opt = yaw_opt.optimize()
+df_opt = yaw_opt.optimize()
 
 # Summarize using the power rose module
 power_rose = pr.PowerRose()
