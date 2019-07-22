@@ -147,7 +147,11 @@ class Gauss(WakeDeflection):
         self.bd = float(model_dictionary["bd"])
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
-        self.deflection_multiplier = 1.2
+        if 'dm' in model_dictionary:
+            self.deflection_multiplier = float(model_dictionary["dm"])
+        else:
+            print('Using default multipler of 1.2')
+            self.deflection_multiplier = 1.2
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
         """
