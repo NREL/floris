@@ -49,7 +49,7 @@ fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.
 fi.calculate_wake()
 
 include_unc = True
-unc_options={'std_wd': 5.0, 'std_yaw': 0.0,'pmf_res': 1.0, 'pdf_cutoff': 0.95}
+unc_options={'std_wd': 4.95, 'std_yaw': 0.0,'pmf_res': 1.0, 'pdf_cutoff': 0.95}
 
 # ================================================================================
 print('Plotting the FLORIS flowfield...')

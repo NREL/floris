@@ -24,21 +24,20 @@ print('Running FLORIS with no yaw...')
 # Instantiate the FLORIS object
 fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 
-# Set turbine locations to 3 turbines in a row
+# Set turbine locations to a 2 turbine array
 D = fi.floris.farm.turbines[0].rotor_diameter
 layout_x = [0, 5*D]
 layout_y = [0, 0]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y), wind_direction = 273.0)
 fi.calculate_wake()
 
-include_unc = True
-unc_options={'std_wd': 4.95, 'std_yaw': 1.75,'pmf_res': 1.0, 'pdf_cutoff': 0.95}
+unc_options={'std_wd': 4.95, 'std_yaw': 1.75,'pmf_res': 1.0, 'pdf_cutoff': 0.99}
 
 # Initial power output without uncertainty
 power_initial = fi.get_farm_power()
 
 # Initial power output with uncertainty
-power_initial_unc = fi.get_farm_power(include_unc=include_unc,
+power_initial_unc = fi.get_farm_power(include_unc=True,
                         unc_options=unc_options)
 
 # =============================================================================
@@ -77,7 +76,7 @@ yaw_angles = yaw_opt.optimize()
 yaw_opt = YawOptimization(fi,
                                minimum_yaw_angle=min_yaw, 
                                maximum_yaw_angle=max_yaw,
-                               include_unc=include_unc,
+                               include_unc=True,
                                unc_options=unc_options)
 
 # Perform optimization
@@ -94,10 +93,10 @@ for i in range(len(yaw_angles_unc)):
 # Assign yaw angles to turbines and calculate wake
 fi.calculate_wake(yaw_angles=yaw_angles)
 power_opt = fi.get_farm_power()
-power_opt_unc = fi.get_farm_power(include_unc=include_unc,
+power_opt_unc = fi.get_farm_power(include_unc=True,
                         unc_options=unc_options)
 fi.calculate_wake(yaw_angles=yaw_angles_unc)
-power_opt_unc_robust = fi.get_farm_power(include_unc=include_unc,
+power_opt_unc_robust = fi.get_farm_power(include_unc=True,
                         unc_options=unc_options)
 
 print('==========================================')
