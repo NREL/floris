@@ -41,7 +41,8 @@ def visualize_layout(turbineLoc,
                      ax=None,
                      show_wake_lines=False,
                      limit_dist=None,
-                     turbine_face_north=False):
+                     turbine_face_north=False,
+                     one_index_turbine=False):
     """
     Make a plot which shows the turbine locations, and important wakes
 
@@ -56,6 +57,7 @@ def visualize_layout(turbineLoc,
             Defaults to None.
         turbine_face_north (bool, optional): Force orientation of wind
             turbines. Defaults to False.
+        one_index_turbine (bool, optional): if true, 1st turbine is turbine 1
     """
 
     turbines = turbineLoc.index.values
@@ -146,10 +148,17 @@ def visualize_layout(turbineLoc,
                 turbineLoc.loc[t1].x + 0.5 * D / 2.
             ], [turbineLoc.loc[t1].y, turbineLoc.loc[t1].y],
                     color='k')
-        ax.text(turbineLoc.loc[t1].x + D / 2,
-                turbineLoc.loc[t1].y,
-                t1,
-                bbox=dict(boxstyle="round", ec='red', fc='white'))
+        if not one_index_turbine:
+            ax.text(turbineLoc.loc[t1].x + D / 2,
+                    turbineLoc.loc[t1].y,
+                    t1,
+                    bbox=dict(boxstyle="round", ec='red', fc='white'))
+        else:
+            ax.text(turbineLoc.loc[t1].x + D / 2,
+                    turbineLoc.loc[t1].y,
+                    t1+1,
+                    bbox=dict(boxstyle="round", ec='red', fc='white'))
+
 
     ax.set_aspect('equal')
 
