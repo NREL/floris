@@ -40,7 +40,6 @@ First, the wind farm coordinates and some optimization parameters are specified 
     fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
     fi.calculate_wake()
 
-    include_unc = True
     unc_options={'std_wd': 4.95, 'std_yaw': 0.0,'pmf_res': 1.0, 'pdf_cutoff': 0.95}
 
 Next, a WindRose object is initialized, as described in :doc:`Example 0011 <example_0011>`. 

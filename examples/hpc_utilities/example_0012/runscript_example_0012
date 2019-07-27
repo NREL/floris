@@ -11,4 +11,4 @@ source $HOME/.bash_profile
 source $HOME/.bashrc
 Floris_Python
 cd <floris/examples path>
-srun -n 36 python -m mpi4py.futures example_0012_optimize_yaw_wind_rose_parallel.py
+srun python -m mpi4py.futures example_0012_optimize_yaw_wind_rose_parallel.py

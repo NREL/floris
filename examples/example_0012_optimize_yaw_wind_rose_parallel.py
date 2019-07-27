@@ -24,11 +24,21 @@ import pandas as pd
 
 if __name__ == '__main__':
     
-    # Instantiate the FLORIS object
-    fi = wfct.floris_utilities.FlorisInterface("example_input.json")
-
     # Define wind farm coordinates and layout
     wf_coordinate = [39.8283, -98.5795]
+
+    # set min and max yaw offsets for optimization
+    min_yaw = 0.0
+    max_yaw = 25.0
+
+    # Define minimum and maximum wind speed for optimizing power. 
+    # Below minimum wind speed, assumes power is zero.
+    # Above maximum_ws, assume optimal yaw offsets are 0 degrees
+    minimum_ws = 3.0
+    maximum_ws = 15.0
+
+    # Instantiate the FLORIS object
+    fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 
     # Set wind farm to N_row x N_row grid with constant spacing 
     # (2 x 2 grid, 5 D spacing)
@@ -46,15 +56,9 @@ if __name__ == '__main__':
     fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
     fi.calculate_wake()
 
-    # set min and max yaw offsets for optimization
-    min_yaw = 0.0
-    max_yaw = 25.0
-
-    # Define minimum and maximum wind speed for optimizing power. 
-    # Below minimum wind speed, assumes power is zero.
-    # Above maximum_ws, assume optimal yaw offsets are 0 degrees
-    minimum_ws = 3.0
-    maximum_ws = 15.0
+    # option to include uncertainty
+    include_unc = False
+    unc_options={'std_wd': 4.95, 'std_yaw': 0.0,'pmf_res': 1.0, 'pdf_cutoff': 0.95}
 
     # ================================================================================
     print('Plotting the FLORIS flowfield...')
@@ -110,10 +114,15 @@ if __name__ == '__main__':
                                    minimum_yaw_angle=min_yaw, 
                                    maximum_yaw_angle=max_yaw,
                                    minimum_ws=minimum_ws,
-                                   maximum_ws=maximum_ws)
+                                   maximum_ws=maximum_ws,
+                                   include_unc=include_unc,
+                                   unc_options=unc_options)
+
+    # Determine baseline power
+    df_base = yaw_opt.calc_baseline_power()
 
     # Perform optimization
-    df_base, df_opt = yaw_opt.optimize()
+    df_opt = yaw_opt.optimize()
 
     # Summarize using the power rose module
     power_rose = pr.PowerRose()

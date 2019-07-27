@@ -494,7 +494,7 @@ class YawOptimizationWindRose(Optimization):
             -   **pdf_cutoff**: A float containing the cumulative distribution 
                 function value at which the tails of the PMFs are truncated. 
 
-            Defaults to None. Initializes to {'std_wd': 5.0, 'std_yaw': 0.0, 
+            Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75, 
             'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
 
     Returns:
@@ -526,7 +526,7 @@ class YawOptimizationWindRose(Optimization):
         self.unc_pmfs = unc_pmfs
 
         if unc_options is None:
-            self.unc_options = {'std_wd': 5.0, 'std_yaw': 0.0, \
+            self.unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
                         'pmf_res': 1.0, 'pdf_cutoff': 0.995}
 
         self.reinitialize_opt_wind_rose(
@@ -678,7 +678,7 @@ class YawOptimizationWindRose(Optimization):
                 -   **pdf_cutoff**: A float containing the cumulative distribution 
                     function value at which the tails of the PMFs are truncated. 
 
-                Defaults to None. Initializes to {'std_wd': 5.0, 'std_yaw': 0.0, 
+                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75, 
                 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
         """
 
@@ -905,6 +905,46 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             scipy.optimize.minize to use. Defaults to None. 
             Initializes to {'maxiter': 100, 'disp': False,
             'iprint': 1, 'ftol': 1e-7, 'eps': 0.01}.
+        include_unc (bool): If True, uncertainty in wind direction 
+            and/or yaw position is included when determining wind farm power. 
+            Uncertainty is included by computing the mean wind farm power for 
+            a distribution of wind direction and yaw position deviations from 
+            the original wind direction and yaw angles. Defaults to False.
+        unc_pmfs (dictionary, optional): A dictionary containing optional 
+            probability mass functions describing the distribution of wind 
+            direction and yaw position deviations when wind direction and/or 
+            yaw position uncertainty is included in the power calculations. 
+            Contains the following key-value pairs:  
+
+            -   **wd_unc**: A numpy array containing wind direction deviations 
+                from the original wind direction. 
+            -   **wd_unc_pmf**: A numpy array containing the probability of 
+                each wind direction deviation in **wd_unc** occuring. 
+            -   **yaw_unc**: A numpy array containing yaw angle deviations 
+                from the original yaw angles. 
+            -   **yaw_unc_pmf**: A numpy array containing the probability of 
+                each yaw angle deviation in **yaw_unc** occuring.
+
+            Defaults to None, in which case default PMFs are calculated using 
+            values provided in **unc_options**.
+        unc_options (disctionary, optional): A dictionary containing values used 
+            to create normally-distributed, zero-mean probability mass functions 
+            describing the distribution of wind direction and yaw position 
+            deviations when wind direction and/or yaw position uncertainty is 
+            included. This argument is only used when **unc_pmfs** is None and 
+            contains the following key-value pairs:
+
+            -   **std_wd**: A float containing the standard deviation of the wind 
+                    direction deviations from the original wind direction.
+            -   **std_yaw**: A float containing the standard deviation of the yaw 
+                    angle deviations from the original yaw angles.
+            -   **pmf_res**: A float containing the resolution in degrees of the 
+                    wind direction and yaw angle PMFs.
+            -   **pdf_cutoff**: A float containing the cumulative distribution 
+                function value at which the tails of the PMFs are truncated. 
+
+            Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75, 
+            'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
 
     Returns:
         YawOptimizationWindRoseParallel: An instantiated YawOptimizationWindRoseParallel object.
@@ -912,10 +952,10 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
     # Private methods
 
-    def _optimize_one_case(self,ws,wd):
+    def _calc_baseline_power_one_case(self,ws,wd):
         """
-        For a single (wind speed, direction) pair, finds the baseline power produced by the wind farm, 
-        the ideal power without wake losses, and the power resulting from optimal wake steering.
+        For a single (wind speed, direction) pair, finds the baseline power produced by the wind farm 
+        and the ideal power without wake losses.
 
         Args:
             ws (float): The wind speed used in floris for the yaw optimization.
@@ -934,7 +974,43 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                   without wake steering for each wind turbine (W).
                 - **turbine_power_no_wake** (*list* of *float* values) - A list containing the ideal power 
                   without wake losses for each wind turbine (W).
+        """
 
+        print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+
+        # Find baseline power in FLORIS
+
+        if ws >= self.minimum_ws:
+            self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            # calculate baseline power
+            self.fi.calculate_wake(yaw_angles=0.0)
+            power_base = self.fi.get_turbine_power(include_unc=self.include_unc, \
+                    unc_pmfs=self.unc_pmfs, unc_options=self.unc_options)
+
+            # calculate power for no wake case
+            self.fi.calculate_wake(no_wake=True)
+            power_no_wake = self.fi.get_turbine_power(include_unc=self.include_unc, \
+                    unc_pmfs=self.unc_pmfs, unc_options=self.unc_options, no_wake=True)
+        else:
+            power_base = self.nturbs*[0.0]
+            power_no_wake = self.nturbs*[0.0]
+
+        # add variables to dataframe
+        df_base = pd.DataFrame({'ws':[ws],'wd':[wd], \
+            'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+            'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
+
+        return df_base
+
+    def _optimize_one_case(self,ws,wd):
+        """
+        For a single (wind speed, direction) pair, finds the power resulting from optimal wake steering.
+
+        Args:
+            ws (float): The wind speed used in floris for the yaw optimization.
+            wd (float): The wind direction used in floris for the yaw optimization.
+
+        Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with a single row, containing the following columns:
 
                 - **ws** (*float*) - The wind speed value for the row.
@@ -948,26 +1024,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         """
 
         print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
-
-        # Find baseline power in FLORIS
-
-        if ws >= self.minimum_ws:
-            self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
-            # calculate baseline power
-            self.fi.calculate_wake(yaw_angles=0.0)
-            power_base = self.fi.get_turbine_power()
-
-            # calculate power for no wake case
-            self.fi.calculate_wake(no_wake=True)
-            power_no_wake = self.fi.get_turbine_power()
-        else:
-            power_base = self.nturbs*[0.0]
-            power_no_wake = self.nturbs*[0.0]
-
-        # add variables to dataframe
-        df_base = pd.DataFrame({'ws':[ws],'wd':[wd], \
-            'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
-            'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
 
         # Optimizing wake redirection control
 
@@ -983,7 +1039,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
             # optimized power
             self.fi.calculate_wake(yaw_angles=opt_yaw_angles)
-            power_opt = self.fi.get_turbine_power()
+            power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
+                    unc_pmfs=self.unc_pmfs, unc_options=self.unc_options)
         elif ws >= self.minimum_ws:
             print('No change in controls suggested for this inflow \
                     condition...')
@@ -991,7 +1048,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                 wind_direction=wd, wind_speed=ws)
             self.fi.calculate_wake(yaw_angles=0.0)
             opt_yaw_angles = self.nturbs*[0.0]
-            power_opt = self.fi.get_turbine_power()
+            power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
+                    unc_pmfs=self.unc_pmfs, unc_options=self.unc_options)
         else:
             print('No change in controls suggested for this inflow \
                     condition...')
@@ -1002,16 +1060,15 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         df_opt = pd.DataFrame({'ws':[ws],'wd':[wd], \
             'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]})
 
-        return df_base, df_opt
+        return df_opt
 
     # Public methods    
 
-    def optimize(self):
+    def calc_baseline_power(self):
         """
-        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm, 
-        the ideal power without wake losses, and the power resulting from optimal wake steering. 
-        The optimization for different wind speed, wind direction combinations is parallelized using the 
-        mpi4py.futures module.
+        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm 
+        and the ideal power without wake losses. The optimization for different wind speed, wind direction 
+        combinations is parallelized using the mpi4py.futures module.
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -1027,7 +1084,32 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                   without wake steering for each wind turbine (W).
                 - **turbine_power_no_wake** (*list* of *float* values) - A list containing the ideal power 
                   without wake losses for each wind turbine (W).
+        """
 
+        print('=====================================================')
+        print('Calculating baseline power in parallel...')
+        print('Number of wind speed, wind direction pairs to calculate = ', len(self.wd))
+        print('=====================================================')
+
+        df_base = pd.DataFrame()
+
+        with MPIPoolExecutor() as executor: 
+            for df_base_one in executor.map(self._calc_baseline_power_one_case,self.ws.values,self.wd.values):
+            
+                # add variables to dataframe
+                df_base = df_base.append(df_base_one)
+        
+        df_base.reset_index(drop=True,inplace=True)
+
+        return df_base
+
+    def optimize(self):
+        """
+        For a series of (wind speed, direction) pairs, finds the power resulting from optimal wake steering. 
+        The optimization for different wind speed, wind direction combinations is parallelized using the 
+        mpi4py.futures module.
+
+        Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
               and ws arrays, containing the following columns:
 
@@ -1047,20 +1129,17 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         print('Number of yaw angles to optimize = ', len(self.x0))
         print('=====================================================')
 
-        df_base = pd.DataFrame()
         df_opt = pd.DataFrame()
 
         with MPIPoolExecutor() as executor: 
-            for df_base_one, df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values):
+            for df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values):
             
                 # add variables to dataframe
-                df_base = df_base.append(df_base_one)
                 df_opt = df_opt.append(df_opt_one)
         
-        df_base.reset_index(drop=True,inplace=True)
         df_opt.reset_index(drop=True,inplace=True)
 
-        return df_base, df_opt
+        return df_opt
 
 
 class LayoutOptimization(Optimization):

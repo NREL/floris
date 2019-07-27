@@ -48,7 +48,6 @@ N_turb = len(layout_x)
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
 fi.calculate_wake()
 
-include_unc = True
 unc_options={'std_wd': 4.95, 'std_yaw': 0.0,'pmf_res': 1.0, 'pdf_cutoff': 0.95}
 
 # ================================================================================
@@ -121,7 +120,7 @@ yaw_opt = YawOptimizationWindRose(fi, df.wd, df.ws,
                                maximum_yaw_angle=max_yaw,
                                minimum_ws=minimum_ws,
                                maximum_ws=maximum_ws,
-                               include_unc=include_unc,
+                               include_unc=True,
                                unc_options=unc_options)
 
 # Determine baseline power with and without wakes

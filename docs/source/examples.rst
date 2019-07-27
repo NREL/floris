@@ -17,6 +17,7 @@ to provide instruction on the use of most of the underlying codes.
     examples/example_0010a.rst
     examples/example_0011.rst
     examples/example_0011a.rst
+    examples/example_0012.rst
     examples/example_0015.rst
     examples/example_0020.rst
     examples/example_0030.rst
