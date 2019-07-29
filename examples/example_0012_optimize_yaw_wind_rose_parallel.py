@@ -125,7 +125,7 @@ if __name__ == '__main__':
     df_opt = yaw_opt.optimize()
 
 
-       # combine wind farm-level power into one dataframe
+    # combine wind farm-level power into one dataframe
     df_power = pd.DataFrame({'ws':df.ws,'wd':df.wd, \
         'freq_val':df.freq_val,'power_no_wake':df_base.power_no_wake, \
         'power_baseline':df_base.power_baseline,'power_opt':df_opt.power_opt})
