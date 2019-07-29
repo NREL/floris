@@ -124,11 +124,8 @@ if __name__ == '__main__':
     # Perform optimization
     df_opt = yaw_opt.optimize()
 
-    # Summarize using the power rose module
-    power_rose = pr.PowerRose()
-    case_name = 'Example '+str(N_row)+' x '+str(N_row)+ ' Wind Farm'
 
-    # combine wind farm-level power into one dataframe
+       # combine wind farm-level power into one dataframe
     df_power = pd.DataFrame({'ws':df.ws,'wd':df.wd, \
         'freq_val':df.freq_val,'power_no_wake':df_base.power_no_wake, \
         'power_baseline':df_base.power_baseline,'power_opt':df_opt.power_opt})
@@ -147,7 +144,10 @@ if __name__ == '__main__':
     df_turbine_power_opt['ws'] = df.ws
     df_turbine_power_opt['wd'] = df.wd
 
-    power_rose.initialize(case_name, df_power, df_yaw, df_turbine_power_no_wake, df_turbine_power_baseline, df_turbine_power_opt)
+    # Summarize using the power rose module
+    case_name = 'Example '+str(N_row)+' x '+str(N_row)+ ' Wind Farm'
+    power_rose = pr.PowerRose(case_name, df_power, df_turbine_power_no_wake, df_turbine_power_baseline,df_yaw, df_turbine_power_opt)
+
 
     fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(6.4, 6.5))
     power_rose.plot_by_direction(axarr)
