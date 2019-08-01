@@ -6,11 +6,10 @@ FLORIS Wake Modeling Utility
 For technical questions regarding FLORIS usage please first search for or post
 your questions to
 `stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
-the **floris** tag. Alternatively, please contact
-`Jen King <mailto:jennifer.king@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_,
-`Chris Bay <mailto:chris.bay@nrel.gov>`_, and
-`Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
+the **floris** tag. Alternatively, email the NREL FLORIS team at
+`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_ or contact
+`Jen King <mailto:jennifer.king@nrel.gov>`_ and
+`Paul Fleming <mailto:paul.fleming@nrel.gov>`_ directly.
 
 Background and Objectives
 =========================
