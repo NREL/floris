@@ -21,7 +21,7 @@ to provide instruction on the use of most of the underlying codes.
 
 For questions not covered in the examples, or to request additional examples, please first search for or 
 submit your questions to stackoverflow.com using the tag FLORIS.  Additionally you can contact
-the NREL FLORIS team at `floris@nrel.gov <mailto:floris@nrel.gov>`_ or
+the NREL FLORIS team at `NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_ or
 `Jen King <mailto:jennifer.king@nrel.gov>`_ and
 `Paul Fleming <mailto:paul.fleming@nrel.gov>`_ directly.
 
