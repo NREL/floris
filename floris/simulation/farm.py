@@ -10,7 +10,6 @@
 # specific language governing permissions and limitations under the License.
 
 from ..utilities import Vec3
-from ..utilities import wrap_360
 from .wake_combination import WakeCombination
 from .flow_field import FlowField
 from .turbine_map import TurbineMap
@@ -193,7 +192,7 @@ class Farm():
 
             >>> wind_direction = floris.farm.wind_direction()
         """
-        return wrap_360(self.flow_field.wind_direction + 270.0)
+        return (self.flow_field.wind_direction + 270.0) % 360.
 
     @property
     def wind_shear(self):

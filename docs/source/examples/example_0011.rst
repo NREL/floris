@@ -76,7 +76,7 @@ Next, a WindRose object is initialized and a DataFrame containing the frequency 
 
 .. image:: ../../_static/images/WindRose_Example.png
 
-The baseline power and optimized power is found for each wind speed and wind direction combination from the wind rose by creating an instance of the :py:class:`YawOptimizationWindRose<floris.tools.optimization.YawOptimizationWindRose>` class. The :py:meth:`calc_baseline_power()
+The baseline power and optimized power are found for each wind speed and wind direction combination from the wind rose by creating an instance of the :py:class:`YawOptimizationWindRose<floris.tools.optimization.YawOptimizationWindRose>` class. The :py:meth:`calc_baseline_power()
 <floris.tools.optimization.YawOptimizationWindRose.calc_baseline_power>` method is used to find the wind farm power and individual turbine power values for each wind direction and wind speed for baseline and no-wake scenarios. Next, the :py:meth:`optimize()
 <floris.tools.optimization.YawOptimizationWindRose.optimize>` method is used to find the optimal wind farm power, individual turbine power values, and optimal yaw offsets for each wind speed and wind direction.
 
