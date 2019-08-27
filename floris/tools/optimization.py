@@ -1609,7 +1609,7 @@ class PowerDensityOptimization1D(Optimization):
         # layout_dist = np.max(locs) - np.min(locs)
         layout_dist = self._avg_dist(locs)
         AEP_sum = self._AEP_single_wd(self.wd[0], self.ws[0])
-        # print('AEP ratio: ', AEP_sum/self.AEP_initial)
+        print('AEP ratio: ', AEP_sum/self.AEP_initial)
         # print('dist opt: ', self.layout_dist_initial/layout_dist)
         # print('AEP opt: ', AEP_sum/self.AEP_initial)
         # print(-1*AEP_sum/self.AEP_initial*self.layout_dist_initial/layout_dist)
@@ -1641,11 +1641,11 @@ class PowerDensityOptimization1D(Optimization):
                      (0.166667, 0.5),
                      (0.25, 0.75),
                      (0.33333, 1.),
-                     (0., 0.1),
-                     (0., 0.1),
-                     (0., 0.1),
-                     (0., 0.1),
-                     (0., 0.1)]
+                     (0., 1.),
+                     (0., 1.),
+                     (0., 1.),
+                     (0., 1.),
+                     (0., 1.)]
 
     def _AEP_single_wd(self, wd, ws):
         self.fi.reinitialize_flow_field(
@@ -1670,7 +1670,7 @@ class PowerDensityOptimization1D(Optimization):
 
         self._change_coordinates(locs_unnorm)
 
-        return self._AEP_single_wd(self.wd[0], self.ws[0])/self.AEP_initial - 1.
+        return (self._AEP_single_wd(self.wd[0], self.ws[0])/self.AEP_initial - 1)*1000000.
 
     def _space_constraint(self, x_in, min_dist):
         x = np.nan_to_num(x_in[0:self.nturbs])
@@ -1794,7 +1794,7 @@ class PowerDensityOptimization1D(Optimization):
             self.yaw_max = yaw_lims[1]
         else:
             self.yaw_min = 0.0
-            self.yaw_max = 200.0
+            self.yaw_max = 20.0
         if wd is not None:
             self.wd = wd
         if ws is not None:
@@ -1829,7 +1829,7 @@ class PowerDensityOptimization1D(Optimization):
         self._generate_constraints()
         # self.layout_dist_initial = np.max(self.x0[0:self.nturbs]) - np.min(self.x0[0:self.nturbs])
         self.layout_dist_initial = self._avg_dist(self.x0[0:self.nturbs])
-        print('initial dist: ', self.layout_dist_initial)
+        # print('initial dist: ', self.layout_dist_initial)
 
 
 class LayoutHeightOptimization(LayoutOptimization):

@@ -44,7 +44,8 @@ opt_options = {'maxiter': 50, 'disp': True, 'iprint': 2, 'ftol': 1e-9}
 # Compute initial AEP for optimization normalization
 AEP_initial = fi.get_farm_AEP(wd, ws, freq)
 
-x0 = [0., 0.25, 0.5, 0.75, 1.0] + [0., 0., 0., 0., 0.]
+# Set initial conditions for optimization (scaled between 0 and 1)
+x0 = [0., 0.25, 0.5, 0.75, 1.0] + [0.25, 0., 0., 0., 0.]
 
 # Instantiate the layout otpimization object
 powdens_opt = wfct.optimization.PowerDensityOptimization1D(
