@@ -42,7 +42,8 @@ def _get_confidence_bounds(confidence):
     return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
 
 
-def energy_ratio(ref_pow_base, test_pow_base, ws_base):
+
+def energy_ratio(ref_pow_base, test_pow_base):
     """
     Compute the balanced energy ratio
 
@@ -56,7 +57,6 @@ def energy_ratio(ref_pow_base, test_pow_base, ws_base):
         ref_pow_base (np.array): Array of baseline reference turbine 
             power.
         test_pow_base (np.array): Array of baseline test turbine power.
-        ws_base (np.array): Array of wind speeds for basline.
         ref_pow_con (np.array): Array of controlled reference turbine 
             power.
         test_pow_con (np.array): Array of controlled test turbine power.
@@ -83,12 +83,17 @@ def energy_ratio(ref_pow_base, test_pow_base, ws_base):
         return np.nan, np.nan
 
 
+
+    
+
     # Weighted sums
     weight_sum_ref_base = np.sum(ref_pow_base)
     weight_sum_test_base = np.sum(test_pow_base)
 
+    if ((weight_sum_ref_base==0) or (weight_sum_test_base==0)):
+        return np.nan, np.nan
 
-    # Ratio and diff
+
     ratio_base = weight_sum_test_base / weight_sum_ref_base
 
 
@@ -101,7 +106,6 @@ def energy_ratio(ref_pow_base, test_pow_base, ws_base):
 
 def calculate_balanced_energy_ratio(reference_power_baseline,
                                     test_power_baseline,
-                                    wind_speed_array_baseline,
                                     wind_direction_array_baseline,
                                     wind_direction_bins,
                                     confidence=95,
@@ -175,8 +179,6 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     reference_power_baseline = _convert_to_numpy_array(
         reference_power_baseline)
     test_power_baseline = _convert_to_numpy_array(test_power_baseline)
-    wind_speed_array_baseline = _convert_to_numpy_array(
-        wind_speed_array_baseline)
     wind_direction_array_baseline = _convert_to_numpy_array(
         wind_direction_array_baseline)
 
@@ -201,7 +203,6 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
 
         reference_power_baseline_wd = reference_power_baseline[wind_dir_mask_baseline]
         test_power_baseline_wd = test_power_baseline[wind_dir_mask_baseline]
-        wind_speed_array_baseline_wd = wind_speed_array_baseline[wind_dir_mask_baseline]
         wind_dir_array_baseline_wd = wind_direction_array_baseline[wind_dir_mask_baseline]
         baseline_weight = gaussian(wind_dir_array_baseline_wd, wind_direction_bin,wind_direction_bin_radius/2.0 )
         baseline_weight = baseline_weight / np.sum(baseline_weight)
@@ -209,11 +210,8 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         if (len(reference_power_baseline_wd) == 0):
             continue
 
-        # Convert wind speed to integers
-        wind_speed_array_baseline_wd = wind_speed_array_baseline_wd.round().astype(int)
-
         # compute the energy ratio
-        ratio_array_base[i], counts_ratio_array_base[i] = energy_ratio(reference_power_baseline_wd, test_power_baseline_wd, wind_speed_array_baseline_wd)
+        # ratio_array_base[i], counts_ratio_array_base[i] = energy_ratio(reference_power_baseline_wd, test_power_baseline_wd)
 
         # Get the bounds through boot strapping
         # determine the number of bootstrap iterations if not given
@@ -231,10 +229,9 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
                 len(reference_power_baseline_wd), size=len(reference_power_baseline_wd),p=baseline_weight)
             reference_power_binned_baseline = reference_power_baseline_wd[ind_bs]
             test_power_binned_baseline = test_power_baseline_wd[ind_bs]
-            wind_speed_binned_baseline = wind_speed_array_baseline_wd[ind_bs]
 
             # compute the energy ratio
-            ratio_base_bs[i_bs], _ = energy_ratio(reference_power_binned_baseline, test_power_binned_baseline, wind_speed_binned_baseline)
+            ratio_base_bs[i_bs], _ = energy_ratio(reference_power_binned_baseline, test_power_binned_baseline)
 
         # Get the confidence bounds
         percentiles = _get_confidence_bounds(confidence)
@@ -320,7 +317,6 @@ def plot_energy_ratio(reference_power_baseline,
 
     ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, counts_ratio_array_base,  = calculate_balanced_energy_ratio(reference_power_baseline,
                                                                                                                                                                                                                                                                                                                                                                              test_power_baseline,
-                                                                                                                                                                                                                                                                                                                                                                             wind_speed_array_baseline,
                                                                                                                                                                                                                                                                                                                                                                              wind_direction_array_baseline,
                                                                                                                                                                                                                                                                                                                                                                              wind_direction_bins,
                                                                                                                                                                                                                                                                                                                                                                              confidence=95,
