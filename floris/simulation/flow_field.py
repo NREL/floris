@@ -293,6 +293,10 @@ class FlowField():
             with_resolution: A :py:class:`floris.utilities.Vec3` object 
                 that defines the flow field resolution at which to 
                 calculate the wake (default is *None*).
+            bounds_to_set: A list of values representing the mininum 
+                and maximum values for the domain 
+                [xmin, xmax, ymin, ymax, zmin, zmax] 
+                (default is *None*).
 
         Returns:
             *None* -- The flow field is updated directly in the 
