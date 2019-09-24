@@ -150,12 +150,10 @@ class FlorisInterface():
         bounds_to_set = (x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1],
                          hub_height - 5., hub_height + 5.)
 
-        # Set new bounds
-        flow_field.set_bounds(bounds_to_set=bounds_to_set)
-
         # Change the resolution
         flow_field.reinitialize_flow_field(
-            with_resolution=Vec3(x_resolution, y_resolution, 3))
+            with_resolution=Vec3(x_resolution, y_resolution, 3), 
+            bounds_to_set=bounds_to_set)
 
         # Calculate the wakes
         flow_field.calculate_wake()
