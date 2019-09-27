@@ -68,10 +68,13 @@ class FlorisInterface():
                 Defaults to None.
             wind_veer (float, optional): direction change over rotor.
                 Defaults to None.
-            turbulence_intensity (float, optional): background turbulence intensity. Defaults to None.Defaults to None.
-            (float, optional): ambient air density.
+            turbulence_intensity (float, optional): background turbulence 
+                intensity. Defaults to None.
+            air_density (float, optional): ambient air density.
                 Defaults to None.
-            wake (str, optional): wake model type. Defaults to None.
+            wake (:py:class:`floris.simulation.wake`, optional): A container 
+                class :py:class:`floris.simulation.wake` with wake model 
+                information used to calculate the flow field. Defaults to None.
             layout_array (np.array, optional): array of x- and
                 y-locations of wind turbines. Defaults to None.
             with_resolution (float, optional): resolution of output
