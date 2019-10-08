@@ -34,8 +34,7 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 - Multi zone model for wake deflection and velocity deficit
 - Curl  model for wake deflection and velocity deficit
 
-More information on all of these models can be found in the
-:ref:`theory <theory>` section of the online documentation.
+More information on all of these models can be found in :ref:`theory`.
 
 A couple of publications with practical information on using floris as a
 modeling and simulation tool for controls research are
@@ -79,10 +78,29 @@ For LaTeX users:
 
 Installation
 ============
-Using ``pip``, FLORIS can be installed in two ways
+The FLORIS repository consists of two primary branches:
+
+- `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
+  release corresponding to a specific version number.
+- `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
+  updates including bug fixes and improvements. See :ref:`changelog` for
+  details.
+
+These can be cloned (i.e. downloaded) directly from GitHub with one of the
+following commands:
+
+.. code-block:: bash
+
+    # master branch
+    git clone https://github.com/nrel/floris -b master
+
+    # develop branch
+    git clone https://github.com/nrel/floris -b develop
+
+After obtaining the source code, it can be "installed" using ``pip`` or another
+Python package manager. With ``pip``, there are two options:
 
 - local editable install
-
 - using a tagged release version from the ``pip`` repo
 
 For consistency between all developers, it is recommended to use Python
