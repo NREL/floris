@@ -10,3 +10,13 @@ install:
 
 script:
   - pytest
+
+deploy:
+  - provider: pypi
+    distributions: sdist bdist_wheel
+    user: <username>
+    password:
+      secure: <encrypted password>
+    skip_existing: true
+    on:
+      tags: true
