@@ -663,10 +663,10 @@ class Curl(WakeVelocity):
         # turbulence are coupled, but the formating of the code may need
         # attention in the future if we wish to add the "mix and match"
         # capability
-        self.ti_initial = float(model_dictionary["initial"])
-        self.ti_constant = float(model_dictionary["constant"])
-        self.ti_ai = float(model_dictionary["ai"])
-        self.ti_downstream = float(model_dictionary["downstream"])
+        # self.ti_initial = float(model_dictionary["initial"])
+        # self.ti_constant = float(model_dictionary["constant"])
+        # self.ti_ai = float(model_dictionary["ai"])
+        # self.ti_downstream = float(model_dictionary["downstream"])
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, wake, flow_field):
