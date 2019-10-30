@@ -1220,7 +1220,7 @@ class LayoutOptimization(Optimization):
             for valx in locs[0:self.nturbs]] + \
             [self._unnorm(valy, self.bndy_min, self.bndy_max) \
             for valy in locs[self.nturbs:2*self.nturbs]]
-        self._change_coordinates(locs_unorm)
+        self._change_coordinates(locs_unnorm)
         AEP_sum = self._AEP_loop_wd()
         return -1*AEP_sum/self.AEP_initial
 
