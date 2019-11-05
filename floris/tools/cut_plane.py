@@ -292,6 +292,17 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
     # Return the mean wind speed
     return np.cbrt(np.mean(cross_plane.u_cubed[distance < R]))
 
+def wind_speed_profile(cross_plane,
+                        R, 
+                        x2_loc, 
+                        resolution=100, 
+                        x1_locs=None):
+
+    if x1_locs is None:
+        x1_locs = np.linspace(
+            min(cross_plane.x1_flat), max(cross_plane.x1_flat), resolution)
+    v_array = np.array([calculate_wind_speed(cross_plane,x1_loc, x2_loc, R) for x1_loc in x1_locs])
+    return x1_locs, v_array
 
 def calculate_power(cross_plane,
                     x1_loc,
@@ -325,13 +336,6 @@ def calculate_power(cross_plane,
     #Return the power
     return 0.5 * air_density * (np.pi * R**2) * cp_value * ws**3
 
-    # def get_profile(self, R, x2_loc, resolution=100, x1_locs=None):
-    #     if x1_locs is None:
-    #         x1_locs = np.linspace(
-    #             min(self.x1_flat), max(self.x1_flat), resolution)
-    #     v_array = np.array([self.calculate_wind_speed(
-    #         x1_loc, x2_loc, R) for x1_loc in x1_locs])
-    #     return x1_locs, v_array)
 
     # def get_power_profile(self, ws_array, cp_array, rotor_radius, air_density=1.225, resolution=100, x1_locs=None):
 

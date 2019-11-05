@@ -79,7 +79,8 @@ def visualize_cut_plane(cut_plane,
                         ax=None,
                         minSpeed=None,
                         maxSpeed=None,
-                        cmap='coolwarm'):
+                        cmap='coolwarm',
+                        levels=None):
     """
     Generate pseudocolor mesh plot of the scan.
 
@@ -122,7 +123,7 @@ def visualize_cut_plane(cut_plane,
     # Add line contour
     line_contour_cut_plane(cut_plane,
                            ax=ax,
-                           levels=None,
+                           levels=levels,
                            colors='w',
                            linewidths=0.8,
                            alpha=0.3)
