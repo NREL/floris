@@ -103,7 +103,7 @@ class WindRose():
         df['ws'] = pd.cut(df.ws, ws_edges, labels=ws)
 
         # Regroup
-        df = df.groupby([c for c in df.columns if c is not 'freq_val']).sum()
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
 
         # Fill nans
         df = df.fillna(0)
@@ -112,7 +112,7 @@ class WindRose():
         df = df.reset_index()
 
         # Set to float
-        for c in [c for c in df.columns if c is not 'freq_val']:
+        for c in [c for c in df.columns if c != 'freq_val']:
             df[c] = df[c].astype(float)
             df[c] = df[c].astype(float)
 
@@ -178,7 +178,7 @@ class WindRose():
         df['wd'] = pd.cut(df.wd, wd_edges, labels=wd)
 
         # Regroup
-        df = df.groupby([c for c in df.columns if c is not 'freq_val']).sum()
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
 
         # Fill nans
         df = df.fillna(0)
@@ -187,7 +187,7 @@ class WindRose():
         df = df.reset_index()
 
         # Set to float Re-wrap
-        for c in [c for c in df.columns if c is not 'freq_val']:
+        for c in [c for c in df.columns if c != 'freq_val']:
             df[c] = df[c].astype(float)
             df[c] = df[c].astype(float)
         df['wd'] = geo.wrap_360(df.wd)
@@ -622,7 +622,7 @@ class WindRose():
         
         # Now group up
         df['freq_val'] = 1.
-        df = df.groupby([c for c in df.columns if c is not 'freq_val']).sum()
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
         df['freq_val'] = df.freq_val.astype(float) / df.freq_val.sum()
         df = df.reset_index()
         

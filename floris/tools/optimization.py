@@ -428,7 +428,7 @@ class YawOptimizationWindRose(Optimization):
     """
     Sub class of the :py:class`floris.tools.optimization.Optimization`
     object class that performs yaw optimization for multiple wind speed,
-    wind direction combinations.
+    wind direction, turbulence intensity (optional) combinations.
 
     Args:
         fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
@@ -443,6 +443,9 @@ class YawOptimizationWindRose(Optimization):
             Assume optimal yaw offsets are zero above this wind speed. Defaults to 25 m/s.
         wd (np.array) : The wind directions for the AEP optimization.
         ws (np.array): The wind speeds for the AEP optimization.
+        ti (np.array, optional): An optional list of turbulence intensity values for the AEP 
+            optimization. Defaults to None, meaning TI will not be included in the AEP 
+            calculations.
         x0 (iterable, optional): The initial yaw conditions. 
             Defaults to None. Initializes to the current turbine 
             yaw settings.
@@ -503,6 +506,7 @@ class YawOptimizationWindRose(Optimization):
 
     def __init__(self, fi, wd,
                            ws,
+                           ti=None,
                            minimum_yaw_angle=0.0,
                            maximum_yaw_angle=25.0,
                            minimum_ws=3.0,
@@ -529,9 +533,12 @@ class YawOptimizationWindRose(Optimization):
             self.unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
                         'pmf_res': 1.0, 'pdf_cutoff': 0.995}
 
+        self.ti = ti
+
         self.reinitialize_opt_wind_rose(
             wd=wd,
             ws=ws,
+            ti=ti,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
             minimum_ws=minimum_ws,
@@ -595,6 +602,7 @@ class YawOptimizationWindRose(Optimization):
     def reinitialize_opt_wind_rose(self,
             wd=None,
             ws=None,
+            ti=None,
             minimum_yaw_angle=None,
             maximum_yaw_angle=None,
             minimum_ws=None,
@@ -625,6 +633,9 @@ class YawOptimizationWindRose(Optimization):
                 Assume optimal yaw offsets are zero above this wind speed. Defaults to None.
             wd (np.array) : The wind directions for the AEP optimization.
             ws (np.array): The wind speeds for the AEP optimization.
+            ti (np.array, optional): An optional list of turbulence intensity values for the AEP 
+                optimization. Defaults to None, meaning TI will not be included in the AEP 
+                calculations.
             x0 (iterable, optional): The initial yaw conditions. 
                 Defaults to None. Initializes to the current turbine 
                 yaw settings.
@@ -686,6 +697,8 @@ class YawOptimizationWindRose(Optimization):
             self.wd = wd
         if ws is not None:
             self.ws = ws
+        if ti is not None:
+            self.ti = ti
         if minimum_ws is not None:
             self.minimum_ws = minimum_ws
         if maximum_ws is not None:
@@ -746,8 +759,8 @@ class YawOptimizationWindRose(Optimization):
 
     def calc_baseline_power(self):
         """
-        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm and 
-        the ideal power without wake losses. 
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the baseline power produced 
+        by the wind farm and the ideal power without wake losses. 
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -755,6 +768,7 @@ class YawOptimizationWindRose(Optimization):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. Only included if self.ti is not None.
                 - **power_baseline** (*float*) - The total power produced by the wind farm with baseline 
                   yaw control (W).
                 - **power_no_wake** (*float*) - The ideal total power produced by the wind farm without 
@@ -766,20 +780,29 @@ class YawOptimizationWindRose(Optimization):
         """
         print('=====================================================')
         print('Calculating baseline power...')
-        print('Number of wind speed, wind direction pairs to calculate = ', len(self.wd))
+        print('Number of wind conditions to calculate = ', len(self.wd))
         print('=====================================================')
 
         df_base = pd.DataFrame()
 
         for i in range(len(self.wd)):
-            print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
-                +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            if self.ti is None:
+                print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
+                    +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            else:
+                print('Computing wind speed, wind direction, turbulence intensity set '+str(i)+' out of ' \
+                    +str(len(self.wd))+': wind speed = '+str(self.ws[i])+' m/s, wind direction = ' \
+                    +str(self.wd[i])+' deg, turbulence intensity = '+str(self.ti[i])+'.')
 
             # Find baseline power in FLORIS
 
             if self.ws[i] >= self.minimum_ws:
-                self.fi.reinitialize_flow_field(
-                    wind_direction=self.wd[i], wind_speed=self.ws[i])
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
                 
                 # calculate baseline power
                 self.fi.calculate_wake(yaw_angles=0.0)
@@ -795,9 +818,15 @@ class YawOptimizationWindRose(Optimization):
                 power_no_wake = self.nturbs*[0.0]
 
             # add variables to dataframe
-            df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
-                'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
-                'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
+            if self.ti is None:
+                df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                    'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+                    'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
+            else:
+                df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                    'ti':[self.ti[i]],'power_baseline':[np.sum(power_base)], \
+                    'turbine_power_baseline':[power_base],'power_no_wake':[np.sum(power_no_wake)], \
+                    'turbine_power_no_wake':[power_no_wake]}))
 
         df_base.reset_index(drop=True,inplace=True)
 
@@ -805,7 +834,8 @@ class YawOptimizationWindRose(Optimization):
 
     def optimize(self):
         """
-        For a series of (wind speed, direction) pairs, finds the power resulting from optimal wake steering. 
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the power resulting from 
+        optimal wake steering. 
 
         Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -813,6 +843,7 @@ class YawOptimizationWindRose(Optimization):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. Only included if self.ti is not None.
                 - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
                   yaw offsets (W).
                 - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
@@ -822,21 +853,30 @@ class YawOptimizationWindRose(Optimization):
         """
         print('=====================================================')
         print('Optimizing wake redirection control...')
-        print('Number of wind speed, wind direction pairs to optimize = ', len(self.wd))
+        print('Number of wind conditions to optimize = ', len(self.wd))
         print('Number of yaw angles to optimize = ', len(self.x0))
         print('=====================================================')
 
         df_opt = pd.DataFrame()
 
         for i in range(len(self.wd)):
-            print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
-                +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            if self.ti is None:
+                print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
+                    +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            else:
+                print('Computing wind speed, wind direction, turbulence intensity set '+str(i)+' out of ' \
+                    +str(len(self.wd))+': wind speed = '+str(self.ws[i])+' m/s, wind direction = ' \
+                    +str(self.wd[i])+' deg, turbulence intensity = '+str(self.ti[i])+'.')
 
             # Optimizing wake redirection control
 
             if (self.ws[i] >= self.minimum_ws) & (self.ws[i] <= self.maximum_ws):
-                self.fi.reinitialize_flow_field(
-                    wind_direction=self.wd[i], wind_speed=self.ws[i])
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
 
                 opt_yaw_angles = self._optimize()
 
@@ -851,8 +891,12 @@ class YawOptimizationWindRose(Optimization):
             elif self.ws[i] >= self.minimum_ws:
                 print('No change in controls suggested for this inflow \
                         condition...')
-                self.fi.reinitialize_flow_field(
-                    wind_direction=self.wd[i], wind_speed=self.ws[i])
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
                 self.fi.calculate_wake(yaw_angles=0.0)
                 opt_yaw_angles = self.nturbs*[0.0]
                 power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -864,8 +908,12 @@ class YawOptimizationWindRose(Optimization):
                 power_opt = self.nturbs*[0.0]
 
             # add variables to dataframe
-            df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
-                'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
+            if self.ti is None:
+                df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                    'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
+            else:
+                df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]],'ti':[self.ti[i]], \
+                    'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
 
         df_opt.reset_index(drop=True,inplace=True)
 
@@ -876,8 +924,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
     """
     Sub class of the :py:class`floris.tools.optimization.YawOptimizationWindRose`
     object class that performs parallel yaw optimization for multiple wind speed,
-    wind direction combinations using the MPIPoolExecutor method of the 
-    mpi4py.futures module.
+    wind direction, turbulence intensity (optional) combinations using the 
+    MPIPoolExecutor method of the mpi4py.futures module.
 
     Args:
         fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
@@ -892,6 +940,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             Assume optimal yaw offsets are zero above this wind speed. Defaults to 25 m/s.
         wd (np.array): The wind directions for the AEP optimization.
         ws (np.array): The wind speeds for the AEP optimization.
+        ti (np.array, optional): An optional list of turbulence intensity values for the AEP 
+            optimization. Defaults to None, meaning TI will not be included in the AEP 
+            calculations.
         x0 (iterable, optional): The initial yaw conditions. 
             Defaults to None. Initializes to the current turbine 
             yaw settings.
@@ -952,20 +1003,24 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
     # Private methods
 
-    def _calc_baseline_power_one_case(self,ws,wd):
+    def _calc_baseline_power_one_case(self,ws,wd,ti=None):
         """
-        For a single (wind speed, direction) pair, finds the baseline power produced by the wind farm 
-        and the ideal power without wake losses.
+        For a single (wind speed, direction, ti (optional)) combination, finds the baseline power 
+        produced by the wind farm and the ideal power without wake losses.
 
         Args:
             ws (float): The wind speed used in floris for the yaw optimization.
             wd (float): The wind direction used in floris for the yaw optimization.
+            ti (float, optional): An optional turbulence intensity value for the yaw optimization. 
+                Defaults to None, meaning TI will not be included in the AEP calculations.
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with a single row, containing the following columns:
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_baseline** (*float*) - The total power produced by the wind farm with baseline 
                   yaw control (W).
                 - **power_no_wake** (*float*) - The ideal total power produced by the wind farm without 
@@ -976,12 +1031,19 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                   without wake losses for each wind turbine (W).
         """
 
-        print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        if ti is None:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        else:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg, turbulence intensity = '+str(ti)+'.')
 
         # Find baseline power in FLORIS
 
         if ws >= self.minimum_ws:
-            self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            if ti is None:
+                self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            else:
+                self.fi.reinitialize_flow_field(
+                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti)
             # calculate baseline power
             self.fi.calculate_wake(yaw_angles=0.0)
             power_base = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -996,25 +1058,35 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             power_no_wake = self.nturbs*[0.0]
 
         # add variables to dataframe
-        df_base = pd.DataFrame({'ws':[ws],'wd':[wd], \
-            'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
-            'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
+        if ti is None:
+            df_base = pd.DataFrame({'ws':[ws],'wd':[wd], \
+                'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+                'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
+        else:
+            df_base = pd.DataFrame({'ws':[ws],'wd':[wd],'ti':[ti], \
+                'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+                'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
 
         return df_base
 
-    def _optimize_one_case(self,ws,wd):
+    def _optimize_one_case(self,ws,wd,ti=None):
         """
-        For a single (wind speed, direction) pair, finds the power resulting from optimal wake steering.
+        For a single (wind speed, direction, ti (optional)) combination, finds the power resulting 
+        from optimal wake steering.
 
         Args:
             ws (float): The wind speed used in floris for the yaw optimization.
             wd (float): The wind direction used in floris for the yaw optimization.
+            ti (float, optional): An optional turbulence intensity value for the yaw optimization. 
+                Defaults to None, meaning TI will not be included in the AEP calculations.
 
         Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with a single row, containing the following columns:
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
                   yaw offsets (W).
                 - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
@@ -1023,13 +1095,19 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                   total wind farm power for each wind turbine (deg).
         """
 
-        print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        if ti is None:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        else:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg, turbulence intensity = '+str(ti)+'.')
 
         # Optimizing wake redirection control
 
         if (ws >= self.minimum_ws) & (ws <= self.maximum_ws):
-            self.fi.reinitialize_flow_field(
-                wind_direction=wd, wind_speed=ws)
+            if ti is None:
+                self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            else:
+                self.fi.reinitialize_flow_field(
+                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti)
 
             opt_yaw_angles = self._optimize()
 
@@ -1044,8 +1122,11 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         elif ws >= self.minimum_ws:
             print('No change in controls suggested for this inflow \
                     condition...')
-            self.fi.reinitialize_flow_field(
-                wind_direction=wd, wind_speed=ws)
+            if ti is None:
+                self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            else:
+                self.fi.reinitialize_flow_field(
+                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti)
             self.fi.calculate_wake(yaw_angles=0.0)
             opt_yaw_angles = self.nturbs*[0.0]
             power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -1057,8 +1138,12 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             power_opt = self.nturbs*[0.0]
 
         # add variables to dataframe
-        df_opt = pd.DataFrame({'ws':[ws],'wd':[wd], \
-            'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]})
+        if ti is None:
+            df_opt = pd.DataFrame({'ws':[ws],'wd':[wd], \
+                'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]})
+        else:
+            df_opt = pd.DataFrame({'ws':[ws],'wd':[wd],'ti':[ti], \
+                'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]})
 
         return df_opt
 
@@ -1066,9 +1151,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
     def calc_baseline_power(self):
         """
-        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm 
-        and the ideal power without wake losses. The optimization for different wind speed, wind direction 
-        combinations is parallelized using the mpi4py.futures module.
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the baseline power 
+        produced by the wind farm and the ideal power without wake losses. The optimization for 
+        different wind speed, wind direction combinations is parallelized using the mpi4py.futures module.
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -1076,6 +1161,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_baseline** (*float*) - The total power produced by the wind farm with baseline 
                   yaw control (W).
                 - **power_no_wake** (*float*) - The ideal total power produced by the wind farm without 
@@ -1088,16 +1175,22 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
         print('=====================================================')
         print('Calculating baseline power in parallel...')
-        print('Number of wind speed, wind direction pairs to calculate = ', len(self.wd))
+        print('Number of wind conditions to calculate = ', len(self.wd))
         print('=====================================================')
 
         df_base = pd.DataFrame()
 
         with MPIPoolExecutor() as executor: 
-            for df_base_one in executor.map(self._calc_baseline_power_one_case,self.ws.values,self.wd.values):
-            
-                # add variables to dataframe
-                df_base = df_base.append(df_base_one)
+            if self.ti is None:
+                for df_base_one in executor.map(self._calc_baseline_power_one_case,self.ws.values,self.wd.values):
+                
+                    # add variables to dataframe
+                    df_base = df_base.append(df_base_one)
+            else:
+                for df_base_one in executor.map(self._calc_baseline_power_one_case,self.ws.values,self.wd.values,self.ti.values):
+                
+                    # add variables to dataframe
+                    df_base = df_base.append(df_base_one)
         
         df_base.reset_index(drop=True,inplace=True)
 
@@ -1105,9 +1198,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
     def optimize(self):
         """
-        For a series of (wind speed, direction) pairs, finds the power resulting from optimal wake steering. 
-        The optimization for different wind speed, wind direction combinations is parallelized using the 
-        mpi4py.futures module.
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the power resulting from 
+        optimal wake steering. The optimization for different wind speed, wind direction combinations is 
+        parallelized using the mpi4py.futures module.
 
         Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -1115,6 +1208,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
                   yaw offsets (W).
                 - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
@@ -1125,17 +1220,23 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
         print('=====================================================')
         print('Optimizing wake redirection control in parallel...')
-        print('Number of wind speed, wind direction pairs to optimize = ', len(self.wd))
+        print('Number of wind conditions to optimize = ', len(self.wd))
         print('Number of yaw angles to optimize = ', len(self.x0))
         print('=====================================================')
 
         df_opt = pd.DataFrame()
 
         with MPIPoolExecutor() as executor: 
-            for df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values):
+            if self.ti is None:
+                for df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values):
+                
+                    # add variables to dataframe
+                    df_opt = df_opt.append(df_opt_one)
+            else:
+                for df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values,self.ti.values):
             
-                # add variables to dataframe
-                df_opt = df_opt.append(df_opt_one)
+                    # add variables to dataframe
+                    df_opt = df_opt.append(df_opt_one)
         
         df_opt.reset_index(drop=True,inplace=True)
 
