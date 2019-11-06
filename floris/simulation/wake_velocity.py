@@ -118,7 +118,7 @@ class Jensen(WakeVelocity):
         model_dictionary = parameter_dictionary[self.model_string]
         self.we = float(model_dictionary["we"])
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the Jensen wake model, this method calculates and returns 
         the wake velocity deficits, caused by the specified turbine, 
@@ -143,8 +143,6 @@ class Jensen(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.
@@ -262,7 +260,7 @@ class MultiZone(WakeVelocity):
         self.bU = float(model_dictionary["bU"])
         self.mU = [float(n) for n in model_dictionary["mU"]]
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the original FLORIS multi-zone wake model, this method 
         calculates and returns the wake velocity deficits, caused by 
@@ -287,8 +285,6 @@ class MultiZone(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.
@@ -445,7 +441,7 @@ class Gauss(WakeVelocity):
         self.alpha = float(model_dictionary["alpha"])  # near wake parameter
         self.beta = float(model_dictionary["beta"])    # near wake parameter
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the Gaussian wake model, this method calculates and 
         returns the wake velocity deficits, caused by the specified 
@@ -470,8 +466,6 @@ class Gauss(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.
@@ -657,7 +651,7 @@ class Curl(WakeVelocity):
         self.veer_linear = float(model_dictionary["veer_linear"])
         self.requires_resolution = True
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the Curl wake model, this method calculates and returns 
         the wake velocity deficits, caused by the specified turbine, 
@@ -682,8 +676,6 @@ class Curl(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.

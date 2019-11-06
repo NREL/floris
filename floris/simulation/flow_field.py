@@ -131,8 +131,8 @@ class FlowField():
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
 
-    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, wake, flow_field):
-        return self.wake.velocity_function(x, y, z, turbine, coord, deflection, wake, flow_field)
+    def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, flow_field):
+        return self.wake.velocity_function(x, y, z, turbine, coord, deflection, flow_field)
 
     def _compute_turbine_wake_deflection(self, x, y, turbine, coord, flow_field):
         return self.wake.deflection_function(x, y, turbine, coord, flow_field)
@@ -385,7 +385,7 @@ class FlowField():
 
             # get the velocity deficit accounting for the deflection
             turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self.wake, self)
+                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self)
 
             # include turbulence model for the gaussian wake model from Porte-Agel
             if self.wake.velocity_model.model_string == 'gauss':
