@@ -259,7 +259,8 @@ class FlowField():
                                 air_density=None,
                                 wake=None,
                                 turbine_map=None,
-                                with_resolution=None):
+                                with_resolution=None,
+                                bounds_to_set=None):
         """
         Reiniaitilzies the flow field when a parameter needs to be 
         updated.
@@ -292,6 +293,10 @@ class FlowField():
             with_resolution: A :py:class:`floris.utilities.Vec3` object 
                 that defines the flow field resolution at which to 
                 calculate the wake (default is *None*).
+            bounds_to_set: A list of values representing the mininum 
+                and maximum values for the domain 
+                [xmin, xmax, ymin, ymax, zmin, zmax] 
+                (default is *None*).
 
         Returns:
             *None* -- The flow field is updated directly in the 
@@ -326,7 +331,7 @@ class FlowField():
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
 
         # Set the domain bounds
-        self.set_bounds()
+        self.set_bounds(bounds_to_set=bounds_to_set)
 
         # reinitialize the flow field
         self._compute_initialized_domain(with_resolution=with_resolution)
