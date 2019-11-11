@@ -23,9 +23,11 @@ class FlorisInterface():
     The interface between a FLORIS instance and the wfc tools
     """
 
-    def __init__(self, input_file):
+    def __init__(self, input_file=None, input_dict=None):
+        if input_file is None and input_dict is None:
+            raise ValueError('Input file or dictionary must be supplied')
         self.input_file = input_file
-        self.floris = Floris(input_file=input_file)
+        self.floris = Floris(input_file=input_file, input_dict=input_dict)
 
     def calculate_wake(self, yaw_angles=None, no_wake=False):
         """
@@ -34,8 +36,8 @@ class FlorisInterface():
         Args:
             yaw_angles (np.array, optional): Turbine yaw angles.
                 Defaults to None.
-            no_wake: (bool, optional): When *True* updates the turbine 
-                quantities without calculating the wake or adding the 
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the
                 wake to the flow field. Defaults to False.
         """
 
@@ -68,12 +70,12 @@ class FlorisInterface():
                 Defaults to None.
             wind_veer (float, optional): direction change over rotor.
                 Defaults to None.
-            turbulence_intensity (float, optional): background turbulence 
+            turbulence_intensity (float, optional): background turbulence
                 intensity. Defaults to None.
             air_density (float, optional): ambient air density.
                 Defaults to None.
-            wake (:py:class:`floris.simulation.wake`, optional): A container 
-                class :py:class:`floris.simulation.wake` with wake model 
+            wake (:py:class:`floris.simulation.wake`, optional): A container
+                class :py:class:`floris.simulation.wake` with wake model
                 information used to calculate the flow field. Defaults to None.
             layout_array (np.array, optional): array of x- and
                 y-locations of wind turbines. Defaults to None.
@@ -271,52 +273,52 @@ class FlorisInterface():
 
     def get_farm_power(self, include_unc=False, unc_pmfs=None, unc_options=None, no_wake=False):
         """
-        Report wind plant power from instance of floris. Optionally includes uncertainty 
-        in wind direction and yaw position when determining power. Uncertainty is included 
-        by computing the mean wind farm power for a distribution of wind direction and yaw 
+        Report wind plant power from instance of floris. Optionally includes uncertainty
+        in wind direction and yaw position when determining power. Uncertainty is included
+        by computing the mean wind farm power for a distribution of wind direction and yaw
         position deviations from the original wind direction and yaw angles.
 
         Args:
-            include_unc (bool): If True, uncertainty in wind direction 
-                and/or yaw position is included when determining wind farm power. 
+            include_unc (bool): If True, uncertainty in wind direction
+                and/or yaw position is included when determining wind farm power.
                 Defaults to False.
-            unc_pmfs (dictionary, optional): A dictionary containing optional 
-                probability mass functions describing the distribution of wind 
-                direction and yaw position deviations when wind direction and/or 
-                yaw position uncertainty is included in the power calculations. 
-                Contains the following key-value pairs:  
+            unc_pmfs (dictionary, optional): A dictionary containing optional
+                probability mass functions describing the distribution of wind
+                direction and yaw position deviations when wind direction and/or
+                yaw position uncertainty is included in the power calculations.
+                Contains the following key-value pairs:
 
-                -   **wd_unc**: A numpy array containing wind direction deviations 
-                    from the original wind direction. 
-                -   **wd_unc_pmf**: A numpy array containing the probability of 
-                    each wind direction deviation in **wd_unc** occuring. 
-                -   **yaw_unc**: A numpy array containing yaw angle deviations 
-                    from the original yaw angles. 
-                -   **yaw_unc_pmf**: A numpy array containing the probability of 
+                -   **wd_unc**: A numpy array containing wind direction deviations
+                    from the original wind direction.
+                -   **wd_unc_pmf**: A numpy array containing the probability of
+                    each wind direction deviation in **wd_unc** occuring.
+                -   **yaw_unc**: A numpy array containing yaw angle deviations
+                    from the original yaw angles.
+                -   **yaw_unc_pmf**: A numpy array containing the probability of
                     each yaw angle deviation in **yaw_unc** occuring.
 
-                Defaults to None, in which case default PMFs are calculated using 
+                Defaults to None, in which case default PMFs are calculated using
                 values provided in **unc_options**.
-            unc_options (disctionary, optional): A dictionary containing values used 
-                to create normally-distributed, zero-mean probability mass functions 
-                describing the distribution of wind direction and yaw position 
-                deviations when wind direction and/or yaw position uncertainty is 
-                included. This argument is only used when **unc_pmfs** is None and 
+            unc_options (disctionary, optional): A dictionary containing values used
+                to create normally-distributed, zero-mean probability mass functions
+                describing the distribution of wind direction and yaw position
+                deviations when wind direction and/or yaw position uncertainty is
+                included. This argument is only used when **unc_pmfs** is None and
                 contains the following key-value pairs:
 
-                -   **std_wd**: A float containing the standard deviation of the wind 
+                -   **std_wd**: A float containing the standard deviation of the wind
                         direction deviations from the original wind direction.
-                -   **std_yaw**: A float containing the standard deviation of the yaw 
+                -   **std_yaw**: A float containing the standard deviation of the yaw
                         angle deviations from the original yaw angles.
-                -   **pmf_res**: A float containing the resolution in degrees of the 
+                -   **pmf_res**: A float containing the resolution in degrees of the
                         wind direction and yaw angle PMFs.
-                -   **pdf_cutoff**: A float containing the cumulative distribution 
-                    function value at which the tails of the PMFs are truncated. 
+                -   **pdf_cutoff**: A float containing the cumulative distribution
+                    function value at which the tails of the PMFs are truncated.
 
-                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75, 
+                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75,
                 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-            no_wake: (bool, optional): When *True* updates the turbine 
-                quantities without calculating the wake or adding the 
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the
                 wake to the flow field. Defaults to False.
 
         Returns:
@@ -380,46 +382,46 @@ class FlorisInterface():
         Report power from each wind turbine from instance of floris.
 
         Args:
-            include_unc (bool): If True, uncertainty in wind direction 
-                and/or yaw position is included when determining wind farm power. 
+            include_unc (bool): If True, uncertainty in wind direction
+                and/or yaw position is included when determining wind farm power.
                 Defaults to False.
-            unc_pmfs (dictionary, optional): A dictionary containing optional 
-                probability mass functions describing the distribution of wind 
-                direction and yaw position deviations when wind direction and/or 
-                yaw position uncertainty is included in the power calculations. 
-                Contains the following key-value pairs:  
+            unc_pmfs (dictionary, optional): A dictionary containing optional
+                probability mass functions describing the distribution of wind
+                direction and yaw position deviations when wind direction and/or
+                yaw position uncertainty is included in the power calculations.
+                Contains the following key-value pairs:
 
-                -   **wd_unc**: A numpy array containing wind direction deviations 
-                    from the original wind direction. 
-                -   **wd_unc_pmf**: A numpy array containing the probability of 
-                    each wind direction deviation in **wd_unc** occuring. 
-                -   **yaw_unc**: A numpy array containing yaw angle deviations 
-                    from the original yaw angles. 
-                -   **yaw_unc_pmf**: A numpy array containing the probability of 
+                -   **wd_unc**: A numpy array containing wind direction deviations
+                    from the original wind direction.
+                -   **wd_unc_pmf**: A numpy array containing the probability of
+                    each wind direction deviation in **wd_unc** occuring.
+                -   **yaw_unc**: A numpy array containing yaw angle deviations
+                    from the original yaw angles.
+                -   **yaw_unc_pmf**: A numpy array containing the probability of
                     each yaw angle deviation in **yaw_unc** occuring.
 
-                Defaults to None, in which case default PMFs are calculated using 
+                Defaults to None, in which case default PMFs are calculated using
                 values provided in **unc_options**.
-            unc_options (disctionary, optional): A dictionary containing values used 
-                to create normally-distributed, zero-mean probability mass functions 
-                describing the distribution of wind direction and yaw position 
-                deviations when wind direction and/or yaw position uncertainty is 
-                included. This argument is only used when **unc_pmfs** is None and 
+            unc_options (disctionary, optional): A dictionary containing values used
+                to create normally-distributed, zero-mean probability mass functions
+                describing the distribution of wind direction and yaw position
+                deviations when wind direction and/or yaw position uncertainty is
+                included. This argument is only used when **unc_pmfs** is None and
                 contains the following key-value pairs:
 
-                -   **std_wd**: A float containing the standard deviation of the wind 
+                -   **std_wd**: A float containing the standard deviation of the wind
                         direction deviations from the original wind direction.
-                -   **std_yaw**: A float containing the standard deviation of the yaw 
+                -   **std_yaw**: A float containing the standard deviation of the yaw
                         angle deviations from the original yaw angles.
-                -   **pmf_res**: A float containing the resolution in degrees of the 
+                -   **pmf_res**: A float containing the resolution in degrees of the
                         wind direction and yaw angle PMFs.
-                -   **pdf_cutoff**: A float containing the cumulative distribution 
-                    function value at which the tails of the PMFs are truncated. 
+                -   **pdf_cutoff**: A float containing the cumulative distribution
+                    function value at which the tails of the PMFs are truncated.
 
-                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75, 
+                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75,
                 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-            no_wake: (bool, optional): When *True* updates the turbine 
-                quantities without calculating the wake or adding the 
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the
                 wake to the flow field. Defaults to False.
 
         Returns:
@@ -481,7 +483,7 @@ class FlorisInterface():
                 for turbine in self.floris.farm.turbines
             ]
             return turb_powers
-        
+
 
     def get_turbine_ct(self):
         """
@@ -503,8 +505,8 @@ class FlorisInterface():
 
         Args:
             yaw_angles (np.array): yaw to apply to each turbine
-            no_wake: (bool, optional): When *True* updates the turbine 
-                quantities without calculating the wake or adding the 
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the
                 wake to the flow field. Defaults to False.
 
         Returns:
@@ -522,7 +524,7 @@ class FlorisInterface():
             self.reinitialize_flow_field(
                 wind_direction=wd[i], wind_speed=ws[i])
             self.calculate_wake()
-            
+
             AEP_sum = AEP_sum + self.get_farm_power()*freq[i]*8760
         return AEP_sum
 
