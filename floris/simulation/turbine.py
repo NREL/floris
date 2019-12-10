@@ -12,7 +12,8 @@
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
-from scipy.spatial import cKDTree, distance_matrix
+from scipy.spatial import distance_matrix
+# from scipy.spatial import cKDTree
 from ..utilities import cosd, sind, tand
 
 
@@ -192,47 +193,32 @@ class Turbine():
             speed at each rotor grid point for the turbine (m/s).
         """
         u_at_turbine = local_wind_speed
+        
+        # PREVIOUS MEHTHOD
         # x_grid = x
         # y_grid = y
         # z_grid = z
 
         # yPts = np.array([point[0] for point in self.grid])
         # zPts = np.array([point[1] for point in self.grid])
-        # print('yPts',yPts)
 
         # # interpolate from the flow field to get the flow field at the grid points
-        # # print('here')
         # dist = [np.sqrt((coord.x1 - x_grid)**2 + (coord.x2 + yPts[i] - y_grid) **
         #                 2 + (self.hub_height + zPts[i] - z_grid)**2) for i in range(len(yPts))]
-        # # print('dist',dist)
         # idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
-        # # print('idx',idx)
         # data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
-        # # print('data',data)
+
 
 
         # Try kd tree approach
         flow_grid_points = np.column_stack([x.flatten(),y.flatten(),z.flatten()])
-        # print(flow_grid_points)
 
-        # HACK set up a grid array
+        # Set up a grid array
         y_array = np.array(self.grid)[:,0] + coord.x2 
         z_array = np.array(self.grid)[:,1] + self.hub_height
         x_array = np.ones_like(y_array) * coord.x1
         grid_array = np.column_stack([x_array,y_array,z_array])
-        # print(grid_array)
 
-        # #print(x)
-        # #print(flow_grid_points)
-        # tree = cKDTree(flow_grid_points)
-        # dd, ii = tree.query(grid_array)
-        # # print(ii)
-        # # print('u',u_at_turbine)
-        # # print(u_at_turbine.flatten()[ii])
-        # # print(tree.query(grid_array))
-        # print(dd)
-        # print(ii)
-        # print(np.argmin(distance_matrix(flow_grid_points,grid_array),axis=0))
         ii = np.argmin(distance_matrix(flow_grid_points,grid_array),axis=0)
 
         # return np.array(data)
