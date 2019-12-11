@@ -202,16 +202,19 @@ class Turbine():
         # yPts = np.array([point[0] for point in self.grid])
         # zPts = np.array([point[1] for point in self.grid])
 
-        # # interpolate from the flow field to get the flow field at the grid points
-        # dist = [np.sqrt((coord.x1 - x_grid)**2 + (coord.x2 + yPts[i] - y_grid) **
-        #                 2 + (self.hub_height + zPts[i] - z_grid)**2) for i in range(len(yPts))]
+        # # interpolate from the flow field to get the flow field at the grid
+        # # points
+        # dist = [np.sqrt((coord.x1 - x_grid)**2 \
+        #      + (coord.x2 + yPts[i] - y_grid) **2 \
+        #      + (self.hub_height + zPts[i] - z_grid)**2) \
+        #      for i in range(len(yPts))]
         # idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
         # data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
 
-
-
         # Try kd tree approach
-        flow_grid_points = np.column_stack([x.flatten(),y.flatten(),z.flatten()])
+        flow_grid_points = np.column_stack([x.flatten(),
+                                            y.flatten(),
+                                            z.flatten()])
 
         # Set up a grid array
         y_array = np.array(self.grid)[:,0] + coord.x2 
