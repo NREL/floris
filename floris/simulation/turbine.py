@@ -193,8 +193,9 @@ class Turbine():
             speed at each rotor grid point for the turbine (m/s).
         """
         u_at_turbine = local_wind_speed
-        
-        # PREVIOUS MEHTHOD
+
+        # # PREVIOUS MEHTHOD========================
+        # # UNCOMMENT IF ANY ISSUE UNCOVERED WITH NEW MOETHOD
         # x_grid = x
         # y_grid = y
         # z_grid = z
@@ -210,8 +211,12 @@ class Turbine():
         #      for i in range(len(yPts))]
         # idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
         # data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
+        # # PREVIOUS MEHTHOD========================
 
-        # Try kd tree approach
+
+
+        # # NEW MEHTHOD========================
+        # Sort by distance
         flow_grid_points = np.column_stack([x.flatten(),
                                             y.flatten(),
                                             z.flatten()])
