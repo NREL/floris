@@ -783,7 +783,8 @@ class YawOptimizationWindRose(Optimization):
         print('Number of wind conditions to calculate = ', len(self.wd))
         print('=====================================================')
 
-        df_base = pd.DataFrame()
+        # Put results in dict for speed, instead of previously appending to frame
+        result_dict = dict()
 
         for i in range(len(self.wd)):
             if self.ti is None:
@@ -819,15 +820,21 @@ class YawOptimizationWindRose(Optimization):
 
             # add variables to dataframe
             if self.ti is None:
-                df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
-                    'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
-                    'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
+                result_dict[i] = {'ws':self.ws[i],'wd':self.wd[i], \
+                    'power_baseline':np.sum(power_base),'turbine_power_baseline':power_base, \
+                    'power_no_wake':np.sum(power_no_wake),'turbine_power_no_wake':power_no_wake}
+                # df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                #     'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+                #     'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
             else:
-                df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
-                    'ti':[self.ti[i]],'power_baseline':[np.sum(power_base)], \
-                    'turbine_power_baseline':[power_base],'power_no_wake':[np.sum(power_no_wake)], \
-                    'turbine_power_no_wake':[power_no_wake]}))
-
+                result_dict[i] = {'ws':self.ws[i],'wd':self.wd[i], \
+                    'ti':self.ti[i],'power_baseline':np.sum(power_base),'turbine_power_baseline':power_base, \
+                    'power_no_wake':np.sum(power_no_wake),'turbine_power_no_wake':power_no_wake}
+                # df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                #     'ti':[self.ti[i]],'power_baseline':[np.sum(power_base)], \
+                #     'turbine_power_baseline':[power_base],'power_no_wake':[np.sum(power_no_wake)], \
+                #     'turbine_power_no_wake':[power_no_wake]}))
+        df_base = pd.DataFrame.from_dict(result_dict, "index")
         df_base.reset_index(drop=True,inplace=True)
 
         return df_base
