@@ -55,9 +55,11 @@ class InputReader():
         }
 
         self._farm_properties = {
-            "wind_speed": float,
-            "wind_direction": float,
-            "turbulence_intensity": float,
+            "wind_speed": list,
+            "wind_x": list,
+            "wind_y": list,
+            "turbulence_intensity": list,
+            "wind_direction": list,
             "wind_shear": float,
             "wind_veer": float,
             "air_density": float,

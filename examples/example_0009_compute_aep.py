@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 
 # Instantiate the FLORIS object
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Define wind farm coordinates and layout
 wf_coordinate = [39.8283, -98.5795]
@@ -41,7 +41,7 @@ for i in range(N_row):
 		layout_y.append(k*spc*D)
 N_turb = len(layout_x)
 
-fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
+fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=[270.0],wind_speed=[8.0])
 fi.calculate_wake()
 
 # set min and max yaw offsets for optimization
@@ -59,10 +59,7 @@ print('Plotting the FLORIS flowfield...')
 # ================================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()

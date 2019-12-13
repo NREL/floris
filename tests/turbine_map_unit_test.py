@@ -78,7 +78,7 @@ def test_rotated():
     sample map is rotated by pi about (0, 0).
     """
     test_class = TurbineMapTest()
-    rotated_map = test_class.instance.rotated(180, Vec3(0.0, 0.0, 0.0))
+    rotated_map = test_class.instance.rotated([180, 180], Vec3(0.0, 0.0, 0.0))
     baseline_coordinates = [
         Vec3(0.0, -10.0, 90.0),
         Vec3(-10.0, -20.0, 90.0)
@@ -111,3 +111,4 @@ def test_sorted_in_x_as_list():
         assert pytest.approx(coordinate.x1) == baseline_coordinates[i].x1
         assert pytest.approx(coordinate.x2) == baseline_coordinates[i].x2
         assert pytest.approx(coordinate.x3) == baseline_coordinates[i].x3
+        

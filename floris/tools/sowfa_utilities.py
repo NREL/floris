@@ -15,6 +15,7 @@ from ..utilities import Vec3
 import pandas as pd
 import os
 import re
+from .cut_plane import CutPlane, get_plane_from_flow_data
 
 
 class SowfaInterface():
@@ -169,6 +170,98 @@ class SowfaInterface():
         print('Simulation time: %.1fs' % self.sim_time_length)
         print('---------------------')
         return ' '
+
+    def get_hor_plane(self, height,
+                x_resolution=200, 
+                y_resolution=200, 
+                x_bounds=None,
+                y_bounds=None):
+        """
+        Get a horizontal cut through plane at a specific height
+
+        Args:
+            height (float): height of cut plane, defaults to hub-height
+                Defaults to Hub-height.
+            x1_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x2_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x1_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+            x2_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+
+        Returns:
+            horplane
+        """
+
+        # Get points from flow data
+        df =  get_plane_from_flow_data(self.flow_data,normal_vector='z', x3_value=height)
+
+
+        # Compute and return the cutplane
+        return CutPlane(df)
+
+
+    def get_cross_plane(self, x_loc,
+                x_resolution=200, 
+                y_resolution=200, 
+                x_bounds=None,
+                y_bounds=None):
+        """
+        Get a horizontal cut through plane at a specific height
+
+        Args:
+            height (float): height of cut plane, defaults to hub-height
+                Defaults to Hub-height.
+            x1_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x2_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x1_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+            x2_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+
+        Returns:
+            horplane
+        """
+
+        # Get the points of data in a dataframe
+        df =  get_plane_from_flow_data(self.flow_data,normal_vector='x', x3_value=x_loc)
+
+        # Compute and return the cutplane
+        return CutPlane(df)
+
+    def get_y_plane(self, y_loc,
+            x_resolution=200, 
+            y_resolution=200, 
+            x_bounds=None,
+            y_bounds=None):
+        """
+        Get a horizontal cut through plane at a specific height
+
+        Args:
+            height (float): height of cut plane, defaults to hub-height
+                Defaults to Hub-height.
+            x1_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x2_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x1_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+            x2_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+
+        Returns:
+            horplane
+        """
+
+        # Get the points of data in a dataframe
+        df =  get_plane_from_flow_data(self.flow_data,normal_vector='y', x3_value=y_loc)
+
+        # Compute and return the cutplane
+        return CutPlane(df)
 
     def get_average_powers(self):
         """

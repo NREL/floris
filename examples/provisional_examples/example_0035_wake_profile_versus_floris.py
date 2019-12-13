@@ -22,7 +22,7 @@ import numpy as np
 # Floris setup
 turbine1_x, turbine1_y = 500.0, 500.0
 turbine2_x, turbine2_y = 1200, 500.0
-floris_interface = wfct.floris_utilities.FlorisInterface("example_input.json")
+floris_interface = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Build the single turbine farm and run
 floris_interface.floris.farm.set_turbine_locations([turbine1_x], [turbine1_y])

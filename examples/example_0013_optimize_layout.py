@@ -19,7 +19,7 @@ import floris.tools.cut_plane as cp
 import numpy as np
 
 # Instantiate the FLORIS object
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Set turbine locations to 3 turbines in a triangle
 D = fi.floris.farm.turbines[0].rotor_diameter

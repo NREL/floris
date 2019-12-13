@@ -23,8 +23,8 @@ print(sowfa_case)
 
 # Demonstrate flow field visualizations
 
-# # Get the horizontal cut plane
-hor_plane = wfct.cut_plane.HorPlane(sowfa_case.flow_data, 90)
+# # Get the horizontal cut plane at 90 m
+hor_plane = sowfa_case.get_hor_plane(90)
 
 # Show the views in different permutations
 fig, axarr = plt.subplots(3, 2, figsize=(10, 10))
@@ -34,6 +34,7 @@ ax = axarr[0, 0]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Original')
 
+
 # Set turbine location as 0,0
 hor_plane = wfct.cut_plane.set_origin(hor_plane, 250., 200.)
 ax = axarr[1, 0]
@@ -42,7 +43,7 @@ ax.set_title('Turbine at origin')
 
 # Increase the resolution
 hor_plane = wfct.cut_plane.change_resolution(
-    hor_plane, resolution=(2000, 2000))
+    hor_plane, resolution=(1000, 1000))
 ax = axarr[2, 0]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Increased Resolution')
@@ -56,6 +57,7 @@ ax = axarr[0, 1]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Provided Grid')
 
+
 # Express axis in terms of D
 D = 126.  # m
 hor_plane = wfct.cut_plane.rescale_axis(hor_plane, x1_factor=D, x2_factor=D)
@@ -63,12 +65,15 @@ ax = axarr[1, 1]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Axis in D')
 
+
+
 # Invert x1
 
 ax = axarr[2, 1]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 wfct.visualization.reverse_cut_plane_x_axis_in_plot(ax=ax)
 ax.set_title('Invert x axis')
+
 
 # Access and plot SOWFA outputs
 

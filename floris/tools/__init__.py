@@ -27,14 +27,14 @@ Examples:
     >>> dir(floris.tools)
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
-    'energy_ratio', 'floris_utilities', 'flow_data',
+    'energy_ratio', 'floris_interface', 'flow_data',
     'layout_functions', 'optimization', 'plotting', 'power_rose',
     'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
 """
 
 from . import cut_plane
 from . import energy_ratio
-from . import floris_utilities
+from . import floris_interface
 from . import flow_data
 from . import layout_functions
 from . import optimization

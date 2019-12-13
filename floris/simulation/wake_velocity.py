@@ -118,7 +118,7 @@ class Jensen(WakeVelocity):
         model_dictionary = parameter_dictionary[self.model_string]
         self.we = float(model_dictionary["we"])
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the Jensen wake model, this method calculates and returns 
         the wake velocity deficits, caused by the specified turbine, 
@@ -143,8 +143,6 @@ class Jensen(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.
@@ -262,7 +260,7 @@ class MultiZone(WakeVelocity):
         self.bU = float(model_dictionary["bU"])
         self.mU = [float(n) for n in model_dictionary["mU"]]
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the original FLORIS multi-zone wake model, this method 
         calculates and returns the wake velocity deficits, caused by 
@@ -287,8 +285,6 @@ class MultiZone(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.
@@ -352,7 +348,7 @@ class MultiZone(WakeVelocity):
         # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
 
-        return 2 * turbine.aI * c * flow_field.wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
+        return 2 * turbine.aI * c * flow_field.wind_map.grid_wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
 
 
 class Gauss(WakeVelocity):
@@ -445,7 +441,7 @@ class Gauss(WakeVelocity):
         self.alpha = float(model_dictionary["alpha"])  # near wake parameter
         self.beta = float(model_dictionary["beta"])    # near wake parameter
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the Gaussian wake model, this method calculates and 
         returns the wake velocity deficits, caused by the specified 
@@ -470,8 +466,6 @@ class Gauss(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.
@@ -489,7 +483,7 @@ class Gauss(WakeVelocity):
         veer = flow_field.wind_veer
 
         # added turbulence model
-        TI = turbine.turbulence_intensity
+        TI = turbine.current_turbulence_intensity
 
         # turbine parameters
         D = turbine.rotor_diameter
@@ -657,7 +651,7 @@ class Curl(WakeVelocity):
         self.veer_linear = float(model_dictionary["veer_linear"])
         self.requires_resolution = True
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, wake, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the Curl wake model, this method calculates and returns 
         the wake velocity deficits, caused by the specified turbine, 
@@ -682,8 +676,6 @@ class Curl(WakeVelocity):
             deflection_field: An array of floats that contains the 
                 amount of wake deflection in meters in the y direction 
                 at each grid point of the flow field.
-            wake: A :py:obj:`floris.simulation.wake` object containing 
-                the wake model used.
             flow_field: A :py:class:`floris.simulation.flow_field` 
                 object containing the flow field information for the 
                 wind farm.
@@ -729,9 +721,9 @@ class Curl(WakeVelocity):
         r1 = np.sqrt(y1**2 + z1**2)
 
         # add initial velocity deficit at the rotor to the flow field
-        uw_initial = -1 * (flow_field.wind_speed * intial_deficit * turbine.aI)
+        uw_initial = -1 * (flow_field.wind_map.grid_wind_speed * intial_deficit * turbine.aI)
         uw[idx, :, :] = gaussian_filter(
-            uw_initial * (r1 <= turbine.rotor_diameter / 2), sigma=1)
+            uw_initial[idx,:,:] * (r1 <= turbine.rotor_diameter / 2), sigma=1)
 
         # enforce the boundary conditions
         uw[idx,  0, :] = 0.0
@@ -749,7 +741,7 @@ class Curl(WakeVelocity):
         yaw = turbine.yaw_angle                         # yaw angle of the turbine
         HH = turbine.hub_height                         # hub height of the turbine
         # the free-stream velocity of the flow field
-        Uinf = flow_field.wind_speed
+        Uinf = flow_field.wind_map.grid_wind_speed[idx,:,:]
         # the tip-speed ratior of the turbine
         TSR = turbine.tsr
         # the axial induction factor of the turbine
@@ -879,7 +871,7 @@ class Curl(WakeVelocity):
         dudz_initial = np.gradient(U, axis=2) \
             / np.gradient(z_locations, axis=2)
 
-        ti_initial = flow_field.turbulence_intensity
+        ti_initial = flow_field.wind_map.grid_turbulence_intensity[idx,:,:]
 
         # turbulence intensity parameters stored in floris.json
         ti_i = self.ti_initial

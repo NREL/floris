@@ -22,13 +22,13 @@ import numpy as np
 
 print('Running FLORIS with no yaw...')
 # Instantiate the FLORIS object
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Set turbine locations to a 2 turbine array
 D = fi.floris.farm.turbines[0].rotor_diameter
 layout_x = [0, 5*D]
 layout_y = [0, 0]
-fi.reinitialize_flow_field(layout_array=(layout_x, layout_y), wind_direction = 273.0)
+fi.reinitialize_flow_field(layout_array=(layout_x, layout_y), wind_direction = [273.0])
 fi.calculate_wake()
 
 unc_options={'std_wd': 4.95, 'std_yaw': 1.75,'pmf_res': 1.0, 'pdf_cutoff': 0.99}

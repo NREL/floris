@@ -28,7 +28,7 @@ First, the wind farm coordinates and some optimization parameters are specified 
     maximum_ws = 15.0
 
     # Instantiate the FLORIS object
-    fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+    fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
     # Set wind farm to a 2 turbine N-S configuration with 5D spacing 
     D = fi.floris.farm.turbines[0].rotor_diameter
