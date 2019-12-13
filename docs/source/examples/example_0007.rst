@@ -13,7 +13,7 @@ First, to ensure the presense of in plane flows, the curl model is selected
 ::
 
         # Initialize the FLORIS interface fi
-        fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+        fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
         # Change the model to curl
         fi.floris.farm.set_wake_model('curl')

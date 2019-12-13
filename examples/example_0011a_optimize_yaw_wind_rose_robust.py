@@ -36,7 +36,7 @@ minimum_ws = 3.0
 maximum_ws = 15.0
 
 # Instantiate the FLORIS object
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Set wind farm to a 2 turbine N-S configuration with 5D spacing 
 D = fi.floris.farm.turbines[0].rotor_diameter
@@ -45,7 +45,7 @@ layout_x = [0, 0]
 layout_y = [0, 5*D]
 N_turb = len(layout_x)
 
-fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
+fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=[270.0],wind_speed=[8.0])
 fi.calculate_wake()
 
 unc_options={'std_wd': 4.95, 'std_yaw': 0.0,'pmf_res': 1.0, 'pdf_cutoff': 0.95}
@@ -71,7 +71,7 @@ print('Importing wind rose data...')
 
 # Create wind rose object and import wind rose dataframe using WIND Toolkit HSDS API.
 # Alternatively, load existing file with wind rose information.
-calculate_new_wind_rose = True
+calculate_new_wind_rose = False
 
 wind_rose = rose.WindRose()
 

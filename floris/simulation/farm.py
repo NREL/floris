@@ -12,6 +12,7 @@
 from ..utilities import Vec3
 from .wake_combination import WakeCombination
 from .flow_field import FlowField
+from .wind_map import WindMap
 from .turbine_map import TurbineMap
 import copy
 import numpy as np
@@ -36,13 +37,16 @@ class Farm():
             -   **properties**: A dictionary containing the following 
                 key-value pairs:
 
-                -   **wind_speed**: A float that is the wind speed at 
-                    hub height (m/s).
-                -   **wind_direction**: A float that is the wind 
-                    direction (deg).
-                -   **turbulence_intensity**: A float that is the 
-                    turbulence intensity (expressed as a decimal 
-                    fraction).
+                -   **wind_speed**: A list that contains the wind speed 
+                    measurements at hub height (m/s).
+                -   **wind_x**: a list that contains the x coordinates
+                    of the wind speed measurements.
+                -   **wind_y**: a list that contains the y coordinates
+                    of the wind speed measurements.
+                -   **wind_direction**: A list that contains the wind 
+                    direction measurements (deg).
+                -   **turbulence_intensity**: A list containing turbulence 
+                    intensity measurements at hub height (%).
                 -   **wind_shear**: A float that is the power law wind 
                     shear exponent.
                 -   **wind_veer**: A float that is the vertical change 
@@ -66,20 +70,28 @@ class Farm():
         properties = instance_dictionary["properties"]
         layout_x = properties["layout_x"]
         layout_y = properties["layout_y"]
+        wind_x = properties["wind_x"]
+        wind_y = properties["wind_y"]
         self.wake = wake
 
-        self.flow_field = FlowField(
+        self.wind_map = WindMap(
             wind_speed=properties["wind_speed"],
-            wind_direction=properties["wind_direction"],
+            layout_array=(layout_x, layout_y),
+            wind_layout=(wind_x, wind_y),
+            turbulence_intensity=properties["turbulence_intensity"],
+            wind_direction=properties["wind_direction"]
+        )
+
+        self.flow_field = FlowField(
             wind_shear=properties["wind_shear"],
             wind_veer=properties["wind_veer"],
-            turbulence_intensity=properties["turbulence_intensity"],
             air_density=properties["air_density"],
             turbine_map=TurbineMap(
                 layout_x,
                 layout_y,
                 [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
-            wake=wake
+            wake=wake,
+            wind_map=self.wind_map
         )
 
     def __str__(self):
@@ -169,14 +181,14 @@ class Farm():
         This property returns the wind speed for the wind farm.
 
         Returns:
-            float: The current wind speed in the wind farm in m/s.
+            list: The current wind speed at each turbine  in m/s.
 
         Examples:
             To get the wind speed for the wind farm:
 
             >>> wind_speed = floris.farm.wind_speed()
         """
-        return self.flow_field.wind_speed
+        return self.wind_map.turbine_wind_speed
 
     @property
     def wind_direction(self):
@@ -184,7 +196,7 @@ class Farm():
         This property returns the wind direction for the wind farm.
 
         Returns:
-            float: The current wind direction in the wind farm in 
+            list: The current wind direction at each turbine in 
             degrees.
 
         Examples:
@@ -192,7 +204,7 @@ class Farm():
 
             >>> wind_direction = floris.farm.wind_direction()
         """
-        return (self.flow_field.wind_direction + 270.0) % 360.
+        return self.wind_map.turbine_wind_direction
 
     @property
     def wind_shear(self):
@@ -235,15 +247,15 @@ class Farm():
         wind farm.
 
         Returns:
-            float: The current turbulence intensity expressed as a 
-            decimal fraction.
+            list: The initial turbulence intensity at each turbine 
+            expressed as a decimal fraction.
 
         Examples:
             To get the turbulence intensity for the wind farm:
 
             >>> TI = floris.farm.turbulence_intensity()
         """
-        return self.flow_field.turbulence_intensity
+        return self.wind_map.turbine_turbulence_intensity
 
     @property
     def air_density(self):
@@ -260,6 +272,29 @@ class Farm():
         """
         return self.flow_field.air_density
 
+    @property
+    def wind_map(self):
+        """
+        This property returns the values of the 
+        :py:obj:`floris.simulation.wind_map` object associated with 
+        the wind farm.
+
+        Returns:
+            WindMap: A :py:obj:`floris.simulation.wind_map` 
+            object that holds atmospheric input.
+
+        Examples:
+            To get the wind map for the wind farm:
+
+            >>> wind_map = floris.farm.wind_map()
+        """
+
+        return self._wind_map
+
+    @wind_map.setter
+    def wind_map(self, value):
+        self._wind_map = value
+    
     @property
     def turbine_map(self):
         """

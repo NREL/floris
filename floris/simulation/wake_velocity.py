@@ -348,7 +348,7 @@ class MultiZone(WakeVelocity):
         # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
 
-        return 2 * turbine.aI * c * flow_field.wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
+        return 2 * turbine.aI * c * flow_field.wind_map.grid_wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
 
 
 class Gauss(WakeVelocity):
@@ -483,7 +483,7 @@ class Gauss(WakeVelocity):
         veer = flow_field.wind_veer
 
         # added turbulence model
-        TI = turbine.turbulence_intensity
+        TI = turbine.current_turbulence_intensity
 
         # turbine parameters
         D = turbine.rotor_diameter
@@ -721,9 +721,9 @@ class Curl(WakeVelocity):
         r1 = np.sqrt(y1**2 + z1**2)
 
         # add initial velocity deficit at the rotor to the flow field
-        uw_initial = -1 * (flow_field.wind_speed * intial_deficit * turbine.aI)
+        uw_initial = -1 * (flow_field.wind_map.grid_wind_speed * intial_deficit * turbine.aI)
         uw[idx, :, :] = gaussian_filter(
-            uw_initial * (r1 <= turbine.rotor_diameter / 2), sigma=1)
+            uw_initial[idx,:,:] * (r1 <= turbine.rotor_diameter / 2), sigma=1)
 
         # enforce the boundary conditions
         uw[idx,  0, :] = 0.0
@@ -741,7 +741,7 @@ class Curl(WakeVelocity):
         yaw = turbine.yaw_angle                         # yaw angle of the turbine
         HH = turbine.hub_height                         # hub height of the turbine
         # the free-stream velocity of the flow field
-        Uinf = flow_field.wind_speed
+        Uinf = flow_field.wind_map.grid_wind_speed[idx,:,:]
         # the tip-speed ratior of the turbine
         TSR = turbine.tsr
         # the axial induction factor of the turbine
@@ -871,7 +871,7 @@ class Curl(WakeVelocity):
         dudz_initial = np.gradient(U, axis=2) \
             / np.gradient(z_locations, axis=2)
 
-        ti_initial = flow_field.turbulence_intensity
+        ti_initial = flow_field.wind_map.grid_turbulence_intensity[idx,:,:]
 
         # turbulence intensity parameters stored in floris.json
         ti_i = self.ti_initial

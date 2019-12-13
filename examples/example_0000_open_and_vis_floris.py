@@ -15,16 +15,13 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Calculate wake
 fi.calculate_wake()
 
-# Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+# Get horizontal plane at default height (hub-height)
+hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()

@@ -45,15 +45,17 @@ class SampleInputs():
             "name": "farm_example_2x2",
             "description": "Example 2x2 Wind Farm",
             "properties": {
-                "wind_speed": 8.0,
-                "wind_direction": 270.0,
-                "turbulence_intensity": 0.1,
+                "wind_speed": [8.0],
+                "wind_direction": [270.0],
+                "turbulence_intensity":[ 0.1],
                 "wind_shear": 0.12,
                 "wind_veer": 0.0,
                 "air_density": 1.225,
                 "wake_combination": "sosfs",
                 "layout_x": [0.0, 5 * self.turbine["properties"]["rotor_diameter"]],
-                "layout_y": [0.0, 0.0]
+                "layout_y": [0.0, 0.0],
+                "wind_x": [0],
+                "wind_y": [0]
             }
         }
 

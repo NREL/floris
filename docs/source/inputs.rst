@@ -25,10 +25,14 @@ The general description is followed by the ``farm`` dictionary. Here is where yo
     -   **wind_veer**: A measure of the change in wind direction from the bottom of the rotor to the top of the rotor (degrees).
     -   **air_density**: The air density of the farm (kg/m^3).
 
-You also set the initial farm layout in this dictionary:
+You also set the initial farm layout and measurement locations for atmospheric
+inputs in this dictionary:
 
     -   **layout_x**: The x-coordinates of the turbines (m).
     -   **layout_y**: The y-coordinates of the turbines (m).
+    -   **wind_x**: The x-coordinates of the wind_speed, wind_direction, and turbulence_intensity measurements (m).
+    -   **wind_y**: The y-coordinates of the wind_speed, wind_direction, and turbulence_intensity measurements (m).
+
 
 ::
 
@@ -37,9 +41,11 @@ You also set the initial farm layout in this dictionary:
     "name": "farm_example_2x2",
     "description": "Example 2x2 Wind Farm",
     "properties": {
-      "wind_speed": 8.0,
-      "wind_direction": 270.0,
-      "turbulence_intensity": 0.06,
+      "wind_x":[0.0]
+      "wind_y":[0.0]
+      "wind_speed": [8.0],
+      "wind_direction": [270.0],
+      "turbulence_intensity": [0.06],
       "wind_shear": 0.12,
       "wind_veer": 0.0,
       "air_density": 1.225,
@@ -59,7 +65,7 @@ You also set the initial farm layout in this dictionary:
   },
 
 Turbine
-================
+=======
 
 After the ``farm`` dictionary is the ``turbine`` dictionary, which contains the relavant parameters for the turbine model being used. These are stored in the sub-dictionary ``properties``:
 
@@ -68,19 +74,19 @@ After the ``farm`` dictionary is the ``turbine`` dictionary, which contains the 
     -   **blade_count**: The number of blades on the turbine.
     -   **pP**: Exponent used on the cosine power loss due to yaw.
     -   **pT**: Exponent used on the cosine power loss due to tilt.
-    -   **generator_efficiency**: The generator efficiency used in calculating 
-        power. If the Cp (``power``) data is electrical and not aerodynamic, 
+    -   **generator_efficiency**: The generator efficiency used in calculating
+        power. If the Cp (``power``) data is electrical and not aerodynamic,
         then set ``generator_efficiency = 1.0``.
-    -   **power_thrust_table**: Sub-dictionary containing Cp, Ct, and wind 
+    -   **power_thrust_table**: Sub-dictionary containing Cp, Ct, and wind
         speed data.
 
-        -   **power**: A list of Cp values that correspond to the Ct 
+        -   **power**: A list of Cp values that correspond to the Ct
             (``thrust``) and ``wind_speed`` data.
-        -   **thrust**: A list of Ct values that correspond to the Cp 
+        -   **thrust**: A list of Ct values that correspond to the Cp
             (``power``) and ``wind_speed`` data.
-        -   **wind_speed**: A list of wind speeds that correspond to the Cp 
+        -   **wind_speed**: A list of wind speeds that correspond to the Cp
             (``power``) and Ct (``thrust``) data.
-    
+
     -   **blade_pitch**: The pitch of the turbine blades to run the simulation at. Not currently implemented; planned for future use.
     -   **yaw_angle**: The initial yaw angle for all the turbines (degrees).
     -   **tilt_angle**: The tilt angle of the rotor (degrees).
@@ -129,73 +135,72 @@ After the ``farm`` dictionary is the ``turbine`` dictionary, which contains the 
         }
     },
 
-Wake 
-======================
-The ``wake`` dictionary follows the ``turbine`` dictionary, containing parameter values for the different wake models available in FLORIS. These parameter values are stored in the ``properties`` sub-dictionary:
+Wake
+====
+The ``wake`` dictionary contains parameter values for the different wake models available in FLORIS. These parameter values are stored in the ``properties`` sub-dictionary:
 
-    -   **velocity_model**: The name of the velocity model to use. Possible 
+    -   **velocity_model**: The name of the velocity model to use. Possible
         models include "jensen", "multiZone", "gauss", and "curl".
-    -   **deflection_model**: The name of the deflection model to use. Possible 
+    -   **deflection_model**: The name of the deflection model to use. Possible
         models include "jimenez", "gauss", and "curl".
-    -   **combination_model**: The method to use to combine the base flow field 
-        and the turbine wakes. Possible options include "fls" (freestream 
-        linear superposition) and "sosfs" (sum of squares freestream 
+    -   **combination_model**: The method to use to combine the base flow field
+        and the turbine wakes. Possible options include "fls" (freestream
+        linear superposition) and "sosfs" (sum of squares freestream
         superposition).
-    -   **parameters**: Sub-dictionary containing parameters for the different 
+    -   **parameters**: Sub-dictionary containing parameters for the different
         wake models.
 
-        -   **turbulence_intensity**: Sub-dictionary containing turbulence 
+        -   **turbulence_intensity**: Sub-dictionary containing turbulence
             intensity parameters for turbulence added by turbines.
 
             -   **initial**: Initial turbulence intensity.
             -   **constant**: Coefficient for the turbulence model.
             -   **ai**: Exponent for the turbine's axial induction factor.
-            -   **downstream**: Exponent for the ratio of the distance 
+            -   **downstream**: Exponent for the ratio of the distance
                 downstream to the turbine rotor's diameter.
-            
+
         -   **jensen**: Sub-dictionary for the Jensen wake model.
 
-            -   **we**: A float that is the linear wake decay constant that 
-                defines the cone boundary for the wake as well as the velocity 
+            -   **we**: A float that is the linear wake decay constant that
+                defines the cone boundary for the wake as well as the velocity
                 deficit.
 
         -   **multizone**: Sub-dictionary for the MultiZone model.
 
-            -   **me**: A list of three floats that help determine the slope of 
-                the diameters of the three wake zones (near wake, far wake, 
+            -   **me**: A list of three floats that help determine the slope of
+                the diameters of the three wake zones (near wake, far wake,
                 mixing zone) as a function of downstream distance.
-            -   **we**: A float that is the scaling parameter used to adjust 
-                the wake expansion, helping to determine the slope of the 
-                diameters of the three wake zones as a function of downstream 
-                distance, as well as the recovery of the velocity deficits in 
+            -   **we**: A float that is the scaling parameter used to adjust
+                the wake expansion, helping to determine the slope of the
+                diameters of the three wake zones as a function of downstream
+                distance, as well as the recovery of the velocity deficits in
                 the wake as a function of downstream distance.
-            -   **aU**: A float that is a parameter used to determine the 
-                dependence of the wake velocity deficit decay rate on the rotor 
+            -   **aU**: A float that is a parameter used to determine the
+                dependence of the wake velocity deficit decay rate on the rotor
                 yaw angle.
-            -   **bU**: A float that is another parameter used to determine the 
-                dependence of the wake velocity deficit decay rate on the rotor 
+            -   **bU**: A float that is another parameter used to determine the
+                dependence of the wake velocity deficit decay rate on the rotor
                 yaw angle.
-            -   **mU**: A list of three floats that are parameters used to 
-                determine the dependence of the wake velocity deficit decay 
-                rate for each of the three wake zones on the rotor yaw angle. 
+            -   **mU**: A list of three floats that are parameters used to
+                determine the dependence of the wake velocity deficit decay
 
         -   **gauss**: Sub-dictionary for the Gaussian model.
 
-            -   **ka**: A float that is a parameter used to determine the 
-                linear relationship between the turbulence intensity and the 
+            -   **ka**: A float that is a parameter used to determine the
+                linear relationship between the turbulence intensity and the
                 width of the Gaussian wake shape.
-            -   **kb**: A float that is a second parameter used to determine 
-                the linear relationship between the turbulence intensity and 
+            -   **kb**: A float that is a second parameter used to determine
+                the linear relationship between the turbulence intensity and
                 the width of the Gaussian wake shape.
-            -   **alpha**: A float that is a parameter that determines the 
-                dependence of the downstream boundary between the near wake and 
+            -   **alpha**: A float that is a parameter that determines the
+                dependence of the downstream boundary between the near wake and
                 far wake region on the turbulence intensity.
-            -   **beta**: A float that is a parameter that determines the 
-                dependence of the downstream boundary between the near wake and 
+            -   **beta**: A float that is a parameter that determines the
+                dependence of the downstream boundary between the near wake and
                 far wake region on the turbine's induction factor.
-            -   **ad**: Parameter to include additional deflection of the wake 
+            -   **ad**: Parameter to include additional deflection of the wake
                 to account for delfection due to the rotation of the turbine.
-            -   **bd**: Parameter to include additional deflection of the wake 
+            -   **bd**: Parameter to include additional deflection of the wake
                 to account for delfection due to the rotation of the turbine.
 
         -   **jimenez**: Sub-dictionary for the Jimenez wake deflection model.
@@ -206,13 +211,13 @@ The ``wake`` dictionary follows the ``turbine`` dictionary, containing parameter
 
         -   **curl**: Sub-dictionary for the Curled Wake model.
 
-            -   **model_grid_resolution**: A list of three values that 
-                represent the number of divisions of the flow field over the 
+            -   **model_grid_resolution**: A list of three values that
+                represent the number of divisions of the flow field over the
                 x-, y-, and z-domains.
-            -   **initial_deficit**: A float that scales the initial wake 
+            -   **initial_deficit**: A float that scales the initial wake
                 deficit profile spawned at each turbine.
-            -   **dissipation**: A tuning parameter that scales the effective 
-                viscosity of the flow, essentially changing how quickly the 
+            -   **dissipation**: A tuning parameter that scales the effective
+                viscosity of the flow, essentially changing how quickly the
                 wakes dissipate.
             -   **veer_linear**: The amount of veer for the curled wake model.
 

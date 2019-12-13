@@ -175,11 +175,12 @@ class Gauss(WakeDeflection):
             deflection (np.array): Deflected wake centerline.
         """
         # ==============================================================
-        wind_speed = flow_field.wind_speed  # free-stream velocity (m/s)
-        TI_0 = flow_field.turbulence_intensity  # turbulence intensity (%/100)
+        wind_speed = flow_field.wind_map.grid_wind_speed  # free-stream velocity (m/s)
         veer = flow_field.wind_veer  # veer (degrees)
-        TI = TI_0
-
+       
+        # added turbulence model
+        TI = turbine.current_turbulence_intensity
+        # TI = flow_field.wind_map.grid_turbulence_intensity
         # hard-coded model input data (goes in input file)
         ka = self.ka  # wake expansion parameter
         kb = self.kb  # wake expansion parameter
@@ -194,8 +195,8 @@ class Gauss(WakeDeflection):
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
 
-        U_local = flow_field.wind_speed*np.ones(np.shape(flow_field.u_initial)) # just a placeholder for now, should be initialized with the flow_field
-        # U_local = flow_field.u_initial
+        # U_local = flow_field.wind_map.grid_wind_speed  #just a placeholder for now, should be initialized with the flow_field
+        U_local = flow_field.u_initial
 
         # initial velocity deficits
         uR = U_local * Ct * cosd(tilt) * cosd(yaw) / (

@@ -38,7 +38,7 @@ if __name__ == '__main__':
     maximum_ws = 15.0
 
     # Instantiate the FLORIS object
-    fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+    fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
     # Set wind farm to N_row x N_row grid with constant spacing 
     # (2 x 2 grid, 5 D spacing)
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     		layout_y.append(k*spc*D)
     N_turb = len(layout_x)
 
-    fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=270.0,wind_speed=8.0)
+    fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=[270.0],wind_speed=[8.0])
     fi.calculate_wake()
 
     # option to include uncertainty

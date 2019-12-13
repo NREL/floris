@@ -69,7 +69,7 @@ In `example_0012_optimize_yaw_wind_rose_parallel.py
     maximum_ws = 15.0
 
     # Instantiate the FLORIS object
-    fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+    fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
     # Set wind farm to N_row x N_row grid with constant spacing 
     # (2 x 2 grid, 5 D spacing)

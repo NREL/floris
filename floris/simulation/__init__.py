@@ -38,6 +38,7 @@ from .farm import Farm
 from .floris import Floris
 from .flow_field import FlowField
 from .input_reader import InputReader
+from .wind_map import WindMap
 from .turbine_map import TurbineMap
 from .turbine import Turbine
 from .wake_combination import WakeCombination

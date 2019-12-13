@@ -16,7 +16,7 @@ import floris.tools as wfct
 from floris.utilities import Vec3
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Change the model to curl
 fi.floris.farm.set_wake_model('curl')
@@ -30,11 +30,8 @@ fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 # Calculate wake
 fi.calculate_wake(yaw_angles=[25,0,0])
 
-# Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+# Get the hor plane
+hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()
@@ -42,7 +39,7 @@ wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 
 
 # Get the vertical cut through and visualize
-cp = wfct.cut_plane.CrossPlane(fi.get_flow_data(),5*D)
+cp = fi.get_cross_plane(5*D)
 fig, ax = plt.subplots(figsize=(10,10))
 wfct.visualization.visualize_cut_plane(cp, ax=ax,minSpeed=6.0,maxSpeed=8)
 wfct.visualization.visualize_quiver(cp,ax=ax,downSamp=2)

@@ -31,7 +31,7 @@ class Optimization():
     Base optimization class.
 
     Args:
-        fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
             Interface from FLORIS to the tools package.
 
     Returns:
@@ -76,7 +76,7 @@ class YawOptimization(Optimization):
     inflow conditions.
 
     Args:
-        fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
             Interface from FLORIS to the tools package.
         minimum_yaw_angle (float, optional): Minimum constraint on 
             yaw. Defaults to None.
@@ -244,7 +244,7 @@ class YawOptimization(Optimization):
         bounds to the supplied values or uses what is currently stored.
         
         Args:
-            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
                 Interface from FLORIS to the tools package.
             minimum_yaw_angle (float, optional): Minimum constraint on 
                 yaw. Defaults to None.
@@ -431,7 +431,7 @@ class YawOptimizationWindRose(Optimization):
     wind direction combinations.
 
     Args:
-        fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
             Interface from FLORIS to the tools package.
         minimum_yaw_angle (float, optional): Minimum constraint on 
             yaw. Defaults to None.
@@ -580,6 +580,7 @@ class YawOptimizationWindRose(Optimization):
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
         """
+        wind_map = self.fi.floris.farm.wind_map
         self.residual_plant = minimize(self._get_power_for_yaw_angle_opt,
                                 self.x0,
                                 method=self.opt_method,
@@ -587,6 +588,9 @@ class YawOptimizationWindRose(Optimization):
                                 options=self.opt_options)
 
         opt_yaw_angles = self.residual_plant.x
+        self.fi.reinitialize_flow_field(wind_speed = wind_map.input_speed,
+                              wind_direction = wind_map.input_direction,
+                              turbulence_intensity = wind_map.input_ti)
 
         return opt_yaw_angles
 
@@ -613,7 +617,7 @@ class YawOptimizationWindRose(Optimization):
         bounds to the supplied values or uses what is currently stored.
         
         Args:
-            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
                 Interface from FLORIS to the tools package.
             minimum_yaw_angle (float, optional): Minimum constraint on 
                 yaw. Defaults to None.
@@ -779,7 +783,7 @@ class YawOptimizationWindRose(Optimization):
 
             if self.ws[i] >= self.minimum_ws:
                 self.fi.reinitialize_flow_field(
-                    wind_direction=self.wd[i], wind_speed=self.ws[i])
+                    wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
                 
                 # calculate baseline power
                 self.fi.calculate_wake(yaw_angles=0.0)
@@ -836,7 +840,7 @@ class YawOptimizationWindRose(Optimization):
 
             if (self.ws[i] >= self.minimum_ws) & (self.ws[i] <= self.maximum_ws):
                 self.fi.reinitialize_flow_field(
-                    wind_direction=self.wd[i], wind_speed=self.ws[i])
+                    wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
 
                 opt_yaw_angles = self._optimize()
 
@@ -852,7 +856,7 @@ class YawOptimizationWindRose(Optimization):
                 print('No change in controls suggested for this inflow \
                         condition...')
                 self.fi.reinitialize_flow_field(
-                    wind_direction=self.wd[i], wind_speed=self.ws[i])
+                    wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
                 self.fi.calculate_wake(yaw_angles=0.0)
                 opt_yaw_angles = self.nturbs*[0.0]
                 power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -880,7 +884,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
     mpi4py.futures module.
 
     Args:
-        fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
             Interface from FLORIS to the tools package.
         minimum_yaw_angle (float, optional): Minimum constraint on 
             yaw. Defaults to None.
@@ -981,7 +985,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         # Find baseline power in FLORIS
 
         if ws >= self.minimum_ws:
-            self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            self.fi.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
             # calculate baseline power
             self.fi.calculate_wake(yaw_angles=0.0)
             power_base = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -1029,7 +1033,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
         if (ws >= self.minimum_ws) & (ws <= self.maximum_ws):
             self.fi.reinitialize_flow_field(
-                wind_direction=wd, wind_speed=ws)
+                wind_direction=[wd], wind_speed=[ws])
 
             opt_yaw_angles = self._optimize()
 
@@ -1045,7 +1049,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             print('No change in controls suggested for this inflow \
                     condition...')
             self.fi.reinitialize_flow_field(
-                wind_direction=wd, wind_speed=ws)
+                wind_direction=[wd], wind_speed=[ws])
             self.fi.calculate_wake(yaw_angles=0.0)
             opt_yaw_angles = self.nturbs*[0.0]
             power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -1162,7 +1166,7 @@ class LayoutOptimization(Optimization):
         Instantiate LayoutOptimization object and parameter values.
         
         Args:
-            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
                 Interface from FLORIS to the tools package.
             boundaries (iterable): A list of pairs of floats that 
                 represent the boundary's vertices. Defaults to None.
@@ -1223,7 +1227,7 @@ class LayoutOptimization(Optimization):
 
     def _AEP_single_wd(self, wd, ws):
         self.fi.reinitialize_flow_field(
-            wind_direction=wd, wind_speed=ws)
+            wind_direction=[wd], wind_speed=[ws])
         self.fi.calculate_wake()
 
         turb_powers = [turbine.power for turbine in \
@@ -1235,7 +1239,7 @@ class LayoutOptimization(Optimization):
 
         for i in range(len(self.wd)):
             self.fi.reinitialize_flow_field(
-                wind_direction=self.wd[i], wind_speed=self.ws[i])
+                wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
             self.fi.calculate_wake()
 
             AEP_sum = AEP_sum + self.fi.get_farm_power()*self.freq[i]*8760
@@ -1546,7 +1550,7 @@ class LayoutHeightOptimization(LayoutOptimization):
         values.
         
         Args:
-            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
                 Interface from FLORIS to the tools package.
             boundaries (iterable): A list of pairs of floats that 
                 represent the boundary's vertices.
@@ -1803,7 +1807,7 @@ class BaseCOE():
         assumed for the needed steel. Tower height is passed directly 
         while the turbine rotor diameter is pulled directly from the 
         turbine object within the 
-        :py:class:`floris.tools.floris_utilities.FlorisInterface`:.
+        :py:class:`floris.tools.floris_interface.FlorisInterface`:.
         
         Args:
             height (float): Turbine hub height in meters.

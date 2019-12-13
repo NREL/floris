@@ -22,7 +22,7 @@ import numpy as np
 
 print('Running FLORIS with no yaw...')
 # Instantiate the FLORIS object
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Set turbine locations to 3 turbines in a row
 D = fi.floris.farm.turbines[0].rotor_diameter
@@ -39,10 +39,9 @@ print('Plotting the FLORIS flowfield...')
 # =============================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_hub_height_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+hor_plane = fi.get_hor_plane(x_resolution=400,
+                                 y_resolution=100)
+
 
 # Plot and show
 fig, ax = plt.subplots()
@@ -82,11 +81,9 @@ print('Plotting the FLORIS flowfield with yaw...')
 # =============================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_hub_height_flow_data(x_resolution=400,
-                                 y_resolution=100),
-    fi.floris.farm.turbines[0].hub_height
-)
+hor_plane = fi.get_hor_plane(x_resolution=400,
+                                 y_resolution=100)
+
 
 # Plot and show
 fig, ax = plt.subplots()

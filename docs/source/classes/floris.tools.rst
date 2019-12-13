@@ -8,7 +8,7 @@ Submodules
 
    floris.tools.cut_plane
    floris.tools.energy_ratio
-   floris.tools.floris_utilities
+   floris.tools.floris_interface
    floris.tools.flow_data
    floris.tools.layout_functions
    floris.tools.optimization
