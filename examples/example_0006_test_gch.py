@@ -13,30 +13,33 @@
 
 import matplotlib.pyplot as plt
 import floris.tools as wfct
-from floris.utilities import Vec3
+import numpy as np
+# from floris.utilities import Vec3
 
 # Initialize the FLORIS interface fi, use default gauss model
-# fi = wfct.floris_utilities.FlorisInterface("example_input.json")
 fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Change the layout
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
-layout_x = [0, 7*D, 14*D]
-layout_y = [0, 0, 0]
+# layout_x = [0, 7*D, 14*D]
+# layout_y = [0, 0, 0]
+layout_x = [0, 7*D]
+layout_y = [0, 0]
+yaw_angles = [0, 0]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
 # Calculate wake
-fi.calculate_wake(yaw_angles=[25,0,0])
+fi.calculate_wake(yaw_angles=yaw_angles)
 
 # Print the turbine power
-print(fi.get_farm_power())
+print(np.array(fi.get_turbine_power())/1000.0)
 
 # # Switch to gch
 # fi.floris.farm.wake._velocity_model.use_yaw_rec = True
 # fi.floris.farm.wake._deflection_model.use_yaw_eff = True
 
 # # Calculate wake
-# fi.calculate_wake(yaw_angles=[25,0,0])
+# fi.calculate_wake(yaw_angles=yaw_angles)
 
 # # Print the turbine power
 # print(fi.get_farm_power())
