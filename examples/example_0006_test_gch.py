@@ -19,6 +19,9 @@ import numpy as np
 # Initialize the FLORIS interface fi, use default gauss model
 fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
+# Force dm to 1.0
+fi.floris.farm.wake._deflection_model.deflection_multiplier = 1.0
+
 # Change the layout
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
 # layout_x = [0, 7*D, 14*D]
