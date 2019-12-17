@@ -649,7 +649,13 @@ class Gauss(WakeVelocity):
 
         # flow parameters
         rho = flow_field.air_density
-        Uinf = flow_field.wind_speed
+
+        # Update to wind map
+        # Uinf = flow_field.wind_speed
+        Uinf = np.mean(flow_field.wind_map.input_speed) # TODO Is this right?
+        # print('U',Uinf)
+
+        
 
         # top point of the rotor
         dist_top = np.sqrt((coord.x1 - x_locations) ** 2 + ((coord.x2) - y_locations) ** 2 + (
