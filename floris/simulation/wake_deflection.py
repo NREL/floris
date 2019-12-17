@@ -212,7 +212,7 @@ class Gauss(WakeDeflection):
             # determine the effective yaw angle
             yaw_effective = self.effective_yaw(x_locations, y_locations, z_locations, coord, turbine, flow_field)
             yaw = -turbine.yaw_angle  - yaw_effective # opposite sign convention in this model
-            # print('Effective yaw angle = ', yaw_effective, turbine.yaw_angle)
+            print('Effective yaw angle = ', yaw_effective, turbine.yaw_angle)
         else:
             yaw = -turbine.yaw_angle
 
