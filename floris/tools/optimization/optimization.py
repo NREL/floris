@@ -46,8 +46,8 @@ class Optimization():
         print('solver in reinit: ', solver)
         self.optProb = pyoptsparse.Optimization(self.model, self.objective_func)
 
-        self.optProb = self.model._add_var_group(self.optProb)
-        self.optProb = self.model._add_con_group(self.optProb)
+        self.optProb = self.model.add_var_group(self.optProb)
+        self.optProb = self.model.add_con_group(self.optProb)
         self.optProb.addObj('obj')
 
         if solver is not None:
@@ -82,7 +82,7 @@ class Optimization():
         return self.sol
 
     def objective_func(self, varDict):
-        return self.model._obj_func(varDict)
+        return self.model.obj_func(varDict)
 
     def sensitivity_func(self):
         pass

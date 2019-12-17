@@ -41,15 +41,15 @@ class Layout():
         return 'layout'
 
     ###########################################################################
-    # Required private optimziation methods
+    # Required private optimization methods
     ###########################################################################
 
-    def _reinitialize(self):
+    def reinitialize(self):
         pass
 
-    def _obj_func(self, varDict):
+    def obj_func(self, varDict):
         # Parse the variable dictionary
-        self._parse_opt_vars(varDict)
+        self.parse_opt_vars(varDict)
 
         # Update turbine map with turbince locations
         self.fi.reinitialize_flow_field(layout_array=[self.x, self.y])
@@ -63,7 +63,7 @@ class Layout():
         )*1e-9
 
         # Compute constraints, if any are defined for the optimization
-        funcs = self._compute_cons(funcs)
+        funcs = self.compute_cons(funcs)
 
         fail = False
         return funcs, fail
@@ -74,15 +74,15 @@ class Layout():
     #     fail = False
     #     return funcsSens, fail
 
-    def _parse_opt_vars(self, varDict):
+    def parse_opt_vars(self, varDict):
         self.x = varDict['x']
         self.y = varDict['y']
 
-    def _parse_sol_vars(self, sol):
+    def parse_sol_vars(self, sol):
         self.x = list(sol.getDVs().values())[0]
         self.y = list(sol.getDVs().values())[1]
 
-    def _add_var_group(self, optProb):
+    def add_var_group(self, optProb):
         optProb.addVarGroup('x', self.nturbs, type='c',
                             lower=self.xmin,
                             upper=self.xmax,
@@ -94,16 +94,16 @@ class Layout():
 
         return optProb
 
-    def _add_con_group(self, optProb):
+    def add_con_group(self, optProb):
         optProb.addConGroup('boundary_con', self.nturbs, lower=0.0)
         optProb.addConGroup('spacing_con', self.nturbs,
                             lower=self.min_dist)
 
         return optProb
 
-    def _compute_cons(self, funcs):
-        funcs['boundary_con'] = self._distance_from_boundaries()
-        funcs['spacing_con'] = self._space_constraint()
+    def compute_cons(self, funcs):
+        funcs['boundary_con'] = self.distance_from_boundaries()
+        funcs['spacing_con'] = self.space_constraint()
 
         return funcs
 
@@ -111,7 +111,7 @@ class Layout():
     # User-defined methods
     ###########################################################################
 
-    def _space_constraint(self):
+    def space_constraint(self):
         dist = [np.min([np.sqrt((self.x[i] - self.x[j])**2 + \
                 (self.y[i] - self.y[j])**2) \
                 for j in range(self.nturbs) if i != j]) \
@@ -119,7 +119,7 @@ class Layout():
 
         return dist
 
-    def _distance_from_boundaries(self):  
+    def distance_from_boundaries(self):  
         x = self.x
         y = self.y
 
@@ -170,7 +170,7 @@ class Layout():
 
         return dist_out
 
-    def _point_inside_polygon(self, x, y, poly):
+    def point_inside_polygon(self, x, y, poly):
         n = len(poly)
         inside =False
 
