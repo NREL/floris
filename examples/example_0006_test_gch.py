@@ -39,7 +39,7 @@ print(np.array(fi.get_turbine_power())/1000.0)
 
 # Switch to gch
 fi.floris.farm.wake._velocity_model.use_yaw_rec = True
-fi.floris.farm.wake._deflection_model.use_yaw_eff = True
+fi.floris.farm.wake._deflection_model.use_yaw_eff = False
 
 # Calculate wake
 fi.calculate_wake(yaw_angles=yaw_angles)
