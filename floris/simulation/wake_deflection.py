@@ -63,7 +63,7 @@ class Jimenez(WakeDeflection):
         self.kd = float(model_dictionary["kd"])
         self.bd = float(model_dictionary["bd"])
 
-    def function(self, x_locations, y_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, coord, flow_field):
         """
         This function defines the angle at which the wake deflects in
         relation to the yaw of the turbine. This is coded as defined in
@@ -72,6 +72,7 @@ class Jimenez(WakeDeflection):
         Args:
             x_locations (np.array): streamwise locations in wake
             y_locations (np.array): spanwise locations in wake
+            z_locations (np.array): vertical locations in wake (not used in Jimenez)
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord
@@ -166,7 +167,7 @@ class Gauss(WakeDeflection):
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied by D in function)
 
 
-    def function(self, x_locations, y_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations,z_locations, turbine, coord, flow_field):
         """
         This function defines the angle at which the wake deflects in
         relation to the yaw of the turbine. This is coded as defined in
@@ -175,6 +176,7 @@ class Gauss(WakeDeflection):
         Args:
             x_locations (np.array): streamwise locations in wake
             y_locations (np.array): spanwise locations in wake
+            z_locations (np.array): vertical locations in wake
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord 
@@ -360,7 +362,7 @@ class Curl(WakeDeflection):
         super().__init__(parameter_dictionary)
         self.model_string = "curl"
 
-    def function(self, x_locations, y_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations,z_locations, turbine, coord, flow_field):
         """
         This function will return the wake centerline predicted with
         the curled wake model. #TODO Eventually. This is coded as
