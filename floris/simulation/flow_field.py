@@ -470,6 +470,10 @@ class FlowField():
             # add points to flow field grid points
             self._compute_initialized_domain(points=points)
 
+        # reinitialize the turbines
+        for i, turbine in enumerate(self.turbine_map.turbines):
+            turbine.reinitialize_turbine(self.wind_map.turbine_turbulence_intensity[i])
+
         # define the center of rotation with reference to 270 deg as center of flow field
         x0 = np.mean([np.min(self.x) , np.max(self.x)])
         y0 = np.mean([np.min(self.y) , np.max(self.y)])
