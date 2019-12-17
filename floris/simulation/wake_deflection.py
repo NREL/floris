@@ -308,15 +308,17 @@ class Gauss(WakeDeflection):
         xLocs = np.abs(x_locations - turbine_coord.x1)
         # idx = np.where((dist < D/2) & (np.abs(yLocs) > 1.0) & (np.abs(zLocs) > 1.0) & (xLocs < D/4))
         idx = np.where((dist < D/2) & (xLocs < D/4) & (np.abs(yLocs) > 0.1))
-        print('idx,',idx)
+
 
         Gamma = V[idx] * ((2 * np.pi) * (yLocs[idx] ** 2 + zLocs[idx] ** 2)) / (
                 yLocs[idx] * (1 - np.exp(-(yLocs[idx] ** 2 + zLocs[idx] ** 2) / ((eps) ** 2))))
         Gamma_wake_rotation = 1.0 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+        print('aI,',aI)
+        print('TSR,',TSR)
+        print('turbine.average_velocity,',turbine.average_velocity)
         print('Gamma_wake_rotation,',Gamma_wake_rotation)
 
         Gamma0 = np.mean(np.abs(Gamma))
-        print('Gamma0,',Gamma0)
         # print(np.mean(V[idx]))
         # print(yLocs[idx])
         # print(xLocs[idx])
