@@ -458,7 +458,7 @@ class Gauss(WakeVelocity):
             self.eps_gain = bool(model_dictionary["eps_gain"])
         else:
             print('Using default option eps_gain')
-            self.eps_gain = 0.03 # SOWFA SETTING (note this will be multiplied by D in function)
+            self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied by D in function)
 
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
