@@ -300,7 +300,7 @@ class Gauss(WakeDeflection):
         zLocs = z_locations - (HH)
 
         eps = self.eps_gain * D# Use set value
-        Uinf = flow_field.wind_speed
+        Uinf = np.mean(flow_field.wind_map.input_speed) # TODO Is this right?
         dist = np.sqrt(yLocs**2 + zLocs**2)
         # idx = np.where((dist > D/2) & (dist < D))
         xLocs = np.abs(x_locations - turbine_coord.x1)
