@@ -153,6 +153,19 @@ class Gauss(WakeDeflection):
             print('Using default gauss deflection multipler of 1.0')
             self.deflection_multiplier = 1.0
 
+        if 'useyaweff' in model_dictionary:
+            self.use_yaw_eff = bool(model_dictionary["useyaweff"])
+        else:
+            print('Using default option of not applying effective yaw (use_yaw_eff=False)')
+            self.use_yaw_eff = False
+
+        if 'eps_gain' in model_dictionary:
+            self.eps_gain = bool(model_dictionary["eps_gain"])
+        else:
+            print('Using default value of eps_gain')
+            self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied by D in function)
+
+
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
         """
         This function defines the angle at which the wake deflects in
@@ -191,7 +204,16 @@ class Gauss(WakeDeflection):
 
         # turbine parameters
         D = turbine.rotor_diameter
-        yaw = -turbine.yaw_angle  # opposite sign convention in this model
+
+        # GCH CODE
+        if self.use_yaw_eff:
+            # determine the effective yaw angle
+            yaw_effective = self.effective_yaw(x_locations, y_locations, z_locations, coord, turbine, flow_field)
+            yaw = -turbine.yaw_angle  - yaw_effective # opposite sign convention in this model
+            # print('Effective yaw angle = ', yaw_effective, turbine.yaw_angle)
+        else:
+            yaw = -turbine.yaw_angle
+
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
 
@@ -259,6 +281,56 @@ class Gauss(WakeDeflection):
         deflection = delta_near_wake + delta_far_wake
 
         return deflection
+
+    def effective_yaw(self, x_locations, y_locations, z_locations, turbine_coord, turbine, flow_field):
+
+        # turbine parameters
+        Ct = turbine.Ct
+        D = turbine.rotor_diameter
+        HH = turbine.hub_height
+        aI = turbine.aI
+        TSR = turbine.tsr
+
+        V = flow_field.v
+        W = flow_field.w
+
+        yLocs = y_locations - turbine_coord.x2
+        zLocs = z_locations - (HH)
+
+        eps = self.eps_gain * D# Use set value
+        Uinf = flow_field.wind_speed
+        dist = np.sqrt(yLocs**2 + zLocs**2)
+        # idx = np.where((dist > D/2) & (dist < D))
+        xLocs = np.abs(x_locations - turbine_coord.x1)
+        # idx = np.where((dist < D/2) & (np.abs(yLocs) > 1.0) & (np.abs(zLocs) > 1.0) & (xLocs < D/4))
+        idx = np.where((dist < D/2) & (xLocs < D/4) & (np.abs(yLocs) > 0.1))
+
+        Gamma = V[idx] * ((2 * np.pi) * (yLocs[idx] ** 2 + zLocs[idx] ** 2)) / (
+                yLocs[idx] * (1 - np.exp(-(yLocs[idx] ** 2 + zLocs[idx] ** 2) / ((eps) ** 2))))
+        Gamma_wake_rotation = 1.0 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+
+        Gamma0 = np.mean(np.abs(Gamma))
+        # print(np.mean(V[idx]))
+        # print(yLocs[idx])
+        # print(xLocs[idx])
+
+        test_gamma = np.linspace(-30, 30, 61)
+        minYaw = 10000
+        for i in range(len(test_gamma)):
+            tmp1 = 8 * Gamma0 / (np.pi * flow_field.air_density * D * turbine.average_velocity * Ct)
+            tmp = np.abs((sind(test_gamma[i]) * cosd(test_gamma[i]) ** 2) - tmp1)
+            # print(tmp,test_gamma[i])
+            if tmp < minYaw:
+                minYaw = tmp
+                idx = i
+
+        try:
+            return test_gamma[idx]
+            # return eff_yaw
+        except:
+            print('ERROR',idx)
+            # return np.nan
+            return 0.0
 
 
 class Curl(WakeDeflection):
