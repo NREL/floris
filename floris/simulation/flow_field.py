@@ -220,8 +220,8 @@ class FlowField():
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, flow_field):
         return self.wake.velocity_function(x, y, z, turbine, coord, deflection, flow_field)
 
-    def _compute_turbine_wake_deflection(self, x, y, turbine, coord, flow_field):
-        return self.wake.deflection_function(x, y, turbine, coord, flow_field)
+    def _compute_turbine_wake_deflection(self, x, y, z, turbine, coord, flow_field):
+        return self.wake.deflection_function(x, y, z, turbine, coord, flow_field)
 
     def _rotated_grid(self, angle, center_of_rotation):
         """
@@ -525,7 +525,7 @@ class FlowField():
 
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(
-                rotated_x, rotated_y, turbine, coord, self)   
+                rotated_x, rotated_y, rotated_z, turbine, coord, self)   
 
             # get the velocity deficit accounting for the deflection
             turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(
