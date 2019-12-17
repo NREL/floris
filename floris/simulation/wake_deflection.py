@@ -151,20 +151,20 @@ class Gauss(WakeDeflection):
         if 'dm' in model_dictionary:
             self.deflection_multiplier = float(model_dictionary["dm"])
         else:
-            print('Using default gauss deflection multipler of 1.0')
             self.deflection_multiplier = 1.0
-
-        if 'useyaweff' in model_dictionary:
-            self.use_yaw_eff = bool(model_dictionary["useyaweff"])
+            print('Using default gauss deflection multipler of: %.1f' % self.deflection_multiplier)
+            
+        if 'use_ss' in model_dictionary:
+            self.use_ss = bool(model_dictionary["use_ss"])
         else:
-            print('Using default option of not applying effective yaw (use_yaw_eff=False)')
-            self.use_yaw_eff = False
+            print('Using default option of not applying gch-based secondary steering (use_ss=False)')
+            self.use_ss = False
 
         if 'eps_gain' in model_dictionary:
             self.eps_gain = bool(model_dictionary["eps_gain"])
         else:
-            print('Using default value of eps_gain')
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied by D in function)
+            print('Using default option eps_gain: %.1f' % self.eps_gain)
 
 
     def function(self, x_locations, y_locations,z_locations, turbine, coord, flow_field):
@@ -208,7 +208,7 @@ class Gauss(WakeDeflection):
         D = turbine.rotor_diameter
 
         # GCH CODE
-        if self.use_yaw_eff:
+        if self.use_ss:
             # determine the effective yaw angle
             yaw_effective = self.effective_yaw(x_locations, y_locations, z_locations, coord, turbine, flow_field)
             yaw = -turbine.yaw_angle  - yaw_effective # opposite sign convention in this model
