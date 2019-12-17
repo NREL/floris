@@ -442,23 +442,24 @@ class Gauss(WakeVelocity):
         self.beta = float(model_dictionary["beta"])    # near wake parameter
 
         # GCH PARAMETERS==============================================================
-        if 'useyawrec' in model_dictionary:
-            self.use_yaw_rec = bool(model_dictionary["useyawrec"])
+        if 'use_yar' in model_dictionary:
+            self.use_yar = bool(model_dictionary["use_yar"])
         else:
-            print('Using default option of not applying added yaw recovery (use_yaw_rec=False)')
-            self.use_yaw_rec = False
+            print('Using default option of not applying added yaw-added recovery (use_yar=False)')
+            self.use_yar = False
 
         if 'yaw_rec_alpha' in model_dictionary:
             self.yaw_rec_alpha = bool(model_dictionary["yaw_rec_alpha"])
         else:
-            print('Using default option yaw_rec_alpha')
             self.yaw_rec_alpha = 0.03
+            print('Using default option yaw_rec_alpha: %.2f' % self.yaw_rec_alpha)
 
         if 'eps_gain' in model_dictionary:
             self.eps_gain = bool(model_dictionary["eps_gain"])
         else:
-            print('Using default option eps_gain')
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied by D in function)
+            print('Using default option eps_gain: %.1f' % self.eps_gain)
+            
 
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
@@ -589,7 +590,7 @@ class Gauss(WakeVelocity):
         V, W = self._velocity_components(turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations)
 
         # If indicated, include the added yaw recovery option
-        if self.use_yaw_rec:
+        if self.use_yar:
 
             # compute the velocity without modification
             U1 = U_local - U
