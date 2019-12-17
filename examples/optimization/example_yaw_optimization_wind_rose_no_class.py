@@ -52,6 +52,10 @@ for i in range(len(wd)):
     optProb.addObj('obj')
 
     # Setup the optimization solver
+    # Note: pyOptSparse has other solvers available; some may require additional
+    #   licenses/installation. See https://github.com/mdolab/pyoptsparse for
+    #   more information. When ready, they can be invoked by changing 'SLSQP'
+    #   to the solver name, for example: 'opt = pyoptsparse.SNOPT(fi=fi)'.
     opt = pyoptsparse.SLSQP(fi=fi, wd=wd_itr, ws=ws_itr, freq=freq_itr)
 
     # Run the optimization with finite-differencing

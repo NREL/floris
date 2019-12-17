@@ -26,6 +26,10 @@ optProb.addVarGroup('yaw', 4, 'c', lower=0, upper= 20, value=2.)
 optProb.addObj('obj')
 
 # Setup the optimization solver
+# Note: pyOptSparse has other solvers available; some may require additional
+#   licenses/installation. See https://github.com/mdolab/pyoptsparse for more
+#   information. When ready, they can be invoked by changing 'SLSQP' to the
+#   solver name, for example: 'opt = pyoptsparse.SNOPT(fi=fi)'.
 opt = pyoptsparse.SLSQP(fi=fi)
 
 # Run the optimization with finite-differencing
