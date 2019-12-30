@@ -63,9 +63,6 @@ class WakeVelocity():
         self.ti_ai = float(turbulence_intensity["ai"])
         self.ti_downstream = float(turbulence_intensity["downstream"])
 
-    def __str__(self):
-        return self.model_string
-
 
 class Jensen(WakeVelocity):
     """
