@@ -154,7 +154,7 @@ class Gauss(WakeDeflection):
             print('Using default gauss deflection multipler of 1.2')
             self.deflection_multiplier = 1.2
 
-    def function(self, x_locations, y_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, coord, flow_field):
         """
         This function defines the angle at which the wake deflects in
         relation to the yaw of the turbine. This is coded as defined in
@@ -289,7 +289,7 @@ class Curl(WakeDeflection):
         super().__init__(parameter_dictionary)
         self.model_string = "curl"
 
-    def function(self, x_locations, y_locations,z_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, coord, flow_field):
         """
         This function will return the wake centerline predicted with
         the curled wake model. #TODO Eventually. This is coded as
@@ -346,7 +346,7 @@ class GaussCurlHybrid(WakeDeflection):
             # TODO: introduce logging
             print('Using default option eps_gain: %.1f' % self.eps_gain)
 
-    def function(self, x_locations, y_locations,z_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, coord, flow_field):
         # TODO: update docstring
 
         # ==============================================================
