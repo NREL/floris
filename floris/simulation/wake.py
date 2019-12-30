@@ -48,24 +48,25 @@ class Wake():
             "jensen": wake_velocity.Jensen(parameters),
             "multizone": wake_velocity.MultiZone(parameters),
             "gauss": wake_velocity.Gauss(parameters),
-            "curl": wake_velocity.Curl(parameters)
+            "curl": wake_velocity.Curl(parameters),
+            "gauss_curl_hybrid": wake_velocity.GaussCurlHybrid(parameters)
         }
-        self._velocity_model = self.velocity_models[
-            properties["velocity_model"]]
+        self.velocity_model = self.velocity_models[properties["velocity_model"]]
 
         self.deflection_models = {
             "jimenez": wake_deflection.Jimenez(parameters),
             "gauss": wake_deflection.Gauss(parameters),
-            "curl": wake_deflection.Curl(parameters)
+            "curl": wake_deflection.Curl(parameters),
+            "gauss_curl_hybrid": wake_deflection.GaussCurlHybrid(parameters)
         }
-        self._deflection_model = self.deflection_models[
+        self.deflection_model = self.deflection_models[
             properties["deflection_model"]]
 
         self.combination_models = {
             "fls": wake_combination.FLS(),
             "sosfs": wake_combination.SOSFS()
         }
-        self._combination_model = self.combination_models[
+        self.combination_model = self.combination_models[
             properties["combination_model"]]
 
     # Getters & Setters
@@ -78,6 +79,7 @@ class Wake():
          - multizone
          - gauss
          - curl
+         - gauss_curl_hybrid
         """
         return self._velocity_model
 
@@ -93,6 +95,7 @@ class Wake():
          - jimenez
          - gauss
          - curl
+         - gauss_curl_hybrid
         """
         return self._deflection_model
 
