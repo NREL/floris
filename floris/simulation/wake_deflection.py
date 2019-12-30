@@ -28,9 +28,6 @@ class WakeDeflection():
     def __init__(self, parameter_dictionary):
         self.model_string = None
 
-    def __str__(self):
-        return self.model_string
-
 
 class Jimenez(WakeDeflection):
     """
