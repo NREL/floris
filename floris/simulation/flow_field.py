@@ -248,7 +248,7 @@ class FlowField():
             x_coord.append(coord.x1)
             y_coord.append(coord.x2)
 
-        if str(self.wake.velocity_model) == 'curl':
+        if self.wake.velocity_model.model_string == 'curl':
             # re-setup the grid for the curl model
             xmin = np.min(x_coord) - 2 * self.max_diameter
             xmax = np.max(x_coord) + 10 * self.max_diameter
