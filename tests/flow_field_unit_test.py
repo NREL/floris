@@ -12,7 +12,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import numpy as np
-from floris.simulation import Floris, FlowField, Turbine, TurbineMap, Wake, WakeCombination
+from floris.simulation import Floris, FlowField, Turbine, TurbineMap, Wake, WakeCombination, WindMap
 from floris.utilities import Vec3
 from .sample_inputs import SampleInputs
 import copy
@@ -32,26 +32,30 @@ class FlowFieldTest():
             [0.0, 0.0],
             [copy.deepcopy(turbine), copy.deepcopy(turbine)]
         )
+        farm_prop = self.sample_inputs.farm["properties"]
+        wind_map =  WindMap(wind_speed = farm_prop["wind_speed"],
+                    layout_array=(farm_prop["layout_x"],farm_prop["layout_y"]),
+                    wind_layout=(farm_prop["wind_x"],farm_prop["wind_y"]),
+                    turbulence_intensity = [farm_prop["turbulence_intensity"]],
+                    wind_direction = farm_prop["wind_direction"]) 
+       
         return {
-            "wind_direction": 270.0,
-            "wind_speed": 8.0,
             "wind_shear": 0.0,
             "wind_veer": 0.0,
-            "turbulence_intensity": 1.0,
             "air_density": 1.225,
             "wake": wake,
-            "turbine_map": turbine_map
+            "turbine_map": turbine_map,
+            "wind_map": wind_map
         }
 
     def _build_instance(self):
-        return FlowField(self.input_dict["wind_speed"],
-                         self.input_dict["wind_direction"],
-                         self.input_dict["wind_shear"],
+        return FlowField(self.input_dict["wind_shear"],
                          self.input_dict["wind_veer"],
-                         self.input_dict["turbulence_intensity"],
                          self.input_dict["air_density"],
                          self.input_dict["wake"],
-                         self.input_dict["turbine_map"])
+                         self.input_dict["turbine_map"],
+                         self.input_dict["wind_map"]
+                         )
 
 
 def test_instantiation():

@@ -14,7 +14,7 @@ required time involved.
 
 
 :py:meth:`get_flow_data() 
-<floris.tools.floris_utilities.FlorisInterface.get_flow_data>` is the 
+<floris.tools.floris_interface.FlorisInterface.get_flow_data>` is the 
 conventional method and returns a 3D flow data field from which both horizontal 
 and vertical cut throughs could be extacted.
 
@@ -23,6 +23,6 @@ and vertical cut throughs could be extacted.
     fi.get_hub_height_flow_data()
 
 :py:meth:`get_hub_height_flow_data() 
-<floris.tools.floris_utilities.FlorisInterface.get_hub_height_flow_data>` only 
+<floris.tools.floris_interface.FlorisInterface.get_hub_height_flow_data>` only 
 returns data near hub-height, which could be useful in quickly plotting the 
 horizontal cut through.

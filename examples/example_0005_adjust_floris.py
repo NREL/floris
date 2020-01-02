@@ -19,7 +19,7 @@ import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 
 # Initialize FLORIS model
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # set turbine locations to 4 turbines in a row - demonstrate how to change coordinates
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
@@ -36,10 +36,7 @@ print('Plotting the FLORIS flowfield...')
 # ================================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()
@@ -60,7 +57,7 @@ for i, speed in enumerate(ws):
         print('Calculating wake: wind direction = ',
               wdir, 'and wind speed = ', speed)
 
-        fi.reinitialize_flow_field(wind_speed=speed, wind_direction=wdir)
+        fi.reinitialize_flow_field(wind_speed=[speed], wind_direction=[wdir])
 
         # recalculate the wake
         fi.calculate_wake()
@@ -73,10 +70,8 @@ for i, speed in enumerate(ws):
         # ============================================
         # Visualize the changes
         # Initialize the horizontal cut
-        hor_plane = wfct.cut_plane.HorPlane(
-            fi.get_flow_data(),
-            fi.floris.farm.turbines[0].hub_height
-        )
+        hor_plane = hor_plane = fi.get_hor_plane()
+
         im = wfct.visualization.visualize_cut_plane(hor_plane, ax=ax[i, j])
         strTitle = 'Wind Dir = ' + \
             str(wdir) + 'deg' + ' Speed = ' + str(speed) + 'm/s'
@@ -106,10 +101,7 @@ print('Plotting the FLORIS flowfield with yaw...')
 # ================================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
-)
+hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()

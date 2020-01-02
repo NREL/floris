@@ -50,7 +50,7 @@ Examples:
     >>> dir(floris.tools)
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
-    'energy_ratio', 'floris_utilities', 'flow_data',
+    'energy_ratio', 'floris_interface', 'flow_data',
     'layout_functions', 'optimization', 'plotting', 'power_rose',
     'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
 """

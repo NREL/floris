@@ -29,7 +29,7 @@ si = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
 # Plot the SOWFA flow and turbines using the input information
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(5, 8.5))
 sowfa_flow_data = si.flow_data
-hor_plane = wfct.cut_plane.HorPlane(si.flow_data, 90)
+hor_plane = si.get_hor_plane(90)
 wfct.visualization.visualize_cut_plane(
     hor_plane, ax=ax2, minSpeed=minspeed, maxSpeed=maxspeed)
 vis.plot_turbines(ax2, si.layout_x, si.layout_y, si.yaw_angles, si.D)
@@ -37,12 +37,12 @@ ax2.set_title('SOWFA')
 ax2.set_ylabel('y location [m]')
 
 # Load the FLORIS case in
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 fi.calculate_wake()
-floris_flow_data_orig = fi.get_flow_data()
+# floris_flow_data_orig = fi.get_flow_data()
 
 # Plot the original FLORIS flow and turbines using the input information
-hor_plane_orig = cp.HorPlane(floris_flow_data_orig, 90)
+hor_plane_orig = fi.get_hor_plane(90)
 wfct.visualization.visualize_cut_plane(
     hor_plane_orig, ax=ax1, minSpeed=minspeed, maxSpeed=maxspeed)
 vis.plot_turbines(ax1, fi.layout_x, fi.layout_y,
@@ -52,28 +52,17 @@ ax1.set_title('FLORIS - Original')
 ax1.set_ylabel('y location [m]')
 
 # Set the relevant FLORIS parameters to equal the SOWFA case
-fi.reinitialize_flow_field(wind_speed=si.precursor_wind_speed,
-                           wind_direction=si.precursor_wind_dir,
+fi.reinitialize_flow_field(wind_speed=[si.precursor_wind_speed],
+                           wind_direction=[si.precursor_wind_dir],
                            layout_array=(si.layout_x, si.layout_y)
                            )
 
 # Set the yaw angles
 fi.calculate_wake(yaw_angles=si.yaw_angles)
 
-# Generate and get a flow from original FLORIS file
-floris_flow_data_matched = fi.get_flow_data()
-
-# Trim the flow to match SOWFA
-sowfa_domain_limits = [
-    [np.min(sowfa_flow_data.x), np.max(sowfa_flow_data.x)],
-    [np.min(sowfa_flow_data.y), np.max(sowfa_flow_data.y)],
-    [np.min(sowfa_flow_data.z), np.max(sowfa_flow_data.z)]]
-floris_flow_data_matched = floris_flow_data_matched.crop(
-    floris_flow_data_matched, sowfa_domain_limits[0],
-    sowfa_domain_limits[1], sowfa_domain_limits[2])
-
-# Plot the FLORIS flow and turbines using the input information
-hor_plane_matched = cp.HorPlane(floris_flow_data_matched, 90)
+# Plot the FLORIS flow and turbines using the input information, and bounds from SOWFA
+hor_plane_matched = fi.get_hor_plane(90,x_bounds=[np.min(sowfa_flow_data.x), np.max(sowfa_flow_data.x)],
+                                        y_bounds=[np.min(sowfa_flow_data.y), np.max(sowfa_flow_data.y)])
 wfct.visualization.visualize_cut_plane(
     hor_plane_matched, ax=ax3, minSpeed=minspeed, maxSpeed=maxspeed)
 vis.plot_turbines(ax3, fi.layout_x, fi.layout_y,

@@ -31,7 +31,7 @@ sowfa_flow_field = sowfa_case.flow_field #TODO Correct?
 
 # # Load FLORIS
 # #TODO Make match SOWFA (waiting for earlier example to copy from)
-floris_interface = wfct.floris_utilities.FlorisInterface("example_input.json")
+floris_interface = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Set the relevant FLORIS parameters to equal the SOWFA case
 floris_interface.floris.farm.flow_field.reinitialize_flow_field(wind_speed=sowfa_case.precursor_wind_speed,wind_direction=sowfa_case.precursor_wind_dir)

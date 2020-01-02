@@ -6,11 +6,10 @@ FLORIS Wake Modeling Utility
 For technical questions regarding FLORIS usage please first search for or post
 your questions to
 `stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
-the **floris** tag. Alternatively, please contact
-`Jen King <mailto:jennifer.king@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_,
-`Chris Bay <mailto:chris.bay@nrel.gov>`_, and
-`Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
+the **floris** tag. Alternatively, email the NREL FLORIS team at
+`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_ or contact
+`Jen King <mailto:jennifer.king@nrel.gov>`_ and
+`Paul Fleming <mailto:paul.fleming@nrel.gov>`_ directly.
 
 Background and Objectives
 =========================
@@ -51,7 +50,7 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 1.0.0 (2019). Available at https://github.com/nrel/floris.
+   FLORIS. Version 1.1.4 (2019). Available at https://github.com/nrel/floris.
 
 For LaTeX users:
 
@@ -59,7 +58,7 @@ For LaTeX users:
 
     @misc{FLORIS_2019,
     author = {NREL},
-    title = {{FLORIS. Version 1.0.0}},
+    title = {{FLORIS. Version 1.1.4}},
     year = {2019},
     publisher = {GitHub},
     journal = {GitHub repository},
@@ -70,10 +69,29 @@ For LaTeX users:
 
 Installation
 ============
-Using ``pip``, FLORIS can be installed in two ways
+The FLORIS repository consists of two primary branches:
+
+- `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
+  release corresponding to a specific version number.
+- `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
+  updates including bug fixes and improvements. See :ref:`changelog` for
+  details.
+
+These can be cloned (i.e. downloaded) directly from GitHub with one of the
+following commands:
+
+.. code-block:: bash
+
+    # master branch
+    git clone https://github.com/nrel/floris -b master
+
+    # develop branch
+    git clone https://github.com/nrel/floris -b develop
+
+After obtaining the source code, it can be "installed" using ``pip`` or another
+Python package manager. With ``pip``, there are two options:
 
 - local editable install
-
 - using a tagged release version from the ``pip`` repo
 
 For consistency between all developers, it is recommended to use Python

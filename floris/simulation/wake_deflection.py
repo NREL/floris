@@ -147,7 +147,11 @@ class Gauss(WakeDeflection):
         self.bd = float(model_dictionary["bd"])
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
-        self.deflection_multiplier = 1.0
+        if 'dm' in model_dictionary:
+            self.deflection_multiplier = float(model_dictionary["dm"])
+        else:
+            print('Using default gauss deflection multipler of 1.2')
+            self.deflection_multiplier = 1.2
 
     def function(self, x_locations, y_locations, turbine, coord, flow_field):
         """
@@ -166,16 +170,17 @@ class Gauss(WakeDeflection):
             flow_field
                 (:py:class:`floris.simulation.flow_field.FlowField`):
                 Flow field object.
-
+        
         Returns:
             deflection (np.array): Deflected wake centerline.
         """
         # ==============================================================
-        wind_speed = flow_field.wind_speed  # free-stream velocity (m/s)
-        TI_0 = flow_field.turbulence_intensity  # turbulence intensity (%/100)
+        wind_speed = flow_field.wind_map.grid_wind_speed  # free-stream velocity (m/s)
         veer = flow_field.wind_veer  # veer (degrees)
-        TI = TI_0
 
+        # added turbulence model
+        TI = turbine.current_turbulence_intensity
+        # TI = flow_field.wind_map.grid_turbulence_intensity
         # hard-coded model input data (goes in input file)
         ka = self.ka  # wake expansion parameter
         kb = self.kb  # wake expansion parameter
@@ -190,7 +195,7 @@ class Gauss(WakeDeflection):
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
 
-        # U_local = flow_field.wind_speed # just a placeholder for now, should be initialized with the flow_field
+        # U_local = flow_field.wind_map.grid_wind_speed  #just a placeholder for now, should be initialized with the flow_field
         U_local = flow_field.u_initial
 
         # initial velocity deficits

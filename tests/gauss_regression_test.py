@@ -71,7 +71,8 @@ def test_regression_rotation():
     test_class = GaussRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
-
+    wind_map = floris.farm.wind_map
+ 
     ### unrotated
     floris.farm.flow_field.calculate_wake()
     turbine = floris.farm.turbine_map.turbines[0]
@@ -82,14 +83,16 @@ def test_regression_rotation():
                       turbine.aI, turbine.average_velocity)
 
     ### rotated
+    wind_map.input_direction = [360]
+    wind_map.calculate_wind_direction()
     new_map = TurbineMap(
         [0.0, 0.0],
         [5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"], 0.0],
         [copy.deepcopy(fresh_turbine), copy.deepcopy(fresh_turbine)]
     )
     floris.farm.flow_field.reinitialize_flow_field(
-        wind_direction=360,
-        turbine_map=new_map
+        turbine_map = new_map,
+        wind_map = wind_map
     )
     floris.farm.flow_field.calculate_wake()
 

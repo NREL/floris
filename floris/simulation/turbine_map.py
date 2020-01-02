@@ -12,7 +12,6 @@
 from ..utilities import Vec3
 from .turbine import Turbine
 import numpy as np
-import copy
 
 
 class TurbineMap():
@@ -66,10 +65,10 @@ class TurbineMap():
         not modified.
 
         Args:
-            angle: The angle, in degrees, of which to rotate the 
-                turbines.
+            angle: A list of the wind direction angles at each turbine,
+            in degrees, of which to rotate the turbines.
             center_of_rotation: The center of rotation. If not supplied 
-                the default is ``Vec3(0.0, 0.0, 0.0)``.
+                the default is the center of the flow field.
 
         Returns:
             TurbineMap: A rotated TurbineMap.
@@ -77,7 +76,7 @@ class TurbineMap():
         layout_x = np.zeros(len(self.coords))
         layout_y = np.zeros(len(self.coords))
         for i, coord in enumerate(self.coords):
-            coord.rotate_on_x3(angle, center_of_rotation)
+            coord.rotate_on_x3(angle[i], center_of_rotation)
             layout_x[i] = coord.x1prime
             layout_y[i] = coord.x2prime
         return TurbineMap(layout_x, layout_y, self.turbines)

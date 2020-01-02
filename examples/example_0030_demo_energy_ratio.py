@@ -26,7 +26,7 @@ wd_bins = np.arange(265, 365, 1.)
 
 # Set up a demonstration wind farm in a n L
 # Initialize FLORIS model
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # set turbine locations to 4 turbines in a row - demonstrate how to change coordinates
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
@@ -39,8 +39,7 @@ fi.calculate_wake()
 
 # Show the farm
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(fi.get_flow_data(),
-                                    fi.floris.farm.turbines[0].hub_height)
+hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()
@@ -61,7 +60,7 @@ wd_base = wd_var_scale * (np.random.rand(n_sim) - 0.5) + 270.
 
 # Run the baseline
 for i, (ws, wd) in enumerate(zip(ws_base, wd_base)):
-    fi.reinitialize_flow_field(wind_speed=ws, wind_direction=wd)
+    fi.reinitialize_flow_field(wind_speed=[ws], wind_direction=[wd])
     fi.calculate_wake()
     turb_powers = fi.get_turbine_power()
     ref_pow_base[i] = turb_powers[1]  # The unaffacted second turbine
@@ -75,7 +74,7 @@ wd_con = wd_var_scale * (np.random.rand(n_sim) - 0.5) + 270.
 
 # Run the control
 for i, (ws, wd) in enumerate(zip(ws_con, wd_con)):
-    fi.reinitialize_flow_field(wind_speed=ws, wind_direction=wd)
+    fi.reinitialize_flow_field(wind_speed=[ws], wind_direction=[wd])
     fi.calculate_wake(
         yaw_angles=[20, 0, 0]
     )  # the control strategy is just to set the control turbine's yaw fixed at 20 degrees
