@@ -35,7 +35,10 @@ class Layout():
             self.wspd = wspd
         else:
             self.wspd = self.fi.floris.farm.flow_field.wind_speed
-        self.wfreq = wfreq
+        if wfreq is not None:
+            self.wfreq = wfreq
+        else:
+            self.wfreq = 1.
 
     def __str__(self):
         return 'layout'
