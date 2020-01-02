@@ -43,7 +43,6 @@ class Optimization():
     # Private methods
 
     def _reinitialize(self, solver=None, optOptions=None):
-        print('solver in reinit: ', solver)
         self.optProb = pyoptsparse.Optimization(self.model, self.objective_func)
 
         self.optProb = self.model.add_var_group(self.optProb)
