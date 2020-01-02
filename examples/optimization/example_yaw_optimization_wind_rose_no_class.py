@@ -14,7 +14,7 @@ ws = 8.0 + np.random.randn(len(wd))*0.5
 freq = np.abs(np.sort(np.random.randn(len(wd))))
 freq = freq/freq.sum()
 
-def objective_function(varDict, **kwargs):
+def objective_function(varDict):
     # Parse the variable dictionary
     yaw = varDict['yaw']
     AEP_sum = 0
@@ -56,7 +56,7 @@ for i in range(len(wd)):
     #   licenses/installation. See https://github.com/mdolab/pyoptsparse for
     #   more information. When ready, they can be invoked by changing 'SLSQP'
     #   to the solver name, for example: 'opt = pyoptsparse.SNOPT(fi=fi)'.
-    opt = pyoptsparse.SLSQP(fi=fi, wd=wd_itr, ws=ws_itr, freq=freq_itr)
+    opt = pyoptsparse.SLSQP()
 
     # Run the optimization with finite-differencing
     solution = opt(optProb, sens='FDR')
