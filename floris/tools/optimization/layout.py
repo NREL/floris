@@ -130,7 +130,7 @@ class Layout():
 
         for k in range(self.nturbs):
             dist = []
-            in_poly = self._point_inside_polygon(self.x[k],
+            in_poly = self.point_inside_polygon(self.x[k],
                                                  self.y[k],
                                                  self.boundaries)
 

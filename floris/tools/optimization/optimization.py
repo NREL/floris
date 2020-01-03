@@ -13,6 +13,11 @@
 import sys
 import numpy as np
 
+try:
+    if "pyoptsparse" not in sys.modules:
+        import pyoptsparse
+except ImportError:
+    print('Cannot import pyoptsparse: module not found.')
 
 class Optimization():
     """
@@ -30,8 +35,6 @@ class Optimization():
         """
         Instantiate Optimization object and its parameters.
         """
-        if "pyoptsparse" not in sys.modules:
-            import pyoptsparse
 
         self.model = model
         self.solver_choices = ['SNOPT', 'IPOPT', 'SLSQP', 'NLPQLP',
