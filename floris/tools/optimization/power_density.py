@@ -10,12 +10,17 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import autograd.numpy as np
+import sys
 import matplotlib.pyplot as plt
+
 
 class PowerDensity():
     def __init__(self, fi, boundaries, wdir=None, wspd=None, wfreq=None,
                  AEP_initial=None):
+
+        if "autograd.numpy" not in sys.modules:
+            import autograd.numpy as np
+
         self.fi = fi
         self.boundaries = boundaries
 

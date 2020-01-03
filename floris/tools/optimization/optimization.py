@@ -10,8 +10,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+import sys
 import numpy as np
-import pyoptsparse
+
 
 class Optimization():
     """
@@ -29,6 +30,9 @@ class Optimization():
         """
         Instantiate Optimization object and its parameters.
         """
+        if "pyoptsparse" not in sys.modules:
+            import pyoptsparse
+
         self.model = model
         self.solver_choices = ['SNOPT', 'IPOPT', 'SLSQP', 'NLPQLP',
                              'FSQP', 'NSGA2', 'PSQP', 'ParOpt',
