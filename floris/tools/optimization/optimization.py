@@ -14,8 +14,7 @@ import sys
 import numpy as np
 
 try:
-    if "pyoptsparse" not in sys.modules:
-        import pyoptsparse
+    import pyoptsparse
 except:
     print('Cannot import pyoptsparse: module not found.')
 
