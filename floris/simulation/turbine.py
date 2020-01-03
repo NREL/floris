@@ -11,6 +11,7 @@
 
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.spatial import distance_matrix
 import math
 from ..utilities import cosd, sind, tand
 import scipy.stats as stats
@@ -87,6 +88,15 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
+        # Precompute interps
+        cp = self.power_thrust_table["power"]
+        wind_speed = self.power_thrust_table["wind_speed"]
+        self.fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
+
+        ct = self.power_thrust_table["thrust"]
+        # wind_speed = self.power_thrust_table["wind_speed"]
+        self.fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
+
         # constants
         self.grid_point_count = 5*5
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
@@ -135,25 +145,21 @@ class Turbine():
         return grid
 
     def _fCp(self, at_wind_speed):
-        cp = self.power_thrust_table["power"]
         wind_speed = self.power_thrust_table["wind_speed"]
-        fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
         if at_wind_speed < min(wind_speed):
             return 0.0
         else:
-            _cp = fCpInterp(at_wind_speed)
+            _cp = self.fCpInterp(at_wind_speed)
             if _cp.size > 1:
                 _cp = _cp[0]
             return float(_cp)
 
     def _fCt(self, at_wind_speed):
-        ct = self.power_thrust_table["thrust"]
         wind_speed = self.power_thrust_table["wind_speed"]
-        fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
         if at_wind_speed < min(wind_speed):
             return 0.99
         else:
-            _ct = fCtInterp(at_wind_speed)
+            _ct = self.fCtInterp(at_wind_speed)
             if _ct.size > 1:
                 _ct = _ct[0]
             if _ct > 1.0:
@@ -187,19 +193,45 @@ class Turbine():
             speed at each rotor grid point for the turbine (m/s).
         """
         u_at_turbine = local_wind_speed
-        x_grid = x
-        y_grid = y
-        z_grid = z
 
-        yPts = np.array([point[0] for point in self.grid])
-        zPts = np.array([point[1] for point in self.grid])
+        # TODO:
+        # # PREVIOUS MEHTHOD========================
+        # # UNCOMMENT IF ANY ISSUE UNCOVERED WITH NEW MOETHOD
+        # x_grid = x
+        # y_grid = y
+        # z_grid = z
 
-        # interpolate from the flow field to get the flow field at the grid points
-        dist = [np.sqrt((coord.x1 - x_grid)**2 + (coord.x2 + yPts[i] - y_grid) **
-                        2 + (self.hub_height + zPts[i] - z_grid)**2) for i in range(len(yPts))]
-        idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
-        data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
-        return np.array(data)
+        # yPts = np.array([point[0] for point in self.grid])
+        # zPts = np.array([point[1] for point in self.grid])
+
+        # # interpolate from the flow field to get the flow field at the grid
+        # # points
+        # dist = [np.sqrt((coord.x1 - x_grid)**2 \
+        #      + (coord.x2 + yPts[i] - y_grid) **2 \
+        #      + (self.hub_height + zPts[i] - z_grid)**2) \
+        #      for i in range(len(yPts))]
+        # idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
+        # data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
+        # # PREVIOUS MEHTHOD========================
+
+
+
+        # # NEW MEHTHOD========================
+        # Sort by distance
+        flow_grid_points = np.column_stack([x.flatten(),
+                                            y.flatten(),
+                                            z.flatten()])
+
+        # Set up a grid array
+        y_array = np.array(self.grid)[:,0] + coord.x2 
+        z_array = np.array(self.grid)[:,1] + self.hub_height
+        x_array = np.ones_like(y_array) * coord.x1
+        grid_array = np.column_stack([x_array,y_array,z_array])
+
+        ii = np.argmin(distance_matrix(flow_grid_points,grid_array),axis=0)
+
+        # return np.array(data)
+        return np.array(u_at_turbine.flatten()[ii])
 
     def calculate_turbulence_intensity(self, area_overlap, flow_field_ti, velocity_model, turbine_coord, wake_coord, turbine_wake):
         """

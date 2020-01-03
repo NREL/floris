@@ -428,7 +428,7 @@ class YawOptimizationWindRose(Optimization):
     """
     Sub class of the :py:class`floris.tools.optimization.Optimization`
     object class that performs yaw optimization for multiple wind speed,
-    wind direction combinations.
+    wind direction, turbulence intensity (optional) combinations.
 
     Args:
         fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
@@ -443,6 +443,9 @@ class YawOptimizationWindRose(Optimization):
             Assume optimal yaw offsets are zero above this wind speed. Defaults to 25 m/s.
         wd (np.array) : The wind directions for the AEP optimization.
         ws (np.array): The wind speeds for the AEP optimization.
+        ti (np.array, optional): An optional list of turbulence intensity values for the AEP 
+            optimization. Defaults to None, meaning TI will not be included in the AEP 
+            calculations.
         x0 (iterable, optional): The initial yaw conditions. 
             Defaults to None. Initializes to the current turbine 
             yaw settings.
@@ -503,6 +506,7 @@ class YawOptimizationWindRose(Optimization):
 
     def __init__(self, fi, wd,
                            ws,
+                           ti=None,
                            minimum_yaw_angle=0.0,
                            maximum_yaw_angle=25.0,
                            minimum_ws=3.0,
@@ -529,9 +533,12 @@ class YawOptimizationWindRose(Optimization):
             self.unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
                         'pmf_res': 1.0, 'pdf_cutoff': 0.995}
 
+        self.ti = ti
+
         self.reinitialize_opt_wind_rose(
             wd=wd,
             ws=ws,
+            ti=ti,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
             minimum_ws=minimum_ws,
@@ -599,6 +606,7 @@ class YawOptimizationWindRose(Optimization):
     def reinitialize_opt_wind_rose(self,
             wd=None,
             ws=None,
+            ti=None,
             minimum_yaw_angle=None,
             maximum_yaw_angle=None,
             minimum_ws=None,
@@ -629,6 +637,9 @@ class YawOptimizationWindRose(Optimization):
                 Assume optimal yaw offsets are zero above this wind speed. Defaults to None.
             wd (np.array) : The wind directions for the AEP optimization.
             ws (np.array): The wind speeds for the AEP optimization.
+            ti (np.array, optional): An optional list of turbulence intensity values for the AEP 
+                optimization. Defaults to None, meaning TI will not be included in the AEP 
+                calculations.
             x0 (iterable, optional): The initial yaw conditions. 
                 Defaults to None. Initializes to the current turbine 
                 yaw settings.
@@ -690,6 +701,8 @@ class YawOptimizationWindRose(Optimization):
             self.wd = wd
         if ws is not None:
             self.ws = ws
+        if ti is not None:
+            self.ti = ti
         if minimum_ws is not None:
             self.minimum_ws = minimum_ws
         if maximum_ws is not None:
@@ -750,8 +763,8 @@ class YawOptimizationWindRose(Optimization):
 
     def calc_baseline_power(self):
         """
-        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm and 
-        the ideal power without wake losses. 
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the baseline power produced 
+        by the wind farm and the ideal power without wake losses. 
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -759,6 +772,7 @@ class YawOptimizationWindRose(Optimization):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. Only included if self.ti is not None.
                 - **power_baseline** (*float*) - The total power produced by the wind farm with baseline 
                   yaw control (W).
                 - **power_no_wake** (*float*) - The ideal total power produced by the wind farm without 
@@ -770,21 +784,31 @@ class YawOptimizationWindRose(Optimization):
         """
         print('=====================================================')
         print('Calculating baseline power...')
-        print('Number of wind speed, wind direction pairs to calculate = ', len(self.wd))
+        print('Number of wind conditions to calculate = ', len(self.wd))
         print('=====================================================')
 
-        df_base = pd.DataFrame()
+        # Put results in dict for speed, instead of previously appending to frame
+        result_dict = dict()
 
         for i in range(len(self.wd)):
-            print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
-                +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            if self.ti is None:
+                print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
+                    +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            else:
+                print('Computing wind speed, wind direction, turbulence intensity set '+str(i)+' out of ' \
+                    +str(len(self.wd))+': wind speed = '+str(self.ws[i])+' m/s, wind direction = ' \
+                    +str(self.wd[i])+' deg, turbulence intensity = '+str(self.ti[i])+'.')
 
             # Find baseline power in FLORIS
 
             if self.ws[i] >= self.minimum_ws:
-                self.fi.reinitialize_flow_field(
-                    wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
-                
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
+
                 # calculate baseline power
                 self.fi.calculate_wake(yaw_angles=0.0)
                 power_base = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -799,17 +823,30 @@ class YawOptimizationWindRose(Optimization):
                 power_no_wake = self.nturbs*[0.0]
 
             # add variables to dataframe
-            df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
-                'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
-                'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
-
+            if self.ti is None:
+                result_dict[i] = {'ws':self.ws[i],'wd':self.wd[i], \
+                    'power_baseline':np.sum(power_base),'turbine_power_baseline':power_base, \
+                    'power_no_wake':np.sum(power_no_wake),'turbine_power_no_wake':power_no_wake}
+                # df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                #     'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+                #     'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]}))
+            else:
+                result_dict[i] = {'ws':self.ws[i],'wd':self.wd[i], \
+                    'ti':self.ti[i],'power_baseline':np.sum(power_base),'turbine_power_baseline':power_base, \
+                    'power_no_wake':np.sum(power_no_wake),'turbine_power_no_wake':power_no_wake}
+                # df_base = df_base.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                #     'ti':[self.ti[i]],'power_baseline':[np.sum(power_base)], \
+                #     'turbine_power_baseline':[power_base],'power_no_wake':[np.sum(power_no_wake)], \
+                #     'turbine_power_no_wake':[power_no_wake]}))
+        df_base = pd.DataFrame.from_dict(result_dict, "index")
         df_base.reset_index(drop=True,inplace=True)
 
         return df_base
 
     def optimize(self):
         """
-        For a series of (wind speed, direction) pairs, finds the power resulting from optimal wake steering. 
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the power resulting from 
+        optimal wake steering. 
 
         Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -817,6 +854,7 @@ class YawOptimizationWindRose(Optimization):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. Only included if self.ti is not None.
                 - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
                   yaw offsets (W).
                 - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
@@ -826,21 +864,30 @@ class YawOptimizationWindRose(Optimization):
         """
         print('=====================================================')
         print('Optimizing wake redirection control...')
-        print('Number of wind speed, wind direction pairs to optimize = ', len(self.wd))
+        print('Number of wind conditions to optimize = ', len(self.wd))
         print('Number of yaw angles to optimize = ', len(self.x0))
         print('=====================================================')
 
         df_opt = pd.DataFrame()
 
         for i in range(len(self.wd)):
-            print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
-                +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            if self.ti is None:
+                print('Computing wind speed, wind direction pair '+str(i)+' out of '+str(len(self.wd)) \
+                    +': wind speed = '+str(self.ws[i])+' m/s, wind direction = '+str(self.wd[i])+' deg.')
+            else:
+                print('Computing wind speed, wind direction, turbulence intensity set '+str(i)+' out of ' \
+                    +str(len(self.wd))+': wind speed = '+str(self.ws[i])+' m/s, wind direction = ' \
+                    +str(self.wd[i])+' deg, turbulence intensity = '+str(self.ti[i])+'.')
 
             # Optimizing wake redirection control
 
             if (self.ws[i] >= self.minimum_ws) & (self.ws[i] <= self.maximum_ws):
-                self.fi.reinitialize_flow_field(
-                    wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
 
                 opt_yaw_angles = self._optimize()
 
@@ -855,8 +902,12 @@ class YawOptimizationWindRose(Optimization):
             elif self.ws[i] >= self.minimum_ws:
                 print('No change in controls suggested for this inflow \
                         condition...')
-                self.fi.reinitialize_flow_field(
-                    wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
                 self.fi.calculate_wake(yaw_angles=0.0)
                 opt_yaw_angles = self.nturbs*[0.0]
                 power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -868,8 +919,12 @@ class YawOptimizationWindRose(Optimization):
                 power_opt = self.nturbs*[0.0]
 
             # add variables to dataframe
-            df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
-                'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
+            if self.ti is None:
+                df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]], \
+                    'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
+            else:
+                df_opt = df_opt.append(pd.DataFrame({'ws':[self.ws[i]],'wd':[self.wd[i]],'ti':[self.ti[i]], \
+                    'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]}))
 
         df_opt.reset_index(drop=True,inplace=True)
 
@@ -880,8 +935,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
     """
     Sub class of the :py:class`floris.tools.optimization.YawOptimizationWindRose`
     object class that performs parallel yaw optimization for multiple wind speed,
-    wind direction combinations using the MPIPoolExecutor method of the 
-    mpi4py.futures module.
+    wind direction, turbulence intensity (optional) combinations using the 
+    MPIPoolExecutor method of the mpi4py.futures module.
 
     Args:
         fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
@@ -896,6 +951,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             Assume optimal yaw offsets are zero above this wind speed. Defaults to 25 m/s.
         wd (np.array): The wind directions for the AEP optimization.
         ws (np.array): The wind speeds for the AEP optimization.
+        ti (np.array, optional): An optional list of turbulence intensity values for the AEP 
+            optimization. Defaults to None, meaning TI will not be included in the AEP 
+            calculations.
         x0 (iterable, optional): The initial yaw conditions. 
             Defaults to None. Initializes to the current turbine 
             yaw settings.
@@ -956,20 +1014,24 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
     # Private methods
 
-    def _calc_baseline_power_one_case(self,ws,wd):
+    def _calc_baseline_power_one_case(self,ws,wd,ti=None):
         """
-        For a single (wind speed, direction) pair, finds the baseline power produced by the wind farm 
-        and the ideal power without wake losses.
+        For a single (wind speed, direction, ti (optional)) combination, finds the baseline power 
+        produced by the wind farm and the ideal power without wake losses.
 
         Args:
             ws (float): The wind speed used in floris for the yaw optimization.
             wd (float): The wind direction used in floris for the yaw optimization.
+            ti (float, optional): An optional turbulence intensity value for the yaw optimization. 
+                Defaults to None, meaning TI will not be included in the AEP calculations.
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with a single row, containing the following columns:
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_baseline** (*float*) - The total power produced by the wind farm with baseline 
                   yaw control (W).
                 - **power_no_wake** (*float*) - The ideal total power produced by the wind farm without 
@@ -980,12 +1042,19 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                   without wake losses for each wind turbine (W).
         """
 
-        print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        if ti is None:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        else:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg, turbulence intensity = '+str(ti)+'.')
 
         # Find baseline power in FLORIS
 
         if ws >= self.minimum_ws:
-            self.fi.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
+            if ti is None:
+                self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            else:
+                self.fi.reinitialize_flow_field(
+                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti)
             # calculate baseline power
             self.fi.calculate_wake(yaw_angles=0.0)
             power_base = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -1000,25 +1069,35 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             power_no_wake = self.nturbs*[0.0]
 
         # add variables to dataframe
-        df_base = pd.DataFrame({'ws':[ws],'wd':[wd], \
-            'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
-            'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
+        if ti is None:
+            df_base = pd.DataFrame({'ws':[ws],'wd':[wd], \
+                'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+                'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
+        else:
+            df_base = pd.DataFrame({'ws':[ws],'wd':[wd],'ti':[ti], \
+                'power_baseline':[np.sum(power_base)],'turbine_power_baseline':[power_base], \
+                'power_no_wake':[np.sum(power_no_wake)],'turbine_power_no_wake':[power_no_wake]})
 
         return df_base
 
-    def _optimize_one_case(self,ws,wd):
+    def _optimize_one_case(self,ws,wd,ti=None):
         """
-        For a single (wind speed, direction) pair, finds the power resulting from optimal wake steering.
+        For a single (wind speed, direction, ti (optional)) combination, finds the power resulting 
+        from optimal wake steering.
 
         Args:
             ws (float): The wind speed used in floris for the yaw optimization.
             wd (float): The wind direction used in floris for the yaw optimization.
+            ti (float, optional): An optional turbulence intensity value for the yaw optimization. 
+                Defaults to None, meaning TI will not be included in the AEP calculations.
 
         Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with a single row, containing the following columns:
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
                   yaw offsets (W).
                 - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
@@ -1027,13 +1106,19 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                   total wind farm power for each wind turbine (deg).
         """
 
-        print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        if ti is None:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg.')
+        else:
+            print('Computing wind speed = '+str(ws)+' m/s, wind direction = '+str(wd)+' deg, turbulence intensity = '+str(ti)+'.')
 
         # Optimizing wake redirection control
 
         if (ws >= self.minimum_ws) & (ws <= self.maximum_ws):
-            self.fi.reinitialize_flow_field(
-                wind_direction=[wd], wind_speed=[ws])
+            if ti is None:
+                self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            else:
+                self.fi.reinitialize_flow_field(
+                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti)
 
             opt_yaw_angles = self._optimize()
 
@@ -1048,8 +1133,11 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         elif ws >= self.minimum_ws:
             print('No change in controls suggested for this inflow \
                     condition...')
-            self.fi.reinitialize_flow_field(
-                wind_direction=[wd], wind_speed=[ws])
+            if ti is None:
+                self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
+            else:
+                self.fi.reinitialize_flow_field(
+                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti)
             self.fi.calculate_wake(yaw_angles=0.0)
             opt_yaw_angles = self.nturbs*[0.0]
             power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -1061,8 +1149,12 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             power_opt = self.nturbs*[0.0]
 
         # add variables to dataframe
-        df_opt = pd.DataFrame({'ws':[ws],'wd':[wd], \
-            'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]})
+        if ti is None:
+            df_opt = pd.DataFrame({'ws':[ws],'wd':[wd], \
+                'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]})
+        else:
+            df_opt = pd.DataFrame({'ws':[ws],'wd':[wd],'ti':[ti], \
+                'power_opt':[np.sum(power_opt)],'turbine_power_opt':[power_opt],'yaw_angles':[opt_yaw_angles]})
 
         return df_opt
 
@@ -1070,9 +1162,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
     def calc_baseline_power(self):
         """
-        For a series of (wind speed, direction) pairs, finds the baseline power produced by the wind farm 
-        and the ideal power without wake losses. The optimization for different wind speed, wind direction 
-        combinations is parallelized using the mpi4py.futures module.
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the baseline power 
+        produced by the wind farm and the ideal power without wake losses. The optimization for 
+        different wind speed, wind direction combinations is parallelized using the mpi4py.futures module.
 
         Returns:
             - **df_base** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -1080,6 +1172,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_baseline** (*float*) - The total power produced by the wind farm with baseline 
                   yaw control (W).
                 - **power_no_wake** (*float*) - The ideal total power produced by the wind farm without 
@@ -1092,16 +1186,22 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
         print('=====================================================')
         print('Calculating baseline power in parallel...')
-        print('Number of wind speed, wind direction pairs to calculate = ', len(self.wd))
+        print('Number of wind conditions to calculate = ', len(self.wd))
         print('=====================================================')
 
         df_base = pd.DataFrame()
 
         with MPIPoolExecutor() as executor: 
-            for df_base_one in executor.map(self._calc_baseline_power_one_case,self.ws.values,self.wd.values):
-            
-                # add variables to dataframe
-                df_base = df_base.append(df_base_one)
+            if self.ti is None:
+                for df_base_one in executor.map(self._calc_baseline_power_one_case,self.ws.values,self.wd.values):
+                
+                    # add variables to dataframe
+                    df_base = df_base.append(df_base_one)
+            else:
+                for df_base_one in executor.map(self._calc_baseline_power_one_case,self.ws.values,self.wd.values,self.ti.values):
+                
+                    # add variables to dataframe
+                    df_base = df_base.append(df_base_one)
         
         df_base.reset_index(drop=True,inplace=True)
 
@@ -1109,9 +1209,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
     def optimize(self):
         """
-        For a series of (wind speed, direction) pairs, finds the power resulting from optimal wake steering. 
-        The optimization for different wind speed, wind direction combinations is parallelized using the 
-        mpi4py.futures module.
+        For a series of (wind speed, direction, ti (optional)) combinations, finds the power resulting from 
+        optimal wake steering. The optimization for different wind speed, wind direction combinations is 
+        parallelized using the mpi4py.futures module.
 
         Returns:
             - **df_opt** (*Pandas DataFrame*) - DataFrame with the same number of rows as the length of the wd 
@@ -1119,6 +1219,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
                 - **ws** (*float*) - The wind speed value for the row.
                 - **wd** (*float*) - The wind direction value for the row.
+                - **ti** (*float*) - The turbulence intensity value for the row. 
+                  Only included if self.ti is not None.
                 - **power_opt** (*float*) - The total power produced by the wind farm with optimal 
                   yaw offsets (W).
                 - **turbine_power_opt** (*list* of *float* values) - A list containing the power produced by
@@ -1129,17 +1231,23 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
 
         print('=====================================================')
         print('Optimizing wake redirection control in parallel...')
-        print('Number of wind speed, wind direction pairs to optimize = ', len(self.wd))
+        print('Number of wind conditions to optimize = ', len(self.wd))
         print('Number of yaw angles to optimize = ', len(self.x0))
         print('=====================================================')
 
         df_opt = pd.DataFrame()
 
         with MPIPoolExecutor() as executor: 
-            for df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values):
+            if self.ti is None:
+                for df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values):
+                
+                    # add variables to dataframe
+                    df_opt = df_opt.append(df_opt_one)
+            else:
+                for df_opt_one in executor.map(self._optimize_one_case,self.ws.values,self.wd.values,self.ti.values):
             
-                # add variables to dataframe
-                df_opt = df_opt.append(df_opt_one)
+                    # add variables to dataframe
+                    df_opt = df_opt.append(df_opt_one)
         
         df_opt.reset_index(drop=True,inplace=True)
 
@@ -1220,19 +1328,22 @@ class LayoutOptimization(Optimization):
     # Private methods
 
     def _AEP_layout_opt(self, locs):
-        self._change_coordinates(
-            self._unnorm(locs, self.bndx_min, self.bndx_max))
+        locs_unnorm = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
+            for valx in locs[0:self.nturbs]] + \
+            [self._unnorm(valy, self.bndy_min, self.bndy_max) \
+            for valy in locs[self.nturbs:2*self.nturbs]]
+        self._change_coordinates(locs_unnorm)
         AEP_sum = self._AEP_loop_wd()
         return -1*AEP_sum/self.AEP_initial
 
-    def _AEP_single_wd(self, wd, ws):
+    def _AEP_single_wd(self, wd, ws, freq):
         self.fi.reinitialize_flow_field(
             wind_direction=[wd], wind_speed=[ws])
         self.fi.calculate_wake()
 
         turb_powers = [turbine.power for turbine in \
             self.fi.floris.farm.turbines]
-        return np.sum(turb_powers)*self.freq*8760
+        return np.sum(turb_powers)*freq*8760
 
     def _AEP_loop_wd(self):
         AEP_sum = 0
@@ -1517,6 +1628,652 @@ class LayoutOptimization(Optimization):
             else:
                 plt.plot([verts[i][0], verts[i+1][0]], \
                          [verts[i][1], verts[i+1][1]], 'b')
+
+class PowerDensityOptimization(LayoutOptimization):
+    def __init__(self, fi, boundaries,
+                           wd,
+                           ws,
+                           freq,
+                           AEP_initial,
+                           yawbnds=None,
+                           x0=None,
+                           bnds=None,
+                           min_dist=None,
+                           opt_method='SLSQP',
+                           opt_options=None):
+
+        super().__init__(fi, boundaries,
+                         wd,
+                         ws,
+                         freq,
+                         AEP_initial,
+                         x0=x0,
+                         bnds=bnds,
+                         min_dist=min_dist,
+                         opt_method=opt_method,
+                         opt_options=opt_options)
+        self.epsilon = np.finfo(float).eps
+        self.counter = 0
+
+        if opt_options is None:
+            self.opt_options = {'maxiter': 100, 'disp': True, \
+                         'iprint': 2, 'ftol': 1e-9}
+
+    def _generate_constraints(self):
+        # grad_constraint1 = grad(self._space_constraint)
+        # grad_constraint2 = grad(self._distance_from_boundaries)
+
+        tmp1 = {'type': 'ineq','fun' : lambda x,*args: \
+                self._space_constraint(x, self.min_dist), \
+                'args':(self.min_dist,)}
+        tmp2 = {'type': 'ineq','fun' : lambda x,*args: \
+                self._distance_from_boundaries(x, self.boundaries_norm), \
+                'args':(self.boundaries_norm,)}
+        tmp3 = {'type': 'ineq','fun' : lambda x,*args: \
+                self._AEP_constraint(x)}
+
+        self.cons = [tmp1, tmp2, tmp3]
+
+    def _set_opt_bounds(self):
+        self.bnds = [(0.0, 1.0) for _ in range(2*self.nturbs + self.nturbs*len(self.wd))]
+
+    def _change_coordinates(self, locsx, locsy):
+        # Parse the layout coordinates
+        layout_array = [locsx, locsy]
+
+        # Update the turbine map in floris
+        self.fi.reinitialize_flow_field(layout_array=layout_array)
+
+    def _powDens_opt(self, optVars):
+        locsx = optVars[0:self.nturbs]
+        locsy = optVars[self.nturbs:2*self.nturbs]
+
+        locsx_unnorm = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
+                        for valx in locsx]
+        locsy_unnorm = [self._unnorm(valy, self.bndy_min, self.bndy_max) \
+                        for valy in locsy]
+
+        turb_controls = [optVars[2*self.nturbs + i*self.nturbs:3*self.nturbs + i*self.nturbs] for i in range(len(self.wd))]
+
+        turb_controls_unnorm = [self._unnorm(yaw, self.yaw_min, self.yaw_max) for yaw in turb_controls]
+
+        self._change_coordinates(locsx_unnorm, locsy_unnorm)
+        opt_area = self.find_layout_area(locsx_unnorm + locsy_unnorm)
+
+        AEP_sum = 0.
+
+        for i in range(len(self.wd)):
+            for j, turbine in enumerate(self.fi.floris.farm.turbine_map.turbines):
+                turbine.yaw_angle = turb_controls_unnorm[i][j]
+
+            AEP_sum = AEP_sum + self._AEP_single_wd(self.wd[i], 
+                                                    self.ws[i], 
+                                                    self.freq[i])
+
+        print('AEP ratio: ', AEP_sum/self.AEP_initial)
+
+        return -1*AEP_sum/self.AEP_initial*self.initial_area/opt_area
+
+    def _AEP_constraint(self, optVars):
+        locsx = optVars[0:self.nturbs]
+        locsy = optVars[self.nturbs:2*self.nturbs]
+
+        locsx_unnorm = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
+                        for valx in locsx]
+        locsy_unnorm = [self._unnorm(valy, self.bndy_min, self.bndy_max) \
+                        for valy in locsy]
+
+        turb_controls = [optVars[2*self.nturbs + i*self.nturbs:3*self.nturbs + i*self.nturbs] for i in range(len(self.wd))]
+
+        turb_controls_unnorm = [self._unnorm(yaw, self.yaw_min, self.yaw_max) for yaw in turb_controls]
+
+        self._change_coordinates(locsx_unnorm, locsy_unnorm)
+
+        AEP_sum = 0.
+
+        for i in range(len(self.wd)):
+            for j, turbine in enumerate(self.fi.floris.farm.turbine_map.turbines):
+                turbine.yaw_angle = turb_controls_unnorm[i][j]
+
+            AEP_sum = AEP_sum + self._AEP_single_wd(self.wd[i], 
+                                                    self.ws[i], 
+                                                    self.freq[i])
+
+        return (AEP_sum/self.AEP_initial - 1.)
+
+    def _optimize(self):
+        self.residual_plant = minimize(self._powDens_opt,
+                                self.x0,
+                                method=self.opt_method,
+                                bounds=self.bnds,
+                                constraints=self.cons,
+                                options=self.opt_options)
+
+        opt_results = self.residual_plant.x
+        
+        return opt_results
+
+    def optimize(self):
+        # TODO: update docs
+        """
+        Find optimized layout of wind turbines for power production given
+        fixed atmospheric conditions (wind speed, direction, etc.).
+        
+        Returns:
+            opt_locs (iterable): optimized locations of each turbine.
+        """
+        print('=====================================================')
+        print('Optimizing turbine layout...')
+        print('Number of parameters to optimize = ', len(self.x0))
+        print('=====================================================')
+
+        opt_locs_norm = self._optimize()
+
+        print('Optimization complete!')
+
+        opt_locs = [[self._unnorm(valx, self.bndx_min, self.bndx_max) \
+            for valx in opt_locs_norm[0:self.nturbs]], \
+            [self._unnorm(valy, self.bndy_min, self.bndy_max) \
+            for valy in opt_locs_norm[self.nturbs:2*self.nturbs]]]
+
+        return opt_locs
+
+    def reinitialize_opt(self, boundaries=None,
+                           yawbnds=None,
+                           wd=None,
+                           ws=None,
+                           freq=None,
+                           AEP_initial=None,
+                           x0=None,
+                           bnds=None,
+                           min_dist=None,
+                           opt_method=None,
+                           opt_options=None):
+        """
+        Reintializes parameter values for the optimization.
+        
+        This method reinitializes the optimization parameters and 
+        bounds to the supplied values or uses what is currently stored.
+        
+        Args:
+            boundaries (iterable): A list of pairs of floats that 
+                represent the boundary's vertices. Defaults to None.
+            wd (np.array, optional): An array of wind directions. 
+                Defaults to None.
+            ws (np.array, optional): An array of wind speeds. Defaults 
+                to None.
+            freq (np.array, optional): An array of wind direction 
+                frequency values. Defaults to None.
+            AEP_initial (float, optional): Initial Annual Energy 
+                Production used in normalizing optimization. Defaults 
+                to None. Initializes to the AEP of the current FLORIS 
+                object.
+            x0 (iterable, optional): The initial turbine locations, 
+                ordered by x-coordinate and then y-coordiante 
+                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]). Defaults to 
+                None. Initializes to the current turbine locations.
+            bnds (iterable, optional): Bounds for the optimization 
+                variables (pairs of min/max values for each variable). 
+                Defaults to None. Initializes to the min. and max. 
+                values of the boundaries iterable.
+            min_dist (float, optional): The minimum distance to be 
+                maitained between turbines during the optimization. 
+                Defaults to None. Initializes to 2 rotor diameters.
+            opt_method (str, optional): The optimization method for 
+                scipy.optimize.minize to use. Defaults to None. 
+                Initializes to 'SLSQP'.
+            opt_options (dict, optional): Dicitonary for setting the 
+                optimization options. Defaults to None.
+        """
+        if boundaries is not None:
+            self.boundaries = boundaries
+            self.bndx_min = np.min([val[0] for val in boundaries])
+            self.bndy_min = np.min([val[1] for val in boundaries])
+            self.bndx_max = np.max([val[0] for val in boundaries])
+            self.bndy_max = np.max([val[1] for val in boundaries])
+            self.boundaries_norm = [[self._norm(val[0], self.bndx_min, \
+                                  self.bndx_max), self._norm(val[1], \
+                                  self.bndy_min, self.bndy_max)] \
+                                  for val in self.boundaries]
+        if yawbnds is not None:
+            self.yaw_min = yawbnds[0]
+            self.yaw_max = yawbnds[1]
+        else:
+            self.yaw_min = 0.0
+            self.yaw_max = 25.0
+        if wd is not None:
+            self.wd = wd
+        if ws is not None:
+            self.ws = ws
+        if freq is not None:
+            self.freq = freq
+        if AEP_initial is not None:
+            self.AEP_initial = AEP_initial
+        else:
+            self.AEP_initial = self.fi.get_farm_AEP(self.wd, \
+                                                    self.ws, self.freq)
+        if x0 is not None:
+            self.x0 = x0
+        else:
+            self.x0 = [self._norm(coord.x1, self.bndx_min, self.bndx_max) for \
+                coord in self.fi.floris.farm.turbine_map.coords] \
+                + [self._norm(coord.x2, self.bndy_min, self.bndy_max) for \
+                coord in self.fi.floris.farm.turbine_map.coords] \
+                + [self._norm(5.0, self.yaw_min, self.yaw_max)]*len(self.wd)*self.nturbs
+        if bnds is not None:
+            self.bnds = bnds
+        else:
+            self._set_opt_bounds()
+        if min_dist is not None:
+            self.min_dist = min_dist
+        else:
+            self.min_dist = 4*self.fi.floris.farm.turbines[0].rotor_diameter
+        if opt_method is not None:
+            self.opt_method = opt_method
+        if opt_options is not None:
+            self.opt_options = opt_options
+
+        self.layout_x_orig = [coord.x1 for coord in \
+                              self.fi.floris.farm.turbine_map.coords] 
+        self.layout_y_orig = [coord.x2 for coord in \
+                              self.fi.floris.farm.turbine_map.coords]
+
+        self._generate_constraints()
+
+        self.initial_area = self.find_layout_area(
+                                    self.layout_x_orig + self.layout_y_orig)
+
+    def find_layout_area(self, locs):
+        locsx = locs[0:self.nturbs]
+        locsy = locs[self.nturbs:]
+
+        points = zip(locsx, locsy)
+        points = np.array(list(points))
+
+        hull = self.convex_hull(points)
+
+        area = self.polygon_area(np.array([val[0] for val in hull]), np.array([val[1] for val in hull]))
+
+        return area
+
+    def convex_hull(self, points):
+        # find two hull points, U, V, and split to left and right search
+        u = min(points, key=lambda p: p[0])
+        v = max(points, key=lambda p: p[0])
+        left, right = self.split(u, v, points), self.split(v, u, points)
+
+        # find convex hull on each side
+        return [v] + self.extend(u, v, left) + [u] + self.extend(v, u, right) + [v]
+
+    def polygon_area(self, x, y):
+        # coordinate shift
+        x_ = x - x.mean()
+        y_ = y - y.mean()
+        
+        correction = x_[-1] * y_[0] - y_[-1]* x_[0]
+        main_area = np.dot(x_[:-1], y_[1:]) - np.dot(y_[:-1], x_[1:])
+        return 0.5*np.abs(main_area + correction)
+
+    def split(self, u, v, points):
+        # return points on left side of UV
+        return [p for p in points if np.cross(p - u, v - u) < 0]
+
+    def extend(self, u, v, points):
+        if not points:
+            return []
+
+        # find furthest point W, and split search to WV, UW
+        w = min(points, key=lambda p: np.cross(p - u, v - u))
+        p1, p2 = self.split(w, v, points), self.split(u, w, points)
+        return self.extend(w, v, p1) + [w] + self.extend(u, w, p2)
+
+    def plot_opt_results(self):
+        """
+        Method to plot the old and new locations of the layout opitimization.
+        """
+        locsx_old = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
+                     for valx in self.x0[0:self.nturbs]]
+        locsy_old = [self._unnorm(valy, self.bndy_min, self.bndy_max) \
+                     for valy in self.x0[self.nturbs:2*self.nturbs]]
+        locsx = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
+                 for valx in self.residual_plant.x[0:self.nturbs]]
+        locsy = [self._unnorm(valy, self.bndy_min, self.bndy_max) \
+                 for valy in self.residual_plant.x[self.nturbs:2*self.nturbs]]
+
+        plt.figure(figsize=(9,6))
+        fontsize= 16
+        plt.plot(locsx_old, locsy_old, 'ob')
+        plt.plot(locsx, locsy, 'or')
+        # plt.title('Layout Optimization Results', fontsize=fontsize)
+        plt.xlabel('x (m)', fontsize=fontsize)
+        plt.ylabel('y (m)', fontsize=fontsize)
+        plt.axis('equal')
+        plt.grid()
+        plt.tick_params(which='both', labelsize=fontsize)
+        plt.legend(['Old locations', 'New locations'], loc='lower center', \
+            bbox_to_anchor=(0.5, 1.01), ncol=2, fontsize=fontsize)
+
+        verts = self.boundaries
+        for i in range(len(verts)):
+            if i == len(verts)-1:
+                plt.plot([verts[i][0], verts[0][0]], \
+                         [verts[i][1], verts[0][1]], 'b')        
+            else:
+                plt.plot([verts[i][0], verts[i+1][0]], \
+                         [verts[i][1], verts[i+1][1]], 'b')
+
+class PowerDensityOptimization1D(Optimization):
+    """
+    Sub class of the 
+    :py:class`floris.tools.optimization.LayoutOptimization` object 
+    class that performs layout optimization in 1 dimension.
+    """
+
+    def __init__(self, fi, wd,
+                           ws,
+                           freq,
+                           AEP_initial,
+                           x0=None,
+                           bnds=None,
+                           min_dist=None,
+                           opt_method='SLSQP',
+                           opt_options=None):
+        """
+        Instantiate LayoutOptimization object and parameter values.
+        
+        Args:
+            fi (:py:class:`floris.tools.floris_utilities.FlorisInterface`): 
+                Interface from FLORIS to the tools package.
+            boundaries (iterable): A list of pairs of floats that 
+                represent the boundary's vertices. Defaults to None.
+            wd (np.array): An array of wind directions. 
+                Defaults to None.
+            ws (np.array): An array of wind speeds. Defaults 
+                to None.
+            freq (np.array): An array of wind direction 
+                frequency values. Defaults to None.
+            AEP_initial (float): Initial Annual Energy 
+                Production used in normalizing optimization. Defaults 
+                to None. Initializes to the AEP of the current FLORIS 
+                object.
+            x0 (iterable, optional): The initial turbine locations, 
+                ordered by x-coordinate and then y-coordiante 
+                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]). Defaults to 
+                None. Initializes to the current turbine locations.
+            bnds (iterable, optional): Bounds for the optimization 
+                variables (pairs of min/max values for each variable). 
+                Defaults to None. Initializes to the min. and max. 
+                values of the boundaries iterable.
+            min_dist (float, optional): The minimum distance to be 
+                maitained between turbines during the optimization. 
+                Defaults to None. Initializes to 2 rotor diamters.
+            opt_method (str, optional): The optimization method for 
+                scipy.optimize.minize to use. Defaults to None. 
+                Initializes to 'SLSQP'.
+            opt_options (dict, optional): Dicitonary for setting the 
+                optimization options. Defaults to None.
+        """
+        super().__init__(fi)
+        self.epsilon = np.finfo(float).eps
+        self.counter = 0
+
+        if opt_options is None:
+            self.opt_options = {'maxiter': 100, 'disp': True, \
+                         'iprint': 2, 'ftol': 1e-9}
+        
+        self.reinitialize_opt(
+            wd = wd,
+            ws = ws,
+            freq = freq,
+            AEP_initial=AEP_initial,
+            x0=x0,
+            bnds=bnds,
+            min_dist=min_dist,
+            opt_method=opt_method,
+            opt_options=opt_options
+        )
+
+    def _PowDens_opt(self, optVars):
+        # print('nturbs: ', self.nturbs)
+        # print('opt vars: ', optVars)
+        locs = optVars[0:self.nturbs]
+        # print('locs normed: ', locs)
+        locs_unnorm = [self._unnorm(valx, self.bndx_min, self.bndx_max) for valx in locs]
+        # print('locs: ', locs_unnorm)
+        turb_controls = [optVars[self.nturbs + i*self.nturbs:2*self.nturbs + i*self.nturbs] for i in range(len(self.wd))]
+        # print('yaw normed: ', turb_controls[0])
+        turb_controls_unnorm = [self._unnorm(yaw, self.yaw_min, self.yaw_max) for yaw in turb_controls]
+        # print('yaw: ', turb_controls_unnorm[0])
+
+        self._change_coordinates(locs_unnorm)
+
+        for i, turbine in enumerate(self.fi.floris.farm.turbine_map.turbines):
+            turbine.yaw_angle = turb_controls_unnorm[0][i]
+
+        # layout_dist = np.max(locs) - np.min(locs)
+        layout_dist = self._avg_dist(locs)
+        AEP_sum = self._AEP_single_wd(self.wd[0], self.ws[0])
+        print('AEP ratio: ', AEP_sum/self.AEP_initial)
+        # print('dist opt: ', self.layout_dist_initial/layout_dist)
+        # print('AEP opt: ', AEP_sum/self.AEP_initial)
+        # print(-1*AEP_sum/self.AEP_initial*self.layout_dist_initial/layout_dist)
+        # return -1.*AEP_sum/self.AEP_initial*self.layout_dist_initial/layout_dist
+        return layout_dist/self.layout_dist_initial
+
+    def _avg_dist(self, locs):
+        dist = []
+        for i in range(len(locs) - 1):
+            dist.append(locs[i+1] - locs[i])
+
+        return np.mean(dist)
+
+
+    def _change_coordinates(self, locs):
+        # Parse the layout coordinates
+        layout_x = locs
+        layout_y = [coord.x2 for coord in \
+            self.fi.floris.farm.turbine_map.coords]
+        layout_array = [layout_x, layout_y]
+
+        # Update the turbine map in floris
+        self.fi.reinitialize_flow_field(layout_array=layout_array)
+
+    def _set_opt_bounds(self):
+        # self.bnds = [(0.0, 1.0) for _ in range(2*self.nturbs)]
+        self.bnds = [(0.0, 0.0),
+                     (0.083333, 0.25),
+                     (0.166667, 0.5),
+                     (0.25, 0.75),
+                     (0.33333, 1.),
+                     (0., 1.),
+                     (0., 1.),
+                     (0., 1.),
+                     (0., 1.),
+                     (0., 1.)]
+
+    def _AEP_single_wd(self, wd, ws):
+        self.fi.reinitialize_flow_field(
+            wind_direction=wd, wind_speed=ws)
+        self.fi.calculate_wake()
+
+        turb_powers = [turbine.power for turbine in \
+            self.fi.floris.farm.turbines]
+        return np.sum(turb_powers)*self.freq[0]*8760
+
+    def _AEP_constraint(self, optVars):
+        locs = optVars[0:self.nturbs]
+        locs_unnorm = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
+            for valx in locs]
+        turb_controls = [optVars[self.nturbs + i*self.nturbs:2*self.nturbs + \
+                            i*self.nturbs] for i in range(len(self.wd))]
+        turb_controls_unnorm = [self._unnorm(yaw, self.yaw_min, self.yaw_max) \
+            for yaw in turb_controls]        
+        
+        for i, turbine in enumerate(self.fi.floris.farm.turbine_map.turbines):
+            turbine.yaw_angle = turb_controls_unnorm[0][i]
+
+        self._change_coordinates(locs_unnorm)
+
+        return (self._AEP_single_wd(self.wd[0], self.ws[0])/self.AEP_initial - 1)*1000000.
+
+    def _space_constraint(self, x_in, min_dist):
+        x = np.nan_to_num(x_in[0:self.nturbs])
+        y = np.nan_to_num(x_in[self.nturbs:])
+
+        dist = [np.sqrt((x[i]-x[j])**2 + (y[i]-y[j])**2) \
+                for i in range(self.nturbs) \
+                for j in range(self.nturbs) if i != j]
+
+        return np.min(dist) - self._norm(min_dist, self.bndx_min, self.bndx_max)
+
+    def _generate_constraints(self):
+        # grad_constraint1 = grad(self._space_constraint)
+        # grad_constraint2 = grad(self._distance_from_boundaries)
+
+        tmp1 = {'type': 'ineq','fun' : lambda x,*args: \
+                self._space_constraint(x, self.min_dist), \
+                'args':(self.min_dist,)}
+        tmp2 = {'type': 'ineq','fun' : lambda x,*args: \
+                self._AEP_constraint(x)}
+
+        self.cons = [tmp1, tmp2]
+
+    def _optimize(self):
+        print('initial guess: ', self.x0)
+        print('bounds: ', self.bnds)
+        self.residual_plant = minimize(self._PowDens_opt,
+                                self.x0,
+                                method=self.opt_method,
+                                bounds=self.bnds,
+                                constraints=self.cons,
+                                options=self.opt_options)
+
+        opt_results = self.residual_plant.x
+        
+        return opt_results
+
+    def optimize(self):
+        """
+        Find optimized layout of wind turbines for power production given
+        fixed atmospheric conditions (wind speed, direction, etc.).
+        
+        Returns:
+            opt_locs (iterable): optimized locations of each turbine.
+        """
+        print('=====================================================')
+        print('Optimizing turbine layout...')
+        print('Number of parameters to optimize = ', len(self.x0))
+        print('=====================================================')
+
+        opt_vars_norm = self._optimize()
+
+        print('Optimization complete!')
+
+        opt_locs = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
+            for valx in opt_vars_norm[0:self.nturbs]]
+
+        opt_yaw = [self._unnorm(yaw, self.yaw_min, self.yaw_max) \
+            for yaw in opt_vars_norm[self.nturbs:]]
+
+        return [opt_locs, opt_yaw]
+
+    def reinitialize_opt(self, wd = None,
+                           ws = None,
+                           freq = None,
+                           AEP_initial = None,
+                           x0=None,
+                           bnds=None,
+                           min_dist=None,
+                           yaw_lims=None,
+                           opt_method=None,
+                           opt_options=None):
+        """
+        Reintializes parameter values for the optimization.
+        
+        This method reinitializes the optimization parameters and 
+        bounds to the supplied values or uses what is currently stored.
+        
+        Args:
+            boundaries (iterable): A list of pairs of floats that 
+                represent the boundary's vertices. Defaults to None.
+            wd (np.array, optional): An array of wind directions. 
+                Defaults to None.
+            ws (np.array, optional): An array of wind speeds. Defaults 
+                to None.
+            freq (np.array, optional): An array of wind direction 
+                frequency values. Defaults to None.
+            AEP_initial (float, optional): Initial Annual Energy 
+                Production used in normalizing optimization. Defaults 
+                to None. Initializes to the AEP of the current FLORIS 
+                object.
+            x0 (iterable, optional): The initial turbine locations, 
+                ordered by x-coordinate and then y-coordiante 
+                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]). Defaults to 
+                None. Initializes to the current turbine locations.
+            bnds (iterable, optional): Bounds for the optimization 
+                variables (pairs of min/max values for each variable). 
+                Defaults to None. Initializes to the min. and max. 
+                values of the boundaries iterable.
+            min_dist (float, optional): The minimum distance to be 
+                maitained between turbines during the optimization. 
+                Defaults to None. Initializes to 2 rotor diameters.
+            opt_method (str, optional): The optimization method for 
+                scipy.optimize.minize to use. Defaults to None. 
+                Initializes to 'SLSQP'.
+            opt_options (dict, optional): Dicitonary for setting the 
+                optimization options. Defaults to None.
+        """
+        # if boundaries is not None:
+        #     self.boundaries = boundaries
+        #     self.bndx_min = np.min([val[0] for val in boundaries])
+        #     self.bndy_min = np.min([val[1] for val in boundaries])
+        #     self.boundaries_norm = [[self._norm(val[0], self.bndx_min, \
+        #                           self.bndx_max)] for val in self.boundaries]
+        self.bndx_min = np.min([coord.x1 for coord in \
+                                self.fi.floris.farm.turbine_map.coords])
+        self.bndx_max = np.max([coord.x1 for coord in \
+                                self.fi.floris.farm.turbine_map.coords])
+        if yaw_lims is not None:
+            self.yaw_min = yaw_lims[0]
+            self.yaw_max = yaw_lims[1]
+        else:
+            self.yaw_min = 0.0
+            self.yaw_max = 20.0
+        if wd is not None:
+            self.wd = wd
+        if ws is not None:
+            self.ws = ws
+        if freq is not None:
+            self.freq = freq
+        if AEP_initial is not None:
+            self.AEP_initial = AEP_initial
+        else:
+            self.AEP_initial = self.fi.get_farm_AEP(self.wd, \
+                                                    self.ws, self.freq)
+        if x0 is not None:
+            self.x0 = x0
+        else:
+            self.x0 = [self._norm(coord.x1, self.bndx_min, self.bndx_max) for \
+                       coord in self.fi.floris.farm.turbine_map.coords] + \
+                       [0.]*self.nturbs
+
+        if bnds is not None:
+            self.bnds = bnds
+        else:
+            self._set_opt_bounds()
+        if min_dist is not None:
+            self.min_dist = min_dist
+        else:
+            self.min_dist = 2*self.fi.floris.farm.turbines[0].rotor_diameter
+        if opt_method is not None:
+            self.opt_method = opt_method
+        if opt_options is not None:
+            self.opt_options = opt_options
+
+        self._generate_constraints()
+        # self.layout_dist_initial = np.max(self.x0[0:self.nturbs]) - np.min(self.x0[0:self.nturbs])
+        self.layout_dist_initial = self._avg_dist(self.x0[0:self.nturbs])
+        # print('initial dist: ', self.layout_dist_initial)
 
 
 class LayoutHeightOptimization(LayoutOptimization):

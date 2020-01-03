@@ -220,8 +220,8 @@ class FlowField():
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord, deflection, flow_field):
         return self.wake.velocity_function(x, y, z, turbine, coord, deflection, flow_field)
 
-    def _compute_turbine_wake_deflection(self, x, y, turbine, coord, flow_field):
-        return self.wake.deflection_function(x, y, turbine, coord, flow_field)
+    def _compute_turbine_wake_deflection(self, x, y, z, turbine, coord, flow_field):
+        return self.wake.deflection_function(x, y, z, turbine, coord, flow_field)
 
     def _rotated_grid(self, angle, center_of_rotation):
         """
@@ -248,7 +248,7 @@ class FlowField():
             x_coord.append(coord.x1)
             y_coord.append(coord.x2)
 
-        if str(self.wake.velocity_model) == 'curl':
+        if self.wake.velocity_model.model_string == 'curl':
             # re-setup the grid for the curl model
             xmin = np.min(x_coord) - 2 * self.max_diameter
             xmax = np.max(x_coord) + 10 * self.max_diameter
@@ -470,6 +470,10 @@ class FlowField():
             # add points to flow field grid points
             self._compute_initialized_domain(points=points)
 
+        # reinitialize the turbines
+        for i, turbine in enumerate(self.turbine_map.turbines):
+            turbine.reinitialize_turbine(self.wind_map.turbine_turbulence_intensity[i])
+
         # define the center of rotation with reference to 270 deg as center of flow field
         x0 = np.mean([np.min(self.x) , np.max(self.x)])
         y0 = np.mean([np.min(self.y) , np.max(self.y)])
@@ -525,7 +529,7 @@ class FlowField():
 
             # get the wake deflecton field
             deflection = self._compute_turbine_wake_deflection(
-                rotated_x, rotated_y, turbine, coord, self)   
+                rotated_x, rotated_y, rotated_z, turbine, coord, self)   
 
             # get the velocity deficit accounting for the deflection
             turb_u_wake, turb_v_wake, turb_w_wake = self._compute_turbine_velocity_deficit(
