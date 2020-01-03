@@ -336,7 +336,7 @@ class YawOptimization(Optimization):
                 self.unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
                             'pmf_res': 1.0, 'pdf_cutoff': 0.995}
 
-            # create normally distributed wd and yaw uncertaitny pmfs
+            # create normally distributed wd and yaw uncertainty pmfs
             if self.unc_options['std_wd'] > 0:
                 wd_bnd = int(np.ceil(norm.ppf(self.unc_options['pdf_cutoff'], \
                                 scale=self.unc_options['std_wd'])/self.unc_options['pmf_res']))
