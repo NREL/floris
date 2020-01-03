@@ -194,6 +194,7 @@ class Turbine():
         """
         u_at_turbine = local_wind_speed
 
+        # TODO:
         # # PREVIOUS MEHTHOD========================
         # # UNCOMMENT IF ANY ISSUE UNCOVERED WITH NEW MOETHOD
         # x_grid = x

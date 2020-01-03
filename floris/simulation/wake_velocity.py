@@ -1083,6 +1083,7 @@ class GaussCurlHybrid(WakeVelocity):
 
         return U, V, W
 
+    # TODO:
     # def find_velocity(self,u,x,y,z,turbine,coord):
 
     #     u_at_turbine = u
