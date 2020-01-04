@@ -13,10 +13,6 @@
 import sys
 import numpy as np
 
-try:
-    import pyoptsparse
-except:
-    print('Cannot import pyoptsparse: module not found.')
 
 class Optimization():
     """
@@ -49,6 +45,8 @@ class Optimization():
     # Private methods
 
     def _reinitialize(self, solver=None, optOptions=None):
+        import pyoptsparse
+        
         self.optProb = pyoptsparse.Optimization(self.model, self.objective_func)
 
         self.optProb = self.model.add_var_group(self.optProb)
