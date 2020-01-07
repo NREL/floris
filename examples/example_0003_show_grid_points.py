@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_utilities.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Just one turbine
 fi.reinitialize_flow_field(layout_array=([100],[100]))
