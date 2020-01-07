@@ -12,7 +12,6 @@ specific language governing permissions and limitations under the License.
 """
 
 import numpy as np
-import copy
 import pytest
 from .sample_inputs import SampleInputs
 from floris.utilities import Vec3
@@ -27,8 +26,8 @@ class TurbineMapTest():
             [10.0, 20.0]  # layout y
         ]
         self.turbines = [
-            copy.deepcopy(Turbine(self.sample_inputs.turbine)),
-            copy.deepcopy(Turbine(self.sample_inputs.turbine))
+            Turbine(self.sample_inputs.turbine),
+            Turbine(self.sample_inputs.turbine)
         ]
         self.instance = self._build_instance()
 
