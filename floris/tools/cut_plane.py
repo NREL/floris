@@ -161,16 +161,16 @@ def change_resolution(cut_plane, resolution=(100, 100)):
     u_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.u.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
     v_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.v.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
     w_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.w.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
 
     # Assign back to df
@@ -220,16 +220,16 @@ def interpolate_onto_array(cut_plane, x1_array, x2_array):
     u_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.u.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
     v_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.v.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
     w_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.w.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
 
     # Assign back to df
