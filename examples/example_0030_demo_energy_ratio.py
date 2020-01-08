@@ -15,9 +15,12 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
 from floris.tools.energy_ratio import plot_energy_ratio, plot_energy_ratio_ws 
+from floris.tools.energy_wake_loss import calculate_balanced_wake_loss, plot_balanced_wake_loss, overall_wake_loss
 import floris.tools.cut_plane as cp
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
+
+
 
 # Parameters
 n_sim = 1000 # number of simulations to use
@@ -82,16 +85,41 @@ for i, (ws,wd) in enumerate(zip(ws_con,wd_con)):
 # Visualize the energy ratio wind direction
 
 fig, axarr = plt.subplots(3,1,sharex=True,figsize=(10,10))
-
 plot_energy_ratio(ref_pow_base,test_pow_base,ws_base,wd_base,
                     ref_pow_con,test_pow_con,ws_con,wd_con,
                     wd_bins, plot_simple=False, axarr=axarr, label_array=['Field Baseline', 'Field Controlled'],
                     label_pchange='Field Gain' )
 
-
-
 for ax in axarr:
     ax.legend()
 
 
+
+
+
+fig, axarr = plt.subplots(2,1,sharex=True,figsize=(6,10))
+plot_balanced_wake_loss(ref_pow_base,
+                                    test_pow_base,
+                                    ws_base,
+                                    wd_base,
+                                    ref_pow_con,
+                                    test_pow_con,
+                                    ws_con,
+                                    wd_con,
+                                    axarr
+                                    )
+
+
+overall_wake_loss(ref_pow_base,
+                                    test_pow_base,
+                                    ws_base,
+                                    wd_base,
+                                    ref_pow_con,
+                                    test_pow_con,
+                                    ws_con,
+                                    wd_con
+                                    
+                                    )
+
 plt.show()
+
