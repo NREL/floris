@@ -550,6 +550,10 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         wind_speed_array_baseline_wd = wind_speed_array_baseline[wind_dir_mask_baseline]
         wind_dir_array_baseline_wd = wind_direction_array_baseline[wind_dir_mask_baseline]
         # wd_baseline_dist = (wind_dir_array_baseline_wd - wind_direction_bin)**2
+        # # if wind_direction_bin_p_overlap > 1:
+            
+        # else:
+        #     baseline_weight = np.ones_like(reference_power_baseline_wd)
         baseline_weight = gaussian(wind_dir_array_baseline_wd, wind_direction_bin,wind_direction_bin_radius/2.0 )
         baseline_weight = baseline_weight / np.sum(baseline_weight)
 
@@ -558,6 +562,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
         wind_speed_array_controlled_wd = wind_speed_array_controlled[wind_dir_mask_controlled]
         wind_dir_array_controlled_wd = wind_direction_array_controlled[wind_dir_mask_controlled]
         controlled_weight = gaussian(wind_dir_array_controlled_wd, wind_direction_bin,wind_direction_bin_radius/2.0 )
+  
         controlled_weight = controlled_weight / np.sum(controlled_weight)
         # wd_controlled_dist = (wind_dir_array_controlled_wd - wind_direction_bin)**2
 
@@ -588,16 +593,24 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             # random resampling w/ replacement
             #ind_bs = np.random.randint(
             #     len(reference_power_baseline_wd), size=len(reference_power_baseline_wd))
-            ind_bs = np.random.choice(
-                len(reference_power_baseline_wd), size=len(reference_power_baseline_wd),p=baseline_weight)
+            if wind_direction_bin_p_overlap>1:
+                ind_bs = np.random.choice(
+                    len(reference_power_baseline_wd), size=len(reference_power_baseline_wd),p=baseline_weight)
+            else:
+                 ind_bs = np.random.choice(
+                    len(reference_power_baseline_wd), size=len(reference_power_baseline_wd))               
             reference_power_binned_baseline = reference_power_baseline_wd[ind_bs]
             test_power_binned_baseline = test_power_baseline_wd[ind_bs]
             wind_speed_binned_baseline = wind_speed_array_baseline_wd[ind_bs]
 
             # ind_bs = np.random.randint(
             #     len(reference_power_controlled_wd), size=len(reference_power_controlled_wd))
-            ind_bs = np.random.choice(
-                len(reference_power_controlled_wd), size=len(reference_power_controlled_wd),p=controlled_weight)
+            if wind_direction_bin_p_overlap>1:
+                ind_bs = np.random.choice(
+                    len(reference_power_controlled_wd), size=len(reference_power_controlled_wd),p=controlled_weight)
+            else:
+                ind_bs = np.random.choice(
+                    len(reference_power_controlled_wd), size=len(reference_power_controlled_wd))                
             reference_power_binned_controlled = reference_power_controlled_wd[ind_bs]
             test_power_binned_controlled = test_power_controlled_wd[ind_bs]
             wind_speed_binned_controlled = wind_speed_array_controlled_wd[ind_bs]
@@ -649,7 +662,9 @@ def plot_energy_ratio(reference_power_baseline,
                       plot_ratio_scatter=False,
                       marker_scale=1.,
                       show_count=True,
-                      hide_controlled_case=False
+                      hide_controlled_case=False,
+                      ls = '--',
+                      marker = None
                       ):
     """
     Plot the balanced energy ratio.
@@ -730,22 +745,22 @@ def plot_energy_ratio(reference_power_baseline,
     if plot_simple:
         ax = axarr[0]
         ax.plot(wind_direction_bins, ratio_array_base,
-                label=label_array[0], color=base_color, ls='--')
+                label=label_array[0], color=base_color, ls=ls,marker=marker)
         if not hide_controlled_case:
             ax.plot(wind_direction_bins, ratio_array_con,
-                    label=label_array[1], color=con_color, ls='--')
+                    label=label_array[1], color=con_color, ls=ls,marker=marker)
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
 
         ax = axarr[1]
         ax.plot(wind_direction_bins, diff_array,
-                label=label_pchange, color=con_color, ls='--')
+                label=label_pchange, color=con_color, ls=ls,marker=marker)
         ax.axhline(0, color='k')
         ax.set_ylabel('Change in Energy Ratio (-)')
 
         ax = axarr[2]
         ax.plot(wind_direction_bins, p_change_array,
-                label=label_pchange, color=con_color, ls='--')
+                label=label_pchange, color=con_color, ls=ls,marker=marker)
         ax.axhline(0, color='k')
         ax.set_ylabel('% Change in Energy Ratio (-)')
 
@@ -795,6 +810,8 @@ def plot_energy_ratio(reference_power_baseline,
     for ax in axarr:
         ax.grid(True)
         ax.set_xlabel('Wind Direction (Deg)')
+    
+    return diff_array
 
 #######WIND SPEED VERSIONS##################
 
@@ -826,7 +843,7 @@ def energy_ratio_ws(ref_pow_base, test_pow_base, wd_base,
         tuple: tuple containing:
 
             -   **ratio_base** (*float*): Baseline energy ratio.
-            -   **ratio_con** (*float*): Controlled enery ratio.
+            -   **ratio_con** (*float*): Controlled enery ra tio.
             -   **ratio_diff** (*float*): Difference in energy ratios.
             -   **p_change** (*float*): Percent change in energy ratios.
             -   **counts_base** (*float*): Number of points in baseline.
