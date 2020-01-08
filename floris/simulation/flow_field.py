@@ -536,7 +536,8 @@ class FlowField():
                 rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self)
 
             # include turbulence model for the gaussian wake model from Porte-Agel
-            if self.wake.velocity_model.model_string == 'gauss':
+            if self.wake.velocity_model.model_string == 'gauss' or \
+                self.wake.velocity_model.model_string == 'gauss_curl_hybrid':
 
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
