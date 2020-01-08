@@ -8,6 +8,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        # 3.5 fails with a bad comparison in TurbineMap unit tests
+        # 3.8 fails when installing pyproj
         python-version: [3.6, 3.7] # 3.5, 3.8
         os: [ubuntu-latest, macos-latest, windows-latest]
       fail-fast: False
