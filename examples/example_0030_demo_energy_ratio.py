@@ -15,10 +15,16 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
 from floris.tools.energy_ratio import plot_energy_ratio, plot_energy_ratio_ws 
+from floris.tools.energy_ratio_single import plot_energy_ratio as plot_single
+
 from floris.tools.energy_wake_loss import calculate_balanced_wake_loss, plot_balanced_wake_loss, overall_wake_loss
 import floris.tools.cut_plane as cp
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
+
+# Experimental version
+# from floris.tools.energy_ratio_ml_knr import plot_energy_ratio as plot_single_knr
+# from floris.tools.energy_ratio_ml_rf import plot_energy_ratio as plot_single_rf
 
 
 
@@ -82,8 +88,19 @@ for i, (ws,wd) in enumerate(zip(ws_con,wd_con)):
     test_pow_con[i] = turb_powers[2] # The downstream turbine
 
 
-# Visualize the energy ratio wind direction
+# Visualize the energy ratio ********************************
 
+# Baseline only
+fig ,ax = plt.subplots()
+
+plot_single(ref_pow_base,test_pow_base,ws_base,wd_base,
+                      wd_bins,
+
+                      ax=ax
+                      )
+ax.set_title("Baseline Plot")
+
+# Balanced energy ratio
 fig, axarr = plt.subplots(3,1,sharex=True,figsize=(10,10))
 plot_energy_ratio(ref_pow_base,test_pow_base,ws_base,wd_base,
                     ref_pow_con,test_pow_con,ws_con,wd_con,
@@ -93,10 +110,32 @@ plot_energy_ratio(ref_pow_base,test_pow_base,ws_base,wd_base,
 for ax in axarr:
     ax.legend()
 
+# # Balanced energy ratio KNR version
+# fig, axarr = plt.subplots(3,1,sharex=True,figsize=(10,10))
+# plot_single_knr(ref_pow_base,test_pow_base,ws_base,wd_base,
+#                     ref_pow_con,test_pow_con,ws_con,wd_con,
+#                     wd_bins, plot_simple=False, axarr=axarr, label_array=['Field Baseline', 'Field Controlled'],
+#                     label_pchange='Field Gain' )
+
+# for ax in axarr:
+#     ax.legend()
+
+# axarr[0].set_title("Balanced Ratio (KNR)")
+
+# # Balanced energy ratio RF version
+# fig, axarr = plt.subplots(3,1,sharex=True,figsize=(10,10))
+# plot_single_rf(ref_pow_base,test_pow_base,ws_base,wd_base,
+#                     ref_pow_con,test_pow_con,ws_con,wd_con,
+#                     wd_bins, plot_simple=False, axarr=axarr, label_array=['Field Baseline', 'Field Controlled'],
+#                     label_pchange='Field Gain' )
+
+# for ax in axarr:
+#     ax.legend()
+
+# axarr[0].set_title("Balanced Ratio (RF)")
 
 
-
-
+# Wake Energy Losses
 fig, axarr = plt.subplots(2,1,sharex=True,figsize=(6,10))
 plot_balanced_wake_loss(ref_pow_base,
                                     test_pow_base,
