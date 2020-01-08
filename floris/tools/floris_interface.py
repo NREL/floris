@@ -282,6 +282,68 @@ class FlorisInterface():
         # Return the dataframe
         return df
 
+    def get_set_of_points(self,
+                                  x_points,
+                                  y_points,
+                                  z_points):
+
+        """
+        Use points method in calculate_wake to quick extract a slice of points
+
+        Args:
+            x_points, float, array of floats
+            y_points, float, array of floats
+            z_points, float, array of floats
+
+
+        Returns:
+            dataframe of x,y,z,u,v,w values
+        """
+
+        # Get a copy for the flow field so don't change underlying grid points
+        flow_field = copy.deepcopy(self.floris.farm.flow_field)
+
+        if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
+            
+            # If this is a gridded model, must extract from full flow field
+            print('Model identifed as %s requires use of underyling grid print' % self.floris.farm.flow_field.wake.velocity_model.model_string)
+            print('FUNCTION NOT AVAILABLE CURRENTLY')
+
+        # Set up points matrix
+        points = np.row_stack((x_points,y_points,z_points))
+
+        # Recalcuate wake with these points
+        flow_field.calculate_wake(points=points)
+
+        # Get results vectors
+        x_flat = flow_field.x.flatten()
+        y_flat = flow_field.y.flatten()
+        z_flat = flow_field.z.flatten()
+        u_flat = flow_field.u.flatten()
+        v_flat = flow_field.v.flatten()
+        w_flat = flow_field.w.flatten()
+
+        df = pd.DataFrame({'x':x_flat,
+            'y':y_flat,
+            'z':z_flat,
+            'u':u_flat,
+            'v':v_flat,
+            'w':w_flat
+            })
+
+
+        # Subset to points requests
+        df = df[df.x.isin(x_points)]
+        df = df[df.y.isin(y_points)]
+        df = df[df.z.isin(z_points)]
+
+        # Drop duplicates
+        df = df.drop_duplicates()
+
+        # Return the dataframe
+        return df
+
+
     def get_hor_plane(self, height=None,
                 x_resolution=200, 
                 y_resolution=200, 
@@ -819,29 +881,31 @@ class FlorisInterface():
         for i,turbine in enumerate(self.floris.farm.turbines):
             turbine.rotor_diameter = rotor_diameter[i]
 
-    def get_velocity_at_point(self, points, initial = False):
-        """
-        Get waked velocity at specified points in the flow field. 
+    # TODO
+    # Comment this out until sure we'll need it
+    # def get_velocity_at_point(self, points, initial = False):
+    #     """
+    #     Get waked velocity at specified points in the flow field. 
 
-        Args:
-            points (np.array): x, y and z coordinates of specified point(s)
-                where flow_field velocity should be reported.
-            initial(bool, optional): if set to True, the initial velocity of 
-                the flow field is returned instead of the waked velocity.
-                Defaults to False.
+    #     Args:
+    #         points (np.array): x, y and z coordinates of specified point(s)
+    #             where flow_field velocity should be reported.
+    #         initial(bool, optional): if set to True, the initial velocity of 
+    #             the flow field is returned instead of the waked velocity.
+    #             Defaults to False.
 
-        Returns:
-            velocity (list): flow field velocity at specified grid point(s), in m/s.
-        """
-        xp, yp, zp = points[0], points[1], points[2]
-        x, y, z = self.floris.farm.flow_field.x, self.floris.farm.flow_field.y, self.floris.farm.flow_field.z
-        velocity = self.floris.farm.flow_field.u
-        initial_velocity = self.floris.farm.wind_map.grid_wind_speed
-        pVel = []
-        for i in range(len(xp)):
-            xloc, yloc, zloc =np.array(x == xp[i]),np.array(y == yp[i]),np.array(z == zp[i])
-            loc = np.logical_and(np.logical_and(xloc, yloc) == True, zloc == True)
-            if initial == True: pVel.append(np.mean(initial_velocity[loc]))
-            else: pVel.append(np.mean(velocity[loc]))
+    #     Returns:
+    #         velocity (list): flow field velocity at specified grid point(s), in m/s.
+    #     """
+    #     xp, yp, zp = points[0], points[1], points[2]
+    #     x, y, z = self.floris.farm.flow_field.x, self.floris.farm.flow_field.y, self.floris.farm.flow_field.z
+    #     velocity = self.floris.farm.flow_field.u
+    #     initial_velocity = self.floris.farm.wind_map.grid_wind_speed
+    #     pVel = []
+    #     for i in range(len(xp)):
+    #         xloc, yloc, zloc =np.array(x == xp[i]),np.array(y == yp[i]),np.array(z == zp[i])
+    #         loc = np.logical_and(np.logical_and(xloc, yloc) == True, zloc == True)
+    #         if initial == True: pVel.append(np.mean(initial_velocity[loc]))
+    #         else: pVel.append(np.mean(velocity[loc]))
 
-        return pVel
+    #     return pVel
