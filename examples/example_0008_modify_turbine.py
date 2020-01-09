@@ -11,6 +11,9 @@
 
 # See read the https://floris.readthedocs.io for documentation
 
+# This example illustrates changing the properties of some of the turbines
+# This can be used to setup farms of different turbines
+
 import matplotlib.pyplot as plt
 import floris.tools as wfct
 
