@@ -17,15 +17,16 @@ import floris.tools as wfct
 # Initialize the FLORIS interface fi
 fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
-fi.change_turbine([1],{'rotor_diameter':300})
+# Change turbine 0, 3 to have a 35 m rotor diamater
+fi.change_turbine([0,3],{'rotor_diameter':35})
 
-# # Calculate wake
-# fi.calculate_wake()
+# Calculate wake
+fi.calculate_wake()
 
-# # Get horizontal plane at default height (hub-height)
-# hor_plane = fi.get_hor_plane()
+# Get horizontal plane at default height (hub-height)
+hor_plane = fi.get_hor_plane()
 
-# # Plot and show
-# fig, ax = plt.subplots()
-# wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-# plt.show()
+# Plot and show
+fig, ax = plt.subplots()
+wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+plt.show()
