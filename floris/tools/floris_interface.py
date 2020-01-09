@@ -835,35 +835,14 @@ class FlorisInterface():
             else:
                 print('Leaving key %s as defined in input file %s' % (key,self.input_file))
 
-        # Now define a new turbine
-        turbine_new =  Turbine(turbine_dict)
-        print(turbine_new)
+        # Now go through turbine list and re-init any in turb_num_array
+        for t_idx in turb_num_array:
+            print('Updating turbine: %00d' % t_idx)
+            self.floris.farm.turbines[t_idx].__init__(turbine_dict)
 
-        #TODO HERE I hit a wall, what is the best way to replace the turbines with indices turb_num_array
-        # in the farm.turbinemap object?
+        # Finish by re-initalizing the flow field
+        self.reinitialize_flow_field()
 
-        # for t in fi.floris.farm.layout_x:
-        #     if 
-
-        #   [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
-
-        # for t in turb_num_array:
-        #     print('Reassigning turbine %d' % t)
-        #     self.floris.farm.flow_field.turbine_map[t].__init__(turbine_dict)
-
-
-        # self.description = instance_dictionary["description"]
-        # properties = instance_dictionary["properties"]
-        # self.rotor_diameter = properties["rotor_diameter"]
-        # self.hub_height = properties["hub_height"]
-        # self.blade_count = properties["blade_count"]
-        # self.pP = properties["pP"]
-        # self.pT = properties["pT"]
-        # self.generator_efficiency = properties["generator_efficiency"]
-        # self.power_thrust_table = properties["power_thrust_table"]
-        # self.yaw_angle = properties["yaw_angle"]
-        # self.tilt_angle = properties["tilt_angle"]
-        # self.tsr = properties["TSR"]
 
     @property
     def layout_x(self):
