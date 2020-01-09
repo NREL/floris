@@ -213,7 +213,7 @@ class FlorisInterface():
                 x1_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
             if x2_bounds is None:
                 hub_height = self.floris.farm.flow_field.turbine_map.turbines[0].hub_height
-                x2_bounds = (0,hub_height*2)
+                x2_bounds = (10,hub_height*2)
 
 
         # Set up the points to test
