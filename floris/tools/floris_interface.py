@@ -12,7 +12,7 @@
 import numpy as np
 import pandas as pd
 from floris.simulation import Floris
-from floris.simulation import TurbineMap
+from floris.simulation import TurbineMap, Turbine
 from .flow_data import FlowData
 from ..utilities import Vec3
 import copy
@@ -819,6 +819,51 @@ class FlorisInterface():
 
             AEP_sum = AEP_sum + self.get_farm_power()*freq[i]*8760
         return AEP_sum
+
+    def change_turbine(self, turb_num_array, turbine_change_dict):
+
+        # First re-read the input file to get the baseline parameters
+        json_dict = self.floris.input_reader._parseJSON(self.input_file)
+        turbine_dict = json_dict["turbine"]
+
+        # Now go through the turbine entries and change if they are in turbine change dict
+        for key in turbine_dict["properties"]:
+            if key in turbine_change_dict:
+                turbine_dict["properties"][key] = turbine_change_dict[key]
+                print("Changing key %s to the following value..." % key)
+                print('...,',turbine_dict["properties"][key])
+            else:
+                print('Leaving key %s as defined in input file %s' % (key,self.input_file))
+
+        # Now define a new turbine
+        turbine_new =  Turbine(turbine_dict)
+        print(turbine_new)
+
+        #TODO HERE I hit a wall, what is the best way to replace the turbines with indices turb_num_array
+        # in the farm.turbinemap object?
+
+        # for t in fi.floris.farm.layout_x:
+        #     if 
+
+        #   [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
+
+        # for t in turb_num_array:
+        #     print('Reassigning turbine %d' % t)
+        #     self.floris.farm.flow_field.turbine_map[t].__init__(turbine_dict)
+
+
+        # self.description = instance_dictionary["description"]
+        # properties = instance_dictionary["properties"]
+        # self.rotor_diameter = properties["rotor_diameter"]
+        # self.hub_height = properties["hub_height"]
+        # self.blade_count = properties["blade_count"]
+        # self.pP = properties["pP"]
+        # self.pT = properties["pT"]
+        # self.generator_efficiency = properties["generator_efficiency"]
+        # self.power_thrust_table = properties["power_thrust_table"]
+        # self.yaw_angle = properties["yaw_angle"]
+        # self.tilt_angle = properties["tilt_angle"]
+        # self.tsr = properties["TSR"]
 
     @property
     def layout_x(self):
