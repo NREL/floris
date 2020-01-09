@@ -108,7 +108,8 @@ class Farm():
         Args:
             wake_model: A string containing the wake model used to 
                 calculate the wake; Valid wake model options are: 
-                "curl", "gauss", "jensen", and "multizone".
+                "curl", "gauss_curl_hybrid", "gauss", "jensen",
+                and "multizone".
 
         Returns:
             *None* -- The wake model and flow field are updated in 
@@ -120,23 +121,19 @@ class Farm():
             >>> floris.farm.set_wake_model('curl')
         """
 
-        valid_wake_models = ['curl', 'gauss', 'jensen', 'multizone']
+        valid_wake_models = [
+            'curl', 'gauss_curl_hybrid', 'gauss', 'jensen', 'multizone'
+        ]
         if wake_model not in valid_wake_models:
-            raise Exception("Invalid wake model. Valid options include: {}.".format(
-                ", ".join(valid_wake_models)))
+            raise Exception(
+                "Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models))
+            )
 
-        if wake_model == 'jensen':
-            self.flow_field.wake.velocity_model = 'jensen'
+        self.flow_field.wake.velocity_model = wake_model
+        if wake_model == 'jensen' or wake_model == 'multizone':
             self.flow_field.wake.deflection_model = 'jimenez'
-        elif wake_model == 'multizone':
-            self.flow_field.wake.velocity_model = 'multizone'
-            self.flow_field.wake.deflection_model = 'jimenez'
-        elif wake_model == 'gauss':
-            self.flow_field.wake.velocity_model = 'gauss'
-            self.flow_field.wake.deflection_model = 'gauss'
-        elif wake_model == 'curl':
-            self.flow_field.wake.velocity_model = 'curl'
-            self.flow_field.wake.deflection_model = 'curl'
+        else:
+            self.flow_field.wake.deflection_model = wake_model
 
         self.flow_field.reinitialize_flow_field(
             with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution)
