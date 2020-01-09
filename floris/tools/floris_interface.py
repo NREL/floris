@@ -821,6 +821,18 @@ class FlorisInterface():
         return AEP_sum
 
     def change_turbine(self, turb_num_array, turbine_change_dict):
+        """
+        Change turbine properties of given turbines
+
+        Args:
+            turb_num_array (list): list of turbines to apply the change to
+            turbine_change_dict (dict): dictionary of changes to make.  All 
+                key values should be from the JSON turbine/properties set.
+                Any key values not specified will be copied from the original
+                JSON values
+        """
+
+        #TODO This may not work as intended if floris_interface not initialized with JSON
 
         # First re-read the input file to get the baseline parameters
         json_dict = self.floris.input_reader._parseJSON(self.input_file)
