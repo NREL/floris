@@ -261,7 +261,6 @@ class WindRose():
         self.wd = wd
         self.num_wd = len(wd)
         self.wd_step = wd[1] - wd[0]
-        # self #TODO This reference to 'self' was here alone. Is this intentional as a print? is it incomplete?
 
         # Update internal data frame
         self.df = self.resample_average_ws_by_wd(self.df)

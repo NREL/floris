@@ -479,7 +479,6 @@ class Gauss(WakeVelocity):
         """
 
         # veer (degrees)
-        # TODO: are we using radians or degrees?
         veer = flow_field.wind_veer
 
         # added turbulence model
@@ -964,10 +963,44 @@ class GaussCurlHybrid(WakeVelocity):
             print('Using default option eps_gain: %.1f' % self.eps_gain)
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
-        # TODO: update docstring
+        """
+        Using the Gauss-Curl hybrid wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified turbine, 
+        relative to the freestream velocities at the grid of points 
+        comprising the wind farm flow field.
+
+        Args:
+            x_locations: An array of floats that contains the 
+                streamwise direction grid coordinates of the flow field 
+                domain (m).
+            y_locations: An array of floats that contains the grid 
+                coordinates of the flow field domain in the direction 
+                normal to x and parallel to the ground (m).
+            z_locations: An array of floats that contains the grid 
+                coordinates of the flow field domain in the vertical 
+                direction (m).
+            turbine: A :py:obj:`floris.simulation.turbine` object that 
+                represents the turbine creating the wake.
+            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
+                containing the coordinate of the turbine creating the 
+                wake (m).
+            deflection_field: An array of floats that contains the 
+                amount of wake deflection in meters in the y direction 
+                at each grid point of the flow field.
+            flow_field: A :py:class:`floris.simulation.flow_field` 
+                object containing the flow field information for the 
+                wind farm.
+
+        Returns:
+            Three arrays of floats that contain the wake velocity 
+            deficit in m/s created by the turbine relative to the 
+            freestream velocities for the u, v, and w components, 
+            aligned with the x, y, and z directions, respectively. The 
+            three arrays contain the velocity deficits at each grid 
+            point in the flow field. 
+        """
 
         # veer (degrees)
-        # TODO: are we actually using degrees?
         veer = flow_field.wind_veer
 
         # added turbulence model
@@ -1082,27 +1115,6 @@ class GaussCurlHybrid(WakeVelocity):
             U[x_locations < turbine_coord.x1] = 0
 
         return U, V, W
-
-    # TODO:
-    # def find_velocity(self,u,x,y,z,turbine,coord):
-
-    #     u_at_turbine = u
-    #     x_grid = x
-    #     y_grid = y
-    #     z_grid = z
-
-    #     yPts = np.array([point[0] for point in turbine.grid])
-    #     zPts = np.array([point[1] for point in turbine.grid])
-
-    #     D = 126.
-
-    #     # interpolate from the flow field to get the flow field at the grid points
-    #     dist = [np.sqrt((7*D - x_grid) ** 2 + (0*D + yPts[i] - y_grid) **
-    #                     2 + (turbine.hub_height + zPts[i] - z_grid) ** 2) for i in range(len(yPts))]
-    #     idx = [np.where(dist[i] == np.min(dist[i])) for i in range(len(yPts))]
-    #     data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
-
-    #     return data
 
     def _velocity_components(self, coord, turbine, flow_field, x_locations, y_locations, z_locations):
 
