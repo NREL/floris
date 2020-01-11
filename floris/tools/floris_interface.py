@@ -835,8 +835,8 @@ class FlorisInterface():
         #TODO This may not work as intended if floris_interface not initialized with JSON
 
         # First re-read the input file to get the baseline parameters
-        json_dict = self.floris.input_reader._parseJSON(self.input_file)
-        turbine_dict = json_dict["turbine"]
+        # json_dict = self.floris.input_reader._parseJSON(self.input_file)
+        turbine_dict = self.floris.input_dict["turbine"]
 
         # Now go through the turbine entries and change if they are in turbine change dict
         for key in turbine_dict["properties"]:
