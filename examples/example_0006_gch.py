@@ -40,8 +40,8 @@ print(np.array(fi.get_turbine_power())/1000.0)
 # Switch to gch
 fi.floris.farm.wake.velocity_model = "gauss_curl_hybrid"
 fi.floris.farm.wake.deflection_model = "gauss_curl_hybrid"
-fi.floris.farm.wake.velocity_models["gauss_curl_hybrid"].use_yar = True
-fi.floris.farm.wake.deflection_models["gauss_curl_hybrid"].use_ss = True
+fi.floris.farm.wake.velocity_model.use_yar = True
+fi.floris.farm.wake.deflection_model.use_ss = True
 
 # Calculate wake
 fi.calculate_wake(yaw_angles=yaw_angles)

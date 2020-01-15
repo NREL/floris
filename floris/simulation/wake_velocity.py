@@ -55,14 +55,22 @@ class WakeVelocity():
         self.requires_resolution = False
         self.model_string = None
         self.model_grid_resolution = None
+        self.parameter_dictionary = parameter_dictionary
 
         # turbulence parameters
-        turbulence_intensity = parameter_dictionary["turbulence_intensity"]
+        turbulence_intensity = self.parameter_dictionary["turbulence_intensity"]
         self.ti_initial = float(turbulence_intensity["initial"])
         self.ti_constant = float(turbulence_intensity["constant"])
         self.ti_ai = float(turbulence_intensity["ai"])
         self.ti_downstream = float(turbulence_intensity["downstream"])
-
+    
+    def _get_model_dict(self):
+        if self.model_string not in self.parameter_dictionary.keys():
+            raise KeyError("The {} wake model was".format(self.model_string) +
+                " instantiated but the model parameters were not found in the" +
+                " input file or dictionary under" +
+                " 'wake.properties.parameters.{}'.".format(self.model_string))
+        return self.parameter_dictionary[self.model_string]
 
 class Jensen(WakeVelocity):
     """
@@ -112,7 +120,7 @@ class Jensen(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "jensen"
-        model_dictionary = parameter_dictionary[self.model_string]
+        model_dictionary = self._get_model_dict()
         self.we = float(model_dictionary["we"])
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
@@ -250,7 +258,7 @@ class MultiZone(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "multizone"
-        model_dictionary = parameter_dictionary[self.model_string]
+        model_dictionary = self._get_model_dict()
         self.me = [float(n) for n in model_dictionary["me"]]
         self.we = float(model_dictionary["we"])
         self.aU = float(model_dictionary["aU"])
@@ -430,7 +438,7 @@ class Gauss(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "gauss"
-        model_dictionary = parameter_dictionary[self.model_string]
+        model_dictionary = self._get_model_dict()
 
         # wake expansion parameters
         self.ka = float(model_dictionary["ka"])
@@ -642,7 +650,7 @@ class Curl(WakeVelocity):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "curl"
-        model_dictionary = parameter_dictionary[self.model_string]
+        model_dictionary = self._get_model_dict()
         self.model_grid_resolution = Vec3(
             model_dictionary["model_grid_resolution"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])
@@ -931,7 +939,7 @@ class GaussCurlHybrid(WakeVelocity):
 
         super().__init__(parameter_dictionary)
         self.model_string = "gauss_curl_hybrid"
-        model_dictionary = parameter_dictionary[self.model_string]
+        model_dictionary = self._get_model_dict()
 
         # wake expansion parameter
         self.ka = float(model_dictionary["ka"])
