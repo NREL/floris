@@ -1,4 +1,4 @@
-floris.tools.floris\_utilities module
+floris.tools.floris\_interface module
 =====================================
 
 .. automodule:: floris.tools.floris_interface

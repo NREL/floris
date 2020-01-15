@@ -926,6 +926,7 @@ class WindRose():
         """
         Generate wind rose plot of TI vs. wind direction. 
         If no axis is provided, make a new one.
+
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes to which data should
                 be plotted. Defaults to None.
@@ -935,6 +936,7 @@ class WindRose():
                 intensity bins. Defaults to np.array([0.06, 0.1, 0.14, 0.18,0.22]).
             wd_bins (np.array, optional): wind direction bin limits.
                 Defaults to np.arange(0, 360, 15.).
+
         Returns:
             ax (:py:class:`matplotlib.pyplot.axes`): Figure axes
                 containing wind rose plot.

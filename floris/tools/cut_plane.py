@@ -34,14 +34,16 @@ def get_plane_from_flow_data(flow_data,
     """
     Get a plane of data, in form of dataframe, from a flow_data object
     This is used to get planes from SOWFA results and FLORIS sims with fixed grids, ie curl
+
     Args:
-            flow_data (np.array): 3D vector field of velocity data
-            normal_vector (string, optional): vector normal to plane
-                Defaults to z.
-            x3_value (float, optional): value of normal vector to slice through
-                Defaults to 100.
-        Returns:
-            dataframe of x1,x2,u,v,w values
+        flow_data (np.array): 3D vector field of velocity data
+        normal_vector (string, optional): vector normal to plane
+            Defaults to z.
+        x3_value (float, optional): value of normal vector to slice through
+            Defaults to 100.
+
+    Returns:
+        dataframe of x1,x2,u,v,w values
     """
     order = "f"
     if normal_vector == 'z':

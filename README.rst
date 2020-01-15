@@ -11,6 +11,11 @@ the **floris** tag. Alternatively, email the NREL FLORIS team at
 `Jen King <mailto:jennifer.king@nrel.gov>`_ and
 `Paul Fleming <mailto:paul.fleming@nrel.gov>`_ directly.
 
+.. image:: https://github.com/nrel/floris/workflows/Automated%20tests%20%26%20code%20coverage/badge.svg
+  :target: https://github.com/nrel/floris/actions
+.. image:: https://codecov.io/gh/nrel/floris/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/nrel/floris
+
 Background and Objectives
 =========================
 This FLORIS framework is designed to provide a computationally inexpensive,
