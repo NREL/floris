@@ -88,6 +88,32 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
+        self._initialize_turbine()
+
+
+
+    def change_turbine_parameters(self, turbine_change_dict):
+        """
+        Change a turbine parameter and re-call the intialzie function
+
+        Args:
+            turbine_change_dict: A dictionary of parameters to change
+
+        """
+        for param in turbine_change_dict:
+            print('Setting %s to ' % param,turbine_change_dict[param])
+            setattr(self,param,turbine_change_dict[param])
+
+        self._initialize_turbine()
+
+
+
+
+    # Private methods
+
+    def _initialize_turbine(self):
+        # Initiailze the turbine given saved parameter settings
+
         # Precompute interps
         cp = self.power_thrust_table["power"]
         wind_speed = self.power_thrust_table["wind_speed"]
@@ -111,8 +137,8 @@ class Turbine():
         # initialize to an invalid value until calculated
         self.air_density = -1
         self.use_turbulence_correction = False
+        
 
-    # Private methods
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
