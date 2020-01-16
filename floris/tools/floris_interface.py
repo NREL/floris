@@ -820,6 +820,7 @@ class FlorisInterface():
             AEP_sum = AEP_sum + self.get_farm_power()*freq[i]*8760
         return AEP_sum
 
+
     def change_turbine(self, turb_num_array, turbine_change_dict):
         """
         Change turbine properties of given turbines
@@ -832,25 +833,10 @@ class FlorisInterface():
                 JSON values
         """
 
-        #TODO This may not work as intended if floris_interface not initialized with JSON
-
-        # First re-read the input file to get the baseline parameters
-        # json_dict = self.floris.input_reader._parseJSON(self.input_file)
-        turbine_dict = self.floris.input_dict["turbine"]
-
-        # Now go through the turbine entries and change if they are in turbine change dict
-        for key in turbine_dict["properties"]:
-            if key in turbine_change_dict:
-                turbine_dict["properties"][key] = turbine_change_dict[key]
-                print("Changing key %s to the following value..." % key)
-                print('...,',turbine_dict["properties"][key])
-            else:
-                print('Leaving key %s as defined in input file %s' % (key,self.input_file))
-
         # Now go through turbine list and re-init any in turb_num_array
         for t_idx in turb_num_array:
             print('Updating turbine: %00d' % t_idx)
-            self.floris.farm.turbines[t_idx](turbine_dict)
+            self.floris.farm.turbines[t_idx].change_turbine_parameters(turbine_change_dict)
 
         # Finish by re-initalizing the flow field
         self.reinitialize_flow_field()
