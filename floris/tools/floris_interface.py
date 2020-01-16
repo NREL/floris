@@ -850,7 +850,7 @@ class FlorisInterface():
         # Now go through turbine list and re-init any in turb_num_array
         for t_idx in turb_num_array:
             print('Updating turbine: %00d' % t_idx)
-            self.floris.farm.turbines[t_idx].__init__(turbine_dict)
+            self.floris.farm.turbines[t_idx](turbine_dict)
 
         # Finish by re-initalizing the flow field
         self.reinitialize_flow_field()
