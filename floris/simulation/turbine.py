@@ -110,7 +110,7 @@ class Turbine():
             raise ValueError(
                 "Turbine.grid_point_count must be the square of a number")
 
-        self.reinitialize_turbine_flow(turbulence_intensity=None)
+        self.reset_velocities()
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
@@ -339,7 +339,7 @@ class Turbine():
             rotated_z
         )
 
-    def reinitialize_turbine_flow(self, turbulence_intensity):
+    def reset_velocities(self):
         """
         This method sets the velocities at the turbine's rotor swept 
         area grid points to zero.
