@@ -349,7 +349,6 @@ class Turbine():
             :py:class:`floris.simulation.turbine` object.
         """
         self.velocities = [0.0] * self.grid_point_count
-        self.current_turbulence_intensity = turbulence_intensity
 
     def set_yaw_angle(self, yaw_angle):
         """
