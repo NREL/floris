@@ -238,6 +238,7 @@ class WindMap():
             *None* -- The values are updated directly in the 
             :py:class:`floris.simulation.wind_map` object.
         """
+        #TODO i can haz comments pls?
         ti = self.input_ti
         if grid is not True:
             if all(elem == ti[0] for elem in ti):

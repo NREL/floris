@@ -81,7 +81,7 @@ class Gauss(WakeTurbulence):
                     exponent used in in the calculation of wake-added
                     turbulence.
                 -   **downstream**: A float that is the exponent
-                    applied to the distance downtream of an upstream
+                    applied to the distance downstream of an upstream
                     turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
 
@@ -101,8 +101,7 @@ class Gauss(WakeTurbulence):
         self.ti_ai = float(model_dictionary["ai"])
         self.ti_downstream = float(model_dictionary["downstream"])
 
-    def function(self, turb_u_wake, sorted_map, x_locations, y_locations,
-                 z_locations, turbine, turbine_coord, flow_field):
+    def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """
         Using the Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified
@@ -131,38 +130,16 @@ class Gauss(WakeTurbulence):
                 wind farm.
         """
 
-        # compute area overlap of wake on other turbines and update downstream
-        # turbine turbulence intensities
-        for coord_ti, turbine_ti in sorted_map:
+        ti_initial = ambient_TI
 
-            if coord_ti.x1 > turbine_coord.x1 and np.abs(
-                    turbine_coord.x2 -
-                    coord_ti.x2) < 2 * turbine.rotor_diameter:
-                # only assess the effects of the current wake
+        # turbulence intensity calculation based on Crespo et. al.
+        ti_calculation = self.ti_constant \
+            * turbine.aI**self.ti_ai \
+            * ti_initial**self.ti_initial \
+            * ((coord_ti.x1 - turbine_coord.x1) / turbine.rotor_diameter)**self.ti_downstream
 
-                freestream_velocities = turbine_ti.calculate_swept_area_velocities(
-                    flow_field.wind_direction, flow_field.u_initial, coord_ti,
-                    x_locations, y_locations, z_locations)
-
-                wake_velocities = turbine_ti.calculate_swept_area_velocities(
-                    flow_field.wind_direction,
-                    flow_field.u_initial - turb_u_wake, coord_ti, x_locations,
-                    y_locations, z_locations)
-
-                area_overlap = flow_field._calculate_area_overlap(
-                    wake_velocities, freestream_velocities, turbine)
-                if area_overlap > 0.0:
-                    ti_initial = flow_field.turbulence_intensity
-
-                    # turbulence intensity calculation based on Crespo et. al.
-                    ti_calculation = self.ti_constant \
-                        * turbine.aI**self.ti_ai \
-                        * ti_initial**self.ti_initial \
-                        * ((coord_ti.x1 - turbine_coord.x1) / turbine_ti.rotor_diameter)**self.ti_downstream
-
-                    # Update turbulence intensity of downstream turbines
-                    turbine_ti.turbulence_intensity = np.sqrt(
-                        ti_calculation**2 + flow_field.turbulence_intensity**2)
+        # Update turbulence intensity of downstream turbines
+        return ti_calculation
 
 
 class Ishihara(WakeTurbulence):
@@ -218,8 +195,9 @@ class Ishihara(WakeTurbulence):
         self.e = model_dictionary["e"]
         self.f = model_dictionary["f"]
 
-    def function(self, turb_u_wake, sorted_map, x_locations, y_locations,
-                 z_locations, turbine, turbine_coord, flow_field):
+    def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
+        # function(self, x_locations, y_locations, z_locations, turbine,
+        #  turbine_coord, flow_field, turb_u_wake, sorted_map):
         """
         Using the Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified
@@ -252,63 +230,113 @@ class Ishihara(WakeTurbulence):
                 object containing the flow field information for the
                 wind farm.
         """
-        # compute area overlap of wake on other turbines and update downstream
-        # turbine turbulence intensities
-        for coord_ti, turbine_ti in sorted_map:
+        # # compute area overlap of wake on other turbines and update downstream
+        # # turbine turbulence intensities
+        # for coord_ti, turbine_ti in sorted_map:
 
-            if coord_ti.x1 > turbine_coord.x1 and np.abs(
-                    turbine_coord.x2 -
-                    coord_ti.x2) < 2 * turbine.rotor_diameter:
-                # only assess the effects of the current wake
+        #     if coord_ti.x1 > turbine_coord.x1 and np.abs(
+        #             turbine_coord.x2 -
+        #             coord_ti.x2) < 2 * turbine.rotor_diameter:
+        #         # only assess the effects of the current wake
 
-                # added turbulence model
-                ti_initial = turbine.turbulence_intensity
+        #         # added turbulence model
+        #         ti_initial = turbine.turbulence_intensity
 
-                # turbine parameters
-                D = turbine.rotor_diameter
-                HH = turbine.hub_height
-                Ct = turbine.Ct
+        #         # turbine parameters
+        #         D = turbine.rotor_diameter
+        #         HH = turbine.hub_height
+        #         Ct = turbine.Ct
 
-                local_x = x_locations - turbine_coord.x1
-                local_y = y_locations - turbine_coord.x2
-                local_z = z_locations - turbine_coord.x3
-                # coordinate info
-                r = np.sqrt(local_y**2 + (local_z)**2)
+        #         local_x = x_locations - turbine_coord.x1
+        #         local_y = y_locations - turbine_coord.x2
+        #         local_z = z_locations - turbine_coord.x3
+        #         # coordinate info
+        #         r = np.sqrt(local_y**2 + (local_z)**2)
 
-                def parameter_value_from_dict(pdict, Ct, ti_initial):
-                    return pdict['const'] * Ct**(pdict['Ct']) * ti_initial**(
-                        pdict['TI'])
+        #         def parameter_value_from_dict(pdict, Ct, ti_initial):
+        #             return pdict['const'] * Ct**(pdict['Ct']) * ti_initial**(
+        #                 pdict['TI'])
 
-                kstar = parameter_value_from_dict(self.kstar, Ct, ti_initial)
-                epsilon = parameter_value_from_dict(self.epsilon, Ct,
-                                                    ti_initial)
+        #         kstar = parameter_value_from_dict(self.kstar, Ct, ti_initial)
+        #         epsilon = parameter_value_from_dict(self.epsilon, Ct,
+        #                                             ti_initial)
 
-                d = parameter_value_from_dict(self.d, Ct, ti_initial)
-                e = parameter_value_from_dict(self.e, Ct, ti_initial)
-                f = parameter_value_from_dict(self.f, Ct, ti_initial)
+        #         d = parameter_value_from_dict(self.d, Ct, ti_initial)
+        #         e = parameter_value_from_dict(self.e, Ct, ti_initial)
+        #         f = parameter_value_from_dict(self.f, Ct, ti_initial)
 
-                k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
-                k1[r / D > 0.5] = 1.0
+        #         k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
+        #         k1[r / D > 0.5] = 1.0
 
-                k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
-                k2[r / D > 0.5] = 0.0
+        #         k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
+        #         k2[r / D > 0.5] = 0.0
 
-                # Representative wake width = \sigma / D
-                wake_width = kstar * (local_x / D) + epsilon
+        #         # Representative wake width = \sigma / D
+        #         wake_width = kstar * (local_x / D) + epsilon
 
-                # Added turbulence intensity = \Delta I_1 (x,y,z)
-                delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH)**2
-                delta[local_z >= HH] = 0.0
-                ti_calculation = 1 / (
-                    d + e * (local_x / D) + f * (1 + (local_x / D))**(-2)) * (
-                        (k1 * np.exp(-(r - D / 2)**2 /
-                                     (2 * (wake_width * D)**2))) +
-                        (k2 * np.exp(-(r + D / 2)**2 /
-                                     (2 * (wake_width * D)**2)))) - delta
+        #         # Added turbulence intensity = \Delta I_1 (x,y,z)
+        #         delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH)**2
+        #         delta[local_z >= HH] = 0.0
+        #         ti_calculation = 1 / (
+        #             d + e * (local_x / D) + f * (1 + (local_x / D))**(-2)) * (
+        #                 (k1 * np.exp(-(r - D / 2)**2 /
+        #                              (2 * (wake_width * D)**2))) +
+        #                 (k2 * np.exp(-(r + D / 2)**2 /
+        #                              (2 * (wake_width * D)**2)))) - delta
 
-                # Update turbulence intensity of downstream turbines
-                turbine_ti.turbulence_intensity = np.sqrt(
-                    ti_calculation**2 + flow_field.turbulence_intensity**2)
+        #         # Update turbulence intensity of downstream turbines
+        #         turbine_ti.turbulence_intensity = np.sqrt(
+        #             ti_calculation**2 + flow_field.turbulence_intensity**2)
+
+        # added turbulence model
+        ti_initial = ambient_TI
+
+        # turbine parameters
+        D = turbine.rotor_diameter
+        HH = turbine.hub_height
+        Ct = turbine.Ct
+
+        local_x = coord_ti.x1 - turbine_coord.x1
+        local_y = coord_ti.x2 - turbine_coord.x2
+        local_z = coord_ti.x3 - turbine_coord.x3
+        # coordinate info
+        r = np.sqrt(local_y**2 + (local_z)**2)
+
+        def parameter_value_from_dict(pdict, Ct, ti_initial):
+            return pdict['const'] * Ct**(pdict['Ct']) * ti_initial**(
+                pdict['TI'])
+
+        kstar = parameter_value_from_dict(self.kstar, Ct, ti_initial)
+        epsilon = parameter_value_from_dict(self.epsilon, Ct, ti_initial)
+
+        d = parameter_value_from_dict(self.d, Ct, ti_initial)
+        e = parameter_value_from_dict(self.e, Ct, ti_initial)
+        f = parameter_value_from_dict(self.f, Ct, ti_initial)
+
+        k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
+        k1[r / D > 0.5] = 1.0
+
+        k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
+        k2[r / D > 0.5] = 0.0
+
+        # Representative wake width = \sigma / D
+        wake_width = kstar * (local_x / D) + epsilon
+
+        # Added turbulence intensity = \Delta I_1 (x,y,z)
+        delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH)**2
+        delta[local_z >= HH] = 0.0
+        ti_calculation = 1 / (d + e * (local_x / D) + f *
+                              (1 + (local_x / D))**(-2)) * (
+                                  (k1 * np.exp(-(r - D / 2)**2 /
+                                               (2 * (wake_width * D)**2))) +
+                                  (k2 * np.exp(-(r + D / 2)**2 /
+                                               (2 *
+                                                (wake_width * D)**2)))) - delta
+
+        # Update turbulence intensity of downstream turbines
+        # turbine_ti.turbulence_intensity = np.sqrt(
+        #     ti_calculation**2 + flow_field.turbulence_intensity**2)
+        return ti_calculation
 
 
 class Direct(WakeTurbulence):
@@ -338,11 +366,11 @@ class Direct(WakeTurbulence):
         # wake model parameter
         self.local_TI_dict = model_dictionary["local_TI_dict"]
 
-    def function(self, turb_u_wake, sorted_map, x_locations, y_locations,
-                 z_locations, turbine, turbine_coord, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, flow_field, turb_u_wake, sorted_map):
         """
         This method ensures that the wake model sees local turbulence intensity 
-        values for each consituent wind turbine.
+        values for each constituent wind turbine.
 
         #TODO include all these inputs? Not really necessary for the model, but 
         # having them ensures that the function call is the same across all 

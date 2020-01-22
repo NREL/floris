@@ -215,7 +215,7 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "ishihara",
+      "velocity_model": "gauss",
       "turbulence_model": "ishihara",
       "deflection_model": "gauss",
       "combination_model": "sosfs",

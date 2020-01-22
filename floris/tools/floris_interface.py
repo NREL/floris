@@ -321,7 +321,7 @@ class FlorisInterface():
         # Set up points matrix
         points = np.row_stack((x_points, y_points, z_points))
 
-        # Recalcuate wake with these points
+        # Recalculate wake with these points
         flow_field.calculate_wake(points=points)
 
         # Get results vectors
@@ -598,7 +598,7 @@ class FlorisInterface():
 
                 Defaults to None, in which case default PMFs are calculated using
                 values provided in **unc_options**.
-            unc_options (disctionary, optional): A dictionary containing values used
+            unc_options (dictionary, optional): A dictionary containing values used
                 to create normally-distributed, zero-mean probability mass functions
                 describing the distribution of wind direction and yaw position
                 deviations when wind direction and/or yaw position uncertainty is
@@ -716,7 +716,7 @@ class FlorisInterface():
 
                 Defaults to None, in which case default PMFs are calculated using
                 values provided in **unc_options**.
-            unc_options (disctionary, optional): A dictionary containing values used
+            unc_options (dictionary, optional): A dictionary containing values used
                 to create normally-distributed, zero-mean probability mass functions
                 describing the distribution of wind direction and yaw position
                 deviations when wind direction and/or yaw position uncertainty is

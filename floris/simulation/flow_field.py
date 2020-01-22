@@ -216,18 +216,40 @@ class FlowField():
 
     def _compute_turbine_velocity_deficit(self, x, y, z, turbine, coord,
                                           deflection, flow_field):
+        """Implement current wake velocity model. 
+        
+        Args:
+            x ([type]): [description]
+            y ([type]): [description]
+            z ([type]): [description]
+            turbine ([type]): [description]
+            coord ([type]): [description]
+            deflection ([type]): [description]
+            flow_field ([type]): [description]
+        """
         return self.wake.velocity_function(x, y, z, turbine, coord, deflection,
                                            flow_field)
 
-    def _compute_turbine_wake_turbulence(self, turb_u_wake, sorted_map, x, y,
-                                         z, turbine, coord, flow_field):
+    def _compute_turbine_wake_turbulence(self, ambient_TI, coord_ti,
+                                         turbine_coord, turbine):
+        """Implement current wake turbulence model
+        
+        Args:
+            x ([type]): [description]
+            y ([type]): [description]
+            z ([type]): [description]
+            turbine ([type]): [description]
+            coord ([type]): [description]
+            flow_field ([type]): [description]
+            turb_u_wake ([type]): [description]
+            sorted_map ([type]): [description]
 
-        return self.wake.turbulence_function(turb_u_wake, sorted_map, x, y, z,
-                                             turbine, coord, flow_field)
+        Returns:
+            [type]: [description]
+        """
 
-    # def _compute_turbine_wake_deflection(self, x, y, turbine, coord,
-    #                                      flow_field):
-    #     return self.wake.deflection_function(x, y, turbine, coord, flow_field)
+        return self.wake.turbulence_function(ambient_TI, coord_ti,
+                                             turbine_coord, turbine)
 
     def _compute_turbine_wake_deflection(self, x, y, z, turbine, coord,
                                          flow_field):
@@ -301,7 +323,7 @@ class FlowField():
         """
         A method that will set the domain bounds for the wake model.
 
-        This method allows a user to customzie the domain bounds for 
+        This method allows a user to customize the domain bounds for 
         the current wake model being used, unless the wake model is the 
         Curl model, then a predefined domain is specified and used. If 
         the bounds are not specified, then a pre-defined set of bounds 
@@ -310,7 +332,7 @@ class FlowField():
         in the x-, y-, and z-directions.
 
         Args:
-            bounds_to_set: A list of values representing the mininum
+            bounds_to_set: A list of values representing the minimum
                 and maximum values for the domain
                 [xmin, xmax, ymin, ymax, zmin, zmax]
                 (default is *None*).
@@ -557,10 +579,12 @@ class FlowField():
                 rotated_x, rotated_y, rotated_z, turbine, coord, deflection,
                 self)
 
+            ###########
             # include turbulence model for the gaussian wake model from Porte-Agel
-            if self.wake.velocity_model.model_string == 'gauss' or \
-                self.wake.velocity_model.model_string == 'gauss_curl_hybrid':
-
+            if self.wake.turbulence_model.model_string == 'gauss' or \
+                    self.wake.velocity_model.model_string == 'gauss_curl_hybrid':
+                # print('turbulence calcs here.')
+                # pass
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
                     xloc, yloc = np.array(rx == coord_ti.x1), np.array(
@@ -585,12 +609,28 @@ class FlowField():
                         area_overlap = self._calculate_area_overlap(
                             wake_velocities, freestream_velocities, turbine)
 
-                        if area_overlap > 0.0 and coord_ti.x1 <= 15 * turbine.rotor_diameter + coord.x1:
-                            turbine_ti.current_turbulence_intensity = turbine_ti.calculate_turbulence_intensity(
-                                area_overlap, self.wind_map.
-                                turbine_turbulence_intensity[idx],
-                                self.wake.turbulence_model, coord_ti, coord,
-                                turbine)
+                        # placeholder for TI/stability influence on how far wakes (and wake added TI) propagate downstream
+                        downstream_influence_length = 15 * turbine.rotor_diameter
+
+                        if area_overlap > 0.0 and coord_ti.x1 <= downstream_influence_length + coord.x1:
+                            ##### Call wake turbulence model
+                            # wake.turbulence_function(inputs)
+                            ti_calculation = self._compute_turbine_wake_turbulence(
+                                self.wind_map.
+                                turbine_turbulence_intensity[idx], coord_ti,
+                                coord, turbine)
+                            # multiply by area overlap
+                            ti_added = area_overlap * ti_calculation
+
+                            turbine_ti.current_turbulence_intensity = np.sqrt(
+                                ti_added**2 +
+                                turbine.current_turbulence_intensity**2)
+
+                            # turbine_ti.current_turbulence_intensity = turbine_ti.calculate_turbulence_intensity(
+                            #     area_overlap, self.wind_map.
+                            #     turbine_turbulence_intensity[idx],
+                            #     self.wake.turbulence_model, coord_ti, coord,
+                            #     turbine)
 
             # combine this turbine's wake into the full wake field
             if not no_wake:

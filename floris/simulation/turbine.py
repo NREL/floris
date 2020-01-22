@@ -232,57 +232,57 @@ class Turbine():
         # return np.array(data)
         return np.array(u_at_turbine.flatten()[ii])
 
-    def calculate_turbulence_intensity(self, area_overlap, flow_field_ti,
-                                       turbulence_model, turbine_coord,
-                                       wake_coord, turbine_wake):
-        """
-        Calculates the turbulence intensity at a specific wind turbine.
+    # def calculate_turbulence_intensity(self, area_overlap, flow_field_ti,
+    #                                    turbulence_model, turbine_coord,
+    #                                    wake_coord, turbine_wake):
+    #     """
+    #     Calculates the turbulence intensity at a specific wind turbine.
 
-        This method calculates and returns the turbulence intensity at 
-        the wind turbine consisting of the ambient turbulence as well 
-        as the wake-added turbulence from an upstream turbine, using 
-        the approach of Crespo, A. and Hernandez, J. "Turbulence 
-        characteristics in wind-turbine wakes." *J. Wind Eng Ind 
-        Aerodyn*. 1996.
+    #     This method calculates and returns the turbulence intensity at
+    #     the wind turbine consisting of the ambient turbulence as well
+    #     as the wake-added turbulence from an upstream turbine, using
+    #     the approach of Crespo, A. and Hernandez, J. "Turbulence
+    #     characteristics in wind-turbine wakes." *J. Wind Eng Ind
+    #     Aerodyn*. 1996.
 
-        Args:
-            flow_field_ti: A float that is the ambient turbulence 
-                intensity in the flow field expressed as a decimal 
-                fraction.
-            turbulence_model: A 
-                :py:obj:`floris.simulation.wake_velocity.WakeVelocity` 
-                object containing wake model parameters.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the turbine.
-            wake_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the upstream turbine.
-            turbine_wake: A :py:class:`floris.simulation.turbine` 
-                object that represents the upstream turbine.
+    #     Args:
+    #         flow_field_ti: A float that is the ambient turbulence
+    #             intensity in the flow field expressed as a decimal
+    #             fraction.
+    #         turbulence_model: A
+    #             :py:obj:`floris.simulation.wake_velocity.WakeVelocity`
+    #             object containing wake model parameters.
+    #         turbine_coord: A :py:obj:`floris.utilities.Vec3` object
+    #             containing the coordinate of the turbine.
+    #         wake_coord: A :py:obj:`floris.utilities.Vec3` object
+    #             containing the coordinate of the upstream turbine.
+    #         turbine_wake: A :py:class:`floris.simulation.turbine`
+    #             object that represents the upstream turbine.
 
-        Returns:
-            numpy.float64: The turbulence intensity at the current 
-            turbine including ambient turbulence and turbulence added 
-            by the upstream turbine wake.
-        """
+    #     Returns:
+    #         numpy.float64: The turbulence intensity at the current
+    #         turbine including ambient turbulence and turbulence added
+    #         by the upstream turbine wake.
+    #     """
+    #     #### Old version
+    #     # ti_initial = flow_field_ti
 
-        ti_initial = flow_field_ti
+    #     # # user-input turbulence intensity parameters
+    #     # ti_i = turbulence_model.ti_initial
+    #     # ti_constant = turbulence_model.ti_constant
+    #     # ti_ai = turbulence_model.ti_ai
+    #     # ti_downstream = turbulence_model.ti_downstream
 
-        # user-input turbulence intensity parameters
-        ti_i = turbulence_model.ti_initial
-        ti_constant = turbulence_model.ti_constant
-        ti_ai = turbulence_model.ti_ai
-        ti_downstream = turbulence_model.ti_downstream
+    #     # # turbulence intensity calculation based on Crespo et. al.
+    #     # ti_calculation = ti_constant \
+    #     #     * turbine_wake.aI**ti_ai \
+    #     #     * ti_initial**ti_i \
+    #     #     * ((turbine_coord.x1 - wake_coord.x1) / self.rotor_diameter)**ti_downstream
 
-        # turbulence intensity calculation based on Crespo et. al.
-        ti_calculation = ti_constant \
-            * turbine_wake.aI**ti_ai \
-            * ti_initial**ti_i \
-            * ((turbine_coord.x1 - wake_coord.x1) / self.rotor_diameter)**ti_downstream
+    #     # multiply by area overlap
+    #     ti_added = area_overlap * ti_calculation
 
-        # multiply by area overlap
-        ti_added = area_overlap * ti_calculation
-
-        return np.sqrt(ti_added**2 + self.current_turbulence_intensity**2)
+    #     return np.sqrt(ti_added**2 + self.current_turbulence_intensity**2)
 
     def update_velocities(self, u_wake, coord, flow_field, rotated_x,
                           rotated_y, rotated_z):

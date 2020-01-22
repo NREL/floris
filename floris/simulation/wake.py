@@ -55,7 +55,8 @@ class Wake():
             "gauss": wake_velocity.Gauss(wake_velocity_parameters),
             "curl": wake_velocity.Curl(wake_velocity_parameters),
             "ishihara": wake_velocity.Ishihara(wake_velocity_parameters),
-            # "gauss_curl_hybrid": wake_velocity.GCH(wake_velocity_parameters)
+            # "gauss_curl_hybrid":
+            # wake_velocity.gauss_curl_hybrid(wake_velocity_parameters)
         }
         self.velocity_model = properties["velocity_model"]
 
@@ -64,15 +65,13 @@ class Wake():
             "ishihara": wake_turbulence.Ishihara(wake_turbulence_parameters),
             "None": wake_turbulence.WakeTurbulence()
         }
-        self.turbulence_model = properties[
-            "turbulence_model"]  #self._turbulence_models[
-        # properties["turbulence_model"]]
+        self.turbulence_model = properties["turbulence_model"]
 
         self._deflection_models = {
             "jimenez": wake_deflection.Jimenez(wake_deflection_parameters),
             "gauss": wake_deflection.Gauss(wake_deflection_parameters),
-            "curl": wake_deflection.Curl(wake_deflection_parameters)
-            # "gauss_curl_hybrid": wake_deflection.GCH(wake_deflection_parameters)#.GaussCurlHybrid
+            "curl": wake_deflection.Curl(wake_deflection_parameters),
+            # "gauss_curl_hybrid": wake_deflection.gauss_curl_hybrid(wake_deflection_parameters)#.GaussCurlHybrid
         }
         self.deflection_model = properties["deflection_model"]
 
