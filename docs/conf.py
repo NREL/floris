@@ -87,7 +87,8 @@ html_static_path = ['_static/custom.css']
 html_theme_options = {
     # "logo": "logo.png",
     # "logo_name": True,
-    "travis_button": True,
+    "badge_branch": "develop",
+    "codecov_button": True,
     "fixed_sidebar": True,
     "github_user": "NREL",
     "github_repo": "FLORIS",

@@ -47,39 +47,40 @@ class Wake():
         wake_velocity_parameters = parameters["wake_velocity_parameters"]
         wake_deflection_parameters = parameters["wake_deflection_parameters"]
         wake_turbulence_parameters = parameters["wake_turbulence_parameters"]
+        # wake_combination_parameters = parameters["wake_combination_parameters"]
 
-        self.velocity_models = {
+        self._velocity_models = {
             "jensen": wake_velocity.Jensen(wake_velocity_parameters),
             "multizone": wake_velocity.MultiZone(wake_velocity_parameters),
             "gauss": wake_velocity.Gauss(wake_velocity_parameters),
             "curl": wake_velocity.Curl(wake_velocity_parameters),
-            "ishihara": wake_velocity.Ishihara(wake_velocity_parameters)
+            "ishihara": wake_velocity.Ishihara(wake_velocity_parameters),
+            # "gauss_curl_hybrid": wake_velocity.GCH(wake_velocity_parameters)
         }
-        self._velocity_model = self.velocity_models[
-            properties["velocity_model"]]
+        self.velocity_model = properties["velocity_model"]
 
-        self.turbulence_models = {
+        self._turbulence_models = {
             "gauss": wake_turbulence.Gauss(wake_turbulence_parameters),
             "ishihara": wake_turbulence.Ishihara(wake_turbulence_parameters),
             "None": wake_turbulence.WakeTurbulence()
         }
-        self._turbulence_model = self.turbulence_models[
-            properties["turbulence_model"]]
+        self.turbulence_model = properties[
+            "turbulence_model"]  #self._turbulence_models[
+        # properties["turbulence_model"]]
 
-        self.deflection_models = {
+        self._deflection_models = {
             "jimenez": wake_deflection.Jimenez(wake_deflection_parameters),
             "gauss": wake_deflection.Gauss(wake_deflection_parameters),
             "curl": wake_deflection.Curl(wake_deflection_parameters)
+            # "gauss_curl_hybrid": wake_deflection.GCH(wake_deflection_parameters)#.GaussCurlHybrid
         }
-        self._deflection_model = self.deflection_models[
-            properties["deflection_model"]]
+        self.deflection_model = properties["deflection_model"]
 
-        self.combination_models = {
-            "fls": wake_combination.FLS(),
-            "sosfs": wake_combination.SOSFS()
+        self._combination_models = {
+            "fls": wake_combination.FLS,
+            "sosfs": wake_combination.SOSFS
         }
-        self._combination_model = self.combination_models[
-            properties["combination_model"]]
+        self.combination_model = properties["combination_model"]
 
     # Getters & Setters
     @property
@@ -91,12 +92,23 @@ class Wake():
          - multizone
          - gauss
          - curl
+         - gauss_curl_hybrid
+         - ishihara
+
+        When assigning, the input can be a string or an instance of the model.
         """
         return self._velocity_model
 
     @velocity_model.setter
     def velocity_model(self, value):
-        self._velocity_model = self.velocity_models[value]
+        if type(value) is str:
+            self._velocity_model = self._velocity_models[value]  #(
+            #self.parameters)
+        elif isinstance(value, wake_velocity.WakeVelocity):
+            self._velocity_model = value
+        else:
+            raise ValueError(
+                "Invalid value given for WakeVelocity: {}".format(value))
 
     @property
     def turbulence_model(self):
@@ -110,7 +122,7 @@ class Wake():
 
     @turbulence_model.setter
     def turbulence_model(self, value):
-        self._turbulence_model = self.turbulence_models[value]
+        self._turbulence_model = self._turbulence_models[value]
 
     @property
     def deflection_model(self):
@@ -120,12 +132,22 @@ class Wake():
          - jimenez
          - gauss
          - curl
+         - gauss_curl_hybrid
+
+        When assigning, the input can be a string or an instance of the model.
         """
         return self._deflection_model
 
     @deflection_model.setter
     def deflection_model(self, value):
-        self._deflection_model = self.deflection_models[value]
+        if type(value) is str:
+            self._deflection_model = self._deflection_models[value]  #(
+            #self.parameters)
+        elif isinstance(value, wake_deflection.WakeDeflection):
+            self._deflection_model = value
+        else:
+            raise ValueError(
+                "Invalid value given for WakeDeflection: {}".format(value))
 
     @property
     def combination_model(self):
@@ -134,12 +156,20 @@ class Wake():
 
          - fls
          - sosfs
+
+        When assigning, the input can be a string or an instance of the model.
         """
         return self._combination_model
 
     @combination_model.setter
     def combination_model(self, value):
-        self._combination_model = self.combination_models[value]
+        if type(value) is str:
+            self._combination_model = self._combination_models[value]()
+        elif isinstance(value, wake_combination.WakeCombination):
+            self._combination_model = value
+        else:
+            raise ValueError(
+                "Invalid value given for WakeCombination: {}".format(value))
 
     @property
     def deflection_function(self):

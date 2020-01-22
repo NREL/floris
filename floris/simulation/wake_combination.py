@@ -23,9 +23,6 @@ class WakeCombination():
     def __init__(self):
         self.model_string = None
 
-    def __str__(self):
-        return self.model_string
-
 
 class FLS(WakeCombination):
     """

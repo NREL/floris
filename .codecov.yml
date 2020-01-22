@@ -1,0 +1,10 @@
+# Codecov configuration file
+
+coverage:
+    range: 0..100  # sets the range for the color bar in the dashboard
+    round: down
+    precision: 2
+
+ignore:
+    - "setup.py"
+    - "tests/"

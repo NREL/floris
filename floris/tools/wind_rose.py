@@ -103,7 +103,7 @@ class WindRose():
         df['ws'] = pd.cut(df.ws, ws_edges, labels=ws)
 
         # Regroup
-        df = df.groupby(['ws', 'wd']).sum()
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
 
         # Fill nans
         df = df.fillna(0)
@@ -112,8 +112,9 @@ class WindRose():
         df = df.reset_index()
 
         # Set to float
-        df['ws'] = df.ws.astype(float)
-        df['wd'] = df.wd.astype(float)
+        for c in [c for c in df.columns if c != 'freq_val']:
+            df[c] = df[c].astype(float)
+            df[c] = df[c].astype(float)
 
         return df
 
@@ -177,7 +178,7 @@ class WindRose():
         df['wd'] = pd.cut(df.wd, wd_edges, labels=wd)
 
         # Regroup
-        df = df.groupby(['ws', 'wd']).sum()
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
 
         # Fill nans
         df = df.fillna(0)
@@ -186,8 +187,9 @@ class WindRose():
         df = df.reset_index()
 
         # Set to float Re-wrap
-        df['wd'] = df.wd.astype(float)
-        df['ws'] = df.ws.astype(float)
+        for c in [c for c in df.columns if c != 'freq_val']:
+            df[c] = df[c].astype(float)
+            df[c] = df[c].astype(float)
         df['wd'] = geo.wrap_360(df.wd)
 
         return df
@@ -259,7 +261,6 @@ class WindRose():
         self.wd = wd
         self.num_wd = len(wd)
         self.wd_step = wd[1] - wd[0]
-        # self #TODO This reference to 'self' was here alone. Is this intentional as a print? is it incomplete?
 
         # Update internal data frame
         self.df = self.resample_average_ws_by_wd(self.df)
@@ -450,6 +451,7 @@ class WindRose():
                                       ht=100,
                                       wd=np.arange(0, 360, 5.),
                                       ws=np.arange(0, 26, 1.),
+                                      include_ti=False,
                                       limit_month=None,
                                       st_date=None,
                                       en_date=None):
@@ -490,6 +492,9 @@ class WindRose():
                 Defaults to np.arange(0, 360, 5.).
             ws (np.array, optional): Wind speed bin limits.
                 Defaults to np.arange(0, 26, 1.).
+            include_ti (bool, optional): If true, TI is added as an 
+                additional wind rose variable, based on Obukhov length 
+                from WIND Toolkit.
             limit_month (str, optional): limit loaded data to specified
                 month. Defaults to None.
             st_date (str, optional): 'MM-DD-YYYY'.
@@ -539,31 +544,36 @@ class WindRose():
             d = self.load_wind_toolkit_hsds(lat, 
                                                 lon, 
                                                 ht, 
+                                                include_ti=include_ti,
                                                 limit_month=limit_month, 
                                                 st_date=st_date, 
                                                 en_date=en_date)
         
             ws_new = d['ws']
             wd_new = d['wd']
+            if include_ti:
+                ti_new = d['ti']
             
         # Case for ht not matching discete height
         else: 
             h_range_up = next(x[0] for x in enumerate(h_range) if x[1] > ht)
             h_range_low = h_range_up - 1
-            hub_up = h_range[h_range_up]
-            hub_low = h_range[h_range_low]
+            h_up = h_range[h_range_up]
+            h_low = h_range[h_range_low]
         
-        # Load data for boundary cases of ht 
+            # Load data for boundary cases of ht 
             d_low = self.load_wind_toolkit_hsds(lat, 
                                             lon, 
-                                            hub_low, 
+                                            h_low, 
+                                            include_ti=include_ti,
                                             limit_month=limit_month, 
                                             st_date=st_date, 
                                             en_date=en_date)
             
             d_up = self.load_wind_toolkit_hsds(lat, 
                                             lon, 
-                                            hub_up, 
+                                            h_up, 
+                                            include_ti=include_ti,
                                             limit_month=limit_month, 
                                             st_date=st_date, 
                                             en_date=en_date)
@@ -572,8 +582,8 @@ class WindRose():
             ws_low = d_low['ws']
             ws_high = d_up['ws']
             
-            ws_new = np.array(ws_low) * (1-((ht - hub_low)/(hub_up - hub_low))) \
-                + np.array(ws_high) * ((ht - hub_low)/(hub_up - hub_low))
+            ws_new = np.array(ws_low) * (1-((ht - h_low)/(h_up - h_low))) \
+                + np.array(ws_high) * ((ht - h_low)/(h_up - h_low))
             
             # Wind Direction interpolation using Circular Mean method 
             wd_low = d_low['wd']
@@ -584,25 +594,34 @@ class WindRose():
             sin1= np.sin(np.array(wd_high) * (np.pi/180))
             cos1 = np.cos(np.array(wd_high) * (np.pi/180))
 
-            sin_wd = sin0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ sin1 * \
-                ((ht - hub_low)/(hub_up - hub_low))
-            cos_wd = cos0 * (1-((ht - hub_low)/(hub_up - hub_low)))+ cos1 * \
-                ((ht - hub_low)/(hub_up - hub_low))
+            sin_wd = sin0 * (1-((ht - h_low)/(h_up - h_low)))+ sin1 * \
+                ((ht - h_low)/(h_up - h_low))
+            cos_wd = cos0 * (1-((ht - h_low)/(h_up - h_low)))+ cos1 * \
+                ((ht - h_low)/(h_up - h_low))
                 
             # Interpolated wind direction 
             wd_new = 180/np.pi * np.arctan2(sin_wd, cos_wd)
+
+            # TI is independent of height
+            if include_ti:
+                ti_new = d_up['ti']
         
         # Create a dataframe named df
-        df= pd.DataFrame({'ws': ws_new,
-                          'wd': wd_new})
+        if include_ti:
+            df= pd.DataFrame({'ws': ws_new,
+                              'wd': wd_new,
+                              'ti': ti_new})
+        else:
+            df= pd.DataFrame({'ws': ws_new,
+                              'wd': wd_new})
                 
         # Start by simply round and wrapping the wind direction and wind speed columns
         df['wd'] = geo.wrap_360(df.wd.round())
-        df['ws'] = geo.wrap_360(df.ws.round())
+        df['ws'] = df.ws.round()
         
         # Now group up
         df['freq_val'] = 1.
-        df = df.groupby(['ws', 'wd']).sum()
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
         df['freq_val'] = df.freq_val.astype(float) / df.freq_val.sum()
         df = df.reset_index()
         
@@ -620,6 +639,7 @@ class WindRose():
                                lat,
                                lon,
                                ht=100,
+                               include_ti=False,
                                limit_month=None,
                                st_date=None,
                                en_date=None):
@@ -639,6 +659,9 @@ class WindRose():
             ht (int, optional): height above ground where wind
                 information is obtained (m).
                 Defaults to 100.
+            include_ti (bool, optional): If true, TI is added as an 
+                additional wind rose variable, based on Obukhov length 
+                from WIND Toolkit.
             limit_month (str, optional): limit loaded data to specified
                 month. Defaults to None.
             st_date (str, optional): 'MM-DD-YYYY'.
@@ -655,9 +678,11 @@ class WindRose():
         # server endpoint, username, password is found via a config file
         f = h5pyd.File("/nrel/wtk-us.h5", 'r')
 
-        # assign wind direction, wind speed, and time datasets for the desired height
+        # assign wind direction, wind speed, optional ti, and time datasets for the desired height
         wd_dset = f['winddirection_' + str(ht) + 'm']
         ws_dset = f['windspeed_' + str(ht) + 'm']
+        if include_ti:
+            obkv_dset = f['inversemoninobukhovlength_2m']
         dt = f['datetime']
         dt = pd.DataFrame({'datetime': dt[:]}, index=range(0, dt.shape[0]))
         dt['datetime'] = dt['datetime'].apply(dateutil.parser.parse)
@@ -677,6 +702,10 @@ class WindRose():
         df = pd.DataFrame()
         df['wd'] = wd_dset[:, Location_idx[0], Location_idx[1]]
         df['ws'] = ws_dset[:, Location_idx[0], Location_idx[1]]
+        if include_ti:
+            L = self.obkv_dset_to_L(obkv_dset, Location_idx)
+            ti = self.ti_calculator_IU2(L)
+            df['ti'] = ti
         df['datetime'] = dt['datetime']
 
         # limit dates if start and end dates are provided
@@ -690,9 +719,69 @@ class WindRose():
         if not limit_month is None:
             df['month'] = df['datetime'].map(lambda x: x.month)
             df = df[df.month.isin(limit_month)]
-        df = df[['wd', 'ws']]
+        if include_ti:
+            df = df[['wd', 'ws', 'ti']]
+        else:
+            df = df[['wd', 'ws']]
 
         return df
+
+    def obkv_dset_to_L(self, obkv_dset, Location_idx):
+        """
+        Function to find Obukhov length array from WIND Toolkit dataset.
+        
+        Args: 
+            obkv_dset: Dataset for Obukhov lengths from Wind Toolkit. 
+            Location_idx: Lat/Lon Coordinates. 
+
+        Returns:
+            L (np.array): array containing Obukhov lengths for each time 
+                index in the Wind Toolkit dataset (m).
+        """
+
+        linv = obkv_dset[:,Location_idx[0], Location_idx[1]]
+        # avoid divide by zero
+        linv[linv == 0.0] = 0.0003
+        L = 1/linv
+        return L
+    
+    def ti_calculator_IU2(self, L):
+        """
+        Function to determine TI for each Obukhov length value using the 
+        relationship between Obukhov length bins and TI given in:
+        Wharton, S. and Lundquist, J. "Assessing Artmospheric Stability and 
+        the Impacts on Wind Characteristics at an Onshore Wind Farm," 19th 
+        Symposium on Boundary Layers and Turbulence, 2010, using the 
+        I_U2SODAR TI values.
+        
+        Args: 
+            L: Obukhov Length  
+
+        Returns:
+            ti_set (list): a list of turbulence intensity values expressed 
+                as fractions.
+        """
+        ti_set=[]
+        for i in L:        
+            # Strongly Stable
+            if 0 < i <100:
+                TI = 0.04 # paper says < 8%, so using 4%        
+            #Stable
+            elif 100 < i < 600:
+                TI = 0.09        
+            # Neutral 
+            elif abs(i) > 600:
+                TI = 0.115      
+            #Convective
+            elif -600 < i < -50:
+               TI = 0.165
+            #Strongly Convective 
+            elif -50 < i < 0:
+                # no upper bound given, so using the lowest 
+                # value from the paper for this stability bin
+                TI = 0.2 
+            ti_set.append(TI)
+        return ti_set
 
     def indices_for_coord(self, f, lat_index, lon_index):
         #TODO This function is tough for me to follow. What is f?
@@ -790,15 +879,10 @@ class WindRose():
         # Based on code provided by Patrick Murphy
          
         # Resample data onto bins
-        # df_plot = self.resample_wind_speed(self.df,ws=ws_bins)
         df_plot = self.resample_wind_direction(self.df, wd=wd_bins)
 
         # Make labels for wind speed based on edges
         ws_step = ws_right_edges[1] - ws_right_edges[0]
-        # ws = ws_edges
-        # ws_edges = (ws - ws_step / 2.0)
-        # ws_edges = np.append(ws_edges,np.array(ws[-1] + ws_step / 2.0))
-        # ws_edges = np.append([0], ws_right_edges)
         ws_labels = ['%d-%d m/s' % (w - ws_step, w) for w in ws_right_edges]
 
         # Grab the wd_step
@@ -831,6 +915,111 @@ class WindRose():
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
         ax.set_xticklabels(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
+
+        return ax
+
+    def plot_wind_rose_ti(self,
+                       ax=None,
+                       color_map='viridis_r',
+                       ti_right_edges=np.array([0.06, 0.1, 0.14, 0.18,0.22]),
+                       wd_bins=np.arange(0, 360, 15.)):
+        """
+        Generate wind rose plot of TI vs. wind direction. 
+        If no axis is provided, make a new one.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes to which data should
+                be plotted. Defaults to None.
+            color_map (str, optional): name of colormap.
+                Defaults to 'viridis_r'.
+            ti_right_edges (np.array, optional): upper bounds of turbulence
+                intensity bins. Defaults to np.array([0.06, 0.1, 0.14, 0.18,0.22]).
+            wd_bins (np.array, optional): wind direction bin limits.
+                Defaults to np.arange(0, 360, 15.).
+
+        Returns:
+            ax (:py:class:`matplotlib.pyplot.axes`): Figure axes
+                containing wind rose plot.
+        """
+        # Based on code provided by Patrick Murphy
+
+        # Resample data onto bins
+        df_plot = self.resample_wind_direction(self.df, wd=wd_bins)
+
+        # Make labels for TI based on edges
+        ti_step = ti_right_edges[1] - ti_right_edges[0]
+        ti_labels = ['%.2f-%.2f ' % (w - ti_step, w) for w in ti_right_edges]
+
+        # Grab the wd_step
+        wd_step = wd_bins[1] - wd_bins[0]
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots(subplot_kw=dict(polar=True))
+
+        # Get a color array
+        color_array = cm.get_cmap(color_map, len(ti_right_edges))
+
+        for wd_idx, wd in enumerate(wd_bins):
+            rects = list()
+            df_plot_sub = df_plot[df_plot.wd == wd]
+            for ti_idx, ti in enumerate(ti_right_edges[::-1]):
+                plot_val = df_plot_sub[df_plot_sub.ti <= ti].freq_val.sum(
+                )  # Get the sum of frequency up to this wind speed
+                rects.append(
+                    ax.bar(np.radians(wd),
+                           plot_val,
+                           width=0.9 * np.radians(wd_step),
+                           color=color_array(ti_idx),
+                           edgecolor='k'))
+  
+        # Configure the plot
+        ax.legend(reversed(rects), ti_labels, loc='lower right',title='TI')
+        ax.set_theta_direction(-1)
+        ax.set_theta_offset(np.pi/2.0)
+        ax.set_theta_zero_location("N")
+        ax.set_xticklabels(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
+    
+        return ax
+
+    def plot_ti_ws(self, ax=None, ws_bins=np.arange(0, 26, 1.)):
+        """
+        Generate plots for ti frequency at each wind speed.
+        If no axis is provided, make a new one.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes to which data should
+                be plotted. Defaults to None.
+            ws_bins (np.array, optional): wind speed bin limits.
+                Defaults to np.arange(0, 26, 1.).
+        Returns:
+            ax (:py:class:`matplotlib.pyplot.axes`): Figure axes
+                containing wind rose plot.
+        """
+
+        # Resample data onto bins
+        df_plot = self.resample_wind_speed(self.df, ws=ws_bins)
+
+        df_plot = df_plot.groupby(['ws','ti']).sum()
+        df_plot = df_plot.reset_index()
+        
+        if ax is None:
+            _, ax = plt.subplots(figsize=(10,7))  
+
+        tis = df_plot['ti'].drop_duplicates()
+        margin_bottom = np.zeros(len(df_plot['ws'].drop_duplicates()))
+        colors = ["#1e5631", "#a4de02","#76ba1b","#4c9a2a","#acdf87"]
+    
+        for num, ti in enumerate(tis):
+            values = list(df_plot[df_plot['ti'] == ti].loc[:, 'freq_val'])
+        
+            df_plot[df_plot['ti'] == ti].plot.bar(x='ws',y='freq_val', ax=ax, bottom = margin_bottom, color=colors[num],label=ti) 
+                                            
+            margin_bottom += values
+
+        plt.title('Turbulence Intensity Frequencies as Function of Wind Speed')
+        plt.xlabel('Wind Speed (m/s)')
+        plt.ylabel('Frequency')
 
         return ax
 

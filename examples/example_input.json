@@ -215,8 +215,8 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss",
-      "turbulence_model": "gauss",
+      "velocity_model": "ishihara",
+      "turbulence_model": "ishihara",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
@@ -290,6 +290,14 @@
               "Ct": -0.25,
               "TI": -0.7
             }
+          },
+          "gauss_curl_hybrid": {
+            "ka": 0.3,
+            "kb": 0.004,
+            "alpha": 0.58,
+            "beta": 0.077,
+            "ad": 0.0,
+            "bd": 0.0
           }
         },
         "wake_turbulence_parameters": {

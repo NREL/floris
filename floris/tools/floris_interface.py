@@ -32,7 +32,7 @@ class FlorisInterface():
         self.input_file = input_file
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
 
-    def calculate_wake(self, yaw_angles=None, no_wake=False, points = None):
+    def calculate_wake(self, yaw_angles=None, no_wake=False, points=None):
         """
         Wrapper to the floris flow field calculate_wake method
 
@@ -50,7 +50,8 @@ class FlorisInterface():
         if yaw_angles is not None:
             self.floris.farm.set_yaw_angles(yaw_angles)
 
-        self.floris.farm.flow_field.calculate_wake(no_wake=no_wake, points=points)
+        self.floris.farm.flow_field.calculate_wake(no_wake=no_wake,
+                                                   points=points)
 
     def reinitialize_flow_field(self,
                                 wind_speed=None,
@@ -100,36 +101,39 @@ class FlorisInterface():
         turbine_map = self.floris.farm.flow_field.turbine_map
         if turbulence_kinetic_energy is not None:
             if wind_speed == None: wind_map.input_speed
-            turbulence_intensity = self.TKE_to_TI(turbulence_kinetic_energy, wind_speed)
+            turbulence_intensity = self.TKE_to_TI(turbulence_kinetic_energy,
+                                                  wind_speed)
 
         if wind_layout or layout_array is not None:
             # Build turbine map and wind map (convenience layer for user)
-            if layout_array is None: layout_array = (self.layout_x, self.layout_y)  
+            if layout_array is None:
+                layout_array = (self.layout_x, self.layout_y)
             else:
-                turbine_map = TurbineMap(                
+                turbine_map = TurbineMap(
                     layout_array[0], layout_array[1], \
                     [copy.deepcopy(self.floris.farm.turbines[0]) \
-                     for ii in range(len(layout_array[0]))])          
-            if wind_layout is None: wind_layout = wind_map.wind_layout 
+                     for ii in range(len(layout_array[0]))])
+            if wind_layout is None: wind_layout = wind_map.wind_layout
             if wind_speed is None: wind_speed = wind_map.input_speed
-            if wind_direction is None: wind_direction = wind_map.input_direction
-            if turbulence_intensity is None: turbulence_intensity = wind_map.input_ti 
+            if wind_direction is None:
+                wind_direction = wind_map.input_direction
+            if turbulence_intensity is None:
+                turbulence_intensity = wind_map.input_ti
 
             wind_map = WindMap(wind_speed=wind_speed,
-                          layout_array=layout_array,
-                          wind_layout=wind_layout, 
-                          turbulence_intensity=turbulence_intensity, 
-                          wind_direction=wind_direction
-                          )
+                               layout_array=layout_array,
+                               wind_layout=wind_layout,
+                               turbulence_intensity=turbulence_intensity,
+                               wind_direction=wind_direction)
             self.floris.farm.wind_map = wind_map
-                
+
         else:
             turbine_map = None
 
             if wind_speed is not None:
                 wind_map.input_speed = wind_speed
                 wind_map.calculate_wind_speed()
-            
+
             if turbulence_intensity is not None:
                 wind_map.input_ti = turbulence_intensity
                 wind_map.calculate_turbulence_intensity()
@@ -137,10 +141,10 @@ class FlorisInterface():
             if wind_direction is not None:
                 wind_map.input_direction = wind_direction
                 wind_map.calculate_wind_direction()
-           
+
             # redefine wind_map in Farm object
             self.floris.farm.wind_map = wind_map
-            
+
         self.floris.farm.flow_field.reinitialize_flow_field(
             wind_shear=wind_shear,
             wind_veer=wind_veer,
@@ -148,16 +152,15 @@ class FlorisInterface():
             wake=wake,
             turbine_map=turbine_map,
             with_resolution=with_resolution,
-            wind_map = self.floris.farm.wind_map)
+            wind_map=self.floris.farm.wind_map)
 
     def get_plane_of_points(self,
-                                  x1_resolution=200, 
-                                  x2_resolution=200, 
-                                  normal_vector='z',
-                                  x3_value=100,
-                                  x1_bounds=None,
-                                  x2_bounds=None):
-
+                            x1_resolution=200,
+                            x2_resolution=200,
+                            normal_vector='z',
+                            x3_value=100,
+                            x1_bounds=None,
+                            x2_bounds=None):
         """
         Use points method in calculate_wake to quick extract a slice of points
 
@@ -183,42 +186,47 @@ class FlorisInterface():
         flow_field = copy.deepcopy(self.floris.farm.flow_field)
 
         if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
-            
+
             # If this is a gridded model, must extract from full flow field
-            print('Model identifed as %s requires use of underyling grid print' % self.floris.farm.flow_field.wake.velocity_model.model_string)
+            print(
+                'Model identified as %s requires use of underlying grid print'
+                % self.floris.farm.flow_field.wake.velocity_model.model_string)
 
             # Get the flow data and extract the plane using it
             flow_data = self.get_flow_data()
-            return get_plane_from_flow_data(flow_data,normal_vector=normal_vector, x3_value=x3_value)
-
-
+            return get_plane_from_flow_data(flow_data,
+                                            normal_vector=normal_vector,
+                                            x3_value=x3_value)
 
         # If x1 and x2 bounds are not provided, use rules of thumb
-        if normal_vector == 'z': # Rules of thumb for horizontal plane
+        if normal_vector == 'z':  # Rules of thumb for horizontal plane
             if x1_bounds is None:
                 coords = self.floris.farm.flow_field.turbine_map.coords
                 max_diameter = self.floris.farm.flow_field.max_diameter
                 x = [coord.x1 for coord in coords]
-                x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
+                x1_bounds = (min(x) - 2 * max_diameter,
+                             max(x) + 10 * max_diameter)
             if x2_bounds is None:
                 coords = self.floris.farm.flow_field.turbine_map.coords
                 max_diameter = self.floris.farm.flow_field.max_diameter
                 y = [coord.x2 for coord in coords]
-                x2_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
-        if normal_vector == 'x': # Rules of thumb for cut plane plane
+                x2_bounds = (min(y) - 2 * max_diameter,
+                             max(y) + 2 * max_diameter)
+        if normal_vector == 'x':  # Rules of thumb for cut plane plane
             if x1_bounds is None:
                 coords = self.floris.farm.flow_field.turbine_map.coords
                 max_diameter = self.floris.farm.flow_field.max_diameter
                 y = [coord.x2 for coord in coords]
-                x1_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
+                x1_bounds = (min(y) - 2 * max_diameter,
+                             max(y) + 2 * max_diameter)
             if x2_bounds is None:
-                hub_height = self.floris.farm.flow_field.turbine_map.turbines[0].hub_height
-                x2_bounds = (0,hub_height)
-
+                hub_height = self.floris.farm.flow_field.turbine_map.turbines[
+                    0].hub_height
+                x2_bounds = (10, hub_height * 2)
 
         # Set up the points to test
-        x1_array = np.linspace(x1_bounds[0],x1_bounds[1],num=x1_resolution)
-        x2_array = np.linspace(x2_bounds[0],x2_bounds[1],num=x2_resolution)
+        x1_array = np.linspace(x1_bounds[0], x1_bounds[1], num=x1_resolution)
+        x2_array = np.linspace(x2_bounds[0], x2_bounds[1], num=x2_resolution)
 
         # Grid the points and flatten
         x1_array, x2_array = np.meshgrid(x1_array, x2_array)
@@ -228,11 +236,11 @@ class FlorisInterface():
 
         # Create the points matrix
         if normal_vector == 'z':
-            points = np.row_stack((x1_array,x2_array,x3_array))
+            points = np.row_stack((x1_array, x2_array, x3_array))
         if normal_vector == 'x':
-            points = np.row_stack((x3_array,x1_array,x2_array))
+            points = np.row_stack((x3_array, x1_array, x2_array))
 
-        # Recalcuate wake with these points
+        # Recalculate wake with these points
         flow_field.calculate_wake(points=points)
 
         # Get results vectors
@@ -245,32 +253,35 @@ class FlorisInterface():
 
         # Create a df of these
         if normal_vector == 'z':
-            df = pd.DataFrame({'x1':x_flat,
-            'x2':y_flat,
-            'x3':z_flat,
-            'u':u_flat,
-            'v':v_flat,
-            'w':w_flat
+            df = pd.DataFrame({
+                'x1': x_flat,
+                'x2': y_flat,
+                'x3': z_flat,
+                'u': u_flat,
+                'v': v_flat,
+                'w': w_flat
             })
         if normal_vector == 'x':
-            df = pd.DataFrame({'x1':y_flat,
-            'x2':z_flat,
-            'x3':x_flat,
-            'u':u_flat,
-            'v':v_flat,
-            'w':w_flat
+            df = pd.DataFrame({
+                'x1': y_flat,
+                'x2': z_flat,
+                'x3': x_flat,
+                'u': u_flat,
+                'v': v_flat,
+                'w': w_flat
             })
         if normal_vector == 'y':
-            df = pd.DataFrame({'x1':x_flat,
-            'x2':z_flat,
-            'x3':y_flat,
-            'u':u_flat,
-            'v':v_flat,
-            'w':w_flat
+            df = pd.DataFrame({
+                'x1': x_flat,
+                'x2': z_flat,
+                'x3': y_flat,
+                'u': u_flat,
+                'v': v_flat,
+                'w': w_flat
             })
 
         # Subset to plane
-        df = df[df.x3==x3_value]
+        df = df[df.x3 == x3_value]
 
         # Drop duplicates
         df = df.drop_duplicates()
@@ -282,11 +293,71 @@ class FlorisInterface():
         # Return the dataframe
         return df
 
-    def get_hor_plane(self, height=None,
-                x_resolution=200, 
-                y_resolution=200, 
-                x_bounds=None,
-                y_bounds=None):
+    def get_set_of_points(self, x_points, y_points, z_points):
+        """
+        Use points method in calculate_wake to quick extract a slice of points
+
+        Args:
+            x_points, float, array of floats
+            y_points, float, array of floats
+            z_points, float, array of floats
+
+
+        Returns:
+            dataframe of x,y,z,u,v,w values
+        """
+
+        # Get a copy for the flow field so don't change underlying grid points
+        flow_field = copy.deepcopy(self.floris.farm.flow_field)
+
+        if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
+
+            # If this is a gridded model, must extract from full flow field
+            print(
+                'Model identified as %s requires use of underlying grid print'
+                % self.floris.farm.flow_field.wake.velocity_model.model_string)
+            print('FUNCTION NOT AVAILABLE CURRENTLY')
+
+        # Set up points matrix
+        points = np.row_stack((x_points, y_points, z_points))
+
+        # Recalcuate wake with these points
+        flow_field.calculate_wake(points=points)
+
+        # Get results vectors
+        x_flat = flow_field.x.flatten()
+        y_flat = flow_field.y.flatten()
+        z_flat = flow_field.z.flatten()
+        u_flat = flow_field.u.flatten()
+        v_flat = flow_field.v.flatten()
+        w_flat = flow_field.w.flatten()
+
+        df = pd.DataFrame({
+            'x': x_flat,
+            'y': y_flat,
+            'z': z_flat,
+            'u': u_flat,
+            'v': v_flat,
+            'w': w_flat
+        })
+
+        # Subset to points requests
+        df = df[df.x.isin(x_points)]
+        df = df[df.y.isin(y_points)]
+        df = df[df.z.isin(z_points)]
+
+        # Drop duplicates
+        df = df.drop_duplicates()
+
+        # Return the dataframe
+        return df
+
+    def get_hor_plane(self,
+                      height=None,
+                      x_resolution=200,
+                      y_resolution=200,
+                      x_bounds=None,
+                      y_bounds=None):
         """
         Get a horizontal cut through plane at a specific height
 
@@ -308,27 +379,27 @@ class FlorisInterface():
 
         # If height not provided, use the hub height
         if height is None:
-            height = self.floris.farm.flow_field.turbine_map.turbines[0].hub_height
+            height = self.floris.farm.flow_field.turbine_map.turbines[
+                0].hub_height
             print('Default to hub height: %.1f' % height)
 
         # Get the points of data in a dataframe
-        df = self.get_plane_of_points(
-                                  x1_resolution=x_resolution, 
-                                  x2_resolution=y_resolution, 
-                                  normal_vector='z',
-                                  x3_value=height,
-                                  x1_bounds=x_bounds,
-                                  x2_bounds=y_bounds)
+        df = self.get_plane_of_points(x1_resolution=x_resolution,
+                                      x2_resolution=y_resolution,
+                                      normal_vector='z',
+                                      x3_value=height,
+                                      x1_bounds=x_bounds,
+                                      x2_bounds=y_bounds)
 
         # Compute and return the cutplane
         return CutPlane(df)
 
-
-    def get_cross_plane(self, x_loc,
-                x_resolution=200, 
-                y_resolution=200, 
-                x_bounds=None,
-                y_bounds=None):
+    def get_cross_plane(self,
+                        x_loc,
+                        x_resolution=200,
+                        y_resolution=200,
+                        x_bounds=None,
+                        y_bounds=None):
         """
         Get a horizontal cut through plane at a specific height
 
@@ -349,22 +420,22 @@ class FlorisInterface():
         """
 
         # Get the points of data in a dataframe
-        df = self.get_plane_of_points(
-                                  x1_resolution=x_resolution, 
-                                  x2_resolution=y_resolution, 
-                                  normal_vector='x',
-                                  x3_value=x_loc,
-                                  x1_bounds=x_bounds,
-                                  x2_bounds=y_bounds)
+        df = self.get_plane_of_points(x1_resolution=x_resolution,
+                                      x2_resolution=y_resolution,
+                                      normal_vector='x',
+                                      x3_value=x_loc,
+                                      x1_bounds=x_bounds,
+                                      x2_bounds=y_bounds)
 
         # Compute and return the cutplane
         return CutPlane(df)
 
-    def get_y_plane(self, y_loc,
-            x_resolution=200, 
-            y_resolution=200, 
-            x_bounds=None,
-            y_bounds=None):
+    def get_y_plane(self,
+                    y_loc,
+                    x_resolution=200,
+                    y_resolution=200,
+                    x_bounds=None,
+                    y_bounds=None):
         """
         Get a horizontal cut through plane at a specific height
 
@@ -385,19 +456,20 @@ class FlorisInterface():
         """
 
         # Get the points of data in a dataframe
-        df = self.get_plane_of_points(
-                                  x1_resolution=x_resolution, 
-                                  x2_resolution=y_resolution, 
-                                  normal_vector='y',
-                                  x3_value=y_loc,
-                                  x1_bounds=x_bounds,
-                                  x2_bounds=y_bounds)
+        df = self.get_plane_of_points(x1_resolution=x_resolution,
+                                      x2_resolution=y_resolution,
+                                      normal_vector='y',
+                                      x3_value=y_loc,
+                                      x1_bounds=x_bounds,
+                                      x2_bounds=y_bounds)
 
         # Compute and return the cutplane
         return CutPlane(df)
 
-
-    def get_flow_data(self, resolution=None, grid_spacing=10, velocity_deficit = False):
+    def get_flow_data(self,
+                      resolution=None,
+                      grid_spacing=10,
+                      velocity_deficit=False):
         """
         Generate FlowData object corresponding to the floris instance.
 
@@ -455,9 +527,12 @@ class FlorisInterface():
 
         # find percent velocity deficit
         if velocity_deficit == True:
-            u = abs(u - flow_field.u_initial.flatten(order=order))/flow_field.u_initial.flatten(order=order) * 100
-            v = abs(v - flow_field.v_initial.flatten(order=order))/flow_field.v_initial.flatten(order=order) * 100
-            w = abs(w - flow_field.w_initial.flatten(order=order))/flow_field.w_initial.flatten(order=order) * 100
+            u = abs(u - flow_field.u_initial.flatten(
+                order=order)) / flow_field.u_initial.flatten(order=order) * 100
+            v = abs(v - flow_field.v_initial.flatten(
+                order=order)) / flow_field.v_initial.flatten(order=order) * 100
+            w = abs(w - flow_field.w_initial.flatten(
+                order=order)) / flow_field.w_initial.flatten(order=order) * 100
 
         # Determine spacing, dimensions and origin
         unique_x = np.sort(np.unique(x))
@@ -490,7 +565,12 @@ class FlorisInterface():
         ]
         return yaw_angles
 
-    def get_farm_power(self, include_unc=False, unc_pmfs=None, unc_options=None, no_wake=False,  use_turbulence_correction = False):
+    def get_farm_power(self,
+                       include_unc=False,
+                       unc_pmfs=None,
+                       unc_options=None,
+                       no_wake=False,
+                       use_turbulence_correction=False):
         """
         Report wind plant power from instance of floris. Optionally includes uncertainty
         in wind direction and yaw position when determining power. Uncertainty is included
@@ -546,7 +626,8 @@ class FlorisInterface():
         Returns:
             plant_power (float): sum of wind turbine powers.
         """
-        for turbine in self.floris.farm.turbines: turbine.use_turbulence_correction = use_turbulence_correction
+        for turbine in self.floris.farm.turbines:
+            turbine.use_turbulence_correction = use_turbulence_correction
         if include_unc:
             if (unc_options is None) & (unc_pmfs is None):
                 unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
@@ -559,8 +640,9 @@ class FlorisInterface():
                                     scale=unc_options['std_wd'])/unc_options['pmf_res']))
                     wd_unc = np.linspace(-1*wd_bnd*unc_options['pmf_res'], \
                                     wd_bnd*unc_options['pmf_res'],2*wd_bnd+1)
-                    wd_unc_pmf = norm.pdf(wd_unc,scale=unc_options['std_wd'])
-                    wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf) # normalize so sum = 1.0
+                    wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options['std_wd'])
+                    wd_unc_pmf = wd_unc_pmf / np.sum(
+                        wd_unc_pmf)  # normalize so sum = 1.0
                 else:
                     wd_unc = np.zeros(1)
                     wd_unc_pmf = np.ones(1)
@@ -570,8 +652,10 @@ class FlorisInterface():
                                     scale=unc_options['std_yaw'])/unc_options['pmf_res']))
                     yaw_unc = np.linspace(-1*yaw_bnd*unc_options['pmf_res'], \
                                     yaw_bnd*unc_options['pmf_res'],2*yaw_bnd+1)
-                    yaw_unc_pmf = norm.pdf(yaw_unc,scale=unc_options['std_yaw'])
-                    yaw_unc_pmf = yaw_unc_pmf / np.sum(yaw_unc_pmf) # normalize so sum = 1.0
+                    yaw_unc_pmf = norm.pdf(yaw_unc,
+                                           scale=unc_options['std_yaw'])
+                    yaw_unc_pmf = yaw_unc_pmf / np.sum(
+                        yaw_unc_pmf)  # normalize so sum = 1.0
                 else:
                     yaw_unc = np.zeros(1)
                     yaw_unc_pmf = np.ones(1)
@@ -584,23 +668,30 @@ class FlorisInterface():
 
             yaw_angles = self.get_yaw_angles()
 
-            for i_wd,delta_wd in enumerate(unc_pmfs['wd_unc']):
-                self.reinitialize_flow_field(wind_direction=wd_orig+delta_wd)
+            for i_wd, delta_wd in enumerate(unc_pmfs['wd_unc']):
+                self.reinitialize_flow_field(wind_direction=wd_orig + delta_wd)
 
-                for i_yaw,delta_yaw in enumerate(unc_pmfs['yaw_unc']):
+                for i_yaw, delta_yaw in enumerate(unc_pmfs['yaw_unc']):
                     mean_farm_power = mean_farm_power + unc_pmfs['wd_unc_pmf'][i_wd] \
                         * unc_pmfs['yaw_unc_pmf'][i_yaw] \
                         * self.get_farm_power_for_yaw_angle(list(np.array(yaw_angles)+delta_yaw),no_wake=no_wake)
 
             # reinitialize with original values
             self.reinitialize_flow_field(wind_direction=wd_orig)
-            self.calculate_wake(yaw_angles=yaw_angles,no_wake=no_wake)
+            self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
             return mean_farm_power
         else:
-            turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
+            turb_powers = [
+                turbine.power for turbine in self.floris.farm.turbines
+            ]
             return np.sum(turb_powers)
 
-    def get_turbine_power(self, include_unc=False, unc_pmfs=None, unc_options=None, no_wake=False, use_turbulence_correction = False):
+    def get_turbine_power(self,
+                          include_unc=False,
+                          unc_pmfs=None,
+                          unc_options=None,
+                          no_wake=False,
+                          use_turbulence_correction=False):
         """
         Report power from each wind turbine from instance of floris.
 
@@ -653,7 +744,8 @@ class FlorisInterface():
         Returns:
             turb_powers (np.array): power produced by each wind turbine.
         """
-        for turbine in self.floris.farm.turbines: turbine.use_turbulence_correction = use_turbulence_correction
+        for turbine in self.floris.farm.turbines:
+            turbine.use_turbulence_correction = use_turbulence_correction
         if include_unc:
             if (unc_options is None) & (unc_pmfs is None):
                 unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
@@ -666,8 +758,9 @@ class FlorisInterface():
                                     scale=unc_options['std_wd'])/unc_options['pmf_res']))
                     wd_unc = np.linspace(-1*wd_bnd*unc_options['pmf_res'], \
                                     wd_bnd*unc_options['pmf_res'],2*wd_bnd+1)
-                    wd_unc_pmf = norm.pdf(wd_unc,scale=unc_options['std_wd'])
-                    wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf) # normalize so sum = 1.0
+                    wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options['std_wd'])
+                    wd_unc_pmf = wd_unc_pmf / np.sum(
+                        wd_unc_pmf)  # normalize so sum = 1.0
                 else:
                     wd_unc = np.zeros(1)
                     wd_unc_pmf = np.ones(1)
@@ -677,8 +770,10 @@ class FlorisInterface():
                                     scale=unc_options['std_yaw'])/unc_options['pmf_res']))
                     yaw_unc = np.linspace(-1*yaw_bnd*unc_options['pmf_res'], \
                                     yaw_bnd*unc_options['pmf_res'],2*yaw_bnd+1)
-                    yaw_unc_pmf = norm.pdf(yaw_unc,scale=unc_options['std_yaw'])
-                    yaw_unc_pmf = yaw_unc_pmf / np.sum(yaw_unc_pmf) # normalize so sum = 1.0
+                    yaw_unc_pmf = norm.pdf(yaw_unc,
+                                           scale=unc_options['std_yaw'])
+                    yaw_unc_pmf = yaw_unc_pmf / np.sum(
+                        yaw_unc_pmf)  # normalize so sum = 1.0
                 else:
                     yaw_unc = np.zeros(1)
                     yaw_unc_pmf = np.ones(1)
@@ -691,26 +786,26 @@ class FlorisInterface():
 
             yaw_angles = self.get_yaw_angles()
 
-            for i_wd,delta_wd in enumerate(unc_pmfs['wd_unc']):
-                self.reinitialize_flow_field(wind_direction= wd_orig + delta_wd)
+            for i_wd, delta_wd in enumerate(unc_pmfs['wd_unc']):
+                self.reinitialize_flow_field(wind_direction=wd_orig + delta_wd)
 
-                for i_yaw,delta_yaw in enumerate(unc_pmfs['yaw_unc']):
-                    self.calculate_wake(yaw_angles=list(np.array(yaw_angles)+delta_yaw),no_wake=no_wake)
+                for i_yaw, delta_yaw in enumerate(unc_pmfs['yaw_unc']):
+                    self.calculate_wake(
+                        yaw_angles=list(np.array(yaw_angles) + delta_yaw),
+                        no_wake=no_wake)
                     mean_farm_power = mean_farm_power + unc_pmfs['wd_unc_pmf'][i_wd] \
                         * unc_pmfs['yaw_unc_pmf'][i_yaw] \
                         * np.array([turbine.power for turbine in self.floris.farm.turbines])
 
             # reinitialize with original values
             self.reinitialize_flow_field(wind_direction=wd_orig)
-            self.calculate_wake(yaw_angles=yaw_angles,no_wake=no_wake)
+            self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
             return list(mean_farm_power)
         else:
             turb_powers = [
-                turbine.power
-                for turbine in self.floris.farm.turbines
+                turbine.power for turbine in self.floris.farm.turbines
             ]
             return turb_powers
-
 
     def get_turbine_ct(self):
         """
@@ -726,7 +821,12 @@ class FlorisInterface():
         return turb_ct_array
 
         # calculate the power under different yaw angles
-    def get_farm_power_for_yaw_angle(self, yaw_angles, include_unc=False, unc_pmfs=None, unc_options=None, no_wake=False):
+    def get_farm_power_for_yaw_angle(self,
+                                     yaw_angles,
+                                     include_unc=False,
+                                     unc_pmfs=None,
+                                     unc_options=None,
+                                     no_wake=False):
         """
         Assign yaw angles to turbines, calculate wake, report power
 
@@ -740,19 +840,24 @@ class FlorisInterface():
             power (float): wind plant power. #TODO negative? in kW?
         """
 
-        self.calculate_wake(yaw_angles=yaw_angles,no_wake=no_wake)
+        self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
 
-        return self.get_farm_power(include_unc=include_unc, unc_pmfs=unc_pmfs, unc_options=unc_options)
+        return self.get_farm_power(include_unc=include_unc,
+                                   unc_pmfs=unc_pmfs,
+                                   unc_options=unc_options)
 
-    def get_farm_AEP(self, wd, ws, freq):
+    def get_farm_AEP(self, wd, ws, freq, yaw=None):
         AEP_sum = 0
 
         for i in range(len(wd)):
-            self.reinitialize_flow_field(
-                wind_direction=[wd[i]], wind_speed=[ws[i]])
-            self.calculate_wake()
+            self.reinitialize_flow_field(wind_direction=[wd[i]],
+                                         wind_speed=[ws[i]])
+            if yaw is None:
+                self.calculate_wake()
+            else:
+                self.calculate_wake(yaw[i])
 
-            AEP_sum = AEP_sum + self.get_farm_power()*freq[i]*8760
+            AEP_sum = AEP_sum + self.get_farm_power() * freq[i] * 8760
         return AEP_sum
 
     @property
@@ -781,8 +886,8 @@ class FlorisInterface():
         layout_y = np.zeros(len(coords))
         for i, coord in enumerate(coords):
             layout_y[i] = coord.x2
-        return layout_y 
-            
+        return layout_y
+
     def TKE_to_TI(self, turbulence_kinetic_energy, wind_speed):
         """
         Converts a list of turbulence kinetic energy values to  
@@ -797,10 +902,12 @@ class FlorisInterface():
             turbulence_intensity (list): converted turbulence intensity 
                 values expressed in decimal fractions.       
         """
-        turbulence_intensity = [(np.sqrt((2/3) * turbulence_kinetic_energy[i]))/wind_speed[i] for i in range(len(turbulence_kinetic_energy))]
-       
+        turbulence_intensity = [(np.sqrt(
+            (2 / 3) * turbulence_kinetic_energy[i])) / wind_speed[i]
+                                for i in range(len(turbulence_kinetic_energy))]
+
         return turbulence_intensity
-    
+
     def set_rotor_diameter(self, rotor_diameter):
         """
         Assign rotor diameter to turbines.
@@ -809,36 +916,39 @@ class FlorisInterface():
             rotor_diameter: the rotor diameter(s) to be 
                 applied to the turbines in meters. 
         """
-        if isinstance(rotor_diameter, float) or isinstance(rotor_diameter, int):
+        if isinstance(rotor_diameter, float) or isinstance(
+                rotor_diameter, int):
             rotor_diameter = [rotor_diameter] * len(self.floris.farm.turbines)
         else:
             rotor_diameter = rotor_diameter
-        for i,turbine in enumerate(self.floris.farm.turbines):
+        for i, turbine in enumerate(self.floris.farm.turbines):
             turbine.rotor_diameter = rotor_diameter[i]
 
-    def get_velocity_at_point(self, points, initial = False):
-        """
-        Get waked velocity at specified points in the flow field. 
+    # TODO
+    # Comment this out until sure we'll need it
+    # def get_velocity_at_point(self, points, initial = False):
+    #     """
+    #     Get waked velocity at specified points in the flow field.
 
-        Args:
-            points (np.array): x, y and z coordinates of specified point(s)
-                where flow_field velocity should be reported.
-            initial(bool, optional): if set to True, the initial velocity of 
-                the flow field is returned instead of the waked velocity.
-                Defaults to False.
+    #     Args:
+    #         points (np.array): x, y and z coordinates of specified point(s)
+    #             where flow_field velocity should be reported.
+    #         initial(bool, optional): if set to True, the initial velocity of
+    #             the flow field is returned instead of the waked velocity.
+    #             Defaults to False.
 
-        Returns:
-            velocity (list): flow field velocity at specified grid point(s), in m/s.
-        """
-        xp, yp, zp = points[0], points[1], points[2]
-        x, y, z = self.floris.farm.flow_field.x, self.floris.farm.flow_field.y, self.floris.farm.flow_field.z
-        velocity = self.floris.farm.flow_field.u
-        initial_velocity = self.floris.farm.wind_map.grid_wind_speed
-        pVel = []
-        for i in range(len(xp)):
-            xloc, yloc, zloc =np.array(x == xp[i]),np.array(y == yp[i]),np.array(z == zp[i])
-            loc = np.logical_and(np.logical_and(xloc, yloc) == True, zloc == True)
-            if initial == True: pVel.append(np.mean(initial_velocity[loc]))
-            else: pVel.append(np.mean(velocity[loc]))
+    #     Returns:
+    #         velocity (list): flow field velocity at specified grid point(s), in m/s.
+    #     """
+    #     xp, yp, zp = points[0], points[1], points[2]
+    #     x, y, z = self.floris.farm.flow_field.x, self.floris.farm.flow_field.y, self.floris.farm.flow_field.z
+    #     velocity = self.floris.farm.flow_field.u
+    #     initial_velocity = self.floris.farm.wind_map.grid_wind_speed
+    #     pVel = []
+    #     for i in range(len(xp)):
+    #         xloc, yloc, zloc =np.array(x == xp[i]),np.array(y == yp[i]),np.array(z == zp[i])
+    #         loc = np.logical_and(np.logical_and(xloc, yloc) == True, zloc == True)
+    #         if initial == True: pVel.append(np.mean(initial_velocity[loc]))
+    #         else: pVel.append(np.mean(velocity[loc]))
 
-        return pVel
+    #     return pVel

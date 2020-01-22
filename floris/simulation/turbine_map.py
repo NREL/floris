@@ -22,6 +22,8 @@ class TurbineMap():
     :py:class:`floris.utilities.Vec3` object. This class also provides 
     some helper methods for sorting and manipulating the turbine layout.
 
+    TODO: this docstring is incorrect!
+
     Args:
         turbine_map_dict: A dictionary mapping of 
             :py:class:`floris.simulation.turbine.Turbine` to 

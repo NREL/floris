@@ -111,7 +111,15 @@ class SampleInputs():
                         "initial_deficit": 2.0,
                         "dissipation": 0.05,
                         "veer_linear": 0.0
-                    }
+                    },
+                    "gauss_curl_hybrid": {
+                        "ka": 0.3,
+                        "kb": 0.004,
+                        "alpha": 0.58,
+                        "beta": 0.077,
+                        "ad": 0.0,
+                        "bd": 0.0
+                    },
                 }
             }
         }

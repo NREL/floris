@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 import pandas as pd
+import copy
 
 def nudge_outward(x):
     """
@@ -34,14 +35,16 @@ def get_plane_from_flow_data(flow_data,
     """
     Get a plane of data, in form of dataframe, from a flow_data object
     This is used to get planes from SOWFA results and FLORIS sims with fixed grids, ie curl
+
     Args:
-            flow_data (np.array): 3D vector field of velocity data
-            normal_vector (string, optional): vector normal to plane
-                Defaults to z.
-            x3_value (float, optional): value of normal vector to slice through
-                Defaults to 100.
-        Returns:
-            dataframe of x1,x2,u,v,w values
+        flow_data (np.array): 3D vector field of velocity data
+        normal_vector (string, optional): vector normal to plane
+            Defaults to z.
+        x3_value (float, optional): value of normal vector to slice through
+            Defaults to 100.
+
+    Returns:
+        dataframe of x1,x2,u,v,w values
     """
     order = "f"
     if normal_vector == 'z':
@@ -161,16 +164,16 @@ def change_resolution(cut_plane, resolution=(100, 100)):
     u_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.u.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
     v_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.v.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
     w_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.w.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
 
     # Assign back to df
@@ -189,7 +192,7 @@ def change_resolution(cut_plane, resolution=(100, 100)):
     return cut_plane
 
 
-def interpolate_onto_array(cut_plane, x1_array, x2_array):
+def interpolate_onto_array(cut_plane_in, x1_array, x2_array):
     """
     Interpolate a CutPlane object onto specified coordinate arrays.
 
@@ -203,6 +206,7 @@ def interpolate_onto_array(cut_plane, x1_array, x2_array):
         cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
                 updated plane of data.
     """
+    cut_plane = copy.deepcopy(cut_plane_in)
 
     # Linearize the data
     x1_lin = x1_array
@@ -214,22 +218,22 @@ def interpolate_onto_array(cut_plane, x1_array, x2_array):
 
     # Mesh the data
     x1_mesh, x2_mesh = np.meshgrid(x1_lin, x2_lin)
-    x3_mesh = np.ones_like(x1_mesh) * cut_plane.df.x3[0]
+    x3_mesh = np.ones_like(x1_mesh) * cut_plane.df.x3.iloc[0]
 
     # Interpolate u,v,w
     u_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.u.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
     v_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.v.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
     w_mesh = griddata(
             np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
             cut_plane.df.w.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='nearest')
+            method='cubic')
 
 
     # Assign back to df
@@ -266,6 +270,52 @@ def rescale_axis(cut_plane, x1_factor=1.0, x2_factor=1.0):
 
     return cut_plane
 
+def project_onto(cut_plane_a, cut_plane_b):
+    """
+    Project cut_plane_a onto the x1, x2 of cut_plane_b
+
+    Args:
+        cut_plane_a (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data to project from
+        cut_plane_b (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data to project onto
+
+
+    Returns:
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
+                a projected onto b's axis
+    """
+
+    return interpolate_onto_array(cut_plane_a, cut_plane_b.df.x1.unique(), cut_plane_b.df.x2.unique())
+
+def subtract(cut_plane_a_in, cut_plane_b_in):
+    """
+    Subtract u,v,w terms of cut_plane_b from cut_plane_a
+
+    Args:
+        cut_plane_a_in (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data to subtract from
+        cut_plane_b_in (:py:class:`floris.tools.cut_plane._CutPlane`):
+            plane of data to subtract b
+
+
+    Returns:
+        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
+                difference
+    """
+
+    # First make copies of original
+    cut_plane_a = copy.deepcopy(cut_plane_a_in)
+    cut_plane_b = copy.deepcopy(cut_plane_b_in)
+
+    # Sort x1 and x2 and make the index
+    cut_plane_a.df = cut_plane_a.df.set_index(['x1','x2'])
+    cut_plane_b.df = cut_plane_b.df.set_index(['x1','x2'])
+
+    # Do subtraction
+    cut_plane_a.df = cut_plane_a.df.subtract(cut_plane_b.df).reset_index()# .sort_values(['x2','x1'])# .dropna()
+    # cut_plane_a.df = cut_plane_a.df.sort_values(['x1','x2'])
+    return cut_plane_a
 
 # def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
 #     """

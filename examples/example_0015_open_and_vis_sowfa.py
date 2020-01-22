@@ -46,7 +46,7 @@ hor_plane = wfct.cut_plane.change_resolution(
     hor_plane, resolution=(1000, 1000))
 ax = axarr[2, 0]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title('Increased Resolution')
+ax.set_title('Increased Resolution (Interpolation)')
 
 # # Interpolate onto new array
 x1_array = np.linspace(-50, 300)
