@@ -37,10 +37,12 @@ jobs:
         pip install pytest
         pytest  
     - name: Generate coverage report
+      # Run these tests on unit tests only so that we avoid inflating our code
+      # coverage through the regression tests
       run: |
         pip install pytest
         pip install pytest-cov
-        pytest --cov=./ --cov-report=xml
+        pytest --cov=./ --cov-report=xml `find . -name "*_test.py" -not -name "*regression*"`
     - name: Upload coverage to Codecov  
       uses: codecov/codecov-action@v1
       with:
