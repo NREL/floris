@@ -442,7 +442,8 @@ class FlowField():
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.reinitialize_turbine(self.wind_map.turbine_turbulence_intensity[i])
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[i]
+            turbine.reset_velocities()
 
     def calculate_wake(self, no_wake=False, points=None):
         """
@@ -472,7 +473,8 @@ class FlowField():
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.reinitialize_turbine(self.wind_map.turbine_turbulence_intensity[i])
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[i]
+            turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of flow field
         x0 = np.mean([np.min(self.x) , np.max(self.x)])

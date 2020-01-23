@@ -88,13 +88,20 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
+        self._initialize_turbine()
+
+    # Private methods
+
+    def _initialize_turbine(self):
+        # Initiailze the turbine given saved parameter settings
+
         # Precompute interps
-        cp = self.power_thrust_table["power"]
         wind_speed = self.power_thrust_table["wind_speed"]
+
+        cp = self.power_thrust_table["power"]
         self.fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
 
         ct = self.power_thrust_table["thrust"]
-        # wind_speed = self.power_thrust_table["wind_speed"]
         self.fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
 
         # constants
@@ -103,7 +110,7 @@ class Turbine():
             raise ValueError(
                 "Turbine.grid_point_count must be the square of a number")
 
-        self.reinitialize_turbine(turbulence_intensity=None)
+        self.reset_velocities()
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
@@ -111,8 +118,6 @@ class Turbine():
         # initialize to an invalid value until calculated
         self.air_density = -1
         self.use_turbulence_correction = False
-
-    # Private methods
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
@@ -167,6 +172,19 @@ class Turbine():
             return float(_ct)
 
     # Public methods
+
+    def change_turbine_parameters(self, turbine_change_dict):
+        """
+        Change a turbine parameter and call the initialize function
+
+        Args:
+            turbine_change_dict: A dictionary of parameters to change
+
+        """
+        for param in turbine_change_dict:
+            print("Setting {} to {}".format(param, turbine_change_dict[param]))
+            setattr(self, param, turbine_change_dict[param])
+        self._initialize_turbine()
 
     def calculate_swept_area_velocities(self, local_wind_speed, coord, x, y, z):
         """
@@ -321,7 +339,7 @@ class Turbine():
             rotated_z
         )
 
-    def reinitialize_turbine(self, turbulence_intensity):
+    def reset_velocities(self):
         """
         This method sets the velocities at the turbine's rotor swept 
         area grid points to zero.
@@ -331,7 +349,6 @@ class Turbine():
             :py:class:`floris.simulation.turbine` object.
         """
         self.velocities = [0.0] * self.grid_point_count
-        self._turbulence_intensity = turbulence_intensity
 
     def set_yaw_angle(self, yaw_angle):
         """
