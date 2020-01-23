@@ -826,7 +826,7 @@ class FlorisInterface():
         Change turbine properties of given turbines
 
         Args:
-            turb_num_array (list): list of turbine indeces to change
+            turb_num_array (list): list of turbine indices to change
             turbine_change_dict (dict): dictionary of changes to make. All 
                 key values should be from the JSON turbine/properties set.
                 Any key values not specified will be copied from the original

@@ -20,7 +20,7 @@ import floris.tools as wfct
 # Initialize the FLORIS interface fi
 fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
-# Change turbine 0, 3 to have a 35 m rotor diamater
+# Change turbine 0 and 3 to have a 35 m rotor diameter
 fi.change_turbine([0,3],{'rotor_diameter':35})
 
 # Calculate wake
