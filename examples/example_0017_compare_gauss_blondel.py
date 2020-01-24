@@ -16,6 +16,25 @@ import floris.tools as wfct
 import numpy as np
 import pandas as pd
 
+# Define a quick function for getting arbitrary points from sowfa
+from sklearn import neighbors
+
+def get_points_from_flow_data(x_points,y_points,z_points,flow_data):
+    # print(x_points,y_points,z_points)
+    X = np.column_stack([flow_data.x,flow_data.y,flow_data.z])
+    n_neighbors = 1
+    knn = neighbors.KNeighborsRegressor(n_neighbors)
+    y_ = knn.fit(X, flow_data.u)#.predict(T)
+
+    # Predict new points
+    T = np.column_stack([x_points,y_points,z_points])
+    return knn.predict(T)
+
+# Load the SOWFA case in
+si = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
+
+
+
 # Initialize the FLORIS interface fi
 fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
@@ -23,34 +42,84 @@ fi = wfct.floris_interface.FlorisInterface("example_input.json")
 HH = fi.floris.farm.flow_field.turbine_map.turbines[0].hub_height
 D = fi.floris.farm.turbines[0].rotor_diameter
 
+# Match SOWFA
+fi.reinitialize_flow_field(wind_speed=[si.precursor_wind_speed],
+                           wind_direction=[si.precursor_wind_dir],
+                           layout_array=(si.layout_x, si.layout_y)
+                           )
+
+
 # Go to a signle turbine
-fi.reinitialize_flow_field(layout_array=([0],[0]))
+# fi.reinitialize_flow_field(layout_array=([0],[0]))
 
 # Calculate wake
 fi.calculate_wake()
 
-# Define to cut across profile
+# Repeat for Blondel
+fi_b = wfct.floris_interface.FlorisInterface("example_input.json")
+fi_b.floris.farm.flow_field.wake.velocity_model.blondel = True
+# fi_b.reinitialize_flow_field(layout_array=([0],[0]))
+fi_b.reinitialize_flow_field(wind_speed=[si.precursor_wind_speed],
+                           wind_direction=[si.precursor_wind_dir],
+                           layout_array=(si.layout_x, si.layout_y)
+                           )
+fi_b.calculate_wake()
+
+# Set up points
 step_size = 5
-y_points = np.arange(-100,100+step_size,step_size)
-x_points = np.ones_like(y_points) * 3 * D
+x_0 = si.layout_x[0]
+y_0 = si.layout_y[0]
+y_points = np.arange(-100+y_0,100+step_size+y_0,step_size)
+x_points = np.ones_like(y_points) * 3 * D + x_0
 z_points = np.ones_like(x_points) * HH
 
+#  Make plot
+fig, axarr = plt.subplots(5,2,figsize=(15,10),sharex='col',sharey='col')
+
+for d_idx, d_downstream in enumerate([2,4,6,8,10]):
+
+    # Grab x points
+    x_points = np.ones_like(y_points) * d_downstream * D
+
+    # Get the values
+    flow_points = fi.get_set_of_points(x_points,y_points,z_points)
+    flow_points_b = fi_b.get_set_of_points(x_points,y_points,z_points)
+    sowfa_u = get_points_from_flow_data(x_points,y_points,z_points,si.flow_data)
+
+    # Get horizontal plane at default height (hub-height)
+    hor_plane = fi.get_hor_plane()
+
+
+    ax = axarr[d_idx,0]
+    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+    ax.plot(x_points,y_points,'r',lw=3)
+    ax.set_title('%d D dowstream' % d_downstream)
+
+    ax = axarr[d_idx,1]
+    ax.plot(flow_points.y,flow_points.u,label='Gauss')
+    ax.plot(flow_points_b.y,flow_points_b.u,label='Blondel')
+    ax.plot(y_points,sowfa_u,label='SOWFA',color='k')
+    ax.set_title('%d D dowstream' % d_downstream)
+    ax.legend()
+    ax.set_ylim([3,8])
+
+# Center line plot
+step_size = 5 
+x_points = np.arange(0,x_0+D*12,step_size)
+y_points = y_0+ np.zeros_like(x_points)
+z_points = np.ones_like(x_points) * HH
 # Get the values
 flow_points = fi.get_set_of_points(x_points,y_points,z_points)
+flow_points_b = fi_b.get_set_of_points(x_points,y_points,z_points)
+sowfa_u = get_points_from_flow_data(x_points,y_points,z_points,si.flow_data)
 
-print(flow_points)
 
-# Get horizontal plane at default height (hub-height)
-hor_plane = fi.get_hor_plane()
+fig, ax = plt.subplots()
+ax.plot((flow_points.x-x_0)/D,flow_points.u,label='Gauss')
+ax.plot((flow_points.x-x_0)/D,flow_points_b.u,label='Blondel')
+ax.plot((x_points-x_0)/D,sowfa_u,label='SOWFA',color='k')
+ax.set_title('Wake Centerline')
+ax.legend()
 
-# Plot and show
-fig, axarr = plt.subplots(1,2)
-
-ax = axarr[0]
-wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.plot(x_points,y_points,'r',lw=3)
-
-ax = axarr[1]
-ax.plot(flow_points.y,flow_points.u)
 
 plt.show()
