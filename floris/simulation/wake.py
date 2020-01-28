@@ -43,35 +43,32 @@ class Wake():
 
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
-        parameters = properties["parameters"]
-        wake_velocity_parameters = parameters["wake_velocity_parameters"]
-        wake_deflection_parameters = parameters["wake_deflection_parameters"]
-        wake_turbulence_parameters = parameters["wake_turbulence_parameters"]
+        self.parameters = properties["parameters"]
+        # TODO: Add support for tuning wake combination parameters?
         # wake_combination_parameters = parameters["wake_combination_parameters"]
 
         self._velocity_models = {
-            "jensen": wake_velocity.Jensen(wake_velocity_parameters),
-            "multizone": wake_velocity.MultiZone(wake_velocity_parameters),
-            "gauss": wake_velocity.Gauss(wake_velocity_parameters),
-            "curl": wake_velocity.Curl(wake_velocity_parameters),
-            "ishihara": wake_velocity.Ishihara(wake_velocity_parameters),
-            # "gauss_curl_hybrid":
-            # wake_velocity.gauss_curl_hybrid(wake_velocity_parameters)
+            "jensen": wake_velocity.Jensen,
+            "multizone": wake_velocity.MultiZone,
+            "gauss": wake_velocity.Gauss,
+            "curl": wake_velocity.Curl,
+            "ishihara": wake_velocity.Ishihara,
+            "gauss_curl_hybrid": wake_velocity.GaussCurlHybrid
         }
         self.velocity_model = properties["velocity_model"]
 
         self._turbulence_models = {
-            "gauss": wake_turbulence.Gauss(wake_turbulence_parameters),
-            "ishihara": wake_turbulence.Ishihara(wake_turbulence_parameters),
-            "None": wake_turbulence.WakeTurbulence()
+            "gauss": wake_turbulence.Gauss,
+            "ishihara": wake_turbulence.Ishihara,
+            "None": wake_turbulence.WakeTurbulence
         }
         self.turbulence_model = properties["turbulence_model"]
 
         self._deflection_models = {
-            "jimenez": wake_deflection.Jimenez(wake_deflection_parameters),
-            "gauss": wake_deflection.Gauss(wake_deflection_parameters),
-            "curl": wake_deflection.Curl(wake_deflection_parameters),
-            # "gauss_curl_hybrid": wake_deflection.gauss_curl_hybrid(wake_deflection_parameters)#.GaussCurlHybrid
+            "jimenez": wake_deflection.Jimenez,
+            "gauss": wake_deflection.Gauss,
+            "curl": wake_deflection.Curl,
+            "gauss_curl_hybrid": wake_deflection.GaussCurlHybrid
         }
         self.deflection_model = properties["deflection_model"]
 
@@ -101,8 +98,7 @@ class Wake():
     @velocity_model.setter
     def velocity_model(self, value):
         if type(value) is str:
-            self._velocity_model = self._velocity_models[value]  #(
-            #self.parameters)
+            self._velocity_model = self._velocity_models[value](self.parameters["wake_velocity_parameters"])
         elif isinstance(value, wake_velocity.WakeVelocity):
             self._velocity_model = value
         else:
@@ -121,7 +117,7 @@ class Wake():
 
     @turbulence_model.setter
     def turbulence_model(self, value):
-        self._turbulence_model = self._turbulence_models[value]
+        self._turbulence_model = self._turbulence_models[value](self.parameters["wake_turbulence_parameters"])
 
     @property
     def deflection_model(self):
@@ -140,13 +136,11 @@ class Wake():
     @deflection_model.setter
     def deflection_model(self, value):
         if type(value) is str:
-            self._deflection_model = self._deflection_models[value]  #(
-            #self.parameters)
+            self._deflection_model = self._deflection_models[value](self.parameters["wake_deflection_parameters"])
         elif isinstance(value, wake_deflection.WakeDeflection):
             self._deflection_model = value
         else:
-            raise ValueError(
-                "Invalid value given for WakeDeflection: {}".format(value))
+            raise ValueError("Invalid value given for WakeDeflection: {}".format(value))
 
     @property
     def combination_model(self):

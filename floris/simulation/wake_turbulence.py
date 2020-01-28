@@ -141,6 +141,96 @@ class Gauss(WakeTurbulence):
         # Update turbulence intensity of downstream turbines
         return ti_calculation
 
+    @property
+    def ti_initial(self):
+        """
+        Parameter that is the initial ambient turbulence intensity, expressed as
+            a decimal fraction.
+
+        Args:
+            ti_initial (float): Initial ambient turbulence intensity.
+
+        Returns:
+            float: Initial ambient turbulence intensity.
+        """
+        return self._ti_initial
+
+    @ti_initial.setter
+    def ti_initial(self, value):
+        if type(value) is float:
+            self._ti_initial = value
+        else:
+            raise ValueError(("Invalid value given for "
+                              "ti_initial: {}").format(value))
+
+    @property
+    def ti_constant(self):
+        """
+        Parameter that is the constant used to scale the wake-added turbulence
+            intensity.
+
+        Args:
+            ti_constant (float): Scales the wake-added turbulence intensity.
+
+        Returns:
+            float: Scales the wake-added turbulence intensity.
+        """
+        return self._ti_constant
+
+    @ti_constant.setter
+    def ti_constant(self, value):
+        if type(value) is float:
+            self._ti_constant = value
+        else:
+            raise ValueError(("Invalid value given for "
+                              "ti_constant: {}").format(value))
+    
+    @property
+    def ti_ai(self):
+        """
+        Parameter that is the axial induction factor exponent used in in the
+            calculation of wake-added turbulence.
+
+        Args:
+            ti_ai (float): Axial induction factor exponent for wake-added
+                turbulence.
+
+        Returns:
+            float: Axial induction factor exponent for wake-added turbulence.
+        """
+        return self._ti_ai
+
+    @ti_ai.setter
+    def ti_ai(self, value):
+        if type(value) is float:
+            self._ti_ai = value
+        else:
+            raise ValueError("Invalid value given for ti_ai: {}".format(value))
+
+    @property
+    def ti_downstream(self):
+        """
+        Parameter that is the exponent applied to the distance downstream of an
+            upstream turbine normalized by the rotor diameter used in the
+            calculation of wake-added turbulence.
+
+        Args:
+            ti_downstream (float): Downstream distance exponent for
+                wake-added turbulence.
+
+        Returns:
+            float: Downstream distance exponent for wake-added turbulence.
+        """
+        return self._ti_downstream
+
+    @ti_downstream.setter
+    def ti_downstream(self, value):
+        if type(value) is float:
+            self._ti_downstream = value
+        else:
+            raise ValueError(("Invalid value given for "
+                              "ti_downstream: {}").format(value))
+
 
 class Ishihara(WakeTurbulence):
     """
@@ -338,6 +428,118 @@ class Ishihara(WakeTurbulence):
         #     ti_calculation**2 + flow_field.turbulence_intensity**2)
         return ti_calculation
 
+    @property
+    def kstar(self):
+        """
+        Parameter that is used to determine the linear relationship between the
+            turbulence intensity and the width of the Gaussian wake shape.
+
+        Args:
+            kstar (float): Factor for relationship between the turbulence
+                intensity and the width of the Gaussian wake shape.
+
+        Returns:
+            float: Factor for relationship between the turbulence intensity and
+                the width of the Gaussian wake shape.
+        """
+        return self._kstar
+
+    @kstar.setter
+    def kstar(self, value):
+        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
+            self._kstar = value
+        else:
+            raise ValueError("Invalid value given for kstar: {}".format(value))
+
+    @property
+    def epsilon(self):
+        """
+        Parameter that is used to determine the linear relationship between the
+            turbulence intensity and the width of the Gaussian wake shape.
+
+        Args:
+            epsilon (float): Factor for relationship between the turbulence
+                intensity and the width of the Gaussian wake shape.
+
+        Returns:
+            float: Factor for relationship between the turbulence intensity and
+                the width of the Gaussian wake shape.
+        """
+        return self._epsilon
+
+    @epsilon.setter
+    def epsilon(self, value):
+        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
+            self._epsilon = value
+        else:
+            raise ValueError("Invalid value given for " +
+                             "epsilon: {}".format(value))
+
+    @property
+    def d(self):
+        """
+        Constant coefficient used in calculation of wake-added turbulence.
+
+        Args:
+            d (float): Constant coefficient used in calculation of wake-added
+                turbulence.
+
+        Returns:
+            float: Constant coefficient used in calculation of wake-added
+                turbulence.
+        """
+        return self._d
+
+    @d.setter
+    def d(self, value):
+        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
+            self._d = value
+        else:
+            raise ValueError("Invalid value given for d: {}".format(value))
+
+    @property
+    def e(self):
+        """
+        Linear coefficient used in calculation of wake-added turbulence.
+
+        Args:
+            e (float): Linear coefficient used in calculation of wake-added
+                turbulence.
+
+        Returns:
+            float: Linear coefficient used in calculation of wake-added
+                turbulence.
+        """
+        return self._d
+
+    @e.setter
+    def e(self, value):
+        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
+            self._e = value
+        else:
+            raise ValueError("Invalid value given for e: {}".format(value))
+
+    @property
+    def f(self):
+        """
+        Near-wake coefficient used in calculation of wake-added turbulence.
+
+        Args:
+            f (float): Near-wake coefficient used in calculation of wake-added
+                turbulence.
+
+        Returns:
+            float: Near-wake coefficient used in calculation of wake-added
+                turbulence.
+        """
+        return self._f
+
+    @f.setter
+    def f(self, value):
+        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
+            self._f = value
+        else:
+            raise ValueError("Invalid value given for f: {}".format(value))
 
 class Direct(WakeTurbulence):
     """

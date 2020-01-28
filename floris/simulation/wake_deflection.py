@@ -106,6 +106,71 @@ class Jimenez(WakeDeflection):
 
         return deflection
 
+    @property
+    def kd(self):
+        """
+        ... #TODO: Update docstring
+
+        Args:
+            kd (float, int): ... #TODO: Update docstring
+
+        Returns:
+            float: ... #TODO: Update docstring
+        """
+        return self._kd
+
+    @kd.setter
+    def d(self, value):
+        if type(value) is float:
+            self._kd = value
+        elif type(value) is int:
+            self._kd = float(value)
+        else:
+            raise ValueError("Invalid value given for kd: {}".format(value))
+
+    @property
+    def ad(self):
+        """
+        ... #TODO: Update docstring
+
+        Args:
+            ad (float, int): ... #TODO: Update docstring
+
+        Returns:
+            float: ... #TODO: Update docstring
+        """
+        return self._ad
+
+    @ad.setter
+    def ad(self, value):
+        if type(value) is float:
+            self._ad = value
+        elif type(value) is int:
+            self._ad = float(value)
+        else:
+            raise ValueError("Invalid value given for ad: {}".format(value))
+
+    @property
+    def bd(self):
+        """
+        ... #TODO: Update docstring
+
+        Args:
+            bd (float, int): ... #TODO: Update docstring
+
+        Returns:
+            float: ... #TODO: Update docstring
+        """
+        return self._bd
+
+    @bd.setter
+    def bd(self, value):
+        if type(value) is float:
+            self._bd = value
+        elif type(value) is int:
+            self._bd = float(value)
+        else:
+            raise ValueError("Invalid value given for bd: {}".format(value))
 
 class Gauss(WakeDeflection):
     """
@@ -259,6 +324,144 @@ class Gauss(WakeDeflection):
         deflection = delta_near_wake + delta_far_wake
 
         return deflection
+
+    @property
+    def ka(self):
+        """
+        Parameter used to determine the linear relationship between the 
+            turbulence intensity and the width of the Gaussian wake shape.
+
+        Args:
+            ka (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._ka
+
+    @ka.setter
+    def ka(self, value):
+        if type(value) is float:
+            self._ka = value
+        elif type(value) is int:
+            self._ka = float(value)
+        else:
+            raise ValueError("Invalid value given for ka: {}".format(value))
+
+    @property
+    def kb(self):
+        """
+        Parameter used to determine the linear relationship between the 
+            turbulence intensity and the width of the Gaussian wake shape.
+
+        Args:
+            kb (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._kb
+
+    @kb.setter
+    def kb(self, value):
+        if type(value) is float:
+            self._kb = value
+        elif type(value) is int:
+            self._kb = float(value)
+        else:
+            raise ValueError("Invalid value given for kb: {}".format(value))
+
+    @property
+    def alpha(self):
+        """
+        Parameter that determines the dependence of the downstream boundary
+            between the near wake and far wake region on the turbulence
+            intensity.
+
+        Args:
+            alpha (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, value):
+        if type(value) is float:
+            self._alpha = value
+        elif type(value) is int:
+            self._alpha = float(value)
+        else:
+            raise ValueError("Invalid value given for alpha: {}".format(value))
+
+    @property
+    def beta(self):
+        """
+        Parameter that determines the dependence of the downstream boundary
+            between the near wake and far wake region on the turbine's
+            induction factor.
+
+        Args:
+            beta (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._beta
+
+    @beta.setter
+    def beta(self, value):
+        if type(value) is float:
+            self._beta = value
+        elif type(value) is int:
+            self._beta = float(value)
+        else:
+            raise ValueError("Invalid value given for beta: {}".format(value))
+
+    @property
+    def ad(self):
+        """
+        ... #TODO: update docstring
+
+        Args:
+            ad (float, int): ... #TODO: update docstring
+
+        Returns:
+            float: ... #TODO: update docstring
+        """
+        return self._ad
+
+    @ad.setter
+    def ad(self, value):
+        if type(value) is float:
+            self._ad = value
+        elif type(value) is int:
+            self._ad = float(value)
+        else:
+            raise ValueError("Invalid value given for ad: {}".format(value))
+
+    @property
+    def bd(self):
+        """
+        ... #TODO: update docstring
+
+        Args:
+            bd (float, int): ... #TODO: update docstring
+
+        Returns:
+            float: ... #TODO: update docstring
+        """
+        return self._bd
+
+    @bd.setter
+    def bd(self, value):
+        if type(value) is float:
+            self._bd = value
+        elif type(value) is int:
+            self._bd = float(value)
+        else:
+            raise ValueError("Invalid value given for bd: {}".format(value))
 
 
 class Curl(WakeDeflection):
@@ -500,3 +703,141 @@ class GaussCurlHybrid(WakeDeflection):
         except:
             print('ERROR', idx)
             return 0.0
+
+    @property
+    def ka(self):
+        """
+        Parameter used to determine the linear relationship between the 
+            turbulence intensity and the width of the Gaussian wake shape.
+
+        Args:
+            ka (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._ka
+
+    @ka.setter
+    def ka(self, value):
+        if type(value) is float:
+            self._ka = value
+        elif type(value) is int:
+            self._ka = float(value)
+        else:
+            raise ValueError("Invalid value given for ka: {}".format(value))
+
+    @property
+    def kb(self):
+        """
+        Parameter used to determine the linear relationship between the 
+            turbulence intensity and the width of the Gaussian wake shape.
+
+        Args:
+            kb (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._kb
+
+    @kb.setter
+    def kb(self, value):
+        if type(value) is float:
+            self._kb = value
+        elif type(value) is int:
+            self._kb = float(value)
+        else:
+            raise ValueError("Invalid value given for kb: {}".format(value))
+
+    @property
+    def alpha(self):
+        """
+        Parameter that determines the dependence of the downstream boundary
+            between the near wake and far wake region on the turbulence
+            intensity.
+
+        Args:
+            alpha (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, value):
+        if type(value) is float:
+            self._alpha = value
+        elif type(value) is int:
+            self._alpha = float(value)
+        else:
+            raise ValueError("Invalid value given for alpha: {}".format(value))
+
+    @property
+    def beta(self):
+        """
+        Parameter that determines the dependence of the downstream boundary
+            between the near wake and far wake region on the turbine's
+            induction factor.
+
+        Args:
+            beta (float, int): Gaussian wake model coefficient.
+
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._beta
+
+    @beta.setter
+    def beta(self, value):
+        if type(value) is float:
+            self._beta = value
+        elif type(value) is int:
+            self._beta = float(value)
+        else:
+            raise ValueError("Invalid value given for beta: {}".format(value))
+
+    @property
+    def ad(self):
+        """
+        ... #TODO: update docstring
+
+        Args:
+            ad (float, int): ... #TODO: update docstring
+
+        Returns:
+            float: ... #TODO: update docstring
+        """
+        return self._ad
+
+    @ad.setter
+    def ad(self, value):
+        if type(value) is float:
+            self._ad = value
+        elif type(value) is int:
+            self._ad = float(value)
+        else:
+            raise ValueError("Invalid value given for ad: {}".format(value))
+
+    @property
+    def bd(self):
+        """
+        ... #TODO: update docstring
+
+        Args:
+            bd (float, int): ... #TODO: update docstring
+
+        Returns:
+            float: ... #TODO: update docstring
+        """
+        return self._bd
+
+    @bd.setter
+    def bd(self, value):
+        if type(value) is float:
+            self._bd = value
+        elif type(value) is int:
+            self._bd = float(value)
+        else:
+            raise ValueError("Invalid value given for bd: {}".format(value))

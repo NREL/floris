@@ -19,6 +19,7 @@ import copy
 from scipy.stats import norm
 from floris.simulation import WindMap
 from .cut_plane import CutPlane, get_plane_from_flow_data
+from .interface_utilities import show_params, get_params, set_params
 
 
 class FlorisInterface():
@@ -923,6 +924,81 @@ class FlorisInterface():
             rotor_diameter = rotor_diameter
         for i, turbine in enumerate(self.floris.farm.turbines):
             turbine.rotor_diameter = rotor_diameter[i]
+
+    def show_model_parameters(self, params=None, verbose=False,
+                                    wake_velocity_model=True,
+                                    wake_deflection_model=True,
+                                    turbulence_model=True):
+        """
+        Helper funtion to print the current wake model parameters and values.
+               
+        Args:
+            params (list, optional): Specific model parameters to be returned,
+                supplied as a list of strings. If None, then returns all
+                parameters. Defaults to None.
+            verbose (bool, optional): If set to True, will return the
+                docstrings for each parameter. Defaults to False.
+            wake_velocity_model (bool, optional): If set to True, will return
+                parameters from the wake_velocity model. If set to False, will
+                exclude parameters from the wake velocity model. Defaults to
+                True.
+            wake_deflection_model (bool, optional): If set to True, will return
+                parameters from the wake deflection model. If set to False, will
+                exclude parameters from the wake deflection model. Defaults to
+                True.
+            turbulence_model ([type], optional): If set to True, will return
+                parameters from the wake turbulence model. If set to False,
+                will exclude parameters from the wake turbulence model.
+                Defaults to True.
+        """
+        show_params(self, params, verbose, wake_velocity_model,
+                                           wake_deflection_model,
+                                           turbulence_model)
+
+    def get_model_parameters(self, params=None, 
+                                   wake_velocity_model=True,
+                                   wake_deflection_model=True,
+                                   turbulence_model=True):
+        """
+        Helper funtion to return the current wake model parameters and values.
+               
+        Args:
+            params (list, optional): Specific model parameters to be returned,
+                supplied as a list of strings. If None, then returns all
+                parameters. Defaults to None.
+            wake_velocity_model (bool, optional): If set to True, will return
+                parameters from the wake_velocity model. If set to False, will
+                exclude parameters from the wake velocity model. Defaults to
+                True.
+            wake_deflection_model (bool, optional): If set to True, will return
+                parameters from the wake deflection model. If set to False,
+                will exclude parameters from the wake deflection model.
+                Defaults to True.
+            turbulence_model ([type], optional): If set to True, will return
+                parameters from the wake turbulence model. If set to False,
+                will exclude parameters from the wake turbulence model.
+                Defaults to True.
+
+        Returns:
+            dict: Dictionary containing model parameters and their values.
+        """
+        model_params = get_params(self, params, wake_velocity_model,
+                                                wake_deflection_model,
+                                                turbulence_model)
+
+        return model_params
+
+    def set_model_parameters(self, params, verbose=True):
+        """
+        Helper function to set current wake model parameters.
+       
+        Args:
+            params (dict): Specific model parameters to be set, supplied as a
+                dictionary of key:value pairs.
+            verbose (bool, optional): If set to True, will print information
+                about each model parameter that is changed. Defaults to True.
+        """
+        set_params(self, params, verbose)
 
     # TODO
     # Comment this out until sure we'll need it
