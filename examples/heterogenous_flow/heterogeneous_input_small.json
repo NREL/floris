@@ -8,16 +8,16 @@
     "name": "farm_example",
     "description": "Wind Farm",
     "properties": {
-        "wind_speed":[5,11,5,11],
-        "wind_x": [ 0, 0, 1000, 1000],
-        "wind_y": [ -400, 1000,  -400, 1000],
-        "wind_direction": [300,260, 300, 260],
-        "turbulence_intensity":[0.1, 0.2, 0.1,0.2],
+        "wind_speed":[8,8],
+        "wind_x": [ 0, 0],
+        "wind_y": [ 0, 1000],
+        "wind_direction": [270,270],
+        "turbulence_intensity":[0.1, 0.1],
         "wind_shear": 0.15,
         "wind_veer": 0.0,
         "air_density": 1.115,
-        "layout_x":[750, 465, 270, 450, 125, 750, 200],
-        "layout_y":[700, 700, 500, 65, 65, 65, 700]
+        "layout_x":[0, 0, 600, 600],
+        "layout_y":[100, 800, 100, 800]
 
         
   }

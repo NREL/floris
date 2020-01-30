@@ -12,7 +12,7 @@
 import numpy as np
 import pandas as pd
 from floris.simulation import Floris
-from floris.simulation import TurbineMap
+from floris.simulation import TurbineMap, Turbine
 from .flow_data import FlowData
 from ..utilities import Vec3
 import copy
@@ -860,6 +860,28 @@ class FlorisInterface():
 
             AEP_sum = AEP_sum + self.get_farm_power() * freq[i] * 8760
         return AEP_sum
+
+
+    def change_turbine(self, turb_num_array, turbine_change_dict):
+        """
+        Change turbine properties of given turbines
+
+        Args:
+            turb_num_array (list): list of turbine indices to change
+            turbine_change_dict (dict): dictionary of changes to make. All 
+                key values should be from the JSON turbine/properties set.
+                Any key values not specified will be copied from the original
+                JSON values.
+        """
+
+        # Now go through turbine list and re-init any in turb_num_array
+        for t_idx in turb_num_array:
+            print('Updating turbine: %00d' % t_idx)
+            self.floris.farm.turbines[t_idx].change_turbine_parameters(turbine_change_dict)
+
+        # Finish by re-initalizing the flow field
+        self.reinitialize_flow_field()
+
 
     @property
     def layout_x(self):

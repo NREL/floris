@@ -89,13 +89,20 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
+        self._initialize_turbine()
+
+    # Private methods
+
+    def _initialize_turbine(self):
+        # Initiailze the turbine given saved parameter settings
+
         # Precompute interps
-        cp = self.power_thrust_table["power"]
         wind_speed = self.power_thrust_table["wind_speed"]
+
+        cp = self.power_thrust_table["power"]
         self.fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
 
         ct = self.power_thrust_table["thrust"]
-        # wind_speed = self.power_thrust_table["wind_speed"]
         self.fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
 
         # constants
@@ -104,7 +111,7 @@ class Turbine():
             raise ValueError(
                 "Turbine.grid_point_count must be the square of a number")
 
-        self.reinitialize_turbine(turbulence_intensity=None)
+        self.reset_velocities()
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
@@ -112,8 +119,6 @@ class Turbine():
         # initialize to an invalid value until calculated
         self.air_density = -1
         self.use_turbulence_correction = False
-
-    # Private methods
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
@@ -169,8 +174,20 @@ class Turbine():
 
     # Public methods
 
-    def calculate_swept_area_velocities(self, local_wind_speed, coord, x, y,
-                                        z):
+    def change_turbine_parameters(self, turbine_change_dict):
+        """
+        Change a turbine parameter and call the initialize function
+
+        Args:
+            turbine_change_dict: A dictionary of parameters to change
+
+        """
+        for param in turbine_change_dict:
+            print("Setting {} to {}".format(param, turbine_change_dict[param]))
+            setattr(self, param, turbine_change_dict[param])
+        self._initialize_turbine()
+
+    def calculate_swept_area_velocities(self, local_wind_speed, coord, x, y, z):
         """
         This method calculates and returns the wind speeds at each
         rotor swept area grid point for the turbine, interpolated from
@@ -232,58 +249,6 @@ class Turbine():
         # return np.array(data)
         return np.array(u_at_turbine.flatten()[ii])
 
-    # def calculate_turbulence_intensity(self, area_overlap, flow_field_ti,
-    #                                    turbulence_model, turbine_coord,
-    #                                    wake_coord, turbine_wake):
-    #     """
-    #     Calculates the turbulence intensity at a specific wind turbine.
-
-    #     This method calculates and returns the turbulence intensity at
-    #     the wind turbine consisting of the ambient turbulence as well
-    #     as the wake-added turbulence from an upstream turbine, using
-    #     the approach of Crespo, A. and Hernandez, J. "Turbulence
-    #     characteristics in wind-turbine wakes." *J. Wind Eng Ind
-    #     Aerodyn*. 1996.
-
-    #     Args:
-    #         flow_field_ti: A float that is the ambient turbulence
-    #             intensity in the flow field expressed as a decimal
-    #             fraction.
-    #         turbulence_model: A
-    #             :py:obj:`floris.simulation.wake_velocity.WakeVelocity`
-    #             object containing wake model parameters.
-    #         turbine_coord: A :py:obj:`floris.utilities.Vec3` object
-    #             containing the coordinate of the turbine.
-    #         wake_coord: A :py:obj:`floris.utilities.Vec3` object
-    #             containing the coordinate of the upstream turbine.
-    #         turbine_wake: A :py:class:`floris.simulation.turbine`
-    #             object that represents the upstream turbine.
-
-    #     Returns:
-    #         numpy.float64: The turbulence intensity at the current
-    #         turbine including ambient turbulence and turbulence added
-    #         by the upstream turbine wake.
-    #     """
-    #     #### Old version
-    #     # ti_initial = flow_field_ti
-
-    #     # # user-input turbulence intensity parameters
-    #     # ti_i = turbulence_model.ti_initial
-    #     # ti_constant = turbulence_model.ti_constant
-    #     # ti_ai = turbulence_model.ti_ai
-    #     # ti_downstream = turbulence_model.ti_downstream
-
-    #     # # turbulence intensity calculation based on Crespo et. al.
-    #     # ti_calculation = ti_constant \
-    #     #     * turbine_wake.aI**ti_ai \
-    #     #     * ti_initial**ti_i \
-    #     #     * ((turbine_coord.x1 - wake_coord.x1) / self.rotor_diameter)**ti_downstream
-
-    #     # multiply by area overlap
-    #     ti_added = area_overlap * ti_calculation
-
-    #     return np.sqrt(ti_added**2 + self.current_turbulence_intensity**2)
-
     def update_velocities(self, u_wake, coord, flow_field, rotated_x,
                           rotated_y, rotated_z):
         """
@@ -318,7 +283,7 @@ class Turbine():
         self.velocities = self.calculate_swept_area_velocities(
             local_wind_speed, coord, rotated_x, rotated_y, rotated_z)
 
-    def reinitialize_turbine(self, turbulence_intensity):
+    def reset_velocities(self):
         """
         This method sets the velocities at the turbine's rotor swept
         area grid points to zero.
@@ -328,7 +293,6 @@ class Turbine():
             :py:class:`floris.simulation.turbine` object.
         """
         self.velocities = [0.0] * self.grid_point_count
-        self._turbulence_intensity = turbulence_intensity
 
     def set_yaw_angle(self, yaw_angle):
         """
@@ -566,7 +530,7 @@ class Turbine():
 
             >>> Ct = floris.farm.turbines[0].Ct()
         """
-        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)**self.pP
+        return self._fCt(self.average_velocity) * cosd(self.yaw_angle) # **self.pP
 
     @property
     def power(self):

@@ -66,60 +66,131 @@ class SampleInputs():
             "properties": {
                 "velocity_model": "gauss",
                 "deflection_model": "gauss",
+                "turbulence_model": "gauss",
                 "combination_model": "sosfs",
                 "parameters": {
-                    "turbulence_intensity": {
-                        "initial": 0.1,
-                        "constant": 0.73,
-                        "ai": 0.8,
-                        "downstream": -0.275
+                    "wake_velocity_parameters": {
+                        "jensen": {
+                            "we": 0.05
+                        },
+                        "multizone": {
+                            "me": [
+                                -0.5,
+                                0.3,
+                                1.0
+                            ],
+                            "we": 0.05,
+                            "aU": 12.0,
+                            "bU": 1.3,
+                            "mU": [
+                                0.5,
+                                1.0,
+                                5.5
+                            ]
+                        },
+                        "gauss": {
+                            "ka": 0.3,
+                            "kb": 0.004,
+                            "alpha": 0.58,
+                            "beta": 0.077
+                        },
+                        "jimenez": {
+                            "kd": 0.05,
+                            "ad": 0.0,
+                            "bd": 0.0
+                        },
+                        "curl": {
+                            "model_grid_resolution": [
+                                250,
+                                100,
+                                75
+                            ],
+                            "initial_deficit": 2.0,
+                            "dissipation": 0.05,
+                            "veer_linear": 0.0,
+                            "initial": 0.1,
+                            "constant": 0.73,
+                            "ai": 0.8,
+                            "downstream": -0.275
+                        },
+                        "ishihara": {
+                            "kstar": {
+                                "const": 0.11,
+                                "Ct": 1.07,
+                                "TI": 0.2
+                            },
+                            "epsilon": {
+                                "const": 0.23,
+                                "Ct": -0.25,
+                                "TI": 0.17
+                            },
+                            "a": {
+                                "const": 0.93,
+                                "Ct": -0.75,
+                                "TI": 0.17
+                            },
+                            "b": {
+                                "const": 0.42,
+                                "Ct": 0.6,
+                                "TI": 0.2
+                            },
+                            "c": {
+                                "const": 0.15,
+                                "Ct": -0.25,
+                                "TI": -0.7
+                            }
+                        },
                     },
-                    "jensen": {
-                        "we": 0.05
+                    "wake_turbulence_parameters": {
+                        "gauss": {
+                            "initial": 0.1,
+                            "constant": 0.73,
+                            "ai": 0.8,
+                            "downstream": -0.275
+                        },
+                        "ishihara": {
+                            "kstar": {
+                                "const": 0.11,
+                                "Ct": 1.07,
+                                "TI": 0.2
+                            },
+                            "epsilon": {
+                                "const": 0.23,
+                                "Ct": -0.25,
+                                "TI": 0.17
+                            },
+                            "d": {
+                                "const": 2.3,
+                                "Ct": 1.2,
+                                "TI": 0.0
+                            },
+                            "e": {
+                                "const": 1.0,
+                                "Ct": 0.0,
+                                "TI": 0.1
+                            },
+                            "f": {
+                                "const": 0.7,
+                                "Ct": -3.2,
+                                "TI": -0.45
+                            }
+                        },
                     },
-                    "multizone": {
-                        "me": [
-                            -0.05,
-                            0.3,
-                            1.0
-                        ],
-                        "we": 0.05,
-                        "aU": 12.0,
-                        "bU": 1.3,
-                        "mU": [
-                            0.5,
-                            1.0,
-                            5.5
-                        ]
-                    },
-                    "jimenez": {
-                        "kd": 0.17,
-                        "ad": 0.0,
-                        "bd": 0.0
-                    },
-                    "gauss": {
-                        "ka": 0.3,
-                        "kb": 0.004,
-                        "alpha": 0.58,
-                        "beta": 0.077,
-                        "ad": 0.0,
-                        "bd": 0.0
-                    },
-                    "curl": {
-                        "model_grid_resolution": [250, 100, 75],
-                        "vortex_strength": 0.3,
-                        "initial_deficit": 2.0,
-                        "dissipation": 0.05,
-                        "veer_linear": 0.0
-                    },
-                    "gauss_curl_hybrid": {
-                        "ka": 0.3,
-                        "kb": 0.004,
-                        "alpha": 0.58,
-                        "beta": 0.077,
-                        "ad": 0.0,
-                        "bd": 0.0
-                    },
+                    "wake_deflection_parameters": {
+                        "gauss": {
+                            "ka": 0.3,
+                            "kb": 0.004,
+                            "alpha": 0.58,
+                            "beta": 0.077,
+                            "ad": 0.0,
+                            "bd": 0.0
+                        },
+                        "jimenez": {
+                            "kd": 0.05,
+                            "ad": 0.0,
+                            "bd": 0.0
+                        }
+                    }
                 }
             }
         }

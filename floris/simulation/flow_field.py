@@ -227,8 +227,29 @@ class FlowField():
             deflection ([type]): [description]
             flow_field ([type]): [description]
         """
-        return self.wake.velocity_function(x, y, z, turbine, coord, deflection,
-                                           flow_field)
+        # velocity deficit calculation
+        u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
+            x,
+            y,
+            z,
+            turbine,
+            coord,
+            deflection,
+            flow_field
+        )
+
+        # correction step
+        u_corrected, v_corrected, w_corrected = self.wake.velocity_model.correction_steps(
+            flow_field.u_initial,
+            u_deficit,
+            v_deficit,
+            w_deficit,
+            x,
+            y,
+            turbine,
+            coord
+        )
+        return u_corrected, v_corrected, w_corrected
 
     def _compute_turbine_wake_turbulence(self, ambient_TI, coord_ti,
                                          turbine_coord, turbine):
@@ -478,8 +499,8 @@ class FlowField():
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.reinitialize_turbine(
-                self.wind_map.turbine_turbulence_intensity[i])
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[i]
+            turbine.reset_velocities()
 
     def calculate_wake(self, no_wake=False, points=None):
         """
@@ -509,8 +530,8 @@ class FlowField():
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.reinitialize_turbine(
-                self.wind_map.turbine_turbulence_intensity[i])
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[i]
+            turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of flow field
         x0 = np.mean([np.min(self.x), np.max(self.x)])
@@ -581,8 +602,7 @@ class FlowField():
 
             ###########
             # include turbulence model for the gaussian wake model from Porte-Agel
-            if self.wake.turbulence_model.model_string == 'gauss' or \
-                    self.wake.velocity_model.model_string == 'gauss_curl_hybrid':
+            if self.wake.turbulence_model.model_string == 'gauss':
                 # print('turbulence calcs here.')
                 # pass
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities

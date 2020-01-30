@@ -108,7 +108,7 @@ class Farm():
         Args:
             wake_model: A string containing the wake model used to 
                 calculate the wake; Valid wake model options are: 
-                "curl", "gauss_curl_hybrid", "gauss", "jensen",
+                "curl", "gauss", "ishihara", "jensen",
                 and "multizone".
 
         Returns:
@@ -122,7 +122,7 @@ class Farm():
         """
 
         valid_wake_models = [
-            'curl', 'gauss_curl_hybrid', 'gauss', 'jensen', 'multizone'
+            'curl', 'gauss', 'ishihara', 'jensen', 'multizone'
         ]
         if wake_model not in valid_wake_models:
             raise Exception(
