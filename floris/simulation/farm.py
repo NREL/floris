@@ -72,7 +72,6 @@ class Farm():
         layout_y = properties["layout_y"]
         wind_x = properties["wind_x"]
         wind_y = properties["wind_y"]
-        self.wake = wake
 
         self.wind_map = WindMap(
             wind_speed=properties["wind_speed"],
@@ -324,6 +323,24 @@ class Farm():
         Examples:
             To get a list of turbine objects from the wind farm:
 
-            >>> turbines = floris.farm.turbines()
+            >>> turbines = floris.farm.turbines
         """
         return self.turbine_map.turbines
+
+    @property
+    def wake(self):
+        """
+        This property returns the :py:obj:`floris.simulation.wake` object
+        contained in the :py:obj:`floris.simulation.flow_field` object. It
+        is intended to reduce the depth of the object-hierachy required to
+        modify the wake models from a script.
+
+        Returns:
+            Wake: A :py:obj:`floris.simulation.wake` object.
+
+        Examples:
+            To access and modify the wake model:
+
+            >>> floris.farm.wake.model = "another_model
+        """
+        return self.flow_field.wake
