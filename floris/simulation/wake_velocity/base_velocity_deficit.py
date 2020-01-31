@@ -64,7 +64,7 @@ class VelocityDeficit():
             self.use_yar = False
 
         if 'yaw_rec_alpha' in self.parameter_dictionary:
-            self.yaw_rec_alpha = 
+            self.yaw_rec_alpha = \
                             bool(self.parameter_dictionary["yaw_rec_alpha"])
         else:
             self.yaw_rec_alpha = 0.03

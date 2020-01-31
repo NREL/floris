@@ -338,8 +338,8 @@
         },
         "wake_deflection_parameters": {
           "gauss": {
-            "ka": 0.3,
-            "kb": 0.004,
+            "ka": 0.3837,
+            "kb": 0.003678,
             "alpha": 0.58,
             "beta": 0.077,
             "ad": 0.0,
