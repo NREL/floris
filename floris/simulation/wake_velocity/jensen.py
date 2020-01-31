@@ -1,19 +1,56 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 
 
 class Jensen(VelocityDeficit):
+    """
+    Wake velocity deficit model based on the Jensen model.
+    Jensen is a subclass of :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
+    used to compute the wake velocity deficit based on the classic
+    Jensen/Park model. See Jensen, N. O., "A note on wind generator
+    interaction." Tech. Rep. Risø-M-2411, Risø, 1983.
+    Args:
+        parameter_dictionary: A dictionary as generated from the
+            input_reader; it should have the following key-value pairs:
+            -   **turbulence_intensity**: A dictionary containing the
+                following key-value pairs used to calculate wake-added
+                turbulence intensity from an upstream turbine, using
+                the approach of Crespo, A. and Herna, J. "Turbulence
+                characteristics in wind-turbine wakes." *J. Wind Eng
+                Ind Aerodyn*. 1996.:
+                -   **initial**: A float that is the initial ambient
+                    turbulence intensity, expressed as a decimal
+                    fraction.
+                -   **constant**: A float that is the constant used to
+                    scale the wake-added turbulence intensity.
+                -   **ai**: A float that is the axial induction factor
+                    exponent used in in the calculation of wake-added
+                    turbulence.
+                -   **downstream**: A float that is the exponent
+                    applied to the distance downtream of an upstream
+                    turbine normalized by the rotor diameter used in
+                    the calculation of wake-added turbulence.
+            -   **jensen**: A dictionary containing the following
+                key-value pairs:
+                -   **we**: A float that is the linear wake decay
+                    constant that defines the cone boundary for the
+                    wake as well as the velocity deficit. D/2 +/- we*x
+                    is the cone boundary for the wake.
+    Returns:
+        An instantiated Jensen(WaveVelocity) object.
+    """
     
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
@@ -21,7 +58,8 @@ class Jensen(VelocityDeficit):
         model_dictionary = self._get_model_dict()
         self.we = float(model_dictionary["we"])
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, deflection_field, flow_field):
         """
         Using the Jensen wake model, this method calculates and returns 
         the wake velocity deficits, caused by the specified turbine, 
@@ -73,14 +111,42 @@ class Jensen(VelocityDeficit):
         z_lower = -1 * boundary_line + turbine.hub_height
 
         # calculate the wake velocity
-        c = (turbine.rotor_diameter /
-             (2 * self.we * (x_locations - turbine_coord.x1) + turbine.rotor_diameter))**2
+        c = (turbine.rotor_diameter \
+             / (2 * self.we * (x_locations - turbine_coord.x1) \
+             + turbine.rotor_diameter))**2
 
-        # filter points upstream and beyond the upper and lower bounds of the wake
+        # filter points upstream and beyond the upper and 
+        # lower bounds of the wake
         c[x_locations - turbine_coord.x1 < 0] = 0
         c[y_locations > y_upper] = 0
         c[y_locations < y_lower] = 0
         c[z_locations > z_upper] = 0
         c[z_locations < z_lower] = 0
 
-        return 2 * turbine.aI * c * flow_field.u_initial, np.zeros(np.shape(flow_field.u_initial)), np.zeros(np.shape(flow_field.u_initial))
+        return 2 * turbine.aI * c * flow_field.u_initial, \
+               np.zeros(np.shape(flow_field.u_initial)), \
+               np.zeros(np.shape(flow_field.u_initial))
+
+    @property
+    def we(self):
+        """
+        A float that is the linear wake decay constant that defines the cone
+            boundary for the wake as well as the velocity deficit. D/2 +/- we*x
+            is the cone boundary for the wake.
+        Args:
+            we (float, int): The linear wake decay constant that defines the
+                cone boundary for the wake as well as the velocity deficit.
+        Returns:
+            float: The linear wake decay constant that defines the cone
+                boundary for the wake as well as the velocity deficit.
+        """
+        return self._we
+
+    @we.setter
+    def we(self, value):
+        if type(value) is float:
+            self._we = value
+        elif type(value) is int:
+            self._we = float(value)
+        else:
+            raise ValueError("Invalid value given for we: {}".format(value))

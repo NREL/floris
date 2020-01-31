@@ -1,13 +1,14 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 from ...utilities import cosd, sind, tand
 from .base_velocity_deflection import VelocityDeflection
@@ -61,7 +62,8 @@ class Gauss(VelocityDeflection):
             print('Using default gauss deflection multipler of: %.1f' %
                   self.deflection_multiplier)
 
-    def function(self, x_locations, y_locations, z_locations, turbine, coord, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine, coord,
+                 flow_field):
         """
         This function defines the angle at which the wake deflects in
         relation to the yaw of the turbine. This is coded as defined in
@@ -83,8 +85,10 @@ class Gauss(VelocityDeflection):
             deflection (np.array): Deflected wake centerline.
         """
         # ==============================================================
-        wind_speed = flow_field.wind_map.grid_wind_speed  # free-stream velocity (m/s)
-        veer = flow_field.wind_veer  # veer (degrees)
+        # free-stream velocity (m/s)
+        wind_speed = flow_field.wind_map.grid_wind_speed
+        # veer (degrees)
+        veer = flow_field.wind_veer
 
         # added turbulence model
         TI = turbine.current_turbulence_intensity
@@ -99,11 +103,14 @@ class Gauss(VelocityDeflection):
 
         # turbine parameters
         D = turbine.rotor_diameter
-        yaw = -1 * self.calculate_effective_yaw_angle(x_locations, y_locations, z_locations, turbine, coord, flow_field)  # opposite sign convention in this model
+        yaw = -1 * self.calculate_effective_yaw_angle(x_locations, y_locations,
+                            z_locations, turbine, coord, flow_field)
+                            # opposite sign convention in this model
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
 
-        # U_local = flow_field.wind_map.grid_wind_speed  #just a placeholder for now, should be initialized with the flow_field
+        # U_local = flow_field.wind_map.grid_wind_speed  
+        # just a placeholder for now, should be initialized with the flow_field
         U_local = flow_field.u_initial
 
         # initial velocity deficits
@@ -137,7 +144,8 @@ class Gauss(VelocityDeflection):
                 1 - np.sqrt(1 - Ct * cosd(yaw)))  # skew angle in radians
         delta0 = np.tan(theta_c0) * (
             x0 - coord.x1
-        )  # initial wake deflection; NOTE: use np.tan here since theta_c0 is radians
+        )  # initial wake deflection;
+        # NOTE: use np.tan here since theta_c0 is radians
 
         # deflection in the near wake
         delta_near_wake = ((x_locations - xR) /

@@ -1,13 +1,14 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 from ...utilities import cosd, sind
 from .base_velocity_deflection import VelocityDeflection
@@ -55,7 +56,8 @@ class Jimenez(VelocityDeflection):
         Args:
             x_locations (np.array): streamwise locations in wake
             y_locations (np.array): spanwise locations in wake
-            z_locations (np.array): vertical locations in wake (not used in Jimenez)
+            z_locations (np.array): vertical locations in wake
+                (not used in Jimenez)
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord
@@ -76,10 +78,13 @@ class Jimenez(VelocityDeflection):
         x_locations = x_locations - coord.x1
 
         # yaw displacement
-        yYaw_init = ( xi_init
-            * ( 15 * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**4. + xi_init**2. )
-            / ((30 * self.kd / turbine.rotor_diameter) * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**5.)) \
-            - (xi_init * turbine.rotor_diameter * (15 + xi_init**2.) / (30 * self.kd))
+        yYaw_init = ( xi_init \
+            * ( 15 * (2 * self.kd * x_locations \
+            / turbine.rotor_diameter + 1)**4. + xi_init**2. ) \
+            / ((30 * self.kd / turbine.rotor_diameter) \
+            * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**5.)) \
+            - (xi_init * turbine.rotor_diameter \
+            * (15 + xi_init**2.) / (30 * self.kd))
 
         # corrected yaw displacement with lateral offset
         deflection = yYaw_init + self.ad + self.bd * x_locations
