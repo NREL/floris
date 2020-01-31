@@ -1104,7 +1104,7 @@ class GaussCurlHybrid(WakeVelocity):
 
         U = np.sqrt(velDef**2 + velDef1**2)
 
-        if not self.use_yar:
+        if not self.use_yaw_added_recovery:
             return U, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
         else:
