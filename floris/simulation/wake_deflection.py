@@ -329,12 +329,12 @@ class GaussCurlHybrid(WakeDeflection):
             # TODO: introduce logging
             print('Using default gauss deflection multipler of: %.1f' % self.deflection_multiplier)
             
-        if 'use_ss' in model_dictionary:
-            self.use_ss = bool(model_dictionary["use_ss"])
+        if 'use_secondary_steering' in model_dictionary:
+            self.use_secondary_steering = bool(model_dictionary["use_secondary_steering"])
         else:
             # TODO: introduce logging
-            print('Using default option of not applying gch-based secondary steering (use_ss=False)')
-            self.use_ss = False
+            print('Using default option of not applying gch-based secondary steering (use_secondary_steering=False)')
+            self.use_secondary_steering = False
 
         if 'eps_gain' in model_dictionary:
             self.eps_gain = bool(model_dictionary["eps_gain"])
@@ -342,6 +342,16 @@ class GaussCurlHybrid(WakeDeflection):
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied by D in function)
             # TODO: introduce logging
             print('Using default option eps_gain: %.1f' % self.eps_gain)
+
+    @property
+    def use_secondary_steering(self):
+        return self._use_secondary_steering
+
+    @use_secondary_steering.setter
+    def use_secondary_steering(self, value):
+        if type(value) is not bool:
+            raise ValueError("Value of use_secondary_steering must be type bool; {} given.".format(type(value)))
+        self._use_secondary_steering = value
 
     def function(self, x_locations, y_locations, z_locations, turbine, coord, flow_field):
         # TODO: update docstring
@@ -365,11 +375,11 @@ class GaussCurlHybrid(WakeDeflection):
         D = turbine.rotor_diameter
 
         # GCH CODE
-        if self.use_ss:
+        # NOTE opposite sign convention in this model
+        if self.use_secondary_steering:
             # determine the effective yaw angle
             yaw_effective = self.effective_yaw(x_locations, y_locations, z_locations, coord, turbine, flow_field)
-            yaw = -turbine.yaw_angle  - yaw_effective # opposite sign convention in this model
-            print('Effective yaw angle = ', yaw_effective, turbine.yaw_angle)
+            yaw = -(turbine.yaw_angle + yaw_effective)
         else:
             yaw = -turbine.yaw_angle
 
