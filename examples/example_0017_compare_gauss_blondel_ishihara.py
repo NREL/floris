@@ -1,15 +1,14 @@
 # Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
-
-# See read the https://floris.readthedocs.io for documentation
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 import matplotlib.pyplot as plt
 import floris.tools as wfct
@@ -54,10 +53,11 @@ fi.calculate_wake(yaw_angles=si.yaw_angles)
 fi_b = wfct.floris_interface.FlorisInterface("example_input.json")
 fi_b.floris.farm.set_wake_model('blondel')
 
-fi_b.reinitialize_flow_field(wind_speed=[si.precursor_wind_speed - wind_speed_mod],
-                           wind_direction=[si.precursor_wind_dir],
-                           layout_array=(si.layout_x, si.layout_y)
-                           )
+fi_b.reinitialize_flow_field(
+                        wind_speed=[si.precursor_wind_speed - wind_speed_mod],
+                        wind_direction=[si.precursor_wind_dir],
+                        layout_array=(si.layout_x, si.layout_y)
+                        )
 
 fi_b.calculate_wake(yaw_angles=si.yaw_angles)      
 
@@ -65,10 +65,11 @@ fi_b.calculate_wake(yaw_angles=si.yaw_angles)
 fi_iq = wfct.floris_interface.FlorisInterface("example_input.json")
 fi_iq.floris.farm.set_wake_model('ishihara')
 
-fi_iq.reinitialize_flow_field(wind_speed=[si.precursor_wind_speed - wind_speed_mod],
-                           wind_direction=[si.precursor_wind_dir],
-                           layout_array=(si.layout_x, si.layout_y)
-                           )
+fi_iq.reinitialize_flow_field(
+                        wind_speed=[si.precursor_wind_speed - wind_speed_mod],
+                        wind_direction=[si.precursor_wind_dir],
+                        layout_array=(si.layout_x, si.layout_y)
+                        )
 
 fi_iq.calculate_wake(yaw_angles=si.yaw_angles)  
 
@@ -138,6 +139,7 @@ print('Ishihara-Qian turbine powers: ', fi_iq.get_turbine_power())
 
 print('Gauss turbine avg ws: ', fi.floris.farm.turbines[0].average_velocity)
 print('Blondel turbine avg ws: ', fi_b.floris.farm.turbines[0].average_velocity)
-print('Ishihara-Qian turbine avg ws: ', fi_iq.floris.farm.turbines[0].average_velocity)
+print('Ishihara-Qian turbine avg ws: ',
+      fi_iq.floris.farm.turbines[0].average_velocity)
 
 plt.show()
