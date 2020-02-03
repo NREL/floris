@@ -14,8 +14,12 @@ from ...utilities import cosd, sind, tand
 from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 from scipy.special import gamma
-import logging
+import coloredlogs, logging
 
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='WARNING', logger=logger,
+                    level_styles={'warning': {'color': 'red', 'bold': False}},
+                    fmt='%(name)s %(levelname)s %(message)s')
 
 class Blondel(VelocityDeficit):
     """
@@ -137,7 +141,7 @@ class Blondel(VelocityDeficit):
         else:
             raise ValueError("Invalid value given for a_s: {}".format(value))
         if value != 0.3837:
-            logging.warning("Current value of a_s, {}, is not equal to tuned " +
+            logger.warning("Current value of a_s, {}, is not equal to tuned " +
                             "value of 0.3837.".format(value))
 
     @property
