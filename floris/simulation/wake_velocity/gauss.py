@@ -108,6 +108,40 @@ class Gauss(VelocityDeficit):
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
+        """
+        Using the Gaussian wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified
+        turbine, relative to the freestream velocities at the grid of
+        points comprising the wind farm flow field.
+        Args:
+            x_locations: An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
+                domain (m).
+            y_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the direction
+                normal to x and parallel to the ground (m).
+            z_locations: An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
+                direction (m).
+            turbine: A :py:obj:`floris.simulation.turbine` object that
+                represents the turbine creating the wake.
+            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
+                containing the coordinate of the turbine creating the
+                wake (m).
+            deflection_field: An array of floats that contains the
+                amount of wake deflection in meters in the y direction
+                at each grid point of the flow field.
+            flow_field: A :py:class:`floris.simulation.flow_field` 
+                object containing the flow field information for the 
+                wind farm.
+        Returns:
+            Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the
+            freestream velocities for the u, v, and w components,
+            aligned with the x, y, and z directions, respectively. The
+            three arrays contain the velocity deficits at each grid
+            point in the flow field.
+        """
         
         # veer (degrees)
         veer = flow_field.wind_veer
