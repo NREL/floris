@@ -415,17 +415,12 @@ class Curl(VelocityDeficit):
     @model_grid_resolution.setter
     def model_grid_resolution(self, value):
         #TODO: add checker to make sure resolution is high enough
-        if type(value) is list and len(list) == 3 and \
-                            all(type(val) is float for val in value) is True:
+        if type(value) is Vec3:
             self._model_grid_resolution = value
-        elif type(value) is list and len(me) == 3 and \
-                            all(type(val) is float for val in value) is False:
-            self._model_grid_resolution = [float(val) for val in value]
         elif value is None:
             self._model_grid_resolution = None
         else:
-            raise ValueError('Invalid value given for \
-                              model_grid_resolution: {}'.format(value))
+            raise ValueError('Invalid value given for model_grid_resolution: {}'.format(value))
 
     @property
     def initial_deficit(self):

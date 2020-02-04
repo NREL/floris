@@ -182,8 +182,6 @@ def test_regression_gch():
     correction enabled
     """
     test_class = GaussRegressionTest()
-    test_class.input_dict["wake"]["properties"]["velocity_model"] = "gauss_curl_hybrid"
-    test_class.input_dict["wake"]["properties"]["deflection_model"] = "gauss_curl_hybrid"
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.set_yaw_angles([5.0, 0.0, 0.0])
 
@@ -220,8 +218,6 @@ def test_regression_yaw_added_recovery():
     correction enabled
     """
     test_class = GaussRegressionTest()
-    test_class.input_dict["wake"]["properties"]["velocity_model"] = "gauss_curl_hybrid"
-    test_class.input_dict["wake"]["properties"]["deflection_model"] = "gauss_curl_hybrid"
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.set_yaw_angles([5.0, 0.0, 0.0])
 
@@ -258,8 +254,6 @@ def test_regression_secondary_steering():
     correction enabled
     """
     test_class = GaussRegressionTest()
-    test_class.input_dict["wake"]["properties"]["velocity_model"] = "gauss_curl_hybrid"
-    test_class.input_dict["wake"]["properties"]["deflection_model"] = "gauss_curl_hybrid"
     floris = Floris(input_dict=test_class.input_dict)
     floris.farm.set_yaw_angles([5.0, 0.0, 0.0])
 

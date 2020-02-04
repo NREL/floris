@@ -67,7 +67,7 @@ class VelocityDeficit():
         if 'use_yaw_added_recovery' in self.parameter_dictionary:
             self.use_yaw_added_recovery = bool(self.parameter_dictionary["use_yaw_added_recovery"])
             if self.use_yaw_added_recovery == True:
-                self.calc_VW = True
+                self.calculate_VW_velocities = True
         else:
             # TODO: introduce logging
             print('Using default option of not applying added yaw-added ' +
@@ -114,7 +114,7 @@ class VelocityDeficit():
         """
         # TODO
         """
-        if self.calc_VW:
+        if self.calculate_VW_velocities:
             V, W = self.calc_VW(coord, turbine, flow_field,
                                      x_locations, y_locations, z_locations)
         return V, W
@@ -134,7 +134,7 @@ class VelocityDeficit():
         D = turbine.rotor_diameter
 
         numerator = -1 * W * xLocs * np.abs(yLocs)
-        denom = np.pi * (self.yaw_rec_alpha * xLocs + D/2) ** 2
+        denom = np.pi * (self.yaw_recovery_alpha * xLocs + D/2) ** 2
         U2 = numerator / denom
 
         # add velocity modification from yaw (U2)
@@ -299,22 +299,6 @@ class VelocityDeficit():
 
         return V, W
 
-    # def function(self, x_locations, y_locations, z_locations, turbine,
-    #              turbine_coord, deflection_field, flow_field):
-    #     """
-    #     Implement the velocity deficit model
-    #     """
-
-    #     V, W = self.calculateVW(x_locations, y_locations, z_locations,
-    #                             turbine, turbine_coord, flow_field)
-    #     U = flow_field.u_initial
-
-    #     if self.use_yar:
-    #         U = self.yaw_added_recovery_correction(U, U, W, x_locations,
-    #                                      y_locations, turbine, turbine_coord)
-
-    #     return U, V, W
-
     @property
     def calculate_VW_velocities(self):
         return self._calculate_VW_velocities
@@ -336,17 +320,6 @@ class VelocityDeficit():
             raise ValueError("Value of use_yaw_added_recovery must be type " +
                              "bool; {} given.".format(type(value)))
         self._use_yaw_added_recovery = value
-
-    @property
-    def yaw_recovery_alpha(self):
-        return self._yaw_recovery_alpha
-
-    @yaw_recovery_alpha.setter
-    def yaw_recovery_alpha(self, value):
-        if type(value) is not float:
-            raise ValueError("Value of yaw_recovery_alpha must be type " +
-                             "float; {} given.".format(type(value)))
-        self._yaw_recovery_alpha = value
 
     @property
     def yaw_recovery_alpha(self):

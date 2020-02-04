@@ -201,10 +201,10 @@ class MultiZone(VelocityDeficit):
 
     @me.setter
     def me(self, value):
-        if type(value) is list and len(me) == 3 and \
+        if type(value) is list and len(value) == 3 and \
                             all(type(val) is float for val in value) is True:
             self._me = value
-        elif type(value) is list and len(me) == 3 and \
+        elif type(value) is list and len(value) == 3 and \
                             all(type(val) is float for val in value) is False:
             self._me = [float(val) for val in value]
         else:
@@ -298,10 +298,10 @@ class MultiZone(VelocityDeficit):
 
     @mU.setter
     def mU(self, value):
-        if type(value) is list and len(mU) == 3 and \
+        if type(value) is list and len(value) == 3 and \
                             all(type(val) is float for val in value) is True:
             self._mU = value
-        elif type(value) is list and len(mU) == 3 and \
+        elif type(value) is list and len(value) == 3 and \
                             all(type(val) is float for val in value) is False:
             self._mU = [float(val) for val in value]
         else:
