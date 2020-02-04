@@ -949,12 +949,12 @@ class GaussCurlHybrid(WakeVelocity):
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
 
-        if 'use_yar' in model_dictionary:
-            self.use_yar = bool(model_dictionary["use_yar"])
+        if 'use_yaw_added_recovery' in model_dictionary:
+            self.use_yaw_added_recovery = bool(model_dictionary["use_yaw_added_recovery"])
         else:
             # TODO: introduce logging
-            print('Using default option of not applying added yaw-added recovery (use_yar=False)')
-            self.use_yar = False
+            print('Using default option of not applying added yaw-added recovery (use_yaw_added_recovery=False)')
+            self.use_yaw_added_recovery = False
 
         if 'yaw_rec_alpha' in model_dictionary:
             self.yaw_rec_alpha = bool(model_dictionary["yaw_rec_alpha"])
@@ -969,6 +969,16 @@ class GaussCurlHybrid(WakeVelocity):
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied by D in function)
             # TODO: introduce logging
             print('Using default option eps_gain: %.1f' % self.eps_gain)
+
+    @property
+    def use_yaw_added_recovery(self):
+        return self._use_yaw_added_recovery
+
+    @use_yaw_added_recovery.setter
+    def use_yaw_added_recovery(self, value):
+        if type(value) is not bool:
+            raise ValueError("Value of use_yaw_added_recovery must be type bool; {} given.".format(type(value)))
+        self._use_yaw_added_recovery = value
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
@@ -1094,11 +1104,13 @@ class GaussCurlHybrid(WakeVelocity):
 
         U = np.sqrt(velDef**2 + velDef1**2)
 
-        # compute the spanwise and vertical velocity components
-        V, W = self._velocity_components(turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations)
+        if not self.use_yaw_added_recovery:
+            return U, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
-        # If indicated, include the added yaw recovery option
-        if self.use_yar:
+        else:
+            # If indicated, include the added yaw recovery option
+            # compute the spanwise and vertical velocity components
+            V, W = self._velocity_components(turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations)
 
             # compute the velocity without modification
             U1 = U_local - U
@@ -1122,7 +1134,7 @@ class GaussCurlHybrid(WakeVelocity):
             # zero out anything before the turbine
             U[x_locations < turbine_coord.x1] = 0
 
-        return U, V, W
+            return U, V, W
 
     def _velocity_components(self, coord, turbine, flow_field, x_locations, y_locations, z_locations):
 
