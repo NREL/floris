@@ -33,14 +33,16 @@ class JensenJimenezRegressionTest():
     def baseline(self, turbine_index):
         baseline = [
             (0.4632706, 0.7655828, 1793661.6494183, 0.2579167, 7.9736330),
-            (0.4553179, 0.8273480,  807133.4600243, 0.2922430, 6.1456034)
+            (0.4553179, 0.8273480,  807133.4600243, 0.2922430, 6.1456034),
+            (0.4494880, 0.8498521, 622820.0654135, 0.3062554, 5.6611213)
         ]
         return baseline[turbine_index]
 
     def yawed_baseline(self, turbine_index):
         baseline = [
             (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
-            (0.4554894, 0.8266861, 813067.4207660, 0.2918451, 6.1598540)
+            (0.4554894, 0.8266861, 813067.4207660, 0.2918451, 6.1598540),
+            (0.4495612, 0.8495696, 624931.5642086, 0.3060732, 5.6672040)
         ]
         return baseline[turbine_index]
 
@@ -72,29 +74,38 @@ def test_regression_rotation():
     floris = Floris(input_dict=test_class.input_dict)
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
     wind_map = floris.farm.wind_map
-    
+ 
     ### unrotated
     floris.farm.flow_field.calculate_wake()
     turbine = floris.farm.turbine_map.turbines[0]
-    unwaked_baseline = (turbine.Cp, turbine.Ct, turbine.power,
-                        turbine.aI, turbine.average_velocity)
+    unwaked_baseline = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
     turbine = floris.farm.turbine_map.turbines[1]
-    waked_baseline = (turbine.Cp, turbine.Ct, turbine.power,
-                      turbine.aI, turbine.average_velocity)
+    first_waked_baseline = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+    turbine = floris.farm.turbine_map.turbines[2]
+    second_waked_baseline = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
 
     ### rotated
     wind_map.input_direction = [360]
     wind_map.calculate_wind_direction()
     new_map = TurbineMap(
-        [0.0, 0.0],
-        [5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"], 0.0],
-        [copy.deepcopy(fresh_turbine), copy.deepcopy(fresh_turbine)]
+        [0.0, 0.0, 0.0],
+        [
+            10 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"],
+            5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"],
+            0.0,
+        ],
+        [
+            copy.deepcopy(fresh_turbine),
+            copy.deepcopy(fresh_turbine),
+            copy.deepcopy(fresh_turbine)
+        ]
     )
     floris.farm.flow_field.reinitialize_flow_field(
-        wind_map = wind_map,
-        turbine_map=new_map
+        turbine_map=new_map,
+        wind_map=wind_map
     )
     floris.farm.flow_field.calculate_wake()
+
     turbine = floris.farm.turbine_map.turbines[0]
     assert pytest.approx(turbine.Cp) == unwaked_baseline[0]
     assert pytest.approx(turbine.Ct) == unwaked_baseline[1]
@@ -103,11 +114,18 @@ def test_regression_rotation():
     assert pytest.approx(turbine.average_velocity) == unwaked_baseline[4]
 
     turbine = floris.farm.turbine_map.turbines[1]
-    assert pytest.approx(turbine.Cp) == waked_baseline[0]
-    assert pytest.approx(turbine.Ct) == waked_baseline[1]
-    assert pytest.approx(turbine.power) == waked_baseline[2]
-    assert pytest.approx(turbine.aI) == waked_baseline[3]
-    assert pytest.approx(turbine.average_velocity) == waked_baseline[4]
+    assert pytest.approx(turbine.Cp) == first_waked_baseline[0]
+    assert pytest.approx(turbine.Ct) == first_waked_baseline[1]
+    assert pytest.approx(turbine.power) == first_waked_baseline[2]
+    assert pytest.approx(turbine.aI) == first_waked_baseline[3]
+    assert pytest.approx(turbine.average_velocity) == first_waked_baseline[4]
+
+    turbine = floris.farm.turbine_map.turbines[2]
+    assert pytest.approx(turbine.Cp) == second_waked_baseline[0]
+    assert pytest.approx(turbine.Ct) == second_waked_baseline[1]
+    assert pytest.approx(turbine.power) == second_waked_baseline[2]
+    assert pytest.approx(turbine.aI) == second_waked_baseline[3]
+    assert pytest.approx(turbine.average_velocity) == second_waked_baseline[4]
 
 
 def test_regression_yaw():

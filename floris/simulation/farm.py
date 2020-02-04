@@ -72,7 +72,6 @@ class Farm():
         layout_y = properties["layout_y"]
         wind_x = properties["wind_x"]
         wind_y = properties["wind_y"]
-        self.wake = wake
 
         self.wind_map = WindMap(
             wind_speed=properties["wind_speed"],
@@ -125,6 +124,7 @@ class Farm():
             'curl', 'gauss', 'ishihara', 'jensen', 'multizone', 'blondel'
         ]
         if wake_model not in valid_wake_models:
+            # TODO: logging
             raise Exception(
                 "Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models))
             )
@@ -185,7 +185,7 @@ class Farm():
         Examples:
             To get the wind speed for the wind farm:
 
-            >>> wind_speed = floris.farm.wind_speed()
+            >>> wind_speed = floris.farm.wind_speed
         """
         return self.wind_map.turbine_wind_speed
 
@@ -201,7 +201,7 @@ class Farm():
         Examples:
             To get the wind direction for the wind farm:
 
-            >>> wind_direction = floris.farm.wind_direction()
+            >>> wind_direction = floris.farm.wind_direction
         """
         return self.wind_map.turbine_wind_direction
 
@@ -218,7 +218,7 @@ class Farm():
         Examples:
             To get the wind shear for the wind farm:
 
-            >>> wind_shear = floris.farm.wind_shear()
+            >>> wind_shear = floris.farm.wind_shear
         """
         return self.flow_field.wind_shear
 
@@ -235,7 +235,7 @@ class Farm():
         Examples:
             To get the wind veer for the wind farm:
 
-            >>> wind_veer = floris.farm.wind_veer()
+            >>> wind_veer = floris.farm.wind_veer
         """
         return self.flow_field.wind_veer
 
@@ -252,7 +252,7 @@ class Farm():
         Examples:
             To get the turbulence intensity for the wind farm:
 
-            >>> TI = floris.farm.turbulence_intensity()
+            >>> TI = floris.farm.turbulence_intensity
         """
         return self.wind_map.turbine_turbulence_intensity
 
@@ -267,7 +267,7 @@ class Farm():
         Examples:
             To get the air density for the wind farm:
 
-            >>> air_density = floris.farm.air_density()
+            >>> air_density = floris.farm.air_density
         """
         return self.flow_field.air_density
 
@@ -285,7 +285,7 @@ class Farm():
         Examples:
             To get the wind map for the wind farm:
 
-            >>> wind_map = floris.farm.wind_map()
+            >>> wind_map = floris.farm.wind_map
         """
 
         return self._wind_map
@@ -308,7 +308,7 @@ class Farm():
         Examples:
             To get the turbine map for the wind farm:
 
-            >>> turbine_map = floris.farm.turbine_map()
+            >>> turbine_map = floris.farm.turbine_map
         """
         return self.flow_field.turbine_map
 
@@ -326,6 +326,24 @@ class Farm():
         Examples:
             To get a list of turbine objects from the wind farm:
 
-            >>> turbines = floris.farm.turbines()
+            >>> turbines = floris.farm.turbines
         """
         return self.turbine_map.turbines
+
+    @property
+    def wake(self):
+        """
+        This property returns the :py:obj:`floris.simulation.wake` object
+        contained in the :py:obj:`floris.simulation.flow_field` object. It
+        is intended to reduce the depth of the object-hierachy required to
+        modify the wake models from a script.
+
+        Returns:
+            Wake: A :py:obj:`floris.simulation.wake` object.
+
+        Examples:
+            To access and modify the wake model:
+
+            >>> floris.farm.wake.model = "another_model
+        """
+        return self.flow_field.wake
