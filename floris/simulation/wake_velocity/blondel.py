@@ -10,16 +10,13 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind, tand
+from ...utilities import cosd, sind, tand, setup_logger
 from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 from scipy.special import gamma
-import coloredlogs, logging
 
-logger = logging.getLogger(__name__)
-coloredlogs.install(level='WARNING', logger=logger,
-                    level_styles={'warning': {'color': 'red', 'bold': False}},
-                    fmt='%(name)s %(levelname)s %(message)s')
+
+logger = setup_logger(name=__name__)
 
 class Blondel(VelocityDeficit):
     """
@@ -50,15 +47,15 @@ class Blondel(VelocityDeficit):
 
         # wake expansion parameters
         # Table 2 of reference in docstring
-        self.a_s = float(model_dictionary["a_s"])
-        self.b_s = float(model_dictionary["b_s"])
-        self.c_s = float(model_dictionary["c_s"])
+        self.a_s = model_dictionary["a_s"]
+        self.b_s = model_dictionary["b_s"]
+        self.c_s = model_dictionary["c_s"]
 
         # fitted parameters for super-Gaussian order n
         # Table 3 of reference in docstring
-        self.a_f = float(model_dictionary["a_f"])
-        self.b_f = float(model_dictionary["b_f"])
-        self.c_f = float(model_dictionary["c_f"])
+        self.a_f = model_dictionary["a_f"]
+        self.b_f = model_dictionary["b_f"]
+        self.c_f = model_dictionary["c_f"]
 
         self.model_grid_resolution = None
 
@@ -104,8 +101,9 @@ class Blondel(VelocityDeficit):
         # Calculate max vel def (Eq 5, pp 4 of ref. in docstring)
         a1 = 2**(2/n-1)
         a2 = 2**(4/n-2)
-        C = a1 - np.sqrt(a2 - ((n*Ct) * cosd(yaw)
-                / (16.0 * gamma(2/n) * sigma_tilde**(4/n) )))
+        C = a1 - np.sqrt(a2 - ((n*Ct) * cosd(yaw) \
+                / (16.0 * gamma(2/n) \
+                * np.sign(sigma_tilde)*(np.abs(sigma_tilde)**(4/n)) )))
 
         # Compute wake velocity (Eq 1, pp 3 of ref. in docstring)
         velDef1 = U_local * C * \
@@ -134,12 +132,13 @@ class Blondel(VelocityDeficit):
 
     @a_s.setter
     def a_s(self, value):
-        if type(value) is float:
-            self._a_s = value
-        elif type(value) is int:
-            self._a_s = float(value)
-        else:
-            raise ValueError("Invalid value given for a_s: {}".format(value))
+        if type(value) is not float:
+            err_msg = "Invalid value given for a_s: {}".format(value)
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+
+        self._a_s = value
+
         if value != 0.3837:
             logger.warning("Current value of a_s, {}, is not equal to tuned " +
                             "value of 0.3837.".format(value))
@@ -168,9 +167,11 @@ class Blondel(VelocityDeficit):
         elif type(value) is int:
             self._b_s = float(value)
         else:
-            raise ValueError("Invalid value given for b_s: {}".format(value))
+            err_msg = "Invalid value given for b_s: {}".format(value)
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         if value != 0.003678:
-            logging.warning("Current value of b_s, {}, is not equal to tuned " +
+            logger.warning("Current value of b_s, {}, is not equal to tuned " +
                             "value of 0.003678.".format(value))
     
     @property
@@ -191,14 +192,16 @@ class Blondel(VelocityDeficit):
 
     @c_s.setter
     def c_s(self, value):
-        if type(value) is float:
+        if type(value) is not float:
             self._c_s = value
         elif type(value) is int:
             self._c_s = float(value)
         else:
-            raise ValueError("Invalid value given for c_s: {}".format(value))
+            err_msg = "Invalid value given for c_s: {}".format(value)
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         if value != 0.2:
-            logging.warning("Current value of c_s, {}, is not equal to tuned " +
+            logger.warning("Current value of c_s, {}, is not equal to tuned " +
                             "value of 0.2.".format(value))
 
     @property
@@ -226,9 +229,11 @@ class Blondel(VelocityDeficit):
         elif type(value) is int:
             self._a_f = float(value)
         else:
-            raise ValueError("Invalid value given for a_f: {}".format(value))
+            err_msg = "Invalid value given for a_f: {}".format(value)
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         if value != 3.11:
-            logging.warning("Current value of a_f, {}, is not equal to tuned " +
+            logger.warning("Current value of a_f, {}, is not equal to tuned " +
                             "value of 3.11.".format(value))
 
     @property
@@ -256,9 +261,11 @@ class Blondel(VelocityDeficit):
         elif type(value) is int:
             self._b_f = float(value)
         else:
-            raise ValueError("Invalid value given for b_f: {}".format(value))
+            err_msg = "Invalid value given for b_f: {}".format(value)
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         if value != -0.68:
-            logging.warning("Current value of b_f, {}, is not equal to tuned " +
+            logger.warning("Current value of b_f, {}, is not equal to tuned " +
                             "value of -0.68.".format(value))
 
     @property
@@ -284,7 +291,9 @@ class Blondel(VelocityDeficit):
         elif type(value) is int:
             self._c_f = float(value)
         else:
-            raise ValueError("Invalid value given for c_f: {}".format(value))
+            err_msg = "Invalid value given for c_f: {}".format(value)
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         if value != 2.41:
-            logging.warning("Current value of c_f, {}, is not equal to tuned " +
+            logger.warning("Current value of c_f, {}, is not equal to tuned " +
                             "value of 2.41.".format(value))

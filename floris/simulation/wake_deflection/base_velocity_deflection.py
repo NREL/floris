@@ -26,15 +26,16 @@ class VelocityDeflection():
 
         self.parameter_dictionary = parameter_dictionary
 
-        if 'use_ss' in self.parameter_dictionary:
-            self.use_ss = bool(self.parameter_dictionary["use_ss"])
+        if 'use_secondary_steering' in self.parameter_dictionary:
+            self.use_secondary_steering = \
+                bool(self.parameter_dictionary["use_secondary_steering"])
         else:
             # TODO: introduce logging
             print(
                 'Using default option of not applying gch-based secondary ' + 
-                'steering (use_ss=False)'
+                'steering (use_secondary_steering=False)'
             )
-            self.use_ss = False
+            self.use_secondary_steering = False
 
         if 'eps_gain' in self.parameter_dictionary:
             self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
@@ -46,15 +47,15 @@ class VelocityDeflection():
 
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
-            raise KeyError("The {} wake model was".format(self.model_string) +
-                " instantiated but the model parameters were not found in the" +
-                " input file or dictionary under" +
-                " 'wake.properties.parameters.{}'.".format(self.model_string))
+            raise KeyError("The {} wake model was ".format(self.model_string) +
+                "instantiated but the model parameters were not found in the " +
+                "input file or dictionary under " +
+                "'wake.properties.parameters.{}'.".format(self.model_string))
         return self.parameter_dictionary[self.model_string]
 
     def calculate_effective_yaw_angle(self, x_locations, y_locations,
                                       z_locations, turbine, coord, flow_field):
-        if self.use_ss:
+        if self.use_secondary_steering:
             # turbine parameters
             Ct = turbine.Ct
             D = turbine.rotor_diameter
@@ -107,3 +108,25 @@ class VelocityDeflection():
 
         else:
             return turbine.yaw_angle
+
+    @property
+    def use_secondary_steering(self):
+        return self._use_secondary_steering
+
+    @use_secondary_steering.setter
+    def use_secondary_steering(self, value):
+        if type(value) is not bool:
+            raise ValueError("Value of use_secondary_steering must be type " +
+                             "bool; {} given.".format(type(value)))
+        self._use_secondary_steering = value
+    
+    @property
+    def eps_gain(self):
+        return self._eps_gain
+
+    @eps_gain.setter
+    def eps_gain(self, value):
+        if type(value) is not float:
+            raise ValueError("Value of eps_gain must be type " +
+                             "float; {} given.".format(type(value)))
+        self._eps_gain = value

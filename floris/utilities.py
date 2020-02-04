@@ -11,7 +11,8 @@
 
 import numpy as np
 from scipy.stats import norm
-
+import coloredlogs, logging
+from datetime import datetime
 
 class Vec3():
     def __init__(self, x1, x2=None, x3=None, string_format=None):
@@ -267,3 +268,56 @@ def calc_unc_pmfs(unc_options=None):
 
     return {'wd_unc': wd_unc, 'wd_unc_pmf': wd_unc_pmf, \
                 'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
+
+def setup_logger(name):
+    logger = logging.getLogger(name)
+    level = 'WARNING'
+    level_styles = {'warning': {'color': 'red', 'bold': False}}
+    fmt_console = '%(name)s %(levelname)s %(message)s'
+    fmt_file = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+    file_name = 'floris_{:%Y-%m-%d-%H_%M_%S}.log'.format(datetime.now())
+
+    console_handler = logging.StreamHandler()
+    file_handler = logging.FileHandler(file_name, 'w+')
+    console_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.INFO)
+
+    console_format = coloredlogs.ColoredFormatter(
+                        level_styles=level_styles,
+                        fmt=fmt_console
+    )
+    file_format = logging.Formatter(fmt_file)
+
+    console_handler.setFormatter(console_format)
+    file_handler.setFormatter(file_format)
+
+    console_handler.addFilter(TracebackInfoFilter(clear=True))
+    file_handler.addFilter(TracebackInfoFilter(clear=False))
+    
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    return logger
+
+class TracebackInfoFilter(logging.Filter):
+    """Clear or restore the exception on log records"""
+    def __init__(self, clear=True):
+        self.clear = clear
+    def filter(self, record):
+        if self.clear:
+
+            # record._exc_info_hidden, record.exc_info = record.exc_info, None
+            # clear the exception traceback text cache, if created.
+            # record.exc_text = None
+
+            record._stack_info_hidden, record.stack_info = \
+                                                        record.stack_info, None
+        # elif hasattr(record, "_exc_info_hidden"):
+        #     record.exc_info = record._exc_info_hidden
+        #     del record._exc_info_hidden
+
+        elif hasattr(record, "_stack_info_hidden"):
+            record.stack_info = record._stack_info_hidden
+            del record._stack_info_hidden
+        return True

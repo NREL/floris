@@ -55,22 +55,33 @@ class VelocityDeficit():
         self.model_grid_resolution = None
         self.parameter_dictionary = parameter_dictionary
 
-        if 'use_yar' in self.parameter_dictionary:
-            self.use_yar = bool(self.parameter_dictionary["use_yar"])
+        if 'calculate_VW_velocities' in self.parameter_dictionary:
+            self.calculate_VW_velocities = \
+                bool(self.parameter_dictionary["calculate_VW_velocities"])
+        else:
+            # TODO: introduce logging
+            print('Using default option of not calculating V and W velocity ' +
+                  'components (calculate_VW_velocities=False)')
+            self.calculate_VW_velocities = False
+
+        if 'use_yaw_added_recovery' in self.parameter_dictionary:
+            self.use_yaw_added_recovery = bool(self.parameter_dictionary["use_yaw_added_recovery"])
+            if self.use_yaw_added_recovery == True:
+                self.calc_VW = True
         else:
             # TODO: introduce logging
             print('Using default option of not applying added yaw-added ' +
-                  'recovery (use_yar=False)')
-            self.use_yar = False
+                  'recovery (use_yaw_added_recovery=False)')
+            self.use_yaw_added_recovery = False
 
-        if 'yaw_rec_alpha' in self.parameter_dictionary:
-            self.yaw_rec_alpha = \
-                            bool(self.parameter_dictionary["yaw_rec_alpha"])
+        if 'yaw_recovery_alpha' in self.parameter_dictionary:
+            self.yaw_recovery_alpha = \
+                bool(self.parameter_dictionary["yaw_recovery_alpha"])
         else:
-            self.yaw_rec_alpha = 0.03
+            self.yaw_recovery_alpha = 0.03
             # TODO: introduce logging
-            print('Using default option yaw_rec_alpha: %.2f' \
-                  % self.yaw_rec_alpha)
+            print('Using default option yaw_recovery_alpha: %.2f' \
+                  % self.yaw_recovery_alpha)
 
         if 'eps_gain' in self.parameter_dictionary:
             self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
@@ -93,10 +104,20 @@ class VelocityDeficit():
         """
         TODO
         """
-        if self.use_yar:
-            U, V, W = self.yaw_added_recovery_correction(U_local, U, W, \
+        if self.use_yaw_added_recovery:
+            U = self.yaw_added_recovery_correction(U_local, U, W, \
                             x_locations, y_locations, turbine, turbine_coord)
-        return U, V, W
+        return U
+
+    def calculate_VW(self, V, W, coord, turbine, flow_field,
+                                x_locations, y_locations, z_locations):
+        """
+        # TODO
+        """
+        if self.calc_VW:
+            V, W = self.calc_VW(coord, turbine, flow_field,
+                                     x_locations, y_locations, z_locations)
+        return V, W
 
     def yaw_added_recovery_correction(self, U_local, U, W, x_locations,
                                       y_locations, turbine, turbine_coord):
@@ -128,7 +149,7 @@ class VelocityDeficit():
 
         return U
 
-    def calculate_VW(self, coord, turbine, flow_field, x_locations, y_locations,
+    def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
                      z_locations):
 
         # turbine parameters
@@ -293,3 +314,60 @@ class VelocityDeficit():
     #                                      y_locations, turbine, turbine_coord)
 
     #     return U, V, W
+
+    @property
+    def calculate_VW_velocities(self):
+        return self._calculate_VW_velocities
+
+    @calculate_VW_velocities.setter
+    def calculate_VW_velocities(self, value):
+        if type(value) is not bool:
+            raise ValueError("Value of calculate_VW_velocities must be type " +
+                             "bool; {} given.".format(type(value)))
+        self._calculate_VW_velocities = value
+
+    @property
+    def use_yaw_added_recovery(self):
+        return self._use_yaw_added_recovery
+
+    @use_yaw_added_recovery.setter
+    def use_yaw_added_recovery(self, value):
+        if type(value) is not bool:
+            raise ValueError("Value of use_yaw_added_recovery must be type " +
+                             "bool; {} given.".format(type(value)))
+        self._use_yaw_added_recovery = value
+
+    @property
+    def yaw_recovery_alpha(self):
+        return self._yaw_recovery_alpha
+
+    @yaw_recovery_alpha.setter
+    def yaw_recovery_alpha(self, value):
+        if type(value) is not float:
+            raise ValueError("Value of yaw_recovery_alpha must be type " +
+                             "float; {} given.".format(type(value)))
+        self._yaw_recovery_alpha = value
+
+    @property
+    def yaw_recovery_alpha(self):
+        return self._yaw_recovery_alpha
+
+    @yaw_recovery_alpha.setter
+    def yaw_recovery_alpha(self, value):
+        if type(value) is not float:
+            raise ValueError("Value of yaw_recovery_alpha must be type " + \
+                             "float; {} given.".format(type(value)))
+        self._yaw_recovery_alpha = value
+
+    @property
+    def eps_gain(self):
+        return self._eps_gain
+
+    @eps_gain.setter
+    def eps_gain(self, value):
+        if type(value) is not float:
+            err_msg = "Value of eps_gain must be type " + \
+                      "float; {} given.".format(type(value))
+            logging.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._eps_gain = value

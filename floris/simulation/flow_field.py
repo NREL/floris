@@ -238,8 +238,21 @@ class FlowField():
             flow_field
         )
 
+        # calculate spanwise and streamwise velocities if needed
+        v_deficit, w_deficit = \
+            self.wake.velocity_model.calculate_VW(
+                v_deficit,
+                w_deficit,
+                coord,
+                turbine,
+                flow_field,
+                x,
+                y,
+                z
+        )
+
         # correction step
-        u_corrected, v_corrected, w_corrected = self.wake.velocity_model.correction_steps(
+        u_corrected = self.wake.velocity_model.correction_steps(
             flow_field.u_initial,
             u_deficit,
             v_deficit,
@@ -249,7 +262,7 @@ class FlowField():
             turbine,
             coord
         )
-        return u_corrected, v_corrected, w_corrected
+        return u_corrected, v_deficit, w_deficit
 
     def _compute_turbine_wake_turbulence(self, ambient_TI, coord_ti,
                                          turbine_coord, turbine):
