@@ -31,11 +31,13 @@ class VelocityDeflection():
                 bool(self.parameter_dictionary["use_secondary_steering"])
         else:
             # TODO: introduce logging
-            print(
-                'Using default option of not applying gch-based secondary ' + 
-                'steering (use_secondary_steering=False)'
-            )
-            self.use_secondary_steering = False
+            logger.info('Using default option of not applying gch-based ' + \
+                        'secondary steering (use_secondary_steering=True)')
+            # print(
+            #     'Using default option of not applying gch-based secondary ' + 
+            #     'steering (use_secondary_steering=True)'
+            # )
+            self.use_secondary_steering = True
 
         if 'eps_gain' in self.parameter_dictionary:
             self.eps_gain = bool(self.parameter_dictionary["eps_gain"])

@@ -11,8 +11,10 @@
 # the License.
 
 import numpy as np
-from ...utilities import cosd, sind, tand
+from ...utilities import cosd, sind, tand, setup_logger
 
+
+logger = setup_logger(name=__name__)
 
 class VelocityDeficit():
     """
@@ -60,19 +62,23 @@ class VelocityDeficit():
                 bool(self.parameter_dictionary["calculate_VW_velocities"])
         else:
             # TODO: introduce logging
-            print('Using default option of not calculating V and W velocity ' +
-                  'components (calculate_VW_velocities=False)')
+            logger.info('Using default option of not calculating V and W ' + \
+                'velocity components (calculate_VW_velocities=False)')
+            # print('Using default option of not calculating V and W velocity ' +
+            #       'components (calculate_VW_velocities=False)')
             self.calculate_VW_velocities = False
 
         if 'use_yaw_added_recovery' in self.parameter_dictionary:
-            self.use_yaw_added_recovery = bool(self.parameter_dictionary["use_yaw_added_recovery"])
-            if self.use_yaw_added_recovery == True:
-                self.calculate_VW_velocities = True
+            # if set to True, self.calculate_VW_velocities also is set to True
+            self.use_yaw_added_recovery = \
+                bool(self.parameter_dictionary["use_yaw_added_recovery"])
         else:
             # TODO: introduce logging
-            print('Using default option of not applying added yaw-added ' +
-                  'recovery (use_yaw_added_recovery=False)')
-            self.use_yaw_added_recovery = False
+            logger.info('Using default option of not applying added ' + \
+                        'yaw-added recovery (use_yaw_added_recovery=True)')
+            # print('Using default option of not applying added yaw-added ' +
+            #       'recovery (use_yaw_added_recovery=True)')
+            self.use_yaw_added_recovery = True
 
         if 'yaw_recovery_alpha' in self.parameter_dictionary:
             self.yaw_recovery_alpha = \
@@ -80,8 +86,10 @@ class VelocityDeficit():
         else:
             self.yaw_recovery_alpha = 0.03
             # TODO: introduce logging
-            print('Using default option yaw_recovery_alpha: %.2f' \
-                  % self.yaw_recovery_alpha)
+            logger.info('Using default option yaw_recovery_alpha: %.2f' \
+                        % self.yaw_recovery_alpha)
+            # print('Using default option yaw_recovery_alpha: %.2f' \
+            #       % self.yaw_recovery_alpha)
 
         if 'eps_gain' in self.parameter_dictionary:
             self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
@@ -89,7 +97,8 @@ class VelocityDeficit():
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied
                                 # by D in function)
             # TODO: introduce logging
-            print('Using default option eps_gain: %.1f' % self.eps_gain)
+            logger.info('Using default option eps_gain: %.1f' % self.eps_gain)
+            # print('Using default option eps_gain: %.1f' % self.eps_gain)
     
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
@@ -306,8 +315,10 @@ class VelocityDeficit():
     @calculate_VW_velocities.setter
     def calculate_VW_velocities(self, value):
         if type(value) is not bool:
-            raise ValueError("Value of calculate_VW_velocities must be type " +
-                             "bool; {} given.".format(type(value)))
+            err_msg = "Value of calculate_VW_velocities must be type " + \
+                      "float; {} given.".format(type(value))
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         self._calculate_VW_velocities = value
 
     @property
@@ -317,9 +328,12 @@ class VelocityDeficit():
     @use_yaw_added_recovery.setter
     def use_yaw_added_recovery(self, value):
         if type(value) is not bool:
-            raise ValueError("Value of use_yaw_added_recovery must be type " +
-                             "bool; {} given.".format(type(value)))
+            err_msg = "Value of use_yaw_added_recovery must be type " + \
+                      "float; {} given.".format(type(value))
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         self._use_yaw_added_recovery = value
+        self.calculate_VW_velocities = self.use_yaw_added_recovery
 
     @property
     def yaw_recovery_alpha(self):
@@ -328,8 +342,10 @@ class VelocityDeficit():
     @yaw_recovery_alpha.setter
     def yaw_recovery_alpha(self, value):
         if type(value) is not float:
-            raise ValueError("Value of yaw_recovery_alpha must be type " + \
-                             "float; {} given.".format(type(value)))
+            err_msg = "Value of yaw_recovery_alpha must be type " + \
+                      "float; {} given.".format(type(value))
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         self._yaw_recovery_alpha = value
 
     @property
@@ -341,6 +357,6 @@ class VelocityDeficit():
         if type(value) is not float:
             err_msg = "Value of eps_gain must be type " + \
                       "float; {} given.".format(type(value))
-            logging.error(err_msg, stack_info=True)
+            logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._eps_gain = value
