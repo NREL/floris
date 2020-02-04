@@ -325,7 +325,7 @@ class GaussCurlHybrid(WakeDeflection):
         if 'dm' in model_dictionary:
             self.deflection_multiplier = float(model_dictionary["dm"])
         else:
-            self.deflection_multiplier = 1.0
+            self.deflection_multiplier = 1.2
             # TODO: introduce logging
             print('Using default gauss deflection multipler of: %.1f' % self.deflection_multiplier)
             

@@ -1094,11 +1094,13 @@ class GaussCurlHybrid(WakeVelocity):
 
         U = np.sqrt(velDef**2 + velDef1**2)
 
-        # compute the spanwise and vertical velocity components
-        V, W = self._velocity_components(turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations)
+        if not self.use_yar:
+            return U, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
-        # If indicated, include the added yaw recovery option
-        if self.use_yar:
+        else:
+            # If indicated, include the added yaw recovery option
+            # compute the spanwise and vertical velocity components
+            V, W = self._velocity_components(turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations)
 
             # compute the velocity without modification
             U1 = U_local - U
@@ -1122,7 +1124,7 @@ class GaussCurlHybrid(WakeVelocity):
             # zero out anything before the turbine
             U[x_locations < turbine_coord.x1] = 0
 
-        return U, V, W
+            return U, V, W
 
     def _velocity_components(self, coord, turbine, flow_field, x_locations, y_locations, z_locations):
 
