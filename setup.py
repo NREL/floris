@@ -40,12 +40,14 @@ REQUIRED = [
     'numpy==1.16.3',
     'pytest>=4',
     'scipy==1.1.0',
+    'coloredlogs==10.0',
 
     # tools
     'h5pyd==0.3.3',
     'pandas==0.24.2',
     'pyproj==2.1.3',
-    'seaborn==0.9.0'
+    'seaborn==0.9.0',
+    'sklearn==0.0'
 ]
 
 # What packages are optional?
