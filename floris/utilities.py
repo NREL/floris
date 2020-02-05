@@ -288,7 +288,7 @@ class LogClass:
         return getattr(self.instance, name)
 
 def setup_logger(name, log_to_console=None):
-    logger = LogClass(log_to_console, log_to_file)
+    # logger = LogClass(log_to_console, log_to_file)
 
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)

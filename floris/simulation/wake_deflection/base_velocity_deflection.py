@@ -32,13 +32,8 @@ class VelocityDeflection():
             self.use_secondary_steering = \
                 bool(self.parameter_dictionary["use_secondary_steering"])
         else:
-            # TODO: introduce logging
-            logger.info('Using default option of not applying gch-based ' + \
+            logger.info('Using default option of applying gch-based ' + \
                         'secondary steering (use_secondary_steering=True)')
-            # print(
-            #     'Using default option of not applying gch-based secondary ' + 
-            #     'steering (use_secondary_steering=True)'
-            # )
             self.use_secondary_steering = True
 
         if 'eps_gain' in self.parameter_dictionary:
@@ -46,15 +41,20 @@ class VelocityDeflection():
         else:
             # SOWFA SETTING (note this will be multiplied by D in function)
             self.eps_gain = 0.3  
-            # TODO: introduce logging
-            print('Using default option eps_gain: %.1f' % self.eps_gain)
+            logger.info(('Using default option eps_gain: %.1f' % self.eps_gain))
 
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
-            raise KeyError("The {} wake model was ".format(self.model_string) +
-                "instantiated but the model parameters were not found in the " +
-                "input file or dictionary under " +
-                "'wake.properties.parameters.{}'.".format(self.model_string))
+            err_msg = "The {} wake model was ".format(self.model_string) + \
+                "instantiated but the model parameters were not found in " + \
+                "the input file or dictionary under " + \
+                "'wake.properties.parameters.{}'.".format(self.model_string)
+            logger.error(err_msg, stack_info=True)
+            raise KeyError(err_msg)
+            # raise KeyError("The {} wake model was ".format(self.model_string) +
+            #     "instantiated but the model parameters were not found in the " +
+            #     "input file or dictionary under " +
+            #     "'wake.properties.parameters.{}'.".format(self.model_string))
         return self.parameter_dictionary[self.model_string]
 
     def calculate_effective_yaw_angle(self, x_locations, y_locations,
@@ -120,8 +120,10 @@ class VelocityDeflection():
     @use_secondary_steering.setter
     def use_secondary_steering(self, value):
         if type(value) is not bool:
-            raise ValueError("Value of use_secondary_steering must be type " +
-                             "bool; {} given.".format(type(value)))
+            err_msg = "Value of use_secondary_steering must be type " + \
+                      "bool; {} given.".format(type(value))
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         self._use_secondary_steering = value
     
     @property
@@ -131,6 +133,8 @@ class VelocityDeflection():
     @eps_gain.setter
     def eps_gain(self, value):
         if type(value) is not float:
-            raise ValueError("Value of eps_gain must be type " +
-                             "float; {} given.".format(type(value)))
+            err_msg = "Value of eps_gain must be type " + \
+                      "float; {} given.".format(type(value))
+            logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         self._eps_gain = value
