@@ -164,7 +164,7 @@ class Blondel(VelocityDeficit):
             err_msg = "Invalid value given for b_s: {}".format(value)
             logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
-            self._b_s = value
+        self._b_s = value
         if value != 0.003678:
             logger.warning("Current value of b_s, {}, is not equal to tuned " +
                             "value of 0.003678.".format(value))
