@@ -74,6 +74,8 @@ class SampleInputs():
                 "combination_model": "sosfs",
                 "parameters": {
                     "wake_velocity_parameters": {
+                        "use_yaw_added_recovery": False,
+                        "use_secondary_steering": False,
                         "jensen": {
                             "we": 0.05
                         },
