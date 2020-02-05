@@ -10,6 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 from ..utilities import Vec3
+from ..utilities import wrap_180
 from .turbine import Turbine
 import numpy as np
 
@@ -94,6 +95,40 @@ class TurbineMap():
         """
         coords = sorted(self._turbine_map_dict, key=lambda coord: coord.x1)
         return [(c, self._turbine_map_dict[c]) for c in coords]
+
+    def number_of_wakes_iec(self, wd):
+        """
+        Returns a dictionary containing the list of turbines in 
+        TurbineMap and the total number of wakes from other turbines 
+        that interact with each turbine for the provided wind 
+        direction. Waked directions are determined using the formula 
+        in Figure A.1 in Annex A of the IEC 61400-12-1:2017 standard. 
+
+        Args:
+            wd (float): Wind direction for determining waked turbines.
+
+        Returns:
+            wake_list: List of Turbine objects and number of upstream 
+            turbines waking them.
+        """
+
+        wake_list =[]
+        for coord0, turbine0 in self.items:
+            other_turbines = [(coord, turbine) for coord,turbine in \
+                self.items if turbine != turbine0]
+            dists = np.array([np.hypot(coord.x1-coord0.x1,coord.x2-coord0.x2)/ \
+                turbine.rotor_diameter for coord,turbine in other_turbines])
+            angles = np.array([np.degrees(np.arctan2(coord.x1-coord0.x1, \
+                coord.x2-coord0.x2)) for coord,turbine in self.items if \
+                turbine != turbine0])
+
+            waked = dists <= 2.
+            waked = waked | ((dists <= 20.) & (np.abs(wrap_180(wd-angles)) \
+                <= 0.5*(1.3*np.degrees(np.arctan(2.5/dists+0.15))+10)))
+
+            wake_list.append((turbine0,waked.sum()))
+        
+        return wake_list
 
     @property
     def turbines(self):
