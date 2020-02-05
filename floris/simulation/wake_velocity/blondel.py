@@ -136,9 +136,7 @@ class Blondel(VelocityDeficit):
             err_msg = "Invalid value given for a_s: {}".format(value)
             logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
-
         self._a_s = value
-
         if value != 0.3837:
             logger.warning("Current value of a_s, {}, is not equal to tuned " +
                             "value of 0.3837.".format(value))
@@ -162,14 +160,11 @@ class Blondel(VelocityDeficit):
 
     @b_s.setter
     def b_s(self, value):
-        if type(value) is float:
-            self._b_s = value
-        elif type(value) is int:
-            self._b_s = float(value)
-        else:
+        if type(value) is not float:
             err_msg = "Invalid value given for b_s: {}".format(value)
             logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
+            self._b_s = value
         if value != 0.003678:
             logger.warning("Current value of b_s, {}, is not equal to tuned " +
                             "value of 0.003678.".format(value))
@@ -193,13 +188,10 @@ class Blondel(VelocityDeficit):
     @c_s.setter
     def c_s(self, value):
         if type(value) is not float:
-            self._c_s = value
-        elif type(value) is int:
-            self._c_s = float(value)
-        else:
             err_msg = "Invalid value given for c_s: {}".format(value)
             logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
+        self._c_s = value
         if value != 0.2:
             logger.warning("Current value of c_s, {}, is not equal to tuned " +
                             "value of 0.2.".format(value))
@@ -224,14 +216,11 @@ class Blondel(VelocityDeficit):
 
     @a_f.setter
     def a_f(self, value):
-        if type(value) is float:
-            self._a_f = value
-        elif type(value) is int:
-            self._a_f = float(value)
-        else:
+        if type(value) is not float:
             err_msg = "Invalid value given for a_f: {}".format(value)
             logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
+        self._a_f = value
         if value != 3.11:
             logger.warning("Current value of a_f, {}, is not equal to tuned " +
                             "value of 3.11.".format(value))
@@ -256,14 +245,11 @@ class Blondel(VelocityDeficit):
 
     @b_f.setter
     def b_f(self, value):
-        if type(value) is float:
-            self._b_f = value
-        elif type(value) is int:
-            self._b_f = float(value)
-        else:
+        if type(value) is not float:
             err_msg = "Invalid value given for b_f: {}".format(value)
             logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
+        self._b_f = value
         if value != -0.68:
             logger.warning("Current value of b_f, {}, is not equal to tuned " +
                             "value of -0.68.".format(value))
@@ -286,14 +272,11 @@ class Blondel(VelocityDeficit):
 
     @c_f.setter
     def c_f(self, value):
-        if type(value) is float:
-            self._c_f = value
-        elif type(value) is int:
-            self._c_f = float(value)
-        else:
+        if type(value) is not float:
             err_msg = "Invalid value given for c_f: {}".format(value)
             logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
+        self._c_f = value
         if value != 2.41:
             logger.warning("Current value of c_f, {}, is not equal to tuned " +
                             "value of 2.41.".format(value))
