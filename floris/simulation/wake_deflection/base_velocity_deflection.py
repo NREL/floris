@@ -11,8 +11,10 @@
 # the License.
 
 import numpy as np
-from ...utilities import cosd, sind, tand
+from ...utilities import cosd, sind, tand, setup_logger
 
+
+logger = setup_logger(name=__name__)
 
 class VelocityDeflection():
     """

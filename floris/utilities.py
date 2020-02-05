@@ -269,34 +269,56 @@ def calc_unc_pmfs(unc_options=None):
     return {'wd_unc': wd_unc, 'wd_unc_pmf': wd_unc_pmf, \
                 'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
 
-def setup_logger(name):
+# class LogClassSingleton():
+
+class __LogClass:
+    def __init__(self, arg):
+        self.val = arg
+
+    def __str__(self):
+        return repr(self) + self.val
+
+class LogClass:
+    instance = None
+    def __init__(self):
+        if LogClass.instance is None:
+            LogClass.instance = __LogClass(arg)
+
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
+
+def setup_logger(name, log_to_console=None):
+    logger = LogClass(log_to_console, log_to_file)
+
     logger = logging.getLogger(name)
-    level = 'WARNING'
-    level_styles = {'warning': {'color': 'red', 'bold': False}}
+    logger.setLevel(logging.DEBUG)
+    # level = 'WARNING'
+    # level_styles = {'warning': {'color': 'red', 'bold': False}}
     fmt_console = '%(name)s %(levelname)s %(message)s'
     fmt_file = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
     file_name = 'floris_{:%Y-%m-%d-%H_%M_%S}.log'.format(datetime.now())
 
-    console_handler = logging.StreamHandler()
-    file_handler = logging.FileHandler(file_name, 'w+')
-    console_handler.setLevel(logging.INFO)
-    file_handler.setLevel(logging.INFO)
+    log_to_console = True
+    if log_to_console:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_format = coloredlogs.ColoredFormatter(
+                            # level_styles=level_styles,
+                            fmt=fmt_console
+        )
+        console_handler.setFormatter(console_format)
+        console_handler.addFilter(TracebackInfoFilter(clear=True))
+        logger.addHandler(console_handler)
 
-    console_format = coloredlogs.ColoredFormatter(
-                        level_styles=level_styles,
-                        fmt=fmt_console
-    )
-    file_format = logging.Formatter(fmt_file)
-
-    console_handler.setFormatter(console_format)
-    file_handler.setFormatter(file_format)
-
-    console_handler.addFilter(TracebackInfoFilter(clear=True))
-    file_handler.addFilter(TracebackInfoFilter(clear=False))
-    
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
+    log_to_file = False
+    if log_to_file:
+        file_handler = logging.FileHandler(file_name, 'w+')
+        file_handler.setLevel(logging.DEBUG)
+        file_format = logging.Formatter(fmt_file)
+        file_handler.setFormatter(file_format)
+        file_handler.addFilter(TracebackInfoFilter(clear=False))
+        logger.addHandler(file_handler)
 
     return logger
 

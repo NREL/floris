@@ -61,11 +61,8 @@ class VelocityDeficit():
             self.calculate_VW_velocities = \
                 bool(self.parameter_dictionary["calculate_VW_velocities"])
         else:
-            # TODO: introduce logging
             logger.info('Using default option of not calculating V and W ' + \
                 'velocity components (calculate_VW_velocities=False)')
-            # print('Using default option of not calculating V and W velocity ' +
-            #       'components (calculate_VW_velocities=False)')
             self.calculate_VW_velocities = False
 
         if 'use_yaw_added_recovery' in self.parameter_dictionary:
@@ -73,11 +70,8 @@ class VelocityDeficit():
             self.use_yaw_added_recovery = \
                 bool(self.parameter_dictionary["use_yaw_added_recovery"])
         else:
-            # TODO: introduce logging
             logger.info('Using default option of not applying added ' + \
                         'yaw-added recovery (use_yaw_added_recovery=True)')
-            # print('Using default option of not applying added yaw-added ' +
-            #       'recovery (use_yaw_added_recovery=True)')
             self.use_yaw_added_recovery = True
 
         if 'yaw_recovery_alpha' in self.parameter_dictionary:
@@ -85,20 +79,15 @@ class VelocityDeficit():
                 bool(self.parameter_dictionary["yaw_recovery_alpha"])
         else:
             self.yaw_recovery_alpha = 0.03
-            # TODO: introduce logging
             logger.info('Using default option yaw_recovery_alpha: %.2f' \
                         % self.yaw_recovery_alpha)
-            # print('Using default option yaw_recovery_alpha: %.2f' \
-            #       % self.yaw_recovery_alpha)
 
         if 'eps_gain' in self.parameter_dictionary:
             self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
         else:
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied
                                 # by D in function)
-            # TODO: introduce logging
             logger.info('Using default option eps_gain: %.1f' % self.eps_gain)
-            # print('Using default option eps_gain: %.1f' % self.eps_gain)
     
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
