@@ -29,22 +29,26 @@ class Gauss(VelocityDeficit):
     from upstream wakes, as well as wind shear and wind veer. For more
     information about the Gauss wake model theory, see:
 
-    Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
+    [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
     wind-turbine wakes: A large-eddy simulation study." *Physics of
     Fluids*, 2015.
 
-    Bastankhah, M. and Porte-Agel, F. "A new analytical model for
+    [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
     wind-turbine wakes." *Renewable Energy*, 2014.
 
-    Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
+    [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
     study of wind turbine wakes in yawed conditions." *J. Fluid
     Mechanics*, 2016.
 
-    Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
+    [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
     A new approach for power prediction." *Energies*, 2016.
 
-    Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
+    [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
     blade pitch offset." *Energies*, 2017.
+
+    [6] Blondel, F. and Cathelain, M. "An alternative form of the
+    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
+    2020.
 
     Args:
         parameter_dictionary: A dictionary as generated from the

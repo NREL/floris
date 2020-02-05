@@ -20,10 +20,14 @@ logger = setup_logger(name=__name__)
 
 class Blondel(VelocityDeficit):
     """
-    Blondel is a velocity deficit subclass that contains objects 
+    Blondel is a velocity deficit subclass that contains objects...
     
     # TODO: update docstring
     [extended_summary]
+
+    [1] Blondel, F. and Cathelain, M. "An alternative form of the
+    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
+    2020.
     
     Args:
         VelocityDeficit ([type]): [description]
@@ -79,33 +83,33 @@ class Blondel(VelocityDeficit):
         # Wake deflection
         delta = deflection_field
 
-        # Calculate mask values
+        # Calculate mask values to mask upstream wake
         yR = y_locations - turbine_coord.x2
         xR = yR * tand(yaw) + turbine_coord.x1
 
-        # Compute scaled variables (Eq 1, pp 3 of ref. in docstring)
+        # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
         x_tilde = (x_locations - turbine_coord.x1) / D
         r_tilde = np.sqrt( (y_locations - turbine_coord.x2 - delta)**2 \
                            + (z_locations - HH)**2, dtype=np.float128) / D
 
-        # Calculate Beta (Eq 10, pp 5 of ref. in docstring)
+        # Calculate Beta (Eq 10, pp 5 of ref. [1] in docstring)
         beta = 0.5 * ( (1 + np.sqrt(1 - Ct)) / np.sqrt(1 - Ct))
 
-        # Calculate sigma_tilde (Eq 9, pp 5 of ref. in docstring)
+        # Calculate sigma_tilde (Eq 9, pp 5 of ref. [1] in docstring)
         sigma_tilde = (self.a_s * TI + self.b_s) * x_tilde + \
                        self.c_s * np.sqrt(beta)
 
-        # Calculate n (Eq 13, pp 6 of ref. in docstring)
+        # Calculate n (Eq 13, pp 6 of ref. [1] in docstring)
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
 
-        # Calculate max vel def (Eq 5, pp 4 of ref. in docstring)
+        # Calculate max vel def (Eq 5, pp 4 of ref. [1] in docstring)
         a1 = 2**(2/n-1)
         a2 = 2**(4/n-2)
         C = a1 - np.sqrt(a2 - ((n*Ct) * cosd(yaw) \
                 / (16.0 * gamma(2/n) \
                 * np.sign(sigma_tilde)*(np.abs(sigma_tilde)**(4/n)) )))
 
-        # Compute wake velocity (Eq 1, pp 3 of ref. in docstring)
+        # Compute wake velocity (Eq 1, pp 3 of ref. [1] in docstring)
         velDef1 = U_local * C * \
                     np.exp( (-1 * r_tilde**n) / (2 * sigma_tilde**2))
         velDef1[x_locations < xR] = 0
