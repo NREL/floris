@@ -215,4 +215,9 @@ class InputReader():
             json_dict = input_dict.copy()
         else:
             raise ValueError("Input file or dictionary must be provided")
-        return json_dict
+
+        turbine_dict = json_dict.pop("turbine")
+        wake_dict = json_dict.pop("wake")
+        farm_dict = json_dict.pop("farm")
+        meta_dict = json_dict
+        return meta_dict, turbine_dict, wake_dict, farm_dict
