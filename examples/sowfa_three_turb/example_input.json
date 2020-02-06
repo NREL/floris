@@ -2,16 +2,6 @@
   "type": "floris_input",
   "name": "floris_input_file_Example",
   "description": "Example FLORIS Input file",
-  "logging": {
-    "console": {
-      "enable": true,
-      "level": "WARNING"
-    },
-    "file": {
-      "enable": true,
-      "level": "WARNING"
-    }
-  },
   "farm": {
     "type": "farm",
     "name": "farm_example_2x2",
@@ -224,7 +214,7 @@
     "description": "wake",
     "properties": {
       "velocity_model": "gauss",
-      "turbulence_model": "ishihara",
+      "turbulence_model": "gauss",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
@@ -248,10 +238,13 @@
             ]
           },
           "gauss": {
-            "ka": 0.3837,
-            "kb": 0.003678,
+            "ka": 0.38,
+            "kb": 0.004,
             "alpha": 0.58,
-            "beta": 0.077
+            "beta": 0.077,
+            "ad": 0.0,
+            "bd": 0.0,
+            "dm": 1.0
           },
           "jimenez": {
             "kd": 0.05,
@@ -310,10 +303,10 @@
         },
         "wake_turbulence_parameters": {
           "gauss": {
-            "initial": 0.1,
-            "constant": 0.73,
-            "ai": 0.8,
-            "downstream": -0.275
+            "initial": 0.5,
+            "constant": 0.9,
+            "ai": 0.75,
+            "downstream": -0.325
           },
           "ishihara": {
             "kstar": {
@@ -351,7 +344,8 @@
             "alpha": 0.58,
             "beta": 0.077,
             "ad": 0.0,
-            "bd": 0.0
+            "bd": 0.0,
+            "dm": 1.0
           },
           "jimenez": {
             "kd": 0.05,

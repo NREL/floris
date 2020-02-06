@@ -1,13 +1,14 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 from ...utilities import cosd
 from .base_velocity_deficit import VelocityDeficit
@@ -91,7 +92,8 @@ class MultiZone(VelocityDeficit):
         self.bU = float(model_dictionary["bU"])
         self.mU = [float(n) for n in model_dictionary["mU"]]
 
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
+    def function(self, x_locations, y_locations, z_locations, turbine,
+                 turbine_coord, deflection_field, flow_field):
         """
         Using the original FLORIS multi-zone wake model, this method 
         calculates and returns the wake velocity deficits, caused by 
@@ -179,4 +181,128 @@ class MultiZone(VelocityDeficit):
         # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
 
-        return 2 * turbine.aI * c * flow_field.wind_map.grid_wind_speed, np.zeros(np.shape(c)), np.zeros(np.shape(c))
+        return 2 * turbine.aI * c * flow_field.wind_map.grid_wind_speed, \
+               np.zeros(np.shape(c)), np.zeros(np.shape(c))
+
+    @property
+    def me(self):
+        """
+        A list of three floats that help determine the slope of the diameters
+            of the three wake zones (near wake, far wake, mixing zone) as a
+            function of downstream distance.
+        Args:
+            me (list): Three floats that help determine the slope of the
+                diameters of the three wake zones.
+        Returns:
+            float: Three floats that help determine the slope of the diameters
+                of the three wake zones.
+        """
+        return self._me
+
+    @me.setter
+    def me(self, value):
+        if type(value) is list and len(value) == 3 and \
+                            all(type(val) is float for val in value) is True:
+            self._me = value
+        elif type(value) is list and len(value) == 3 and \
+                            all(type(val) is float for val in value) is False:
+            self._me = [float(val) for val in value]
+        else:
+            raise ValueError("Invalid value given for me: {}".format(value))
+
+    @property
+    def we(self):
+        """
+        A float that is the scaling parameter used to adjust the wake expansion,
+            helping to determine the slope of the diameters of the three wake
+            zones as a function of downstream distance, as well as the recovery
+            of the velocity deficits in the wake as a function of downstream
+            distance.
+        Args:
+            we (float, int): Scaling parameter used to adjust the wake
+                expansion.
+        Returns:
+            float: Scaling parameter used to adjust the wake expansion.
+        """
+        return self._we
+
+    @we.setter
+    def we(self, value):
+        if type(value) is float:
+            self._we = value
+        elif type(value) is int:
+            self._we = float(value)
+        else:
+            raise ValueError("Invalid value given for we: {}".format(value))
+
+    @property
+    def aU(self):
+        """
+        A float that is a parameter used to determine the dependence of the
+            wake velocity deficit decay rate on the rotor yaw angle.
+        Args:
+            aU (float, int): Parameter used to determine the dependence of the
+                wake velocity deficit decay rate on the rotor yaw angle.
+        Returns:
+            float: Parameter used to determine the dependence of the wake
+                velocity deficit decay rate on the rotor yaw angle.
+        """
+        return self._aU
+
+    @aU.setter
+    def aU(self, value):
+        if type(value) is float:
+            self._aU = value
+        elif type(value) is int:
+            self._aU = float(value)
+        else:
+            raise ValueError("Invalid value given for aU: {}".format(value))
+
+    @property
+    def bU(self):
+        """
+        A float that is a parameter used to determine the dependence of the
+            wake velocity deficit decay rate on the rotor yaw angle.
+        Args:
+            bU (float, int): Parameter used to determine the dependence of the
+                wake velocity deficit decay rate on the rotor yaw angle.
+        Returns:
+            float: Parameter used to determine the dependence of the wake
+                velocity deficit decay rate on the rotor yaw angle.
+        """
+        return self._bU
+
+    @bU.setter
+    def bU(self, value):
+        if type(value) is float:
+            self._bU = value
+        elif type(value) is int:
+            self._bU = float(value)
+        else:
+            raise ValueError("Invalid value given for bU: {}".format(value))
+
+    @property
+    def mU(self):
+        """
+        A list of three floats that are parameters used to determine the
+            dependence of the wake velocity deficit decay rate for each of the
+            three wake zones on the rotor yaw angle.
+        Args:
+            me (list): Three floats that are parameters used to determine the
+                dependence of the wake velocity deficit decay rate.
+        Returns:
+            float: Three floats that are parameters used to determine the
+                dependence of the wake velocity deficit decay rate.
+        """
+        return self._mU
+
+    @mU.setter
+    def mU(self, value):
+        if type(value) is list and len(value) == 3 and \
+                            all(type(val) is float for val in value) is True:
+            self._mU = value
+        elif type(value) is list and len(value) == 3 and \
+                            all(type(val) is float for val in value) is False:
+            self._mU = [float(val) for val in value]
+        else:
+            raise ValueError("Invalid value given for mU: {}".format(value))

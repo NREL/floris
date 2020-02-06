@@ -47,13 +47,17 @@ class SampleInputs():
             "properties": {
                 "wind_speed": [8.0],
                 "wind_direction": [270.0],
-                "turbulence_intensity":[ 0.1],
+                "turbulence_intensity":[0.1],
                 "wind_shear": 0.12,
                 "wind_veer": 0.0,
                 "air_density": 1.225,
                 "wake_combination": "sosfs",
-                "layout_x": [0.0, 5 * self.turbine["properties"]["rotor_diameter"]],
-                "layout_y": [0.0, 0.0],
+                "layout_x": [
+                    0.0,
+                    5 * self.turbine["properties"]["rotor_diameter"],
+                    10 * self.turbine["properties"]["rotor_diameter"]
+                ],
+                "layout_y": [0.0, 0.0, 0.0],
                 "wind_x": [0],
                 "wind_y": [0]
             }
@@ -70,6 +74,8 @@ class SampleInputs():
                 "combination_model": "sosfs",
                 "parameters": {
                     "wake_velocity_parameters": {
+                        "use_yaw_added_recovery": False,
+                        "use_secondary_steering": False,
                         "jensen": {
                             "we": 0.05
                         },
@@ -199,6 +205,16 @@ class SampleInputs():
             "type": "floris_input",
             "name": "floris_regression_test",
             "description": "Regression tests for FLORIS",
+            "logging": {
+                "console": {
+                    "enable": False,
+                    "level": "WARNING"
+                },
+                "file": {
+                    "enable": False,
+                    "level": "WARNING"
+                }
+            },
             "farm": self.farm,
             "turbine": self.turbine,
             "wake": self.wake
