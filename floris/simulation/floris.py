@@ -35,15 +35,10 @@ class Floris():
 
     def __init__(self, input_file=None, input_dict=None):
         input_reader = InputReader()
-        json_dict = input_reader.read(input_file, input_dict)
-
-        turbine_dict = input_reader.validate_turbine(json_dict["turbine"])
+        self.meta_dict, turbine_dict, wake_dict, farm_dict \
+            = input_reader.read(input_file, input_dict)
         turbine = Turbine(turbine_dict)
-                
-        wake_dict = input_reader.validate_wake(json_dict["wake"])
         wake = Wake(wake_dict)
-
-        farm_dict = input_reader.validate_farm(json_dict["farm"])
         self.farm = Farm(farm_dict, turbine, wake)
 
     def export_pickle(self, pickle_file):
