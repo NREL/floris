@@ -14,8 +14,6 @@ import numpy as np
 from ...utilities import cosd, sind, tand, setup_logger
 
 
-logger = setup_logger(name=__name__)
-
 class VelocityDeflection():
     """
     Base VelocityDeflection object class. Subclasses are:
@@ -25,6 +23,7 @@ class VelocityDeflection():
     """
     def __init__(self, parameter_dictionary):
         self.model_string = None
+        self.logger = setup_logger(name=__name__)
 
         self.parameter_dictionary = parameter_dictionary
 
@@ -32,7 +31,7 @@ class VelocityDeflection():
             self.use_secondary_steering = \
                 bool(self.parameter_dictionary["use_secondary_steering"])
         else:
-            logger.info('Using default option of applying gch-based ' + \
+            self.logger.info('Using default option of applying gch-based ' + \
                         'secondary steering (use_secondary_steering=True)')
             self.use_secondary_steering = True
 
@@ -41,7 +40,7 @@ class VelocityDeflection():
         else:
             # SOWFA SETTING (note this will be multiplied by D in function)
             self.eps_gain = 0.3  
-            logger.info(('Using default option eps_gain: %.1f' % self.eps_gain))
+            self.logger.info(('Using default option eps_gain: %.1f' % self.eps_gain))
 
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
@@ -49,7 +48,7 @@ class VelocityDeflection():
                 "instantiated but the model parameters were not found in " + \
                 "the input file or dictionary under " + \
                 "'wake.properties.parameters.{}'.".format(self.model_string)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise KeyError(err_msg)
             # raise KeyError("The {} wake model was ".format(self.model_string) +
             #     "instantiated but the model parameters were not found in the " +
@@ -122,7 +121,7 @@ class VelocityDeflection():
         if type(value) is not bool:
             err_msg = "Value of use_secondary_steering must be type " + \
                       "bool; {} given.".format(type(value))
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._use_secondary_steering = value
     
@@ -135,6 +134,6 @@ class VelocityDeflection():
         if type(value) is not float:
             err_msg = "Value of eps_gain must be type " + \
                       "float; {} given.".format(type(value))
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._eps_gain = value

@@ -16,8 +16,6 @@ import numpy as np
 from scipy.special import gamma
 
 
-logger = setup_logger(name=__name__)
-
 class Blondel(VelocityDeficit):
     """
     Blondel is a velocity deficit subclass that contains objects...
@@ -46,6 +44,8 @@ class Blondel(VelocityDeficit):
 
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
+
         self.model_string = "blondel"
         model_dictionary = self._get_model_dict()
 
@@ -138,11 +138,11 @@ class Blondel(VelocityDeficit):
     def a_s(self, value):
         if type(value) is not float:
             err_msg = "Invalid value given for a_s: {}".format(value)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_s = value
         if value != 0.3837:
-            logger.warning("Current value of a_s, {}, is not equal to tuned " +
+            self.logger.warning("Current value of a_s, {}, is not equal to tuned " +
                             "value of 0.3837.".format(value))
 
     @property
@@ -166,11 +166,11 @@ class Blondel(VelocityDeficit):
     def b_s(self, value):
         if type(value) is not float:
             err_msg = "Invalid value given for b_s: {}".format(value)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_s = value
         if value != 0.003678:
-            logger.warning("Current value of b_s, {}, is not equal to tuned " +
+            self.logger.warning("Current value of b_s, {}, is not equal to tuned " +
                             "value of 0.003678.".format(value))
     
     @property
@@ -193,11 +193,11 @@ class Blondel(VelocityDeficit):
     def c_s(self, value):
         if type(value) is not float:
             err_msg = "Invalid value given for c_s: {}".format(value)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_s = value
         if value != 0.2:
-            logger.warning("Current value of c_s, {}, is not equal to tuned " +
+            self.logger.warning("Current value of c_s, {}, is not equal to tuned " +
                             "value of 0.2.".format(value))
 
     @property
@@ -222,11 +222,11 @@ class Blondel(VelocityDeficit):
     def a_f(self, value):
         if type(value) is not float:
             err_msg = "Invalid value given for a_f: {}".format(value)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_f = value
         if value != 3.11:
-            logger.warning("Current value of a_f, {}, is not equal to tuned " +
+            self.logger.warning("Current value of a_f, {}, is not equal to tuned " +
                             "value of 3.11.".format(value))
 
     @property
@@ -251,11 +251,11 @@ class Blondel(VelocityDeficit):
     def b_f(self, value):
         if type(value) is not float:
             err_msg = "Invalid value given for b_f: {}".format(value)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_f = value
         if value != -0.68:
-            logger.warning("Current value of b_f, {}, is not equal to tuned " +
+            self.logger.warning("Current value of b_f, {}, is not equal to tuned " +
                             "value of -0.68.".format(value))
 
     @property
@@ -278,9 +278,9 @@ class Blondel(VelocityDeficit):
     def c_f(self, value):
         if type(value) is not float:
             err_msg = "Invalid value given for c_f: {}".format(value)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_f = value
         if value != 2.41:
-            logger.warning("Current value of c_f, {}, is not equal to tuned " +
+            self.logger.warning("Current value of c_f, {}, is not equal to tuned " +
                             "value of 2.41.".format(value))

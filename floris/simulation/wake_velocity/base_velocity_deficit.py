@@ -14,8 +14,6 @@ import numpy as np
 from ...utilities import cosd, sind, tand, setup_logger
 
 
-logger = setup_logger(name=__name__)
-
 class VelocityDeficit():
     """
     VelocityDeficit is the base class of the different velocity deficit model 
@@ -52,6 +50,8 @@ class VelocityDeficit():
     """
 
     def __init__(self, parameter_dictionary):
+        self.logger = setup_logger(name=__name__)
+
         self.requires_resolution = False
         self.model_string = None
         self.model_grid_resolution = None
@@ -61,7 +61,7 @@ class VelocityDeficit():
             self.calculate_VW_velocities = \
                 bool(self.parameter_dictionary["calculate_VW_velocities"])
         else:
-            logger.info('Using default option of not calculating V and W ' + \
+            self.logger.info('Using default option of not calculating V and W ' + \
                 'velocity components (calculate_VW_velocities=False)')
             self.calculate_VW_velocities = False
 
@@ -70,7 +70,7 @@ class VelocityDeficit():
             self.use_yaw_added_recovery = \
                 bool(self.parameter_dictionary["use_yaw_added_recovery"])
         else:
-            logger.info('Using default option of not applying added ' + \
+            self.logger.info('Using default option of not applying added ' + \
                         'yaw-added recovery (use_yaw_added_recovery=True)')
             self.use_yaw_added_recovery = True
 
@@ -79,7 +79,7 @@ class VelocityDeficit():
                 bool(self.parameter_dictionary["yaw_recovery_alpha"])
         else:
             self.yaw_recovery_alpha = 0.03
-            logger.info('Using default option yaw_recovery_alpha: %.2f' \
+            self.logger.info('Using default option yaw_recovery_alpha: %.2f' \
                         % self.yaw_recovery_alpha)
 
         if 'eps_gain' in self.parameter_dictionary:
@@ -87,7 +87,7 @@ class VelocityDeficit():
         else:
             self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied
                                 # by D in function)
-            logger.info(('Using default option eps_gain: %.1f' % self.eps_gain))
+            self.logger.info(('Using default option eps_gain: %.1f' % self.eps_gain))
     
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
@@ -95,7 +95,7 @@ class VelocityDeficit():
                 "instantiated but the model parameters were not found in " + \
                 "the input file or dictionary under " + \
                 "'wake.properties.parameters.{}'.".format(self.model_string)
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise KeyError(err_msg)
             # raise KeyError("The {} wake model was".format(self.model_string) +
             #     " instantiated but the model parameters were not found in the" +
@@ -312,7 +312,7 @@ class VelocityDeficit():
         if type(value) is not bool:
             err_msg = "Value of calculate_VW_velocities must be type " + \
                       "float; {} given.".format(type(value))
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._calculate_VW_velocities = value
 
@@ -325,7 +325,7 @@ class VelocityDeficit():
         if type(value) is not bool:
             err_msg = "Value of use_yaw_added_recovery must be type " + \
                       "float; {} given.".format(type(value))
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._use_yaw_added_recovery = value
         self.calculate_VW_velocities = self.use_yaw_added_recovery
@@ -339,7 +339,7 @@ class VelocityDeficit():
         if type(value) is not float:
             err_msg = "Value of yaw_recovery_alpha must be type " + \
                       "float; {} given.".format(type(value))
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._yaw_recovery_alpha = value
 
@@ -352,6 +352,6 @@ class VelocityDeficit():
         if type(value) is not float:
             err_msg = "Value of eps_gain must be type " + \
                       "float; {} given.".format(type(value))
-            logger.error(err_msg, stack_info=True)
+            self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._eps_gain = value
