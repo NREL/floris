@@ -34,9 +34,15 @@ class Floris():
     """
 
     def __init__(self, input_file=None, input_dict=None):
+        # Parse the input into dictionaries
         input_reader = InputReader()
         self.meta_dict, turbine_dict, wake_dict, farm_dict \
             = input_reader.read(input_file, input_dict)
+
+        # Configure logging
+        logging_dict = self.meta_dict["logging"]
+
+        # Initialize the simulation objects
         turbine = Turbine(turbine_dict)
         wake = Wake(wake_dict)
         self.farm = Farm(farm_dict, turbine, wake)

@@ -2,6 +2,16 @@
   "type": "floris_input",
   "name": "floris_input_file_Example",
   "description": "Example FLORIS Input file",
+  "logging": {
+    "console": {
+      "enable": true,
+      "level": "WARNING"
+    },
+    "file": {
+      "enable": true,
+      "level": "WARNING"
+    }
+  },
   "farm": {
     "type": "farm",
     "name": "farm_example_2x2",

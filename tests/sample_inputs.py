@@ -205,6 +205,16 @@ class SampleInputs():
             "type": "floris_input",
             "name": "floris_regression_test",
             "description": "Regression tests for FLORIS",
+            "logging": {
+                "console": {
+                    "enable": False,
+                    "level": "WARNING"
+                },
+                "file": {
+                    "enable": False,
+                    "level": "WARNING"
+                }
+            },
             "farm": self.farm,
             "turbine": self.turbine,
             "wake": self.wake
