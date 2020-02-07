@@ -13,7 +13,6 @@
 # See read the https://floris.readthedocs.io for documentation
 
 import numpy as np
-from scipy.stats import norm
 import coloredlogs
 import logging
 from datetime import datetime
@@ -199,84 +198,6 @@ def wrap_360(x):
     x = np.where(x < 0., x + 360., x)
     x = np.where(x >= 360., x - 360., x)
     return (x)
-
-
-def calc_unc_pmfs(unc_options=None):
-    # TODO: Is there a better place for this?
-    """
-    Calculates normally-distributed probability mass functions describing the 
-    distribution of wind direction and yaw position deviations when wind direction 
-    and/or yaw position uncertainty are included in power calculations.
-
-    Args:
-        unc_options (dictionary, optional): A dictionary containing values used 
-                to create normally-distributed, zero-mean probability mass functions 
-                describing the distribution of wind direction and yaw position 
-                deviations when wind direction and/or yaw position uncertainty is 
-                included. This argument is only used when **unc_pmfs** is None and 
-                contains the following key-value pairs:
-
-                -   **std_wd**: A float containing the standard deviation of the wind 
-                        direction deviations from the original wind direction.
-                -   **std_yaw**: A float containing the standard deviation of the yaw 
-                        angle deviations from the original yaw angles.
-                -   **pmf_res**: A float containing the resolution in degrees of the 
-                        wind direction and yaw angle PMFs.
-                -   **pdf_cutoff**: A float containing the cumulative distribution 
-                    function value at which the tails of the PMFs are truncated. 
-
-                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75, 
-                'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-
-    Returns:
-        [dictionary]: A dictionary containing 
-                probability mass functions describing the distribution of wind 
-                direction and yaw position deviations when wind direction and/or 
-                yaw position uncertainty is included in the power calculations. 
-                Contains the following key-value pairs:  
-
-                -   **wd_unc**: A numpy array containing wind direction deviations 
-                    from the original wind direction. 
-                -   **wd_unc_pmf**: A numpy array containing the probability of 
-                    each wind direction deviation in **wd_unc** occuring. 
-                -   **yaw_unc**: A numpy array containing yaw angle deviations 
-                    from the original yaw angles. 
-                -   **yaw_unc_pmf**: A numpy array containing the probability of 
-                    each yaw angle deviation in **yaw_unc** occuring.
-
-    """
-
-    if unc_options is None:
-        unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
-                    'pmf_res': 1.0, 'pdf_cutoff': 0.995}
-
-    # create normally distributed wd and yaw uncertainty pmfs
-    if unc_options['std_wd'] > 0:
-        wd_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
-                        scale=unc_options['std_wd'])/unc_options['pmf_res']))
-        wd_unc = np.linspace(-1 * wd_bnd * unc_options['pmf_res'],
-                             wd_bnd * unc_options['pmf_res'], 2 * wd_bnd + 1)
-        wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options['std_wd'])
-        wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf)  # normalize so sum = 1.0
-    else:
-        wd_unc = np.zeros(1)
-        wd_unc_pmf = np.ones(1)
-
-    if unc_options['std_yaw'] > 0:
-        yaw_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
-                        scale=unc_options['std_yaw'])/unc_options['pmf_res']))
-        yaw_unc = np.linspace(-1 * yaw_bnd * unc_options['pmf_res'],
-                              yaw_bnd * unc_options['pmf_res'],
-                              2 * yaw_bnd + 1)
-        yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options['std_yaw'])
-        yaw_unc_pmf = yaw_unc_pmf / np.sum(
-            yaw_unc_pmf)  # normalize so sum = 1.0
-    else:
-        yaw_unc = np.zeros(1)
-        yaw_unc_pmf = np.ones(1)
-
-    return {'wd_unc': wd_unc, 'wd_unc_pmf': wd_unc_pmf, \
-                'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
 
 
 class LogClass:
