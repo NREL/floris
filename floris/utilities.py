@@ -25,26 +25,30 @@ class Vec3():
         Object containing vector information for coordinates.
 
         Args:
-            x1: [float, float, float] or float -- The first argument
-            can be a list of the three vector components or simply the
-            first component of the vector.
-            x2: float (optional) -- The second component of the vector.
-            x3: float (optional) -- The third component of the vector.
+            x1: [numeric, numeric, numeric] or numeric -- The first argument
+                can be a list of the three vector components or simply the
+                first component of the vector.
+            x2: numeric (optional) -- The second component of the vector
+                if the first argument is not a list.
+            x3: numeric (optional) -- The third component of the vector
+                if the first argument is not a list.
             string_format: str (optional) -- The string format to use in the
                 overloaded __str__ function.
         """
         if isinstance(x1, list):
-            self.x1, self.x2, self.x3 = [x for x in x1]
+            self.x1, self.x2, self.x3 = x1
         else:
             self.x1 = x1
             self.x2 = x2
             self.x3 = x3
 
-        if not (type(self.x1) == type(self.x2) and type(self.x1) == type(
-                self.x3) and type(self.x2) == type(self.x3)):
-            target_type = type(self.x1)
-            self.x2 = target_type(self.x2)
-            self.x3 = target_type(self.x3)
+        # If they arent, cast all components to the same type
+        if not (type(self.x1) == type(self.x2) and
+                type(self.x1) == type(self.x3) and
+                type(self.x2) == type(self.x3)):
+                target_type = type(self.x1)
+                self.x2 = target_type(self.x2)
+                self.x3 = target_type(self.x3)
 
         if string_format is not None:
             self.string_format = string_format
@@ -66,10 +70,8 @@ class Vec3():
             center_of_rotation = Vec3(0.0, 0.0, 0.0)
         x1offset = self.x1 - center_of_rotation.x1
         x2offset = self.x2 - center_of_rotation.x2
-        self.x1prime = x1offset * cosd(theta) - x2offset * sind(
-            theta) + center_of_rotation.x1
-        self.x2prime = x2offset * cosd(theta) + x1offset * sind(
-            theta) + center_of_rotation.x2
+        self.x1prime = x1offset * cosd(theta) - x2offset * sind(theta) + center_of_rotation.x1
+        self.x2prime = x2offset * cosd(theta) + x1offset * sind(theta) + center_of_rotation.x2
         self.x3prime = self.x3
 
     def __str__(self):
@@ -79,7 +81,6 @@ class Vec3():
         return template_string.format(self.x1, self.x2, self.x3)
 
     def __add__(self, arg):
-
         if type(arg) is Vec3:
             return Vec3(self.x1 + arg.x1, self.x2 + arg.x2, self.x3 + arg.x3)
         else:
@@ -92,7 +93,6 @@ class Vec3():
             return Vec3(self.x1 - arg, self.x2 - arg, self.x3 - arg)
 
     def __mul__(self, arg):
-
         if type(arg) is Vec3:
             return Vec3(self.x1 * arg.x1, self.x2 * arg.x2, self.x3 * arg.x3)
         else:
