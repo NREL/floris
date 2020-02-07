@@ -176,28 +176,34 @@ def tand(angle):
     return np.tan(np.radians(angle))
 
 
-def wrap_180(x):
+def wrap_180(angle):
     """
-    Wrap an angle to between -180 and 180
+    If the given angle is less than -180 or greater than or equal to
+    180 degrees, correct it to lie within the range (-180, 180].
 
     Returns:
-        [array]: angles in specified interval
+        The corrected angle
     """
-    x = np.where(x <= -180., x + 360., x)
-    x = np.where(x > 180., x - 360., x)
-    return (x)
+    if angle <= -180.0:
+        return angle + 360.0
+    if angle > 180.0:
+        return angle - 360.0
+    return angle
 
 
-def wrap_360(x):
+def wrap_360(angle):
     """
-    Wrap an angle to between 0 and 360
+    If the given angle is less than 0 or greater than or equal to
+    360 degrees, correct it to lie within the range (0, 360].
 
     Returns:
-        [array]: angles in specified interval
+        The corrected angle
     """
-    x = np.where(x < 0., x + 360., x)
-    x = np.where(x >= 360., x - 360., x)
-    return (x)
+    if angle <= 0.0:
+        return angle + 360.0
+    if angle > 360.0:
+        return angle - 360.0
+    return angle
 
 
 class LogClass:
