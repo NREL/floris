@@ -112,40 +112,6 @@ class Vec3():
         return hash((self.x1, self.x2, self.x3))
 
 
-class Output():
-    def __init__(self, filename):
-        """
-        Generate output file at specified location.
-
-        Args:
-            filename ([str]): write to location
-        """
-        self.filename = filename
-        self.file = open(self.filename, "w")
-        self.ln = "\n"
-
-    def write_empty_line(self):
-        """
-        Add blank line to file.
-        """
-        self.write_line("")
-
-    def write_line(self, line):
-        """
-        Add line to file with specified content.
-
-        Args:
-            line ([str]): content to add to file
-        """
-        self.file.write(line + self.ln)
-
-    def end(self):
-        """
-        Close file.
-        """
-        self.file.close()
-
-
 def cosd(angle):
     """
     cosine of an angle with the angle given in degrees

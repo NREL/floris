@@ -11,7 +11,7 @@
 
 import os
 import numpy as np
-from ..utilities import Vec3, Output
+from ..utilities import Vec3
 from sklearn import neighbors
 
 
@@ -74,19 +74,21 @@ class FlowData():
             filename (str): Write-to path for vtk file
         """
         n_points = self.dimensions.x1 * self.dimensions.x2 * self.dimensions.x3
-        vtk_file = Output(filename)
-        vtk_file.write_line('# vtk DataFile Version 3.0')
-        vtk_file.write_line('array.mean0D')
-        vtk_file.write_line('ASCII')
-        vtk_file.write_line('DATASET STRUCTURED_POINTS')
-        vtk_file.write_line('DIMENSIONS {}'.format(self.dimensions))
-        vtk_file.write_line('ORIGIN {}'.format(self.origin))
-        vtk_file.write_line('SPACING {}'.format(self.spacing))
-        vtk_file.write_line('POINT_DATA {}'.format(n_points))
-        vtk_file.write_line('FIELD attributes 1')
-        vtk_file.write_line('UAvg 3 {} float'.format(n_points))
+
+        ln = "\n"
+        vtk_file = open(filename, "w")
+        vtk_file.write('# vtk DataFile Version 3.0' + ln)
+        vtk_file.write('array.mean0D' + ln)
+        vtk_file.write('ASCII' + ln)
+        vtk_file.write('DATASET STRUCTURED_POINTS' + ln)
+        vtk_file.write('DIMENSIONS {}'.format(self.dimensions) + ln)
+        vtk_file.write('ORIGIN {}'.format(self.origin) + ln)
+        vtk_file.write('SPACING {}'.format(self.spacing) + ln)
+        vtk_file.write('POINT_DATA {}'.format(n_points) + ln)
+        vtk_file.write('FIELD attributes 1' + ln)
+        vtk_file.write('UAvg 3 {} float'.format(n_points) + ln)
         for u, v, w in zip(self.u, self.v, self.w):
-            vtk_file.write_line('{}'.format(Vec3(u, v, w)))
+            vtk_file.write_line('{}'.format(Vec3(u, v, w)) + ln)
 
     @staticmethod
     def crop(ff, x_bnds, y_bnds, z_bnds):
