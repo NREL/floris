@@ -39,7 +39,7 @@ class FLS(WakeCombination):
     def function(self, u_field, u_wake):
         """
         This method combines the base flow field with the velocity 
-        defecits using freestream linear superpostion.
+        deficits using freestream linear superpostion.
 
         Args:
             u_field (np.array): The base flow field.

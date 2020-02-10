@@ -11,8 +11,10 @@
 
 import numpy as np
 from scipy.stats import norm
-import coloredlogs, logging
+import coloredlogs
+import logging
 from datetime import datetime
+
 
 class Vec3():
     def __init__(self, x1, x2=None, x3=None, string_format=None):
@@ -35,12 +37,11 @@ class Vec3():
             self.x2 = x2
             self.x3 = x3
 
-        if not (type(self.x1) == type(self.x2) and
-                type(self.x1) == type(self.x3) and
-                type(self.x2) == type(self.x3)):
-                target_type = type(self.x1)
-                self.x2 = target_type(self.x2)
-                self.x3 = target_type(self.x3)
+        if not (type(self.x1) == type(self.x2) and type(self.x1) == type(
+                self.x3) and type(self.x2) == type(self.x3)):
+            target_type = type(self.x1)
+            self.x2 = target_type(self.x2)
+            self.x3 = target_type(self.x3)
 
         if string_format is not None:
             self.string_format = string_format
@@ -196,6 +197,7 @@ def wrap_360(x):
     x = np.where(x >= 360., x - 360., x)
     return (x)
 
+
 def calc_unc_pmfs(unc_options=None):
     # TODO: Is there a better place for this?
     """
@@ -242,16 +244,17 @@ def calc_unc_pmfs(unc_options=None):
     """
 
     if unc_options is None:
-            unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
-                        'pmf_res': 1.0, 'pdf_cutoff': 0.995}
+        unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
+                    'pmf_res': 1.0, 'pdf_cutoff': 0.995}
 
     # create normally distributed wd and yaw uncertainty pmfs
     if unc_options['std_wd'] > 0:
         wd_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
                         scale=unc_options['std_wd'])/unc_options['pmf_res']))
-        wd_unc = np.linspace(-1*wd_bnd*unc_options['pmf_res'],wd_bnd*unc_options['pmf_res'],2*wd_bnd+1)
-        wd_unc_pmf = norm.pdf(wd_unc,scale=unc_options['std_wd'])
-        wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf) # normalize so sum = 1.0
+        wd_unc = np.linspace(-1 * wd_bnd * unc_options['pmf_res'],
+                             wd_bnd * unc_options['pmf_res'], 2 * wd_bnd + 1)
+        wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options['std_wd'])
+        wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf)  # normalize so sum = 1.0
     else:
         wd_unc = np.zeros(1)
         wd_unc_pmf = np.ones(1)
@@ -259,9 +262,12 @@ def calc_unc_pmfs(unc_options=None):
     if unc_options['std_yaw'] > 0:
         yaw_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
                         scale=unc_options['std_yaw'])/unc_options['pmf_res']))
-        yaw_unc = np.linspace(-1*yaw_bnd*unc_options['pmf_res'],yaw_bnd*unc_options['pmf_res'],2*yaw_bnd+1)
-        yaw_unc_pmf = norm.pdf(yaw_unc,scale=unc_options['std_yaw'])
-        yaw_unc_pmf = yaw_unc_pmf / np.sum(yaw_unc_pmf) # normalize so sum = 1.0
+        yaw_unc = np.linspace(-1 * yaw_bnd * unc_options['pmf_res'],
+                              yaw_bnd * unc_options['pmf_res'],
+                              2 * yaw_bnd + 1)
+        yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options['std_yaw'])
+        yaw_unc_pmf = yaw_unc_pmf / np.sum(
+            yaw_unc_pmf)  # normalize so sum = 1.0
     else:
         yaw_unc = np.zeros(1)
         yaw_unc_pmf = np.ones(1)
@@ -269,15 +275,14 @@ def calc_unc_pmfs(unc_options=None):
     return {'wd_unc': wd_unc, 'wd_unc_pmf': wd_unc_pmf, \
                 'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
 
-# class LogClassSingleton():
 
+# class LogClassSingleton():
 
 
 class LogClass:
     class __LogClass:
         def __init__(self, param_dict):
-            print('here')
-            print(param_dict)
+
             if param_dict is not None:
                 for key in param_dict:
                     if key == 'console':
@@ -290,7 +295,9 @@ class LogClass:
 
         # def __str__(self):
         #     return repr(self)# + self.val
+
     instance = None
+
     def __init__(self, arg):
         if not LogClass.instance:
             LogClass.instance = self.__LogClass(arg)
@@ -302,6 +309,7 @@ class LogClass:
 
     def __setattr__(self, name, value):
         self.instance.__setattr__(name, value)
+
 
 def setup_logger(name, logging_dict=None, floris=None):
     log_class = LogClass(logging_dict)
@@ -319,9 +327,8 @@ def setup_logger(name, logging_dict=None, floris=None):
         console_handler = logging.StreamHandler()
         console_handler.setLevel(log_class.console_level)
         console_format = coloredlogs.ColoredFormatter(
-                            # level_styles=level_styles,
-                            fmt=fmt_console
-        )
+            # level_styles=level_styles,
+            fmt=fmt_console)
         console_handler.setFormatter(console_format)
         console_handler.addFilter(TracebackInfoFilter(clear=True))
         logger.addHandler(console_handler)
@@ -336,10 +343,13 @@ def setup_logger(name, logging_dict=None, floris=None):
 
     return logger
 
+
 class TracebackInfoFilter(logging.Filter):
     """Clear or restore the exception on log records"""
+
     def __init__(self, clear=True):
         self.clear = clear
+
     def filter(self, record):
         if self.clear:
 

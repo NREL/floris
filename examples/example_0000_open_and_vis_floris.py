@@ -20,6 +20,7 @@ fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Calculate wake
 fi.calculate_wake()
+print(fi.floris.farm.wind_direction)
 
 # Get horizontal plane at default height (hub-height)
 hor_plane = fi.get_hor_plane()

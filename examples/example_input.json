@@ -18,12 +18,15 @@
     "description": "Example 2x2 Wind Farm",
     "properties": {
       "wind_speed": [
+        8.0,
         8.0
       ],
       "wind_direction": [
-        270.0
+        35.0,
+        45.0
       ],
       "turbulence_intensity": [
+        0.06,
         0.06
       ],
       "wind_shear": 0.12,
@@ -42,10 +45,12 @@
         630.0
       ],
       "wind_x": [
-        0
+        0,
+        756.0
       ],
       "wind_y": [
-        0
+        0,
+        630.0
       ]
     }
   },
@@ -300,12 +305,12 @@
             }
           },
           "blondel": {
-              "a_s": 0.3837,
-              "b_s": 0.003678,
-              "c_s": 0.2,
-              "a_f": 3.11,
-              "b_f": -0.68,
-              "c_f": 2.41
+            "a_s": 0.3837,
+            "b_s": 0.003678,
+            "c_s": 0.2,
+            "a_f": 3.11,
+            "b_f": -0.68,
+            "c_f": 2.41
           }
         },
         "wake_turbulence_parameters": {

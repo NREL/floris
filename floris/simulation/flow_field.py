@@ -84,7 +84,7 @@ class FlowField():
                         yoffset * sind(-1 * self.wind_map.turbine_wind_direction[i]) + coord.x1
 
                     y_grid[i, j, k] = yoffset * cosd(-1 * self.wind_map.turbine_wind_direction[i]) + \
-                        xoffset * sind(-1 * self.wind_map.turbine_wind_direction[i]) + coord.x2
+                        xoffset * sind(-1*self.wind_map.turbine_wind_direction[i]) + coord.x2
 
         return x_grid, y_grid, z_grid
 
@@ -229,14 +229,7 @@ class FlowField():
         """
         # velocity deficit calculation
         u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
-            x,
-            y,
-            z,
-            turbine,
-            coord,
-            deflection,
-            flow_field
-        )
+            x, y, z, turbine, coord, deflection, flow_field)
 
         # calculate spanwise and streamwise velocities if needed
         v_deficit, w_deficit = \
@@ -253,15 +246,8 @@ class FlowField():
 
         # correction step
         u_corrected = self.wake.velocity_model.correction_steps(
-            flow_field.u_initial,
-            u_deficit,
-            v_deficit,
-            w_deficit,
-            x,
-            y,
-            turbine,
-            coord
-        )
+            flow_field.u_initial, u_deficit, v_deficit, w_deficit, x, y,
+            turbine, coord)
         return u_corrected, v_deficit, w_deficit
 
     def _compute_turbine_wake_turbulence(self, ambient_TI, coord_ti,
@@ -512,7 +498,8 @@ class FlowField():
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[i]
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
+                i]
             turbine.reset_velocities()
 
     def calculate_wake(self, no_wake=False, points=None):
@@ -543,7 +530,8 @@ class FlowField():
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[i]
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
+                i]
             turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of flow field

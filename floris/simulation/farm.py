@@ -10,7 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 from ..utilities import Vec3
-from .wake_combination import WakeCombination
+# from .wake_combination import WakeCombination
 from .flow_field import FlowField
 from .wind_map import WindMap
 from .turbine_map import TurbineMap
@@ -78,20 +78,17 @@ class Farm():
             layout_array=(layout_x, layout_y),
             wind_layout=(wind_x, wind_y),
             turbulence_intensity=properties["turbulence_intensity"],
-            wind_direction=properties["wind_direction"]
-        )
+            wind_direction=properties["wind_direction"])
 
         self.flow_field = FlowField(
             wind_shear=properties["wind_shear"],
             wind_veer=properties["wind_veer"],
             air_density=properties["air_density"],
             turbine_map=TurbineMap(
-                layout_x,
-                layout_y,
+                layout_x, layout_y,
                 [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
             wake=wake,
-            wind_map=self.wind_map
-        )
+            wind_map=self.wind_map)
 
     def __str__(self):
         return \
@@ -126,8 +123,8 @@ class Farm():
         if wake_model not in valid_wake_models:
             # TODO: logging
             raise Exception(
-                "Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models))
-            )
+                "Invalid wake model. Valid options include: {}.".format(
+                    ", ".join(valid_wake_models)))
 
         self.flow_field.wake.velocity_model = wake_model
         if wake_model == 'jensen' or wake_model == 'multizone':
@@ -138,7 +135,8 @@ class Farm():
             self.flow_field.wake.deflection_model = wake_model
 
         self.flow_field.reinitialize_flow_field(
-            with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution)
+            with_resolution=self.flow_field.wake.velocity_model.
+            model_grid_resolution)
 
     def set_yaw_angles(self, yaw_angles):
         """
@@ -203,7 +201,8 @@ class Farm():
 
             >>> wind_direction = floris.farm.wind_direction
         """
-        return self.wind_map.turbine_wind_direction
+        return list(
+            (np.array(self.wind_map.turbine_wind_direction) - 90) % 360)
 
     @property
     def wind_shear(self):
@@ -293,7 +292,7 @@ class Farm():
     @wind_map.setter
     def wind_map(self, value):
         self._wind_map = value
-    
+
     @property
     def turbine_map(self):
         """

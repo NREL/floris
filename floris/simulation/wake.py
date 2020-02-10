@@ -107,7 +107,8 @@ class Wake():
     @velocity_model.setter
     def velocity_model(self, value):
         if type(value) is str:
-            self._velocity_model = self._velocity_models[value](self.parameters["wake_velocity_parameters"])
+            self._velocity_model = self._velocity_models[value](
+                self.parameters["wake_velocity_parameters"])
         elif isinstance(value, VelocityDeficit):
             self._velocity_model = value
         else:
@@ -126,7 +127,8 @@ class Wake():
 
     @turbulence_model.setter
     def turbulence_model(self, value):
-        self._turbulence_model = self._turbulence_models[value](self.parameters["wake_turbulence_parameters"])
+        self._turbulence_model = self._turbulence_models[value](
+            self.parameters["wake_turbulence_parameters"])
 
     @property
     def deflection_model(self):
@@ -144,11 +146,13 @@ class Wake():
     @deflection_model.setter
     def deflection_model(self, value):
         if type(value) is str:
-            self._deflection_model = self._deflection_models[value](self.parameters["wake_deflection_parameters"])
+            self._deflection_model = self._deflection_models[value](
+                self.parameters["wake_deflection_parameters"])
         elif isinstance(value, VelocityDeflection):
             self._deflection_model = value
         else:
-            raise ValueError("Invalid value given for VelocityDeflection: {}".format(value))
+            raise ValueError(
+                "Invalid value given for VelocityDeflection: {}".format(value))
 
     @property
     def combination_model(self):
@@ -157,6 +161,7 @@ class Wake():
 
          - fls
          - sosfs
+         - max
 
         When assigning, the input can be a string or an instance of the model.
         """

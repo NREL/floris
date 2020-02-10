@@ -21,6 +21,7 @@ class VelocityDeflection():
     Each subclass has specific functional requirements. Refer to the
     each VelocityDeflection subclass for further detail.
     """
+
     def __init__(self, parameter_dictionary):
         self.model_string = None
         self.logger = setup_logger(name=__name__)
@@ -33,14 +34,15 @@ class VelocityDeflection():
         else:
             self.logger.info('Using default option of applying gch-based ' + \
                         'secondary steering (use_secondary_steering=True)')
-            self.use_secondary_steering = True
+            self.use_secondary_steering = False
 
         if 'eps_gain' in self.parameter_dictionary:
             self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
         else:
             # SOWFA SETTING (note this will be multiplied by D in function)
-            self.eps_gain = 0.3  
-            self.logger.info(('Using default option eps_gain: %.1f' % self.eps_gain))
+            self.eps_gain = 0.3
+            self.logger.info(
+                ('Using default option eps_gain: %.1f' % self.eps_gain))
 
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
@@ -75,7 +77,7 @@ class VelocityDeflection():
             # Use set value
             eps = self.eps_gain * D
             # TODO Is this right below?
-            Uinf = np.mean(flow_field.wind_map.input_speed) 
+            Uinf = np.mean(flow_field.wind_map.input_speed)
 
             dist = np.sqrt(yLocs**2 + zLocs**2)
             xLocs = np.abs(x_locations - coord.x1)
@@ -124,7 +126,7 @@ class VelocityDeflection():
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._use_secondary_steering = value
-    
+
     @property
     def eps_gain(self):
         return self._eps_gain

@@ -220,5 +220,7 @@ class InputReader():
         turbine_dict = json_dict.pop("turbine")
         wake_dict = json_dict.pop("wake")
         farm_dict = json_dict.pop("farm")
+        # print(farm_dict)
         meta_dict = json_dict
+        # print(meta_dict)
         return meta_dict, turbine_dict, wake_dict, farm_dict

@@ -65,7 +65,7 @@ class Blondel(VelocityDeficit):
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
-        
+
         # TODO: implement veer
         # Veer (degrees)
         veer = flow_field.wind_veer
@@ -93,7 +93,7 @@ class Blondel(VelocityDeficit):
                            + (z_locations - HH)**2, dtype=np.float128) / D
 
         # Calculate Beta (Eq 10, pp 5 of ref. [1] in docstring)
-        beta = 0.5 * ( (1 + np.sqrt(1 - Ct)) / np.sqrt(1 - Ct))
+        beta = 0.5 * ((1 + np.sqrt(1 - Ct)) / np.sqrt(1 - Ct))
 
         # Calculate sigma_tilde (Eq 9, pp 5 of ref. [1] in docstring)
         sigma_tilde = (self.a_s * TI + self.b_s) * x_tilde + \
@@ -103,8 +103,8 @@ class Blondel(VelocityDeficit):
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
 
         # Calculate max vel def (Eq 5, pp 4 of ref. [1] in docstring)
-        a1 = 2**(2/n-1)
-        a2 = 2**(4/n-2)
+        a1 = 2**(2 / n - 1)
+        a2 = 2**(4 / n - 2)
         C = a1 - np.sqrt(a2 - ((n*Ct) * cosd(yaw) \
                 / (16.0 * gamma(2/n) \
                 * np.sign(sigma_tilde)*(np.abs(sigma_tilde)**(4/n)) )))
@@ -142,8 +142,9 @@ class Blondel(VelocityDeficit):
             raise ValueError(err_msg)
         self._a_s = value
         if value != 0.3837:
-            self.logger.warning("Current value of a_s, {}, is not equal to tuned " +
-                            "value of 0.3837.".format(value))
+            self.logger.warning(
+                "Current value of a_s, {}, is not equal to tuned " +
+                "value of 0.3837.".format(value))
 
     @property
     def b_s(self):
@@ -170,9 +171,10 @@ class Blondel(VelocityDeficit):
             raise ValueError(err_msg)
         self._b_s = value
         if value != 0.003678:
-            self.logger.warning("Current value of b_s, {}, is not equal to tuned " +
-                            "value of 0.003678.".format(value))
-    
+            self.logger.warning(
+                "Current value of b_s, {}, is not equal to tuned " +
+                "value of 0.003678.".format(value))
+
     @property
     def c_s(self):
         """
@@ -197,8 +199,9 @@ class Blondel(VelocityDeficit):
             raise ValueError(err_msg)
         self._c_s = value
         if value != 0.2:
-            self.logger.warning("Current value of c_s, {}, is not equal to tuned " +
-                            "value of 0.2.".format(value))
+            self.logger.warning(
+                "Current value of c_s, {}, is not equal to tuned " +
+                "value of 0.2.".format(value))
 
     @property
     def a_f(self):
@@ -226,8 +229,9 @@ class Blondel(VelocityDeficit):
             raise ValueError(err_msg)
         self._a_f = value
         if value != 3.11:
-            self.logger.warning("Current value of a_f, {}, is not equal to tuned " +
-                            "value of 3.11.".format(value))
+            self.logger.warning(
+                "Current value of a_f, {}, is not equal to tuned " +
+                "value of 3.11.".format(value))
 
     @property
     def b_f(self):
@@ -255,8 +259,9 @@ class Blondel(VelocityDeficit):
             raise ValueError(err_msg)
         self._b_f = value
         if value != -0.68:
-            self.logger.warning("Current value of b_f, {}, is not equal to tuned " +
-                            "value of -0.68.".format(value))
+            self.logger.warning(
+                "Current value of b_f, {}, is not equal to tuned " +
+                "value of -0.68.".format(value))
 
     @property
     def c_f(self):
@@ -282,5 +287,6 @@ class Blondel(VelocityDeficit):
             raise ValueError(err_msg)
         self._c_f = value
         if value != 2.41:
-            self.logger.warning("Current value of c_f, {}, is not equal to tuned " +
-                            "value of 2.41.".format(value))
+            self.logger.warning(
+                "Current value of c_f, {}, is not equal to tuned " +
+                "value of 2.41.".format(value))

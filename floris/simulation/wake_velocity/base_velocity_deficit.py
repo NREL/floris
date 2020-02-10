@@ -72,7 +72,7 @@ class VelocityDeficit():
         else:
             self.logger.info('Using default option of not applying added ' + \
                         'yaw-added recovery (use_yaw_added_recovery=True)')
-            self.use_yaw_added_recovery = True
+            self.use_yaw_added_recovery = False
 
         if 'yaw_recovery_alpha' in self.parameter_dictionary:
             self.yaw_recovery_alpha = \
@@ -85,10 +85,11 @@ class VelocityDeficit():
         if 'eps_gain' in self.parameter_dictionary:
             self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
         else:
-            self.eps_gain = 0.3 # SOWFA SETTING (note this will be multiplied
-                                # by D in function)
-            self.logger.info(('Using default option eps_gain: %.1f' % self.eps_gain))
-    
+            self.eps_gain = 0.3  # SOWFA SETTING (note this will be multiplied
+            # by D in function)
+            self.logger.info(
+                ('Using default option eps_gain: %.1f' % self.eps_gain))
+
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
             err_msg = "The {} wake model was".format(self.model_string) + \
@@ -113,14 +114,14 @@ class VelocityDeficit():
                             x_locations, y_locations, turbine, turbine_coord)
         return U
 
-    def calculate_VW(self, V, W, coord, turbine, flow_field,
-                                x_locations, y_locations, z_locations):
+    def calculate_VW(self, V, W, coord, turbine, flow_field, x_locations,
+                     y_locations, z_locations):
         """
         # TODO
         """
         if self.calculate_VW_velocities:
-            V, W = self.calc_VW(coord, turbine, flow_field,
-                                     x_locations, y_locations, z_locations)
+            V, W = self.calc_VW(coord, turbine, flow_field, x_locations,
+                                y_locations, z_locations)
         return V, W
 
     def yaw_added_recovery_correction(self, U_local, U, W, x_locations,
@@ -138,7 +139,7 @@ class VelocityDeficit():
         D = turbine.rotor_diameter
 
         numerator = -1 * W * xLocs * np.abs(yLocs)
-        denom = np.pi * (self.yaw_recovery_alpha * xLocs + D/2) ** 2
+        denom = np.pi * (self.yaw_recovery_alpha * xLocs + D / 2)**2
         U2 = numerator / denom
 
         # add velocity modification from yaw (U2)
@@ -154,7 +155,7 @@ class VelocityDeficit():
         return U
 
     def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
-                     z_locations):
+                z_locations):
 
         # turbine parameters
         D = turbine.rotor_diameter
@@ -169,7 +170,7 @@ class VelocityDeficit():
 
         # Update to wind map
         # Uinf = flow_field.wind_speed
-        Uinf = np.mean(flow_field.wind_map.input_speed) # TODO Is this right?
+        Uinf = np.mean(flow_field.wind_map.input_speed)  # TODO Is this right?
 
         # top point of the rotor
         dist_top = np.sqrt((coord.x1 - x_locations) ** 2 \
@@ -201,17 +202,17 @@ class VelocityDeficit():
         eps = self.eps_gain * D
 
         # decay the vortices as they move downstream - using mixing length
-        lmda = D/8 #D/4 #D/4 #D/2
+        lmda = D / 8  #D/4 #D/4 #D/2
         kappa = 0.41
         lm = kappa * z_locations / (1 + kappa * z_locations / lmda)
         z = np.linspace(np.min(z_locations), np.max(z_locations), \
                         np.shape(flow_field.u_initial)[2])
         dudz_initial = np.gradient(flow_field.u_initial, z, axis=2)
-        nu = lm ** 2 * np.abs(dudz_initial[0, :, :])
+        nu = lm**2 * np.abs(dudz_initial[0, :, :])
 
         # top vortex
-        yLocs = y_locations+0.01 - (coord.x2)
-        zLocs = z_locations+0.01 - (HH + D/2)
+        yLocs = y_locations + 0.01 - (coord.x2)
+        zLocs = z_locations + 0.01 - (HH + D / 2)
         V1 = (((yLocs * Gamma_top) / (2 * np.pi * (yLocs**2 + zLocs**2))) \
                 * (1 - np.exp(-(yLocs**2 + zLocs**2)/(eps**2))) ) * \
                 eps**2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps**2)
@@ -222,7 +223,7 @@ class VelocityDeficit():
 
         # bottom vortex
         yLocs = y_locations + 0.01 - (coord.x2)
-        zLocs = z_locations + 0.01 - (HH - D/2)
+        zLocs = z_locations + 0.01 - (HH - D / 2)
         V2 = (((yLocs * -Gamma_bottom) \
             / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
             * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))) \
@@ -235,7 +236,7 @@ class VelocityDeficit():
 
         # top vortex - ground
         yLocs = y_locations + 0.01 - (coord.x2)
-        zLocs = z_locations + 0.01 + (HH + D/2)
+        zLocs = z_locations + 0.01 + (HH + D / 2)
         V3 = (((yLocs * -Gamma_top) \
             / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
             * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) + 0.0) \
@@ -294,12 +295,12 @@ class VelocityDeficit():
         # compute velocity deficit
         # yR = y_locations - coord.x2
         # xR = yR * tand(yaw) + coord.x1
-        V[x_locations < coord.x1+10] = 0.0
-        W[x_locations < coord.x1+10] = 0.0
+        V[x_locations < coord.x1 + 10] = 0.0
+        W[x_locations < coord.x1 + 10] = 0.0
 
         # cut off in the spanwise direction
-        V[np.abs(y_locations-coord.x2) > D] = 0.0
-        W[np.abs(y_locations-coord.x2) > D] = 0.0
+        V[np.abs(y_locations - coord.x2) > D] = 0.0
+        W[np.abs(y_locations - coord.x2) > D] = 0.0
 
         return V, W
 
