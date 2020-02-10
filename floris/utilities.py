@@ -23,6 +23,12 @@ class Vec3():
         """
         Object containing vector information for coordinates.
 
+        # TODO: possibility to store components as np.array or Python list
+        # and use x1, x2, x3 virtual properties. This would simplify the
+        # arithmetic overloading by allowing the use of numpy array
+        # operations. It may add some performance gain, too, but that is
+        # likely negligible.
+
         Args:
             x1: [numeric, numeric, numeric] or numeric -- The first argument
                 can be a list of the three vector components or simply the
@@ -104,9 +110,10 @@ class Vec3():
             return Vec3(self.x1 / arg, self.x2 / arg, self.x3 / arg)
 
     def __eq__(self, arg):
-        return self.x1 == arg.x1 \
-            and self.x2 == arg.x2 \
-            and self.x3 == arg.x3
+        return False not in np.isclose(
+            [self.x1, self.x2, self.x3],
+            [arg.x1, arg.x2, arg.x3]
+        )
 
     def __hash__(self):
         return hash((self.x1, self.x2, self.x3))
