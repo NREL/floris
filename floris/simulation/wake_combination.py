@@ -80,3 +80,33 @@ class SOSFS(WakeCombination):
             and the velocity deficits.
         """
         return np.hypot(u_wake, u_field)
+
+
+class MAX(WakeCombination):
+    """
+    MAX is a subclass of 
+    :py:class:`floris.simulation.wake_combination.WakeCombination` 
+    which uses the maximum wake velocity deficit to add to the 
+    base flow field. For more information, refer to: "Limitations to the
+    validity of single wake superposition in wind farm yield assessment",
+    K. Gunn et al 2016 J. Phys.: Conf. Ser. 749 012003.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.model_string = "max"
+
+    def function(self, u_field, u_wake):
+        """
+        This method combines the base flow field with the maximum velocity 
+        deficits.
+
+        Args:
+            u_field (np.array): The base flow field.
+            u_wake (np.array): The wake velocity deficits.
+
+        Returns:
+            array: A maximum combination of the base flow field 
+            and the velocity deficits.
+        """
+        return np.maximum(u_wake, u_field)
