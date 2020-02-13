@@ -37,7 +37,7 @@ class TurbineMap():
 
                 Vec3(): Turbine(),
 
-                ...,
+                ...,`
 
                 Vec3(): Turbine()
 
@@ -114,14 +114,19 @@ class TurbineMap():
 
         wake_list =[]
         for coord0, turbine0 in self.items:
+
             other_turbines = [(coord, turbine) for coord,turbine in \
                 self.items if turbine != turbine0]
+
             dists = np.array([np.hypot(coord.x1-coord0.x1,coord.x2-coord0.x2)/ \
                 turbine.rotor_diameter for coord,turbine in other_turbines])
+
             angles = np.array([np.degrees(np.arctan2(coord.x1-coord0.x1, \
                 coord.x2-coord0.x2)) for coord,turbine in self.items if \
                 turbine != turbine0])
 
+            # angles = (-angles - 90) % 360
+            
             waked = dists <= 2.
             waked = waked | ((dists <= 20.) & (np.abs(wrap_180(wd-angles)) \
                 <= 0.5*(1.3*np.degrees(np.arctan(2.5/dists+0.15))+10)))

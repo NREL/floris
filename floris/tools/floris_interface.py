@@ -20,7 +20,8 @@ from scipy.stats import norm
 from floris.simulation import WindMap
 from .cut_plane import CutPlane, get_plane_from_flow_data
 from .interface_utilities import show_params, get_params, set_params
-
+import matplotlib.pyplot as plt
+import floris.tools as wfct
 
 class FlorisInterface():
     """
@@ -33,7 +34,7 @@ class FlorisInterface():
         self.input_file = input_file
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
 
-    def calculate_wake(self, yaw_angles=None, no_wake=False, points=None):
+    def calculate_wake(self, yaw_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False):
         """
         Wrapper to the floris flow field calculate_wake method
 
@@ -52,7 +53,7 @@ class FlorisInterface():
             self.floris.farm.set_yaw_angles(yaw_angles)
 
         self.floris.farm.flow_field.calculate_wake(no_wake=no_wake,
-                                                   points=points)
+                                                   points=points, track_n_upstream_wakes=track_n_upstream_wakes )
 
     def reinitialize_flow_field(self,
                                 wind_speed=None,
@@ -1021,6 +1022,16 @@ class FlorisInterface():
                 about each model parameter that is changed. Defaults to True.
         """
         set_params(self, params, verbose)
+
+
+    def show_flow_field(self):
+        # Get horizontal plane at default height (hub-height)
+        hor_plane = self.get_hor_plane()
+
+        # Plot and show
+        fig, ax = plt.subplots()
+        wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+        plt.show()
 
     # TODO
     # Comment this out until sure we'll need it

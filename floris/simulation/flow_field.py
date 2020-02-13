@@ -53,6 +53,8 @@ class FlowField():
             turbine_map=turbine_map,
             wind_map=wind_map,
             with_resolution=wake.velocity_model.model_grid_resolution)
+        #TODO consider remapping wake_list with reinitialize flow field
+        self.wake_list = {turbine: None for _, turbine in self.turbine_map.items}
 
     def _discretize_turbine_domain(self):
         """
@@ -502,7 +504,7 @@ class FlowField():
                 i]
             turbine.reset_velocities()
 
-    def calculate_wake(self, no_wake=False, points=None):
+    def calculate_wake(self, no_wake=False, points=None, track_n_upstream_wakes=False):
         """
         Updates the flow field based on turbine activity.
 
@@ -528,6 +530,10 @@ class FlowField():
             # add points to flow field grid points
             self._compute_initialized_domain(points=points)
 
+        if track_n_upstream_wakes:
+            # keep track of the wakes upstream of each turbine
+            self.wake_list = {turbine: 0 for _, turbine in self.turbine_map.items}
+
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
             turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
@@ -540,7 +546,7 @@ class FlowField():
         center_of_rotation = Vec3(x0, y0, 0)
 
         # Rotate the turbines such that they are now in the frame of reference
-        # of the wind direction simpifying computing the wakes and wake overlap
+        # of the wind direction simplifying computing the wakes and wake overlap
         rotated_map = self.turbine_map.rotated(
             self.wind_map.turbine_wind_direction, center_of_rotation)
 
@@ -605,8 +611,6 @@ class FlowField():
             # include turbulence model for the gaussian wake model from Porte-Agel
             if self.wake.turbulence_model.model_string == 'gauss' or \
                     self.wake.turbulence_model.model_string == 'blondel':
-                # print('turbulence calcs here.')
-                # pass
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
                     xloc, yloc = np.array(rx == coord_ti.x1), np.array(
@@ -648,11 +652,9 @@ class FlowField():
                                 ti_added**2 +
                                 turbine.current_turbulence_intensity**2)
 
-                            # turbine_ti.current_turbulence_intensity = turbine_ti.calculate_turbulence_intensity(
-                            #     area_overlap, self.wind_map.
-                            #     turbine_turbulence_intensity[idx],
-                            #     self.wake.turbulence_model, coord_ti, coord,
-                            #     turbine)
+                            if track_n_upstream_wakes:
+                                # increment by one for each upstream wake
+                                self.wake_list[turbine_ti] += 1
 
             # combine this turbine's wake into the full wake field
             if not no_wake:
@@ -680,7 +682,7 @@ class FlowField():
         Returns:
             floats: xmin, xmax, ymin, ymax, zmin, zmax
 
-            The mininmum and maxmimum values of the domain in the x, y, and z directions.
+            The minimum and maximum values of the domain in the x, y, and z directions.
 
         Examples:
             To get the domain bounds:
@@ -689,3 +691,4 @@ class FlowField():
             ... floris.farm.flow_field.domain_bounds()
         """
         return self._xmin, self._xmax, self._ymin, self._ymax, self._zmin, self._zmax
+

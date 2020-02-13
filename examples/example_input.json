@@ -4,11 +4,11 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": true,
+      "enable": false,
       "level": "WARNING"
     },
     "file": {
-      "enable": true,
+      "enable": false,
       "level": "WARNING"
     }
   },
@@ -18,15 +18,12 @@
     "description": "Example 2x2 Wind Farm",
     "properties": {
       "wind_speed": [
-        8.0,
         8.0
       ],
       "wind_direction": [
-        35.0,
-        45.0
+        270.0
       ],
       "turbulence_intensity": [
-        0.06,
         0.06
       ],
       "wind_shear": 0.12,
@@ -45,12 +42,10 @@
         630.0
       ],
       "wind_x": [
-        0,
-        756.0
+        0
       ],
       "wind_y": [
-        0,
-        630.0
+        0
       ]
     }
   },
@@ -229,7 +224,7 @@
     "description": "wake",
     "properties": {
       "velocity_model": "gauss",
-      "turbulence_model": "ishihara",
+      "turbulence_model": "gauss",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
