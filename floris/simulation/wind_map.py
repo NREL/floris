@@ -51,11 +51,11 @@ class WindMap():
         # Indicates that fix_wind_layout has been used when True. Initializing to False.
         self.duplicated_wind_layout = False
 
-        if wind_direction:
+        if wind_direction is not None:
             self.calculate_wind_direction()
-        if wind_speed:
+        if wind_speed is not None:
             self.calculate_wind_speed()
-        if turbulence_intensity:
+        if turbulence_intensity is not None:
             self.calculate_turbulence_intensity()
 
     # Public functions
