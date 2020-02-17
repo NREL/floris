@@ -67,7 +67,7 @@ class Farm():
     """
 
     def __init__(self, instance_dictionary, turbine, wake):
-        self.description = instance_dictionary["description"]
+        self.name = instance_dictionary["name"]
         properties = instance_dictionary["properties"]
         layout_x = properties["layout_x"]
         layout_y = properties["layout_y"]
@@ -94,7 +94,7 @@ class Farm():
 
     def __str__(self):
         return \
-            "Description: {}\n".format(self.description) + \
+            "Name: {}\n".format(self.name) + \
             "Wake Model: {}\n".format(self.flow_field.wake.velocity_model) + \
             "Deflection Model: {}\n".format(
                 self.flow_field.wake.deflection_model)

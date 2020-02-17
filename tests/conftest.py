@@ -27,7 +27,6 @@ class SampleInputs():
         self.turbine = {
             "type": "turbine",
             "name": "nrel_5mw",
-            "description": "NREL 5MW",
             "properties": {
                 "rotor_diameter": 126.0,
                 "hub_height": 90.0,
@@ -49,7 +48,6 @@ class SampleInputs():
         self.farm = {
             "type": "farm",
             "name": "farm_example_2x2",
-            "description": "Example 2x2 Wind Farm",
             "properties": {
                 "wind_speed": [8.0],
                 "wind_direction": [270.0],
@@ -57,7 +55,6 @@ class SampleInputs():
                 "wind_shear": 0.12,
                 "wind_veer": 0.0,
                 "air_density": 1.225,
-                "wake_combination": "sosfs",
                 "layout_x": [
                     0.0,
                     5 * self.turbine["properties"]["rotor_diameter"],
@@ -72,7 +69,6 @@ class SampleInputs():
         self.wake = {
             "type": "wake",
             "name": "wake_default",
-            "description": "wake",
             "properties": {
                 "velocity_model": "gauss",
                 "deflection_model": "gauss",

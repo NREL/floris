@@ -33,7 +33,7 @@ class InputReader():
 
     def __init__(self):
 
-        self._validObjects = ["turbine", "wake", "farm"]
+        self._valid_objects = ["turbine", "wake", "farm"]
 
         self._turbine_properties = {
             "rotor_diameter": float,
@@ -58,15 +58,15 @@ class InputReader():
 
         self._farm_properties = {
             "wind_speed": list,
-            "wind_x": list,
-            "wind_y": list,
-            "turbulence_intensity": list,
             "wind_direction": list,
+            "turbulence_intensity": list,
             "wind_shear": float,
             "wind_veer": float,
             "air_density": float,
             "layout_x": list,
-            "layout_y": list
+            "layout_y": list,
+            "wind_x": list,
+            "wind_y": list
         }
 
     def _parseJSON(self, filename):
@@ -85,15 +85,15 @@ class InputReader():
             data = json.load(jsonfile)
         return data
 
-    def _validateJSON(self, json_dict, type_map):
+    def _validate_dict(self, input_dict, type_map):
         """
         Verifies that the expected fields exist in the json input file
         and validates the type of the input data by casting the fields
         to appropriate values based on the predefined type maps in.
 
         Args:
-            json_dict: Input dictionary with all elements of type str.
-            type_map: Predefined type map dictionary for type checking
+            input_dict: Input dictionary with all elements of type str.
+            type_map: Predefined type map dictionary for type checking 
                 inputs structured as {"property": type}.
 
         Returns:
@@ -104,46 +104,38 @@ class InputReader():
         validated = {}
 
         # validate the object type
-        if "type" not in json_dict:
-            raise KeyError("'type' key is required")
+        if "type" not in input_dict:
+            raise KeyError("'type' key is required in input")
+        if input_dict["type"] not in self._valid_objects:
+            raise ValueError("'type' must be one of {}".format(", ".join(self._valid_objects)))
+        validated["type"] = input_dict["type"]
 
-        if json_dict["type"] not in self._validObjects:
-            raise ValueError("'type' must be one of {}".format(", ".join(
-                self._validObjects)))
-
-        validated["type"] = json_dict["type"]
-
-        # validate the description
-        if "description" not in json_dict:
-            raise KeyError("'description' key is required")
-
-        validated["description"] = json_dict["description"]
+        # validate the name
+        if "name" not in input_dict:
+            raise KeyError("'name' key is required in input")
+        validated["name"] = input_dict["name"]
 
         # validate the properties dictionary
-        if "properties" not in json_dict:
-            raise KeyError("'properties' key is required")
+        if "properties" not in input_dict:
+            raise KeyError("'properties' key is required in input")
+
         # check every attribute in the predefined type dictionary for existence
         # and proper type in the given inputs
-        propDict = {}
-        properties = json_dict["properties"]
+        prop_dict = {}
+        properties = input_dict["properties"]
         for element in type_map:
             if element not in properties:
-                raise KeyError("'{}' is required for object type '{}'".format(
-                    element, validated["type"]))
+                raise KeyError("'{}' is required for object type '{}'".format(element, validated["type"]))
+            prop_dict[element] = self._cast(type_map[element], properties[element])
+        validated["properties"] = prop_dict
 
-            value, error = self._cast_to_type(type_map[element],
-                                              properties[element])
-            if error is not None:
-                raise error("'{}' must be of type '{}'".format(
-                    element, type_map[element]))
-
-            propDict[element] = value
-
-        validated["properties"] = propDict
-
+        for element in properties:
+            if element not in type_map:
+                raise KeyError("'{}' is given but not required for object type '{}'".format(element, validated["type"]))
+        
         return validated
 
-    def _cast_to_type(self, typecast, value):
+    def _cast(self, typecast, value):
         """
         Casts the string input to the type in typecast.
 
@@ -155,52 +147,49 @@ class InputReader():
             type or None: position 0 - the casted value.
             None or Error: position 1 - the caught error.
         """
-        try:
-            return typecast(value), None
-        except ValueError:
-            return None, ValueError
+        return typecast(value)
 
-    def validate_turbine(self, json_dict):
+    def validate_turbine(self, input_dict):
         """
         Checks for the required values and types of input in the
         given input dictionary as required by the
         :py:obj:`floris.simulation.turbine` object.
 
         Args:
-            json_dict: Input dictionary describing a turbine model.
+            input_dict: Input dictionary describing a turbine model.
 
         Returns:
             dict: A validated dictionary
         """
-        return self._validateJSON(json_dict, self._turbine_properties)
+        return self._validate_dict(input_dict, self._turbine_properties)
 
-    def validate_wake(self, json_dict):
+    def validate_wake(self, input_dict):
         """
         Checks for the required values and types of input in the
         given input dictionary as required by the
         :py:obj:`floris.simulation.wake` object.
 
         Args:
-            json_dict: dict - Input dictionary describing a wake model.
+            input_dict: dict - Input dictionary describing a wake model.
 
         Returns:
             dict: A validated dictionary
         """
-        return self._validateJSON(json_dict, self._wake_properties)
+        return self._validate_dict(input_dict, self._wake_properties)
 
-    def validate_farm(self, json_dict):
+    def validate_farm(self, input_dict):
         """
         Checks for the required values and types of input in the
         given input dictionary as required by the
         :py:obj:`floris.simulation.farm` object.
 
         Args:
-            json_dict: Input dictionary describing a farm model.
+            input_dict: Input dictionary describing a farm model.
 
         Returns:
             dict: A validated dictionary
         """
-        return self._validateJSON(json_dict, self._farm_properties)
+        return self._validate_dict(input_dict, self._farm_properties)
 
     def read(self, input_file=None, input_dict=None):
         """
@@ -212,17 +201,17 @@ class InputReader():
             input_dict: A Python dictionary of inputs
 
         Returns:
-            json_dict: A validated dictionary
+            input_dict: A validated dictionary
         """
         if input_file is not None:
-            json_dict = self._parseJSON(input_file)
+            input_dict = self._parseJSON(input_file)
         elif input_dict is not None:
-            json_dict = input_dict.copy()
+            input_dict = input_dict.copy()
         else:
             raise ValueError("Input file or dictionary must be provided")
 
-        turbine_dict = json_dict.pop("turbine")
-        wake_dict = json_dict.pop("wake")
-        farm_dict = json_dict.pop("farm")
-        meta_dict = json_dict
+        turbine_dict = input_dict.pop("turbine")
+        wake_dict = input_dict.pop("wake")
+        farm_dict = input_dict.pop("farm")
+        meta_dict = input_dict
         return meta_dict, turbine_dict, wake_dict, farm_dict
