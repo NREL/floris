@@ -12,6 +12,7 @@
 from .wake_velocity.base_velocity_deficit import VelocityDeficit
 from .wake_velocity.curl import Curl as CurlDeficit
 from .wake_velocity.gauss import Gauss as GaussDeficit
+from .wake_velocity.gauss_m import Gauss_M as Gauss_MDeficit
 from .wake_velocity.jensen import Jensen
 from .wake_velocity.multizone import MultiZone
 from .wake_velocity.ishihara import Ishihara
@@ -62,6 +63,7 @@ class Wake():
             "jensen": Jensen,
             "multizone": MultiZone,
             "gauss": GaussDeficit,
+            "gauss_m": Gauss_MDeficit,
             "ishihara": Ishihara,
             "curl": CurlDeficit,
             "blondel": BlondelDeficit
