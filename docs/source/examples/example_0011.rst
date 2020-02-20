@@ -72,7 +72,7 @@ Next, a WindRose object is initialized and a DataFrame containing the frequency 
                                                             en_date = None)
 
     else:
-        df = wind_rose.load('windtoolkit_geo_center_us.p')
+        df = wind_rose.load(os.path.join(file_dir, 'windtoolkit_geo_center_us.p'))
 
 .. image:: ../../_static/images/WindRose_Example.png
 
