@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -12,12 +12,16 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 import floris.tools as wfct
-import floris.tools.optimization as opt
+import floris.tools.optimization.pyoptsparse as opt
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+file_dir = os.path.dirname(os.path.abspath(__file__))
+fi = wfct.floris_interface.FlorisInterface(
+    os.path.join(file_dir, '../../example_input.json')
+)
 
 boundaries = [[0., 0.], [0., 1000.], [1000., 1000.], [1000., 0.]]
 

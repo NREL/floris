@@ -1,26 +1,27 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
-
-# See read the https://floris.readthedocs.io for documentation
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 
 import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
 import floris.tools.cut_plane as cp
-from floris.tools.optimization import YawOptimizationWindRoseParallel
+from floris.tools.optimization.scipy.optimization \
+    import YawOptimizationWindRoseParallel
 import floris.tools.wind_rose as rose
 import floris.tools.power_rose as pr
 import numpy as np
 import pandas as pd
+import os
 
 if __name__ == '__main__':
     
@@ -38,7 +39,10 @@ if __name__ == '__main__':
     maximum_ws = 15.0
 
     # Instantiate the FLORIS object
-    fi = wfct.floris_interface.FlorisInterface("example_input.json")
+    file_dir = os.path.dirname(os.path.abspath(__file__))
+    fi = wfct.floris_interface.FlorisInterface(
+        os.path.join(file_dir, '../../example_input.json')
+    )
 
     # Set wind farm to N_row x N_row grid with constant spacing 
     # (2 x 2 grid, 5 D spacing)
@@ -65,9 +69,8 @@ if __name__ == '__main__':
     # ================================================================================
 
     # Initialize the horizontal cut
-    hor_plane = wfct.cut_plane.HorPlane(
-        fi.get_flow_data(),
-        fi.floris.farm.turbines[0].hub_height
+    hor_plane = fi.get_hor_plane(
+        height=fi.floris.farm.turbines[0].hub_height
     )
 
     # Plot and show
@@ -100,14 +103,16 @@ if __name__ == '__main__':
     	                                                    en_date = None)
 
     else:
-    	df = wind_rose.load('windtoolkit_geo_center_us.p')
+    	df = wind_rose.load(
+            os.path.join(file_dir, 'windtoolkit_geo_center_us.p')
+        )
 
     # plot wind rose
     wind_rose.plot_wind_rose()
 
-    # =============================================================================
+    # ==========================================================================
     print('Finding baseline and optimal wake steering power in FLORIS...')
-    # =============================================================================
+    # ==========================================================================
 
     # Instantiate the parallel optimization object
     yaw_opt = YawOptimizationWindRoseParallel(fi, df.wd, df.ws, 
@@ -131,7 +136,10 @@ if __name__ == '__main__':
         'power_baseline':df_base.power_baseline,'power_opt':df_opt.power_opt})
 
     # initialize power rose
-    df_yaw = pd.DataFrame([list(row) for row in df_opt['yaw_angles']],columns=[str(i) for i in range(1,N_turb+1)])
+    df_yaw = pd.DataFrame(
+        [list(row) for row in df_opt['yaw_angles']], \
+        columns=[str(i) for i in range(1,N_turb+1)]
+    )
     df_yaw['ws'] = df.ws
     df_yaw['wd'] = df.wd
     df_turbine_power_no_wake = pd.DataFrame([list(row) for row in df_base['turbine_power_no_wake']],columns=[str(i) for i in range(1,N_turb+1)])

@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -10,11 +10,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import floris.tools.optimization as opt
+import os
+import floris.tools.optimization.pyoptsparse as opt
 import floris.tools as wfct
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface('../example_input.json')
+file_dir = os.path.dirname(os.path.abspath(__file__))
+fi = wfct.floris_interface.FlorisInterface(
+    os.path.join(file_dir, '../../example_input.json')
+)
 
 # Define wind speed and direction
 ws = [8]
