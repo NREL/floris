@@ -804,10 +804,10 @@ class YawOptimizationWindRose(Optimization):
             if self.ws[i] >= self.minimum_ws:
                 if self.ti is None:
                     self.fi.reinitialize_flow_field(
-                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                        wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
                 else:
                     self.fi.reinitialize_flow_field(
-                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
+                        wind_direction=[self.wd[i]], wind_speed=[self.ws[i]], turbulence_intensity=self.ti[i])
 
                 # calculate baseline power
                 self.fi.calculate_wake(yaw_angles=0.0)
@@ -884,10 +884,10 @@ class YawOptimizationWindRose(Optimization):
             if (self.ws[i] >= self.minimum_ws) & (self.ws[i] <= self.maximum_ws):
                 if self.ti is None:
                     self.fi.reinitialize_flow_field(
-                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                        wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
                 else:
                     self.fi.reinitialize_flow_field(
-                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
+                        wind_direction=[self.wd[i]], wind_speed=[self.ws[i]], turbulence_intensity=self.ti[i])
 
                 opt_yaw_angles = self._optimize()
 
@@ -904,10 +904,10 @@ class YawOptimizationWindRose(Optimization):
                         condition...')
                 if self.ti is None:
                     self.fi.reinitialize_flow_field(
-                        wind_direction=self.wd[i], wind_speed=self.ws[i])
+                        wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
                 else:
                     self.fi.reinitialize_flow_field(
-                        wind_direction=self.wd[i], wind_speed=self.ws[i], turbulence_intensity=self.ti[i])
+                        wind_direction=[self.wd[i]], wind_speed=[self.ws[i]], turbulence_intensity=self.ti[i])
                 self.fi.calculate_wake(yaw_angles=0.0)
                 opt_yaw_angles = self.nturbs*[0.0]
                 power_opt = self.fi.get_turbine_power(include_unc=self.include_unc, \
@@ -1387,7 +1387,7 @@ class LayoutOptimization(Optimization):
         #                  self.bndy_min, self.bndy_max)
         x = x_in[0:self.nturbs]
         y = x_in[self.nturbs:2*self.nturbs]       
-            
+
         dist_out = []
 
         for k in range(self.nturbs):
