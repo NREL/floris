@@ -18,8 +18,34 @@ from scipy.special import gamma
 
 class Gauss_M(VelocityDeficit):
     """
-    ROUGH IN, THE MERGED GAUSSIAN CLASS
+    This is the first draft of what will hopefully become the new gaussian class 
+    Currently it contains a direct port of the Bastankhah gaussian class from previous
+    A direct implementation of the Blondel model
+    And a new GM model where we merge features a bit more of the two to ensure consistency with previous far-wake results
+    of the Gaussian model, while implementing the Blondel model's smooth near-wake
 
+    TODO: This needs to be much more expanded and including full references
+
+    [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
+    wind-turbine wakes: A large-eddy simulation study." *Physics of
+    Fluids*, 2015.
+
+    [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
+    wind-turbine wakes." *Renewable Energy*, 2014.
+
+    [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
+    study of wind turbine wakes in yawed conditions." *J. Fluid
+    Mechanics*, 2016.
+
+    [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
+    A new approach for power prediction." *Energies*, 2016.
+
+    [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
+    blade pitch offset." *Energies*, 2017.
+
+    [6] Blondel, F. and Cathelain, M. "An alternative form of the
+    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
+    2020.
     Notes to be written (merged)
     """
 
@@ -32,7 +58,7 @@ class Gauss_M(VelocityDeficit):
         self.ka = float(model_dictionary["ka"])
         self.kb = float(model_dictionary["kb"])
 
-        # near wake parameters
+        # near wake / far wake boundary parameters
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
 
@@ -55,7 +81,7 @@ class Gauss_M(VelocityDeficit):
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
         """
-        Saving this space
+        First batch of code dedicated to sections common across codes
         """
         
         # veer (degrees)
@@ -74,11 +100,11 @@ class Gauss_M(VelocityDeficit):
         # wake deflection
         delta = deflection_field
 
-        if self.model_code == 'b2':
+        if self.model_code == 'gm':
 
-            # ALTERED BLONDEL
+            # MERGED Gaussian Code
 
-            # Calculate mask values to mask upstream wake
+            # Calculate mask values to mask upstream wake as before
             yR = y_locations - turbine_coord.x2
             xR = yR * tand(yaw) + turbine_coord.x1
 
@@ -109,34 +135,41 @@ class Gauss_M(VelocityDeficit):
             # sigma_tilde = (self.a_s * TI + self.b_s) * x_tilde + \
             #         self.c_s * np.sqrt(beta)
             #TO 
-            a_s = self.ka
-            b_s = self.kb
+            a_s = self.ka # Force equality to previous parameters to reduce new parameters
+            b_s = self.kb # Force equality to previous parameters to reduce new parameters
             c_s = 0.5
             sigma_tilde = (a_s * TI + b_s) * x_tilde + \
                         c_s * np.sqrt(beta)
 
+            # 
+            # Include the x0 subtraction of previous gaussian code for consistency
+            #CHANGEB#4
+            #TO 
+            x0 = D * (cosd(yaw) * (1 + np.sqrt(1 - Ct))) / (np.sqrt(2) \
+                * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) \
+                + turbine_coord.x1
+            sigma_tilde = sigma_tilde  - (a_s * TI + b_s) * x0/D
+
 
             # TEMP ADDITIONAL CALCUATIONS
-            pnw = -1
-            a = 0.5 * (1 - np.sqrt(1 - Ct))
-            cnw = np.sqrt(Ct / (8 * (1 - (1-a)**2))) - c_s * np.sqrt(beta)
-            k = cnw * (1 + x_tilde)**pnw
-            Cx = 1 - np.sqrt(1 - (Ct / (8 * (sigma_tilde + k)**2)))
+            # pnw = -1
+            # a = 0.5 * (1 - np.sqrt(1 - Ct))
+            # cnw = np.sqrt(Ct / (8 * (1 - (1-a)**2))) - c_s * np.sqrt(beta)
+            # k = cnw * (1 + x_tilde)**pnw
+            # Cx = 1 - np.sqrt(1 - (Ct / (8 * (sigma_tilde + k)**2)))
 
 
-            # TEMP PRINTOUT
-            # print('beta compare')
-            # print('left', c_s*np.sqrt(beta))
-            # print('right', sigma_y0/D)
-            # print('beta compare')
 
             # Calculate n (Eq 13, pp 6 of ref. [1] in docstring)
             #CHANGEB#1
             # FROM:
             # n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
             # TO:
+            # Force c_f to 2 and treat a_f and b_f as tuning variables
+            a_f = 1.5 * 3.11
+            b_f = 0.65 * -0.68
             c_f = 2.0
-            n = self.a_f * np.exp(self.b_f * x_tilde) + c_f
+            n = a_f * np.exp(b_f * x_tilde) + c_f
             #END CHANGE
 
             # Calculate max vel def (Eq 5, pp 4 of ref. [1] in docstring)
@@ -156,7 +189,7 @@ class Gauss_M(VelocityDeficit):
             self.n = n
             self.beta_out = np.ones_like(self.sigma_tilde) * beta
             self.C = C
-            self.Cx = Cx
+            # self.Cx = Cx
 
             return np.sqrt(velDef1**2), np.zeros(np.shape(velDef1)), \
                                         np.zeros(np.shape(velDef1))
@@ -281,11 +314,13 @@ class Gauss_M(VelocityDeficit):
             velDef1[x_locations < x0] = 0
 
             # TEMP HACK: Store some variables for inspection
-            self.sigma_tilde = np.sqrt((sigma_y/D)**2 + (sigma_z/D)**2)
+            # self.sigma_tilde = np.sqrt((sigma_y/D)**2 + (sigma_z/D)**2)
+            self.sigma_tilde = np.sqrt((sigma_y/D) * (sigma_z/D))
+
             self.n = 2 * np.ones_like(self.sigma_tilde) # Always 2 for gauss
             self.beta_out = np.ones_like(self.sigma_tilde) * sigma_y0 /D
             self.C = (U_local * (1 - np.sqrt(1 - ((Ct * cosd(yaw)) \
-                    / (8.0 * sigma_y * sigma_z / D**2)))) * 1.0)
+                    / (8.0 * sigma_y * sigma_z / D**2)))) * 1/D)
 
 
             return np.sqrt(velDef**2 + velDef1**2), np.zeros(np.shape(velDef)), \
