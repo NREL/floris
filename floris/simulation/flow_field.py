@@ -212,6 +212,13 @@ class FlowField():
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
+        if self.wake.velocity_model.model_string == 'curl':
+            print('ADDING VEER!')
+            v_veer = .4/100 * self.z - .4*90/100
+            print('min veer: ', np.min(v_veer))
+            print('max veer: ', np.max(v_veer))
+            self.v_initial = self.v_initial + v_veer
+
         self.u = self.u_initial.copy()
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
@@ -567,6 +574,13 @@ class FlowField():
         for i, cord in enumerate(self.turbine_map.coords):
             rx[i], ry[i] = cord.x1prime, cord.x2prime
 
+        # if self.wake.velocity_model.model_string == 'curl':
+        #     print('ADDING VEER!')
+        #     v_veer = -.4/100 * rotated_z + .4*90/100
+        #     print('min veer: ', np.min(v_veer))
+        #     print('max veer: ', np.max(v_veer))
+        #     self.v_initial = self.v_initial + v_veer
+
         for coord, turbine in sorted_map:
             xloc, yloc = np.array(rx == coord.x1), np.array(ry == coord.x2)
             idx = int(np.where(np.logical_and(yloc == True, xloc == True))[0])
@@ -610,7 +624,9 @@ class FlowField():
             ###########
             # include turbulence model for the gaussian wake model from Porte-Agel
             if self.wake.turbulence_model.model_string == 'gauss' or \
-                    self.wake.turbulence_model.model_string == 'blondel':
+                    self.wake.turbulence_model.model_string == 'ishihara':
+                # print('turbulence calcs here.')
+                # pass
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
                     xloc, yloc = np.array(rx == coord_ti.x1), np.array(
@@ -659,14 +675,24 @@ class FlowField():
             # combine this turbine's wake into the full wake field
             if not no_wake:
                 u_wake = self.wake.combination_function(u_wake, turb_u_wake)
-                v_wake = (v_wake + turb_v_wake)
-                w_wake = (w_wake + turb_w_wake)
+                # v_wake = (v_wake + turb_v_wake)
+                # w_wake = (w_wake + turb_w_wake)
+
+                # gauss
+                # self.v = self.v + turb_v_wake
+                # self.w = self.w + turb_w_wake
+
+                # curl
+                # self.v = turb_v_wake
+                # self.w = turb_w_wake
+                self.v = self.wake.combination_function(turb_v_wake, self.v)
+                self.w = self.wake.combination_function(turb_w_wake, self.v)
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
             self.u = self.u_initial - u_wake
-            self.v = self.v_initial + v_wake
-            self.w = self.w_initial + w_wake
+            # self.v = self.v_initial + v_wake
+            # self.w = self.w_initial + w_wake
 
         # rotate the grid if it is curl
         if self.wake.velocity_model.model_string == 'curl':
@@ -691,4 +717,3 @@ class FlowField():
             ... floris.farm.flow_field.domain_bounds()
         """
         return self._xmin, self._xmax, self._ymin, self._ymax, self._zmin, self._zmax
-
