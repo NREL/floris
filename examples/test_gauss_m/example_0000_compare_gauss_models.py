@@ -333,6 +333,30 @@ ax.grid(True)
 ax.legend()
 
 
+# Redo for paper
+fig, ax = plt.subplots(1,1,sharex=False,sharey=False,figsize=(6,5))
+
+# Downstream power comparison
+sweep_locations, ps_fi_g = power_sweep(fi_g,D)
+sweep_locations, ps_fi_b = power_sweep(fi_b,D)
+sweep_locations, ps_fi_gmg = power_sweep(fi_gmg,D)
+sweep_locations, ps_fi_gmb = power_sweep(fi_gmb,D)
+sweep_locations, ps_fi_gmgm = power_sweep(fi_gmgm,D)
+
+ax.set_title('Dowstream power sweep')
+# ax.plot(sweep_locations,ps_fi_g,label='Gauss',lw=2,color=color_dict['Gauss'])
+# ax.plot(sweep_locations,ps_fi_b,label='Blondel',lw=2,color=color_dict['Blondel'])
+ax.plot(df_power_ti.d_spacing,df_power_ti.sowfa_power_2, color='k',marker='o',ls='None',label='SOWFA 1')
+ax.plot(df_power_ti.d_spacing,df_power_ti.sowfa_power_3, color='k',marker='s',ls='None',label='SOWFA 2')
+ax.plot(sweep_locations,ps_fi_gmg,'--',label='Gauss-Legacy',color=color_dict['gmg'])
+# ax.plot(sweep_locations,ps_fi_gmb,'-',label='gmb',color=color_dict['gmb'],lw=3)
+ax.plot(sweep_locations,ps_fi_gmgm,'.-',label='Gauss-Blondel',color=color_dict['gmgm'])
+ax.set_ylabel('Downstream Power (kW)')
+ax.set_xlabel('Distance downstream (D)')
+ax.grid(True)
+ax.legend()
+fig.savefig('Blondel.png',dpi=150)
+
 
 plt.show()
 
