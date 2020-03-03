@@ -1,19 +1,14 @@
 # Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not 
+# use this file except in compliance with the License. You may obtain a copy of 
 # the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+# License for the specific language governing permissions and limitations under 
 # the License.
-
-# See https://floris.readthedocs.io for documentation
-
-
-import copy
 
 import numpy as np
 import pandas as pd
@@ -143,9 +138,11 @@ class FlorisInterface(LoggerBase):
         wind_map = self.floris.farm.wind_map
         turbine_map = self.floris.farm.flow_field.turbine_map
         if turbulence_kinetic_energy is not None:
-            if wind_speed is None:
-                wind_map.input_speed
-            turbulence_intensity = self.TKE_to_TI(turbulence_kinetic_energy, wind_speed)
+            if wind_speed == None: wind_map.input_speed
+            turbulence_intensity = self.TKE_to_TI(
+                turbulence_kinetic_energy,
+                wind_speed
+            )
 
         if wind_layout or layout_array is not None:
             # Build turbine map and wind map (convenience layer for user)
@@ -298,7 +295,10 @@ class FlorisInterface(LoggerBase):
                 coords = self.floris.farm.flow_field.turbine_map.coords
                 max_diameter = self.floris.farm.flow_field.max_diameter
                 x = [coord.x1 for coord in coords]
-                x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
+                x1_bounds = (
+                    min(x) - 2 * max_diameter,
+                    max(x) + 10 * max_diameter
+                )
             if x2_bounds is None:
                 coords = self.floris.farm.flow_field.turbine_map.coords
                 max_diameter = self.floris.farm.flow_field.max_diameter
@@ -309,7 +309,10 @@ class FlorisInterface(LoggerBase):
                 coords = self.floris.farm.flow_field.turbine_map.coords
                 max_diameter = self.floris.farm.flow_field.max_diameter
                 y = [coord.x2 for coord in coords]
-                x1_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
+                x1_bounds = (
+                    min(y) - 2 * max_diameter,
+                    max(y) + 2 * max_diameter
+                )
             if x2_bounds is None:
                 hub_height = self.floris.farm.flow_field.turbine_map.turbines[
                     0
@@ -849,7 +852,8 @@ class FlorisInterface(LoggerBase):
             self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
             return mean_farm_power
         else:
-            turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
+            turb_powers = \
+                [turbine.power for turbine in self.floris.farm.turbines]
             return np.sum(turb_powers)
 
     def get_turbine_layout(self, z=False):
