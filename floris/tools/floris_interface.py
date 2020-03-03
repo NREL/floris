@@ -15,6 +15,7 @@ from floris.simulation import Floris
 from floris.simulation import TurbineMap, Turbine
 from .flow_data import FlowData
 from ..utilities import Vec3
+from ..utilities import setup_logger
 import copy
 from scipy.stats import norm
 from floris.simulation import WindMap
@@ -27,8 +28,11 @@ class FlorisInterface():
     """
 
     def __init__(self, input_file=None, input_dict=None):
+        self.logger = setup_logger(name=__name__)
         if input_file is None and input_dict is None:
-            raise ValueError('Input file or dictionary must be supplied')
+            err_msg = 'Input file or dictionary must be supplied'
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         self.input_file = input_file
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
 

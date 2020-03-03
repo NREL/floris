@@ -12,6 +12,7 @@
 from . import wake_deflection
 from . import wake_velocity
 from . import wake_combination
+from ..utilities import setup_logger
 
 
 class Wake():
