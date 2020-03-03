@@ -66,7 +66,8 @@ class Wake():
 
         self._combination_models = {
             "fls": wake_combination.FLS,
-            "sosfs": wake_combination.SOSFS
+            "sosfs": wake_combination.SOSFS,
+            "max": wake_combination.MAX
         }
         self.combination_model = properties["combination_model"]
 
