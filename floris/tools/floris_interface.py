@@ -10,6 +10,8 @@
 # License for the specific language governing permissions and limitations under 
 # the License.
 
+import copy
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
