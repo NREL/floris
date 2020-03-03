@@ -12,5 +12,8 @@ pandas>=0.24
 pyproj>=2.1
 seaborn>=0.9
 
+# utilities
+coloredlogs>=10.0
+
 # optimization
 # TODO: Add optimization dependencies and version numbers

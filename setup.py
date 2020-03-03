@@ -45,7 +45,10 @@ REQUIRED = [
     'h5pyd==0.3.3',
     'pandas==0.24.2',
     'pyproj==2.1.3',
-    'seaborn==0.9.0'
+    'seaborn==0.9.0',
+
+    # utilities
+    'coloredlogs>=10.0'
 ]
 
 # What packages are optional?
