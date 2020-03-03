@@ -14,6 +14,7 @@ from scipy.interpolate import interp1d
 from scipy.spatial import distance_matrix
 import math
 from ..utilities import cosd, sind, tand
+from ..utilities import setup_logger
 import scipy.stats as stats
 
 class Turbine():

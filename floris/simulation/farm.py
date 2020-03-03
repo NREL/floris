@@ -10,6 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 from ..utilities import Vec3
+from ..utilities import setup_logger
 from .wake_combination import WakeCombination
 from .flow_field import FlowField
 from .wind_map import WindMap

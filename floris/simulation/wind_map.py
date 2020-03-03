@@ -10,6 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 from ..utilities import Vec3
+from ..utilities import setup_logger
 import numpy as np
 import scipy as sp
 

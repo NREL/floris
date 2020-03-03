@@ -11,6 +11,7 @@
 
 import json
 import numpy as np
+from ..utilities import setup_logger
 
 
 class InputReader():
