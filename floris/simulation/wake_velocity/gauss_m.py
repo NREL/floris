@@ -16,7 +16,7 @@ import numpy as np
 from scipy.special import gamma
 
 
-class Gauss_M(VelocityDeficit):
+class GaussianModel():
     """
     This is the first draft of what will hopefully become the new gaussian class 
     Currently it contains a direct port of the Bastankhah gaussian class from previous
@@ -47,7 +47,30 @@ class Gauss_M(VelocityDeficit):
     super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
     2020.
     Notes to be written (merged)
-    """
+    """    
+
+    @staticmethod
+    def mask_upstream_wake(y_locations, turbine_coord, yaw):
+        yR = y_locations - turbine_coord.x2
+        xR = yR * tand(yaw) + turbine_coord.x1
+        return xR, yR
+
+    @staticmethod
+    def initial_velocity_deficits(U_local, Ct):
+        uR = U_local * Ct / (2.0 * (1 - np.sqrt(1 - Ct)))
+        u0 = U_local * np.sqrt(1 - Ct)
+        return uR, u0
+
+    @staticmethod
+    def initial_wake_expansion(turbine, U_local, veer, uR, u0):
+        yaw = -1 * turbine.yaw_angle 
+        sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt( uR / (U_local + u0) )
+        sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
+        return sigma_y0, sigma_z0
+
+    @staticmethod
+    def gaussian_function(U, C, r, n, sigma):
+        return U * C * np.exp( -1 * r**n / (2 * sigma**2) )
 
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
