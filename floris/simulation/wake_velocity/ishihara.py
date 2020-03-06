@@ -49,9 +49,12 @@ class Ishihara(VelocityDeficit):
                     determine the linear relationship between the
                     turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **a**: constant coefficient used in calculation of              wake-added turbulence.
-                -   **b**: linear coefficient used in calculation of                wake-added turbulence.
-                -   **c**: near-wake coefficient used in calculation of             wake-added turbulence.
+                -   **a**: constant coefficient used in calculation of
+                    wake-added turbulence.
+                -   **b**: linear coefficient used in calculation of
+                    wake-added turbulence.
+                -   **c**: near-wake coefficient used in calculation of
+                    wake-added turbulence.
 
     Returns:
         An instantiated Ishihara(WaveVelocity) object.
