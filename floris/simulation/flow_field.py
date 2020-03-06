@@ -212,12 +212,7 @@ class FlowField():
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
-        if self.wake.velocity_model.model_string == 'curl':
-            print('ADDING VEER!')
-            v_veer = .4/100 * self.z - .4*90/100
-            print('min veer: ', np.min(v_veer))
-            print('max veer: ', np.max(v_veer))
-            self.v_initial = self.v_initial + v_veer
+
 
         self.u = self.u_initial.copy()
         self.v = self.v_initial.copy()
@@ -573,13 +568,6 @@ class FlowField():
         ry = np.zeros(len(self.turbine_map.coords))
         for i, cord in enumerate(self.turbine_map.coords):
             rx[i], ry[i] = cord.x1prime, cord.x2prime
-
-        # if self.wake.velocity_model.model_string == 'curl':
-        #     print('ADDING VEER!')
-        #     v_veer = -.4/100 * rotated_z + .4*90/100
-        #     print('min veer: ', np.min(v_veer))
-        #     print('max veer: ', np.max(v_veer))
-        #     self.v_initial = self.v_initial + v_veer
 
         for coord, turbine in sorted_map:
             xloc, yloc = np.array(rx == coord.x1), np.array(ry == coord.x2)
