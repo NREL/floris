@@ -151,6 +151,22 @@ class SowfaInterface():
             print('No flow field found, setting NULL, origin at 0')
             self.flow_data = None  #TODO might need a null flow-field
 
+        # Try to work out the precursor directory
+        self.precursor_directory = 'unknown'
+        try:
+            with open(os.path.join(case_folder, 'runscript.preprocess'), 'r') as fid:
+                raw = fid.readlines()
+
+            for i, line in enumerate(raw):
+                if 'precursorDir=' in line:
+                    self.precursor_directory = os.path.basename(line.replace('precursorDir=',''))
+
+
+
+        except FileNotFoundError:
+            print('No preprocess file found')
+
+
     def __str__(self):
 
         print('---------------------')

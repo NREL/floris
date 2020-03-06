@@ -21,7 +21,7 @@ from floris.simulation import WindMap
 from .cut_plane import CutPlane, get_plane_from_flow_data
 from .interface_utilities import show_params, get_params, set_params
 import matplotlib.pyplot as plt
-import floris.tools as wfct
+from .visualization import visualize_cut_plane
 
 class FlorisInterface():
     """
@@ -341,6 +341,81 @@ class FlorisInterface():
             'u': u_flat,
             'v': v_flat,
             'w': w_flat
+        })
+
+        # Subset to points requests
+        df = df[df.x.isin(x_points)]
+        df = df[df.y.isin(y_points)]
+        df = df[df.z.isin(z_points)]
+
+        # Drop duplicates
+        df = df.drop_duplicates()
+
+        # Return the dataframe
+        return df
+
+    def get_set_of_points_temp_hack(self, x_points, y_points, z_points):
+        """
+        Use points method in calculate_wake to quick extract a slice of points
+
+        Args:
+            x_points, float, array of floats
+            y_points, float, array of floats
+            z_points, float, array of floats
+
+
+        Returns:
+            dataframe of x,y,z,u,v,w values
+        """
+
+        # Get a copy for the flow field so don't change underlying grid points
+        flow_field = copy.deepcopy(self.floris.farm.flow_field)
+
+        if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
+
+            # If this is a gridded model, must extract from full flow field
+            print(
+                'Model identified as %s requires use of underlying grid print'
+                % self.floris.farm.flow_field.wake.velocity_model.model_string)
+            print('FUNCTION NOT AVAILABLE CURRENTLY')
+
+        # Set up points matrix
+        points = np.row_stack((x_points, y_points, z_points))
+
+        # Recalculate wake with these points
+        flow_field.calculate_wake(points=points)
+
+
+        # Get results vectors
+        x_flat = flow_field.x.flatten()
+        y_flat = flow_field.y.flatten()
+        z_flat = flow_field.z.flatten()
+        u_flat = flow_field.u.flatten()
+        v_flat = flow_field.v.flatten()
+        w_flat = flow_field.w.flatten()
+
+        sigma_tilde = flow_field.wake.velocity_model.sigma_tilde.flatten()
+        n = flow_field.wake.velocity_model.n.flatten()
+        beta = flow_field.wake.velocity_model.beta_out.flatten()
+        C = flow_field.wake.velocity_model.C.flatten()
+        if hasattr(flow_field.wake.velocity_model,'Cx'):
+            Cx = flow_field.wake.velocity_model.Cx.flatten()
+        else:
+            Cx = np.nan * C
+
+
+        df = pd.DataFrame({
+            'x': x_flat,
+            'y': y_flat,
+            'z': z_flat,
+            'u': u_flat,
+            'v': v_flat,
+            'w': w_flat,
+            'sigma_tilde':sigma_tilde,
+            'n':n,
+            'beta':beta,
+            'C':C,
+            'Cx':Cx
         })
 
         # Subset to points requests
@@ -1030,7 +1105,7 @@ class FlorisInterface():
 
         # Plot and show
         fig, ax = plt.subplots()
-        wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+        visualize_cut_plane(hor_plane, ax=ax)
         plt.show()
 
     # TODO
