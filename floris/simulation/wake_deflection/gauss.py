@@ -59,8 +59,8 @@ class Gauss(VelocityDeflection):
         else:
             self.deflection_multiplier = 1.2
             # TODO: logging
-            print('Using default gauss deflection multipler of: %.1f' %
-                  self.deflection_multiplier)
+            # print('Using default gauss deflection multipler of: %.1f' %
+                #   self.deflection_multiplier)
 
     def function(self, x_locations, y_locations, z_locations, turbine, coord,
                  flow_field):

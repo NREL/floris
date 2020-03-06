@@ -94,7 +94,7 @@ class Turbine():
     # Private methods
 
     def _initialize_turbine(self):
-        # Initiailze the turbine given saved parameter settings
+        # Initialize the turbine given saved parameter settings
 
         # Precompute interps
         wind_speed = self.power_thrust_table["wind_speed"]

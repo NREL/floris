@@ -41,7 +41,6 @@ class FlowField():
     Returns:
         FlowField: An instantiated FlowField object.
     """
-
     def __init__(self, wind_shear, wind_veer, air_density, wake, turbine_map,
                  wind_map):
 
@@ -54,7 +53,10 @@ class FlowField():
             wind_map=wind_map,
             with_resolution=wake.velocity_model.model_grid_resolution)
         #TODO consider remapping wake_list with reinitialize flow field
-        self.wake_list = {turbine: None for _, turbine in self.turbine_map.items}
+        self.wake_list = {
+            turbine: None
+            for _, turbine in self.turbine_map.items
+        }
 
     def _discretize_turbine_domain(self):
         """
@@ -504,7 +506,10 @@ class FlowField():
                 i]
             turbine.reset_velocities()
 
-    def calculate_wake(self, no_wake=False, points=None, track_n_upstream_wakes=False):
+    def calculate_wake(self,
+                       no_wake=False,
+                       points=None,
+                       track_n_upstream_wakes=False):
         """
         Updates the flow field based on turbine activity.
 
@@ -532,7 +537,10 @@ class FlowField():
 
         if track_n_upstream_wakes:
             # keep track of the wakes upstream of each turbine
-            self.wake_list = {turbine: 0 for _, turbine in self.turbine_map.items}
+            self.wake_list = {
+                turbine: 0
+                for _, turbine in self.turbine_map.items
+            }
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
@@ -673,7 +681,7 @@ class FlowField():
                 # self.v = turb_v_wake
                 # self.w = turb_w_wake
                 self.v = self.wake.combination_function(turb_v_wake, self.v)
-                self.w = self.wake.combination_function(turb_w_wake, self.v)
+                self.w = self.wake.combination_function(turb_w_wake, self.w)
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
