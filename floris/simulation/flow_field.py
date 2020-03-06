@@ -609,7 +609,10 @@ class FlowField():
 
             ###########
             # include turbulence model for the gaussian wake model from Porte-Agel
-            if 'gauss' in self.wake.turbulence_model.model_string  or self.wake.turbulence_model.model_string == 'blondel':
+            if self.wake.turbulence_model.model_string == 'gauss' or \
+                    self.wake.turbulence_model.model_string == 'ishihara':
+                # print('turbulence calcs here.')
+                # pass
 
                 # compute area overlap of wake on other turbines and update downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:
@@ -659,14 +662,24 @@ class FlowField():
             # combine this turbine's wake into the full wake field
             if not no_wake:
                 u_wake = self.wake.combination_function(u_wake, turb_u_wake)
-                v_wake = (v_wake + turb_v_wake)
-                w_wake = (w_wake + turb_w_wake)
+                # v_wake = (v_wake + turb_v_wake)
+                # w_wake = (w_wake + turb_w_wake)
+
+                # gauss
+                # self.v = self.v + turb_v_wake
+                # self.w = self.w + turb_w_wake
+
+                # curl
+                # self.v = turb_v_wake
+                # self.w = turb_w_wake
+                self.v = self.wake.combination_function(turb_v_wake, self.v)
+                self.w = self.wake.combination_function(turb_w_wake, self.v)
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
             self.u = self.u_initial - u_wake
-            self.v = self.v_initial + v_wake
-            self.w = self.w_initial + w_wake
+            # self.v = self.v_initial + v_wake
+            # self.w = self.w_initial + w_wake
 
         # rotate the grid if it is curl
         if self.wake.velocity_model.model_string == 'curl':
@@ -691,4 +704,3 @@ class FlowField():
             ... floris.farm.flow_field.domain_bounds()
         """
         return self._xmin, self._xmax, self._ymin, self._ymax, self._zmin, self._zmax
-
