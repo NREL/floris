@@ -10,9 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+import numpy as np
 from ...utilities import cosd, sind, tand
 from .base_velocity_deficit import VelocityDeficit
-import numpy as np
+from .gaussian_model_ish import GaussianModel
 
 
 class Ishihara(VelocityDeficit):
@@ -138,18 +139,22 @@ class Ishihara(VelocityDeficit):
         wake_width = kstar * (local_x / D) + epsilon
 
         # wake velocity deficit = \Delta U (x,y,z) / U_h
-        velDef = 1 / (a + b * (local_x / D) + c *
-                      (1 +
-                       (local_x / D))**(-2))**2 * np.exp(-(r)**2 /
-                                                         (2 *
-                                                          (wake_width * D)**2))
+        C = 1 / (a + b * (local_x / D) + c * (1 + (local_x / D))**(-2))**2
+        r_tilde = r
+        n = 2
+        sigma_tilde = wake_width * D
+        velDef = GaussianModel.gaussian_function(
+            U_local, 
+            C, 
+            r_tilde, 
+            n, 
+            sigma_tilde
+        )
 
         # trim wakes to 1 D upstream to avoid artifacts
         yR = y_locations - turbine_coord.x2
         xR = yR * tand(yaw) + turbine_coord.x1 - D
         velDef[x_locations < xR] = 0
-
-        velDef = U_local * (velDef)
 
         return velDef, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
