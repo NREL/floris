@@ -32,18 +32,6 @@ class Gauss(VelocityDeficit):
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
 
-        # wake expansion parameters
-        # Table 2 of reference in docstring
-        self.a_s = model_dictionary["a_s"]
-        self.b_s = model_dictionary["b_s"]
-        self.c_s = model_dictionary["c_s"]
-
-        # fitted parameters for super-Gaussian order n
-        # Table 3 of reference in docstring
-        self.a_f = model_dictionary["a_f"]
-        self.b_f = model_dictionary["b_f"]
-        self.c_f = model_dictionary["c_f"]
-
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         # added turbulence model
         TI = turbine.current_turbulence_intensity

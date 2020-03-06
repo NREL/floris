@@ -20,7 +20,7 @@ class LegacyGauss(VelocityDeficit):
     def __init__(self, parameter_dictionary):
         super().__init__()
 
-        self.model_string = "gauss_merge"
+        self.model_string = "gauss_legacy"
         model_dictionary = self._get_model_dict()
 
         # near wake / far wake boundary parameters
@@ -93,3 +93,89 @@ class LegacyGauss(VelocityDeficit):
         U = np.sqrt(velDef**2 + velDef1**2)
 
         return U, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
+
+    @property
+    def ka(self):
+        """
+        Parameter used to determine the linear relationship between the 
+            turbulence intensity and the width of the Gaussian wake shape.
+        Args:
+            ka (float, int): Gaussian wake model coefficient.
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._ka
+
+    @ka.setter
+    def ka(self, value):
+        if type(value) is float:
+            self._ka = value
+        elif type(value) is int:
+            self._ka = float(value)
+        else:
+            raise ValueError("Invalid value given for ka: {}".format(value))
+
+    @property
+    def kb(self):
+        """
+        Parameter used to determine the linear relationship between the 
+            turbulence intensity and the width of the Gaussian wake shape.
+        Args:
+            kb (float, int): Gaussian wake model coefficient.
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._kb
+
+    @kb.setter
+    def kb(self, value):
+        if type(value) is float:
+            self._kb = value
+        elif type(value) is int:
+            self._kb = float(value)
+        else:
+            raise ValueError("Invalid value given for kb: {}".format(value))
+
+    @property
+    def alpha(self):
+        """
+        Parameter that determines the dependence of the downstream boundary
+            between the near wake and far wake region on the turbulence
+            intensity.
+        Args:
+            alpha (float, int): Gaussian wake model coefficient.
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, value):
+        if type(value) is float:
+            self._alpha = value
+        elif type(value) is int:
+            self._alpha = float(value)
+        else:
+            raise ValueError("Invalid value given for alpha: {}".format(value))
+
+    @property
+    def beta(self):
+        """
+        Parameter that determines the dependence of the downstream boundary
+            between the near wake and far wake region on the turbine's
+            induction factor.
+        Args:
+            beta (float, int): Gaussian wake model coefficient.
+        Returns:
+            float: Gaussian wake model coefficient.
+        """
+        return self._beta
+
+    @beta.setter
+    def beta(self, value):
+        if type(value) is float:
+            self._beta = value
+        elif type(value) is int:
+            self._beta = float(value)
+        else:
+            raise ValueError("Invalid value given for beta: {}".format(value))
