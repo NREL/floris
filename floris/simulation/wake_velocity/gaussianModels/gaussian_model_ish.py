@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind, tand
+from ....utilities import cosd, sind, tand
 import numpy as np
 
 

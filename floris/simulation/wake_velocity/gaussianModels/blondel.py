@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind, tand, setup_logger
-from .base_velocity_deficit import VelocityDeficit
+from ....utilities import cosd, sind, tand, setup_logger
+from ..base_velocity_deficit import VelocityDeficit
 import numpy as np
 from scipy.special import gamma
 

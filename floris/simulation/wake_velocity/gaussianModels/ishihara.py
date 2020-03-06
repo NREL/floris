@@ -11,8 +11,8 @@
 # the License.
 
 import numpy as np
-from ...utilities import cosd, sind, tand
-from .base_velocity_deficit import VelocityDeficit
+from ....utilities import cosd, sind, tand
+from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
 

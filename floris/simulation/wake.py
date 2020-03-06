@@ -11,13 +11,13 @@
 
 from .wake_velocity.base_velocity_deficit import VelocityDeficit
 from .wake_velocity.curl import Curl as CurlDeficit
-from .wake_velocity.gauss_legacy import LegacyGauss as LegacyGaussDeficit
-from .wake_velocity.gauss_merge import MergeGauss as MergeGaussDeficit
-from .wake_velocity.gauss import Gauss as GaussDeficit
+from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaussDeficit
+from .wake_velocity.gaussianModels.gauss_merge import MergeGauss as MergeGaussDeficit
+from .wake_velocity.gaussianModels.gauss import Gauss as GaussDeficit
 from .wake_velocity.jensen import Jensen
 from .wake_velocity.multizone import MultiZone
-from .wake_velocity.ishihara import Ishihara
-from .wake_velocity.blondel import Blondel as BlondelDeficit
+from .wake_velocity.gaussianModels.ishihara import Ishihara
+from .wake_velocity.gaussianModels.blondel import Blondel as BlondelDeficit
 
 from .wake_deflection.base_velocity_deflection import VelocityDeflection
 from .wake_deflection.jimenez import Jimenez
