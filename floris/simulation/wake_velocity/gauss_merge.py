@@ -72,11 +72,10 @@ class MergeGauss(VelocityDeficit):
         C = a1 - np.sqrt(a2 - (n * Ct * cosd(yaw) / (16.0 * gamma(2/n) * np.sign(sigma_tilde) * np.abs(sigma_tilde)**(4/n) ) ) )
 
         # Compute wake velocity (Eq 1, pp 3 of ref. [1] in docstring)
-        velDef1 = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
-        velDef1[x_locations < xR] = 0
-        U = np.sqrt(velDef1**2)
+        velDef = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
+        velDef[x_locations < xR] = 0
 
-        return U, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
+        return U, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
     @property
     def ka(self):
