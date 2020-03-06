@@ -174,9 +174,9 @@ class FlorisInterface():
                 Defaults to z.
             x3_value (float, optional): value of normal vector to slice through
                 Defaults to 100.
-            x1_bounds (tuple, optional): limits of output array.
+            x1_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
-            x2_bounds (tuple, optional): limits of output array.
+            x2_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
 
         Returns:
@@ -283,6 +283,9 @@ class FlorisInterface():
         df = df[df.x1.isin(x1_array)]
         df = df[df.x2.isin(x2_array)]
 
+        # Sort values of df to make sure plotting is acceptable
+        df = df.sort_values(['x2','x1']).reset_index(drop=True)
+
         # Return the dataframe
         return df
 
@@ -363,9 +366,9 @@ class FlorisInterface():
                 Defaults to 200.
             x2_resolution (float, optional): output array resolution.
                 Defaults to 200.
-            x1_bounds (tuple, optional): limits of output array.
+            x1_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
-            x2_bounds (tuple, optional): limits of output array.
+            x2_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
 
         Returns:
