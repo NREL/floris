@@ -21,7 +21,7 @@ from floris.simulation import WindMap
 from .cut_plane import CutPlane, get_plane_from_flow_data
 from .interface_utilities import show_params, get_params, set_params
 import matplotlib.pyplot as plt
-import floris.tools as wfct
+from .visualization import visualize_cut_plane
 
 class FlorisInterface():
     """
@@ -1105,7 +1105,7 @@ class FlorisInterface():
 
         # Plot and show
         fig, ax = plt.subplots()
-        wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+        visualize_cut_plane(hor_plane, ax=ax)
         plt.show()
 
     # TODO
