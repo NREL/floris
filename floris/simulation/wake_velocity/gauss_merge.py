@@ -75,7 +75,7 @@ class MergeGauss(VelocityDeficit):
         velDef = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
         velDef[x_locations < xR] = 0
 
-        return U, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
+        return velDef, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
     @property
     def ka(self):
