@@ -18,7 +18,7 @@ from .gaussian_model_ish import GaussianModel
 
 class LegacyGauss(VelocityDeficit):
     def __init__(self, parameter_dictionary):
-        super().__init__()
+        super().__init__(parameter_dictionary)
 
         self.model_string = "gauss_legacy"
         model_dictionary = self._get_model_dict()
