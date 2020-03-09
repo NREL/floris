@@ -667,18 +667,15 @@ class FlowField():
             # combine this turbine's wake into the full wake field
             if not no_wake:
                 u_wake = self.wake.combination_function(u_wake, turb_u_wake)
-                # v_wake = (v_wake + turb_v_wake)
-                # w_wake = (w_wake + turb_w_wake)
 
-                # gauss
-                # self.v = self.v + turb_v_wake
-                # self.w = self.w + turb_w_wake
-
-                # curl
-                # self.v = turb_v_wake
-                # self.w = turb_w_wake
-                self.v = self.wake.combination_function(turb_v_wake, self.v)
-                self.w = self.wake.combination_function(turb_w_wake, self.w)
+                if self.wake.velocity_model.model_string == 'curl':
+                    self.v = turb_v_wake
+                    self.w = turb_w_wake
+                else:
+                    # v_wake = (v_wake + turb_v_wake)
+                    # w_wake = (w_wake + turb_w_wake)
+                    self.v = self.wake.combination_function(turb_v_wake, self.v)
+                    self.w = self.wake.combination_function(turb_w_wake, self.w)
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
