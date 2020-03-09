@@ -103,17 +103,17 @@ saved_gauss[(3,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  
 
 # Gauss Legacy Class
 fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gl.floris.farm.set_wake_model('legacy_gauss')
+fi_gl.floris.farm.set_wake_model('gauss_legacy')
 fi_dict['gl'] = fi_gl
 color_dict['gl'] = 'ro--'
-label_dict['gl'] = 'legacy_gauss'
+label_dict['gl'] = 'gauss_legacy'
 
 # Gauss Merge Class
 fi_gm = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gm.floris.farm.set_wake_model('merge_gauss')
+fi_gm.floris.farm.set_wake_model('gauss_merge')
 fi_dict['gm'] = fi_gm
 color_dict['gm'] = 'b^-'
-label_dict['gm'] = 'merge_gauss'
+label_dict['gm'] = 'gauss_merge'
 
 # Get HH and D
 HH = fi_gl.floris.farm.flow_field.turbine_map.turbines[0].hub_height
