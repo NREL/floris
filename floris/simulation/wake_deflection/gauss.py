@@ -10,10 +10,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind, tand
+from ...utilities import cosd, sind, tand, setup_logger
 from .base_velocity_deflection import VelocityDeflection
 import numpy as np
-
 
 class Gauss(VelocityDeflection):
     """
@@ -28,6 +27,15 @@ class Gauss(VelocityDeflection):
      - ad: #TODO What is this parameter for?
      - bd: #TODO What is this parameter for?
     """
+    default_parameters = {
+        "ka": 0.38,
+        "kb": 0.004,
+        "alpha": 0.58,
+        "beta": 0.077,
+        "ad": 0.0,
+        "bd": 0.0,
+        "dm": 1.0
+    }
 
     def __init__(self, parameter_dictionary):
         """
@@ -47,7 +55,7 @@ class Gauss(VelocityDeflection):
         """
         super().__init__(parameter_dictionary)
         self.model_string = "gauss"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(default_parameters)
         self.ka = float(model_dictionary["ka"])
         self.kb = float(model_dictionary["kb"])
         self.ad = float(model_dictionary["ad"])
@@ -192,12 +200,15 @@ class Gauss(VelocityDeflection):
 
     @ka.setter
     def ka(self, value):
-        if type(value) is float:
-            self._ka = value
-        elif type(value) is int:
-            self._ka = float(value)
-        else:
-            raise ValueError("Invalid value given for ka: {}".format(value))
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for ka: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ka = value
+        if value != default_parameters['ka']:
+            self.logger.info(
+                ('Current value of ka, {0}, is not equal to tuned ' +
+                'value of {1}.').format(value, default_parameters['ka']))
 
     @property
     def kb(self):
@@ -215,12 +226,15 @@ class Gauss(VelocityDeflection):
 
     @kb.setter
     def kb(self, value):
-        if type(value) is float:
-            self._kb = value
-        elif type(value) is int:
-            self._kb = float(value)
-        else:
-            raise ValueError("Invalid value given for kb: {}".format(value))
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for kb: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._kb = value
+        if value != default_parameters['kb']:
+            self.logger.info(
+                ('Current value of kb, {0}, is not equal to tuned ' +
+                'value of {1}.').format(value, default_parameters['kb']))
 
     @property
     def alpha(self):
@@ -239,12 +253,15 @@ class Gauss(VelocityDeflection):
 
     @alpha.setter
     def alpha(self, value):
-        if type(value) is float:
-            self._alpha = value
-        elif type(value) is int:
-            self._alpha = float(value)
-        else:
-            raise ValueError("Invalid value given for alpha: {}".format(value))
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for alpha: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._alpha = value
+        if value != default_parameters['alpha']:
+            self.logger.info(
+                ('Current value of alpha, {0}, is not equal to tuned ' +
+                'value of {1}.').format(value, default_parameters['alpha']))
 
     @property
     def beta(self):
@@ -263,12 +280,15 @@ class Gauss(VelocityDeflection):
 
     @beta.setter
     def beta(self, value):
-        if type(value) is float:
-            self._beta = value
-        elif type(value) is int:
-            self._beta = float(value)
-        else:
-            raise ValueError("Invalid value given for beta: {}".format(value))
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for beta: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._beta = value
+        if value != default_parameters['beta']:
+            self.logger.info(
+                ('Current value of beta, {0}, is not equal to tuned ' +
+                'value of {1}.').format(value, default_parameters['beta']))
 
     @property
     def ad(self):
@@ -285,12 +305,15 @@ class Gauss(VelocityDeflection):
 
     @ad.setter
     def ad(self, value):
-        if type(value) is float:
-            self._ad = value
-        elif type(value) is int:
-            self._ad = float(value)
-        else:
-            raise ValueError("Invalid value given for ad: {}".format(value))
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for ad: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ad = value
+        if value != default_parameters['ad']:
+            self.logger.info(
+                ('Current value of ad, {0}, is not equal to tuned ' +
+                'value of {1}.').format(value, default_parameters['ad']))
 
     @property
     def bd(self):
@@ -307,9 +330,12 @@ class Gauss(VelocityDeflection):
 
     @bd.setter
     def bd(self, value):
-        if type(value) is float:
-            self._bd = value
-        elif type(value) is int:
-            self._bd = float(value)
-        else:
-            raise ValueError("Invalid value given for bd: {}".format(value))
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for bd: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._bd = value
+        if value != default_parameters['bd']:
+            self.logger.info(
+                ('Current value of bd, {0}, is not equal to tuned ' +
+                'value of {1}.').format(value, default_parameters['bd']))

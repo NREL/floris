@@ -105,7 +105,7 @@ class VelocityDeficit():
             for key in user_dict:
                 if key not in default_dict:
                     err_msg = ('User supplied value {}, not in standard ' + \
-                        'model dictionary.').format(key)
+                        'wake velocity model dictionary.').format(key)
                     self.logger.warning(err_msg, stack_info=True)
                     raise KeyError(err_msg)
             return_dict = user_dict
