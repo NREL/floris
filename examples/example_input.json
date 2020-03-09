@@ -4,12 +4,12 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": false,
-      "level": "WARNING"
+      "enable": true,
+      "level": "INFO"
     },
     "file": {
       "enable": false,
-      "level": "WARNING"
+      "level": "INFO"
     }
   },
   "farm": {
@@ -223,7 +223,7 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss",
+      "velocity_model": "ishihara",
       "turbulence_model": "gauss",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
@@ -254,7 +254,7 @@
             "beta": 0.077
           },
           "gauss_legacy": {
-            "ka": 0.3837,
+            "ka2": 0.004,
             "kb": 0.003678,
             "alpha": 0.58,
             "beta": 0.077
@@ -286,7 +286,7 @@
           },
           "ishihara": {
             "kstar": {
-              "const": 0.11,
+              "const": 0.12,
               "Ct": 1.07,
               "TI": 0.2
             },
