@@ -94,9 +94,21 @@ class SampleInputs():
                                 5.5
                             ]
                         },
+                        "gauss_merge": {
+                            "ka": 0.3837,
+                            "kb": 0.003678,
+                            "alpha": 0.58,
+                            "beta": 0.077
+                        },
+                        "gauss_legacy": {
+                            "ka": 0.3837,
+                            "kb": 0.003678,
+                            "alpha": 0.58,
+                            "beta": 0.077
+                        },
                         "gauss": {
-                            "ka": 0.3,
-                            "kb": 0.004,
+                            "ka": 0.3837,
+                            "kb": 0.003678,
                             "alpha": 0.58,
                             "beta": 0.077
                         },

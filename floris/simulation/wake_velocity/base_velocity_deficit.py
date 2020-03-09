@@ -92,16 +92,12 @@ class VelocityDeficit():
 
     def _get_model_dict(self):
         if self.model_string not in self.parameter_dictionary.keys():
-            err_msg = "The {} wake model was".format(self.model_string) + \
+            err_msg = "The {} wake model was ".format(self.model_string) + \
                 "instantiated but the model parameters were not found in " + \
                 "the input file or dictionary under " + \
                 "'wake.properties.parameters.{}'.".format(self.model_string)
             self.logger.error(err_msg, stack_info=True)
             raise KeyError(err_msg)
-            # raise KeyError("The {} wake model was".format(self.model_string) +
-            #     " instantiated but the model parameters were not found in the" +
-            #     " input file or dictionary under" +
-            #     " 'wake.properties.parameters.{}'.".format(self.model_string))
         return self.parameter_dictionary[self.model_string]
 
     def correction_steps(self, U_local, U, V, W, x_locations, y_locations,

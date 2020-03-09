@@ -64,8 +64,8 @@ class Wake():
             "jensen": Jensen,
             "multizone": MultiZone,
             "gauss": GaussDeficit,
-            "merge_gauss": MergeGaussDeficit,
-            "legacy_gauss": LegacyGaussDeficit,
+            "gauss_merge": MergeGaussDeficit,
+            "gauss_legacy": LegacyGaussDeficit,
             "ishihara": Ishihara,
             "curl": CurlDeficit,
             "blondel": BlondelDeficit
