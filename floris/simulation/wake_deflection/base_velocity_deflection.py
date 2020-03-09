@@ -44,9 +44,8 @@ class VelocityDeflection():
             self.logger.info(
                 ('Using default option eps_gain: %.1f' % self.eps_gain))
 
-    def _get_model_dict(self):
+    def _get_model_dict(self, default_dict):
         if self.model_string not in self.parameter_dictionary.keys():
-            if self.model_string not in self.parameter_dictionary.keys():
             return_dict = default_dict
         else:
             user_dict = self.parameter_dictionary[self.model_string]

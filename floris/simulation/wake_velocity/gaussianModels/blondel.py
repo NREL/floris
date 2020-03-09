@@ -42,12 +42,21 @@ class Blondel(VelocityDeficit):
         [type]: [description]
     """
 
+    default_parameters = {
+        "a_s": 0.3837,
+        "b_s": 0.003678,
+        "c_s": 0.2,
+        "a_f": 3.11,
+        "b_f": -0.68,
+        "c_f": 2.41
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
 
         self.model_string = "blondel"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake expansion parameters
         # Table 2 of reference in docstring
@@ -137,14 +146,17 @@ class Blondel(VelocityDeficit):
     @a_s.setter
     def a_s(self, value):
         if type(value) is not float:
-            err_msg = "Invalid value given for a_s: {}".format(value)
+            err_msg = 'Invalid value type given for a_s: {}'.format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_s = value
-        if value != 0.3837:
-            self.logger.warning(
-                "Current value of a_s, {}, is not equal to tuned " +
-                "value of 0.3837.".format(value))
+        if value != __class__.default_parameters['a_s']:
+            self.logger.info(
+                ('Current value of a_s, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['a_s'])
+                )
+
 
     @property
     def b_s(self):
@@ -166,14 +178,16 @@ class Blondel(VelocityDeficit):
     @b_s.setter
     def b_s(self, value):
         if type(value) is not float:
-            err_msg = "Invalid value given for b_s: {}".format(value)
+            err_msg = 'Invalid value type given for b_s: {}'.format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_s = value
-        if value != 0.003678:
-            self.logger.warning(
-                "Current value of b_s, {}, is not equal to tuned " +
-                "value of 0.003678.".format(value))
+        if value != __class__.default_parameters['b_s']:
+            self.logger.info(
+                ('Current value of b_s, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['b_s'])
+                )
 
     @property
     def c_s(self):
@@ -194,14 +208,17 @@ class Blondel(VelocityDeficit):
     @c_s.setter
     def c_s(self, value):
         if type(value) is not float:
-            err_msg = "Invalid value given for c_s: {}".format(value)
+            err_msg = 'Invalid value type given for c_s: {}'.format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_s = value
-        if value != 0.2:
-            self.logger.warning(
-                "Current value of c_s, {}, is not equal to tuned " +
-                "value of 0.2.".format(value))
+        if value != __class__.default_parameters['c_s']:
+            self.logger.info(
+                ('Current value of c_s, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['c_s']
+                )
+            )
 
     @property
     def a_f(self):
@@ -224,14 +241,17 @@ class Blondel(VelocityDeficit):
     @a_f.setter
     def a_f(self, value):
         if type(value) is not float:
-            err_msg = "Invalid value given for a_f: {}".format(value)
+            err_msg = 'Invalid value type given for a_f: {}'.format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_f = value
-        if value != 3.11:
-            self.logger.warning(
-                "Current value of a_f, {}, is not equal to tuned " +
-                "value of 3.11.".format(value))
+        if value != __class__.default_parameters['a_f']:
+            self.logger.info(
+                ('Current value of a_f, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['a_f']
+                )
+            )
 
     @property
     def b_f(self):
@@ -254,14 +274,17 @@ class Blondel(VelocityDeficit):
     @b_f.setter
     def b_f(self, value):
         if type(value) is not float:
-            err_msg = "Invalid value given for b_f: {}".format(value)
+            err_msg = 'Invalid value type given for b_f: {}'.format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_f = value
-        if value != -0.68:
-            self.logger.warning(
-                "Current value of b_f, {}, is not equal to tuned " +
-                "value of -0.68.".format(value))
+        if value != __class__.default_parameters['b_f']:
+            self.logger.info(
+                ('Current value of b_f, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['b_f']
+                )
+            )
 
     @property
     def c_f(self):
@@ -282,11 +305,14 @@ class Blondel(VelocityDeficit):
     @c_f.setter
     def c_f(self, value):
         if type(value) is not float:
-            err_msg = "Invalid value given for c_f: {}".format(value)
+            err_msg = 'Invalid value type given for c_f: {}'.format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_f = value
-        if value != 2.41:
-            self.logger.warning(
-                "Current value of c_f, {}, is not equal to tuned " +
-                "value of 2.41.".format(value))
+        if value != __class__.default_parameters['c_f']:
+            self.logger.info(
+                ('Current value of c_f, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['c_f']
+                )
+            )

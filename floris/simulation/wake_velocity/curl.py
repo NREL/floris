@@ -91,10 +91,25 @@ class Curl(VelocityDeficit):
         An instantiated Curl object.
     """
 
+    default_parameters = {
+        "model_grid_resolution": [
+            250,
+            100,
+            75
+        ],
+        "initial_deficit": 2.0,
+        "dissipation": 0.06,
+        "veer_linear": 0.0,
+        "initial": 0.1,
+        "constant": 0.73,
+        "ai": 0.8,
+        "downstream": -0.275
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "curl"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.model_grid_resolution = Vec3(
             model_dictionary["model_grid_resolution"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])
@@ -428,12 +443,29 @@ class Curl(VelocityDeficit):
     @model_grid_resolution.setter
     def model_grid_resolution(self, value):
         #TODO: add checker to make sure resolution is high enough
-        if type(value) is Vec3:
-            self._model_grid_resolution = value
-        elif value is None:
-            self._model_grid_resolution = None
-        else:
-            raise ValueError('Invalid value given for model_grid_resolution: {}'.format(value))
+        # if type(value) is Vec3:
+        #     self._model_grid_resolution = value
+        # elif value is None:
+        #     self._model_grid_resolution = None
+        # else:
+        #     raise ValueError('Invalid value given for model_grid_resolution: {}'.format(value))
+
+        if type(value) is not Vec3 and value is not None:
+            err_msg = ('Invalid value type given for ' + \
+                       'model_grid_resolution: {}').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._model_grid_resolution = value
+        if value is not None:
+            if value != Vec3(
+                __class__.default_parameters['model_grid_resolution']):
+                    self.logger.info(
+                        ('Current value of model_grid_resolution, {0}, is ' + \
+                         'not equal to tuned value of {1}.').format(
+                           value,
+                           __class__.default_parameters['model_grid_resolution']
+                        )
+                    )
 
     @property
     def initial_deficit(self):
@@ -450,13 +482,19 @@ class Curl(VelocityDeficit):
 
     @initial_deficit.setter
     def initial_deficit(self, value):
-        if type(value) is float:
-            self._initial_deficit = value
-        elif type(value) is int:
-            self._initial_deficit = float(value)
-        else:
-            raise ValueError('Invalid value given for \
-                              initial_deficit: {}'.format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'initial_deficit: {}').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._initial_deficit = value
+        if value != __class__.default_parameters['initial_deficit']:
+            self.logger.info(
+                ('Current value of initial_deficit, {0}, is not equal to ' + \
+                    'tuned value of {1}.').format(
+                        value, __class__.default_parameters['initial_deficit']
+                    )
+                )
 
     @property
     def dissipation(self):
@@ -472,13 +510,20 @@ class Curl(VelocityDeficit):
 
     @dissipation.setter
     def dissipation(self, value):
-        if type(value) is float:
-            self._dissipation = value
-        elif type(value) is int:
-            self._dissipation = float(value)
-        else:
-            raise ValueError('Invalid value given for \
-                              dissipation: {}'.format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'dissipation: {}').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._dissipation = value
+        if value != __class__.default_parameters['dissipation']:
+            self.logger.info(
+                ('Current value of dissipation, {0}, is not equal to ' + \
+                    'tuned value of {1}.').format(
+                        value, __class__.default_parameters['dissipation']
+                    )
+                )
+
 
     @property
     def veer_linear(self):
@@ -497,10 +542,16 @@ class Curl(VelocityDeficit):
 
     @veer_linear.setter
     def veer_linear(self, value):
-        if type(value) is float:
-            self._veer_linear = value
-        elif type(value) is int:
-            self._veer_linear = float(value)
-        else:
-            raise ValueError('Invalid value given for \
-                              veer_linear: {}'.format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'veer_linear: {}').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._veer_linear = value
+        if value != __class__.default_parameters['veer_linear']:
+            self.logger.info(
+                ('Current value of veer_linear, {0}, is not equal to ' + \
+                    'tuned value of {1}.').format(
+                        value, __class__.default_parameters['veer_linear']
+                    )
+                )

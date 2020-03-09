@@ -16,28 +16,28 @@ from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
-default_parameters = {
-    'ka': 0.38,
-    'kb': 0.004,
-    'alpha': 0.58,
-    'beta': 0.077
-}
-
 
 class MergeGauss(VelocityDeficit):
+    default_parameters = {
+        'ka': 0.38,
+        'kb': 0.004,
+        'alpha': 0.58,
+        'beta': 0.077
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
 
         self.model_string = "gauss_merge"
-        model_dictionary = self._get_model_dict(default_parameters)
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake expansion parameters
-        self.ka = float(model_dictionary["ka"])
-        self.kb = float(model_dictionary["kb"])
+        self.ka = model_dictionary["ka"]
+        self.kb = model_dictionary["kb"]
 
         # near wake / far wake boundary parameters
-        self.alpha = float(model_dictionary["alpha"])
-        self.beta = float(model_dictionary["beta"])
+        self.alpha = model_dictionary["alpha"]
+        self.beta = model_dictionary["beta"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         # added turbulence model
@@ -103,10 +103,12 @@ class MergeGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
-        if value != default_parameters['ka']:
+        if value != __class__.default_parameters['ka']:
             self.logger.info(
                 ('Current value of ka, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['ka']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ka'])
+                )
 
     @property
     def kb(self):
@@ -127,10 +129,12 @@ class MergeGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
-        if value != default_parameters['kb']:
+        if value != __class__.default_parameters['kb']:
             self.logger.info(
                 ('Current value of kb, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['kb']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['kb'])
+                )
 
     @property
     def alpha(self):
@@ -152,10 +156,12 @@ class MergeGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
-        if value != default_parameters['alpha']:
+        if value != __class__.default_parameters['alpha']:
             self.logger.info(
                 ('Current value of alpha, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['alpha']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['alpha'])
+                )
 
     @property
     def beta(self):
@@ -177,7 +183,9 @@ class MergeGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value
-        if value != default_parameters['beta']:
+        if value != __class__.default_parameters['beta']:
             self.logger.info(
                 ('Current value of beta, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['beta']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['beta'])
+                )

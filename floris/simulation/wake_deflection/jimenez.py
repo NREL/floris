@@ -25,6 +25,12 @@ class Jimenez(VelocityDeflection):
      - kd: #TODO What is this parameter for?
      - bd: #TODO What is this parameter for?
     """
+    
+    default_parameters = {
+        "kd": 0.05,
+        "ad": 0.0,
+        "bd": 0.0
+    }
 
     def __init__(self, parameter_dictionary):
         """
@@ -41,7 +47,7 @@ class Jimenez(VelocityDeflection):
         """
         super().__init__(parameter_dictionary)
         self.model_string = "jimenez"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(default_parameters)
         self.ad = float(model_dictionary["ad"])
         self.kd = float(model_dictionary["kd"])
         self.bd = float(model_dictionary["bd"])

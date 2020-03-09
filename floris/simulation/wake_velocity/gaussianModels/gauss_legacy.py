@@ -29,15 +29,15 @@ class LegacyGauss(VelocityDeficit):
         self.logger = setup_logger(name=__name__)
 
         self.model_string = "gauss_legacy"
-        model_dictionary = self._get_model_dict(LegacyGauss.default_parameters)
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # near wake / far wake boundary parameters
-        self.alpha = float(model_dictionary["alpha"])
-        self.beta = float(model_dictionary["beta"])
+        self.alpha = model_dictionary["alpha"]
+        self.beta = model_dictionary["beta"]
 
         # wake expansion parameters
-        self.ka = float(model_dictionary["ka"])
-        self.kb = float(model_dictionary["kb"])
+        self.ka = model_dictionary["ka"]
+        self.kb = model_dictionary["kb"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         # veer (degrees)
@@ -121,11 +121,11 @@ class LegacyGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
-        if value != LegacyGauss.default_parameters['ka']:
+        if value != __class__.default_parameters['ka']:
             self.logger.info(
                 ('Current value of ka, {0}, is not equal to tuned ' +
                 'value of {1}.').format(
-                    value, LegacyGauss.default_parameters['ka'])
+                    value, __class__.default_parameters['ka'])
                 )
 
     @property
@@ -147,11 +147,11 @@ class LegacyGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
-        if value != LegacyGauss.default_parameters['kb']:
+        if value != __class__.default_parameters['kb']:
             self.logger.info(
                 ('Current value of kb, {0}, is not equal to tuned ' +
                 'value of {1}.').format(
-                    value, LegacyGauss.default_parameters['kb'])
+                    value, __class__.default_parameters['kb'])
                 )
 
     @property
@@ -174,11 +174,11 @@ class LegacyGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
-        if value != LegacyGauss.default_parameters['alpha']:
+        if value != __class__.default_parameters['alpha']:
             self.logger.info(
                 ('Current value of alpha, {0}, is not equal to tuned ' +
                 'value of {1}.').format(
-                    value, LegacyGauss.default_parameters['alpha'])
+                    value, __class__.default_parameters['alpha'])
                 )
 
     @property
@@ -201,9 +201,9 @@ class LegacyGauss(VelocityDeficit):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value
-        if value != LegacyGauss.default_parameters['beta']:
+        if value != __class__.default_parameters['beta']:
             self.logger.info(
                 ('Current value of beta, {0}, is not equal to tuned ' +
                 'value of {1}.').format(
-                    value, LegacyGauss.default_parameters['beta'])
+                    value, __class__.default_parameters['beta'])
                 )

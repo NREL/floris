@@ -51,11 +51,15 @@ class Jensen(VelocityDeficit):
     Returns:
         An instantiated Jensen(WaveVelocity) object.
     """
-    
+
+    default_parameters = {
+        "we": 0.05
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "jensen"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.we = float(model_dictionary["we"])
 
     def function(self, x_locations, y_locations, z_locations, turbine,
@@ -144,9 +148,14 @@ class Jensen(VelocityDeficit):
 
     @we.setter
     def we(self, value):
-        if type(value) is float:
-            self._we = value
-        elif type(value) is int:
-            self._we = float(value)
-        else:
-            raise ValueError("Invalid value given for we: {}".format(value))
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for we: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._we = value
+        if value != __class__.default_parameters['we']:
+            self.logger.info(
+                ('Current value of we, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['we'])
+                )

@@ -223,7 +223,7 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "ishihara",
+      "velocity_model": "gauss",
       "turbulence_model": "gauss",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
@@ -254,7 +254,7 @@
             "beta": 0.077
           },
           "gauss_legacy": {
-            "ka2": 0.004,
+            "ka": 0.004,
             "kb": 0.003678,
             "alpha": 0.58,
             "beta": 0.077

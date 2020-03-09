@@ -97,10 +97,17 @@ class Gauss(VelocityDeficit):
         An instantiated Gauss object.
     """
 
+    default_parameters = {
+        'ka': 0.38,
+        'kb': 0.004,
+        'alpha': 0.58,
+        'beta': 0.077
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.model_string = "gauss"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake expansion parameters
         self.ka = float(model_dictionary["ka"])

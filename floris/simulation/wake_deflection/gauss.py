@@ -27,6 +27,7 @@ class Gauss(VelocityDeflection):
      - ad: #TODO What is this parameter for?
      - bd: #TODO What is this parameter for?
     """
+    
     default_parameters = {
         "ka": 0.38,
         "kb": 0.004,
@@ -55,17 +56,17 @@ class Gauss(VelocityDeflection):
         """
         super().__init__(parameter_dictionary)
         self.model_string = "gauss"
-        model_dictionary = self._get_model_dict(default_parameters)
-        self.ka = float(model_dictionary["ka"])
-        self.kb = float(model_dictionary["kb"])
-        self.ad = float(model_dictionary["ad"])
-        self.bd = float(model_dictionary["bd"])
-        self.alpha = float(model_dictionary["alpha"])
-        self.beta = float(model_dictionary["beta"])
+        model_dictionary = self._get_model_dict(Gauss.default_parameters)
+        self.ka = model_dictionary["ka"]
+        self.kb = model_dictionary["kb"]
+        self.ad = model_dictionary["ad"]
+        self.bd = model_dictionary["bd"]
+        self.alpha = model_dictionary["alpha"]
+        self.beta = model_dictionary["beta"]
         if 'dm' in model_dictionary:
-            self.deflection_multiplier = float(model_dictionary["dm"])
+            self.deflection_multiplier = model_dictionary["dm"]
         else:
-            self.deflection_multiplier = 1.2
+            self.deflection_multiplier = 1.0
             # TODO: logging
             # print('Using default gauss deflection multipler of: %.1f' %
                 #   self.deflection_multiplier)
@@ -205,10 +206,10 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
-        if value != default_parameters['ka']:
+        if value != Gauss.default_parameters['ka']:
             self.logger.info(
                 ('Current value of ka, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['ka']))
+                'value of {1}.').format(value, Gauss.default_parameters['ka']))
 
     @property
     def kb(self):
@@ -231,10 +232,10 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
-        if value != default_parameters['kb']:
+        if value != Gauss.default_parameters['kb']:
             self.logger.info(
                 ('Current value of kb, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['kb']))
+                'value of {1}.').format(value, Gauss.default_parameters['kb']))
 
     @property
     def alpha(self):
@@ -258,10 +259,12 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
-        if value != default_parameters['alpha']:
+        if value != Gauss.default_parameters['alpha']:
             self.logger.info(
                 ('Current value of alpha, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['alpha']))
+                'value of {1}.').format(
+                    value, Gauss.default_parameters['alpha'])
+                )
 
     @property
     def beta(self):
@@ -285,10 +288,12 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value
-        if value != default_parameters['beta']:
+        if value != Gauss.default_parameters['beta']:
             self.logger.info(
                 ('Current value of beta, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['beta']))
+                'value of {1}.').format(
+                    value, Gauss.default_parameters['beta'])
+                )
 
     @property
     def ad(self):
@@ -310,10 +315,10 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ad = value
-        if value != default_parameters['ad']:
+        if value != Gauss.default_parameters['ad']:
             self.logger.info(
                 ('Current value of ad, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['ad']))
+                'value of {1}.').format(value, Gauss.default_parameters['ad']))
 
     @property
     def bd(self):
@@ -335,7 +340,7 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._bd = value
-        if value != default_parameters['bd']:
+        if value != Gauss.default_parameters['bd']:
             self.logger.info(
                 ('Current value of bd, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, default_parameters['bd']))
+                'value of {1}.').format(value, Gauss.default_parameters['bd']))
