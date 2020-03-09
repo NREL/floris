@@ -64,7 +64,7 @@ class LegacyGauss(VelocityDeficit):
         a = cosd(veer)**2 / (2 * sigma_y**2) + sind(veer)**2 / (2 * sigma_z**2)
         b = -sind(2 * veer) / (4 * sigma_y**2) + sind(2 * veer) / (4 * sigma_z**2)
         c = sind(veer)**2 / (2 * sigma_y**2) + cosd(veer)**2 / (2 * sigma_z**2)
-        r = -(a * ((y_locations - turbine_coord.x2) - delta)**2 - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2)
+        r = a * ((y_locations - turbine_coord.x2) - delta)**2 - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2
         C = 1 - np.sqrt(1 - ( Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D**2) ) )
 
         velDef = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5) )
