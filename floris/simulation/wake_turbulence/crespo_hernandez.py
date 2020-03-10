@@ -10,37 +10,18 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from ...utilities import setup_logger
+from .base_wake_turbulence import WakeTurbulence
 
-class Gauss(WakeTurbulence):
+
+class CrespoHernandez(WakeTurbulence):
     """
-    Gauss is a wake velocity subclass that contains objects related to the
-    Gaussian wake model.
+    CrespoHernandez is a wake turbulence subclass that contains objects related
+    to the wake turbulence model.
 
-    Gauss is a subclass of
+    CrespoHernandez is a subclass of
     :py:class:`floris.simulation.wake_velocity.WakeTurbulence` that is
-    used to compute the wake velocity deficit based on the Gaussian
-    wake model with self-similarity. The Gaussian wake model includes a
-    Gaussian wake velocity deficit profile in the y and z directions
-    and includes the effects of ambient turbulence, added turbulence
-    from upstream wakes, as well as wind shear and wind veer. For more
-    information about the Gauss wake model theory, see:
-
-    Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
-    wind-turbine wakes: A large-eddy simulation study." *Physics of
-    Fluids*, 2015.
-
-    Bastankhah, M. and Porte-Agel, F. "A new analytical model for
-    wind-turbine wakes." *Renewable Energy*, 2014.
-
-    Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
-    study of wind turbine wakes in yawed conditions." *J. Fluid
-    Mechanics*, 2016.
-
-    Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
-    A new approach for power prediction." *Energies*, 2016.
-
-    Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
-    blade pitch offset." *Energies*, 2017.
+    used to compute the... #TODO finish updating docstring; add reference
 
     Args:
         parameter_dictionary: A dictionary as generated from the
@@ -64,12 +45,13 @@ class Gauss(WakeTurbulence):
 
 
     Returns:
-        An instantiated Gauss(WakeTurbulence) object.
+        An instantiated CrespoHernandez(WakeTurbulence) object.
     """
 
     def __init__(self, parameter_dictionary):
         super().__init__()
-        self.model_string = "gauss"
+        self.logger = setup_logger(name=__name__)
+        self.model_string = "crespo_hernandez"
         model_dictionary = parameter_dictionary[self.model_string]
 
         # turbulence parameters
@@ -80,10 +62,7 @@ class Gauss(WakeTurbulence):
 
     def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """
-        Using the Gaussian wake model, this method calculates and
-        returns the wake velocity deficits, caused by the specified
-        turbine, relative to the freestream velocities at the grid of
-        points comprising the wind farm flow field.
+        #TODO update docstring
 
         Args:
             turb_u_wake (np.array): u-component of turbine wake field

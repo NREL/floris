@@ -11,12 +11,12 @@
 # the License.
 
 import numpy as np
-from ....utilities import cosd, sind, tand
+from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
 
-class Ishihara(VelocityDeficit):
+class IshiharaQian(VelocityDeficit):
     """
     Ishihara is a wake velocity subclass that contains objects related to the
     Gaussian wake model that include a near-wake correction.
@@ -90,6 +90,7 @@ class Ishihara(VelocityDeficit):
 
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 

@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd
+from ...utilities import cosd, setup_logger
 from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 
@@ -100,6 +100,7 @@ class MultiZone(VelocityDeficit):
 
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "multizone"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.me = [n for n in model_dictionary["me"]]

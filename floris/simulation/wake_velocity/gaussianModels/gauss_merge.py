@@ -12,7 +12,7 @@
 
 import numpy as np
 from scipy.special import gamma
-from ....utilities import cosd, sind, tand
+from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
@@ -27,6 +27,7 @@ class MergeGauss(VelocityDeficit):
 
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
 
         self.model_string = "gauss_merge"
         model_dictionary = self._get_model_dict(__class__.default_parameters)

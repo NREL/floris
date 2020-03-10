@@ -224,7 +224,7 @@
     "description": "wake",
     "properties": {
       "velocity_model": "gauss",
-      "turbulence_model": "gauss",
+      "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
@@ -284,7 +284,7 @@
             "ai": 0.8,
             "downstream": -0.275
           },
-          "ishihara": {
+          "ishihara_qian": {
             "kstar": {
               "const": 0.12,
               "Ct": 1.07,
@@ -321,13 +321,13 @@
           }
         },
         "wake_turbulence_parameters": {
-          "gauss": {
+          "crespo_hernandez": {
             "initial": 0.1,
             "constant": 0.73,
             "ai": 0.8,
             "downstream": -0.275
           },
-          "ishihara": {
+          "ishihara_qian": {
             "kstar": {
               "const": 0.11,
               "Ct": 1.07,

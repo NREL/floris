@@ -11,7 +11,7 @@
 # the License.
 
 from ...utilities import Vec3
-from ...utilities import sind
+from ...utilities import sind, setup_logger
 from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
@@ -108,6 +108,7 @@ class Curl(VelocityDeficit):
 
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "curl"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.model_grid_resolution = Vec3(

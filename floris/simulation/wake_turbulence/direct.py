@@ -10,6 +10,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from ...utilities import setup_logger
+from .base_wake_turbulence import WakeTurbulence
+
 
 class Direct(WakeTurbulence):
     """
@@ -32,6 +35,7 @@ class Direct(WakeTurbulence):
 
     def __init__(self, parameter_dictionary):
         super().__init__()
+        self.logger = setup_logger(name=__name__)
         self.model_string = "direct"
         model_dictionary = parameter_dictionary[self.model_string]
 
@@ -74,3 +78,4 @@ class Direct(WakeTurbulence):
                 object containing the flow field information for the
                 wind farm.
         """
+        #TODO write function

@@ -55,6 +55,7 @@ class Gauss(VelocityDeflection):
                     }
         """
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "gauss"
         model_dictionary = self._get_model_dict(Gauss.default_parameters)
         self.ka = model_dictionary["ka"]

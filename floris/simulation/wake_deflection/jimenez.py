@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind
+from ...utilities import cosd, sind, setup_logger
 from .base_velocity_deflection import VelocityDeflection
 import numpy as np
 
@@ -46,6 +46,7 @@ class Jimenez(VelocityDeflection):
                     }
         """
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "jimenez"
         model_dictionary = self._get_model_dict(default_parameters)
         self.ad = float(model_dictionary["ad"])

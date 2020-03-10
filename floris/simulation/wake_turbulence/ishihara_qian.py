@@ -10,8 +10,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from ...utilities import setup_logger
+from .base_wake_turbulence import WakeTurbulence
 
-class Ishihara(WakeTurbulence):
+
+class IshiharaQian(WakeTurbulence):
     """
     Ishihara is a wake velocity subclass that contains objects related to the
     Gaussian wake model that include a near-wake correction.
@@ -54,6 +57,7 @@ class Ishihara(WakeTurbulence):
 
     def __init__(self, parameter_dictionary):
         super().__init__()
+        self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara"
         model_dictionary = parameter_dictionary[self.model_string]
 

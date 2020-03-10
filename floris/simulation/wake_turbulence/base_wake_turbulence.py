@@ -10,4 +10,23 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+class WakeTurbulence():
+    """
+    WakeTurbulence is the base class of the different wake velocity model
+    classes.
 
+    An instantiated WakeTurbulence object will import parameters used to
+    calculate wake-added turbulence intensity from an upstream turbine,
+    using one of several approaches.
+
+    Returns:
+        An instantiated WakeTurbulence object.
+    """
+
+    def __init__(self, ):
+        self.requires_resolution = False
+        self.model_string = None
+        self.model_grid_resolution = None
+
+    def __str__(self):
+        return self.model_string
