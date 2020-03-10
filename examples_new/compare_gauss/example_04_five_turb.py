@@ -17,12 +17,16 @@ import pandas as pd
 import copy
 import seaborn as sns
 
-"""
-Example 00
-First in set of scripts to test the behaviors of new gaussian models
+# For debugging
+# np.seterr(all='raise')
 
-This script confirms the sameness of the basic gaussian models
 """
+Example 02
+Test behavior for run of 5 turbines
+
+"""
+
+# TI = 0.06
 
 # Define some helper functions
 def power_cross_sweep(fi_in,D,dist_downstream,yaw_angle=0):
@@ -34,9 +38,9 @@ def power_cross_sweep(fi_in,D,dist_downstream,yaw_angle=0):
 
     for y_idx, y_loc in enumerate(sweep_locations):
 
-        fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2],[0,0,y_loc*D]))
-        fi.calculate_wake([yaw_angle,0,0])
-        power_out[y_idx] = fi.get_turbine_power()[2]/1000.
+        fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2,dist_downstream*D*3,dist_downstream*D*4],[0,0,0,0,y_loc*D]))
+        fi.calculate_wake([yaw_angle,0,0,0,0])
+        power_out[y_idx] = fi.get_turbine_power()[4]/1000.
 
     return sweep_locations, power_out
 
@@ -49,11 +53,11 @@ def power_cross_sweep_gain(fi_in,D,dist_downstream,yaw_angle=0):
 
     for y_idx, y_loc in enumerate(sweep_locations):
 
-        fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2],[0,0,y_loc*D]))
+        fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2,dist_downstream*D*3,dist_downstream*D*4],[0,0,0,0,y_loc*D]))
         fi.calculate_wake([0,0,0])
-        base_power = fi.get_turbine_power()[1]/1000.
-        fi.calculate_wake([yaw_angle,0,0])
-        power_out[y_idx] = 100 * (fi.get_turbine_power()[2]/1000. - base_power) / base_power
+        base_power = fi.get_turbine_power()[4]/1000.
+        fi.calculate_wake([yaw_angle,0,0,0,0])
+        power_out[y_idx] = 100 * (fi.get_turbine_power()[4]/1000. - base_power) / base_power
 
     return sweep_locations, power_out
 
@@ -66,43 +70,44 @@ label_dict = dict()
 # Gauss Class (This one is going away I think?)
 fi_g = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_g.floris.farm.set_wake_model('gauss')
+# fi_g.reinitialize_flow_field(turbulence_intensity=TI)
 fi_dict['g'] = fi_g
 color_dict['g'] = 'g--'
 label_dict['g'] = 'gauss'
 
 # Set up a saved gauss 
 saved_gauss = dict()
-saved_gauss[(10,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1435.94370406, 1323.89503547, 1217.15795972, 1140.26658923,
-       1111.78491916, 1140.26658923, 1217.15795972, 1323.89503547,
-       1435.94370406]) ]
-saved_gauss[(10,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1337.24318379, 1254.84555316, 1186.68781729, 1146.78010767,
-       1148.51442743, 1197.65054508, 1286.72278821, 1395.9458244 ,
-       1500.24350567]) ]
-saved_gauss[(6,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1438.93360213, 1232.23167916, 1000.43763306,  816.19974529,
-        746.3504836 ,  816.19974529, 1000.43763306, 1232.23167916,
-       1438.93360213]) ]
-saved_gauss[(6,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1226.76528778, 1044.48135074,  897.85075458,  816.61889812,
-        827.16686762,  940.29903358, 1131.86539695, 1343.01397005,
-       1514.42885058]) ]
-saved_gauss[(3,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1505.19140631, 1199.59728334,  775.07370251,  399.30350983,
-        247.97049643,  399.30350983,  775.07370251, 1199.59728334,
-       1505.19140631]) ]
-saved_gauss[(3,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1314.00611798,  931.18272859,  547.7518679 ,  319.60029603,
-        322.93021495,  554.43381933,  934.88567606, 1311.855186  ,
-       1558.47919504]) ]
-saved_gauss[(10,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([48.26101647, 39.12553788, 31.56884564, 27.14425206, 27.33653722,
-       32.78429035, 42.65978755, 54.76941619, 66.33296756]) ]
-saved_gauss[(6,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([123.76164592,  90.51310671,  63.76772691,  48.95105898,
-        50.87500567,  71.51028115, 106.45193233, 144.9653731 ,
-       176.23139944]) ]
-saved_gauss[(3,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([327.58602328, 203.01283565,  78.24197295,   3.99998733,
-         5.08356432,  80.41632283, 204.21779852, 326.88609622,
-       407.13913144]) ]
+saved_gauss[(10,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1475.857046  , 1438.61314837, 1407.12361597, 1385.76945702,
+       1378.24142295, 1385.76945702, 1407.12361597, 1438.61314837,
+       1475.857046  ]) ]
+saved_gauss[(10,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1460.87607432, 1426.11836183, 1396.89636511, 1378.10577621,
+       1373.68315683, 1385.03544661, 1410.70852317, 1446.48128931,
+       1487.27870735]) ]
+saved_gauss[(6,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1386.33360627, 1297.56151952, 1216.46738785, 1159.26620127,
+       1138.5417156 , 1159.26620127, 1216.46738785, 1297.56151952,
+       1386.33360627]) ]
+saved_gauss[(6,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1330.80440754, 1255.38388012, 1190.62796652, 1149.27972502,
+       1142.70862247, 1175.47342487, 1242.16104566, 1328.69052857,
+       1417.72060005]) ]
+saved_gauss[(3,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1308.75179417, 1105.39829949,  891.46814402,  726.85407202,
+        664.85992705,  726.85407202,  891.46814402, 1105.39829949,
+       1308.75179417]) ]
+saved_gauss[(3,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1157.83042919,  954.9184752 ,  792.60776463,  703.31776021,
+        702.4195797 ,  794.11740686,  962.28277757, 1163.62487709,
+       1349.63535527]) ]
+saved_gauss[(10,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([-1.01506929, 12.02821879, 11.51990855, 10.8243142 , 10.17994975,
+        9.80928765,  9.83854542, 10.23366611, 10.8826738 ]) ]
+saved_gauss[(6,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([-4.00547159, 10.38469059, 10.77897463, 10.47859704,  9.84211287,
+        9.53432126,  9.92784683, 10.95353561, 12.06408527]) ]
+saved_gauss[(3,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([-11.53170262,  -0.11975635,   2.63354986,   8.76905788,
+        13.47688416,  13.97260825,  13.17746328,  12.82450192,
+        13.00086758]) ]
 
 
 # Gauss Legacy Class
 fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_gl.floris.farm.set_wake_model('gauss_legacy')
+# fi_gl.reinitialize_flow_field(turbulence_intensity=TI)
 fi_dict['gl'] = fi_gl
 color_dict['gl'] = 'ro--'
 label_dict['gl'] = 'gauss_legacy'
@@ -110,6 +115,7 @@ label_dict['gl'] = 'gauss_legacy'
 # Gauss Merge Class
 fi_gm = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_gm.floris.farm.set_wake_model('gauss_merge')
+# fi_gm.reinitialize_flow_field(turbulence_intensity=TI)
 fi_dict['gm'] = fi_gm
 color_dict['gm'] = 'b^-'
 label_dict['gm'] = 'gauss_merge'
@@ -126,35 +132,34 @@ fig, axarr = plt.subplots(3,3,sharex=True, sharey=False,figsize=(14,9))
 for d_idx, dist_downstream in enumerate([10, 6, 3]):
     for y_idx, yaw in enumerate([0 , 20]):
         ax = axarr[d_idx, y_idx]
-        ax.set_title('%d D downstream, yaw = %d' % (dist_downstream,yaw))
+        ax.set_title('%d D spacing, yaw = %d' % (dist_downstream,yaw))
 
         # First plot the saved results
         sweep_locations, ps = saved_gauss[(dist_downstream, yaw)]
-        ax.plot(sweep_locations,ps,'k*-' ,label='Saved FLORIS Gauss')
+        # ax.plot(sweep_locations,ps,'ks-' ,label='Saved FLORIS Gauss',lw=3)
 
         for fi_key in fi_dict.keys():
             sweep_locations, ps = power_cross_sweep(fi_dict[fi_key],D,dist_downstream,yaw)
             ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
-            ax.set_ylim([0,2000])
-            if fi_key == 'gm':
-                print(ps)
+            ax.set_ylim([500,1600])
+
             # Save for after clean up
             # if fi_key == 'g':
             #     print('saved_gauss[(%d,%d)] = [np.' % (dist_downstream,yaw), repr(sweep_locations),',np.',repr(ps),']')
-print('GAINS')
+
 # Check the gains
 for d_idx, dist_downstream in enumerate([10, 6, 3]):
     ax = axarr[d_idx, -1]
-    ax.set_title('%d D downstream, Gain' % (dist_downstream))
+    ax.set_title('%d D spacing, Gain' % (dist_downstream))
 
     # First plot the saved results
     sweep_locations, ps = saved_gauss[(dist_downstream, 'gain')]
-    ax.plot(sweep_locations,ps,'k*-' ,label='Saved FLORIS Gauss')
+    # ax.plot(sweep_locations,ps,'ks-' ,label='Saved FLORIS Gauss',lw=3)
 
     for fi_key in fi_dict.keys():
         sweep_locations, ps = power_cross_sweep_gain(fi_dict[fi_key],D,dist_downstream,yaw_angle=20)
         ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
-        ax.set_ylim([-100,100])
+        ax.set_ylim([-40,40])
         # Save for after clean-up
         # if fi_key == 'g':
         #     print('saved_gauss[(%d,"gain")] = [np.' % (dist_downstream), repr(sweep_locations),',np.',repr(ps),']')
