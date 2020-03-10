@@ -224,11 +224,9 @@
     "description": "wake",
     "properties": {
       "velocity_model": "gauss",
-      "turbulence_model": "ishihara_qian",
+      "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
-      "combination_model": "sosfs",
-      "parameters": {
-      }
+      "combination_model": "sosfs"
     }
   }
 }

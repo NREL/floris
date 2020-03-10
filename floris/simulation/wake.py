@@ -64,7 +64,10 @@ class Wake():
 
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
-        self.parameters = properties["parameters"]
+        if "parameters" not in properties.keys():
+            self.parameters = {}
+        else:
+            self.parameters = properties["parameters"]
         # TODO: Add support for tuning wake combination parameters?
         # wake_combination_parameters = parameters["wake_combination_parameters"]
 
