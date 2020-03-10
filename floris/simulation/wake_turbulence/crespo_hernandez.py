@@ -48,17 +48,24 @@ class CrespoHernandez(WakeTurbulence):
         An instantiated CrespoHernandez(WakeTurbulence) object.
     """
 
+    default_parameters = {
+        "initial": 0.1,
+        "constant": 0.73,
+        "ai": 0.8,
+        "downstream": -0.275
+    }
+
     def __init__(self, parameter_dictionary):
-        super().__init__()
+        super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "crespo_hernandez"
-        model_dictionary = parameter_dictionary[self.model_string]
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # turbulence parameters
-        self.ti_initial = float(model_dictionary["initial"])
-        self.ti_constant = float(model_dictionary["constant"])
-        self.ti_ai = float(model_dictionary["ai"])
-        self.ti_downstream = float(model_dictionary["downstream"])
+        self.ti_initial = model_dictionary["initial"]
+        self.ti_constant = model_dictionary["constant"]
+        self.ti_ai = model_dictionary["ai"]
+        self.ti_downstream = model_dictionary["downstream"]
 
     def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """

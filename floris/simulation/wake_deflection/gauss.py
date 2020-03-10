@@ -57,7 +57,7 @@ class Gauss(VelocityDeflection):
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "gauss"
-        model_dictionary = self._get_model_dict(Gauss.default_parameters)
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.ka = model_dictionary["ka"]
         self.kb = model_dictionary["kb"]
         self.ad = model_dictionary["ad"]
@@ -207,10 +207,12 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
-        if value != Gauss.default_parameters['ka']:
+        if value != __class__.default_parameters['ka']:
             self.logger.info(
                 ('Current value of ka, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, Gauss.default_parameters['ka']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ka'])
+                )
 
     @property
     def kb(self):
@@ -233,10 +235,12 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
-        if value != Gauss.default_parameters['kb']:
+        if value != __class__.default_parameters['kb']:
             self.logger.info(
                 ('Current value of kb, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, Gauss.default_parameters['kb']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['kb'])
+                )
 
     @property
     def alpha(self):
@@ -260,11 +264,11 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
-        if value != Gauss.default_parameters['alpha']:
+        if value != __class__.default_parameters['alpha']:
             self.logger.info(
                 ('Current value of alpha, {0}, is not equal to tuned ' +
                 'value of {1}.').format(
-                    value, Gauss.default_parameters['alpha'])
+                    value, __class__.default_parameters['alpha'])
                 )
 
     @property
@@ -289,11 +293,11 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value
-        if value != Gauss.default_parameters['beta']:
+        if value != __class__.default_parameters['beta']:
             self.logger.info(
                 ('Current value of beta, {0}, is not equal to tuned ' +
                 'value of {1}.').format(
-                    value, Gauss.default_parameters['beta'])
+                    value, __class__.default_parameters['beta'])
                 )
 
     @property
@@ -316,10 +320,12 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ad = value
-        if value != Gauss.default_parameters['ad']:
+        if value != __class__.default_parameters['ad']:
             self.logger.info(
                 ('Current value of ad, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, Gauss.default_parameters['ad']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ad'])
+                )
 
     @property
     def bd(self):
@@ -341,7 +347,9 @@ class Gauss(VelocityDeflection):
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._bd = value
-        if value != Gauss.default_parameters['bd']:
+        if value != __class__.default_parameters['bd']:
             self.logger.info(
                 ('Current value of bd, {0}, is not equal to tuned ' +
-                'value of {1}.').format(value, Gauss.default_parameters['bd']))
+                'value of {1}.').format(
+                    value, __class__.default_parameters['bd'])
+                )

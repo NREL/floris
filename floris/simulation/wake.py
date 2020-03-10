@@ -121,8 +121,11 @@ class Wake():
     @velocity_model.setter
     def velocity_model(self, value):
         if type(value) is str:
-            self._velocity_model = self._velocity_models[value](
-                self.parameters["wake_velocity_parameters"])
+            if "wake_velocity_parameters" not in self.parameters.keys():
+                self._velocity_model = self._velocity_models[value]({})
+            else:
+                self._velocity_model = self._velocity_models[value](
+                    self.parameters["wake_velocity_parameters"])
         elif isinstance(value, VelocityDeficit):
             self._velocity_model = value
         else:
@@ -141,8 +144,20 @@ class Wake():
 
     @turbulence_model.setter
     def turbulence_model(self, value):
-        self._turbulence_model = self._turbulence_models[value](
-            self.parameters["wake_turbulence_parameters"])
+        if type(value) is str:
+            if "wake_turbulence_parameters" not in self.parameters.keys():
+                self._turbulence_model = self._turbulence_models[value]({})
+            else:
+                self._turbulence_model = self._turbulence_models[value](
+                    self.parameters["wake_turbulence_parameters"])
+        elif isinstance(value, WakeTurbulence):
+            self._turbulence_model = value
+        else:
+            raise ValueError(
+                "Invalid value given for WakeTurbulence: {}".format(value))
+        
+        # self._turbulence_model = self._turbulence_models[value](
+        #     self.parameters["wake_turbulence_parameters"])
 
     @property
     def deflection_model(self):
@@ -160,8 +175,11 @@ class Wake():
     @deflection_model.setter
     def deflection_model(self, value):
         if type(value) is str:
-            self._deflection_model = self._deflection_models[value](
-                self.parameters["wake_deflection_parameters"])
+            if "wake_deflection_parameters" not in self.parameters.keys():
+                self._deflection_model = self._deflection_models[value]({})
+            else:
+                self._deflection_model = self._deflection_models[value](
+                    self.parameters["wake_deflection_parameters"])
         elif isinstance(value, VelocityDeflection):
             self._deflection_model = value
         else:

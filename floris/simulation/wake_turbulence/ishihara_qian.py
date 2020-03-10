@@ -55,11 +55,39 @@ class IshiharaQian(WakeTurbulence):
         An instantiated Ishihara(WakeTurbulence) object.
     """
 
+    default_parameters = {
+        "kstar": {
+            "const": 0.11,
+            "Ct": 1.07,
+            "TI": 0.2
+        },
+        "epsilon": {
+            "const": 0.23,
+            "Ct": -0.25,
+            "TI": 0.17
+        },
+        "d": {
+            "const": 2.3,
+            "Ct": 1.2,
+            "TI": 0.0
+        },
+        "e": {
+            "const": 1.0,
+            "Ct": 0.0,
+            "TI": 0.1
+        },
+        "f": {
+            "const": 0.7,
+            "Ct": -3.2,
+            "TI": -0.45
+        }
+    }
+
     def __init__(self, parameter_dictionary):
-        super().__init__()
+        super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
-        self.model_string = "ishihara"
-        model_dictionary = parameter_dictionary[self.model_string]
+        self.model_string = "ishihara_qian"
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake model parameter
         self.kstar = model_dictionary["kstar"]
