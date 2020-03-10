@@ -217,7 +217,8 @@ class IshiharaQian(VelocityDeficit):
         if not (
             type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
         ):
-            err_msg = 'Invalid value type given for kstar: {}'.format(value)
+            err_msg = ('Invalid value type given for kstar: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kstar = value
@@ -249,7 +250,8 @@ class IshiharaQian(VelocityDeficit):
         if not (
             type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
         ):
-            err_msg = 'Invalid value type given for epsilon: {}'.format(value)
+            err_msg = ('Invalid value type given for epsilon: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._epsilon = value
@@ -280,7 +282,8 @@ class IshiharaQian(VelocityDeficit):
         if not (
             type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
         ):
-            err_msg = 'Invalid value type given for a: {}'.format(value)
+            err_msg = ('Invalid value type given for a: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a = value
@@ -311,7 +314,8 @@ class IshiharaQian(VelocityDeficit):
         if not (
             type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
         ):
-            err_msg = 'Invalid value type given for b: {}'.format(value)
+            err_msg = ('Invalid value type given for b: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b = value
@@ -342,7 +346,8 @@ class IshiharaQian(VelocityDeficit):
         if not (
             type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
         ):
-            err_msg = 'Invalid value type given for c: {}'.format(value)
+            err_msg = ('Invalid value type given for c: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c = value

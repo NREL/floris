@@ -203,7 +203,8 @@ class Gauss(VelocityDeflection):
     @ka.setter
     def ka(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for ka: {}'.format(value)
+            err_msg = ('Invalid value type given for ka: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
@@ -231,7 +232,8 @@ class Gauss(VelocityDeflection):
     @kb.setter
     def kb(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for kb: {}'.format(value)
+            err_msg = ('Invalid value type given for kb: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
@@ -260,7 +262,8 @@ class Gauss(VelocityDeflection):
     @alpha.setter
     def alpha(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for alpha: {}'.format(value)
+            err_msg = ('Invalid value type given for alpha: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
@@ -289,7 +292,8 @@ class Gauss(VelocityDeflection):
     @beta.setter
     def beta(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for beta: {}'.format(value)
+            err_msg = ('Invalid value type given for beta: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value
@@ -316,7 +320,8 @@ class Gauss(VelocityDeflection):
     @ad.setter
     def ad(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for ad: {}'.format(value)
+            err_msg = ('Invalid value type given for ad: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ad = value
@@ -343,7 +348,8 @@ class Gauss(VelocityDeflection):
     @bd.setter
     def bd(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for bd: {}'.format(value)
+            err_msg = ('Invalid value type given for bd: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._bd = value

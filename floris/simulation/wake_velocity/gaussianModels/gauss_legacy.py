@@ -117,7 +117,8 @@ class LegacyGauss(VelocityDeficit):
     @ka.setter
     def ka(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for ka: {}'.format(value)
+            err_msg = ('Invalid value type given for ka: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
@@ -143,7 +144,8 @@ class LegacyGauss(VelocityDeficit):
     @kb.setter
     def kb(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for kb: {}'.format(value)
+            err_msg = ('Invalid value type given for kb: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
@@ -170,7 +172,8 @@ class LegacyGauss(VelocityDeficit):
     @alpha.setter
     def alpha(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for alpha: {}'.format(value)
+            err_msg = ('Invalid value type given for alpha: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
@@ -197,7 +200,8 @@ class LegacyGauss(VelocityDeficit):
     @beta.setter
     def beta(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for beta: {}'.format(value)
+            err_msg = ('Invalid value type given for beta: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value

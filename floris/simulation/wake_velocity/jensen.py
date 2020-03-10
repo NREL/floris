@@ -151,7 +151,8 @@ class Jensen(VelocityDeficit):
     @we.setter
     def we(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for we: {}'.format(value)
+            err_msg = ('Invalid value type given for we: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._we = value

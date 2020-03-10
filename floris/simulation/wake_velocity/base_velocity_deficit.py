@@ -336,7 +336,6 @@ class VelocityDeficit():
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._use_yaw_added_recovery = value
-        self.calculate_VW_velocities = self.use_yaw_added_recovery
 
     @property
     def yaw_recovery_alpha(self):

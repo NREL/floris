@@ -257,10 +257,20 @@ class IshiharaQian(WakeTurbulence):
 
     @kstar.setter
     def kstar(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._kstar = value
-        else:
-            raise ValueError("Invalid value given for kstar: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for kstar: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._kstar = value
+        if value != __class__.default_parameters['kstar']:
+            self.logger.info(
+                ('Current value of kstar, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['kstar'])
+                )
 
     @property
     def epsilon(self):
@@ -280,11 +290,20 @@ class IshiharaQian(WakeTurbulence):
 
     @epsilon.setter
     def epsilon(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._epsilon = value
-        else:
-            raise ValueError("Invalid value given for " +
-                             "epsilon: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for epsilon: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._epsilon = value
+        if value != __class__.default_parameters['epsilon']:
+            self.logger.info(
+                ('Current value of epsilon, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['epsilon'])
+                )
 
     @property
     def d(self):
@@ -303,10 +322,20 @@ class IshiharaQian(WakeTurbulence):
 
     @d.setter
     def d(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._d = value
-        else:
-            raise ValueError("Invalid value given for d: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for d: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._d = value
+        if value != __class__.default_parameters['d']:
+            self.logger.info(
+                ('Current value of d, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['d'])
+                )
 
     @property
     def e(self):
@@ -321,14 +350,24 @@ class IshiharaQian(WakeTurbulence):
             float: Linear coefficient used in calculation of wake-added
                 turbulence.
         """
-        return self._d
+        return self._e
 
     @e.setter
     def e(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._e = value
-        else:
-            raise ValueError("Invalid value given for e: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for e: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._e = value
+        if value != __class__.default_parameters['e']:
+            self.logger.info(
+                ('Current value of e, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['e'])
+                )
 
     @property
     def f(self):
@@ -347,7 +386,17 @@ class IshiharaQian(WakeTurbulence):
 
     @f.setter
     def f(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._f = value
-        else:
-            raise ValueError("Invalid value given for f: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for f: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._f = value
+        if value != __class__.default_parameters['f']:
+            self.logger.info(
+                ('Current value of f, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['f'])
+                )

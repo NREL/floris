@@ -146,7 +146,8 @@ class Blondel(VelocityDeficit):
     @a_s.setter
     def a_s(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for a_s: {}'.format(value)
+            err_msg = ('Invalid value type given for a_s: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_s = value
@@ -178,7 +179,8 @@ class Blondel(VelocityDeficit):
     @b_s.setter
     def b_s(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for b_s: {}'.format(value)
+            err_msg = ('Invalid value type given for b_s: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_s = value
@@ -208,7 +210,8 @@ class Blondel(VelocityDeficit):
     @c_s.setter
     def c_s(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for c_s: {}'.format(value)
+            err_msg = ('Invalid value type given for c_s: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_s = value
@@ -241,7 +244,8 @@ class Blondel(VelocityDeficit):
     @a_f.setter
     def a_f(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for a_f: {}'.format(value)
+            err_msg = ('Invalid value type given for a_f: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_f = value
@@ -274,7 +278,8 @@ class Blondel(VelocityDeficit):
     @b_f.setter
     def b_f(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for b_f: {}'.format(value)
+            err_msg = ('Invalid value type given for b_f: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_f = value
@@ -305,7 +310,8 @@ class Blondel(VelocityDeficit):
     @c_f.setter
     def c_f(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for c_f: {}'.format(value)
+            err_msg = ('Invalid value type given for c_f: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_f = value

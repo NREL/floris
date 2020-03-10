@@ -453,7 +453,7 @@ class Curl(VelocityDeficit):
 
         if type(value) is not Vec3 and value is not None:
             err_msg = ('Invalid value type given for ' + \
-                       'model_grid_resolution: {}').format(value)
+                'model_grid_resolution: {}, expected type Vec3.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._model_grid_resolution = value
@@ -485,7 +485,7 @@ class Curl(VelocityDeficit):
     def initial_deficit(self, value):
         if type(value) is not float:
             err_msg = ('Invalid value type given for ' + \
-                       'initial_deficit: {}').format(value)
+                       'initial_deficit: {}, expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._initial_deficit = value
@@ -513,7 +513,7 @@ class Curl(VelocityDeficit):
     def dissipation(self, value):
         if type(value) is not float:
             err_msg = ('Invalid value type given for ' + \
-                       'dissipation: {}').format(value)
+                       'dissipation: {}, expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._dissipation = value
@@ -545,7 +545,7 @@ class Curl(VelocityDeficit):
     def veer_linear(self, value):
         if type(value) is not float:
             err_msg = ('Invalid value type given for ' + \
-                       'veer_linear: {}').format(value)
+                       'veer_linear: {}, expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._veer_linear = value

@@ -118,12 +118,18 @@ class Jimenez(VelocityDeflection):
 
     @kd.setter
     def kd(self, value):
-        if type(value) is float:
-            self._kd = value
-        elif type(value) is int:
-            self._kd = float(value)
-        else:
-            raise ValueError("Invalid value given for kd: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for kd: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._kd = value
+        if value != __class__.default_parameters['kd']:
+            self.logger.info(
+                ('Current value of kd, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['kd'])
+                )
 
     @property
     def ad(self):
@@ -140,12 +146,18 @@ class Jimenez(VelocityDeflection):
 
     @ad.setter
     def ad(self, value):
-        if type(value) is float:
-            self._ad = value
-        elif type(value) is int:
-            self._ad = float(value)
-        else:
-            raise ValueError("Invalid value given for ad: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ad: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ad = value
+        if value != __class__.default_parameters['ad']:
+            self.logger.info(
+                ('Current value of ad, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ad'])
+                )
 
     @property
     def bd(self):
@@ -162,9 +174,15 @@ class Jimenez(VelocityDeflection):
 
     @bd.setter
     def bd(self, value):
-        if type(value) is float:
-            self._bd = value
-        elif type(value) is int:
-            self._bd = float(value)
-        else:
-            raise ValueError("Invalid value given for bd: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for bd: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._bd = value
+        if value != __class__.default_parameters['bd']:
+            self.logger.info(
+                ('Current value of bd, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['bd'])
+                )

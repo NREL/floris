@@ -120,11 +120,20 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_initial.setter
     def ti_initial(self, value):
-        if type(value) is float:
-            self._ti_initial = value
-        else:
-            raise ValueError(("Invalid value given for "
-                              "ti_initial: {}").format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'ti_initial: {}, expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ti_initial = value
+        if value != __class__.default_parameters['ti_initial']:
+            self.logger.info(
+                ('Current value of ti_initial, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ti_initial']
+                )
+            )
+
 
     @property
     def ti_constant(self):
@@ -142,11 +151,19 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_constant.setter
     def ti_constant(self, value):
-        if type(value) is float:
-            self._ti_constant = value
-        else:
-            raise ValueError(("Invalid value given for "
-                              "ti_constant: {}").format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'ti_constant: {}, expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ti_constant = value
+        if value != __class__.default_parameters['ti_constant']:
+            self.logger.info(
+                ('Current value of ti_constant, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ti_constant']
+                )
+            )
     
     @property
     def ti_ai(self):
@@ -165,10 +182,19 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_ai.setter
     def ti_ai(self, value):
-        if type(value) is float:
-            self._ti_ai = value
-        else:
-            raise ValueError("Invalid value given for ti_ai: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'ti_ai: {}, expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ti_ai = value
+        if value != __class__.default_parameters['ti_ai']:
+            self.logger.info(
+                ('Current value of ti_ai, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ti_ai']
+                )
+            )
 
     @property
     def ti_downstream(self):
@@ -188,8 +214,16 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_downstream.setter
     def ti_downstream(self, value):
-        if type(value) is float:
-            self._ti_downstream = value
-        else:
-            raise ValueError(("Invalid value given for "
-                              "ti_downstream: {}").format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'ti_downstream: {}, expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ti_downstream = value
+        if value != __class__.default_parameters['ti_downstream']:
+            self.logger.info(
+                ('Current value of ti_downstream, {0}, is not equal to ' + \
+                'tuned value of {1}.').format(
+                    value, __class__.default_parameters['ti_downstream']
+                )
+            )

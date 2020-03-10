@@ -229,7 +229,8 @@ class MultiZone(VelocityDeficit):
 
         if type(value) is not list or len(value) != 3 or \
                             all(type(val) is float for val in value) is False:
-            err_msg = 'Invalid value type given for me: {}'.format(value)
+            err_msg = ('Invalid value type given for me: {}, ' + \
+                       'expected list of length 3.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._me = value
@@ -260,7 +261,8 @@ class MultiZone(VelocityDeficit):
     @we.setter
     def we(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for we: {}'.format(value)
+            err_msg = ('Invalid value type given for we: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._we = value
@@ -288,7 +290,8 @@ class MultiZone(VelocityDeficit):
     @aU.setter
     def aU(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for aU: {}'.format(value)
+            err_msg = ('Invalid value type given for aU: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._aU = value
@@ -316,7 +319,8 @@ class MultiZone(VelocityDeficit):
     @bU.setter
     def bU(self, value):
         if type(value) is not float:
-            err_msg = 'Invalid value type given for bU: {}'.format(value)
+            err_msg = ('Invalid value type given for bU: {}, ' + \
+                       'expected float.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._bU = value
@@ -355,7 +359,8 @@ class MultiZone(VelocityDeficit):
 
         if type(value) is not list or len(value) != 3 or \
                             all(type(val) is float for val in value) is False:
-            err_msg = 'Invalid value type given for mU: {}'.format(value)
+            err_msg = ('Invalid value type given for mU: {}, ' + \
+                       'expected list of length 3.').format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._mU = value
