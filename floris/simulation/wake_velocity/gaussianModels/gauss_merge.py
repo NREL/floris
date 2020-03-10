@@ -50,6 +50,10 @@ class MergeGauss(VelocityDeficit):
 
         # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
         x_tilde = (x_locations - turbine_coord.x1) / D
+
+        # Over-ride the values less than xR, these go away anyway
+        x_tilde[x_locations < xR] = 0 #np.mean(x_tilde[x_locations >= xR] )
+
         r_tilde = np.sqrt( (y_locations - turbine_coord.x2 - delta)**2 + (z_locations - HH)**2, dtype=np.float128) / D
 
         beta = ( 1 + np.sqrt(1 - Ct * cosd(yaw)) )  /  (2 * ( 1 + np.sqrt(1 - Ct) ) )
@@ -57,10 +61,13 @@ class MergeGauss(VelocityDeficit):
         a_s = self.ka # Force equality to previous parameters to reduce new parameters
         b_s = self.kb # Force equality to previous parameters to reduce new parameters
         c_s = 0.5
-        sigma_tilde = (a_s * TI + b_s) * x_tilde + c_s * np.sqrt(beta)
-
-        x0 = D * ( cosd(yaw) * (1 + np.sqrt(1 - Ct))) / (np.sqrt(2) * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) + turbine_coord.x1
-        sigma_tilde = sigma_tilde  - (a_s * TI + b_s) * x0/D
+        
+        x0 = D * ( cosd(yaw) * (1 + np.sqrt(1 - Ct))) / (np.sqrt(2) * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) # + turbine_coord.x1
+        sigma_tilde = (a_s * TI + b_s) * (x_tilde - x0/D) + c_s * np.sqrt(beta)
+        
+        # If not subtracting x0 as above, but I think equivalent
+        # sigma_tilde = (a_s * TI + b_s) * (x_tilde - 0) + c_s * np.sqrt(beta)
+        # sigma_tilde = sigma_tilde  - (a_s * TI + b_s) * x0/D
 
         a_f = 1.5 * 3.11
         b_f = 0.65 * -0.68
@@ -69,7 +76,10 @@ class MergeGauss(VelocityDeficit):
 
         a1 = 2**(2 / n - 1)
         a2 = 2**(4 / n - 2)
+        
+        # These two lines seem to be equivalent
         C = a1 - np.sqrt(a2 - (n * Ct * cosd(yaw) / (16.0 * gamma(2/n) * np.sign(sigma_tilde) * np.abs(sigma_tilde)**(4/n) ) ) )
+        # C = a1 - np.sqrt(a2 - (n * Ct * cosd(yaw) / (16.0 * gamma(2/n) * sigma_tilde**(4/n) ) ) )
 
         # Compute wake velocity (Eq 1, pp 3 of ref. [1] in docstring)
         velDef = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
