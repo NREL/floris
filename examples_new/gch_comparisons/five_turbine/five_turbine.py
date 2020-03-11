@@ -34,6 +34,7 @@ fi_gl = wfct.floris_interface.FlorisInterface("../../example_input.json")
 
 # Select gauss legacy
 fi_gl.floris.farm.set_wake_model('gauss_legacy')
+# fi_gl.floris.farm.set_wake_model('gauss_merge')
 
 # # Match the layout
 x_layout = tuple(map(float,df_results.layout_x.values[0].replace('(','').replace(')','').split(',')))
