@@ -48,7 +48,7 @@ class Jimenez(VelocityDeflection):
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "jimenez"
-        model_dictionary = self._get_model_dict(default_parameters)
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.ad = float(model_dictionary["ad"])
         self.kd = float(model_dictionary["kd"])
         self.bd = float(model_dictionary["bd"])
