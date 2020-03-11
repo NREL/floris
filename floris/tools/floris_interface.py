@@ -30,11 +30,14 @@ class FlorisInterface():
     """
 
     def __init__(self, input_file=None, input_dict=None):
-        self.logger = setup_logger(name=__name__)
         if input_file is None and input_dict is None:
+            self.logger = setup_logger(name=__name__,
+                logging_dict={'console': {'enable': True, 'level': 'INFO'},
+                'file': {'enable': False, 'level': 'INFO'} })
             err_msg = 'Input file or dictionary must be supplied'
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
+            self.logger = setup_logger(name=__name__)
         self.input_file = input_file
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
 

@@ -4,12 +4,12 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": false,
-      "level": "WARNING"
+      "enable": true,
+      "level": "INFO"
     },
     "file": {
       "enable": false,
-      "level": "WARNING"
+      "level": "INFO"
     }
   },
   "farm": {
