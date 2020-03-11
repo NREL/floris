@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats
+from ..utilities import setup_logger
 
 def _convert_to_numpy_array(series):
     if hasattr(series, 'values'):

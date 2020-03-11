@@ -12,6 +12,7 @@
 import numpy as np
 from .flow_data import FlowData
 from ..utilities import Vec3
+from ..utilities import setup_logger
 import pandas as pd
 import os
 import re

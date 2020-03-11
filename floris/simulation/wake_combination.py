@@ -14,7 +14,8 @@ import numpy as np
 
 class WakeCombination():
     """
-    The WakeCombination class provides methods for combining the base flow field with the velocity deficits from the wake models.
+    The WakeCombination class provides methods for combining the base flow
+    field with the velocity deficits from the wake models.
 
     Returns:
         WakeCombination: An instantiated WakeCombination object.
@@ -26,9 +27,9 @@ class WakeCombination():
 
 class FLS(WakeCombination):
     """
-    FLS is a subclass of 
-    :py:class:`floris.simulation.wake_combination.WakeCombination` 
-    which uses freestream linear superposition to combine the base flow 
+    FLS is a subclass of
+    :py:class:`floris.simulation.wake_combination.WakeCombination`
+    which uses freestream linear superposition to combine the base flow
     field with the wake velocity deficits.
     """
 
@@ -38,16 +39,16 @@ class FLS(WakeCombination):
 
     def function(self, u_field, u_wake):
         """
-        This method combines the base flow field with the velocity 
+        This method combines the base flow field with the velocity
         deficits using freestream linear superpostion.
 
         Args:
             u_field (np.array): The base flow field.
-            u_wake (np.array): The wake to add to the rest of the flow 
+            u_wake (np.array): The wake to add to the rest of the flow
                 field.
 
         Returns:
-            array: A linear combination of the base flow field and the 
+            array: A linear combination of the base flow field and the
             velocity deficits.
         """
         return u_field + u_wake
@@ -55,9 +56,9 @@ class FLS(WakeCombination):
 
 class SOSFS(WakeCombination):
     """
-    SOSFS is a subclass of 
-    :py:class:`floris.simulation.wake_combination.WakeCombination` 
-    which uses sum of squares freestream superposition to combine the 
+    SOSFS is a subclass of
+    :py:class:`floris.simulation.wake_combination.WakeCombination`
+    which uses sum of squares freestream superposition to combine the
     base flow field with the wake velocity deficits.
     """
 
@@ -67,16 +68,16 @@ class SOSFS(WakeCombination):
 
     def function(self, u_field, u_wake):
         """
-        This method combines the base flow field with the velocity 
+        This method combines the base flow field with the velocity
         defecits using sum of squares.
 
         Args:
             u_field (np.array): The base flow field.
-            u_wake (np.array): The wake to add to the rest of the flow 
+            u_wake (np.array): The wake to add to the rest of the flow
                 field.
 
         Returns:
-            array: A sum of squares combination of the base flow field 
+            array: A sum of squares combination of the base flow field
             and the velocity deficits.
         """
         return np.hypot(u_wake, u_field)
@@ -84,9 +85,9 @@ class SOSFS(WakeCombination):
 
 class MAX(WakeCombination):
     """
-    MAX is a subclass of 
-    :py:class:`floris.simulation.wake_combination.WakeCombination` 
-    which uses the maximum wake velocity deficit to add to the 
+    MAX is a subclass of
+    :py:class:`floris.simulation.wake_combination.WakeCombination`
+    which uses the maximum wake velocity deficit to add to the
     base flow field. For more information, refer to: "Limitations to the
     validity of single wake superposition in wind farm yield assessment",
     K. Gunn et al 2016 J. Phys.: Conf. Ser. 749 012003.
@@ -98,15 +99,13 @@ class MAX(WakeCombination):
 
     def function(self, u_field, u_wake):
         """
-        This method combines the base flow field with the maximum velocity 
+        This method combines the base flow field with the maximum velocity
         deficits.
-
         Args:
             u_field (np.array): The base flow field.
             u_wake (np.array): The wake velocity deficits.
-
         Returns:
-            array: A maximum combination of the base flow field 
+            array: A maximum combination of the base flow field
             and the velocity deficits.
         """
         return np.maximum(u_wake, u_field)

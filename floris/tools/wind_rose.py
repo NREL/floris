@@ -25,8 +25,7 @@ import pandas as pd
 import pickle
 from pyproj import Proj
 import floris.utilities as geo
-
-
+from ..utilities import setup_logger
 
 
 class WindRose():

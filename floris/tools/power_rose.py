@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 from floris.utilities import wrap_180
+from ..utilities import setup_logger
 
 
 class PowerRose():

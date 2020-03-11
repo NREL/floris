@@ -26,6 +26,7 @@ from .wake_deflection.curl import Curl as CurlDeflection
 
 from . import wake_turbulence
 from . import wake_combination
+from ..utilities import setup_logger
 
 
 class Wake():

@@ -16,14 +16,17 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
 import floris.tools.cut_plane as cp
-from floris.tools.optimization import YawOptimizationWindRose
+from floris.tools.optimization.scipy.optimization import YawOptimizationWindRose
 import floris.tools.wind_rose as rose
 import floris.tools.power_rose as pr
 import numpy as np
 import pandas as pd
 
 # Instantiate the FLORIS object
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+file_dir = os.path.dirname(os.path.abspath(__file__))
+fi = wfct.floris_interface.FlorisInterface(
+    os.path.join(file_dir, '../../example_input.json')
+)
 
 # Define wind farm coordinates and layout
 wf_coordinate = [39.8283, -98.5795]
@@ -91,7 +94,7 @@ if calculate_new_wind_rose:
 	                                                    en_date = None)
 
 else:
-	df = wind_rose.load('windtoolkit_geo_center_us.p')
+	df = wind_rose.load(os.path.join(file_dir, 'windtoolkit_geo_center_us.p'))
 
 # plot wind rose
 wind_rose.plot_wind_rose()
