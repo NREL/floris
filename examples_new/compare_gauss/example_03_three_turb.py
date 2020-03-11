@@ -82,6 +82,7 @@ fi_gl.floris.farm.wake._deflection_model.deflection_multiplier = 1.2 # Deflectio
 fi_dict['gl'] = fi_gl
 color_dict['gl'] = 'bo--'
 label_dict['gl'] = 'gauss_legacy'
+
 # Set up a saved gauss 
 saved_gauss = dict()
 saved_gauss[(10,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1435.94370406, 1323.89503547, 1217.15795972, 1140.26658923,

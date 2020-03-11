@@ -54,7 +54,7 @@ def power_cross_sweep_gain(fi_in,D,dist_downstream,yaw_angle=0):
     for y_idx, y_loc in enumerate(sweep_locations):
 
         fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2,dist_downstream*D*3,dist_downstream*D*4],[0,0,0,0,y_loc*D]))
-        fi.calculate_wake([0,0,0])
+        fi.calculate_wake([0,0,0,0,0])
         base_power = fi.get_turbine_power()[4]/1000.
         fi.calculate_wake([yaw_angle,0,0,0,0])
         power_out[y_idx] = 100 * (fi.get_turbine_power()[4]/1000. - base_power) / base_power
@@ -67,13 +67,22 @@ fi_dict = dict()
 color_dict = dict()
 label_dict = dict()
 
-# Gauss Class (This one is going away I think?)
+# Gauss Class -- Current Default
 fi_g = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_g.floris.farm.set_wake_model('gauss')
-# fi_g.reinitialize_flow_field(turbulence_intensity=TI)
+# fi_g.set_gch(True)
 fi_dict['g'] = fi_g
-color_dict['g'] = 'g--'
+color_dict['g'] = 'r^-'
 label_dict['g'] = 'gauss'
+
+# Gauss_Legacy Class with GCH disabled and deflection multiplier = 1.2
+fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi_gl.floris.farm.set_wake_model('gauss_legacy')
+fi_gl.set_gch(False) # Disable GCH
+fi_gl.floris.farm.wake._deflection_model.deflection_multiplier = 1.2 # Deflection multiplier to 1.2
+fi_dict['gl'] = fi_gl
+color_dict['gl'] = 'bo--'
+label_dict['gl'] = 'gauss_legacy'
 
 # Set up a saved gauss 
 saved_gauss = dict()
@@ -102,23 +111,6 @@ saved_gauss[(6,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  
 saved_gauss[(3,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([-11.53170262,  -0.11975635,   2.63354986,   8.76905788,
         13.47688416,  13.97260825,  13.17746328,  12.82450192,
         13.00086758]) ]
-
-
-# Gauss Legacy Class
-fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gl.floris.farm.set_wake_model('gauss_legacy')
-# fi_gl.reinitialize_flow_field(turbulence_intensity=TI)
-fi_dict['gl'] = fi_gl
-color_dict['gl'] = 'ro--'
-label_dict['gl'] = 'gauss_legacy'
-
-# Gauss Merge Class
-fi_gm = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gm.floris.farm.set_wake_model('gauss_merge')
-# fi_gm.reinitialize_flow_field(turbulence_intensity=TI)
-fi_dict['gm'] = fi_gm
-color_dict['gm'] = 'b^-'
-label_dict['gm'] = 'gauss_merge'
 
 
 # Get HH and D
