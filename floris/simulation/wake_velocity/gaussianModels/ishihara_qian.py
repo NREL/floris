@@ -91,7 +91,7 @@ class IshiharaQian(VelocityDeficit):
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
-        self.model_string = "ishihara"
+        self.model_string = "ishihara_qian"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake model parameter
