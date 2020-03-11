@@ -61,12 +61,23 @@ fi_dict = dict()
 color_dict = dict()
 label_dict = dict()
 
-# Gauss Class (This one is going away I think?)
+# Gauss Class -- Current Default
 fi_g = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_g.floris.farm.set_wake_model('gauss')
+# fi_g.set_gch(True)
 fi_dict['g'] = fi_g
-color_dict['g'] = 'g--'
+color_dict['g'] = 'r^-'
 label_dict['g'] = 'gauss'
+
+# Gauss_Legacy Class with GCH disabled and deflection multiplier = 1.2
+fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi_gl.floris.farm.set_wake_model('gauss_legacy')
+fi_gl.set_gch(False) # Disable GCH
+fi_gl.floris.farm.wake._deflection_model.deflection_multiplier = 1.2 # Deflection multiplier to 1.2
+fi_dict['gl'] = fi_gl
+color_dict['gl'] = 'bo--'
+label_dict['gl'] = 'gauss_legacy'
+
 
 # Set up a saved gauss 
 saved_gauss = dict()
@@ -121,20 +132,6 @@ saved_gauss[(3,"gain")] = [np.array([1. , 1.5, 2. , 2.5, 3. , 3.5, 4. , 4.5, 5. 
        69.61875081, 72.88422651, 76.35133369, 75.40150443, 67.50509487,
        61.05084723, 55.80723148, 51.03544101, 46.75486389, 43.14276456,
        39.88735058, 36.92259286, 34.17579983]) ]
-
-# Gauss Legacy Class
-fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gl.floris.farm.set_wake_model('gauss_legacy')
-fi_dict['gl'] = fi_gl
-color_dict['gl'] = 'ro--'
-label_dict['gl'] = 'gauss_legacy'
-
-# Gauss Merge Class
-fi_gm = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gm.floris.farm.set_wake_model('gauss_merge')
-fi_dict['gm'] = fi_gm
-color_dict['gm'] = 'b^-'
-label_dict['gm'] = 'gauss_merge'
 
 # Get HH and D
 HH = fi_gl.floris.farm.flow_field.turbine_map.turbines[0].hub_height
