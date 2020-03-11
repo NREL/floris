@@ -571,6 +571,7 @@ class FlowField():
         # v_wake = np.zeros(np.shape(self.u))
         # w_wake = np.zeros(np.shape(self.u))
 
+        # Empty the stored variables of v and w at start, these will be updated and stored within the loop
         self.v = np.zeros(np.shape(self.u))
         self.w = np.zeros(np.shape(self.u))
 
@@ -678,6 +679,7 @@ class FlowField():
                 else:
                     # v_wake = (v_wake + turb_v_wake)
                     # w_wake = (w_wake + turb_w_wake)
+
                     self.v = self.wake.combination_function(turb_v_wake, self.v)
                     self.w = self.wake.combination_function(turb_w_wake, self.w)
 

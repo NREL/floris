@@ -137,14 +137,25 @@ class FlorisInterface():
             turbine_map = None
 
             if wind_speed is not None:
+
+                # If not a list, convert to list
+                # TODO: What if tuple? Or
+                wind_speed = wind_speed if isinstance(wind_speed, list) else [wind_speed]
+
                 wind_map.input_speed = wind_speed
                 wind_map.calculate_wind_speed()
 
             if turbulence_intensity is not None:
+                # If not a list, convert to list
+                # TODO: What if tuple? Or
+                turbulence_intensity = turbulence_intensity if isinstance(turbulence_intensity, list) else [turbulence_intensity]
                 wind_map.input_ti = turbulence_intensity
                 wind_map.calculate_turbulence_intensity()
 
             if wind_direction is not None:
+                # If not a list, convert to list
+                # TODO: What if tuple? Or
+                wind_direction = wind_direction if isinstance(wind_direction, list) else [wind_direction]
                 wind_map.input_direction = wind_direction
                 wind_map.calculate_wind_direction()
 
