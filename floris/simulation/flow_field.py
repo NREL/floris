@@ -567,8 +567,12 @@ class FlowField():
 
         # calculate the velocity deficit and wake deflection on the mesh
         u_wake = np.zeros(np.shape(self.u))
-        v_wake = np.zeros(np.shape(self.u))
-        w_wake = np.zeros(np.shape(self.u))
+        # v_wake = np.zeros(np.shape(self.u))
+        # w_wake = np.zeros(np.shape(self.u))
+
+        # Empty the stored variables of v and w at start, these will be updated and stored within the loop
+        self.v = np.zeros(np.shape(self.u))
+        self.w = np.zeros(np.shape(self.u))
 
         rx = np.zeros(len(self.turbine_map.coords))
         ry = np.zeros(len(self.turbine_map.coords))
@@ -674,7 +678,11 @@ class FlowField():
                 else:
                     # v_wake = (v_wake + turb_v_wake)
                     # w_wake = (w_wake + turb_w_wake)
+                    # print('turb_v_wake',np.unique(turb_v_wake))
+                    print('turb_v_wake',np.mean(turb_v_wake))
+                    print('v',np.mean(self.v))
                     self.v = self.wake.combination_function(turb_v_wake, self.v)
+                    print('v',np.mean(self.v))
                     self.w = self.wake.combination_function(turb_w_wake, self.w)
 
         # apply the velocity deficit field to the freestream
