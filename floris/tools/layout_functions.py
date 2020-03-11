@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.spatial.distance import squareform, pdist
 from floris.utilities import wrap_360
+from ..utilities import setup_logger
 
 # All functions assume a dataframe with index turbine, and columns x and y
 

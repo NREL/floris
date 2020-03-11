@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 import pandas as pd
 import copy
+from ..utilities import setup_logger
 
 def nudge_outward(x):
     """

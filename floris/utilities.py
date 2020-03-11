@@ -276,9 +276,6 @@ def calc_unc_pmfs(unc_options=None):
                 'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
 
 
-# class LogClassSingleton():
-
-
 class LogClass:
     class __LogClass:
         def __init__(self, param_dict):
@@ -292,6 +289,11 @@ class LogClass:
                     if key == 'file':
                         self.log_to_file = param_dict[key]['enable']
                         self.file_level = param_dict[key]['level']
+            else:
+                self.log_to_console = True
+                self.console_level = 'DEBUG'
+                self.log_to_file = True
+                self.file_level = 'DEBUG'
 
         # def __str__(self):
         #     return repr(self)# + self.val
@@ -352,17 +354,8 @@ class TracebackInfoFilter(logging.Filter):
 
     def filter(self, record):
         if self.clear:
-
-            # record._exc_info_hidden, record.exc_info = record.exc_info, None
-            # clear the exception traceback text cache, if created.
-            # record.exc_text = None
-
             record._stack_info_hidden, record.stack_info = \
                                                         record.stack_info, None
-        # elif hasattr(record, "_exc_info_hidden"):
-        #     record.exc_info = record._exc_info_hidden
-        #     del record._exc_info_hidden
-
         elif hasattr(record, "_stack_info_hidden"):
             record.stack_info = record._stack_info_hidden
             del record._stack_info_hidden
