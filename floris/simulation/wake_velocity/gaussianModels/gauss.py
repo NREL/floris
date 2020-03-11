@@ -52,7 +52,7 @@ additional corrections to provide better consistency with previous models and SO
 results
 
 
-""""
+"""
 
 class Gauss(VelocityDeficit):
     default_parameters = {
