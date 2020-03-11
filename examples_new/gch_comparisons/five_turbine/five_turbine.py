@@ -32,8 +32,9 @@ df_results = pd.read_csv('paper_results_5_turbine.csv')
 # # Initialize the FLORIS interface fi
 fi_gl = wfct.floris_interface.FlorisInterface("../../example_input.json")
 
-# Select gauss legacy
+# Select gauss legacy with GCH off
 fi_gl.floris.farm.set_wake_model('gauss_legacy')
+fi_gl.set_gch(False) # Disable GCH
 # fi_gl.floris.farm.set_wake_model('gauss_merge')
 
 # # Match the layout
@@ -72,27 +73,15 @@ fi_gl.reinitialize_flow_field()
 
 # Set up the yar model
 fi_yar = copy.deepcopy(fi_gl)
-model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] = True
-fi_yar.set_model_parameters(model_params)
-fi_yar.reinitialize_flow_field()
+fi_yar.set_gch_yaw_added_recovery(True)
 
 # Set up the ss model
 fi_ss = copy.deepcopy(fi_gl)
-model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] = False
-model_params['Wake Deflection Parameters']['use_secondary_steering'] = True
-
-fi_ss.set_model_parameters(model_params)
-# HACK ON THE CALC
-fi_ss.floris.farm.wake.velocity_model.calculate_VW_velocities=True
-fi_ss.reinitialize_flow_field()
+fi_ss.set_gch_secondary_steering(True)
 
 # Set up the gch model
 fi_gch = copy.deepcopy(fi_gl)
-model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] = True
-model_params['Wake Deflection Parameters']['use_secondary_steering'] = True
-fi_gch.set_model_parameters(model_params)
-fi_gch.reinitialize_flow_field()
-
+fi_gch.set_gch(True)
 
 # Produce restuls for each floris model
 number_cases = 4
