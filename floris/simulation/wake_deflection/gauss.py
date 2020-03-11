@@ -57,7 +57,7 @@ class Gauss(VelocityDeflection):
         if 'dm' in model_dictionary:
             self.deflection_multiplier = float(model_dictionary["dm"])
         else:
-            self.deflection_multiplier = 1.2
+            self.deflection_multiplier = 1.0
             # TODO: logging
             # print('Using default gauss deflection multipler of: %.1f' %
                 #   self.deflection_multiplier)
