@@ -25,11 +25,24 @@ Literature on the Gaussian model can be found in the following papers:
 5. Bastankhah, M. and Porté-Agel, 5 F.: Experimental and theoretical study of
    wind turbine wakes in yawed conditions, Journal of FluidMechanics, 806,
    506–541, 2016.
+   
+6. Martinez-Tossas, L. A., Annoni, J., Fleming, P. A., and Churchfield, M. J.: 
+   The aerodynamics of the curled wake: a simplified model in view of flow control, 
+   Wind Energ. Sci., 4, 127–138, 2019.
+ 
 
 
-Curl Wake Model
+Curled Wake Model
 ===============
-Describe the curl wake model here
+The curled wake model solves a linearized version of the 
+Reynolds-averaged Navier-Stokes equations to obtain
+the wake velocity deficit.
+This is the computationally most expensive option (1-10 seconds)
+in the FLORIS
+framework because it solves a parabolic system of equations.
+This model can be used when accurate modeling of yawed wakes 
+is of interest
+and comptutational expense is not a priority.
 
 Gauss Wake Model
 ================

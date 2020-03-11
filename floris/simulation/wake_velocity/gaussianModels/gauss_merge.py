@@ -12,25 +12,33 @@
 
 import numpy as np
 from scipy.special import gamma
-from ....utilities import cosd, sind, tand
+from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
 
 class MergeGauss(VelocityDeficit):
+    default_parameters = {
+        'ka': 0.38,
+        'kb': 0.004,
+        'alpha': 0.58,
+        'beta': 0.077
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
 
         self.model_string = "gauss_merge"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake expansion parameters
-        self.ka = float(model_dictionary["ka"])
-        self.kb = float(model_dictionary["kb"])
+        self.ka = model_dictionary["ka"]
+        self.kb = model_dictionary["kb"]
 
         # near wake / far wake boundary parameters
-        self.alpha = float(model_dictionary["alpha"])
-        self.beta = float(model_dictionary["beta"])
+        self.alpha = model_dictionary["alpha"]
+        self.beta = model_dictionary["beta"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         # added turbulence model
@@ -101,12 +109,18 @@ class MergeGauss(VelocityDeficit):
 
     @ka.setter
     def ka(self, value):
-        if type(value) is float:
-            self._ka = value
-        elif type(value) is int:
-            self._ka = float(value)
-        else:
-            raise ValueError("Invalid value given for ka: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ka: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ka = value
+        if value != __class__.default_parameters['ka']:
+            self.logger.info(
+                ('Current value of ka, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['ka'])
+                )
 
     @property
     def kb(self):
@@ -122,12 +136,18 @@ class MergeGauss(VelocityDeficit):
 
     @kb.setter
     def kb(self, value):
-        if type(value) is float:
-            self._kb = value
-        elif type(value) is int:
-            self._kb = float(value)
-        else:
-            raise ValueError("Invalid value given for kb: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for kb: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._kb = value
+        if value != __class__.default_parameters['kb']:
+            self.logger.info(
+                ('Current value of kb, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['kb'])
+                )
 
     @property
     def alpha(self):
@@ -144,12 +164,18 @@ class MergeGauss(VelocityDeficit):
 
     @alpha.setter
     def alpha(self, value):
-        if type(value) is float:
-            self._alpha = value
-        elif type(value) is int:
-            self._alpha = float(value)
-        else:
-            raise ValueError("Invalid value given for alpha: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for alpha: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._alpha = value
+        if value != __class__.default_parameters['alpha']:
+            self.logger.info(
+                ('Current value of alpha, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['alpha'])
+                )
 
     @property
     def beta(self):
@@ -166,9 +192,15 @@ class MergeGauss(VelocityDeficit):
 
     @beta.setter
     def beta(self, value):
-        if type(value) is float:
-            self._beta = value
-        elif type(value) is int:
-            self._beta = float(value)
-        else:
-            raise ValueError("Invalid value given for beta: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for beta: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._beta = value
+        if value != __class__.default_parameters['beta']:
+            self.logger.info(
+                ('Current value of beta, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['beta'])
+                )

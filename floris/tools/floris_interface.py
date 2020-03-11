@@ -15,6 +15,7 @@ from floris.simulation import Floris
 from floris.simulation import TurbineMap, Turbine
 from .flow_data import FlowData
 from ..utilities import Vec3
+from ..utilities import setup_logger
 import copy
 from scipy.stats import norm
 from floris.simulation import WindMap
@@ -29,8 +30,11 @@ class FlorisInterface():
     """
 
     def __init__(self, input_file=None, input_dict=None):
+        self.logger = setup_logger(name=__name__)
         if input_file is None and input_dict is None:
-            raise ValueError('Input file or dictionary must be supplied')
+            err_msg = 'Input file or dictionary must be supplied'
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
         self.input_file = input_file
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
 
@@ -186,9 +190,9 @@ class FlorisInterface():
                 Defaults to z.
             x3_value (float, optional): value of normal vector to slice through
                 Defaults to 100.
-            x1_bounds (tuple, optional): limits of output array.
+            x1_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
-            x2_bounds (tuple, optional): limits of output array.
+            x2_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
 
         Returns:
@@ -302,6 +306,9 @@ class FlorisInterface():
         # Limit to requested points
         df = df[df.x1.isin(x1_array)]
         df = df[df.x2.isin(x2_array)]
+
+        # Sort values of df to make sure plotting is acceptable
+        df = df.sort_values(['x2','x1']).reset_index(drop=True)
 
         # Return the dataframe
         return df
@@ -456,9 +463,9 @@ class FlorisInterface():
                 Defaults to 200.
             x2_resolution (float, optional): output array resolution.
                 Defaults to 200.
-            x1_bounds (tuple, optional): limits of output array.
+            x1_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
-            x2_bounds (tuple, optional): limits of output array.
+            x2_bounds (tuple, optional): limits of output array. (in m)
                 Defaults to None.
 
         Returns:
@@ -1110,13 +1117,14 @@ class FlorisInterface():
         set_params(self, params, verbose)
 
 
-    def show_flow_field(self):
+    def show_flow_field(self, ax=None):
         # Get horizontal plane at default height (hub-height)
         hor_plane = self.get_hor_plane()
 
         # Plot and show
-        fig, ax = plt.subplots()
-        visualize_cut_plane(hor_plane, ax=ax)
+        if ax is None:
+            fig, ax = plt.subplots()
+        wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
         plt.show()
 
     # TODO

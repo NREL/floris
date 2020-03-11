@@ -10,7 +10,7 @@
 # specific language governing permissions and limitations under the License.
 
 from ..utilities import Vec3
-# from .wake_combination import WakeCombination
+from ..utilities import setup_logger
 from .flow_field import FlowField
 from .wind_map import WindMap
 from .turbine_map import TurbineMap
@@ -118,7 +118,7 @@ class Farm():
         """
 
         valid_wake_models = [
-            'curl', 'gauss', 'ishihara', 'jensen', 'multizone', 'blondel', 'gauss', 'gauss_merge', 'gauss_legacy'
+            'curl', 'gauss', 'ishihara_qian', 'jensen', 'multizone', 'blondel', 'gauss', 'gauss_merge', 'gauss_legacy'
         ]
         if wake_model not in valid_wake_models:
             # TODO: logging
@@ -129,7 +129,7 @@ class Farm():
         self.flow_field.wake.velocity_model = wake_model
         if wake_model == 'jensen' or wake_model == 'multizone':
             self.flow_field.wake.deflection_model = 'jimenez'
-        elif wake_model == 'blondel' or wake_model == 'ishihara' or 'gauss' in wake_model:
+        elif wake_model == 'blondel' or wake_model == 'ishihara_qian' or 'gauss' in wake_model:
             self.flow_field.wake.deflection_model = 'gauss'
         else:
             self.flow_field.wake.deflection_model = wake_model

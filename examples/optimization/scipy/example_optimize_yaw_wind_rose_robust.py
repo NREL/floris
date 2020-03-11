@@ -1,26 +1,26 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
-
-# See read the https://floris.readthedocs.io for documentation
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 
 import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
 import floris.tools.cut_plane as cp
-from floris.tools.optimization import YawOptimizationWindRose
+from floris.tools.optimization.scipy.optimization import YawOptimizationWindRose
 import floris.tools.wind_rose as rose
 import floris.tools.power_rose as pr
 import numpy as np
 import pandas as pd
+import os
 
 # Define wind farm coordinates and layout
 wf_coordinate = [39.8283, -98.5795]
@@ -36,7 +36,10 @@ minimum_ws = 3.0
 maximum_ws = 15.0
 
 # Instantiate the FLORIS object
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+file_dir = os.path.dirname(os.path.abspath(__file__))
+fi = wfct.floris_interface.FlorisInterface(
+    os.path.join(file_dir, '../../example_input.json')
+)
 
 # Set wind farm to a 2 turbine N-S configuration with 5D spacing 
 D = fi.floris.farm.turbines[0].rotor_diameter
@@ -55,9 +58,8 @@ print('Plotting the FLORIS flowfield...')
 # ================================================================================
 
 # Initialize the horizontal cut
-hor_plane = wfct.cut_plane.HorPlane(
-    fi.get_flow_data(),
-    fi.floris.farm.turbines[0].hub_height
+hor_plane = fi.get_hor_plane(
+    height=fi.floris.farm.turbines[0].hub_height
 )
 
 # Plot and show
@@ -90,7 +92,7 @@ if calculate_new_wind_rose:
 	                                                    en_date = None)
 
 else:
-	df = wind_rose.load('windtoolkit_geo_center_us.p')
+	df = wind_rose.load(os.path.join(file_dir, 'windtoolkit_geo_center_us.p'))
 
 # plot wind rose
 wind_rose.plot_wind_rose()

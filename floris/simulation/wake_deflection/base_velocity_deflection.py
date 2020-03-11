@@ -44,19 +44,26 @@ class VelocityDeflection():
             self.logger.info(
                 ('Using default option eps_gain: %.1f' % self.eps_gain))
 
-    def _get_model_dict(self):
+    def _get_model_dict(self, default_dict):
         if self.model_string not in self.parameter_dictionary.keys():
-            err_msg = "The {} wake model was ".format(self.model_string) + \
-                "instantiated but the model parameters were not found in " + \
-                "the input file or dictionary under " + \
-                "'wake.properties.parameters.{}'.".format(self.model_string)
-            self.logger.error(err_msg, stack_info=True)
-            raise KeyError(err_msg)
-            # raise KeyError("The {} wake model was ".format(self.model_string) +
-            #     "instantiated but the model parameters were not found in the " +
-            #     "input file or dictionary under " +
-            #     "'wake.properties.parameters.{}'.".format(self.model_string))
-        return self.parameter_dictionary[self.model_string]
+            return_dict = default_dict
+        else:
+            user_dict = self.parameter_dictionary[self.model_string]
+            # if default key is not in the user-supplied dict, then use the
+            # default value
+            for key in default_dict.keys():
+                if key not in user_dict:
+                    user_dict[key] = default_dict[key]
+            # if user-supplied key is not in the default dict, then warn the
+            # user that key: value pair was not used
+            for key in user_dict:
+                if key not in default_dict:
+                    err_msg = ('User supplied value {}, not in standard ' + \
+                        'wake velocity model dictionary.').format(key)
+                    self.logger.warning(err_msg, stack_info=True)
+                    raise KeyError(err_msg)
+            return_dict = user_dict
+        return return_dict
 
     def calculate_effective_yaw_angle(self, x_locations, y_locations,
                                       z_locations, turbine, coord, flow_field):

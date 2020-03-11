@@ -10,11 +10,17 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ....utilities import cosd, sind, tand
-from ....utilities import setup_logger
-from ..base_velocity_deficit import VelocityDeficit
+from ...utilities import cosd, sind, tand, setup_logger
+from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 
+
+default_parameters = {
+    'ka': 0.38,
+    'kb': 0.004,
+    'alpha': 0.58,
+    'beta': 0.077
+}
 
 class Gauss(VelocityDeficit):
     """
@@ -98,18 +104,11 @@ class Gauss(VelocityDeficit):
         An instantiated Gauss object.
     """
 
-    default_parameters = {
-        'ka': 0.38,
-        'kb': 0.004,
-        'alpha': 0.58,
-        'beta': 0.077
-    }
-
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "gauss"
-        model_dictionary = self._get_model_dict(__class__.default_parameters)
+        model_dictionary = self._get_model_dict()
 
         # wake expansion parameters
         self.ka = float(model_dictionary["ka"])
@@ -253,16 +252,28 @@ class Gauss(VelocityDeficit):
         Returns:
             float: Gaussian wake model coefficient.
         """
-        return self._ka
+        # return self._ka
+        return self._ka if hasattr(self, '_ka') else default_parameters['ka']
 
     @ka.setter
     def ka(self, value):
-        if type(value) is float:
-            self._ka = value
-        elif type(value) is int:
-            self._ka = float(value)
-        else:
-            raise ValueError("Invalid value given for ka: {}".format(value))
+        # if type(value) is float:
+        #     self._ka = value
+        # elif type(value) is int:
+        #     self._ka = float(value)
+        # else:
+        #     raise ValueError("Invalid value given for ka: {}".format(value))
+
+        if type(value) is not float:
+            err_msg = 'Invalid value type given for ka: {}'.format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._ka = value
+        print('default val: ', default_parameters['ka'])
+        if value != default_parameters['ka']:
+            self.logger.warning(
+                'Current value of a_s, {0}, is not equal to tuned ' +
+                'value of {1}.'.format(value, default_parameters['ka']))
 
     @property
     def kb(self):

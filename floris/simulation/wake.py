@@ -1,13 +1,14 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 from .wake_velocity.base_velocity_deficit import VelocityDeficit
 from .wake_velocity.curl import Curl as CurlDeficit
@@ -16,7 +17,7 @@ from .wake_velocity.gaussianModels.gauss_merge import MergeGauss as MergeGaussDe
 from .wake_velocity.gaussianModels.gauss import Gauss as GaussDeficit
 from .wake_velocity.jensen import Jensen
 from .wake_velocity.multizone import MultiZone
-from .wake_velocity.gaussianModels.ishihara import Ishihara
+from .wake_velocity.gaussianModels.ishihara_qian import IshiharaQian as IshiharaQianDeficit
 from .wake_velocity.gaussianModels.blondel import Blondel as BlondelDeficit
 
 from .wake_deflection.base_velocity_deflection import VelocityDeflection
@@ -24,8 +25,15 @@ from .wake_deflection.jimenez import Jimenez
 from .wake_deflection.gauss import Gauss as GaussDeflection
 from .wake_deflection.curl import Curl as CurlDeflection
 
-from . import wake_turbulence
-from . import wake_combination
+from .wake_turbulence.base_wake_turbulence import WakeTurbulence
+from .wake_turbulence.crespo_hernandez import CrespoHernandez as CrespoHernandezTurbulence
+from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
+from .wake_turbulence.direct import Direct as DirectTurbulence
+
+from .wake_combination.base_wake_combination import WakeCombination
+from .wake_combination.fls import FLS
+from .wake_combination.sosfs import SOSFS
+from .wake_combination.max import MAX
 
 
 class Wake():
@@ -56,7 +64,10 @@ class Wake():
 
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
-        self.parameters = properties["parameters"]
+        if "parameters" not in properties.keys():
+            self.parameters = {}
+        else:
+            self.parameters = properties["parameters"]
         # TODO: Add support for tuning wake combination parameters?
         # wake_combination_parameters = parameters["wake_combination_parameters"]
 
@@ -66,16 +77,17 @@ class Wake():
             "gauss": GaussDeficit,
             "gauss_merge": MergeGaussDeficit,
             "gauss_legacy": LegacyGaussDeficit,
-            "ishihara": Ishihara,
+            "ishihara_qian": IshiharaQianDeficit,
             "curl": CurlDeficit,
             "blondel": BlondelDeficit
         }
         self.velocity_model = properties["velocity_model"]
 
         self._turbulence_models = {
-            "gauss": wake_turbulence.Gauss,
-            "ishihara": wake_turbulence.Ishihara,
-            "None": wake_turbulence.WakeTurbulence
+            "crespo_hernandez": CrespoHernandezTurbulence,
+            "ishihara_qian": IshiharaQianTurbulence,
+            "direct": DirectTurbulence,
+            "None": WakeTurbulence
         }
         self.turbulence_model = properties["turbulence_model"]
 
@@ -87,9 +99,9 @@ class Wake():
         self.deflection_model = properties["deflection_model"]
 
         self._combination_models = {
-            "fls": wake_combination.FLS,
-            "sosfs": wake_combination.SOSFS,
-            "max": wake_combination.MAX
+            "fls": FLS,
+            "sosfs": SOSFS,
+            "max": MAX
         }
         self.combination_model = properties["combination_model"]
 
@@ -112,8 +124,11 @@ class Wake():
     @velocity_model.setter
     def velocity_model(self, value):
         if type(value) is str:
-            self._velocity_model = self._velocity_models[value](
-                self.parameters["wake_velocity_parameters"])
+            if "wake_velocity_parameters" not in self.parameters.keys():
+                self._velocity_model = self._velocity_models[value]({})
+            else:
+                self._velocity_model = self._velocity_models[value](
+                    self.parameters["wake_velocity_parameters"])
         elif isinstance(value, VelocityDeficit):
             self._velocity_model = value
         else:
@@ -132,8 +147,20 @@ class Wake():
 
     @turbulence_model.setter
     def turbulence_model(self, value):
-        self._turbulence_model = self._turbulence_models[value](
-            self.parameters["wake_turbulence_parameters"])
+        if type(value) is str:
+            if "wake_turbulence_parameters" not in self.parameters.keys():
+                self._turbulence_model = self._turbulence_models[value]({})
+            else:
+                self._turbulence_model = self._turbulence_models[value](
+                    self.parameters["wake_turbulence_parameters"])
+        elif isinstance(value, WakeTurbulence):
+            self._turbulence_model = value
+        else:
+            raise ValueError(
+                "Invalid value given for WakeTurbulence: {}".format(value))
+        
+        # self._turbulence_model = self._turbulence_models[value](
+        #     self.parameters["wake_turbulence_parameters"])
 
     @property
     def deflection_model(self):
@@ -151,8 +178,11 @@ class Wake():
     @deflection_model.setter
     def deflection_model(self, value):
         if type(value) is str:
-            self._deflection_model = self._deflection_models[value](
-                self.parameters["wake_deflection_parameters"])
+            if "wake_deflection_parameters" not in self.parameters.keys():
+                self._deflection_model = self._deflection_models[value]({})
+            else:
+                self._deflection_model = self._deflection_models[value](
+                    self.parameters["wake_deflection_parameters"])
         elif isinstance(value, VelocityDeflection):
             self._deflection_model = value
         else:

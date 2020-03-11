@@ -41,7 +41,8 @@ from .input_reader import InputReader
 from .wind_map import WindMap
 from .turbine_map import TurbineMap
 from .turbine import Turbine
-from .wake_combination import WakeCombination
 from . import wake_deflection
 from . import wake_velocity
+from . import wake_combination
+from . import wake_turbulence
 from .wake import Wake
