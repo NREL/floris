@@ -61,9 +61,9 @@ class VelocityDeficit():
             self.calculate_VW_velocities = \
                 bool(self.parameter_dictionary["calculate_VW_velocities"])
         else:
-            self.logger.info('Using default option of not calculating V and W ' + \
+            self.logger.info('Using default option of calculating V and W ' + \
                 'velocity components (calculate_VW_velocities=False)')
-            self.calculate_VW_velocities = False
+            self.calculate_VW_velocities = True
 
         if 'use_yaw_added_recovery' in self.parameter_dictionary:
             # if set to True, self.calculate_VW_velocities also is set to True
