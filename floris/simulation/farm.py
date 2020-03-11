@@ -118,7 +118,7 @@ class Farm():
         """
 
         valid_wake_models = [
-            'curl', 'gauss', 'ishihara_qian', 'jensen', 'multizone', 'blondel', 'gauss', 'gauss_merge', 'gauss_legacy'
+             'jensen', 'multizone', 'gauss', 'gauss_legacy', 'blondel', 'ishihara_qian','curl'
         ]
         if wake_model not in valid_wake_models:
             # TODO: logging

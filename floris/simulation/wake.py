@@ -13,7 +13,6 @@
 from .wake_velocity.base_velocity_deficit import VelocityDeficit
 from .wake_velocity.curl import Curl as CurlDeficit
 from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaussDeficit
-from .wake_velocity.gaussianModels.gauss_merge import MergeGauss as MergeGaussDeficit
 from .wake_velocity.gaussianModels.gauss import Gauss as GaussDeficit
 from .wake_velocity.jensen import Jensen
 from .wake_velocity.multizone import MultiZone
@@ -75,7 +74,6 @@ class Wake():
             "jensen": Jensen,
             "multizone": MultiZone,
             "gauss": GaussDeficit,
-            "gauss_merge": MergeGaussDeficit,
             "gauss_legacy": LegacyGaussDeficit,
             "ishihara_qian": IshiharaQianDeficit,
             "curl": CurlDeficit,
