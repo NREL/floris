@@ -289,22 +289,12 @@ class LogClass:
                     if key == 'file':
                         self.log_to_file = param_dict[key]['enable']
                         self.file_level = param_dict[key]['level']
-            else:
-                self.log_to_console = True
-                self.console_level = 'DEBUG'
-                self.log_to_file = True
-                self.file_level = 'DEBUG'
-
-        # def __str__(self):
-        #     return repr(self)# + self.val
 
     instance = None
 
     def __init__(self, arg):
         if not LogClass.instance:
             LogClass.instance = self.__LogClass(arg)
-        # else:
-        #     LogClass.instance.val = arg
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
