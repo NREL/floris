@@ -12,6 +12,7 @@
 import numpy as np
 from ..utilities import Vec3
 from ..utilities import cosd, sind, tand
+from ..utilities import setup_logger
 import scipy as sp
 from scipy.interpolate import griddata
 
@@ -567,8 +568,11 @@ class FlowField():
 
         # calculate the velocity deficit and wake deflection on the mesh
         u_wake = np.zeros(np.shape(self.u))
-        v_wake = np.zeros(np.shape(self.u))
-        w_wake = np.zeros(np.shape(self.u))
+        # v_wake = np.zeros(np.shape(self.u))
+        # w_wake = np.zeros(np.shape(self.u))
+
+        self.v = np.zeros(np.shape(self.u))
+        self.w = np.zeros(np.shape(self.u))
 
         rx = np.zeros(len(self.turbine_map.coords))
         ry = np.zeros(len(self.turbine_map.coords))
