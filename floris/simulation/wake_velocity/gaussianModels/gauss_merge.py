@@ -17,7 +17,7 @@ from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
 
-class MergeGauss(VelocityDeficit):
+class Gauss(VelocityDeficit):
     default_parameters = {
         'ka': 0.38,
         'kb': 0.004,
@@ -29,7 +29,7 @@ class MergeGauss(VelocityDeficit):
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
 
-        self.model_string = "gauss_merge"
+        self.model_string = "gauss"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake expansion parameters
