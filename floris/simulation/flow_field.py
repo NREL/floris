@@ -678,11 +678,8 @@ class FlowField():
                 else:
                     # v_wake = (v_wake + turb_v_wake)
                     # w_wake = (w_wake + turb_w_wake)
-                    # print('turb_v_wake',np.unique(turb_v_wake))
-                    print('turb_v_wake',np.mean(turb_v_wake))
-                    print('v',np.mean(self.v))
+
                     self.v = self.wake.combination_function(turb_v_wake, self.v)
-                    print('v',np.mean(self.v))
                     self.w = self.wake.combination_function(turb_w_wake, self.w)
 
         # apply the velocity deficit field to the freestream
