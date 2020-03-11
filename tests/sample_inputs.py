@@ -70,7 +70,7 @@ class SampleInputs():
             "properties": {
                 "velocity_model": "gauss",
                 "deflection_model": "gauss",
-                "turbulence_model": "gauss",
+                "turbulence_model": "crespo_hernandez",
                 "combination_model": "sosfs",
                 "parameters": {
                     "wake_velocity_parameters": {
@@ -131,7 +131,7 @@ class SampleInputs():
                             "ai": 0.8,
                             "downstream": -0.275
                         },
-                        "ishihara": {
+                        "ishihara_qian": {
                             "kstar": {
                                 "const": 0.11,
                                 "Ct": 1.07,
@@ -160,13 +160,13 @@ class SampleInputs():
                         },
                     },
                     "wake_turbulence_parameters": {
-                        "gauss": {
+                        "crespo_hernandez": {
                             "initial": 0.1,
                             "constant": 0.73,
                             "ai": 0.8,
                             "downstream": -0.275
                         },
-                        "ishihara": {
+                        "ishihara_qian": {
                             "kstar": {
                                 "const": 0.11,
                                 "Ct": 1.07,

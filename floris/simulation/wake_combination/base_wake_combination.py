@@ -9,3 +9,14 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+
+class WakeCombination():
+    """
+    The WakeCombination class provides methods for combining the base flow field with the velocity deficits from the wake models.
+
+    Returns:
+        WakeCombination: An instantiated WakeCombination object.
+    """
+
+    def __init__(self):
+        self.model_string = None

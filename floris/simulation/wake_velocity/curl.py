@@ -11,7 +11,7 @@
 # the License.
 
 from ...utilities import Vec3
-from ...utilities import sind
+from ...utilities import sind, setup_logger
 from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
@@ -91,10 +91,26 @@ class Curl(VelocityDeficit):
         An instantiated Curl object.
     """
 
+    default_parameters = {
+        "model_grid_resolution": [
+            250,
+            100,
+            75
+        ],
+        "initial_deficit": 2.0,
+        "dissipation": 0.06,
+        "veer_linear": 0.0,
+        "initial": 0.1,
+        "constant": 0.73,
+        "ai": 0.8,
+        "downstream": -0.275
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "curl"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.model_grid_resolution = Vec3(
             model_dictionary["model_grid_resolution"])
         self.initial_deficit = float(model_dictionary["initial_deficit"])
@@ -260,11 +276,11 @@ class Curl(VelocityDeficit):
             # locations of the tip vortices
             # top
             y_vortex_1 = turbine_coord.x2 + z * TiltFlag
-            z_vortex_1 = HH + z * YawFlag
+            z_vortex_1 = HH + z*1.1 * YawFlag
 
             # bottom
             y_vortex_2 = turbine_coord.x2 - z * TiltFlag
-            z_vortex_2 = HH - z * YawFlag
+            z_vortex_2 = HH - z*1.1 * YawFlag
 
             # vortex velocities
             # top
@@ -310,8 +326,13 @@ class Curl(VelocityDeficit):
         # decay the vortices as they move downstream
         lmda = 15
         kappa = 0.41
-        lm = kappa * z / (1 + kappa * z / lmda)
-        dudz_initial = np.gradient(U, z, axis=2)
+        z_tmp = np.linspace(
+            np.min(z_locations),
+            np.max(z_locations),
+            int(self.model_grid_resolution.x3)
+        )
+        lm = kappa * z_tmp / (1 + kappa * z_tmp / lmda)
+        dudz_initial = np.gradient(U, z_tmp, axis=2)
         nu = lm**2 * np.abs(dudz_initial[0, :, :])
 
         for i in range(idx, len(x) - 1):
@@ -321,7 +342,7 @@ class Curl(VelocityDeficit):
             W[i + 1, :, :] = W[idx, :, :] * eps**2 \
                 / (4 * nu * (flow_field.x[i, :, :]
                              - turbine_coord.x1) / Uinf + eps**2)
-
+ 
         # simple implementation of linear veer, added to the V component 
         # of the flow field
         z = np.linspace(
@@ -329,14 +350,22 @@ class Curl(VelocityDeficit):
             np.max(z_locations),
             int(self.model_grid_resolution.x3)
         )
-        z_min = HH
-        b_veer = veer_linear
-        m_veer = -b_veer / z_min
+        # z_min = HH
+        # b_veer = veer_linear
+        # m_veer = -b_veer / z_min
+        # m_veer = -0.5/63
+        # b_veer = 90/63
 
-        v_veer = m_veer * z + b_veer
+        # 0 = -.4/100 * 90 + b
+        # v_veer = m_veer * z + b_veer
+        # u = 0.01
+        # v_veer = -.4/100 * z + .4*90/100
+        # v_veer = -.4/100 * z_locations + .4*90/100
 
-        for i in range(len(z) - 1):
-            V[:, :, i] = V[:, :, i] + v_veer[i]
+        # for i in range(len(z) - 1):
+        #     V[:, :, i] = V[:, :, i] + v_veer[i]
+        
+        # V += v_veer
 
         # ======================================================================
         # SOLVE CURL
@@ -415,12 +444,29 @@ class Curl(VelocityDeficit):
     @model_grid_resolution.setter
     def model_grid_resolution(self, value):
         #TODO: add checker to make sure resolution is high enough
-        if type(value) is Vec3:
-            self._model_grid_resolution = value
-        elif value is None:
-            self._model_grid_resolution = None
-        else:
-            raise ValueError('Invalid value given for model_grid_resolution: {}'.format(value))
+        # if type(value) is Vec3:
+        #     self._model_grid_resolution = value
+        # elif value is None:
+        #     self._model_grid_resolution = None
+        # else:
+        #     raise ValueError('Invalid value given for model_grid_resolution: {}'.format(value))
+
+        if type(value) is not Vec3 and value is not None:
+            err_msg = ('Invalid value type given for ' + \
+                'model_grid_resolution: {}, expected type Vec3.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._model_grid_resolution = value
+        if value is not None:
+            if value != Vec3(
+                __class__.default_parameters['model_grid_resolution']):
+                    self.logger.info(
+                        ('Current value of model_grid_resolution, {0}, is ' + \
+                         'not equal to tuned value of {1}.').format(
+                           value,
+                           __class__.default_parameters['model_grid_resolution']
+                        )
+                    )
 
     @property
     def initial_deficit(self):
@@ -437,13 +483,19 @@ class Curl(VelocityDeficit):
 
     @initial_deficit.setter
     def initial_deficit(self, value):
-        if type(value) is float:
-            self._initial_deficit = value
-        elif type(value) is int:
-            self._initial_deficit = float(value)
-        else:
-            raise ValueError('Invalid value given for \
-                              initial_deficit: {}'.format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'initial_deficit: {}, expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._initial_deficit = value
+        if value != __class__.default_parameters['initial_deficit']:
+            self.logger.info(
+                ('Current value of initial_deficit, {0}, is not equal to ' + \
+                    'tuned value of {1}.').format(
+                        value, __class__.default_parameters['initial_deficit']
+                    )
+                )
 
     @property
     def dissipation(self):
@@ -459,13 +511,20 @@ class Curl(VelocityDeficit):
 
     @dissipation.setter
     def dissipation(self, value):
-        if type(value) is float:
-            self._dissipation = value
-        elif type(value) is int:
-            self._dissipation = float(value)
-        else:
-            raise ValueError('Invalid value given for \
-                              dissipation: {}'.format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'dissipation: {}, expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._dissipation = value
+        if value != __class__.default_parameters['dissipation']:
+            self.logger.info(
+                ('Current value of dissipation, {0}, is not equal to ' + \
+                    'tuned value of {1}.').format(
+                        value, __class__.default_parameters['dissipation']
+                    )
+                )
+
 
     @property
     def veer_linear(self):
@@ -484,10 +543,16 @@ class Curl(VelocityDeficit):
 
     @veer_linear.setter
     def veer_linear(self, value):
-        if type(value) is float:
-            self._veer_linear = value
-        elif type(value) is int:
-            self._veer_linear = float(value)
-        else:
-            raise ValueError('Invalid value given for \
-                              veer_linear: {}'.format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for ' + \
+                       'veer_linear: {}, expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._veer_linear = value
+        if value != __class__.default_parameters['veer_linear']:
+            self.logger.info(
+                ('Current value of veer_linear, {0}, is not equal to ' + \
+                    'tuned value of {1}.').format(
+                        value, __class__.default_parameters['veer_linear']
+                    )
+                )

@@ -171,29 +171,30 @@ def visualize_quiver(cut_plane,
     if not ax:
         fig, ax = plt.subplots()
 
-        # # Reshape UMesh internally
-        x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1],
-                                                 cut_plane.resolution[0])
-        x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1],
-                                                 cut_plane.resolution[0])
-        v_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1],
-                                               cut_plane.resolution[0])
-        w_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1],
-                                               cut_plane.resolution[0])
+    # Reshape UMesh internally
+    x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1],
+                                                cut_plane.resolution[0])
+    x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1],
+                                                cut_plane.resolution[0])
+    v_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1],
+                                            cut_plane.resolution[0])
+    w_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1],
+                                            cut_plane.resolution[0])
 
-        # plot the stream plot
-        QV1 = ax.quiver((x1_mesh[::downSamp, ::downSamp]),
-                        (x2_mesh[::downSamp, ::downSamp]),
-                        v_mesh[::downSamp, ::downSamp],
-                        w_mesh[::downSamp, ::downSamp],
-                        scale=80.0,
-                        alpha=0.75,
-                        **kw)
+    # plot the stream plot
+    QV1 = ax.streamplot((x1_mesh[::downSamp, ::downSamp]),
+                    (x2_mesh[::downSamp, ::downSamp]),
+                    v_mesh[::downSamp, ::downSamp],
+                    w_mesh[::downSamp, ::downSamp],
+                    # scale=80.0,
+                    # alpha=0.75,
+                    # **kw
+                    )
 
-        ax.quiverkey(QV1, -.75, -0.4, 1, '1 m/s', coordinates='data')
+    # ax.quiverkey(QV1, -.75, -0.4, 1, '1 m/s', coordinates='data')
 
-        # Make equal axis
-        ax.set_aspect('equal')
+    # Make equal axis
+    # ax.set_aspect('equal')
 
 
 def reverse_cut_plane_x_axis_in_plot(ax):

@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd
+from ...utilities import cosd, setup_logger
 from .base_velocity_deficit import VelocityDeficit
 import numpy as np
 
@@ -82,15 +82,32 @@ class MultiZone(VelocityDeficit):
         An instantiated Floris object.
     """
 
+    default_parameters = {
+            "me": [
+              -0.5,
+              0.3,
+              1.0
+            ],
+            "we": 0.05,
+            "aU": 12.0,
+            "bU": 1.3,
+            "mU": [
+              0.5,
+              1.0,
+              5.5
+            ]
+          }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "multizone"
-        model_dictionary = self._get_model_dict()
-        self.me = [float(n) for n in model_dictionary["me"]]
-        self.we = float(model_dictionary["we"])
-        self.aU = float(model_dictionary["aU"])
-        self.bU = float(model_dictionary["bU"])
-        self.mU = [float(n) for n in model_dictionary["mU"]]
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
+        self.me = [n for n in model_dictionary["me"]]
+        self.we = model_dictionary["we"]
+        self.aU = model_dictionary["aU"]
+        self.bU = model_dictionary["bU"]
+        self.mU = [n for n in model_dictionary["mU"]]
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
@@ -201,14 +218,29 @@ class MultiZone(VelocityDeficit):
 
     @me.setter
     def me(self, value):
-        if type(value) is list and len(value) == 3 and \
-                            all(type(val) is float for val in value) is True:
-            self._me = value
-        elif type(value) is list and len(value) == 3 and \
+        # if type(value) is list and len(value) == 3 and \
+        #                     all(type(val) is float for val in value) is True:
+        #     self._me = value
+        # elif type(value) is list and len(value) == 3 and \
+        #                     all(type(val) is float for val in value) is False:
+        #     self._me = [float(val) for val in value]
+        # else:
+        #     raise ValueError("Invalid value given for me: {}".format(value))
+
+        if type(value) is not list or len(value) != 3 or \
                             all(type(val) is float for val in value) is False:
-            self._me = [float(val) for val in value]
-        else:
-            raise ValueError("Invalid value given for me: {}".format(value))
+            err_msg = ('Invalid value type given for me: {}, ' + \
+                       'expected list of length 3.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._me = value
+        if value != __class__.default_parameters['me']:
+            self.logger.info(
+                ('Current value of me, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['me']
+                )
+            )
 
     @property
     def we(self):
@@ -228,12 +260,18 @@ class MultiZone(VelocityDeficit):
 
     @we.setter
     def we(self, value):
-        if type(value) is float:
-            self._we = value
-        elif type(value) is int:
-            self._we = float(value)
-        else:
-            raise ValueError("Invalid value given for we: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for we: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._we = value
+        if value != __class__.default_parameters['we']:
+            self.logger.info(
+                ('Current value of we, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['we'])
+                )
 
     @property
     def aU(self):
@@ -251,12 +289,18 @@ class MultiZone(VelocityDeficit):
 
     @aU.setter
     def aU(self, value):
-        if type(value) is float:
-            self._aU = value
-        elif type(value) is int:
-            self._aU = float(value)
-        else:
-            raise ValueError("Invalid value given for aU: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for aU: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._aU = value
+        if value != __class__.default_parameters['aU']:
+            self.logger.info(
+                ('Current value of aU, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['aU'])
+                )
 
     @property
     def bU(self):
@@ -274,12 +318,18 @@ class MultiZone(VelocityDeficit):
 
     @bU.setter
     def bU(self, value):
-        if type(value) is float:
-            self._bU = value
-        elif type(value) is int:
-            self._bU = float(value)
-        else:
-            raise ValueError("Invalid value given for bU: {}".format(value))
+        if type(value) is not float:
+            err_msg = ('Invalid value type given for bU: {}, ' + \
+                       'expected float.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._bU = value
+        if value != __class__.default_parameters['bU']:
+            self.logger.info(
+                ('Current value of bU, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['bU'])
+                )
 
     @property
     def mU(self):
@@ -298,11 +348,26 @@ class MultiZone(VelocityDeficit):
 
     @mU.setter
     def mU(self, value):
-        if type(value) is list and len(value) == 3 and \
-                            all(type(val) is float for val in value) is True:
-            self._mU = value
-        elif type(value) is list and len(value) == 3 and \
+        # if type(value) is list and len(value) == 3 and \
+        #                     all(type(val) is float for val in value) is True:
+        #     self._mU = value
+        # elif type(value) is list and len(value) == 3 and \
+        #                     all(type(val) is float for val in value) is False:
+        #     self._mU = [float(val) for val in value]
+        # else:
+        #     raise ValueError("Invalid value given for mU: {}".format(value))
+
+        if type(value) is not list or len(value) != 3 or \
                             all(type(val) is float for val in value) is False:
-            self._mU = [float(val) for val in value]
-        else:
-            raise ValueError("Invalid value given for mU: {}".format(value))
+            err_msg = ('Invalid value type given for mU: {}, ' + \
+                       'expected list of length 3.').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._mU = value
+        if value != __class__.default_parameters['mU']:
+            self.logger.info(
+                ('Current value of mU, {0}, is not equal to tuned ' + \
+                'value of {1}.').format(
+                    value, __class__.default_parameters['mU']
+                )
+            )

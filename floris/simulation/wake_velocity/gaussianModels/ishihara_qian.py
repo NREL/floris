@@ -11,12 +11,12 @@
 # the License.
 
 import numpy as np
-from ....utilities import cosd, sind, tand
+from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
 
-class Ishihara(VelocityDeficit):
+class IshiharaQian(VelocityDeficit):
     """
     Ishihara is a wake velocity subclass that contains objects related to the
     Gaussian wake model that include a near-wake correction.
@@ -59,10 +59,40 @@ class Ishihara(VelocityDeficit):
     Returns:
         An instantiated Ishihara(WaveVelocity) object.
     """
+    
+    default_parameters = {
+        "kstar": {
+            "const": 0.11,
+            "Ct": 1.07,
+            "TI": 0.2
+        },
+        "epsilon": {
+            "const": 0.23,
+            "Ct": -0.25,
+            "TI": 0.17
+        },
+        "a": {
+            "const": 0.93,
+            "Ct": -0.75,
+            "TI": 0.17
+        },
+        "b": {
+            "const": 0.42,
+            "Ct": 0.6,
+            "TI": 0.2
+        },
+        "c": {
+            "const": 0.15,
+            "Ct": -0.25,
+            "TI": -0.7
+        }
+    }
+
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
+        self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara"
-        model_dictionary = self._get_model_dict()
+        model_dictionary = self._get_model_dict(__class__.default_parameters)
 
         # wake model parameter
         self.kstar = model_dictionary["kstar"]
@@ -179,10 +209,25 @@ class Ishihara(VelocityDeficit):
 
     @kstar.setter
     def kstar(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._kstar = value
-        else:
-            raise ValueError("Invalid value given for kstar: {}".format(value))
+        # if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
+        #     self._kstar = value
+        # else:
+        #     raise ValueError("Invalid value given for kstar: {}".format(value))
+
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for kstar: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._kstar = value
+        if value != __class__.default_parameters['kstar']:
+            self.logger.info(
+                ('Current value of kstar, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['kstar'])
+                )
 
     @property
     def epsilon(self):
@@ -202,11 +247,20 @@ class Ishihara(VelocityDeficit):
 
     @epsilon.setter
     def epsilon(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._epsilon = value
-        else:
-            raise ValueError("Invalid value given for " +
-                             "epsilon: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for epsilon: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._epsilon = value
+        if value != __class__.default_parameters['epsilon']:
+            self.logger.info(
+                ('Current value of epsilon, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['epsilon'])
+                )
 
     @property
     def a(self):
@@ -225,10 +279,20 @@ class Ishihara(VelocityDeficit):
 
     @a.setter
     def a(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._a = value
-        else:
-            raise ValueError("Invalid value given for a: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for a: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._a = value
+        if value != __class__.default_parameters['a']:
+            self.logger.info(
+                ('Current value of a, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['a'])
+                )
 
     @property
     def b(self):
@@ -247,10 +311,20 @@ class Ishihara(VelocityDeficit):
 
     @b.setter
     def b(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._b = value
-        else:
-            raise ValueError("Invalid value given for b: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for b: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._b = value
+        if value != __class__.default_parameters['b']:
+            self.logger.info(
+                ('Current value of b, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['b'])
+                )
 
     @property
     def c(self):
@@ -269,7 +343,17 @@ class Ishihara(VelocityDeficit):
 
     @c.setter
     def c(self, value):
-        if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-            self._c = value
-        else:
-            raise ValueError("Invalid value given for c: {}".format(value))
+        if not (
+            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
+        ):
+            err_msg = ('Invalid value type given for c: {}, expected ' + \
+                       'dict with keys ["const", "Ct", "TI"]').format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._c = value
+        if value != __class__.default_parameters['c']:
+            self.logger.info(
+                ('Current value of c, {0}, is not equal to tuned ' +
+                'value of {1}.').format(
+                    value, __class__.default_parameters['c'])
+                )
