@@ -70,9 +70,9 @@ class VelocityDeficit():
             self.use_yaw_added_recovery = \
                 bool(self.parameter_dictionary["use_yaw_added_recovery"])
         else:
-            self.logger.info('Using default option of not applying added ' + \
+            self.logger.info('Using default option of applying added ' + \
                         'yaw-added recovery (use_yaw_added_recovery=True)')
-            self.use_yaw_added_recovery = False
+            self.use_yaw_added_recovery = True
 
         if 'yaw_recovery_alpha' in self.parameter_dictionary:
             self.yaw_recovery_alpha = \
