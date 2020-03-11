@@ -16,6 +16,43 @@ from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_ish import GaussianModel
 
+""""
+Full doc string to be written
+
+Short Version: New Gauss Class replaces the Gauss Version now in gauss_legacy
+This version merges the previous gaussian wake model based on:
+
+    [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
+    wind-turbine wakes: A large-eddy simulation study." *Physics of
+    Fluids*, 2015.
+
+    [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
+    wind-turbine wakes." *Renewable Energy*, 2014.
+
+    [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
+    study of wind turbine wakes in yawed conditions." *J. Fluid
+    Mechanics*, 2016.
+
+    [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
+    A new approach for power prediction." *Energies*, 2016.
+
+    [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
+    blade pitch offset." *Energies*, 2017.
+
+And merges it with models described in 
+
+    [6] Blondel, F. and Cathelain, M. "An alternative form of the
+    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
+    2020.
+
+(Note this model [6] is implemented more directly in blondel.py)
+
+The model merges the Bastankhah/Niayifar/Porte-Agel with that of Blondel and includes
+additional corrections to provide better consistency with previous models and SOWFA
+results
+
+
+""""
 
 class Gauss(VelocityDeficit):
     default_parameters = {
