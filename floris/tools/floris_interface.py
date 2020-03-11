@@ -976,6 +976,63 @@ class FlorisInterface():
         # Finish by re-initalizing the flow field
         self.reinitialize_flow_field()
 
+    def set_gch(self, enable=True):
+        """
+        Enable or disable GCH's two components
+        """
+        self.set_gch_yaw_added_recovery(enable)
+        self.set_gch_secondary_steering(enable)
+
+    def set_gch_yaw_added_recovery(self, enable=True):
+        """
+        Enable/Disable GCH YAR
+        And control state of calcVW based on this and ss setting
+        """
+        model_params = self.get_model_parameters()
+        use_secondary_steering = model_params['Wake Deflection Parameters']['use_secondary_steering'] 
+
+        if enable:
+            model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] = True
+
+            # If enabling be sure calc vw is on
+            model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = True
+            
+        if not enable:
+            model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] = False
+
+            # If secondary steering is also off, disable calculate_VW_velocities
+            if not use_secondary_steering:
+                 model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = False
+
+        self.set_model_parameters(model_params)
+        self.reinitialize_flow_field()
+
+
+    def set_gch_secondary_steering(self, enable=True):
+        """
+        Enable/Disable GCH SS
+        And control state of calcVW based on this and yar setting
+        """
+        model_params = self.get_model_parameters()
+        use_yaw_added_recovery = model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] 
+
+        if enable:
+            model_params['Wake Deflection Parameters']['use_secondary_steering'] = True
+
+            # If enabling be sure calc vw is on
+            model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = True
+            
+        if not enable:
+            model_params['Wake Deflection Parameters']['use_secondary_steering'] = False
+
+            # If yar is also off, disable calculate_VW_velocities
+            if not use_yaw_added_recovery:
+                 model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = False
+
+        self.set_model_parameters(model_params)
+        self.reinitialize_flow_field()
+            
+
     @property
     def layout_x(self):
         """
