@@ -16,28 +16,50 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 import numpy as np
 
+
+
 # Initialize the FLORIS interface fi
 fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi.reinitialize_flow_field(layout_array=[[0,0],[0,1000]])
 
 # Calculate wake
 fi.calculate_wake()
+init_power = np.array(fi.get_turbine_power())/1000.
 
-# Show the powers
-init_power = fi.get_turbine_power()[0]/1000.
-print(init_power)
+fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(10,5))
 
-# Now sweep the heights and see what happens
-heights = np.arange(100,5,-1.)
-powers = np.zeros_like(heights)
-
-for h_idx, h in enumerate(heights):
-    fi.change_turbine([0],{'hub_height':h})
-    fi.calculate_wake()
-    powers[h_idx] = fi.get_turbine_power()[0]/1000.
+# Show the hub-height slice in the 3rd pane
+hor_plane = fi.get_hor_plane()
+wfct.visualization.visualize_cut_plane(hor_plane, ax=axarr[2])
 
 
-fig, ax = plt.subplots()
-ax.plot(heights, powers, 'k')
-ax.axhline(init_power,color='r')
-ax.axvline(90,color='r')
+for t in range(2):
+
+    # Reset both turbines to 90
+    fi.change_turbine([0],{'hub_height':90})
+    fi.change_turbine([1],{'hub_height':90})
+
+
+    ax = axarr[t]
+
+    # Now sweep the heights for this turbine
+    heights = np.arange(50,120,1.)
+    powers = np.zeros_like(heights)
+
+    for h_idx, h in enumerate(heights):
+        fi.change_turbine([t],{'hub_height':h})
+        fi.reinitialize_flow_field()
+        fi.calculate_wake()
+        powers[h_idx] = fi.get_turbine_power()[t]/1000.
+
+
+
+    ax.plot(heights, powers, 'k')
+    ax.axhline(init_power[t],color='r',ls=':')
+    ax.axvline(90,color='r',ls=':')
+    ax.set_title('T%d' % t)
+    ax.set_xlim([50,120])
+    ax.set_ylim([1000,2000])
+    ax.set_xlabel("Hub Height")
+    ax.set_ylabel("Power")
 plt.show()
