@@ -89,7 +89,8 @@ class Farm():
                 layout_x, layout_y,
                 [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
             wake=wake,
-            wind_map=self.wind_map)
+            wind_map=self.wind_map,
+            specified_wind_height=properties["specified_wind_height"])
 
     def __str__(self):
         return \
