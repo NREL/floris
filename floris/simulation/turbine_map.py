@@ -52,11 +52,24 @@ class TurbineMap():
         all are lists
         """
         turbine_dict = {}
-        hub_height = turbines[0].hub_height
         coordinates = list(zip(layout_x, layout_y))
         for i, c in enumerate(coordinates):
+            hub_height = turbines[i].hub_height
             turbine_dict[Vec3(c[0], c[1], hub_height)] = turbines[i]
         self._turbine_map_dict = turbine_dict
+
+    def update_hub_heights(self):
+        """
+        If turbine hub-heights have changed make sure to
+        update in coordinates
+        """
+        turbine_dict = {}
+        for coord, turbine in self.items:
+            hub_height = turbine.hub_height
+            coord.x3 = hub_height
+            turbine_dict[coord] = turbine
+        self._turbine_map_dict = turbine_dict
+
 
     def rotated(self, angle, center_of_rotation):
         """
