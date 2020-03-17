@@ -43,7 +43,7 @@ for t in range(2):
     ax = axarr[t]
 
     # Now sweep the heights for this turbine
-    heights = np.arange(50,120,1.)
+    heights =  np.arange(50,120,1.)
     powers = np.zeros_like(heights)
 
     for h_idx, h in enumerate(heights):
