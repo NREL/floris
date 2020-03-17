@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -17,15 +17,15 @@ import floris.tools as wfct
 import numpy as np
 
 
-# Version 1, Side by Side
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+# Side by Side, adjust T0 and T1 heights
+fi = wfct.floris_interface.FlorisInterface('../example_input.json')
 fi.reinitialize_flow_field(layout_array=[[0,0],[0,1000]])
 
 # Calculate wake
 fi.calculate_wake()
 init_power = np.array(fi.get_turbine_power())/1000.
 
-fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(10,5))
+fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(15,5))
 
 # Show the hub-height slice in the 3rd pane
 hor_plane = fi.get_hor_plane()
@@ -42,7 +42,6 @@ for t in range(2):
 
     for h_idx, h in enumerate(heights):
         fi.change_turbine([t],{'hub_height':h})
-        fi.reinitialize_flow_field()
         fi.calculate_wake()
         powers[h_idx] = fi.get_turbine_power()[t]/1000.
 
@@ -54,19 +53,21 @@ for t in range(2):
     ax.set_title('T%d' % t)
     ax.set_xlim([50,120])
     ax.set_ylim([1000,2000])
-    ax.set_xlabel("Hub Height")
-    ax.set_ylabel("Power")
+    ax.set_xlabel('Hub Height T%d' % t)
+    ax.set_ylabel('Power')
+
+plt.suptitle('Adjusting Both Turbine Heights')
 
 
-# Version 2, Waked, adjust T0
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+# Waked, adjust T0 height
+fi = wfct.floris_interface.FlorisInterface('../example_input.json')
 fi.reinitialize_flow_field(layout_array=[[0,500],[0,0]])
 
 # Calculate wake
 fi.calculate_wake()
 init_power = np.array(fi.get_turbine_power())/1000.
 
-fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(10,5))
+fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(15,5))
 
 # Show the hub-height slice in the 3rd pane
 hor_plane = fi.get_hor_plane()
@@ -83,31 +84,28 @@ for t in range(2):
 
     for h_idx, h in enumerate(heights):
         fi.change_turbine([0],{'hub_height':h})
-        fi.reinitialize_flow_field()
         fi.calculate_wake()
         powers[h_idx] = fi.get_turbine_power()[t]/1000.
-
-
 
     ax.plot(heights, powers, 'k')
     ax.axhline(init_power[t],color='r',ls=':')
     ax.axvline(90,color='r',ls=':')
     ax.set_title('T%d' % t)
     ax.set_xlim([50,120])
-    ax.set_xlabel("Hub Height T0")
-    ax.set_ylabel("Power T%d" % t)
+    ax.set_xlabel('Hub Height T0')
+    ax.set_ylabel('Power T%d' % t)
 
+plt.suptitle('Adjusting T0 Height')
 
-
-# Version 2, Waked, adjust T1
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+# Waked, adjust T1 height
+fi = wfct.floris_interface.FlorisInterface('../example_input.json')
 fi.reinitialize_flow_field(layout_array=[[0,500],[0,0]])
 
 # Calculate wake
 fi.calculate_wake()
 init_power = np.array(fi.get_turbine_power())/1000.
 
-fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(10,5))
+fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(15,5))
 
 # Show the hub-height slice in the 3rd pane
 hor_plane = fi.get_hor_plane()
@@ -124,19 +122,17 @@ for t in range(2):
 
     for h_idx, h in enumerate(heights):
         fi.change_turbine([1],{'hub_height':h})
-        fi.reinitialize_flow_field()
         fi.calculate_wake()
         powers[h_idx] = fi.get_turbine_power()[t]/1000.
-
-
 
     ax.plot(heights, powers, 'k')
     ax.axhline(init_power[t],color='r',ls=':')
     ax.axvline(90,color='r',ls=':')
     ax.set_title('T%d' % t)
     ax.set_xlim([50,120])
-    ax.set_xlabel("Hub Height T1")
-    ax.set_ylabel("Power T%d" % t)
+    ax.set_xlabel('Hub Height T1')
+    ax.set_ylabel('Power T%d' % t)
 
+plt.suptitle('Adjusting T1 Height')
 
 plt.show()

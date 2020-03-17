@@ -1,13 +1,14 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 # See read the https://floris.readthedocs.io for documentation
 
@@ -33,14 +34,15 @@ ys = fi.floris.farm.flow_field.y
 zs = fi.floris.farm.flow_field.z
 ax.scatter(xs, ys, zs, marker='.')
 ax.set_xlim([0,600])
-ax.set_ylim([-300,300])
-ax.set_zlim([0,200])
-ax.set_title('Initial')
-
+ax.set_ylim([-150,150])
+ax.set_zlim([0,300])
+ax.set_title('Initial Rotor Points')
+ax.set_xlabel('Streamwise [m]')
+ax.set_ylabel('Spanwise [m]')
+ax.set_zlabel('Vertical [m]')
 
 # Raise the hub height of the second turbine and show
-fi.change_turbine([1],{'hub_height':150})
-fi.reinitialize_flow_field()
+fi.change_turbine([0],{'hub_height':150})
 fi.calculate_wake()
 ax = fig.add_subplot(132, projection='3d')
 xs = fi.floris.farm.flow_field.x
@@ -48,13 +50,15 @@ ys = fi.floris.farm.flow_field.y
 zs = fi.floris.farm.flow_field.z
 ax.scatter(xs, ys, zs, marker='.')
 ax.set_xlim([0,600])
-ax.set_ylim([-300,300])
-ax.set_zlim([0,200])
-ax.set_title('Raise Second HH')
+ax.set_ylim([-150,150])
+ax.set_zlim([0,300])
+ax.set_title('Raise First Hub Height')
+ax.set_xlabel('Streamwise [m]')
+ax.set_ylabel('Spanwise [m]')
+ax.set_zlabel('Vertical [m]')
 
 # Increase the first turbine rotor_diameter and plot 
 fi.change_turbine([0],{'rotor_diameter':250})
-fi.reinitialize_flow_field()
 fi.calculate_wake()
 ax = fig.add_subplot(133, projection='3d')
 xs = fi.floris.farm.flow_field.x
@@ -62,9 +66,11 @@ ys = fi.floris.farm.flow_field.y
 zs = fi.floris.farm.flow_field.z
 ax.scatter(xs, ys, zs, marker='.')
 ax.set_xlim([0,600])
-ax.set_ylim([-300,300])
-ax.set_zlim([0,200])
-ax.set_title('Increase first diameter')
-
+ax.set_ylim([-150,150])
+ax.set_zlim([0,300])
+ax.set_title('Increase First Diameter')
+ax.set_xlabel('Streamwise [m]')
+ax.set_ylabel('Spanwise [m]')
+ax.set_zlabel('Vertical [m]')
 
 plt.show()

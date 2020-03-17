@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -17,20 +17,19 @@ import floris.tools as wfct
 import numpy as np
 
 
-# Version 1, Side by Side
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+# Side by Side, adjust both T0 and T1 diameters
+fi = wfct.floris_interface.FlorisInterface('../example_input.json')
 fi.reinitialize_flow_field(layout_array=[[0,0],[0,1000]])
 
 # Calculate wake
 fi.calculate_wake()
 init_power = np.array(fi.get_turbine_power())/1000.
 
-fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(10,5))
+fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(15,5))
 
 # Show the hub-height slice in the 3rd pane
 hor_plane = fi.get_hor_plane()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=axarr[2])
-
 
 for t in range(2):
 
@@ -42,7 +41,6 @@ for t in range(2):
 
     for d_idx, d in enumerate(diameters):
         fi.change_turbine([t],{'rotor_diameter':d})
-        fi.reinitialize_flow_field()
         fi.calculate_wake()
         powers[d_idx] = fi.get_turbine_power()[t]/1000.
 
@@ -52,24 +50,24 @@ for t in range(2):
     ax.set_title('T%d' % t)
     ax.set_xlim([80,160])
     ax.set_ylim([200,3000])
-    ax.set_xlabel("Diameter")
-    ax.set_ylabel("Power")
+    ax.set_xlabel('Diameter T%d' % t)
+    ax.set_ylabel('Power')
 
+plt.suptitle('Adjusting Both T0 and T1 Diameters')
 
-# # Version 2, Waked, adjust T0
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+# Waked, adjust T0 diameter
+fi = wfct.floris_interface.FlorisInterface('../example_input.json')
 fi.reinitialize_flow_field(layout_array=[[0,500],[0,0]])
 
 # Calculate wake
 fi.calculate_wake()
 init_power = np.array(fi.get_turbine_power())/1000.
 
-fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(10,5))
+fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(15,5))
 
 # Show the hub-height slice in the 3rd pane
 hor_plane = fi.get_hor_plane()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=axarr[2])
-
 
 for t in range(2):
 
@@ -81,7 +79,6 @@ for t in range(2):
 
     for d_idx, d in enumerate(diameters):
         fi.change_turbine([0],{'rotor_diameter':d})
-        fi.reinitialize_flow_field()
         fi.calculate_wake()
         powers[d_idx] = fi.get_turbine_power()[t]/1000.
 
@@ -91,23 +88,24 @@ for t in range(2):
     ax.set_title('T%d' % t)
     ax.set_xlim([80,160])
     ax.set_ylim([200,3000])
-    ax.set_xlabel("Diameter T0")
-    ax.set_ylabel("Power")
+    ax.set_xlabel('Diameter T0')
+    ax.set_ylabel('Power')
 
- # Version 2, Waked, adjust T0
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+plt.suptitle('Adjusting T0 Diameter')
+
+ # Waked, adjust T0 diameter
+fi = wfct.floris_interface.FlorisInterface('../example_input.json')
 fi.reinitialize_flow_field(layout_array=[[0,500],[0,0]])
 
 # Calculate wake
 fi.calculate_wake()
 init_power = np.array(fi.get_turbine_power())/1000.
 
-fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(10,5))
+fig, axarr = plt.subplots(1,3,sharex=False,sharey=False,figsize=(15,5))
 
 # Show the hub-height slice in the 3rd pane
 hor_plane = fi.get_hor_plane()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=axarr[2])
-
 
 for t in range(2):
 
@@ -119,7 +117,6 @@ for t in range(2):
 
     for d_idx, d in enumerate(diameters):
         fi.change_turbine([1],{'rotor_diameter':d})
-        fi.reinitialize_flow_field()
         fi.calculate_wake()
         powers[d_idx] = fi.get_turbine_power()[t]/1000.
 
@@ -129,8 +126,9 @@ for t in range(2):
     ax.set_title('T%d' % t)
     ax.set_xlim([80,160])
     ax.set_ylim([200,3000])
-    ax.set_xlabel("Diameter T1")
-    ax.set_ylabel("Power")
+    ax.set_xlabel('Diameter T1')
+    ax.set_ylabel('Power')
 
+plt.suptitle('Adjusting T1 Diameter')
 
 plt.show()
