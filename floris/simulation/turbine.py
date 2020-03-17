@@ -90,6 +90,10 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
+        # initialize to an invalid value until calculated
+        self.air_density = -1
+        self.use_turbulence_correction = False
+
         self._initialize_turbine()
 
     # Private methods
@@ -117,9 +121,6 @@ class Turbine():
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
 
-        # initialize to an invalid value until calculated
-        self.air_density = -1
-        self.use_turbulence_correction = False
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
