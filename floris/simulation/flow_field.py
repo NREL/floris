@@ -493,6 +493,10 @@ class FlowField():
         # initialize derived attributes and constants
         self.max_diameter = max(
             [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
+
+
+        # FOR BUG FIX NOTICE THAT THIS ASSUMES THAT THE FIRST TURBINE DETERMINES WIND HEIGHT MAKING
+        # CHANGING IT MOOT    
         self.specified_wind_height = self.turbine_map.turbines[0].hub_height
 
         # Set the domain bounds
