@@ -31,21 +31,21 @@ URL = 'https://github.com/NREL/FLORIS'
 EMAIL = 'rafael.mudafort@nrel.gov'
 AUTHOR = 'NREL National Wind Technology Center'
 REQUIRES_PYTHON = '>=3.3.0'
-VERSION = '1.1.5'
+VERSION = '1.1.6'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
     # simulation
-    'matplotlib>=3',
-    'numpy==1.16.3',
-    'pytest>=4',
-    'scipy==1.1.0',
+    'matplotlib',
+    'numpy',
+    'pytest',
+    'scipy',
 
     # tools
-    'h5pyd==0.3.3',
-    'pandas==0.24.2',
-    'pyproj==2.1.3',
-    'seaborn==0.9.0'
+    'h5pyd',
+    'pandas',
+    'pyproj',
+    'seaborn'
 ]
 
 # What packages are optional?
