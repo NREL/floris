@@ -251,6 +251,15 @@ class Turbine():
         # return np.array(data)
         return np.array(u_at_turbine.flatten()[ii])
 
+    def return_grid_points(self, coord):
+        y_array = np.array(self.grid)[:, 0] + coord.x2
+        z_array = np.array(self.grid)[:, 1] + self.hub_height
+        x_array = np.ones_like(y_array) * coord.x1
+
+        return x_array, y_array, z_array
+
+
+
     def update_velocities(self, u_wake, coord, flow_field, rotated_x,
                           rotated_y, rotated_z):
         """
