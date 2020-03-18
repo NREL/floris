@@ -51,13 +51,13 @@ class TurbineMap():
         """
         all are lists
         """
-        coordinates = list(zip(layout_x, layout_y))
+        coordinates = [Vec3(x1,x2,0 ) for x1, x2 in list(zip(layout_x, layout_y))]
         self._turbine_map_dict = self._build_internal_dict(coordinates, turbines)
 
     def _build_internal_dict(self, coordinates, turbines):
         turbine_dict = {}
         for i, c in enumerate(coordinates):
-            this_coordinate = Vec3(c[0], c[1], turbines[i].hub_height)
+            this_coordinate = Vec3(c.x1, c.x2, turbines[i].hub_height)
             turbine_dict[this_coordinate] = turbines[i]
         return turbine_dict
 
