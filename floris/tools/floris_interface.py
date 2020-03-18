@@ -976,6 +976,12 @@ class FlorisInterface():
             self.floris.farm.turbines[t_idx].change_turbine_parameters(
                 turbine_change_dict)
 
+        # Make sure to update turbine map in case hub-height has changed
+        self.floris.farm.flow_field.turbine_map.update_hub_heights()
+
+        # Rediscritize the flow field grid
+        self.floris.farm.flow_field._discretize_turbine_domain()
+
         # Finish by re-initalizing the flow field
         self.reinitialize_flow_field()
 

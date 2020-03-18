@@ -27,6 +27,7 @@
         0.06
       ],
       "wind_shear": 0.12,
+      "specified_wind_height": 90.0,
       "wind_veer": 0.0,
       "air_density": 1.225,
       "layout_x": [

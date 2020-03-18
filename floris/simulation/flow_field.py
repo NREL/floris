@@ -43,7 +43,7 @@ class FlowField():
         FlowField: An instantiated FlowField object.
     """
     def __init__(self, wind_shear, wind_veer, air_density, wake, turbine_map,
-                 wind_map):
+                 wind_map,specified_wind_height):
 
         self.reinitialize_flow_field(
             wind_shear=wind_shear,
@@ -52,7 +52,8 @@ class FlowField():
             wake=wake,
             turbine_map=turbine_map,
             wind_map=wind_map,
-            with_resolution=wake.velocity_model.model_grid_resolution)
+            with_resolution=wake.velocity_model.model_grid_resolution,
+            specified_wind_height=specified_wind_height)
         #TODO consider remapping wake_list with reinitialize flow field
         self.wake_list = {
             turbine: None
@@ -90,7 +91,7 @@ class FlowField():
 
                     y_grid[i, j, k] = yoffset * cosd(-1 * self.wind_map.turbine_wind_direction[i]) + \
                         xoffset * sind(-1*self.wind_map.turbine_wind_direction[i]) + coord.x2
-
+                        
         return x_grid, y_grid, z_grid
 
     def _discretize_gridded_domain(self, xmin, xmax, ymin, ymax, zmin, zmax,
@@ -434,7 +435,8 @@ class FlowField():
                                 turbine_map=None,
                                 wind_map=None,
                                 with_resolution=None,
-                                bounds_to_set=None):
+                                bounds_to_set=None,
+                                specified_wind_height=None):
         """
         Reiniaitilzies the flow field when a parameter needs to be
         updated.
@@ -481,6 +483,8 @@ class FlowField():
             self.wind_shear = wind_shear
         if wind_veer is not None:
             self.wind_veer = wind_veer
+        if specified_wind_height is not None:
+            self.specified_wind_height = specified_wind_height
         if air_density is not None:
             self.air_density = air_density
             for turbine in self.turbine_map.turbines:
@@ -493,7 +497,11 @@ class FlowField():
         # initialize derived attributes and constants
         self.max_diameter = max(
             [turbine.rotor_diameter for turbine in self.turbine_map.turbines])
-        self.specified_wind_height = self.turbine_map.turbines[0].hub_height
+
+
+        # FOR BUG FIX NOTICE THAT THIS ASSUMES THAT THE FIRST TURBINE DETERMINES WIND HEIGHT MAKING
+        # CHANGING IT MOOT    
+        # self.specified_wind_height = self.turbine_map.turbines[0].hub_height
 
         # Set the domain bounds
         self.set_bounds(bounds_to_set=bounds_to_set)

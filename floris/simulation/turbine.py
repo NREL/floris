@@ -90,6 +90,10 @@ class Turbine():
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
+        # initialize to an invalid value until calculated
+        self.air_density = -1
+        self.use_turbulence_correction = False
+
         self._initialize_turbine()
 
     # Private methods
@@ -117,9 +121,6 @@ class Turbine():
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
 
-        # initialize to an invalid value until calculated
-        self.air_density = -1
-        self.use_turbulence_correction = False
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
@@ -249,6 +250,15 @@ class Turbine():
 
         # return np.array(data)
         return np.array(u_at_turbine.flatten()[ii])
+
+    def return_grid_points(self, coord):
+        y_array = np.array(self.grid)[:, 0] + coord.x2
+        z_array = np.array(self.grid)[:, 1] + self.hub_height
+        x_array = np.ones_like(y_array) * coord.x1
+
+        return x_array, y_array, z_array
+
+
 
     def update_velocities(self, u_wake, coord, flow_field, rotated_x,
                           rotated_y, rotated_z):
