@@ -33,6 +33,12 @@ xs = fi.floris.farm.flow_field.x
 ys = fi.floris.farm.flow_field.y
 zs = fi.floris.farm.flow_field.z
 ax.scatter(xs, ys, zs, marker='.')
+
+# Show the turbine points in this case
+for coord, turbine in fi.floris.farm.turbine_map.items:
+    xt, yt, zt = turbine.return_grid_points(coord)
+    ax.scatter(xt, yt, zt, marker='o',color='r',alpha=0.25)
+
 ax.set_xlim([0,600])
 ax.set_ylim([-150,150])
 ax.set_zlim([0,300])
@@ -49,6 +55,12 @@ xs = fi.floris.farm.flow_field.x
 ys = fi.floris.farm.flow_field.y
 zs = fi.floris.farm.flow_field.z
 ax.scatter(xs, ys, zs, marker='.')
+
+# Show the turbine points in this case
+for coord, turbine in fi.floris.farm.turbine_map.items:
+    xt, yt, zt = turbine.return_grid_points(coord)
+    ax.scatter(xt, yt, zt, marker='o',color='r',alpha=0.25)
+
 ax.set_xlim([0,600])
 ax.set_ylim([-150,150])
 ax.set_zlim([0,300])
@@ -65,6 +77,12 @@ xs = fi.floris.farm.flow_field.x
 ys = fi.floris.farm.flow_field.y
 zs = fi.floris.farm.flow_field.z
 ax.scatter(xs, ys, zs, marker='.')
+
+# Show the turbine points in this case
+for coord, turbine in fi.floris.farm.turbine_map.items:
+    xt, yt, zt = turbine.return_grid_points(coord)
+    ax.scatter(xt, yt, zt, marker='o',color='r',alpha=0.25)
+
 ax.set_xlim([0,600])
 ax.set_ylim([-150,150])
 ax.set_zlim([0,300])
