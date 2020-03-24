@@ -94,6 +94,9 @@ class Turbine():
         self.air_density = -1
         self.use_turbulence_correction = False
 
+        # Initiate to False unless specifically set
+        self.use_points_on_perimeter = False
+
         self._initialize_turbine()
 
     # Private methods
@@ -147,10 +150,18 @@ class Turbine():
                 for h in horizontal]
 
         # keep only the points in the swept area
-        grid = [
-            point for point in grid
-            if np.hypot(point[0], point[1]) < self.rotor_radius
-        ]
+        if self.use_points_on_perimeter:
+            print('<=')
+            grid = [
+                point for point in grid
+                if np.hypot(point[0], point[1]) <= self.rotor_radius
+            ]
+        else:
+            print('<')
+            grid = [
+                point for point in grid
+                if np.hypot(point[0], point[1]) < self.rotor_radius
+            ]
 
         return grid
 
