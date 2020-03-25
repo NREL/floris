@@ -35,7 +35,8 @@ class Gauss(VelocityDeflection):
         "beta": 0.077,
         "ad": 0.0,
         "bd": 0.0,
-        "dm": 1.0
+        "dm": 1.0,
+        "use_secondary_steering":True
     }
 
     def __init__(self, parameter_dictionary):
@@ -64,13 +65,7 @@ class Gauss(VelocityDeflection):
         self.bd = model_dictionary["bd"]
         self.alpha = model_dictionary["alpha"]
         self.beta = model_dictionary["beta"]
-        if 'dm' in model_dictionary:
-            self.deflection_multiplier = model_dictionary["dm"]
-        else:
-            self.deflection_multiplier = 1.0
-            # TODO: logging
-            # print('Using default gauss deflection multipler of: %.1f' %
-                #   self.deflection_multiplier)
+        self.dm = model_dictionary["dm"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, coord,
                  flow_field):
@@ -149,7 +144,7 @@ class Gauss(VelocityDeflection):
         xR = yR * tand(yaw) + coord.x1
 
         # yaw parameters (skew angle and distance from centerline)
-        theta_c0 = self.deflection_multiplier * (
+        theta_c0 = self.dm * (
             0.3 * np.radians(yaw) / cosd(yaw)) * (
                 1 - np.sqrt(1 - Ct * cosd(yaw)))  # skew angle in radians
         delta0 = np.tan(theta_c0) * (

@@ -79,7 +79,7 @@ label_dict['g'] = 'gauss'
 fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_gl.floris.farm.set_wake_model('gauss_legacy')
 fi_gl.set_gch(False) # Disable GCH
-fi_gl.floris.farm.wake._deflection_model.deflection_multiplier = 1.2 # Deflection multiplier to 1.2
+fi_gl.floris.farm.wake._deflection_model.dm = 1.2 # Deflection multiplier to 1.2
 fi_dict['gl'] = fi_gl
 color_dict['gl'] = 'bo--'
 label_dict['gl'] = 'gauss_legacy'
