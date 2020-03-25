@@ -36,7 +36,8 @@ class Gauss(VelocityDeflection):
         "ad": 0.0,
         "bd": 0.0,
         "dm": 1.0,
-        "use_secondary_steering":True
+        "use_secondary_steering":True,
+        "eps_gain":0.3
     }
 
     def __init__(self, parameter_dictionary):
@@ -66,6 +67,8 @@ class Gauss(VelocityDeflection):
         self.alpha = model_dictionary["alpha"]
         self.beta = model_dictionary["beta"]
         self.dm = model_dictionary["dm"]
+        self.use_secondary_steering = model_dictionary["use_secondary_steering"]
+        self.eps_gain = model_dictionary["eps_gain"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, coord,
                  flow_field):
