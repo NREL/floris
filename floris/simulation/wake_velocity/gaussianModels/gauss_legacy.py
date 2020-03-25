@@ -13,7 +13,7 @@
 import numpy as np
 from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
-from .gaussian_model_ish import GaussianModel
+from .gaussian_model_base import GaussianModel
 
 
 class LegacyGauss(VelocityDeficit):
@@ -21,15 +21,24 @@ class LegacyGauss(VelocityDeficit):
         'ka': 0.38,
         'kb': 0.004,
         'alpha': 0.58,
-        'beta': 0.077
+        'beta': 0.077,
+        'calculate_VW_velocities':False,
+        'use_yaw_added_recovery':False,
+        'yaw_recovery_alpha':0.03,
+        'eps_gain':0.3
     }
 
     def __init__(self, parameter_dictionary):
+        print(parameter_dictionary)
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
 
+        print(self.calculate_VW_velocities)
+
         self.model_string = "gauss_legacy"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
+
+        print(self.calculate_VW_velocities)
 
         # near wake / far wake boundary parameters
         self.alpha = model_dictionary["alpha"]

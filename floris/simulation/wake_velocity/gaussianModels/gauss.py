@@ -14,7 +14,7 @@ import numpy as np
 from scipy.special import gamma
 from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
-from .gaussian_model_ish import GaussianModel
+from .gaussian_model_base import GaussianModel
 
 """"
 Full doc string to be written
@@ -59,7 +59,11 @@ class Gauss(VelocityDeficit):
         'ka': 0.38,
         'kb': 0.004,
         'alpha': 0.58,
-        'beta': 0.077
+        'beta': 0.077,
+        'calculate_VW_velocities':True,
+        'use_yaw_added_recovery':True,
+        'yaw_recovery_alpha':0.03,
+        'eps_gain':0.3
     }
 
     def __init__(self, parameter_dictionary):

@@ -13,7 +13,7 @@
 import numpy as np
 from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
-from .gaussian_model_ish import GaussianModel
+from .gaussian_model_base import GaussianModel
 
 
 class IshiharaQian(VelocityDeficit):
