@@ -985,14 +985,6 @@ class FlorisInterface():
         # Finish by re-initalizing the flow field
         self.reinitialize_flow_field()
 
-    def set_gch(self, enable=True):
-        """
-        Enable or disable GCH's two components
-        """
-        self.set_gch_yaw_added_recovery(enable)
-        self.set_gch_secondary_steering(enable)
-
-
     def set_use_points_on_perimeter(self,use_points_on_perimeter):
         """
         Set whether to use the points on the rotor perimieter when calculating flow
@@ -1000,6 +992,13 @@ class FlorisInterface():
         for turbine in self.floris.farm.turbines:
             turbine.use_points_on_perimeter = use_points_on_perimeter
             turbine._initialize_turbine()
+
+    def set_gch(self, enable=True):
+        """
+        Enable or disable GCH's two components
+        """
+        self.set_gch_yaw_added_recovery(enable)
+        self.set_gch_secondary_steering(enable)
 
     def set_gch_yaw_added_recovery(self, enable=True):
         """
