@@ -54,7 +54,7 @@ results
 
 """
 
-class Gauss(VelocityDeficit):
+class Gauss(GaussianModel):
     default_parameters = {
         'ka': 0.38,
         'kb': 0.004,
@@ -80,6 +80,12 @@ class Gauss(VelocityDeficit):
         # near wake / far wake boundary parameters
         self.alpha = model_dictionary["alpha"]
         self.beta = model_dictionary["beta"]
+
+        # GCH Parameters
+        self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
+        self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
+        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
+        self.eps_gain = model_dictionary["eps_gain"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         # added turbulence model
