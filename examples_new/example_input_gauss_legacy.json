@@ -218,10 +218,24 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss",
+      "velocity_model": "gauss_legacy",
       "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
-      "combination_model": "sosfs"
+      "combination_model": "sosfs",
+      "parameters": {
+        "wake_velocity_parameters": {
+          "gauss_legacy": {
+            "calculate_VW_velocities": false,
+            "use_yaw_added_recovery": false
+          }
+        },
+        "wake_deflection_parameters": {
+          "gauss": {
+            "dm": 1.2,
+            "use_secondary_steering":false
+          }
+        }
     }
   }
+}
 }
