@@ -95,7 +95,10 @@ class Turbine():
         self.use_turbulence_correction = False
 
         # Initiate to False unless specifically set
-        self.use_points_on_perimeter = False
+        if 'use_points_on_perimeter' in properties:
+            self.use_points_on_perimeter = bool(properties['use_points_on_perimeter'])
+        else:
+            self.use_points_on_perimeter = False
 
         self._initialize_turbine()
 
