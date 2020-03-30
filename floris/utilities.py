@@ -180,9 +180,23 @@ def wrap_360(angle):
 
 
 class LogClass:
+    """
+    TODO
+    """
+
     class __LogClass:
+        """
+        TODO
+        """
+
         def __init__(self, param_dict):
 
+            self.log_to_console = False
+            self.console_level = 'WARNING'
+            self.log_to_file = False
+            self.file_level = 'WARNING'
+
+            # TODO: what if it IS None?
             if param_dict is not None:
                 for key in param_dict:
                     if key == 'console':

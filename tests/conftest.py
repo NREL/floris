@@ -61,6 +61,7 @@ class SampleInputs():
                     10 * self.turbine["properties"]["rotor_diameter"]
                 ],
                 "layout_y": [0.0, 0.0, 0.0],
+                "specified_wind_height": 90.0,
                 "wind_x": [0],
                 "wind_y": [0]
             }
@@ -73,6 +74,7 @@ class SampleInputs():
                 "velocity_model": "gauss",
                 "deflection_model": "gauss",
                 "combination_model": "sosfs",
+                "turbulence_model": "crespo_hernandez",
                 "parameters": {
                     "turbulence_intensity": {
                         "initial": 0.1,

@@ -13,7 +13,6 @@
 import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plt
-from floris.utilities import calc_unc_pmfs
 from ...visualization import visualize_cut_plane
 
 class Yaw():
