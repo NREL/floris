@@ -231,14 +231,14 @@
             "calculate_VW_velocities": true,
             "use_yaw_added_recovery": true,
             "yaw_recovery_alpha":0.055,
-            "eps_gain":0.55
+            "eps_gain":0.25
           }
         },
         "wake_deflection_parameters": {
           "gauss": {
             "dm": 1.0,
             "use_secondary_steering":true,
-            "eps_gain":0.55
+            "eps_gain":0.3
           }
         },
         "wake_turbulence_parameters": {
