@@ -28,21 +28,21 @@ class VelocityDeflection():
 
         self.parameter_dictionary = parameter_dictionary
 
-        if 'use_secondary_steering' in self.parameter_dictionary:
-            self.use_secondary_steering = \
-                bool(self.parameter_dictionary["use_secondary_steering"])
-        else:
-            self.logger.info('Using default option of applying gch-based ' + \
-                        'secondary steering (use_secondary_steering=True)')
-            self.use_secondary_steering = True
+        # if 'use_secondary_steering' in self.parameter_dictionary:
+        #     self.use_secondary_steering = \
+        #         bool(self.parameter_dictionary["use_secondary_steering"])
+        # else:
+        #     self.logger.info('Using default option of applying gch-based ' + \
+        #                 'secondary steering (use_secondary_steering=True)')
+        #     self.use_secondary_steering = True
 
-        if 'eps_gain' in self.parameter_dictionary:
-            self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
-        else:
-            # SOWFA SETTING (note this will be multiplied by D in function)
-            self.eps_gain = 0.3
-            self.logger.info(
-                ('Using default option eps_gain: %.1f' % self.eps_gain))
+        # if 'eps_gain' in self.parameter_dictionary:
+        #     self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
+        # else:
+        #     # SOWFA SETTING (note this will be multiplied by D in function)
+        #     self.eps_gain = 0.3
+        #     self.logger.info(
+        #         ('Using default option eps_gain: %.1f' % self.eps_gain))
 
     def _get_model_dict(self, default_dict):
         if self.model_string not in self.parameter_dictionary.keys():
