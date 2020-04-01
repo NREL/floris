@@ -219,13 +219,13 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss",
+      "velocity_model": "gauss_legacy",
       "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
         "wake_velocity_parameters": {
-          "gauss_": {
+          "gauss_legacy": {
             "ka": 0.38,
             "kb": 0.004,
             "calculate_VW_velocities": true,
