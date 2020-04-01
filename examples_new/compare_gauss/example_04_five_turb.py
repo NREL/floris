@@ -134,7 +134,7 @@ for d_idx, dist_downstream in enumerate([10, 6, 3]):
         for fi_key in fi_dict.keys():
             sweep_locations, ps = power_cross_sweep(fi_dict[fi_key],D,dist_downstream,yaw)
             ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
-            ax.set_ylim([500,1600])
+            ax.set_ylim([200,2000])
 
             # Save for after clean up
             # if fi_key == 'g':
@@ -152,7 +152,7 @@ for d_idx, dist_downstream in enumerate([10, 6, 3]):
     for fi_key in fi_dict.keys():
         sweep_locations, ps = power_cross_sweep_gain(fi_dict[fi_key],D,dist_downstream,yaw_angle=20)
         ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
-        ax.set_ylim([-10,10])
+        ax.set_ylim([-30,30])
         # Save for after clean-up
         # if fi_key == 'g':
         #     print('saved_gauss[(%d,"gain")] = [np.' % (dist_downstream), repr(sweep_locations),',np.',repr(ps),']')
