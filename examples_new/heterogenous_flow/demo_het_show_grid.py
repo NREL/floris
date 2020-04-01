@@ -21,11 +21,14 @@ import floris.tools as wfct
 import pandas as pd
 import numpy as np
 
-fi = wfct.floris_interface.FlorisInterface("heterogeneous_input_small.json")
+fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+
+# Set layout to 2 turbines
+fi.reinitialize_flow_field(layout_array=[[0,0],[100,400]])
 fi.calculate_wake()
 
 # Introduce variation in wind speed
-fi.reinitialize_flow_field(wind_speed=[6,9])
+fi.reinitialize_flow_field(wind_speed=[6,9],wind_layout=[[-100,300],[0,500]])
 fi.calculate_wake()
 
 # Show the grid points (note only on turbines, not on wind measurements)
