@@ -4,7 +4,7 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": true,
+      "enable": false,
       "level": "INFO"
     },
     "file": {
@@ -49,7 +49,7 @@
     "name": "nrel_5mw",
     "description": "NREL 5MW",
     "properties": {
-      "use_points_on_perimeter": false,
+      "use_points_on_perimeter": true,
       "rotor_diameter": 126.0,
       "hub_height": 90.0,
       "blade_count": 3,
@@ -219,34 +219,37 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss_legacy",
+      "velocity_model": "gauss",
       "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
         "wake_velocity_parameters": {
-          "gauss_legacy": {
-            "ka": 0.38,
-            "kb": 0.004,
+          "gauss": {
+            "ka": 0.22,
+            "kb": 0.002,
             "calculate_VW_velocities": true,
-            "use_yaw_added_recovery": true
+            "use_yaw_added_recovery": true,
+            "yaw_recovery_alpha":0.055,
+            "eps_gain":0.25
           }
         },
         "wake_deflection_parameters": {
           "gauss": {
             "dm": 1.0,
-            "use_secondary_steering":true
+            "use_secondary_steering":true,
+            "eps_gain":0.3
           }
         },
         "wake_turbulence_parameters": {
           "crespo_hernandez": {
-            "initial": 0.5,
-            "constant": 0.9,
-            "ai": 0.75,
-            "downstream": -0.325
+            "initial": 0.05,
+            "constant": 0.365,
+            "ai": 0.44,
+            "downstream": -0.354
           }
         }
     }
+    }
   }
-}
 }

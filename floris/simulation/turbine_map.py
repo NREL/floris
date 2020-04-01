@@ -106,7 +106,7 @@ class TurbineMap():
         coords = sorted(self._turbine_map_dict, key=lambda coord: coord.x1)
         return [(c, self._turbine_map_dict[c]) for c in coords]
 
-    def number_of_wakes_iec(self, wd):
+    def number_of_wakes_iec(self, wd, return_turbines=True):
         """
         Returns a dictionary containing the list of turbines in 
         TurbineMap and the total number of wakes from other turbines 
@@ -116,6 +116,8 @@ class TurbineMap():
 
         Args:
             wd (float): Wind direction for determining waked turbines.
+
+            return_turbines (bool): Should turbines be returned with list
 
         Returns:
             wake_list: List of Turbine objects and number of upstream 
@@ -141,7 +143,10 @@ class TurbineMap():
             waked = waked | ((dists <= 20.) & (np.abs(wrap_180(wd-angles)) \
                 <= 0.5*(1.3*np.degrees(np.arctan(2.5/dists+0.15))+10)))
 
-            wake_list.append((turbine0,waked.sum()))
+            if return_turbines:
+                wake_list.append((turbine0,waked.sum()))
+            else:
+                wake_list.append(waked.sum())
         
         return wake_list
 

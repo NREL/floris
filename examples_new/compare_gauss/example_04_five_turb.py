@@ -69,20 +69,21 @@ label_dict = dict()
 
 # Gauss Class -- Current Default
 fi_g = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_g.floris.farm.set_wake_model('gauss')
-# fi_g.set_gch(True)
 fi_dict['g'] = fi_g
 color_dict['g'] = 'r^-'
-label_dict['g'] = 'gauss'
+label_dict['g'] = 'current_default'
 
 # Gauss_Legacy Class with GCH disabled and deflection multiplier = 1.2
-fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gl.floris.farm.set_wake_model('gauss_legacy')
-fi_gl.set_gch(False) # Disable GCH
-fi_gl.floris.farm.wake._deflection_model.deflection_multiplier = 1.2 # Deflection multiplier to 1.2
+fi_gl = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
 fi_dict['gl'] = fi_gl
 color_dict['gl'] = 'bo--'
 label_dict['gl'] = 'gauss_legacy'
+
+# New sowfa tuning
+fi_gs = wfct.floris_interface.FlorisInterface("../other_jsons/input_sowfa_tuning.json")
+fi_dict['gs'] = fi_gs
+color_dict['gs'] = 'gd--'
+label_dict['gs'] = 'sowfa_tune'
 
 # Set up a saved gauss 
 saved_gauss = dict()
@@ -133,7 +134,7 @@ for d_idx, dist_downstream in enumerate([10, 6, 3]):
         for fi_key in fi_dict.keys():
             sweep_locations, ps = power_cross_sweep(fi_dict[fi_key],D,dist_downstream,yaw)
             ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
-            ax.set_ylim([500,1600])
+            ax.set_ylim([200,2000])
 
             # Save for after clean up
             # if fi_key == 'g':
@@ -151,7 +152,7 @@ for d_idx, dist_downstream in enumerate([10, 6, 3]):
     for fi_key in fi_dict.keys():
         sweep_locations, ps = power_cross_sweep_gain(fi_dict[fi_key],D,dist_downstream,yaw_angle=20)
         ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
-        ax.set_ylim([-40,40])
+        ax.set_ylim([-30,30])
         # Save for after clean-up
         # if fi_key == 'g':
         #     print('saved_gauss[(%d,"gain")] = [np.' % (dist_downstream), repr(sweep_locations),',np.',repr(ps),']')

@@ -37,7 +37,7 @@ for t in range(2):
     ax = axarr[t]
 
     # Now sweep the heights for this turbine
-    heights =  np.arange(50,120,1.)
+    heights =  np.arange(70,120,1.)
     powers = np.zeros_like(heights)
 
     for h_idx, h in enumerate(heights):
@@ -51,7 +51,7 @@ for t in range(2):
     ax.axhline(init_power[t],color='r',ls=':')
     ax.axvline(90,color='r',ls=':')
     ax.set_title('T%d' % t)
-    ax.set_xlim([50,120])
+    ax.set_xlim([70,120])
     ax.set_ylim([1000,2000])
     ax.set_xlabel('Hub Height T%d' % t)
     ax.set_ylabel('Power')
@@ -79,7 +79,7 @@ for t in range(2):
     ax = axarr[t]
 
     # Now sweep the heights for this turbine
-    heights =  np.arange(50,120,1.)
+    heights =  np.arange(70,120,1.)
     powers = np.zeros_like(heights)
 
     for h_idx, h in enumerate(heights):
@@ -117,7 +117,7 @@ for t in range(2):
     ax = axarr[t]
 
     # Now sweep the heights for this turbine
-    heights =  np.arange(50,120,1.)
+    heights =  np.arange(70,120,1.)
     powers = np.zeros_like(heights)
 
     for h_idx, h in enumerate(heights):
@@ -129,7 +129,7 @@ for t in range(2):
     ax.axhline(init_power[t],color='r',ls=':')
     ax.axvline(90,color='r',ls=':')
     ax.set_title('T%d' % t)
-    ax.set_xlim([50,120])
+    ax.set_xlim([70,120])
     ax.set_xlabel('Hub Height T1')
     ax.set_ylabel('Power T%d' % t)
 

@@ -4,7 +4,7 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": true,
+      "enable": false,
       "level": "INFO"
     },
     "file": {
@@ -49,7 +49,7 @@
     "name": "nrel_5mw",
     "description": "NREL 5MW",
     "properties": {
-      "use_points_on_perimeter": false,
+      "use_points_on_perimeter": true,
       "rotor_diameter": 126.0,
       "hub_height": 90.0,
       "blade_count": 3,
@@ -219,13 +219,13 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss_legacy",
+      "velocity_model": "gauss",
       "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
         "wake_velocity_parameters": {
-          "gauss_legacy": {
+          "gauss": {
             "ka": 0.38,
             "kb": 0.004,
             "calculate_VW_velocities": true,
@@ -247,6 +247,6 @@
           }
         }
     }
+    }
   }
-}
 }

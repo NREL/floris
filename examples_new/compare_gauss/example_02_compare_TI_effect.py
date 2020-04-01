@@ -64,17 +64,12 @@ label_dict = dict()
 
 # Gauss Class -- Current Default
 fi_g = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_g.floris.farm.set_wake_model('gauss')
-# fi_g.set_gch(True)
 fi_dict['g'] = fi_g
 color_dict['g'] = 'r^-'
-label_dict['g'] = 'gauss'
+label_dict['g'] = 'current_default'
 
 # Gauss_Legacy Class with GCH disabled and deflection multiplier = 1.2
-fi_gl = wfct.floris_interface.FlorisInterface("../example_input.json")
-fi_gl.floris.farm.set_wake_model('gauss_legacy')
-fi_gl.set_gch(False) # Disable GCH
-fi_gl.floris.farm.wake._deflection_model.deflection_multiplier = 1.2 # Deflection multiplier to 1.2
+fi_gl = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
 fi_dict['gl'] = fi_gl
 color_dict['gl'] = 'bo--'
 label_dict['gl'] = 'gauss_legacy'

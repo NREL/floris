@@ -21,8 +21,8 @@ fi = wfct.floris_interface.FlorisInterface("example_input.json")
 fi_gch = wfct.floris_interface.FlorisInterface("example_input.json")
 
 # Force dm to 1.0
-fi.floris.farm.wake._deflection_model.deflection_multiplier = 1.0
-fi_gch.floris.farm.wake._deflection_model.deflection_multiplier = 1.0
+fi.floris.farm.wake._deflection_model.dm = 1.0
+fi_gch.floris.farm.wake._deflection_model.dm = 1.0
 
 # Set up gch
 fi_gch.floris.farm.wake.velocity_model = "gauss_curl_hybrid"

@@ -4,7 +4,7 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": true,
+      "enable": false,
       "level": "INFO"
     },
     "file": {
@@ -219,13 +219,13 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss_legacy",
+      "velocity_model": "gauss",
       "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
         "wake_velocity_parameters": {
-          "gauss_legacy": {
+          "gauss": {
             "ka": 0.38,
             "kb": 0.004,
             "calculate_VW_velocities": true,
@@ -247,6 +247,6 @@
           }
         }
     }
+    }
   }
-}
 }

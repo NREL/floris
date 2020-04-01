@@ -13,10 +13,10 @@
 import numpy as np
 from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
-from .gaussian_model_ish import GaussianModel
+from .gaussian_model_base import GaussianModel
 
 
-class IshiharaQian(VelocityDeficit):
+class IshiharaQian(GaussianModel):
     """
     Ishihara is a wake velocity subclass that contains objects related to the
     Gaussian wake model that include a near-wake correction.
@@ -100,6 +100,12 @@ class IshiharaQian(VelocityDeficit):
         self.a = model_dictionary["a"]
         self.b = model_dictionary["b"]
         self.c = model_dictionary["c"]
+
+        # GCH Parameters
+        self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
+        self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
+        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
+        self.eps_gain = model_dictionary["eps_gain"]
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):

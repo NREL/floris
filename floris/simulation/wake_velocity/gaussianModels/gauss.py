@@ -14,7 +14,7 @@ import numpy as np
 from scipy.special import gamma
 from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
-from .gaussian_model_ish import GaussianModel
+from .gaussian_model_base import GaussianModel
 
 """"
 Full doc string to be written
@@ -54,12 +54,16 @@ results
 
 """
 
-class Gauss(VelocityDeficit):
+class Gauss(GaussianModel):
     default_parameters = {
         'ka': 0.38,
         'kb': 0.004,
         'alpha': 0.58,
-        'beta': 0.077
+        'beta': 0.077,
+        'calculate_VW_velocities':True,
+        'use_yaw_added_recovery':True,
+        'yaw_recovery_alpha':0.03,
+        'eps_gain':0.3
     }
 
     def __init__(self, parameter_dictionary):
@@ -76,6 +80,12 @@ class Gauss(VelocityDeficit):
         # near wake / far wake boundary parameters
         self.alpha = model_dictionary["alpha"]
         self.beta = model_dictionary["beta"]
+
+        # GCH Parameters
+        self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
+        self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
+        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
+        self.eps_gain = model_dictionary["eps_gain"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         # added turbulence model

@@ -298,6 +298,21 @@ class SowfaInterface():
             pow_list.append(df_sub.powerGenerator.mean())
         return np.array(pow_list)
 
+
+    def get_time_power_t(self,t):
+        """
+        Return the power over time of a specific turbine t
+
+        Args:
+        t, turbine number
+
+        Returns:
+            power
+        """
+
+        return self.turbine_output[self.turbine_output.turbine==t].powerGenerator
+ 
+
     def get_average_thrust(self):
         """
         Return the average thrust from the simulation per turbine
