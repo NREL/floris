@@ -33,7 +33,7 @@ wd_bins = np.arange(265, 365, 1.)
 
 # Set up a demonstration wind farm in a n L
 # Initialize FLORIS model
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 # set turbine locations to 4 turbines in a row - demonstrate how to change coordinates
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
