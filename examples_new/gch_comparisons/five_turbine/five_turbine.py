@@ -30,8 +30,8 @@ use_nominal_values = True
 df_results = pd.read_csv('paper_results_5_turbine.csv')
 
 # # Initialize the FLORIS interface fi
-fi_gl = wfct.floris_interface.FlorisInterface("../../other_jsons/example_input_gch_paper.json")
-fi_new = wfct.floris_interface.FlorisInterface("../../example_input.json")
+fi_gl = wfct.floris_interface.FlorisInterface("../../example_input.json")
+fi_new = wfct.floris_interface.FlorisInterface("../../other_jsons/input_sowfa_tuning.json")
 
 # Select gauss legacy with GCH off
 # fi_gl.floris.farm.set_wake_model('gauss_legacy')
@@ -49,30 +49,6 @@ U0 = df_results.floris_U0.values[0]
 TI = df_results.floris_TI.values[0]
 fi_gl.reinitialize_flow_field(wind_speed=U0,turbulence_intensity=TI)
 fi_new.reinitialize_flow_field(wind_speed=U0,turbulence_intensity=TI)
-
-# # Select gauss legacy
-
-# # Match the wake paramters
-# # Grab the wake parameters
-# model_params = fi_gl.get_model_parameters()
-
-# # Match the wake velocity parameters
-# model_params['Wake Velocity Parameters']['ka'] = 0.38
-# model_params['Wake Velocity Parameters']['kb'] = 0.004
-
-# # Match the wake deflection parameters
-# model_params['Wake Deflection Parameters']['ka'] = 0.38
-# model_params['Wake Deflection Parameters']['kb'] = 0.004
-
-# # Match the turbulence parameters
-# model_params['Wake Turbulence Parameters']['ti_initial'] = 0.5
-# model_params['Wake Turbulence Parameters']['ti_constant'] =  0.9
-# model_params['Wake Turbulence Parameters']['ti_ai'] = 0.75
-# model_params['Wake Turbulence Parameters']['ti_downstream'] = -.325 
-
-# # Set the parameters in fi
-# fi_gl.set_model_parameters(model_params)
-# fi_gl.reinitialize_flow_field()
 
 # Set up the yar model
 fi_yar = copy.deepcopy(fi_gl)
