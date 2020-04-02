@@ -27,7 +27,7 @@ degRad = np.pi/180.
 rpmRadSec = 2.0*(np.pi)/60.0
 
 # Load the sowfa case for an example turbine input file for the NREL 5MW
-sowfa_case = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
+sowfa_case = wfct.sowfa_utilities.SowfaInterface('../sowfa_example')
 
 # Grab the turbine dict in order to have controller values
 turbine_dict = wfct.sowfa_utilities.read_foam_file(os.path.join(sowfa_case.case_folder, sowfa_case.turbine_sub_path, sowfa_case.turbine_name))
