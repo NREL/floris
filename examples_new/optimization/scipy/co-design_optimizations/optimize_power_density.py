@@ -12,6 +12,11 @@
 
 # See read the https://floris.readthedocs.io for documentation
 
+# This example optimization takes a 2x2 array of turbines and works to reduce
+# the wind farm footprint area (measured as a convex hull), while working to
+# maintain the original energy output by leveraging wake steering. It is meant
+# to be an illustrative example of some of the benefits of wake steering.
+
 import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
