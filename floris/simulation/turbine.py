@@ -76,7 +76,8 @@ class Turbine():
     """
 
     def __init__(self, instance_dictionary):
-
+        
+        self.logger = setup_logger(name=__name__)
         self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
         self.rotor_diameter = properties["rotor_diameter"]
@@ -154,13 +155,11 @@ class Turbine():
 
         # keep only the points in the swept area
         if self.use_points_on_perimeter:
-            print('<=')
             grid = [
                 point for point in grid
                 if np.hypot(point[0], point[1]) <= self.rotor_radius
             ]
         else:
-            print('<')
             grid = [
                 point for point in grid
                 if np.hypot(point[0], point[1]) < self.rotor_radius
@@ -201,7 +200,10 @@ class Turbine():
 
         """
         for param in turbine_change_dict:
-            print("Setting {} to {}".format(param, turbine_change_dict[param]))
+            self.logger.info(
+                'Setting {} to {}'.format(param, turbine_change_dict[param])
+            )
+            # print("Setting {} to {}".format(param, turbine_change_dict[param]))
             setattr(self, param, turbine_change_dict[param])
         self._initialize_turbine()
 
