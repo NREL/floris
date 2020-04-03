@@ -94,7 +94,7 @@ class PowerDensity():
 
         funcs = {}
         funcs['obj'] = -1e1*AEP_sum/self.AEP_initial*self.initial_area/opt_area
-        print('obj: ', funcs['obj'])
+        # print('obj: ', funcs['obj'])
 
         # Compute constraints, if any are defined for the optimization
         funcs = self.compute_cons(funcs, AEP_sum)
@@ -149,9 +149,9 @@ class PowerDensity():
         funcs['boundary_con'] = self.distance_from_boundaries()
         funcs['spacing_con'] = self.space_constraint()
         funcs['aep_con'] = self.aep_constraint(AEP_sum)
-        print('boundary_con: ', funcs['boundary_con'])
-        print('spacing_con: ', funcs['spacing_con'])
-        print('aep_con: ', funcs['aep_con'])
+        # print('boundary_con: ', funcs['boundary_con'])
+        # print('spacing_con: ', funcs['spacing_con'])
+        # print('aep_con: ', funcs['aep_con'])
 
         return funcs
 
@@ -324,7 +324,7 @@ class PowerDensity():
         Returns:
             nturbs (int): The number of turbines in the FLORIS object.
         """
-        self._nturbs = len(self.fi.floris.farm.turbine_map.turbines)
+        self._nturbs = len(self.fi.floris.farm.turbines)
         return self._nturbs
 
     @property
