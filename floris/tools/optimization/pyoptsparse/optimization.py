@@ -10,9 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import sys
-import numpy as np
-import importlib
+from ....utilities import setup_logger
 
 
 class Optimization():
@@ -31,6 +29,7 @@ class Optimization():
         """
         Instantiate Optimization object and its parameters.
         """
+        self.logger = setup_logger(name=__name__)
 
         self.model = model
         self.solver_choices = ['SNOPT', 'IPOPT', 'SLSQP', 'NLPQLP',
@@ -46,7 +45,14 @@ class Optimization():
     # Private methods
 
     def _reinitialize(self, solver=None, optOptions=None):
-        import pyoptsparse
+        try:
+            import pyoptsparse
+        except ImportError:
+            err_msg = ('It appears you do not have pyOptSparse installed. ' + \
+                'Please refer to https://pyoptsparse.readthedocs.io/ for ' + \
+                'guidance on how to properly install the module.')
+            self.logger.error(err_msg, stack_info=True)
+            raise ImportError(err_msg)
         
         self.optProb = pyoptsparse.Optimization(self.model, self.objective_func)
 

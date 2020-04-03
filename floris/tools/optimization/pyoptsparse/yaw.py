@@ -214,5 +214,5 @@ class Yaw():
         Returns:
             nturbs (int): The number of turbines in the FLORIS object.
         """
-        self._nturbs = len(self.fi.floris.farm.turbine_map.turbines)
+        self._nturbs = len(self.fi.floris.farm.turbines)
         return self._nturbs

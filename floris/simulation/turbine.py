@@ -154,13 +154,11 @@ class Turbine():
 
         # keep only the points in the swept area
         if self.use_points_on_perimeter:
-            print('<=')
             grid = [
                 point for point in grid
                 if np.hypot(point[0], point[1]) <= self.rotor_radius
             ]
         else:
-            print('<')
             grid = [
                 point for point in grid
                 if np.hypot(point[0], point[1]) < self.rotor_radius
