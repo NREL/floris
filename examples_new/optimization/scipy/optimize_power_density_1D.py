@@ -18,13 +18,19 @@ from floris.tools.optimization.scipy.power_density_1D \
 import numpy as np
 import os
 
+# This example optimization takes a 1x5 array of turbines at an initial spacing
+# of 9 rotor diameters and works to compress that spacing in the streamwise (x)
+# direction, while working to maintain the original energy output by leveraging
+# wake steering. It is meant to be an illustrative example of some of the
+# benefits of wake steering.
+
 # Instantiate the FLORIS object
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fi = wfct.floris_interface.FlorisInterface(
     os.path.join(file_dir, '../../example_input.json')
 )
 
-# Set turbine locations to 3 turbines in a triangle
+# Set turbine locations to 5 turbines in a line
 D = fi.floris.farm.turbines[0].rotor_diameter
 spacing = 9*D
 layout_x = [0, spacing, 2*spacing, 3*spacing, 4*spacing]
