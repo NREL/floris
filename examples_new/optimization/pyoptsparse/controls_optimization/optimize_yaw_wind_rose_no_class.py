@@ -19,7 +19,7 @@ import floris.tools as wfct
 # Initialize the FLORIS interface fi
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fi = wfct.floris_interface.FlorisInterface(
-    os.path.join(file_dir, '../../example_input.json')
+    os.path.join(file_dir, '../../../example_input.json')
 )
 
 # Set turbine locations to 4 turbines in a rectangle

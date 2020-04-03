@@ -20,7 +20,7 @@ import floris.tools.optimization.pyoptsparse as opt
 # Initialize the FLORIS interface fi
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fi = wfct.floris_interface.FlorisInterface(
-    os.path.join(file_dir, '../../example_input.json')
+    os.path.join(file_dir, '../../../example_input.json')
 )
 
 boundaries = [[0., 0.], [0., 1000.], [1000., 1000.], [1000., 0.]]
@@ -31,13 +31,15 @@ layout_x = [0, 0, 6*D, 6*D]
 layout_y = [0, 5*D, 0, 5*D]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
+# wd = np.arange(0., 360., 60.)
+# wd = [0, 90, 180, 270]
 wd = [270]
 np.random.seed(1)
 ws = 8.0 + np.random.randn(len(wd))*0.5
 freq = np.abs(np.sort(np.random.randn(len(wd))))
 freq = freq/freq.sum()
 
-model = opt.layout.Layout(fi, boundaries, wdir=wd,
+model = opt.power_density.PowerDensity(fi, boundaries, wdir=wd,
                                           wspd=ws,
                                           wfreq=freq)
 

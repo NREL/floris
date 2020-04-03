@@ -10,20 +10,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import numpy as np
-import matplotlib.pyplot as plt
 import os
-
-import floris.tools as wfct
 import floris.tools.optimization.pyoptsparse as opt
+import floris.tools as wfct
 
 # Initialize the FLORIS interface fi
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fi = wfct.floris_interface.FlorisInterface(
-    os.path.join(file_dir, '../../example_input.json')
+    os.path.join(file_dir, '../../../example_input.json')
 )
-
-boundaries = [[0., 0.], [0., 1000.], [1000., 1000.], [1000., 0.]]
 
 # Set turbine locations to 4 turbines in a rectangle
 D = fi.floris.farm.turbines[0].rotor_diameter
@@ -31,23 +26,24 @@ layout_x = [0, 0, 6*D, 6*D]
 layout_y = [0, 5*D, 0, 5*D]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
-# wd = np.arange(0., 360., 60.)
-# wd = [0, 90, 180, 270]
+# Define wind speed and direction
+ws = [8]
 wd = [270]
-np.random.seed(1)
-ws = 8.0 + np.random.randn(len(wd))*0.5
-freq = np.abs(np.sort(np.random.randn(len(wd))))
-freq = freq/freq.sum()
 
-model = opt.power_density.PowerDensity(fi, boundaries, wdir=wd,
-                                          wspd=ws,
-                                          wfreq=freq)
+# Set bounds on yaw offsets
+minimum_yaw_angle = 0.
+maximum_yaw_angle = 30.
+
+model = opt.yaw.Yaw(fi, minimum_yaw_angle, maximum_yaw_angle, wdir=wd,
+                                          wspd=ws)
 
 tmp = opt.optimization.Optimization(model=model, solver='SLSQP')
 
 sol = tmp.optimize()
 
+# Display results
 print(sol)
 
-model.plot_layout_opt_results(sol)
-plt.show()
+model.print_power_gain(sol)
+
+model.plot_yaw_opt_results(sol)
