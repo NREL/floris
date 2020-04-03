@@ -40,7 +40,16 @@ def power_cross_sweep(fi_in,D,dist_downstream,yaw_angle=0):
 
     for y_idx, y_loc in enumerate(sweep_locations):
 
-        fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2,dist_downstream*D*3,dist_downstream*D*4],[0,0,0,0,y_loc*D]))
+        fi.reinitialize_flow_field(layout_array=(
+            [
+                0,
+                dist_downstream*D,
+                dist_downstream*D*2,
+                dist_downstream*D*3,
+                dist_downstream*D*4
+            ],
+            [0,0,0,0,y_loc*D]
+        ))
         fi.calculate_wake([yaw_angle,0,0,0,0])
         power_out[y_idx] = fi.get_turbine_power()[4]/1000.
 
@@ -55,11 +64,21 @@ def power_cross_sweep_gain(fi_in,D,dist_downstream,yaw_angle=0):
 
     for y_idx, y_loc in enumerate(sweep_locations):
 
-        fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2,dist_downstream*D*3,dist_downstream*D*4],[0,0,0,0,y_loc*D]))
+        fi.reinitialize_flow_field(layout_array=(
+            [
+                0,
+                dist_downstream*D,
+                dist_downstream*D*2,
+                dist_downstream*D*3,
+                dist_downstream*D*4
+            ],
+            [0,0,0,0,y_loc*D]
+        ))
         fi.calculate_wake([0,0,0,0,0])
         base_power = fi.get_turbine_power()[4]/1000.
         fi.calculate_wake([yaw_angle,0,0,0,0])
-        power_out[y_idx] = 100 * (fi.get_turbine_power()[4]/1000. - base_power) / base_power
+        power_out[y_idx] = \
+            100 * (fi.get_turbine_power()[4]/1000. - base_power) / base_power
 
     return sweep_locations, power_out
 
@@ -76,45 +95,93 @@ color_dict['g'] = 'r^-'
 label_dict['g'] = 'current_default'
 
 # Gauss_Legacy Class with GCH disabled and deflection multiplier = 1.2
-fi_gl = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
+fi_gl = wfct.floris_interface.FlorisInterface(
+    "../other_jsons/input_legacy.json"
+)
 fi_dict['gl'] = fi_gl
 color_dict['gl'] = 'bo--'
 label_dict['gl'] = 'gauss_legacy'
 
 # New sowfa tuning
-fi_gs = wfct.floris_interface.FlorisInterface("../other_jsons/input_sowfa_tuning.json")
+fi_gs = wfct.floris_interface.FlorisInterface(
+    "../other_jsons/input_sowfa_tuning.json"
+)
 fi_dict['gs'] = fi_gs
 color_dict['gs'] = 'gd--'
 label_dict['gs'] = 'sowfa_tune'
 
 # Set up a saved gauss 
 saved_gauss = dict()
-saved_gauss[(10,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1475.857046  , 1438.61314837, 1407.12361597, 1385.76945702,
-       1378.24142295, 1385.76945702, 1407.12361597, 1438.61314837,
-       1475.857046  ]) ]
-saved_gauss[(10,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1460.87607432, 1426.11836183, 1396.89636511, 1378.10577621,
-       1373.68315683, 1385.03544661, 1410.70852317, 1446.48128931,
-       1487.27870735]) ]
-saved_gauss[(6,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1386.33360627, 1297.56151952, 1216.46738785, 1159.26620127,
-       1138.5417156 , 1159.26620127, 1216.46738785, 1297.56151952,
-       1386.33360627]) ]
-saved_gauss[(6,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1330.80440754, 1255.38388012, 1190.62796652, 1149.27972502,
-       1142.70862247, 1175.47342487, 1242.16104566, 1328.69052857,
-       1417.72060005]) ]
-saved_gauss[(3,0)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1308.75179417, 1105.39829949,  891.46814402,  726.85407202,
-        664.85992705,  726.85407202,  891.46814402, 1105.39829949,
-       1308.75179417]) ]
-saved_gauss[(3,20)] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([1157.83042919,  954.9184752 ,  792.60776463,  703.31776021,
-        702.4195797 ,  794.11740686,  962.28277757, 1163.62487709,
-       1349.63535527]) ]
-saved_gauss[(10,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([-1.01506929, 12.02821879, 11.51990855, 10.8243142 , 10.17994975,
-        9.80928765,  9.83854542, 10.23366611, 10.8826738 ]) ]
-saved_gauss[(6,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([-4.00547159, 10.38469059, 10.77897463, 10.47859704,  9.84211287,
-        9.53432126,  9.92784683, 10.95353561, 12.06408527]) ]
-saved_gauss[(3,"gain")] = [np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]) ,np.array([-11.53170262,  -0.11975635,   2.63354986,   8.76905788,
-        13.47688416,  13.97260825,  13.17746328,  12.82450192,
-        13.00086758]) ]
-
+saved_gauss[(10,0)] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        1475.857046  , 1438.61314837, 1407.12361597, 1385.76945702,
+        1378.24142295, 1385.76945702, 1407.12361597, 1438.61314837,
+        1475.857046
+    ])
+]
+saved_gauss[(10,20)] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        1460.87607432, 1426.11836183, 1396.89636511, 1378.10577621,
+        1373.68315683, 1385.03544661, 1410.70852317, 1446.48128931,
+        1487.27870735
+    ])
+]
+saved_gauss[(6,0)] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        1386.33360627, 1297.56151952, 1216.46738785, 1159.26620127,
+        1138.5417156 , 1159.26620127, 1216.46738785, 1297.56151952,
+        1386.33360627
+    ])
+]
+saved_gauss[(6,20)] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        1330.80440754, 1255.38388012, 1190.62796652, 1149.27972502,
+        1142.70862247, 1175.47342487, 1242.16104566, 1328.69052857,
+        1417.72060005
+    ])
+]
+saved_gauss[(3,0)] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        1308.75179417, 1105.39829949,  891.46814402,  726.85407202,
+         664.85992705,  726.85407202,  891.46814402, 1105.39829949,
+        1308.75179417
+    ])
+]
+saved_gauss[(3,20)] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        1157.83042919,  954.9184752 ,  792.60776463,  703.31776021,
+         702.4195797 ,  794.11740686,  962.28277757, 1163.62487709,
+        1349.63535527
+    ])
+]
+saved_gauss[(10,"gain")] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        -1.01506929, 12.02821879, 11.51990855, 10.8243142 , 10.17994975,
+         9.80928765,  9.83854542, 10.23366611, 10.8826738
+    ])
+]
+saved_gauss[(6,"gain")] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        -4.00547159, 10.38469059, 10.77897463, 10.47859704,  9.84211287,
+         9.53432126,  9.92784683, 10.95353561, 12.06408527
+    ])
+]
+saved_gauss[(3,"gain")] = [
+    np.array([-1.  , -0.75, -0.5 , -0.25,  0.  ,  0.25,  0.5 ,  0.75,  1.  ]),
+    np.array([
+        -11.53170262,  -0.11975635,   2.63354986,   8.76905788,
+         13.47688416,  13.97260825,  13.17746328,  12.82450192,
+         13.00086758
+    ])
+]
 
 # Get HH and D
 HH = fi_gl.floris.farm.flow_field.turbine_map.turbines[0].hub_height
@@ -134,13 +201,24 @@ for d_idx, dist_downstream in enumerate([10, 6, 3]):
         # ax.plot(sweep_locations,ps,'ks-' ,label='Saved FLORIS Gauss',lw=3)
 
         for fi_key in fi_dict.keys():
-            sweep_locations, ps = power_cross_sweep(fi_dict[fi_key],D,dist_downstream,yaw)
-            ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
+            sweep_locations, ps = power_cross_sweep(
+                fi_dict[fi_key],
+                D,
+                dist_downstream,
+                yaw
+            )
+            ax.plot(
+                sweep_locations,
+                ps,
+                color_dict[fi_key],
+                label=label_dict[fi_key]
+            )
             ax.set_ylim([200,2000])
 
             # Save for after clean up
             # if fi_key == 'g':
-            #     print('saved_gauss[(%d,%d)] = [np.' % (dist_downstream,yaw), repr(sweep_locations),',np.',repr(ps),']')
+            #     print('saved_gauss[(%d,%d)] = [np.' % (dist_downstream,yaw), \
+            #         repr(sweep_locations),',np.',repr(ps),']')
 
 # Check the gains
 for d_idx, dist_downstream in enumerate([10, 6, 3]):
@@ -152,16 +230,21 @@ for d_idx, dist_downstream in enumerate([10, 6, 3]):
     # ax.plot(sweep_locations,ps,'ks-' ,label='Saved FLORIS Gauss',lw=3)
 
     for fi_key in fi_dict.keys():
-        sweep_locations, ps = power_cross_sweep_gain(fi_dict[fi_key],D,dist_downstream,yaw_angle=20)
+        sweep_locations, ps = power_cross_sweep_gain(
+            fi_dict[fi_key],
+            D,
+            dist_downstream,
+            yaw_angle=20
+        )
         ax.plot(sweep_locations,ps,color_dict[fi_key] ,label=label_dict[fi_key])
         ax.set_ylim([-30,30])
         # Save for after clean-up
         # if fi_key == 'g':
-        #     print('saved_gauss[(%d,"gain")] = [np.' % (dist_downstream), repr(sweep_locations),',np.',repr(ps),']')
+        #     print('saved_gauss[(%d,"gain")] = [np.' % (dist_downstream), \
+        #         repr(sweep_locations),',np.',repr(ps),']')
 
 axarr[0,0].legend()
 axarr[-1,0].set_xlabel('Lateral Offset (D)')
 axarr[-1,1].set_xlabel('Lateral Offset (D)')
 axarr[-1,2].set_xlabel('Lateral Offset (D)')
 plt.show()
-
