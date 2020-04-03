@@ -1,16 +1,16 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 # See read the https://floris.readthedocs.io for documentation
-
 
 # This example is meant to time the two core functions of floris:
 # calculate_wake and reinitialize_flow_field
@@ -28,7 +28,8 @@ dist = d * d_space
 n_row_to_test = [5,6,7,8,9,10,11]
 
 for n_row in n_row_to_test:
-    print('****** Timing %d turbine wind farm which is %d x %d m in size' % (n_row * n_row, n_row*dist, n_row*dist))
+    print('****** Timing %d turbine wind farm which is %d x %d m in size' \
+        % (n_row * n_row, n_row*dist, n_row*dist))
 
     setup_code = """
 import floris.tools as wfct
@@ -78,7 +79,8 @@ fi.reinitialize_flow_field()
     results[(n_row,'re')] = run_time
 
 for n_row in n_row_to_test:
-    print('-------------------------------------------------------------------------------------')
-    print('Timing results %d turbine wind farm which is %d x %d m in size' % (n_row * n_row, n_row*dist, n_row*dist))
+    print('-------------------------------------------------------------------')
+    print('Timing results %d turbine wind farm which is %d x %d m in size' \
+        % (n_row * n_row, n_row*dist, n_row*dist))
     print('---- Calc wake runs in %.1f ms ' % results[(n_row,'calc')])
     print('---- Re - flow runs in %.1f ms ' % results[(n_row,'re')])
