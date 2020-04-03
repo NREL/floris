@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # Instantiate the FLORIS object
     file_dir = os.path.dirname(os.path.abspath(__file__))
     fi = wfct.floris_interface.FlorisInterface(
-        os.path.join(file_dir, '../../example_input.json')
+        os.path.join(file_dir, '../../../example_input.json')
     )
 
     # Set wind farm to N_row x N_row grid with constant spacing 
@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     else:
     	df = wind_rose.load(
-            os.path.join(file_dir, 'windtoolkit_geo_center_us.p')
+            os.path.join(file_dir, '../windtoolkit_geo_center_us.p')
         )
 
     # plot wind rose
