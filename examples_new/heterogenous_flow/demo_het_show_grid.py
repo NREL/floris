@@ -12,21 +12,34 @@
 
 # See read the https://floris.readthedocs.io for documentation
 
+# Show the grid points in hetergenous flow calculation
+
+# This import registers the 3D projection, but is otherwise unused.
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+
 import matplotlib.pyplot as plt
 import floris.tools as wfct
+import pandas as pd
+import numpy as np
 
-# Initialize the FLORIS interface fi
-# For basic usage, the florice interface provides a simplified interface to
-# the underlying classes
 fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
-# Calculate wake
+# Set layout to 2 turbines
+fi.reinitialize_flow_field(layout_array=[[0,0],[100,400]])
 fi.calculate_wake()
 
-# Get horizontal plane at default height (hub-height)
-hor_plane = fi.get_hor_plane()
+# Introduce variation in wind speed
+fi.reinitialize_flow_field(wind_speed=[6,9],wind_layout=[[-100,300],[0,500]])
+fi.calculate_wake()
 
-# Plot and show
-fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+# Show the grid points (note only on turbines, not on wind measurements)
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+xs = fi.floris.farm.flow_field.x
+ys = fi.floris.farm.flow_field.y
+zs = fi.floris.farm.flow_field.z
+ax.scatter(xs, ys, zs, marker='.')
+ax.set_xlim([0,1000])
+ax.set_ylim([0,1000])
+ax.set_zlim([0,300])
 plt.show()

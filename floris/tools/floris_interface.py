@@ -37,9 +37,9 @@ class FlorisInterface():
             err_msg = 'Input file or dictionary must be supplied'
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
-            self.logger = setup_logger(name=__name__)
         self.input_file = input_file
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
+        self.logger = setup_logger(name=__name__)
 
     def calculate_wake(self, yaw_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False):
         """
@@ -479,7 +479,9 @@ class FlorisInterface():
         if height is None:
             height = self.floris.farm.flow_field.turbine_map.turbines[
                 0].hub_height
-            print('Default to hub height: %.1f' % height)
+            self.logger.info(
+                'Default to hub height = %.1f for horizontal plane.' % height
+            )
 
         # Get the points of data in a dataframe
         df = self.get_plane_of_points(x1_resolution=x_resolution,
@@ -972,7 +974,7 @@ class FlorisInterface():
 
         # Now go through turbine list and re-init any in turb_num_array
         for t_idx in turb_num_array:
-            print('Updating turbine: %00d' % t_idx)
+            self.logger.info('Updating turbine: %00d' % t_idx)
             self.floris.farm.turbines[t_idx].change_turbine_parameters(
                 turbine_change_dict)
 

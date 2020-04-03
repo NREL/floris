@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -31,7 +31,9 @@ df_results = pd.read_csv('paper_results_5_turbine.csv')
 
 # # Initialize the FLORIS interface fi
 fi_gl = wfct.floris_interface.FlorisInterface("../../example_input.json")
-fi_new = wfct.floris_interface.FlorisInterface("../../other_jsons/input_sowfa_tuning.json")
+fi_new = wfct.floris_interface.FlorisInterface(
+    "../../other_jsons/input_sowfa_tuning.json"
+)
 
 # Select gauss legacy with GCH off
 # fi_gl.floris.farm.set_wake_model('gauss_legacy')
@@ -39,8 +41,14 @@ fi_gl.set_gch(False) # Disable GCH
 # fi_gl.floris.farm.set_wake_model('gauss_merge')
 
 # # Match the layout
-x_layout = tuple(map(float,df_results.layout_x.values[0].replace('(','').replace(')','').split(',')))
-y_layout = tuple(map(float,df_results.layout_y.values[0].replace('(','').replace(')','').split(',')))
+x_layout = tuple(map(
+    float,
+    df_results.layout_x.values[0].replace('(','').replace(')','').split(',')
+))
+y_layout = tuple(map(
+    float,
+    df_results.layout_y.values[0].replace('(','').replace(')','').split(',')
+))
 fi_gl.reinitialize_flow_field(layout_array=[x_layout,y_layout])
 fi_new.reinitialize_flow_field(layout_array=[x_layout,y_layout])
 
