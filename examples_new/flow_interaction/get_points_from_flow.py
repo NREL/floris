@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 # Calculate wake
 fi.calculate_wake()
