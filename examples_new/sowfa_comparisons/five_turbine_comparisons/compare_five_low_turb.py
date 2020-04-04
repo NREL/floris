@@ -17,7 +17,12 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 import numpy as np
 import pandas as pd
+import copy
 
+# HIGH TI
+
+
+# Low TI
 
 
 # Write out SOWFA results
@@ -37,15 +42,13 @@ df_sowfa = pd.DataFrame(sowfa_results,
 wind_speed = 8.39
 TI = 0.065
 
-
-# Initialize the FLORIS interface fi, use default gauss model
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+# Initialize the FLORIS interface fi, use default model
+fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
 fi.reinitialize_flow_field(wind_speed=[wind_speed],turbulence_intensity=[TI],layout_array=(layout_x, layout_y))
 
-# Setup blonel
-fi_b = wfct.floris_interface.FlorisInterface("example_input.json")
-fi_b.floris.farm.set_wake_model('blondel')
-fi_b.reinitialize_flow_field(wind_speed=[wind_speed],turbulence_intensity=[TI],layout_array=(layout_x, layout_y))
+# Setup alternative with gch off
+fi_b = copy.deepcopy(fi)
+fi_b.set_gch(False)
 
 # Compare yaw combinations
 yaw_combinations = [
@@ -57,8 +60,8 @@ yaw_names = ['%d/%d/%d/%d/%d' % yc for yc in yaw_combinations]
 fig, axarr = plt.subplots(1,3,sharex=True,sharey=True,figsize=(12,5))
 
 total_sowfa = []
-total_gauss = []
-total_blondel = []
+total_gch_on = []
+total_gch_off = []
 
 for y_idx, yc in enumerate(yaw_combinations):
 
@@ -67,21 +70,21 @@ for y_idx, yc in enumerate(yaw_combinations):
     s_data = [s_data.p0.values[0], s_data.p1.values[0],s_data.p2.values[0],s_data.p3.values[0],s_data.p4.values[0]]
     total_sowfa.append(np.sum(s_data))
 
-    # Collect Gauss data
+    # Collect GCH ON data
     fi.calculate_wake(yaw_angles=yc)
     g_data = np.array(fi.get_turbine_power())/ 1000. 
-    total_gauss.append(np.sum(g_data))
+    total_gch_on.append(np.sum(g_data))
 
-    # Collect Blondel data
+    # Collect GCH OFF data
     fi_b.calculate_wake(yaw_angles=yc)
     b_data = np.array(fi_b.get_turbine_power())/ 1000. 
-    total_blondel.append(np.sum(b_data))
+    total_gch_off.append(np.sum(b_data))
 
     ax = axarr[y_idx]
     ax.set_title(yc)
     ax.plot(['T0','T1','T2','T3','T4'], s_data,'k',marker='s',label='SOWFA')
-    ax.plot(['T0','T1','T2','T3','T4'], g_data,'g',marker='o',label='Gauss')
-    ax.plot(['T0','T1','T2','T3','T4'], b_data,'b',marker='*',label='Blondel')
+    ax.plot(['T0','T1','T2','T3','T4'], g_data,'g',marker='o',label='GCH ON')
+    ax.plot(['T0','T1','T2','T3','T4'], b_data,'b',marker='*',label='GCH OFF')
 
 axarr[-1].legend()
 
@@ -89,11 +92,11 @@ axarr[-1].legend()
 total_sowfa = np.array(total_sowfa)
 nom_sowfa = total_sowfa/total_sowfa[0]
 
-total_gauss = np.array(total_gauss)
-nom_gauss = total_gauss/total_gauss[0]
+total_gch_on = np.array(total_gch_on)
+nom_gch_on = total_gch_on/total_gch_on[0]
 
-total_blondel = np.array(total_blondel)
-nom_blondel = total_blondel/total_blondel[0]
+total_gch_off = np.array(total_gch_off)
+nom_gch_off = total_gch_off/total_gch_off[0]
 
 fig, axarr = plt.subplots(1,2,sharex=True,sharey=False,figsize=(8,5))
 
@@ -102,10 +105,10 @@ ax  = axarr[0]
 ax.set_title("Total Power")
 ax.plot(yaw_names,total_sowfa,'k',marker='s',label='SOWFA',ls='None')
 ax.axhline(total_sowfa[0],color='k',ls='--')
-ax.plot(yaw_names,total_gauss,'g',marker='o',label='Gauss',ls='None')
-ax.axhline(total_gauss[0],color='g',ls='--')
-ax.plot(yaw_names,total_blondel,'b',marker='*',label='Blondel',ls='None')
-ax.axhline(total_blondel[0],color='b',ls='--')
+ax.plot(yaw_names,total_gch_on,'g',marker='o',label='GCH ON',ls='None')
+ax.axhline(total_gch_on[0],color='g',ls='--')
+ax.plot(yaw_names,total_gch_off,'b',marker='*',label='GCH OFF',ls='None')
+ax.axhline(total_gch_off[0],color='b',ls='--')
 ax.legend()
 
 # Normalized results
@@ -113,10 +116,10 @@ ax  = axarr[1]
 ax.set_title("Normalized Power")
 ax.plot(yaw_names,nom_sowfa,'k',marker='s',label='SOWFA',ls='None')
 ax.axhline(nom_sowfa[0],color='k',ls='--')
-ax.plot(yaw_names,nom_gauss,'g',marker='o',label='Gauss',ls='None')
-ax.axhline(nom_gauss[0],color='g',ls='--')
-ax.plot(yaw_names,nom_blondel,'b',marker='*',label='Blondel',ls='None')
-ax.axhline(nom_blondel[0],color='b',ls='--')
+ax.plot(yaw_names,nom_gch_on,'g',marker='o',label='GCH ON',ls='None')
+ax.axhline(nom_gch_on[0],color='g',ls='--')
+ax.plot(yaw_names,nom_gch_off,'b',marker='*',label='GCH OFF',ls='None')
+ax.axhline(nom_gch_off[0],color='b',ls='--')
 
 
 

@@ -28,7 +28,7 @@ si = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
 sowfa_flow_data = si.flow_data
 
 # Load the FLORIS case in
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi.calculate_wake()
 
 # Set the relevant FLORIS parameters to equal the SOWFA case

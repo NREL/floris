@@ -37,7 +37,7 @@ ax2.set_title('SOWFA')
 ax2.set_ylabel('y location [m]')
 
 # Load the FLORIS case in
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi.calculate_wake()
 # floris_flow_data_orig = fi.get_flow_data()
 
