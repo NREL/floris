@@ -14,10 +14,8 @@
 
 # Demonstrate extracting the flow field to vtk
 
-import matplotlib.pyplot as plt
+
 import floris.tools as wfct
-import numpy as np
-import pandas as pd
 
 # Initialize the FLORIS interface fi
 fi = wfct.floris_interface.FlorisInterface("../example_input.json")
