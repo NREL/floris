@@ -1,13 +1,16 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See read the https://floris.readthedocs.io for documentation
 
 import numpy as np
 from .flow_data import FlowData
@@ -56,7 +59,18 @@ class SowfaInterface():
             assumed_settling_time (float, optional): Time to account
                 for startup transients in simulation. Defaults to None.
         """
-        print(case_folder)
+        logging_dict = {
+            "console": {
+                "enable": True,
+                "level": "INFO"
+            },
+            "file": {
+                "enable": False,
+                "level": "INFO"
+            }
+        }
+        self.logger = setup_logger(name=__name__, logging_dict=logging_dict)
+        self.logger.info(case_folder)
 
         # Save the case_folder and sub_paths
         self.case_folder = case_folder
@@ -90,15 +104,14 @@ class SowfaInterface():
             self.yaw_angles = df_SC.yaw.values
             self.pitch_angles = df_SC.pitch.values
         else:
-            print(
-                'No SC_INPUT.txt, getting pitch and yaw from turbine array props'
-            )
+            self.logger.info('No SC_INPUT.txt, getting pitch and yaw ' + \
+                'from turbine array props')
             self.yaw_angles = get_turbine_yaw_angles(
                 os.path.join(self.case_folder, self.turbine_array_sub_path))
             self.pitch_angles = get_turbine_pitch_angles(
                 os.path.join(self.case_folder, self.turbine_array_sub_path))
-            print(self.yaw_angles)
-            print(self.pitch_angles)
+            self.logger.info(self.yaw_angles)
+            self.logger.info(self.pitch_angles)
 
         # Get the turbine rotor diameter and hub height
         turbine_dict = read_foam_file(
@@ -106,8 +119,8 @@ class SowfaInterface():
                          self.turbine_name))
         self.D = 2 * turbine_dict['TipRad']
 
-        # Use the setup file and control file to determine the precursor wind speed
-        # And the time flow averaging begins (settling time)
+        # Use the setup file and control file to determine the precursor wind 
+        # speed and the time flow averaging begins (settling time)
         setup_dict = read_foam_file(
             os.path.join(self.case_folder, self.setup_sub_path))
         controlDict_dict = read_foam_file(
@@ -115,7 +128,7 @@ class SowfaInterface():
         start_run_time = controlDict_dict['startTime']
         averaging_start_time = setup_dict['meanStartTime']
         if assumed_settling_time is not None:
-            print('Using assumed settling time of %.1f s' %
+            self.logger.info('Using assumed settling time of %.1f s' %
                   assumed_settling_time)
             self.settling_time = assumed_settling_time
         else:
@@ -149,43 +162,46 @@ class SowfaInterface():
             self.layout_y = self.layout_y - self.flow_data.origin.x2
 
         except FileNotFoundError:
-            print('No flow field found, setting NULL, origin at 0')
+            self.logger.info('No flow field found, setting NULL, origin at 0')
             self.flow_data = None  #TODO might need a null flow-field
 
         # Try to work out the precursor directory
         self.precursor_directory = 'unknown'
         try:
-            with open(os.path.join(case_folder, 'runscript.preprocess'), 'r') as fid:
+            with open(os.path.join(
+                case_folder, 'runscript.preprocess'), 'r') as fid:
                 raw = fid.readlines()
 
             for i, line in enumerate(raw):
                 if 'precursorDir=' in line:
-                    self.precursor_directory = os.path.basename(line.replace('precursorDir=',''))
-
-
+                    self.precursor_directory = os.path.basename(
+                        line.replace('precursorDir=','')
+                    )
 
         except FileNotFoundError:
-            print('No preprocess file found')
-
+            self.logger.info('No preprocess file found')
 
     def __str__(self):
 
-        print('---------------------')
-        print('Case: %s' % self.case_folder)
-        print('==Turbine Info==')
-        print('Turbine: %s' % self.turbine_name)
-        print('Diameter: %dm' % self.D)
-        print('Num Turbines = %d' % self.num_turbines)
-        print('==Control Settings==')
-        print('Yaw Angles, ', self.yaw_angles)
-        print('Pitch Angles, ', self.pitch_angles)
-        print('==Inflow Info==')
-        print('U0Mag: %.2fm/s' % self.precursor_wind_speed)
-        print('dir: %.1f' % self.precursor_wind_dir)
-        print('==Timing Info==')
-        print('Settling time: %.1fs' % self.settling_time)
-        print('Simulation time: %.1fs' % self.sim_time_length)
-        print('---------------------')
+        self.logger.info('---------------------')
+        self.logger.info('Case: %s' % self.case_folder)
+        self.logger.info('==Turbine Info==')
+        self.logger.info('Turbine: %s' % self.turbine_name)
+        self.logger.info('Diameter: %dm' % self.D)
+        self.logger.info('Num Turbines = %d' % self.num_turbines)
+        self.logger.info('==Control Settings==')
+        self.logger.info('Yaw Angles, [' + \
+            ', '.join(map(str, self.yaw_angles)) + ']')
+        self.logger.info('Pitch Angles, [' + \
+            ', '.join(map(str, self.pitch_angles)) + ']')
+        self.logger.info('==Inflow Info==')
+        self.logger.info('U0Mag: %.2fm/s' % self.precursor_wind_speed)
+        self.logger.info('dir: %.1f' % self.precursor_wind_dir)
+        self.logger.info('==Timing Info==')
+        self.logger.info('Settling time: %.1fs' % self.settling_time)
+        self.logger.info('Simulation time: %.1fs' % self.sim_time_length)
+        self.logger.info('---------------------')
+
         return ' '
 
     def get_hor_plane(self, height,
@@ -211,14 +227,15 @@ class SowfaInterface():
         Returns:
             horplane
         """
-
         # Get points from flow data
-        df =  get_plane_from_flow_data(self.flow_data,normal_vector='z', x3_value=height)
-
+        df =  get_plane_from_flow_data(
+            self.flow_data,
+            normal_vector='z',
+            x3_value=height
+        )
 
         # Compute and return the cutplane
         return CutPlane(df)
-
 
     def get_cross_plane(self, x_loc,
                 x_resolution=200, 
@@ -243,9 +260,12 @@ class SowfaInterface():
         Returns:
             horplane
         """
-
         # Get the points of data in a dataframe
-        df =  get_plane_from_flow_data(self.flow_data,normal_vector='x', x3_value=x_loc)
+        df =  get_plane_from_flow_data(
+            self.flow_data,
+            normal_vector='x',
+            x3_value=x_loc
+        )
 
         # Compute and return the cutplane
         return CutPlane(df)
@@ -273,9 +293,12 @@ class SowfaInterface():
         Returns:
             horplane
         """
-
         # Get the points of data in a dataframe
-        df =  get_plane_from_flow_data(self.flow_data,normal_vector='y', x3_value=y_loc)
+        df =  get_plane_from_flow_data(
+            self.flow_data,
+            normal_vector='y',
+            x3_value=y_loc
+        )
 
         # Compute and return the cutplane
         return CutPlane(df)
@@ -290,14 +313,11 @@ class SowfaInterface():
         Returns:
             pow_list (numpy array): an array of powers per turbine
         """
-
-
         pow_list = list()
         for t in range(self.num_turbines):
             df_sub = self.turbine_output[self.turbine_output.turbine==t]
             pow_list.append(df_sub.powerGenerator.mean())
         return np.array(pow_list)
-
 
     def get_time_power_t(self,t):
         """
@@ -309,9 +329,7 @@ class SowfaInterface():
         Returns:
             power
         """
-
         return self.turbine_output[self.turbine_output.turbine==t].powerGenerator
- 
 
     def get_average_thrust(self):
         """
@@ -323,8 +341,6 @@ class SowfaInterface():
         Returns:
             pow_list (numpy array): an array of thrust per turbine
         """
-
-
         thrust_list = list()
         for t in range(self.num_turbines):
             df_sub = self.turbine_output[self.turbine_output.turbine==t]
@@ -342,7 +358,6 @@ class SowfaInterface():
             FlowData (pd.DataFrame): a pandas table with the columns,
                 of all relavent flow info (e.g. x, y, z, u, v, w).
         """
-
         # Read the dimension info from the file
         with open(filename, 'r') as f:
             for _ in range(10):
@@ -392,7 +407,6 @@ class SowfaInterface():
         return FlowData(x, y, z, df.u.values, df.v.values, df.w.values,
                         spacing, dimensions, origin)
 
-
 def read_sc_input(case_folder, wind_direction=270.):
     """
     Read the super controller (SC) input file to get the wind farm
@@ -406,7 +420,6 @@ def read_sc_input(case_folder, wind_direction=270.):
     Returns:
         df_SC (pd.DataFrame): dataframe containing SC info.
     """
-
     sc_file = os.path.join(case_folder, 'SC_INPUT.txt')
 
     df_SC = pd.read_csv(sc_file, delim_whitespace=True)
@@ -419,7 +432,6 @@ def read_sc_input(case_folder, wind_direction=270.):
 
     return df_SC
 
-
 def read_sowfa_df(folder_name, channels=[]):
     """
     New function to use pandas to read in files using pandas
@@ -431,7 +443,6 @@ def read_sowfa_df(folder_name, channels=[]):
         channels (list, optional): list of specific channels to read.
             Defaults to [].
     """
-
     # Get the availble outputs
     outputNames = [
         f for f in os.listdir(folder_name)
@@ -492,7 +503,6 @@ def read_sowfa_df(folder_name, channels=[]):
 
     return df
 
-
 def read_foam_file(filename):
     """
     Method to read scalar and boolean/string inputs from an OpenFOAM
@@ -504,7 +514,6 @@ def read_foam_file(filename):
     Returns:
         data (dict): dictionary with OpenFOAM inputs
     """
-
     data = {}
 
     with open(filename, 'r') as fid:
@@ -542,7 +551,6 @@ def read_foam_file(filename):
 
     return data
 
-
 def get_turbine_locations(turbine_array_file):
     """
     Extract wind turbine locations from SOWFA data.
@@ -555,7 +563,6 @@ def get_turbine_locations(turbine_array_file):
         layout_x (np.array): wind plant layout coodinates (east-west).
         layout_y (np.array): wind plant layout coodinates (north-south).
     """
-
     x = list()
     y = list()
 
@@ -573,7 +580,6 @@ def get_turbine_locations(turbine_array_file):
     layout_y = np.array(y)
 
     return layout_x, layout_y
-
 
 def get_turbine_pitch_angles(turbine_array_file):
     """
@@ -597,7 +603,6 @@ def get_turbine_pitch_angles(turbine_array_file):
                 p.append(float(data[0]))
 
     return np.array(p)
-
 
 def get_turbine_yaw_angles(turbine_array_file, wind_direction=270.):
     """
