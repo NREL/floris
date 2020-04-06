@@ -14,7 +14,6 @@
 
 # Demonstrate extracting the flow field to vtk
 
-
 import floris.tools as wfct
 
 # Initialize the FLORIS interface fi
@@ -26,4 +25,3 @@ fi.calculate_wake()
 # Get the flow data and save to vtk
 flow_data = fi.get_flow_data()
 flow_data.save_as_vtk('flow.vtk')
-
