@@ -22,16 +22,14 @@ import copy
 import pickle
 
 # Parameters
-num_turbines = 5
+num_turbines = 3
 sowfa_U0 = 8.0
-sowfa_TI = 0.06
-layout_x = (1000.0, 1756.0, 2512.0, 3268.0, 4024.0)
-layout_y = (1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
-yaw_cases_to_select = [
-    np.array([0.,0.,0.,0.,0.]),
-    np.array([25.,0.,0.,0.,0.]),
-    np.array([25.,25.,0.,0.,0.])
-]
+sowfa_TI = 0.1 # High = 0.1, low = 0.06
+
+# Can chose between two x layouts
+# layout_x = (1000.0, 1756.0, 2512.0) 
+layout_x = (1000.0, 1882.0, 2764.0)
+layout_y = (1000.0, 1000.0, 1000.0)
 
 ## Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle('../sowfa_data_set/sowfa_data_set.p')
@@ -44,6 +42,10 @@ df_sowfa = df_sowfa[df_sowfa.sowfa_U0 == sowfa_U0]
 
 # Limit to turbulence
 df_sowfa = df_sowfa[df_sowfa.sowfa_TI == sowfa_TI]
+
+# Limit to particular layout
+df_sowfa = df_sowfa[df_sowfa.layout_x == layout_x]
+df_sowfa = df_sowfa[df_sowfa.layout_y == layout_y]
 
 # Sort by total sowfa power
 df_sowfa['total_sowfa_power'] = df_sowfa.power.apply(np.sum)
@@ -59,6 +61,7 @@ for floris_label in fi_dict:
     df_sowfa[floris_label] = 0
     df_sowfa[floris_label] = df_sowfa[floris_label].astype(object)
     for i, row in df_sowfa.iterrows():
+
 
         # Match the layout, wind_speed and TI
         fi.reinitialize_flow_field(

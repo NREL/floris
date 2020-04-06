@@ -22,14 +22,16 @@ import copy
 import pickle
 
 # Parameters
-num_turbines = 3
+num_turbines = 5
 sowfa_U0 = 8.0
-sowfa_TI = 0.1
-
-# Can chose between two x layouts
-# layout_x = (1000.0, 1756.0, 2512.0) 
-layout_x = (1000.0, 1882.0, 2764.0)
-layout_y = (1000.0, 1000.0, 1000.0)
+sowfa_TI = 0.06 # High = 0.1, low = 0.06
+layout_x = (1000.0, 1756.0, 2512.0, 3268.0, 4024.0)
+layout_y = (1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
+yaw_cases_to_select = [
+    np.array([0.,0.,0.,0.,0.]),
+    np.array([25.,0.,0.,0.,0.]),
+    np.array([25.,25.,0.,0.,0.])
+]
 
 ## Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle('../sowfa_data_set/sowfa_data_set.p')
@@ -42,13 +44,6 @@ df_sowfa = df_sowfa[df_sowfa.sowfa_U0 == sowfa_U0]
 
 # Limit to turbulence
 df_sowfa = df_sowfa[df_sowfa.sowfa_TI == sowfa_TI]
-
-# Limit to particular layout
-df_sowfa = df_sowfa[df_sowfa.layout_x == layout_x]
-df_sowfa = df_sowfa[df_sowfa.layout_y == layout_y]
-
-# Limit to positive yaw angles
-df_sowfa = df_sowfa[df_sowfa.yaw.apply(np.min) >= 0.0]
 
 # Sort by total sowfa power
 df_sowfa['total_sowfa_power'] = df_sowfa.power.apply(np.sum)
@@ -64,7 +59,6 @@ for floris_label in fi_dict:
     df_sowfa[floris_label] = 0
     df_sowfa[floris_label] = df_sowfa[floris_label].astype(object)
     for i, row in df_sowfa.iterrows():
-
 
         # Match the layout, wind_speed and TI
         fi.reinitialize_flow_field(
@@ -185,98 +179,3 @@ df_sowfa = pd.DataFrame(
     sowfa_results, 
     columns = ['p0','p1','p2','p3','p4','y0','y1','y2','y3','y4']
 )
-
-# ## SET UP FLORIS AND MATCH TO BASE CASE
-# wind_speed = 8.38
-# TI = 0.09
-
-# # Initialize the FLORIS interface fi, use default model
-# fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
-# fi.reinitialize_flow_field(wind_speed=[wind_speed],turbulence_intensity=[TI],layout_array=(layout_x, layout_y))
-
-# # Setup alternative with gch off
-# fi_b = copy.deepcopy(fi)
-# fi_b.set_gch(False)
-
-# # Setup the previous defaul
-# fi_gl = wfct.floris_interface.FlorisInterface("../../other_jsons/input_legacy.json")
-# fi_gl.reinitialize_flow_field(wind_speed=[wind_speed],turbulence_intensity=[TI],layout_array=(layout_x, layout_y))
-
-# # Compare yaw combinations
-# yaw_combinations = [
-#     (0,0,0,0,0), (25,0,0,0,0), (25,25,0,0,0)
-# ]
-# yaw_names = ['%d/%d/%d/%d/%d' % yc for yc in yaw_combinations]
-
-# # Plot individual turbine powers
-# fig, axarr = plt.subplots(1,3,sharex=True,sharey=True,figsize=(12,5))
-
-# total_sowfa = []
-# total_gch_on = []
-# total_gch_off = []
-# total_legacy = []
-
-# for y_idx, yc in enumerate(yaw_combinations):
-
-#     # Collect SOWFA DATA
-#     s_data = df_sowfa[(df_sowfa.y0==yc[0]) & (df_sowfa.y1==yc[1]) & (df_sowfa.y2==yc[2]) & (df_sowfa.y2==yc[3]) & (df_sowfa.y2==yc[4])]
-#     s_data = [s_data.p0.values[0], s_data.p1.values[0],s_data.p2.values[0],s_data.p3.values[0],s_data.p4.values[0]]
-#     total_sowfa.append(np.sum(s_data))
-
-#     # Collect GCH ON data
-#     fi.calculate_wake(yaw_angles=yc)
-#     g_data = np.array(fi.get_turbine_power())/ 1000. 
-#     total_gch_on.append(np.sum(g_data))
-
-#     # Collect GCH OFF data
-#     fi_b.calculate_wake(yaw_angles=yc)
-#     b_data = np.array(fi_b.get_turbine_power())/ 1000. 
-#     total_gch_off.append(np.sum(b_data))
-
-#     # Collect Legacy data
-#     fi_b.calculate_wake(yaw_angles=yc)
-#     b_data = np.array(fi_b.get_turbine_power())/ 1000. 
-#     total_gch_off.append(np.sum(b_data))
-
-#     ax = axarr[y_idx]
-#     ax.set_title(yc)
-#     ax.plot(['T0','T1','T2','T3','T4'], s_data,'k',marker='s',label='SOWFA')
-#     ax.plot(['T0','T1','T2','T3','T4'], g_data,'g',marker='o',label='GCH ON')
-#     ax.plot(['T0','T1','T2','T3','T4'], b_data,'b',marker='*',label='GCH OFF')
-
-# axarr[-1].legend()
-
-# # Calculate totals and normalized totals
-# total_sowfa = np.array(total_sowfa)
-# nom_sowfa = total_sowfa/total_sowfa[0]
-
-# total_gch_on = np.array(total_gch_on)
-# nom_gch_on = total_gch_on/total_gch_on[0]
-
-# total_gch_off = np.array(total_gch_off)
-# nom_gch_off = total_gch_off/total_gch_off[0]
-
-# fig, axarr = plt.subplots(1,2,sharex=True,sharey=False,figsize=(8,5))
-
-# # Show results
-# ax  = axarr[0]
-# ax.set_title("Total Power")
-# ax.plot(yaw_names,total_sowfa,'k',marker='s',label='SOWFA',ls='None')
-# ax.axhline(total_sowfa[0],color='k',ls='--')
-# ax.plot(yaw_names,total_gch_on,'g',marker='o',label='GCH ON',ls='None')
-# ax.axhline(total_gch_on[0],color='g',ls='--')
-# ax.plot(yaw_names,total_gch_off,'b',marker='*',label='GCH OFF',ls='None')
-# ax.axhline(total_gch_off[0],color='b',ls='--')
-# ax.legend()
-
-# # Normalized results
-# ax  = axarr[1]
-# ax.set_title("Normalized Power")
-# ax.plot(yaw_names,nom_sowfa,'k',marker='s',label='SOWFA',ls='None')
-# ax.axhline(nom_sowfa[0],color='k',ls='--')
-# ax.plot(yaw_names,nom_gch_on,'g',marker='o',label='GCH ON',ls='None')
-# ax.axhline(nom_gch_on[0],color='g',ls='--')
-# ax.plot(yaw_names,nom_gch_off,'b',marker='*',label='GCH OFF',ls='None')
-# ax.axhline(nom_gch_off[0],color='b',ls='--')
-
-# plt.show()
