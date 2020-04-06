@@ -10,13 +10,17 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+# See read the https://floris.readthedocs.io for documentation
+
 from .wake_velocity.base_velocity_deficit import VelocityDeficit
 from .wake_velocity.curl import Curl as CurlDeficit
-from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaussDeficit
+from .wake_velocity.gaussianModels.gauss_legacy \
+    import LegacyGauss as LegacyGaussDeficit
 from .wake_velocity.gaussianModels.gauss import Gauss as GaussDeficit
 from .wake_velocity.jensen import Jensen
 from .wake_velocity.multizone import MultiZone
-from .wake_velocity.gaussianModels.ishihara_qian import IshiharaQian as IshiharaQianDeficit
+from .wake_velocity.gaussianModels.ishihara_qian \
+    import IshiharaQian as IshiharaQianDeficit
 from .wake_velocity.gaussianModels.blondel import Blondel as BlondelDeficit
 
 from .wake_deflection.base_velocity_deflection import VelocityDeflection
@@ -25,8 +29,10 @@ from .wake_deflection.gauss import Gauss as GaussDeflection
 from .wake_deflection.curl import Curl as CurlDeflection
 
 from .wake_turbulence.base_wake_turbulence import WakeTurbulence
-from .wake_turbulence.crespo_hernandez import CrespoHernandez as CrespoHernandezTurbulence
-from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
+from .wake_turbulence.crespo_hernandez \
+    import CrespoHernandez as CrespoHernandezTurbulence
+from .wake_turbulence.ishihara_qian \
+    import IshiharaQian as IshiharaQianTurbulence
 from .wake_turbulence.direct import Direct as DirectTurbulence
 
 from .wake_combination.base_wake_combination import WakeCombination
@@ -68,7 +74,7 @@ class Wake():
         else:
             self.parameters = properties["parameters"]
         # TODO: Add support for tuning wake combination parameters?
-        # wake_combination_parameters = parameters["wake_combination_parameters"]
+        # wake_comb_parameters = parameters["wake_combination_parameters"]
 
         self._velocity_models = {
             "jensen": Jensen,
