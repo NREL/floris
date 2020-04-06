@@ -1,13 +1,14 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 # See read the https://floris.readthedocs.io for documentation
 
@@ -19,7 +20,6 @@ sowfa_case = wfct.sowfa_utilities.SowfaInterface('sowfa_example')
 
 # Summarize self
 print(sowfa_case)
-
 
 # Demonstrate flow field visualizations
 
@@ -33,7 +33,6 @@ fig, axarr = plt.subplots(3, 2, figsize=(10, 10))
 ax = axarr[0, 0]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Original')
-
 
 # Set turbine location as 0,0
 hor_plane = wfct.cut_plane.set_origin(hor_plane, 250., 200.)
@@ -57,7 +56,6 @@ ax = axarr[0, 1]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Provided Grid')
 
-
 # Express axis in terms of D
 D = 126.  # m
 hor_plane = wfct.cut_plane.rescale_axis(hor_plane, x1_factor=D, x2_factor=D)
@@ -65,15 +63,11 @@ ax = axarr[1, 1]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title('Axis in D')
 
-
-
 # Invert x1
-
 ax = axarr[2, 1]
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 wfct.visualization.reverse_cut_plane_x_axis_in_plot(ax=ax)
 ax.set_title('Invert x axis')
-
 
 # Access and plot SOWFA outputs
 
