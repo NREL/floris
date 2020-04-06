@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface('../example_input.json')
 
 # Calculate wake
 fi.calculate_wake()

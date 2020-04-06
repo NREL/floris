@@ -1,13 +1,16 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See read the https://floris.readthedocs.io for documentation
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,6 +18,7 @@ from scipy.interpolate import griddata
 import pandas as pd
 import copy
 from ..utilities import setup_logger
+# logger = setup_logger(name='__name__')
 
 def nudge_outward(x):
     """
@@ -35,7 +39,8 @@ def get_plane_from_flow_data(flow_data,
                             x3_value=100):
     """
     Get a plane of data, in form of dataframe, from a flow_data object
-    This is used to get planes from SOWFA results and FLORIS sims with fixed grids, ie curl
+    This is used to get planes from SOWFA results and FLORIS sims with fixed
+    grids, ie curl.
 
     Args:
         flow_data (np.array): 3D vector field of velocity data
@@ -70,6 +75,7 @@ def get_plane_from_flow_data(flow_data,
     search_values = np.array(sorted(np.unique(x3_array)))
     nearest_idx = (np.abs(search_values - x3_value)).argmin()
     nearest_value = search_values[nearest_idx]
+    # logger.info('Nearest value to %.2f is %.2f' % (x3_value, nearest_value))
     print('Nearest value to %.2f is %.2f' %
         (x3_value, nearest_value))
 
@@ -84,13 +90,16 @@ def get_plane_from_flow_data(flow_data,
     v = v[x3_select_mask]
     w = w[x3_select_mask]
 
-    df = pd.DataFrame({'x1':x1,
-                'x2':x2,
-                'x3':x3,
-                'u':u,
-                'v':v,
-                'w':w
-                })
+    df = pd.DataFrame(
+        {
+            'x1':x1,
+            'x2':x2,
+            'x3':x3,
+            'u':u,
+            'v':v,
+            'w':w
+        }
+    )
     return df
 
 
@@ -163,18 +172,33 @@ def change_resolution(cut_plane, resolution=(100, 100)):
 
     # Interpolate u,v,w
     u_mesh = griddata(
-            np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
-            cut_plane.df.u.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='cubic')
+        np.column_stack(
+            [nudge_outward(cut_plane.df.x1),
+            nudge_outward(cut_plane.df.x2)]
+        ),
+        cut_plane.df.u.values,
+        (x1_mesh.flatten(), x2_mesh.flatten()),
+        method='cubic'
+    )
     v_mesh = griddata(
-            np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
-            cut_plane.df.v.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='cubic')
+        np.column_stack(
+            [nudge_outward(cut_plane.df.x1),
+            nudge_outward(cut_plane.df.x2)]
+        ),
+        cut_plane.df.v.values,
+        (x1_mesh.flatten(), x2_mesh.flatten()),
+        method='cubic'
+    )
 
     w_mesh = griddata(
-            np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
-            cut_plane.df.w.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='cubic')
+        np.column_stack(
+            [nudge_outward(cut_plane.df.x1),
+            nudge_outward(cut_plane.df.x2)]
+        ),
+        cut_plane.df.w.values,
+        (x1_mesh.flatten(), x2_mesh.flatten()),
+        method='cubic'
+    )
 
 
     # Assign back to df
@@ -223,18 +247,33 @@ def interpolate_onto_array(cut_plane_in, x1_array, x2_array):
 
     # Interpolate u,v,w
     u_mesh = griddata(
-            np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
-            cut_plane.df.u.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='cubic')
+        np.column_stack(
+            [nudge_outward(cut_plane.df.x1),
+            nudge_outward(cut_plane.df.x2)]
+        ),
+        cut_plane.df.u.values,
+        (x1_mesh.flatten(), x2_mesh.flatten()),
+        method='cubic'
+    )
     v_mesh = griddata(
-            np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
-            cut_plane.df.v.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='cubic')
+        np.column_stack(
+            [nudge_outward(cut_plane.df.x1),
+            nudge_outward(cut_plane.df.x2)]
+        ),
+        cut_plane.df.v.values,
+        (x1_mesh.flatten(), x2_mesh.flatten()),
+        method='cubic'
+    )
 
     w_mesh = griddata(
-            np.column_stack([nudge_outward(cut_plane.df.x1), nudge_outward(cut_plane.df.x2)]),
-            cut_plane.df.w.values, (x1_mesh.flatten(), x2_mesh.flatten()),
-            method='cubic')
+        np.column_stack(
+            [nudge_outward(cut_plane.df.x1),
+            nudge_outward(cut_plane.df.x2)]
+        ),
+        cut_plane.df.w.values,
+        (x1_mesh.flatten(), x2_mesh.flatten()),
+        method='cubic'
+    )
 
 
     # Assign back to df
@@ -287,7 +326,8 @@ def project_onto(cut_plane_a, cut_plane_b):
                 a projected onto b's axis
     """
 
-    return interpolate_onto_array(cut_plane_a, cut_plane_b.df.x1.unique(), cut_plane_b.df.x2.unique())
+    return interpolate_onto_array(
+        cut_plane_a, cut_plane_b.df.x1.unique(), cut_plane_b.df.x2.unique())
 
 def subtract(cut_plane_a_in, cut_plane_b_in):
     """

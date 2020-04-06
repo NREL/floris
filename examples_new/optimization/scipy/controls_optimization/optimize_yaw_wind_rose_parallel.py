@@ -10,18 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import matplotlib.pyplot as plt
-import floris.tools as wfct
-import floris.tools.visualization as vis
-import floris.tools.cut_plane as cp
-from floris.tools.optimization.scipy.yaw_wind_rose_parallel \
-    import YawOptimizationWindRoseParallel
-import floris.tools.wind_rose as rose
-import floris.tools.power_rose as pr
-import numpy as np
-import pandas as pd
-import os
-
+# See read the https://floris.readthedocs.io for documentation
 
 # NOTE: To run this script across multiple cores, you must
 # execute it as follows:
@@ -34,6 +23,18 @@ import os
 # installed, which is not part of the standard FLORIS installation and also
 # requires a working MPI implementation. For more information, please see
 # https://https://mpi4py.readthedocs.io/.
+
+import matplotlib.pyplot as plt
+import floris.tools as wfct
+import floris.tools.visualization as vis
+import floris.tools.cut_plane as cp
+from floris.tools.optimization.scipy.yaw_wind_rose_parallel \
+    import YawOptimizationWindRoseParallel
+import floris.tools.wind_rose as rose
+import floris.tools.power_rose as pr
+import numpy as np
+import pandas as pd
+import os
 
 # Need if statement so that spawned child processes do not execute this code as
 # well, as this file is imported on each core/node.
