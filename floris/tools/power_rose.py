@@ -20,72 +20,48 @@ from ..utilities import setup_logger
 
 class PowerRose():
     """
-    PowerRose object class used to parse data and generate figures.
+    PowerRose object class used to parse data and generate figures. 
+    The PowerRose object can layer be populated with inputs or a 
+    saved PowerRose object can be loaded.
     """
 
-    def __init__(self, name=None, df_windrose=None, power_no_wake=None, power_baseline=None, power_opt=None, 
-                   df_turbine_power_no_wake=None, df_turbine_power_baseline=None,
-                   df_turbine_power_opt=None, df_yaw=None):
-
+    def __init__(self, ):
         """
-        Additional initialization of the PowerRose object. The PowerRose object can be intialized 
-        with inputs or as an empty object that can be used to load a saved PowerRose object.
+        Init Function of PowerRose Object.
+        No explicit arguments required.
+        """
+
+    def load(self, filename):
+        """
+        Load PowerRose object from pickle file.
 
         Args:
-            name (str): name of PowerRose object.
-            df_windrose (pd.DataFrame): Wind rose dataframe containing at least 
-                'ws', 'wd', and 'freq_val' columns
-            power_no_wake (iterable): Wind farm power corresponding to wind conditions 
-                in df_windrose without wake losses
-            power_baseline (iterable): Baseline wind farm power corresponding to 
-                wind conditions in df_windrose
-            power_opt (iterable, optional): Optimal wind farm power corresponding to 
-                wind conditions in df_windrose. Defaults to None.
-            df_turbine_power_no_wake (pd.DataFrame, optional): Wind turbine power
-                data without wake losses. Dataframe oraganized with turbines as columns 
-                and wind conditions corresponding to df_windrose as rows. Defaults to None.
-                TODO: Currently not used.
-            df_turbine_power_baseline (pd.DataFrame, optional): Wind turbine baseline power
-                data. Dataframe oraganized with turbines as columns and wind conditions 
-                corresponding to df_windrose as rows. Defaults to None.
-                TODO: Currently not used.
-            df_turbine_power_opt (pd.DataFrame, optional): Optimal wind turbine power data. 
-                Dataframe oraganized with turbines as columns and wind conditions 
-                corresponding to df_windrose as rows. Defaults to None.
-                TODO: Currently not used.
-            df_yaw (pd.DataFrame, optional): Optimal turbine yaw angles. 
-                Dataframe oraganized with turbines as columns and wind conditions 
-                corresponding to df_windrose as rows. Defaults to None.
-                TODO: Currently not used.
-
+            filename (str): Read-from path to pickled PowerRose object.
         """
-        self.name = name
-        if df_windrose is not None:
-            self.df_windrose = self._norm_frequency(df_windrose)
-        self.power_no_wake = power_no_wake
-        self.power_baseline = power_baseline
-        self.power_opt = power_opt
-        self.df_yaw = df_yaw
-        self.df_turbine_power_no_wake = df_turbine_power_no_wake
-        self.df_turbine_power_baseline = df_turbine_power_baseline
-        self.df_turbine_power_opt = df_turbine_power_opt
 
-        # Only use_opt data if provided
-        if (power_opt is None) and (df_turbine_power_opt is None) and (df_yaw is None):
-            self.use_opt = False
-        else:
-            self.use_opt = True
+        # self.name, self.df_power, self.df_yaw, self.df_turbine_power_no_wake, self.df_turbine_power_baseline, self.df_turbine_power_opt, self.df_combine = pickle.load(
+        #    open(filename, "rb"))
 
-        # # Make a single combined frame in case it's useful (Set aside for now)
-        # self.df_combine = self._all_combine()
+        self.name, self.df_windrose, self.power_no_wake, self.power_baseline, self.power_opt, \
+            self.use_opt = pickle.load(open(filename, "rb"))
 
-        if (df_windrose is not None) and (power_no_wake is not None) and (power_baseline is not None):
-            # Compute energies
-            self.df_power = pd.DataFrame({'wd': df_windrose['wd'], 'ws': df_windrose['ws']})
-            self._compute_energy()
+        # Compute energies
+        self.df_power = pd.DataFrame({'wd': self.df_windrose['wd'], 'ws': self.df_windrose['ws']})
+        self._compute_energy()
 
-            # Compute totals
-            self._compute_totals()
+        # Compute totals
+        self._compute_totals()
+
+    def save(self, filename):
+        """
+        Pickle a PowerRose Object
+
+        Args:
+            filename (str): Write-to path for PowerRose pickle.
+        """
+        pickle.dump([
+            self.name, self.df_windrose, self.power_no_wake, self.power_baseline, self.power_opt, \
+            self.use_opt], open(filename, "wb"))
 
     # def _all_combine(self):
     #     df_power = self.df_power.copy(deep=True)
@@ -163,6 +139,59 @@ class PowerRose():
                 self.opt_wake_loss -
                 self.baseline_wake_loss) / self.baseline_wake_loss
 
+    def make_power_rose_from_user_data(self, 
+                                    name, df_windrose, power_no_wake, 
+                                    power_baseline, power_opt=None):
+        """
+        Populate PowerRose object variables with uder-defined data.
+
+        Args:
+            name (str): name of PowerRose object.
+            df_windrose (pd.DataFrame): Wind rose dataframe containing at least 
+                'ws', 'wd', and 'freq_val' columns
+            power_no_wake (iterable): Wind farm power corresponding to wind conditions 
+                in df_windrose without wake losses
+            power_baseline (iterable): Baseline wind farm power corresponding to 
+                wind conditions in df_windrose
+            power_opt (iterable, optional): Optimal wind farm power corresponding to 
+                wind conditions in df_windrose. Defaults to None.
+            TODO: df_turbine_power_no_wake (pd.DataFrame, optional): Wind turbine power
+                data without wake losses. Dataframe oraganized with turbines as columns 
+                and wind conditions corresponding to df_windrose as rows. Defaults to None.
+            TODO: df_turbine_power_baseline (pd.DataFrame, optional): Wind turbine baseline power
+                data. Dataframe oraganized with turbines as columns and wind conditions 
+                corresponding to df_windrose as rows. Defaults to None.
+            TODO: df_turbine_power_opt (pd.DataFrame, optional): Optimal wind turbine power data. 
+                Dataframe oraganized with turbines as columns and wind conditions 
+                corresponding to df_windrose as rows. Defaults to None.
+            TODO: df_yaw (pd.DataFrame, optional): Optimal turbine yaw angles. 
+                Dataframe oraganized with turbines as columns and wind conditions 
+                corresponding to df_windrose as rows. Defaults to None.
+
+        """
+        self.name = name
+        if df_windrose is not None:
+            self.df_windrose = self._norm_frequency(df_windrose)
+        self.power_no_wake = power_no_wake
+        self.power_baseline = power_baseline
+        self.power_opt = power_opt
+
+        # Only use_opt data if provided
+        if power_opt is None:
+            self.use_opt = False
+        else:
+            self.use_opt = True
+
+        # # Make a single combined frame in case it's useful (Set aside for now)
+        # self.df_combine = self._all_combine()
+
+        # Compute energies
+        self.df_power = pd.DataFrame({'wd': df_windrose['wd'], 'ws': df_windrose['ws']})
+        self._compute_energy()
+
+        # Compute totals
+        self._compute_totals()
+
     def report(self):
         """
         Print operational data information to screen.
@@ -194,42 +223,6 @@ class PowerRose():
                 (100. * self.baseline_percent))
             print('Wk Loss\t--\t\t%.1f%%' %
                 (100. * self.baseline_wake_loss))
-
-
-    def load(self, filename):
-        """
-        Load PowerRose object from pickle file.
-
-        Args:
-            filename (str): Read-from path to pickled PowerRose object.
-        """
-
-        # self.name, self.df_power, self.df_yaw, self.df_turbine_power_no_wake, self.df_turbine_power_baseline, self.df_turbine_power_opt, self.df_combine = pickle.load(
-        #    open(filename, "rb"))
-
-        self.name, self.df_windrose, self.power_no_wake, self.power_baseline, self.power_opt, \
-            self.df_turbine_power_no_wake, self.df_turbine_power_baseline, self.df_turbine_power_opt, \
-            self.df_yaw, self.use_opt = pickle.load(open(filename, "rb"))
-
-        # Compute energies
-        self.df_power = pd.DataFrame({'wd': self.df_windrose['wd'], 'ws': self.df_windrose['ws']})
-        self._compute_energy()
-
-        # Compute totals
-        self._compute_totals()
-
-    def save(self, filename):
-        """
-        Pickle a PowerRose Object
-
-        Args:
-            filename (str): Write-to path for PowerRose pickle.
-        """
-        pickle.dump([
-            self.name, self.df_windrose, self.power_no_wake, self.power_baseline, self.power_opt, \
-            self.df_turbine_power_no_wake, self.df_turbine_power_baseline, self.df_turbine_power_opt, \
-            self.df_yaw, self.use_opt# , self.df_combine
-        ], open(filename, "wb"))
 
     def plot_by_direction(self,axarr=None):
         """
