@@ -10,6 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+# See read the https://floris.readthedocs.io for documentation
 
 import matplotlib.pyplot as plt
 import floris.tools as wfct

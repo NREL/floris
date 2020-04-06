@@ -10,6 +10,14 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+# See read the https://floris.readthedocs.io for documentation
+
+# This example optimization takes a 1x5 array of turbines at an initial spacing
+# of 9 rotor diameters and works to compress that spacing in the streamwise (x)
+# direction, while working to maintain the original energy output by leveraging
+# wake steering. It is meant to be an illustrative example of some of the
+# benefits of wake steering.
+
 import matplotlib.pyplot as plt
 import floris.tools as wfct
 import floris.tools.visualization as vis
@@ -17,12 +25,6 @@ from floris.tools.optimization.scipy.power_density_1D \
     import PowerDensityOptimization1D
 import numpy as np
 import os
-
-# This example optimization takes a 1x5 array of turbines at an initial spacing
-# of 9 rotor diameters and works to compress that spacing in the streamwise (x)
-# direction, while working to maintain the original energy output by leveraging
-# wake steering. It is meant to be an illustrative example of some of the
-# benefits of wake steering.
 
 # Instantiate the FLORIS object
 file_dir = os.path.dirname(os.path.abspath(__file__))

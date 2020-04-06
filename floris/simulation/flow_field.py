@@ -1,13 +1,16 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See read the https://floris.readthedocs.io for documentation
 
 import numpy as np
 from ..utilities import Vec3
@@ -238,23 +241,25 @@ class FlowField():
             x, y, z, turbine, coord, deflection, flow_field)
 
         # calculate spanwise and streamwise velocities if needed
-        v_deficit, w_deficit = \
-            self.wake.velocity_model.calculate_VW(
-                v_deficit,
-                w_deficit,
-                coord,
-                turbine,
-                flow_field,
-                x,
-                y,
-                z
-        )
+        if hasattr(self.wake.velocity_model, 'calculate_wake'):
+            v_deficit, w_deficit = \
+                self.wake.velocity_model.calculate_VW(
+                    v_deficit,
+                    w_deficit,
+                    coord,
+                    turbine,
+                    flow_field,
+                    x,
+                    y,
+                    z
+            )
 
         # correction step
-        u_corrected = self.wake.velocity_model.correction_steps(
-            flow_field.u_initial, u_deficit, v_deficit, w_deficit, x, y,
-            turbine, coord)
-        return u_corrected, v_deficit, w_deficit
+        if hasattr(self.wake.velocity_model, 'correction_steps'):
+            u_deficit = self.wake.velocity_model.correction_steps(
+                flow_field.u_initial, u_deficit, v_deficit, w_deficit, x, y,
+                turbine, coord)
+        return u_deficit, v_deficit, w_deficit
 
     def _compute_turbine_wake_turbulence(self, ambient_TI, coord_ti,
                                          turbine_coord, turbine):
