@@ -241,7 +241,7 @@ class FlowField():
             x, y, z, turbine, coord, deflection, flow_field)
 
         # calculate spanwise and streamwise velocities if needed
-        if hasattr(self.wake.velocity_model, 'calculate_wake'):
+        if hasattr(self.wake.velocity_model, 'calculate_VW'):
             v_deficit, w_deficit = \
                 self.wake.velocity_model.calculate_VW(
                     v_deficit,
