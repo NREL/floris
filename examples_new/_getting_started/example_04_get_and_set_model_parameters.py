@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 # Show the current model parameters
 print('All the model parameters and their current values:\n')
@@ -41,10 +41,11 @@ print('\n')
 
 # Set parameters on the current model
 print('Set specific model parameters on the current wake model:\n')
-params = {'Wake Velocity Parameters': {'alpha': 0.2},
-          'Wake Deflection Parameters': {'alpha': 0.2},
-          'Wake Turbulence Parameters': {
-                                    'd': {'const': 2.4, 'Ct': 1.2, 'TI': 0.0}}}
+params = {
+    'Wake Velocity Parameters': {'alpha': 0.2},
+    'Wake Deflection Parameters': {'alpha': 0.2},
+    'Wake Turbulence Parameters': {'ti_constant': 1.0}
+}
 fi.set_model_parameters(params)
 print('\n')
 
