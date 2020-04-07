@@ -1,4 +1,4 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -41,10 +41,11 @@ print('\n')
 
 # Set parameters on the current model
 print('Set specific model parameters on the current wake model:\n')
-params = {'Wake Velocity Parameters': {'alpha': 0.2},
-          'Wake Deflection Parameters': {'alpha': 0.2},
-          'Wake Turbulence Parameters': {
-                                    'd': {'const': 2.4, 'Ct': 1.2, 'TI': 0.0}}}
+params = {
+    'Wake Velocity Parameters': {'alpha': 0.2},
+    'Wake Deflection Parameters': {'alpha': 0.2},
+    'Wake Turbulence Parameters': {'ti_constant': 1.0}
+}
 fi.set_model_parameters(params)
 print('\n')
 
