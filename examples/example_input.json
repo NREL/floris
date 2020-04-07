@@ -27,19 +27,14 @@
         0.06
       ],
       "wind_shear": 0.12,
+      "specified_wind_height": 90.0,
       "wind_veer": 0.0,
       "air_density": 1.225,
       "layout_x": [
-        0,
-        756,
-        0,
-        756
+        0.0
       ],
       "layout_y": [
-        0.0,
-        0.0,
-        630.0,
-        630.0
+        0.0
       ],
       "wind_x": [
         0
@@ -54,6 +49,7 @@
     "name": "nrel_5mw",
     "description": "NREL 5MW",
     "properties": {
+      "use_points_on_perimeter": false,
       "rotor_diameter": 126.0,
       "hub_height": 90.0,
       "blade_count": 3,
@@ -223,10 +219,34 @@
     "name": "wake_default",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss",
+      "velocity_model": "gauss_legacy",
       "turbulence_model": "crespo_hernandez",
       "deflection_model": "gauss",
-      "combination_model": "sosfs"
+      "combination_model": "sosfs",
+      "parameters": {
+        "wake_velocity_parameters": {
+          "gauss_legacy": {
+            "ka": 0.38,
+            "kb": 0.004,
+            "calculate_VW_velocities": true,
+            "use_yaw_added_recovery": true
+          }
+        },
+        "wake_deflection_parameters": {
+          "gauss": {
+            "dm": 1.0,
+            "use_secondary_steering":true
+          }
+        },
+        "wake_turbulence_parameters": {
+          "crespo_hernandez": {
+            "initial": 0.5,
+            "constant": 0.9,
+            "ai": 0.75,
+            "downstream": -0.325
+          }
+        }
     }
   }
+}
 }
