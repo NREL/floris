@@ -49,8 +49,8 @@ class PowerRose():
         self.df_power = pd.DataFrame({'wd': self.df_windrose['wd'], 'ws': self.df_windrose['ws']})
         self._compute_energy()
 
-            # Compute totals
-            self._compute_totals()
+        # Compute totals
+        self._compute_totals()
 
     def save(self, filename):
         """
