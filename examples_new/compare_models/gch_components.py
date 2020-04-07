@@ -21,13 +21,14 @@ import pandas as pd
 import copy
 import pickle
 
-
 # Set up default model
 fi_gch = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 # Set as a row of 5 turbines spaced 6D apart
 D = 126.
-fi_gch.reinitialize_flow_field(layout_array=[[D*6*r for r in range(5)],[0,0,0,0,0]])
+fi_gch.reinitialize_flow_field(
+    layout_array=[[D*6*r for r in range(5)],[0, 0, 0, 0, 0]]
+)
 
 # Set up versions with components disabled
 fi_ss = copy.deepcopy(fi_gch)
@@ -57,7 +58,7 @@ yar_power = np.array(fi_yar.get_turbine_power())/1000.
 fi_all_off.calculate_wake([30,0,0,0,0])
 all_off_power = np.array(fi_all_off.get_turbine_power())/1000.
 
-turbines = ['t1','t2','t3','t4','t5']
+turbines = ['T1','T2','T3','T4','T5']
 fig, ax = plt.subplots(figsize=(10,6))
 
 ax.plot(turbines,base_power,'k.-',label='Aligned')
@@ -70,7 +71,6 @@ ax.set_xlabel("Turbinbe")
 ax.set_ylabel('Power (kW)')
 ax.legend()
 
-
 # Total power
 print('Total Powers =======')
 print('Baseline:\t%.1f'%np.sum(base_power))
@@ -78,7 +78,5 @@ print('All Off:\t%.1f'%np.sum(all_off_power))
 print('YAR:\t%.1f'%np.sum(yar_power))
 print('SS:\t%.1f'%np.sum(ss_power))
 print('GCH:\t%.1f'%np.sum(gch_power))
-
-
 
 plt.show()

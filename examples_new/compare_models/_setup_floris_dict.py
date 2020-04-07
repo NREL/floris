@@ -37,7 +37,6 @@ fi_dict['gauss'] = (fi_4, 'k', '.')
 fi_3 = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
 fi_dict['legacy'] = (fi_3, 'm', '^')
 
-
 # Merged Class 
 # The merged case, still in development, blends the super-gaussian model of     
 #       Blondel, F. and Cathelain, M. "An alternative form of the
@@ -49,14 +48,11 @@ fi_dict['legacy'] = (fi_3, 'm', '^')
 fi_2 = wfct.floris_interface.FlorisInterface("../other_jsons/input_merge.json")
 fi_dict['merge'] = (fi_2,'r','o')
 
-
 # Default Class 
 # The default class uses the legacy gauss velocity deficit model, however the 
 # Crespo-Hernandez Turbulence Model has been retuned to match available data
 # GCH is used for deflection in place of the deflection model
 fi_1 = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_dict['default'] = (fi_1,'b','d') # Define a fixed color and marker
-
-
 
 pickle.dump( fi_dict, open( "floris_models.p", "wb" ) )

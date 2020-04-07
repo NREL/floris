@@ -31,7 +31,12 @@ def power_cross_sweep(fi_in,D,dist_downstream,yaw_angle=0):
 
     for y_idx, y_loc in enumerate(sweep_locations):
 
-        fi.reinitialize_flow_field(layout_array=([0,dist_downstream*D,dist_downstream*D*2],[0,0,y_loc*D]))
+        fi.reinitialize_flow_field(
+            layout_array=(
+                [0,dist_downstream*D,dist_downstream*D*2],
+                [0,0,y_loc*D]
+            )
+        )
         fi.calculate_wake([yaw_angle,0,0])
         power_out[y_idx] = fi.get_turbine_power()[2]/1000.
 
@@ -47,8 +52,10 @@ def power_cross_sweep_gain(fi_in,D,dist_downstream,yaw_angle=0):
     for y_idx, y_loc in enumerate(sweep_locations):
 
         fi.reinitialize_flow_field(
-            layout_array=([0,dist_downstream*D,dist_downstream*D*2],
-            [0,0,y_loc*D])
+            layout_array=(
+                [0,dist_downstream*D,dist_downstream*D*2],
+                [0,0,y_loc*D]
+            )
         )
         fi.calculate_wake([0,0,0])
         base_power = fi.get_turbine_power()[2]/1000.
@@ -61,7 +68,6 @@ def power_cross_sweep_gain(fi_in,D,dist_downstream,yaw_angle=0):
 # Load the saved FLORIS interfaces
 fi_dict = pickle.load( open( "floris_models.p", "rb" ) )
 
-
 # Make a plot of comparisons
 fig, axarr = plt.subplots(3,3,sharex=True, sharey=False,figsize=(14,9))
 
@@ -69,8 +75,9 @@ fig, axarr = plt.subplots(3,3,sharex=True, sharey=False,figsize=(14,9))
 for d_idx, dist_downstream in enumerate([10, 6, 3]):
     for y_idx, yaw in enumerate([0 , 20]):
         ax = axarr[d_idx, y_idx]
-        ax.set_title('%d D spacing, yaw (1st turb) = %d' % (dist_downstream,yaw))
-
+        ax.set_title(
+            '%d D spacing, yaw (1st turb) = %d' % (dist_downstream,yaw)
+        )
 
         for floris_label in fi_dict:
             (fi, floris_color, floris_marker) = fi_dict[floris_label]
@@ -114,7 +121,6 @@ for d_idx, dist_downstream in enumerate([10, 6, 3]):
                 label=floris_label
             )
         ax.set_ylim([-50,75])
-
 
 axarr[0,0].legend()
 axarr[-1,0].set_xlabel('Lateral Offset (D)')
