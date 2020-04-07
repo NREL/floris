@@ -210,6 +210,54 @@ class WindRose():
         # Update internal data frame
         self.df = self.resample_wind_direction(self.df, wd)
 
+    def resample_column(self, df, col, bins):
+        """
+        Modify the default bins for sorting the specified variable.
+
+        Args:
+            df (pd.DataFrame): WindRose dataframe containing column of interest
+            col (str): Name of column to resample
+            bins (np.array): Vector of bins for the WindRose column
+
+        Returns:
+            df (pd.DataFrame): WindRose dataframe with resampled column
+        """
+        # Make a copy of incoming dataframe
+        df = df.copy(deep=True)
+
+        # Cut into bins, make first and last bins extend to -/+ infinity
+        var_edges = np.append(0.5*(bins[1:]+bins[:-1]),np.inf)
+        var_edges = np.append(-np.inf,var_edges)
+        df[col] = pd.cut(df[col], var_edges, labels=bins)
+
+        # Regroup
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
+
+        # Fill nans
+        df = df.fillna(0)
+
+        # Reset the index
+        df = df.reset_index()
+
+        # Set to float
+        for c in [c for c in df.columns if c != 'freq_val']:
+            df[c] = df[c].astype(float)
+
+        return df
+
+    def internal_resample_column(self, col, bins):
+        """
+        Internal method for resampling column into desired bins.
+        Modifies data within WindRose object without explicit return.
+
+        Args:
+            col (str): Name of column to resample
+            bins (np.array): Vector of bins for the WindRose column
+        """
+
+        # Update internal data frame
+        self.df = self.resample_column(self.df, col, bins)
+
     def resample_average_ws_by_wd(self, df):
         """
         Re-established counts of wind speed observations in wind
@@ -340,6 +388,146 @@ class WindRose():
         # Save the df at this point
         self.df = df
         #TODO is there a reason self.df is updated AND returned?
+        return self.df
+
+    def make_wind_rose_from_user_data(self,
+                                      wd_raw,
+                                      ws_raw,
+                                      *args,
+                                      wd=np.arange(0, 360, 5.),
+                                      ws=np.arange(0, 26, 1.)):
+   
+        """
+        Given user-specified arrays of wind direction, wind speed, and 
+        additional optional variables, return a dataframe containing the 
+        normalized frequency of each set of wind speed, wind direction,
+        and any additional variables specified.
+
+        Args:
+            wd_raw (array-like): An array-like list of all wind directions 
+                used to calculate the normalized frequencies
+            wd_raw (array-like): An array-like list of all wind speeds 
+                used to calculate the normalized frequencies
+            *args: Variable length argument list consisting of alternating 
+                string arguments, array-like arguments, and np.array objects. 
+                The strings indicate the names of additional variables to include 
+                in the wind rose where the array-like arguments contain values of 
+                the variables used to calculate the frequencies and the np.array 
+                objects specify the bin limits for the variable. 
+            wd (np.array, optional): Wind direction bin limits.
+                Defaults to np.arange(0, 360, 5.).
+            ws (np.array, optional): Wind speed bin limits.
+                Defaults to np.arange(0, 26, 1.).
+
+        Returns:
+            df (pd.DataFrame): DataFrame with wind speed and direction
+                (and any other additional variables specified) values and corresponding 
+                frequencies.
+        """
+
+        df = pd.DataFrame()
+
+        # convert inputs to np.array
+        wd_raw = np.array(wd_raw)
+        ws_raw = np.array(ws_raw)
+
+        # Start by simply round and wrapping the wind direction and wind speed columns
+        df['wd'] = geo.wrap_360(wd_raw.round())
+        df['ws'] = ws_raw.round()
+
+        # Loop through *args and assign new dataframe columns after cutting into possibly irregularly-spaced bins
+        for in_var in range(0,len(args),3):
+            df[args[in_var]] = np.array(args[in_var+1])
+            
+            # Cut into bins, make first and last bins extend to -/+ infinity
+            var_edges = np.append(0.5*(args[in_var+2][1:]+args[in_var+2][:-1]),np.inf)
+            var_edges = np.append(-np.inf,var_edges)
+            df[args[in_var]] = pd.cut(df[args[in_var]], var_edges, labels=args[in_var+2])
+
+        # Now group up
+        df['freq_val'] = 1.
+        df = df.groupby([c for c in df.columns if c != 'freq_val']).sum()
+        df['freq_val'] = df.freq_val.astype(float) / df.freq_val.sum()
+        df = df.reset_index()
+
+        # Save the df at this point
+        self.df = df
+
+        # Resample onto the provided wind speed and wind direction binnings
+        self.internal_resample_wind_speed(ws=ws)
+        self.internal_resample_wind_direction(wd=wd)
+
+        return self.df
+
+    def make_wind_rose_from_user_dist(self,
+                                      wd_raw,
+                                      ws_raw,
+                                      freq_val,
+                                      *args,
+                                      wd=np.arange(0, 360, 5.),
+                                      ws=np.arange(0, 26, 1.)):
+   
+        """
+        Given user-specified arrays of wind direction, wind speed, additional optional 
+        variables, and frequencies, return a dataframe containing the normalized frequency 
+        of each set of wind speed, wind direction, and any additional variables specified 
+        resampled according to the optional bins that are provided. This dataframe is then 
+        assigned to the WindRose object.
+
+        Args:
+            wd_raw (array-like): An array-like list of all wind directions 
+                corresponding to the normalized frequencies
+            wd_raw (array-like): An array-like list of all wind speeds 
+                corresponding to the normalized frequencies
+            freq_val (array-like): An array-like list of normalized frequencies corresponding 
+                to the provided wind variable values
+            *args: Variable length argument list consisting of alternating 
+                string arguments, array-like arguments, and np.array objects. 
+                The strings indicate the names of additional variables to include 
+                in the wind rose where the array-like arguments contain values of 
+                the variables corresponding to the provided frequencies. The np.array 
+                objects specify the bin limits for the variable.
+            wd (np.array, optional): Wind direction bin limits.
+                Defaults to np.arange(0, 360, 5.).
+            ws (np.array, optional): Wind speed bin limits.
+                Defaults to np.arange(0, 26, 1.).
+
+        Returns:
+            df (pd.DataFrame): DataFrame with wind speed and direction
+                (and any other additional variables specified) values and corresponding 
+                frequencies.
+        """
+
+        df = pd.DataFrame()
+
+        # convert inputs to np.array
+        wd_raw = np.array(wd_raw)
+        ws_raw = np.array(ws_raw)
+
+        # Start by simply wrapping the wind direction column
+        df['wd'] = geo.wrap_360(wd_raw)
+        df['ws'] = ws_raw
+
+
+        # Loop through *args and assign new dataframe columns 
+        for in_var in range(0,len(args),3):
+            df[args[in_var]] = np.array(args[in_var+1])
+            
+        # Assign frequency column
+        df['freq_val'] = np.array(freq_val)
+        df['freq_val'] = df['freq_val']/df['freq_val'].sum()
+
+        # Save the df at this point
+        self.df = df
+
+        # Resample onto the provided wind variable binnings
+        self.internal_resample_wind_speed(ws=ws)
+        self.internal_resample_wind_direction(wd=wd)
+
+        # Loop through *args and resample using provided binnings
+        for in_var in range(0,len(args),3):
+            self.internal_resample_column(args[in_var],args[in_var+2])
+
         return self.df
 
     def parse_wind_toolkit_folder(self,
