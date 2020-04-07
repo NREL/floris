@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 print('========== visualizing flow field with one turbine =========')
-fi = wfct.floris_interface.FlorisInterface("example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi.reinitialize_flow_field(layout_array=([0],[0]),
                             turbulence_intensity=[0.15])
 fi.calculate_wake()
