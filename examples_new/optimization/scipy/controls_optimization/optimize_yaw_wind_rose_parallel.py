@@ -161,50 +161,16 @@ if __name__ == '__main__':
     df_opt = yaw_opt.optimize()
 
 
-    # combine wind farm-level power into one dataframe
-    df_power = pd.DataFrame({'ws':df.ws,'wd':df.wd, \
-        'freq_val':df.freq_val,'power_no_wake':df_base.power_no_wake, \
-        'power_baseline':df_base.power_baseline,'power_opt':df_opt.power_opt})
-
-    # initialize power rose
-    df_yaw = pd.DataFrame(
-        [list(row) for row in df_opt['yaw_angles']], \
-        columns=[str(i) for i in range(1,N_turb+1)]
-    )
-    df_yaw['ws'] = df.ws
-    df_yaw['wd'] = df.wd
-    df_turbine_power_no_wake = pd.DataFrame(
-        [list(row) for row in df_base['turbine_power_no_wake']],
-        columns=[str(i) for i in range(1,N_turb+1)]
-    )
-    df_turbine_power_no_wake['ws'] = df.ws
-    df_turbine_power_no_wake['wd'] = df.wd
-    df_turbine_power_baseline = pd.DataFrame(
-        [list(row) for row in df_base['turbine_power_baseline']],
-        columns=[str(i) for i in range(1,N_turb+1)]
-    )
-    df_turbine_power_baseline['ws'] = df.ws
-    df_turbine_power_baseline['wd'] = df.wd
-    df_turbine_power_opt = pd.DataFrame(
-        [list(row) for row in df_opt['turbine_power_opt']],
-        columns=[str(i) for i in range(1,N_turb+1)]
-    )
-    df_turbine_power_opt['ws'] = df.ws
-    df_turbine_power_opt['wd'] = df.wd
+    # Initialize power rose
+    case_name = 'Example '+str(N_row)+' x '+str(N_row)+ ' Wind Farm'
+    power_rose = pr.PowerRose()
+    power_rose.make_power_rose_from_user_data(
+        case_name,df,df_base['power_no_wake'],
+        df_base['power_baseline'],df_opt['power_opt'])
 
     # Summarize using the power rose module
-    case_name = 'Example '+str(N_row)+' x '+str(N_row)+ ' Wind Farm'
-    power_rose = pr.PowerRose(
-        case_name,
-        df_power,
-        df_turbine_power_no_wake,
-        df_turbine_power_baseline,
-        df_yaw,
-        df_turbine_power_opt
-    )
-
     fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(6.4, 6.5))
     power_rose.plot_by_direction(axarr)
     power_rose.report()
 
-    plt.show()
+plt.show()
