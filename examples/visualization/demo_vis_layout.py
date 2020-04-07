@@ -38,7 +38,4 @@ fi.vis_layout(ax=ax)
 ax = axarr[2]
 fi.vis_layout(ax=ax,show_wake_lines=True)
 
-
-
-
 plt.show()

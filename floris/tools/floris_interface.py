@@ -1236,10 +1236,10 @@ class FlorisInterface():
 
 
     def vis_layout( self, ax=None,
-                     show_wake_lines=False,
-                     limit_dist=None,
-                     turbine_face_north=False,
-                     one_index_turbine=False):
+                    show_wake_lines=False,
+                    limit_dist=None,
+                    turbine_face_north=False,
+                    one_index_turbine=False):
 
         for i, turbine in enumerate(self.floris.farm.turbines):
             D = turbine.rotor_diameter
@@ -1249,18 +1249,17 @@ class FlorisInterface():
         layout_y = np.array([c.x2 for c in coords])
 
         turbineLoc = build_turbine_loc(layout_x,layout_y)
-        
 
         # Show visualize the turbine layout
-        visualize_layout(turbineLoc,
-                     D,
-                     ax=ax,
-                     show_wake_lines=show_wake_lines,
-                     limit_dist=limit_dist ,
-                     turbine_face_north=turbine_face_north,
-                     one_index_turbine=one_index_turbine)
-
-
+        visualize_layout(
+            turbineLoc,
+            D,
+            ax=ax,
+            show_wake_lines=show_wake_lines,
+            limit_dist=limit_dist ,
+            turbine_face_north=turbine_face_north,
+            one_index_turbine=one_index_turbine
+        )
 
     def show_flow_field(self, ax=None):
         # Get horizontal plane at default height (hub-height)
