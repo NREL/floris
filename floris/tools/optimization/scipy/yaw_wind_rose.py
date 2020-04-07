@@ -576,7 +576,7 @@ class YawOptimizationWindRose(Optimization):
                     unc_pmfs=self.unc_pmfs,
                     unc_options=self.unc_options
                 )
-            elif self.ws[i] >= self.minimum_ws:
+            elif self.ws[i] >= self.maximum_ws:
                 print('No change in controls suggested for this inflow \
                         condition...')
                 if self.ti is None:

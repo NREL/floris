@@ -26,7 +26,6 @@ from floris.tools.optimization.scipy.yaw import YawOptimization
 import numpy as np
 import os
 
-
 print('Running FLORIS with no yaw...')
 # Instantiate the FLORIS object
 file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -74,20 +73,24 @@ max_yaw = 25.0
 
 # Without uncertainty
 # Instantiate the Optimization object
-yaw_opt = YawOptimization(fi,
-                               minimum_yaw_angle=min_yaw, 
-                               maximum_yaw_angle=max_yaw)
+yaw_opt = YawOptimization(
+    fi,
+    minimum_yaw_angle=min_yaw, 
+    maximum_yaw_angle=max_yaw
+)
 
 # Perform optimization
 yaw_angles = yaw_opt.optimize()
 
 # With Uncertainty
 # Instantiate the Optimization object
-yaw_opt = YawOptimization(fi,
-                               minimum_yaw_angle=min_yaw, 
-                               maximum_yaw_angle=max_yaw,
-                               include_unc=True,
-                               unc_options=unc_options)
+yaw_opt = YawOptimization(
+    fi,
+    minimum_yaw_angle=min_yaw, 
+    maximum_yaw_angle=max_yaw,
+    include_unc=True,
+    unc_options=unc_options
+)
 
 # Perform optimization
 yaw_angles_unc = yaw_opt.optimize()
@@ -103,11 +106,15 @@ for i in range(len(yaw_angles_unc)):
 # Assign yaw angles to turbines and calculate wake
 fi.calculate_wake(yaw_angles=yaw_angles)
 power_opt = fi.get_farm_power()
-power_opt_unc = fi.get_farm_power(include_unc=True,
-                        unc_options=unc_options)
+power_opt_unc = fi.get_farm_power(
+    include_unc=True,
+    unc_options=unc_options
+)
 fi.calculate_wake(yaw_angles=yaw_angles_unc)
-power_opt_unc_robust = fi.get_farm_power(include_unc=True,
-                        unc_options=unc_options)
+power_opt_unc_robust = fi.get_farm_power(
+    include_unc=True,
+    unc_options=unc_options
+)
 
 print('==========================================')
 print('Total Power Gain without Uncertainty = %.1f%%' %
