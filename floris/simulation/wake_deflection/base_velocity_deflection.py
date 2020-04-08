@@ -116,6 +116,8 @@ class VelocityDeflection():
                 print('ERROR', idx)
                 yaw_effective = 0.0
 
+
+            print('yaw_effective=  ',yaw_effective)
             return yaw_effective + turbine.yaw_angle
 
         else:
