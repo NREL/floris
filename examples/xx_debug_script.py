@@ -24,11 +24,15 @@ fi.reinitialize_flow_field(layout_array=[[0,10*126,20*126],[0,0,0]])
 
 # Calculate wake
 fi.calculate_wake()
+# fi.calculate_wake()
+# fi.calculate_wake()
+print('--')
+fi.calculate_wake(yaw_angles=[25,0,0])
 
-# Get horizontal plane at default height (hub-height)
-hor_plane = fi.get_hor_plane()
+# # Get horizontal plane at default height (hub-height)
+# hor_plane = fi.get_hor_plane()
 
-# Plot and show
-fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-plt.show()
+# # Plot and show
+# fig, ax = plt.subplots()
+# wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+# plt.show()
