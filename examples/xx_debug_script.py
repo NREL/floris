@@ -18,7 +18,7 @@ import floris.tools as wfct
 # Initialize the FLORIS interface fi
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi = wfct.floris_interface.FlorisInterface("example_input.json")
 
 fi.reinitialize_flow_field(layout_array=[[0,10*126,20*126],[0,0,0]])
 
