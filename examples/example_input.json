@@ -4,7 +4,7 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": true,
+      "enable": false,
       "level": "INFO"
     },
     "file": {
@@ -225,6 +225,13 @@
       "combination_model": "sosfs",
       "parameters": {
         "wake_velocity_parameters": {
+          "curl": {
+            "model_grid_resolution": [
+              400,
+              100,
+              75
+            ]
+          },
           "gauss_legacy": {
             "ka": 0.38,
             "kb": 0.004,
