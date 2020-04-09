@@ -103,8 +103,9 @@ class VelocityDeflection():
             for i in range(len(test_gamma)):
                 tmp1 = 8 * Gamma0 / (np.pi * flow_field.air_density * D \
                        * turbine.average_velocity * Ct)
-                tmp = np.abs((sind(test_gamma[i]) * cosd(test_gamma[i])**2) \
-                      - tmp1)
+                tmp = np.abs(
+                    (sind(test_gamma[i]) * cosd(test_gamma[i])**2) - tmp1
+                )
                 if tmp < minYaw:
                     minYaw = tmp
                     idx = i
