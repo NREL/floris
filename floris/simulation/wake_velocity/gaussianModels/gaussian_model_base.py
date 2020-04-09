@@ -51,6 +51,9 @@ class GaussianModel(VelocityDeficit):
     def __init__(self, parameter_dictionary):
 
         super().__init__(parameter_dictionary)
+        self.gamma_scale = 1.0
+        self.gamma_rotation_scale = 0.5
+        self.wake_rotation = True
 
 
     def correction_steps(self, U_local, U, V, W, x_locations, y_locations,
@@ -138,12 +141,12 @@ class GaussianModel(VelocityDeficit):
         if len(idx_bottom) > 1:
             idx_bottom = idx_bottom[0]
 
-        scale = 1.0
-        Gamma_top = scale * (np.pi / 8) * rho * D * turbine.average_velocity \
+        # scale = 1.5
+        Gamma_top = self.gamma_scale * (np.pi / 8) * rho * D * turbine.average_velocity \
                     * Ct * sind(yaw) * cosd(yaw) ** 2
-        Gamma_bottom = scale*(np.pi/8) * rho * D * turbine.average_velocity \
+        Gamma_bottom = self.gamma_scale*(np.pi/8) * rho * D * turbine.average_velocity \
                        * Ct * sind(yaw) * cosd(yaw)**2
-        Gamma_wake_rotation = 0.5 * 2 * np.pi * D * (aI - aI ** 2) \
+        Gamma_wake_rotation = self.gamma_rotation_scale * 2 * np.pi * D * (aI - aI ** 2) \
                               * turbine.average_velocity / TSR
 
         # compute the spanwise and vertical velocities induced by yaw
@@ -236,10 +239,12 @@ class GaussianModel(VelocityDeficit):
             * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
 
         # total spanwise velocity
-        V = V1 + V2 + V3 + V4 + V5 + V6
-
-        # total vertical velocity
-        W = W1 + W2 + W3 + W4 + W5 + W6
+        if self.wake_rotation:
+            V = V1 + V2 + V3 + V4 + V5 + V6
+            W = W1 + W2 + W3 + W4 + W5 + W6
+        else:
+            V = V1 + V2 + V3 + V4# + V5 + V6
+            W = W1 + W2 + W3 + W4# + W5 + W6
 
         # compute velocity deficit
         # yR = y_locations - coord.x2
