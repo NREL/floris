@@ -43,15 +43,19 @@ fi_all_off = copy.deepcopy(fi_gch)
 fi_all_off.set_gch(False)
 
 # Get the baseline power for all allgined
+print('GCH Aligned')
 fi_gch.calculate_wake()
 base_power = np.array(fi_gch.get_turbine_power())/1000.
 
+print('GCH')
 fi_gch.calculate_wake([30,0,0,0,0])
 gch_power = np.array(fi_gch.get_turbine_power())/1000.
 
+print('SS')
 fi_ss.calculate_wake([30,0,0,0,0])
 ss_power = np.array(fi_ss.get_turbine_power())/1000.
 
+print('YAR')
 fi_yar.calculate_wake([30,0,0,0,0])
 yar_power = np.array(fi_yar.get_turbine_power())/1000.
 
