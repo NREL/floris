@@ -4,7 +4,7 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": false,
+      "enable": true,
       "level": "INFO"
     },
     "file": {
@@ -236,6 +236,7 @@
           "gauss": {
             "dm": 1.2,
             "use_secondary_steering":false
+          }
           },
           "wake_turbulence_parameters": {
             "crespo_hernandez": {
@@ -245,7 +246,7 @@
               "downstream": -0.275
             }
           }
-        }
+        
     }
   }
 }
