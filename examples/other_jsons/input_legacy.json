@@ -53,7 +53,7 @@
       "rotor_diameter": 126.0,
       "hub_height": 90.0,
       "blade_count": 3,
-      "pP": 1.88,
+      "pP": 2.1,
       "pT": 1.88,
       "generator_efficiency": 1.0,
       "power_thrust_table": {

@@ -4,7 +4,7 @@
   "description": "Example FLORIS Input file",
   "logging": {
     "console": {
-      "enable": false,
+      "enable": true,
       "level": "INFO"
     },
     "file": {
@@ -225,34 +225,28 @@
       "combination_model": "sosfs",
       "parameters": {
         "wake_velocity_parameters": {
-          "curl": {
-            "model_grid_resolution": [
-              400,
-              100,
-              75
-            ]
-          },
           "gauss_legacy": {
             "ka": 0.38,
             "kb": 0.004,
-            "calculate_VW_velocities": true,
-            "use_yaw_added_recovery": true
+            "calculate_VW_velocities": false,
+            "use_yaw_added_recovery": false
           }
         },
         "wake_deflection_parameters": {
           "gauss": {
-            "dm": 1.0,
-            "use_secondary_steering":true
+            "dm": 2.0,
+            "use_secondary_steering":false
           }
-        },
-        "wake_turbulence_parameters": {
-          "crespo_hernandez": {
-            "initial": 0.5,
-            "constant": 0.9,
-            "ai": 0.75,
-            "downstream": -0.325
+          },
+          "wake_turbulence_parameters": {
+            "crespo_hernandez": {
+              "initial": 0.1,
+              "constant": 0.73,
+              "ai": 0.8,
+              "downstream": -0.275
+            }
           }
-        }
+        
     }
   }
 }
