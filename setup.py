@@ -31,7 +31,7 @@ URL = 'https://github.com/NREL/FLORIS'
 EMAIL = 'rafael.mudafort@nrel.gov'
 AUTHOR = 'NREL National Wind Technology Center'
 REQUIRES_PYTHON = '>=3.3.0'
-VERSION = '1.1.6'
+VERSION = '1.1.7'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -40,6 +40,7 @@ REQUIRED = [
     'numpy',
     'pytest',
     'scipy',
+    'coloredlogs',
 
     # tools
     'h5pyd',
@@ -51,9 +52,9 @@ REQUIRED = [
 # What packages are optional?
 EXTRAS = {
     'docs': {
-        'readthedocs-sphinx-ext==0.5.15',
-        'Sphinx==2.0',
-        'sphinxcontrib-napoleon==0.7'
+        'readthedocs-sphinx-ext',
+        'Sphinx',
+        'sphinxcontrib-napoleon'
     }
 }
 

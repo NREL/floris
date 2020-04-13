@@ -17,7 +17,6 @@
 
 import os
 import dateutil
-import h5pyd
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
@@ -580,6 +579,7 @@ class WindRose():
             df (pd.DataFrame): dataframe with wind speed and wind
                 directiond columns containing hourly data.
         """
+        import h5pyd
 
         # Open the wind data "file"
         # server endpoint, username, password is found via a config file
