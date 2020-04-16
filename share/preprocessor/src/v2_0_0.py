@@ -70,6 +70,12 @@ class V2_0_0(VersionClass, DataTransform):
             [0.0]            
         )
 
+        DataTransform.deep_put(
+            self.base_farm,
+            ["farm", "properties", "specified_wind_height"],
+            self.base_turbine["turbine"]["properties"]["hub_height"]
+        )
+
         return self.base_farm
 
     def build_wake_dict(self):
