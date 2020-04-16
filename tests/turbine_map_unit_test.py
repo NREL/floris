@@ -28,7 +28,7 @@ def test_instantiation(turbine_map_fixture):
     """
     The class should initialize with the standard inputs
     """
-    assert turbine_map_fixture is not None
+    assert type(turbine_map_fixture) is TurbineMap
 
 def test_rotated(turbine_map_fixture):
     """

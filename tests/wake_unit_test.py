@@ -11,19 +11,15 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import pytest
 from floris.simulation import Wake
-from .sample_inputs import SampleInputs
 
 
-class WakeTest():
-    def __init__(self):
-        self.sample_inputs = SampleInputs()
-        self.input_dict = self.build_input_dict()
+@pytest.fixture
+def wake_fixture(sample_inputs_fixture):
+    return Wake(
+        sample_inputs_fixture.wake
+    )
 
-    def build_input_dict(self):
-        return self.sample_inputs.wake
-
-
-def test_instantiation():
-    test_class = WakeTest()
-    assert Wake(test_class.input_dict) is not None
+def test_instantiation(wake_fixture):
+    assert type(wake_fixture) is Wake

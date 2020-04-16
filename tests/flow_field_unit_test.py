@@ -11,74 +11,51 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import pytest
 import numpy as np
-from floris.simulation import Floris, FlowField, Turbine, TurbineMap, Wake, WindMap
-from floris.simulation.wake_combination.base_wake_combination import WakeCombination
-from floris.utilities import Vec3
-from .sample_inputs import SampleInputs
+from floris.simulation import FlowField, Turbine, TurbineMap, Wake, WindMap
 import copy
 
 
-class FlowFieldTest():
-    def __init__(self):
-        self.sample_inputs = SampleInputs()
-        self.input_dict = self._build_input_dict()
-        self.instance = self._build_instance()
+@pytest.fixture
+def flow_field_fixture(sample_inputs_fixture):
+    wake = Wake(sample_inputs_fixture.wake)
+    turbine = Turbine(sample_inputs_fixture.turbine)
+    turbine_map = TurbineMap(
+        [0.0, 100.0],
+        [0.0, 0.0],
+        [copy.deepcopy(turbine), copy.deepcopy(turbine)]
+    )
+    farm_prop = sample_inputs_fixture.farm["properties"]
+    wind_map = WindMap(
+        wind_speed = farm_prop["wind_speed"],
+        layout_array=(farm_prop["layout_x"], farm_prop["layout_y"]),
+        wind_layout=(farm_prop["wind_x"],farm_prop["wind_y"]),
+        turbulence_intensity = [farm_prop["turbulence_intensity"]],
+        wind_direction = farm_prop["wind_direction"]
+    )
+    return FlowField(
+        farm_prop["wind_shear"],
+        farm_prop["wind_veer"],
+        farm_prop["air_density"],
+        wake,
+        turbine_map,
+        wind_map,
+        farm_prop["specified_wind_height"]
+    )
 
-    def _build_input_dict(self):
-        wake = Wake(self.sample_inputs.wake)
-        turbine = Turbine(self.sample_inputs.turbine)
-        turbine_map = TurbineMap(
-            [0.0, 100.0],
-            [0.0, 0.0],
-            [copy.deepcopy(turbine), copy.deepcopy(turbine)]
-        )
-        farm_prop = self.sample_inputs.farm["properties"]
-        wind_map =  WindMap(
-            wind_speed = farm_prop["wind_speed"],
-            layout_array=(farm_prop["layout_x"], farm_prop["layout_y"]),
-            wind_layout=(farm_prop["wind_x"],farm_prop["wind_y"]),
-            turbulence_intensity = [farm_prop["turbulence_intensity"]],
-            wind_direction = farm_prop["wind_direction"]
-        )
-       
-        return {
-            "wind_shear": 0.0,
-            "wind_veer": 0.0,
-            "air_density": 1.225,
-            "wake": wake,
-            "turbine_map": turbine_map,
-            "wind_map": wind_map,
-            "specified_wind_height": farm_prop["specified_wind_height"]
-        }
-
-    def _build_instance(self):
-        return FlowField(
-            self.input_dict["wind_shear"],
-            self.input_dict["wind_veer"],
-            self.input_dict["air_density"],
-            self.input_dict["wake"],
-            self.input_dict["turbine_map"],
-            self.input_dict["wind_map"],
-            self.input_dict["specified_wind_height"]
-        )
-
-
-def test_instantiation():
+def test_instantiation(flow_field_fixture):
     """
     The class should initialize with the standard inputs
     """
-    test_class = FlowFieldTest()
-    assert test_class.instance is not None
+    assert type(flow_field_fixture) is FlowField
 
-
-def test_discretize_domain():
+def test_discretize_domain(flow_field_fixture):
     """
     The class should discretize the domain on initialization with three
     component-arrays each of type np.ndarray and size (100, 100, 50)
     """
-    test_class = FlowFieldTest()
-    x, y, z = test_class.instance._discretize_turbine_domain()
+    x, y, z = flow_field_fixture._discretize_turbine_domain()
     assert np.shape(x) == (2, 5, 5) and type(x) is np.ndarray \
         and np.shape(y) == (2, 5, 5) and type(y) is np.ndarray \
         and np.shape(z) == (2, 5, 5) and type(z) is np.ndarray
