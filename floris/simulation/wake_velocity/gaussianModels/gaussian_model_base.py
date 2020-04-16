@@ -69,7 +69,6 @@ class GaussianModel(VelocityDeficit):
         # TODO
         """
         if self.use_yaw_added_recovery:
-            print('bool: ', self.calculate_VW_velocities)
             if not self.calculate_VW_velocities:
                 err_msg = "It appears that 'use_yaw_added_recovery' is set " + \
                 "to True and 'calculate_VW_velocities' is set to False. " + \
