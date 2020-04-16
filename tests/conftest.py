@@ -27,6 +27,7 @@ class SampleInputs():
         self.turbine = {
             "type": "turbine",
             "name": "nrel_5mw",
+            "description": "NREL 5MW",
             "properties": {
                 "rotor_diameter": 126.0,
                 "hub_height": 90.0,
@@ -55,15 +56,16 @@ class SampleInputs():
                 "wind_shear": 0.12,
                 "wind_veer": 0.0,
                 "air_density": 1.225,
+                "wake_combination": "sosfs",
                 "layout_x": [
                     0.0,
                     5 * self.turbine["properties"]["rotor_diameter"],
                     10 * self.turbine["properties"]["rotor_diameter"]
                 ],
                 "layout_y": [0.0, 0.0, 0.0],
-                "specified_wind_height": 90.0,
                 "wind_x": [0],
-                "wind_y": [0]
+                "wind_y": [0],
+                "specified_wind_height": self.turbine["properties"]["hub_height"]
             }
         }
 
