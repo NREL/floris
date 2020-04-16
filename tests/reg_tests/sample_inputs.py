@@ -21,6 +21,7 @@ class SampleInputs():
         self.turbine = {
             "type": "turbine",
             "name": "nrel_5mw",
+            "description": "NREL 5MW",
             "properties": {
                 "rotor_diameter": 126.0,
                 "hub_height": 90.0,
@@ -57,7 +58,8 @@ class SampleInputs():
                 ],
                 "layout_y": [0.0, 0.0, 0.0],
                 "wind_x": [0],
-                "wind_y": [0]
+                "wind_y": [0],
+                "specified_wind_height": self.turbine["properties"]["hub_height"]
             }
         }
 
