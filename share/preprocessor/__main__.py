@@ -49,7 +49,9 @@ def main():
             data = json.load(jsonfile)
             if "floris_version" not in data:
                 raise ValueError("Given input file does not contain a FLORIS.")
-            if data["floris_version"] not in VERSION_MAP:
+            elif data["floris_version"] >= "v2.0.0":
+                raise ValueError("The given input file version is up to date with or newer than the latest supported verion.")
+            elif data["floris_version"] not in VERSION_MAP:
                 raise ValueError("Given FLORIS version is not currently supported.")
             else:
                 starting_version = VERSION_MAP[data["floris_version"]](
@@ -58,7 +60,7 @@ def main():
                     farm_dict = data.pop("farm"),
                     meta_dict = data,
                 )
-
+    
     ending_version = V2_0_0(
         starting_version.meta_dict,
         starting_version.turbine_dict,
