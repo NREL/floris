@@ -59,13 +59,17 @@ def main():
                     meta_dict = data,
                 )
 
-    # v200 = V2_0_0(
-    #     starting_version.meta_dict,
-    #     starting_version.turbine_dict,
-    #     starting_version.wake_dict,
-    #     starting_version.farm_dict
-    # )
-    # v200.export(filename="v2.0.0.json")
+    ending_version = V2_0_0(
+        starting_version.meta_dict,
+        starting_version.turbine_dict,
+        starting_version.wake_dict,
+        starting_version.farm_dict
+    )
+    if not args.output_file:
+        output_filename = ending_version.version_string + ".json"
+    else:
+        output_filename = args.output_file
+    ending_version.export(filename=output_filename)
 
 if __name__=="__main__":
 
