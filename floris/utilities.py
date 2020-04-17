@@ -13,7 +13,6 @@
 # See read the https://floris.readthedocs.io for documentation
 
 import numpy as np
-from scipy.stats import norm
 import coloredlogs
 import logging
 from datetime import datetime
@@ -24,27 +23,37 @@ class Vec3():
         """
         Object containing vector information for coordinates.
 
+        # TODO: possibility to store components as np.array or Python list
+        # and use x1, x2, x3 virtual properties. This would simplify the
+        # arithmetic overloading by allowing the use of numpy array
+        # operations. It may add some performance gain, too, but that is
+        # likely negligible.
+
         Args:
-            x1: [float, float, float] or float -- The first argument
-            can be a list of the three vector components or simply the
-            first component of the vector.
-            x2: float (optional) -- The second component of the vector.
-            x3: float (optional) -- The third component of the vector.
+            x1: [numeric, numeric, numeric] or numeric -- The first argument
+                can be a list of the three vector components or simply the
+                first component of the vector.
+            x2: numeric (optional) -- The second component of the vector
+                if the first argument is not a list.
+            x3: numeric (optional) -- The third component of the vector
+                if the first argument is not a list.
             string_format: str (optional) -- The string format to use in the
                 overloaded __str__ function.
         """
         if isinstance(x1, list):
-            self.x1, self.x2, self.x3 = [x for x in x1]
+            self.x1, self.x2, self.x3 = x1
         else:
             self.x1 = x1
             self.x2 = x2
             self.x3 = x3
 
-        if not (type(self.x1) == type(self.x2) and type(self.x1) == type(
-                self.x3) and type(self.x2) == type(self.x3)):
-            target_type = type(self.x1)
-            self.x2 = target_type(self.x2)
-            self.x3 = target_type(self.x3)
+        # If they arent, cast all components to the same type
+        if not (type(self.x1) == type(self.x2) and
+                type(self.x1) == type(self.x3) and
+                type(self.x2) == type(self.x3)):
+                target_type = type(self.x1)
+                self.x2 = target_type(self.x2)
+                self.x3 = target_type(self.x3)
 
         if string_format is not None:
             self.string_format = string_format
@@ -66,10 +75,8 @@ class Vec3():
             center_of_rotation = Vec3(0.0, 0.0, 0.0)
         x1offset = self.x1 - center_of_rotation.x1
         x2offset = self.x2 - center_of_rotation.x2
-        self.x1prime = x1offset * cosd(theta) - x2offset * sind(
-            theta) + center_of_rotation.x1
-        self.x2prime = x2offset * cosd(theta) + x1offset * sind(
-            theta) + center_of_rotation.x2
+        self.x1prime = x1offset * cosd(theta) - x2offset * sind(theta) + center_of_rotation.x1
+        self.x2prime = x2offset * cosd(theta) + x1offset * sind(theta) + center_of_rotation.x2
         self.x3prime = self.x3
 
     def __str__(self):
@@ -79,7 +86,6 @@ class Vec3():
         return template_string.format(self.x1, self.x2, self.x3)
 
     def __add__(self, arg):
-
         if type(arg) is Vec3:
             return Vec3(self.x1 + arg.x1, self.x2 + arg.x2, self.x3 + arg.x3)
         else:
@@ -92,7 +98,6 @@ class Vec3():
             return Vec3(self.x1 - arg, self.x2 - arg, self.x3 - arg)
 
     def __mul__(self, arg):
-
         if type(arg) is Vec3:
             return Vec3(self.x1 * arg.x1, self.x2 * arg.x2, self.x3 * arg.x3)
         else:
@@ -105,46 +110,13 @@ class Vec3():
             return Vec3(self.x1 / arg, self.x2 / arg, self.x3 / arg)
 
     def __eq__(self, arg):
-        return self.x1 == arg.x1 \
-            and self.x2 == arg.x2 \
-            and self.x3 == arg.x3
+        return False not in np.isclose(
+            [self.x1, self.x2, self.x3],
+            [arg.x1, arg.x2, arg.x3]
+        )
 
     def __hash__(self):
         return hash((self.x1, self.x2, self.x3))
-
-
-class Output():
-    def __init__(self, filename):
-        """
-        Generate output file at specified location.
-
-        Args:
-            filename ([str]): write to location
-        """
-        self.filename = filename
-        self.file = open(self.filename, "w")
-        self.ln = "\n"
-
-    def write_empty_line(self):
-        """
-        Add blank line to file.
-        """
-        self.write_line("")
-
-    def write_line(self, line):
-        """
-        Add line to file with specified content.
-
-        Args:
-            line ([str]): content to add to file
-        """
-        self.file.write(line + self.ln)
-
-    def end(self):
-        """
-        Close file.
-        """
-        self.file.close()
 
 
 def cosd(angle):
@@ -177,112 +149,54 @@ def tand(angle):
     return np.tan(np.radians(angle))
 
 
-def wrap_180(x):
+def wrap_180(angle):
     """
-    Wrap an angle to between -180 and 180
+    If the given angle is less than -180 or greater than or equal to
+    180 degrees, correct it to lie within the range (-180, 180].
 
     Returns:
-        [array]: angles in specified interval
+        The corrected angle
     """
-    x = np.where(x <= -180., x + 360., x)
-    x = np.where(x > 180., x - 360., x)
-    return (x)
+    if angle <= -180.0:
+        return angle + 360.0
+    if angle > 180.0:
+        return angle - 360.0
+    return angle
 
 
-def wrap_360(x):
+def wrap_360(angle):
     """
-    Wrap an angle to between 0 and 360
+    If the given angle is less than 0 or greater than or equal to
+    360 degrees, correct it to lie within the range (0, 360].
 
     Returns:
-        [array]: angles in specified interval
+        The corrected angle
     """
-    x = np.where(x < 0., x + 360., x)
-    x = np.where(x >= 360., x - 360., x)
-    return (x)
-
-
-def calc_unc_pmfs(unc_options=None):
-    # TODO: Is there a better place for this?
-    """
-    Calculates normally-distributed probability mass functions describing the 
-    distribution of wind direction and yaw position deviations when wind direction 
-    and/or yaw position uncertainty are included in power calculations.
-
-    Args:
-        unc_options (dictionary, optional): A dictionary containing values used 
-                to create normally-distributed, zero-mean probability mass functions 
-                describing the distribution of wind direction and yaw position 
-                deviations when wind direction and/or yaw position uncertainty is 
-                included. This argument is only used when **unc_pmfs** is None and 
-                contains the following key-value pairs:
-
-                -   **std_wd**: A float containing the standard deviation of the wind 
-                        direction deviations from the original wind direction.
-                -   **std_yaw**: A float containing the standard deviation of the yaw 
-                        angle deviations from the original yaw angles.
-                -   **pmf_res**: A float containing the resolution in degrees of the 
-                        wind direction and yaw angle PMFs.
-                -   **pdf_cutoff**: A float containing the cumulative distribution 
-                    function value at which the tails of the PMFs are truncated. 
-
-                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75, 
-                'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-
-    Returns:
-        [dictionary]: A dictionary containing 
-                probability mass functions describing the distribution of wind 
-                direction and yaw position deviations when wind direction and/or 
-                yaw position uncertainty is included in the power calculations. 
-                Contains the following key-value pairs:  
-
-                -   **wd_unc**: A numpy array containing wind direction deviations 
-                    from the original wind direction. 
-                -   **wd_unc_pmf**: A numpy array containing the probability of 
-                    each wind direction deviation in **wd_unc** occuring. 
-                -   **yaw_unc**: A numpy array containing yaw angle deviations 
-                    from the original yaw angles. 
-                -   **yaw_unc_pmf**: A numpy array containing the probability of 
-                    each yaw angle deviation in **yaw_unc** occuring.
-
-    """
-
-    if unc_options is None:
-        unc_options = {'std_wd': 4.95, 'std_yaw': 1.75, \
-                    'pmf_res': 1.0, 'pdf_cutoff': 0.995}
-
-    # create normally distributed wd and yaw uncertainty pmfs
-    if unc_options['std_wd'] > 0:
-        wd_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
-                        scale=unc_options['std_wd'])/unc_options['pmf_res']))
-        wd_unc = np.linspace(-1 * wd_bnd * unc_options['pmf_res'],
-                             wd_bnd * unc_options['pmf_res'], 2 * wd_bnd + 1)
-        wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options['std_wd'])
-        wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf)  # normalize so sum = 1.0
-    else:
-        wd_unc = np.zeros(1)
-        wd_unc_pmf = np.ones(1)
-
-    if unc_options['std_yaw'] > 0:
-        yaw_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
-                        scale=unc_options['std_yaw'])/unc_options['pmf_res']))
-        yaw_unc = np.linspace(-1 * yaw_bnd * unc_options['pmf_res'],
-                              yaw_bnd * unc_options['pmf_res'],
-                              2 * yaw_bnd + 1)
-        yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options['std_yaw'])
-        yaw_unc_pmf = yaw_unc_pmf / np.sum(
-            yaw_unc_pmf)  # normalize so sum = 1.0
-    else:
-        yaw_unc = np.zeros(1)
-        yaw_unc_pmf = np.ones(1)
-
-    return {'wd_unc': wd_unc, 'wd_unc_pmf': wd_unc_pmf, \
-                'yaw_unc': yaw_unc, 'yaw_unc_pmf': yaw_unc_pmf}
+    if angle <= 0.0:
+        return angle + 360.0
+    if angle > 360.0:
+        return angle - 360.0
+    return angle
 
 
 class LogClass:
+    """
+    TODO
+    """
+
     class __LogClass:
+        """
+        TODO
+        """
+
         def __init__(self, param_dict):
 
+            self.log_to_console = False
+            self.console_level = 'WARNING'
+            self.log_to_file = False
+            self.file_level = 'WARNING'
+
+            # TODO: what if it IS None?
             if param_dict is not None:
                 for key in param_dict:
                     if key == 'console':

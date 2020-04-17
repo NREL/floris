@@ -79,9 +79,9 @@ class Turbine():
     """
 
     def __init__(self, instance_dictionary):
-        
         self.logger = setup_logger(name=__name__)
         self.description = instance_dictionary["description"]
+
         properties = instance_dictionary["properties"]
         self.rotor_diameter = properties["rotor_diameter"]
         self.hub_height = properties["hub_height"]

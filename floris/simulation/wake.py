@@ -67,7 +67,6 @@ class Wake():
                 }
         """
 
-        self.description = instance_dictionary["description"]
         properties = instance_dictionary["properties"]
         if "parameters" not in properties.keys():
             self.parameters = {}

@@ -43,7 +43,6 @@ class SampleInputs():
         self.farm = {
             "type": "farm",
             "name": "farm_example_2x2",
-            "description": "Example 2x2 Wind Farm",
             "properties": {
                 "wind_speed": [8.0],
                 "wind_direction": [270.0],
@@ -59,14 +58,14 @@ class SampleInputs():
                 ],
                 "layout_y": [0.0, 0.0, 0.0],
                 "wind_x": [0],
-                "wind_y": [0]
+                "wind_y": [0],
+                "specified_wind_height": self.turbine["properties"]["hub_height"]
             }
         }
 
         self.wake = {
             "type": "wake",
             "name": "wake_default",
-            "description": "wake",
             "properties": {
                 "velocity_model": "gauss",
                 "deflection_model": "gauss",

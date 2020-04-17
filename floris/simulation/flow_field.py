@@ -45,8 +45,14 @@ class FlowField():
     Returns:
         FlowField: An instantiated FlowField object.
     """
-    def __init__(self, wind_shear, wind_veer, air_density, wake, turbine_map,
-                 wind_map,specified_wind_height):
+    def __init__(self,
+                 wind_shear,
+                 wind_veer,
+                 air_density,
+                 wake,
+                 turbine_map,
+                 wind_map,
+                 specified_wind_height):
 
         self.reinitialize_flow_field(
             wind_shear=wind_shear,
