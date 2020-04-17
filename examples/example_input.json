@@ -2,6 +2,7 @@
   "type": "floris_input",
   "name": "floris_input_file_Example",
   "description": "Example FLORIS Input file",
+  "floris_version": "v2.0.0",
   "logging": {
     "console": {
       "enable": true,
