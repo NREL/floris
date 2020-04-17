@@ -68,6 +68,14 @@ class VelocityDeflection():
     def calculate_effective_yaw_angle(self, x_locations, y_locations,
                                       z_locations, turbine, coord, flow_field):
         if self.use_secondary_steering:
+            if not flow_field.wake.velocity_model.calculate_VW_velocities:
+                err_msg = "It appears that 'use_secondary_steering' is set " + \
+                "to True and 'calculate_VW_velocities' is set to False. " + \
+                "This configuration is not valid. Please set " + \
+                "'use_secondary_steering' to True if you wish to use " + \
+                "yaw-added recovery."
+                self.logger.error(err_msg, stack_info=True)
+                raise ValueError(err_msg)
             # turbine parameters
             Ct = turbine.Ct
             D = turbine.rotor_diameter

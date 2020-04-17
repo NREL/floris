@@ -68,6 +68,15 @@ class GaussianModel(VelocityDeficit):
         """
         # TODO
         """
+        if self.use_yaw_added_recovery:
+            if not self.calculate_VW_velocities:
+                err_msg = "It appears that 'use_yaw_added_recovery' is set " + \
+                "to True and 'calculate_VW_velocities' is set to False. " + \
+                "This configuration is not valid. Please set " + \
+                "'calculate_VW_velocities' to True if you wish to use " + \
+                "yaw-added recovery."
+                self.logger.error(err_msg, stack_info=True)
+                raise ValueError(err_msg)
         if self.calculate_VW_velocities:
             V, W = self.calc_VW(coord, turbine, flow_field, x_locations,
                                 y_locations, z_locations)
