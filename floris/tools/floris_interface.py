@@ -100,8 +100,8 @@ class FlorisInterface():
                 Defaults to None.
             wind_veer (float, optional): direction change over rotor.
                 Defaults to None.
-            specified_wind_height (float, optional): specified wind height for shear
-                Defaults to None.
+            specified_wind_height (float, optional): specified wind height for
+                shear. Defaults to None.
             turbulence_intensity (list, optional): background turbulence 
                 intensity. Defaults to None.
             turbulence_kinetic_energy (list, optional): background turbulence
@@ -1006,7 +1006,10 @@ class FlorisInterface():
             AEP_sum = AEP_sum + self.get_farm_power() * freq[i] * 8760
         return AEP_sum
 
-    def change_turbine(self, turb_num_array, turbine_change_dict,update_specified_wind_height=False):
+    def change_turbine(self,
+                       turb_num_array,
+                       turbine_change_dict,
+                       update_specified_wind_height=False):
         """
         Change turbine properties of given turbines
 
@@ -1016,16 +1019,22 @@ class FlorisInterface():
                 key values should be from the JSON turbine/properties set.
                 Any key values not specified will be copied from the original
                 JSON values.
-            update_specified_wind_height (bool): Update specified wind height to match new hub_height
+            update_specified_wind_height (bool): Update specified wind height
+                to match new hub_height
         """
 
         # Alert user if changing hub-height and not specified wind height
         if ('hub_height' in turbine_change_dict) and (not update_specified_wind_height):
-            self.logger.info('Note, updating hub height but not update the specfied_wind_height')
+            self.logger.info('Note, updating hub height but not updating ' + \
+                'the specfied_wind_height')
 
         if ('hub_height' in turbine_change_dict) and update_specified_wind_height:
-            self.logger.info('Note, specfied_wind_height to hub-height: %.1f' % turbine_change_dict['hub_height'])
-            self.reinitialize_flow_field(specified_wind_height=turbine_change_dict['hub_height'])
+            self.logger.info(
+                'Note, specfied_wind_height changed to hub-height: %.1f' % turbine_change_dict['hub_height']
+            )
+            self.reinitialize_flow_field(
+                specified_wind_height=turbine_change_dict['hub_height']
+            )
 
         # Now go through turbine list and re-init any in turb_num_array
         for t_idx in turb_num_array:
