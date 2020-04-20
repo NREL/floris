@@ -39,17 +39,17 @@ def test_tand():
 
 
 def test_wrap_180():
-    assert floris.utilities.wrap_180(-180) == 180
-    assert floris.utilities.wrap_180(180) == 180
-    assert floris.utilities.wrap_180(-181) == 179
-    assert floris.utilities.wrap_180(-179) == -179
-    assert floris.utilities.wrap_180(179) == 179
-    assert floris.utilities.wrap_180(181) == -179
+    assert floris.utilities.wrap_180(-180.0) == 180.0
+    assert floris.utilities.wrap_180(180.0) == 180.0
+    assert floris.utilities.wrap_180(-181.0) == 179.0
+    assert floris.utilities.wrap_180(-179.0) == -179.0
+    assert floris.utilities.wrap_180(179.0) == 179.0
+    assert floris.utilities.wrap_180(181.0) == -179.0
 
 def test_wrap_360():
-    assert floris.utilities.wrap_360(0) == 360
-    assert floris.utilities.wrap_360(360) == 360
-    assert floris.utilities.wrap_360(-1) == 359
-    assert floris.utilities.wrap_360(1) == 1
-    assert floris.utilities.wrap_360(359) == 359
-    assert floris.utilities.wrap_360(361) == 1
+    assert floris.utilities.wrap_360(0.0) == 0.0
+    assert floris.utilities.wrap_360(360.0) == 0.0
+    assert floris.utilities.wrap_360(-1.0) == 359.0
+    assert floris.utilities.wrap_360(1.0) == 1.0
+    assert floris.utilities.wrap_360(359.0) == 359.0
+    assert floris.utilities.wrap_360(361.0) == 1.0
