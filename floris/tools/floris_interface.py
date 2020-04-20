@@ -76,6 +76,7 @@ class FlorisInterface():
                                 wind_direction=None,
                                 wind_shear=None,
                                 wind_veer=None,
+                                specified_wind_height=None,
                                 turbulence_intensity=None,
                                 turbulence_kinetic_energy=None,
                                 air_density=None,
@@ -98,6 +99,8 @@ class FlorisInterface():
             wind_shear (float, optional): shear exponent.
                 Defaults to None.
             wind_veer (float, optional): direction change over rotor.
+                Defaults to None.
+            specified_wind_height (float, optional): specified wind height for shear
                 Defaults to None.
             turbulence_intensity (list, optional): background turbulence 
                 intensity. Defaults to None.
@@ -180,6 +183,7 @@ class FlorisInterface():
         self.floris.farm.flow_field.reinitialize_flow_field(
             wind_shear=wind_shear,
             wind_veer=wind_veer,
+            specified_wind_height=specified_wind_height,
             air_density=air_density,
             wake=wake,
             turbine_map=turbine_map,
