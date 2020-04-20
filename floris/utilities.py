@@ -154,6 +154,8 @@ def wrap_180(x):
     If the given angle is less than -180 or greater than or equal to
     180 degrees, correct it to lie within the range (-180, 180].
 
+    x can be a scalar or numpy array
+
     Returns:
         The corrected angle
     """
@@ -166,6 +168,8 @@ def wrap_360(x):
     """
     If the given angle is less than 0 or greater than or equal to
     360 degrees, correct it to lie within the range (0, 360].
+
+    x can be a scalar or numpy array
 
     Returns:
         The corrected angle
