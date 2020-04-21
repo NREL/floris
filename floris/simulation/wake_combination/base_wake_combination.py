@@ -12,10 +12,8 @@
 
 class WakeCombination():
     """
-    The WakeCombination class provides methods for combining the base flow field with the velocity deficits from the wake models.
-
-    Returns:
-        WakeCombination: An instantiated WakeCombination object.
+    The WakeCombination class provides methods for combining the base flow
+    field with the velocity deficits from the wake models.
     """
 
     def __init__(self):

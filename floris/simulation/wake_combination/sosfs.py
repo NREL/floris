@@ -17,9 +17,9 @@ from .base_wake_combination import WakeCombination
 
 class SOSFS(WakeCombination):
     """
-    SOSFS is a subclass of 
-    :py:class:`floris.simulation.wake_combination.WakeCombination` 
-    which uses sum of squares freestream superposition to combine the 
+    SOSFS is a subclass of
+    :py:class:`floris.simulation.wake_combination.base_wake_combination.WakeCombination` 
+    which uses sum of squares freestream superposition to combine the
     base flow field with the wake velocity deficits.
     """
 
@@ -30,16 +30,16 @@ class SOSFS(WakeCombination):
 
     def function(self, u_field, u_wake):
         """
-        This method combines the base flow field with the velocity 
+        This method combines the base flow field with the velocity
         defecits using sum of squares.
 
         Args:
             u_field (np.array): The base flow field.
-            u_wake (np.array): The wake to add to the rest of the flow 
+            u_wake (np.array): The wake to add to the rest of the flow
                 field.
 
         Returns:
-            array: A sum of squares combination of the base flow field 
+            np.array: A sum of squares combination of the base flow field
             and the velocity deficits.
         """
         return np.hypot(u_wake, u_field)
