@@ -19,6 +19,15 @@ import scipy.stats
 from ..utilities import setup_logger
 
 def _convert_to_numpy_array(series):
+    """
+    If passed a pandas serires, convert to numpy array
+
+    Args:
+        series (pd.Series): potential series object
+
+    Returns:
+        np.array: array
+    """
     if hasattr(series, 'values'):
         return series.values
     elif isinstance(series, np.ndarray):
@@ -27,6 +36,16 @@ def _convert_to_numpy_array(series):
 
 # Define ci function
 def ci(data, confidence=0.95):
+    """
+    Compute confidence interval
+
+    Args:
+        data (np.array): array of floats
+        confidence (float, optional): confidence value. Defaults to 0.95.
+
+    Returns:
+        float: confidence interval
+    """
     a = 1.0 * np.array(data)
     n = len(a)
     m, se = np.mean(a), scipy.stats.sem(a)
@@ -44,7 +63,15 @@ def calculate_balanced_wake_loss(reference_power_baseline,
                                     wind_direction_array_controlled
                                     ):
     """
-    Calculate balanced wake loss
+    Calculate balanced wake loss  See [1] for documentation of method
+
+    References:
+        [1]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
+        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
+        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
+        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
+        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
+        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -66,7 +93,7 @@ def calculate_balanced_wake_loss(reference_power_baseline,
         
 
     Returns:
-        dataframe
+        dataframe: balanced wake loss result
 
     """
 
@@ -144,7 +171,7 @@ def plot_balanced_wake_loss(reference_power_baseline,
                                     axarr
                                     ):
     """
-    Calculate balanced wake loss
+    Plot balanced wake loss
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -163,6 +190,7 @@ def plot_balanced_wake_loss(reference_power_baseline,
             controlled conditions.
         wind_direction_array_controlled (np.array): Array of wind 
             directions in controlled case.
+        axarr (list of plt.ax): A list of axes to plot onto
         
 
     Returns:
@@ -221,6 +249,29 @@ def overall_wake_loss(reference_power_baseline,
                                     wind_speed_array_controlled,
                                     wind_direction_array_controlled
                                     ):
+    """
+    Compute the overall wake losses and changes
+
+    Args:
+        reference_power_baseline (np.array): Array of power of 
+            reference turbine in baseline conditions.
+        test_power_baseline (np.array): Array of power of test turbine 
+            in baseline conditions.
+        wind_speed_array_baseline (np.array): Array of wind speeds in 
+            baseline conditions.
+        wind_direction_array_baseline (np.array): Array of wind 
+            directions in baseline case.
+        reference_power_controlled (np.array): Array of power of 
+            reference turbine in controlled conditions.
+        test_power_controlled (np.array): Array of power of test 
+            turbine in controlled conditions.
+        wind_speed_array_controlled (np.array): Array of wind speeds in 
+            controlled conditions.
+        wind_direction_array_controlled (np.array): Array of wind 
+            directions in controlled case.
+
+
+    """
     # Get the result frame
     df_sum = calculate_balanced_wake_loss(reference_power_baseline,
                                     test_power_baseline,
@@ -236,4 +287,3 @@ def overall_wake_loss(reference_power_baseline,
     print('Baseline Energy Loss:\t%d%%' % (100*(df_sum['wt_loss_base'].sum() / df_sum['ref_en'].sum())))
     print('Controlled Energy Loss:\t%d%%' % (100*(df_sum['wt_loss_con'].sum() / df_sum['ref_en'].sum())))
     print('Reduction Energy Loss:\t%d%%' % (100*(df_sum['energy_loss_mean_base'].sum() - df_sum['energy_loss_mean_con'].sum())/df_sum['energy_loss_mean_base'].sum()))
-    # print('%.1f%%' % (100*(df_sum['energy_loss%s_mean_base' % suffix].sum() - df_sum['energy_loss%s_mean_con' % suffix].sum())/df_sum['energy_loss%s_mean_base' % suffix].sum()))

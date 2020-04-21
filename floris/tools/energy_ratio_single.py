@@ -17,23 +17,69 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# From https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function
 def gaussian(x, mu, sig):
+    """
+    Compute gaussian function, from https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function
+
+    Args:
+        x (float, np.array): input variable
+        mu (float): mean value
+        sig (float): sigma
+
+    Returns:
+        [float, np.array]: resulting valurs
+    """
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
+
 def _convert_to_numpy_array(series):
+    """
+    If passed a pandas serires, convert to numpy array
+
+    Args:
+        series (pd.Series): potential series object
+
+    Returns:
+        np.array: array
+    """
     if hasattr(series, 'values'):
         return series.values
     elif isinstance(series, np.ndarray):
         return series
 
+
 def _calculate_bootstrap_iterations(n):
+    """
+    Calculate number of bootstrap iterations given length
+
+    Args:
+        n (int): Number of points
+
+    Returns:
+        int: number of bootstrap iterations
+    """
     maximum = 10000
     minimum = 2000
     return int(np.round(max(min(n * np.log10(n), maximum), minimum)))
 
 
-def _calculate_lower_and_upper_bound(bootstrap_array, percentiles, central_estimate=None, method='simple_percentile'):
+def _calculate_lower_and_upper_bound(bootstrap_array,
+                                     percentiles,
+                                     central_estimate=None,
+                                     method='simple_percentile'):
+    """
+    Given resultant bootstrap output array compute lower and upper bound 
+    of confidence interval
+
+    Args:
+        bootstrap_array (np.array): array of bootrapped results
+        percentiles (np.array): percentile values
+        central_estimate (float, optional): if not using simple percentile, need to provide the central estimated result. Defaults to None.
+        method (str, optional): method for computing bounds. Defaults to 'simple_percentile'.
+
+    Returns:
+        (float,float): lower and upper ci bounds
+    """
     if method is 'simple_percentile':
         upper, lower = np.percentile(bootstrap_array, percentiles)
     else:
@@ -55,31 +101,35 @@ def energy_ratio(ref_pow_base, test_pow_base):
     energy ratio calculation for a particular wind direction bin.  Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
-    power estimate from a measurement.
+    power estimate from a measurement.  See [1,2] for documentation of method
+
+    References:
+        [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,
+        Scholbrock, A., Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K
+        , van Dam, J , Bay, C., Mudafort, R., Lopez, H., Skopek, J., Scott, M.,
+        Ryan, B., Guernsey, C., and Brake, D.: Initial results from a field
+        campaign of wake steering applied at a commercial wind farm – Part 1,
+        Wind Energ. Sci., 4, 273–285, https://doi.org/10.5194/wes-4-273-2019,
+        2019.
+
+        [2]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
+        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
+        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
+        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
+        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
+        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
 
     Args:
         ref_pow_base (np.array): Array of baseline reference turbine 
             power.
         test_pow_base (np.array): Array of baseline test turbine power.
-        ref_pow_con (np.array): Array of controlled reference turbine 
-            power.
-        test_pow_con (np.array): Array of controlled test turbine power.
-        ws_con (np.array): Array of wind speeds in control.
+
 
     Returns:
         tuple: tuple containing:
 
             -   **ratio_base** (*float*): Baseline energy ratio.
-            -   **ratio_con** (*float*): Controlled enery ratio.
-            -   **ratio_diff** (*float*): Difference in energy ratios.
-            -   **p_change** (*float*): Percent change in energy ratios.
             -   **counts_base** (*float*): Number of points in baseline.
-            -   **counts_con** (*float*): Number of points in 
-                controlled.
-            -   **counts_diff** (*float*): Number of points in diff (min
-                (baseline,controlled)).
-            -   **counts_pchange** (*float*): Number of points in 
-                pchange (min(baseline,controlled)).
     """
 
 
@@ -129,7 +179,24 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     and lower uncertaintity bounds computed through bootstrapping, are 
     returned.  Note the reference turbine should not be the turbine 
     implementing control, but should be an unaffected nearby turbine, 
-    or a synthetic power estimate from a measurement
+    or a synthetic power estimate from a measurement  See [1,2] for
+    documentation of method
+
+    References:
+        [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,
+        Scholbrock, A., Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K
+        , van Dam, J , Bay, C., Mudafort, R., Lopez, H., Skopek, J., Scott, M.,
+        Ryan, B., Guernsey, C., and Brake, D.: Initial results from a field
+        campaign of wake steering applied at a commercial wind farm – Part 1,
+        Wind Energ. Sci., 4, 273–285, https://doi.org/10.5194/wes-4-273-2019,
+        2019.
+
+        [2]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
+        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
+        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
+        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
+        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
+        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -140,14 +207,6 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             baseline conditions.
         wind_direction_array_baseline (np.array): Array of wind 
             directions in baseline case.
-        reference_power_controlled (np.array): Array of power of 
-            reference turbine in controlled conditions.
-        test_power_controlled (np.array): Array of power of test 
-            turbine in controlled conditions.
-        wind_speed_array_controlled (np.array): Array of wind speeds in 
-            controlled conditions.
-        wind_direction_array_controlled (np.array): Array of wind 
-            directions in controlled case.
         wind_direction_bins (np.array): Wind directions bins.
         confidence (int, optional): Confidence level to use.  Defaults 
             to 95.
@@ -164,18 +223,7 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             **lower_ratio_array_base** (*np.array*): Lower confidence bound of baseline energy ratio at each wind direction bin.
             **upper_ratio_array_base** (*np.array*): Upper confidence bound of baseline energy ratio at each wind direction bin.
             **counts_ratio_array_base** (*np.array*): Counts per wind direction bin in baseline.
-            **ratio_array_con** (*np.array*): Controlled energy ratio at each wind direction bin.
-            **lower_ratio_array_con** (*np.array*): Lower confidence bound of controlled energy ratio at each wind direction bin.
-            **upper_ratio_array_con** (*np.array*): Upper confidence bound of controlled energy ratio at each wind direction bin.
-            **counts_ratio_array_con** (*np.array*): Counts per wind direction bin in controlled.
-            **diff_array** (*np.array*): Difference in baseline and controlled energy ratio per wind direction bin.
-            **lower_diff_array** (*np.array*): Lower confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
-            **upper_diff_array** (*np.array*): Upper confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
-            **counts_diff_array** (*np.array*): Counts in difference (minimum of baseline and controlled).
-            **p_change_array** (*np.array*): Percent change in baseline and controlled energy ratio per wind direction bin.
-            **lower_p_change_array** (*np.array*): Lower confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
-            **upper_p_change_array** (*np.array*): Upper confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
-            **counts_p_change_array** (*np.array*): Counts in percent change bins (minimum of baseline and controlled).
+            
 
     """
 
