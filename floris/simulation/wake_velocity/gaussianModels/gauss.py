@@ -16,43 +16,43 @@ from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_base import GaussianModel
 
-""""
-Full doc string to be written
-
-Short Version: New Gauss Class replaces the Gauss Version now in gauss_legacy
-This version merges the previous gaussian wake model based on:
-
-    [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
-    wind-turbine wakes: A large-eddy simulation study." *Physics of
-    Fluids*, 2015.
-
-    [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
-    wind-turbine wakes." *Renewable Energy*, 2014.
-
-    [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
-    study of wind turbine wakes in yawed conditions." *J. Fluid
-    Mechanics*, 2016.
-
-    [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
-    A new approach for power prediction." *Energies*, 2016.
-
-    [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
-    blade pitch offset." *Energies*, 2017.
-
-And merges it with models described in 
-
-    [6] Blondel, F. and Cathelain, M. "An alternative form of the
-    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
-    2020.
-
-(Note this model [6] is implemented more directly in blondel.py)
-
-The model merges the Bastankhah/Niayifar/Porte-Agel with that of Blondel and
-includes additional corrections to provide better consistency with previous
-models and SOWFA results.
-"""
 
 class Gauss(GaussianModel):
+    """
+    The new Gauss model blends the previously implemented Gussian model based
+    on [1-5] with the super-Gaussian model of [6].  The blending is meant to
+    provide consistency with previuos results in the far wake while improving
+    prediction of the near wake
+
+    References:
+        [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
+        wind-turbine wakes: A large-eddy simulation study." *Physics of
+        Fluids*, 2015.
+
+        [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
+        wind-turbine wakes." *Renewable Energy*, 2014.
+
+        [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
+        study of wind turbine wakes in yawed conditions." *J. Fluid
+        Mechanics*, 2016.
+
+        [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
+        A new approach for power prediction." *Energies*, 2016.
+
+        [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
+        blade pitch offset." *Energies*, 2017.
+
+        [6] Blondel, F. and Cathelain, M. "An alternative form of the
+        super-Gaussian wind turbine wake model." *Wind Energy Science
+        Disucssions*, 2020.
+
+
+    Raises:
+        ValueError: Invalid value type given for ka
+        ValueError: Invalid value type given for kb
+        ValueError: Invalid value type given for alpha
+        ValueError: Invalid value type given for beta
+    """
     default_parameters = {
         'ka': 0.38,
         'kb': 0.004,
@@ -65,6 +65,13 @@ class Gauss(GaussianModel):
     }
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialization function for Gauss wake model
+
+        Args:
+            parameter_dictionary {dict} -- Dictionary of parameter values
+                non-provided values were revert to default values above
+        """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
 
@@ -86,6 +93,42 @@ class Gauss(GaussianModel):
         self.eps_gain = model_dictionary["eps_gain"]
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
+        """
+        Using the blended gaussian wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified turbine, 
+        relative to the freestream velocities at the grid of points 
+        comprising the wind farm flow field.
+
+        Args:
+            x_locations (np.array): An array of floats that contains the 
+                streamwise direction grid coordinates of the flow field 
+                domain (m).
+            y_locations (np.array: n array of floats that contains the grid 
+                coordinates of the flow field domain in the direction 
+                normal to x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid 
+                coordinates of the flow field domain in the vertical 
+                direction (m).
+            turbine (:py:obj:`floris.simulation.turbine`): object that 
+                represents the turbine creating the wake.
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): object
+                containing the coordinate of the turbine creating the 
+                wake (m).
+            deflection_field (np.array): An array of floats that contains the 
+                amount of wake deflection in meters in the y direction 
+                at each grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): object
+                containing the flow field information for the 
+                wind farm.
+
+        Returns:
+            (np.array): Three arrays of floats that contain the wake velocity 
+            deficit in m/s created by the turbine relative to the 
+            freestream velocities for the u, v, and w components, 
+            aligned with the x, y, and z directions, respectively. The 
+            three arrays contain the velocity deficits at each grid 
+            point in the flow field. 
+        """
         # added turbulence model
         TI = turbine.current_turbulence_intensity
 
