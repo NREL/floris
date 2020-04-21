@@ -16,13 +16,27 @@ from ...utilities import cosd, sind, tand, setup_logger
 
 class VelocityDeflection():
     """
-    Base VelocityDeflection object class. Subclasses are:
+    Base VelocityDeflection object class. This class contains methods for
+    implementing secondary steering as well as getting relevant model
+    parameters from the input dictionary.
 
-    Each subclass has specific functional requirements. Refer to the
-    each VelocityDeflection subclass for further detail.
+    References:
+        [1] King, J., Fleming, P., King, R., Martínez-Tossas, L. A.,
+        Bay, C. J, Mudafort, R., and Simley, E.: Controls-Oriented Model
+        for Secondary Effects of Wake Steering, *Wind Energ. Sci.
+        Discuss.*, https://doi.org/10.5194/wes-2020-3, in review, 2020.
     """
 
     def __init__(self, parameter_dictionary):
+        """
+        Stores the parameter dictionary for the wake deflection model.
+
+        Args:
+            parameter_dictionary (dict): Dictionary containing the wake
+                deflection model parameters. See individual wake deflection
+                models for details of specific key-value pairs.
+        """
+
         self.model_string = None
         self.logger = setup_logger(name=__name__)
 
@@ -67,6 +81,33 @@ class VelocityDeflection():
 
     def calculate_effective_yaw_angle(self, x_locations, y_locations,
                                       z_locations, turbine, coord, flow_field):
+        """
+        This method determines the effective yaw angle to be used when
+        secondary steering is enabled. For more details on how the effective
+        yaw angle is calculated, see [1].
+
+        Args:
+            x_locations (np.array): Streamwise locations in wake.
+            y_locations (np.array): Spanwise locations in wake.
+            z_locations (np.array): Vertical locations in wake.
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
+            coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
+            flow_field (:py:class:`floris.simulation.flow_field.FlowField`):
+                Flow field object.
+
+        Raises:
+            ValueError: It appears that 'use_secondary_steering' is set
+                to True and 'calculate_VW_velocities' is set to False.
+                This configuration is not valid. Please set
+                'use_secondary_steering' to True if you wish to use
+                yaw-added recovery.
+
+        Returns:
+            float: The turbine yaw angle, including any effective yaw if
+            secondary steering is enabled.
+        """
         if self.use_secondary_steering:
             if not flow_field.wake.velocity_model.calculate_VW_velocities:
                 err_msg = "It appears that 'use_secondary_steering' is set " + \
@@ -131,6 +172,21 @@ class VelocityDeflection():
 
     @property
     def use_secondary_steering(self):
+        """
+        Flag to use secondary steering on the wake deflection using methods
+        developed in [1].
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
         return self._use_secondary_steering
 
     @use_secondary_steering.setter
@@ -144,6 +200,24 @@ class VelocityDeflection():
 
     @property
     def eps_gain(self):
+        """
+        Tuning value for yaw added recovery on the wake velocity using methods
+        developed in [1].
+
+        TODO: Don't believe this needs to be defined here. Already defined in
+        gaussian_model_model.py. Verify that it can be removed.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
         return self._eps_gain
 
     @eps_gain.setter
