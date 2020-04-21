@@ -18,47 +18,25 @@ from .gaussian_model_base import GaussianModel
 
 class IshiharaQian(GaussianModel):
     """
-    Ishihara is a wake velocity subclass that contains objects related to the
-    Gaussian wake model that include a near-wake correction.
+    IshiharaQian is a wake velocity subclass that contains objects related to
+    the Gaussian wake model that include a near-wake correction.
 
     Ishihara is a subclass of
-    :py:class:`floris.simulation.wake_velocity.VelocityDeficit` that is
-    used to compute the wake velocity deficit based on the Gaussian
+    :py:class:`floris.simulation.wake_velocity.gaussianModels.GaussianModel`
+    that is used to compute the wake velocity deficit based on the Gaussian
     wake model with self-similarity and a near wake correction. The Ishihara
     wake model includes a Gaussian wake velocity deficit profile in the y and z
     directions and includes the effects of ambient turbulence, added turbulence
     from upstream wakes, as well as wind shear and wind veer. For more info,
-    see:
+    see [1]
 
-    Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based analytical wake
-    model for wind turbines considering ambient turbulence intensities and
-    thrust coefficient effects." Journal of Wind Engineering and Industrial
-    Aerodynamics 177 (2018): 275-292.
 
-   Args:
-        parameter_dictionary: A dictionary as generated from the
-        input_reader; it should have the following key-value pairs:
+    References:
+        [1] Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based
+        analytical wake model for wind turbines considering ambient turbulence
+        intensities and thrust coefficient effects." Journal of Wind
+        Engineering and Industrial Aerodynamics 177 (2018): 275-292.
 
-            -   **ishihara**: A dictionary containing the following
-                key-value pairs:
-
-                -   **kstar**: A float that is a parameter used to
-                    determine the linear relationship between the
-                    turbulence intensity and the width of the Gaussian
-                    wake shape.
-                -   **epsilon**: A float that is a second parameter used to
-                    determine the linear relationship between the
-                    turbulence intensity and the width of the Gaussian
-                    wake shape.
-                -   **a**: constant coefficient used in calculation of
-                    wake-added turbulence.
-                -   **b**: linear coefficient used in calculation of
-                    wake-added turbulence.
-                -   **c**: near-wake coefficient used in calculation of
-                    wake-added turbulence.
-
-    Returns:
-        An instantiated Ishihara(WaveVelocity) object.
     """
     
     default_parameters = {
@@ -90,6 +68,31 @@ class IshiharaQian(GaussianModel):
     }
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialization function for Gauss wake model
+
+        Args:
+                parameter_dictionary: A dictionary as generated from the
+                input_reader; it should have the following key-value pairs:
+
+                    -   **ishihara**: A dictionary containing the following
+                        key-value pairs:
+                    -   **kstar**: A float that is a parameter used to
+                        determine the linear relationship between the
+                        turbulence intensity and the width of the Gaussian
+                        wake shape.
+                    -   **epsilon**: A float that is a second parameter
+                    used to
+                        determine the linear relationship between the
+                        turbulence intensity and the width of the Gaussian
+                        wake shape.
+                    -   **a**: constant coefficient used in calculation of
+                        wake-added turbulence.
+                    -   **b**: linear coefficient used in calculation of
+                        wake-added turbulence.
+                    -   **c**: near-wake coefficient used in calculation of
+                        wake-added turbulence.
+        """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara_qian"
@@ -111,38 +114,40 @@ class IshiharaQian(GaussianModel):
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
         """
-        Using the Gaussian wake model, this method calculates and
-        returns the wake velocity deficits, caused by the specified
-        turbine, relative to the freestream velocities at the grid of
-        points comprising the wind farm flow field.
+        Using the IshiharaQian gaussian wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified turbine, 
+        relative to the freestream velocities at the grid of points 
+        comprising the wind farm flow field.
 
         Args:
-            x_locations: An array of floats that contains the
-                streamwise direction grid coordinates of the flow field
+            x_locations (np.array): An array of floats that contains the 
+                streamwise direction grid coordinates of the flow field 
                 domain (m).
-            y_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the direction
+            y_locations (np.array: n array of floats that contains the grid 
+                coordinates of the flow field domain in the direction 
                 normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the vertical
+            z_locations (np.array): An array of floats that contains the grid 
+                coordinates of the flow field domain in the vertical 
                 direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that
+            turbine (:py:obj:`floris.simulation.turbine`): object that 
                 represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
-                containing the coordinate of the turbine creating the
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): object
+                containing the coordinate of the turbine creating the 
                 wake (m).
-            deflection_field: #TODO not yet integrated into the Ishihara model
-            flow_field: A :py:class:`floris.simulation.flow_field`
-                object containing the flow field information for the
+            deflection_field (np.array): An array of floats that contains the 
+                amount of wake deflection in meters in the y direction 
+                at each grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): object
+                containing the flow field information for the 
                 wind farm.
 
         Returns:
-            Three arrays of floats that contain the wake velocity
-            deficit in m/s created by the turbine relative to the
-            freestream velocities for the u, v, and w components,
-            aligned with the x, y, and z directions, respectively. The
-            three arrays contain the velocity deficits at each grid
-            point in the flow field.
+            (np.array): Three arrays of floats that contain the wake velocity 
+            deficit in m/s created by the turbine relative to the 
+            freestream velocities for the u, v, and w components, 
+            aligned with the x, y, and z directions, respectively. The 
+            three arrays contain the velocity deficits at each grid 
+            point in the flow field. 
         """
         # added turbulence model
         TI = turbine._turbulence_intensity
