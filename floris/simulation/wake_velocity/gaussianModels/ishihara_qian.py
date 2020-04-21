@@ -30,7 +30,6 @@ class IshiharaQian(GaussianModel):
     from upstream wakes, as well as wind shear and wind veer. For more info,
     see [1]
 
-
     References:
         [1] Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based
         analytical wake model for wind turbines considering ambient turbulence
@@ -209,13 +208,16 @@ class IshiharaQian(GaussianModel):
         Parameter that is used to determine the linear relationship between the
         turbulence intensity and the width of the Gaussian wake shape.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            kstar (float): Factor for relationship between the turbulence
-                intensity and the width of the Gaussian wake shape.
+            value (float): Value to set.
 
         Returns:
-            float: Factor for relationship between the turbulence intensity and
-            the width of the Gaussian wake shape.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._kstar
 
@@ -247,13 +249,16 @@ class IshiharaQian(GaussianModel):
         Parameter that is used to determine the linear relationship between the
         turbulence intensity and the width of the Gaussian wake shape.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            epsilon (float): Factor for relationship between the turbulence
-                intensity and the width of the Gaussian wake shape.
+            value (float): Value to set.
 
         Returns:
-            float: Factor for relationship between the turbulence intensity and
-            the width of the Gaussian wake shape.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._epsilon
 
@@ -279,13 +284,16 @@ class IshiharaQian(GaussianModel):
         """
         Constant coefficient used in calculation of wake-added turbulence.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            a (float): Constant coefficient used in calculation of wake-added
-                turbulence.
+            value (float): Value to set.
 
         Returns:
-            float: Constant coefficient used in calculation of wake-added
-            turbulence.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._a
 
@@ -311,13 +319,16 @@ class IshiharaQian(GaussianModel):
         """
         Linear coefficient used in calculation of wake-added turbulence.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            b (float): Linear coefficient used in calculation of wake-added
-                turbulence.
+            value (float): Value to set.
 
         Returns:
-            float: Linear coefficient used in calculation of wake-added
-            turbulence.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._b
 
@@ -343,13 +354,16 @@ class IshiharaQian(GaussianModel):
         """
         Near-wake coefficient used in calculation of wake-added turbulence.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            c (float): Near-wake coefficient used in calculation of wake-added
-                turbulence.
+            value (float): Value to set.
 
         Returns:
-            float: Near-wake coefficient used in calculation of wake-added
-            turbulence.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._c
 

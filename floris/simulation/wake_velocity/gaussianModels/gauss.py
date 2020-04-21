@@ -187,16 +187,16 @@ class Gauss(GaussianModel):
         Parameter used to determine the linear relationship between the 
         turbulence intensity and the width of the Gaussian wake shape.
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-           value (float): Value to set.
+            value (float): Value to set.
 
         Returns:
             float: Value currently set.
 
-         Raises:
-             ValueError: Invalid value
+        Raises:
+            ValueError: Invalid value.
         """
         return self._ka
 
@@ -221,16 +221,16 @@ class Gauss(GaussianModel):
         Parameter used to determine the linear relationship between the 
         turbulence intensity and the width of the Gaussian wake shape.
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-           value (float): Value to set.
+            value (float): Value to set.
 
         Returns:
             float: Value currently set.
 
-         Raises:
-             ValueError: Invalid value
+        Raises:
+            ValueError: Invalid value.
         """
         return self._kb
 
@@ -256,16 +256,16 @@ class Gauss(GaussianModel):
         between the near wake and far wake region on the turbulence
         intensity.
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-           value (float): Value to set.
+            value (float): Value to set.
 
         Returns:
             float: Value currently set.
 
-         Raises:
-             ValueError: Invalid value
+        Raises:
+            ValueError: Invalid value.
         """
         return self._alpha
 
@@ -291,16 +291,16 @@ class Gauss(GaussianModel):
         between the near wake and far wake region on the turbine's
         induction factor.
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-           value (float): Value to set.
+            value (float): Value to set.
 
         Returns:
             float: Value currently set.
 
-         Raises:
-             ValueError: Invalid value
+        Raises:
+            ValueError: Invalid value.
         """
         return self._beta
 

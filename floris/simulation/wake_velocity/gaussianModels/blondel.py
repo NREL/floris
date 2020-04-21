@@ -178,8 +178,7 @@ class Blondel(GaussianModel):
         Constant coefficient used in calculation of wake expansion. See
         Eqn. 9 in [1].
 
-        Note:
-            This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -188,7 +187,7 @@ class Blondel(GaussianModel):
             float: Value currently set.
 
         Raises:
-            ValueError: Invalid value
+            ValueError: Invalid value.
         """
         return self._a_s
 
@@ -213,8 +212,7 @@ class Blondel(GaussianModel):
         Constant coefficient used in calculation of wake expansion. See
         Eqn. 9 in [1].
 
-        Note:
-            This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -223,7 +221,7 @@ class Blondel(GaussianModel):
             float: Value currently set.
 
         Raises:
-            ValueError: Invalid value
+            ValueError: Invalid value.
         """
         return self._b_s
 
@@ -248,8 +246,7 @@ class Blondel(GaussianModel):
         Linear constant used in calculation of wake expansion. See
         Eqn. 9 in [1].
 
-        Note:
-            This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -258,7 +255,7 @@ class Blondel(GaussianModel):
             float: Value currently set.
 
         Raises:
-            ValueError: Invalid value
+            ValueError: Invalid value.
         """
         return self._c_s
 
@@ -284,8 +281,7 @@ class Blondel(GaussianModel):
         Constant exponent coefficient used in calculation of the super-Gaussian
         order. See Eqn. 13 in [1].
 
-        Note:
-            This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -294,7 +290,7 @@ class Blondel(GaussianModel):
             float: Value currently set.
 
         Raises:
-            ValueError: Invalid value
+            ValueError: Invalid value.
         """
         return self._a_f
 
@@ -320,8 +316,7 @@ class Blondel(GaussianModel):
         Constant exponent coefficient used in calculation of the super-Gaussian
         order. See Eqn. 13 in [1].
 
-        Note:
-            This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -330,7 +325,7 @@ class Blondel(GaussianModel):
             float: Value currently set.
 
         Raises:
-            ValueError: Invalid value
+            ValueError: Invalid value.
         """
         return self._b_f
 
@@ -356,8 +351,7 @@ class Blondel(GaussianModel):
         Linear constant used in calculation of the super-Gaussian order. See
         Eqn. 13 in [1].
 
-        Note:
-            This is a virtual property used to "get" or "set" a value.
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -366,7 +360,7 @@ class Blondel(GaussianModel):
             float: Value currently set.
 
         Raises:
-            ValueError: Invalid value
+            ValueError: Invalid value.
         """
         return self._c_f
 

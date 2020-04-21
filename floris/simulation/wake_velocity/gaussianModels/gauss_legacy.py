@@ -192,11 +192,16 @@ class LegacyGauss(GaussianModel):
         Parameter used to determine the linear relationship between the 
         turbulence intensity and the width of the Gaussian wake shape.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            ka (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._ka
 
@@ -218,14 +223,19 @@ class LegacyGauss(GaussianModel):
     @property
     def kb(self):
         """
-        Parameter used to determine the linear relationship between the 
+        Parameter used to determine the linear relationship between the
         turbulence intensity and the width of the Gaussian wake shape.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            kb (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._kb
 
@@ -251,11 +261,16 @@ class LegacyGauss(GaussianModel):
         between the near wake and far wake region on the turbulence
         intensity.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            alpha (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._alpha
 
@@ -281,11 +296,16 @@ class LegacyGauss(GaussianModel):
         between the near wake and far wake region on the turbine's
         induction factor.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            beta (float, int): Gaussian wake model coefficient.
-            
+            value (float): Value to set.
+
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._beta
 
