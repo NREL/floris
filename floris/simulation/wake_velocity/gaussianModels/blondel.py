@@ -121,9 +121,6 @@ class Blondel(GaussianModel):
             three arrays contain the velocity deficits at each grid 
             point in the flow field. 
         """
-  
-
-
         # TODO: implement veer
         # Veer (degrees)
         veer = flow_field.wind_veer
@@ -179,9 +176,10 @@ class Blondel(GaussianModel):
     def a_s(self):
         """
         Constant coefficient used in calculation of wake expansion. See
-        Eqn. 9 in [1]
+        Eqn. 9 in [1].
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        Note:
+            This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -209,14 +207,14 @@ class Blondel(GaussianModel):
                     value, __class__.default_parameters['a_s'])
                 )
 
-
     @property
     def b_s(self):
         """
         Constant coefficient used in calculation of wake expansion. See
-        Eqn. 9 in [1]
+        Eqn. 9 in [1].
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        Note:
+            This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -248,9 +246,10 @@ class Blondel(GaussianModel):
     def c_s(self):
         """
         Linear constant used in calculation of wake expansion. See
-        Eqn. 9 in [1]
+        Eqn. 9 in [1].
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        Note:
+            This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -283,9 +282,10 @@ class Blondel(GaussianModel):
     def a_f(self):
         """
         Constant exponent coefficient used in calculation of the super-Gaussian
-        order. See Eqn. 13 in [1]
+        order. See Eqn. 13 in [1].
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        Note:
+            This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -318,9 +318,10 @@ class Blondel(GaussianModel):
     def b_f(self):
         """
         Constant exponent coefficient used in calculation of the super-Gaussian
-        order. See Eqn. 13 in [1]
+        order. See Eqn. 13 in [1].
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        Note:
+            This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
@@ -353,9 +354,10 @@ class Blondel(GaussianModel):
     def c_f(self):
         """
         Linear constant used in calculation of the super-Gaussian order. See
-        Eqn. 13 in [1]
+        Eqn. 13 in [1].
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
+        Note:
+            This is a virtual property used to "get" or "set" a value.
 
         Args:
             value (float): Value to set.
