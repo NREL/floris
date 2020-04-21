@@ -45,27 +45,30 @@ from .wake_combination.max import MAX
 class Wake():
     """
     Wake is a container class for the various wake model objects. In
-    particular, Wake holds references to the velocity and deflection
-    models as well as their parameters.
+    particular, Wake holds references to the velocity, deflection, turbulence,
+    and combination models as well as their parameters.
+    
+    Raises:
+        ValueError: Invalid value given for VelocityDeficit
+        ValueError: Invalid value given for WakeTurbulence
+        ValueError: Invalid value given for WakeCombination
+        ValueError: Invalid value given for VelocityDeflection
     """
+    
 
     def __init__(self, instance_dictionary):
         """
-        Init method for Wake objects.
+        Some info for the initialization of this class.
+        # TODO
 
         Args:
-            instance_dictionary (dict): the input dictionary with the
-            following key-value pairs:
-                {
-                    "description": str,
-                    "properties": dict({
-                        velocity_model: VelocityDeficit
-                        deflection_model: VelocityDeflection
-                        parameters: dict({
-                            see VelocityDeficit, VelocityDeflection
-                        })
-                    }),
-                }
+            instance_dictionary (dict): Dictionary consisting of the following key-value pairs:
+
+                - velocity_model
+                - turbulence_model
+                - deflection_model
+                - combination_model
+                - parameters - see model classes
         """
 
         properties = instance_dictionary["properties"]
@@ -113,15 +116,21 @@ class Wake():
     @property
     def velocity_model(self):
         """
-        Print or re-assign the velocity model. Recognized types:
+        Get or assign the velocity model.
 
-         - jensen
-         - multizone
-         - gauss
-         - curl
-         - ishihara
+        **Note**: This is a virtual property used to "get" or "set" a value.
 
-        When assigning, the input can be a string or an instance of the model.
+        Args:
+            value (str, `VelocityDefecit`_): Velocity model to set.
+
+        Returns:
+            `VelocityDefecit`_: Velocity model currently set.
+
+        Raises:
+            ValueError: Invalid value given for `VelocityDefecit`_
+        
+        .. _VelocityDefecit:
+            :py:class:`floris.simulation.wake_velocity.base_velocity_deficit.VelocityDeficit`
         """
         return self._velocity_model
 
@@ -142,10 +151,21 @@ class Wake():
     @property
     def turbulence_model(self):
         """
-        Print or re-assign the wake turbulence model. Recognized types:
+        Get or assign the turbulence model.
 
-         - gauss
-         - ishihara
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (str, `WakeTurbulence`_): Turbulence model to set.
+
+        Returns:
+            `WakeTurbulence`_: Turbulence model currently set.
+
+        Raises:
+            ValueError: Invalid value given for `WakeTurbulence`_
+        
+        .. _WakeTurbulence:
+            :py:class:`floris.simulation.wake_turbulence.base_wake_turbulence.WakeTurbulence
         """
         return self._turbulence_model
 
@@ -162,20 +182,25 @@ class Wake():
         else:
             raise ValueError(
                 "Invalid value given for WakeTurbulence: {}".format(value))
-        
-        # self._turbulence_model = self._turbulence_models[value](
-        #     self.parameters["wake_turbulence_parameters"])
 
     @property
     def deflection_model(self):
         """
-        Print or re-assign the deflection model. Recognized types:
+        Get or assign the deflection model.
 
-         - jimenez
-         - gauss
-         - curl
+        **Note**: This is a virtual property used to "get" or "set" a value.
 
-        When assigning, the input can be a string or an instance of the model.
+        Args:
+            value (str, `VelocityDeflection`_): Deflection model to set.
+
+        Returns:
+            `VelocityDeflection`_: Deflection model currently set.
+
+        Raises:
+            ValueError: Invalid value given for `VelocityDeflection`_
+        
+        .. _VelocityDeflection:
+            :py:class:`floris.simulation.wake_deflection.base_wake_deflection.VelocityDeflection
         """
         return self._deflection_model
 
@@ -196,13 +221,21 @@ class Wake():
     @property
     def combination_model(self):
         """
-        Print or re-assign the combination model. Recognized types:
+        Get or assign the combination model.
 
-         - fls
-         - sosfs
-         - max
+        **Note**: This is a virtual property used to "get" or "set" a value.
 
-        When assigning, the input can be a string or an instance of the model.
+        Args:
+            value (str, `WakeCombination`_): Combination model to set.
+
+        Returns:
+            `WakeCombination`_: Combination model currently set.
+
+        Raises:
+            ValueError: Invalid value given for `WakeCombination`_
+        
+        .. _WakeCombination:
+            :py:class:`floris.simulation.wake_combination.base_wake_combination.WakeCombination
         """
         return self._combination_model
 
@@ -219,27 +252,51 @@ class Wake():
     @property
     def deflection_function(self):
         """
-        Return the underlying function of the deflection model.
+        Get the function used as the deflection model.
+
+        Returns:
+            `VelocityDeflection`_
+
+        .. _VelocityDeflection:
+            :py:class:`floris.simulation.wake_deflection.base_wake_deflection.VelocityDeflection
         """
         return self.deflection_model.function
 
     @property
     def velocity_function(self):
         """
-        Return the underlying function of the velocity model.
+        Get the function used as the velocity deficit model.
+
+        Returns:
+            `VelocityDefecit`_
+
+        .. _VelocityDefecit:
+            :py:class:`floris.simulation.wake_velocity.base_velocity_deficit.VelocityDeficit`
         """
         return self.velocity_model.function
 
     @property
     def turbulence_function(self):
         """
-        Return the underlying function of the velocity model.
+        Get the function used as the turbulence model.
+        
+        Returns:
+            `WakeTurbulence`_
+
+        .. _WakeTurbulence:
+            :py:class:`floris.simulation.wake_turbulence.base_wake_turbulence.WakeTurbulence
         """
         return self.turbulence_model.function
 
     @property
     def combination_function(self):
         """
-        Return the underlying function of the combination model.
+        Get the function used as the combination model.
+        
+        Returns:
+            `WakeCombination`_
+
+        .. _WakeCombination:
+            :py:class:`floris.simulation.wake_combination.base_wake_combination.WakeCombination
         """
         return self.combination_model.function
