@@ -47,11 +47,9 @@ And merges it with models described in
 
 (Note this model [6] is implemented more directly in blondel.py)
 
-The model merges the Bastankhah/Niayifar/Porte-Agel with that of Blondel and includes
-additional corrections to provide better consistency with previous models and SOWFA
-results
-
-
+The model merges the Bastankhah/Niayifar/Porte-Agel with that of Blondel and
+includes additional corrections to provide better consistency with previous
+models and SOWFA results.
 """
 
 class Gauss(GaussianModel):
@@ -146,9 +144,11 @@ class Gauss(GaussianModel):
     def ka(self):
         """
         Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
         Args:
             ka (float, int): Gaussian wake model coefficient.
+
         Returns:
             float: Gaussian wake model coefficient.
         """
@@ -173,9 +173,11 @@ class Gauss(GaussianModel):
     def kb(self):
         """
         Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
         Args:
             kb (float, int): Gaussian wake model coefficient.
+
         Returns:
             float: Gaussian wake model coefficient.
         """
@@ -200,10 +202,12 @@ class Gauss(GaussianModel):
     def alpha(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbulence
-            intensity.
+        between the near wake and far wake region on the turbulence
+        intensity.
+
         Args:
             alpha (float, int): Gaussian wake model coefficient.
+
         Returns:
             float: Gaussian wake model coefficient.
         """
@@ -228,10 +232,12 @@ class Gauss(GaussianModel):
     def beta(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbine's
-            induction factor.
+        between the near wake and far wake region on the turbine's
+        induction factor.
+
         Args:
             beta (float, int): Gaussian wake model coefficient.
+            
         Returns:
             float: Gaussian wake model coefficient.
         """

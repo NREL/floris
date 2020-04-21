@@ -20,10 +20,6 @@ class Jimenez(VelocityDeflection):
     Subclass of the
     :py:class:`floris.simulation.wake_deflection.VelocityDeflection`
     object class. Parameters required for Jimenez wake model:
-
-     - ad: #TODO What is this parameter for?
-     - kd: #TODO What is this parameter for?
-     - bd: #TODO What is this parameter for?
     """
     
     default_parameters = {
@@ -37,13 +33,11 @@ class Jimenez(VelocityDeflection):
         Instantiate Jimenez object and pass function paramter values.
 
         Args:
-            parameter_dictionary (dict): input dictionary with the
-                following key-value pairs:
-                    {
-                        "kd": 0.05,
-                        "ad": 0.0,
-                        "bd": 0.0
-                    }
+            parameter_dictionary (dict): input dictionary with the following key-value pairs:
+
+                - kd #TODO What is this parameter for?
+                - ad #TODO What is this parameter for?
+                - bd #TODO What is this parameter for?
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)

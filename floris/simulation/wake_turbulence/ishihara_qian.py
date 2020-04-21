@@ -34,8 +34,8 @@ class IshiharaQian(WakeTurbulence):
     Aerodynamics 177 (2018): 275-292.
 
     Args:
-        parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
+        parameter_dictionary: A dictionary as generated from the input_reader;
+        it should have the following key-value pairs:
             -   **ishihara**: A dictionary containing the following
                 key-value pairs:
 
@@ -47,9 +47,9 @@ class IshiharaQian(WakeTurbulence):
                     determine the linear relationship between the
                     turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **d**: constant coefficient used in calculation of              wake-added turbulence.
-                -   **e**: linear coefficient used in calculation of                wake-added turbulence.
-                -   **f**: near-wake coefficient used in calculation of             wake-added turbulence.
+                -   **d**: constant coefficient used in calculation of wake-added turbulence.
+                -   **e**: linear coefficient used in calculation of wake-added turbulence.
+                -   **f**: near-wake coefficient used in calculation of wake-added turbulence.
 
     Returns:
         An instantiated Ishihara(WakeTurbulence) object.

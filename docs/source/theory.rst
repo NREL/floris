@@ -33,7 +33,7 @@ Literature on the Gaussian model can be found in the following papers:
 
 
 Curled Wake Model
-===============
+=================
 The curled wake model solves a linearized version of the 
 Reynolds-averaged Navier-Stokes equations to obtain
 the wake velocity deficit.

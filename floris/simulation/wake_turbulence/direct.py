@@ -24,10 +24,10 @@ class Direct(WakeTurbulence):
     Args:
         parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
-            -   **direct**: A dictionary containing the following
-                key-value pairs:
 
-                -   **local_TI_dict**: an ordered dict 
+            - **direct**: A dictionary containing the following key-value pairs:
+
+                - **local_TI_dict**: an ordered dict 
 
     Returns:
         An instantiated Ishihara(WakeTurbulence) object.

@@ -20,12 +20,12 @@ class Gauss(VelocityDeflection):
     :py:class:`floris.simulation.wake_deflection.VelocityDeflection`
     object. Parameters required for Gauss wake model:
 
-     - ka: #TODO What is this parameter for?
-     - kb: #TODO What is this parameter for?
-     - alpha: #TODO What is this parameter for?
-     - beta: #TODO What is this parameter for?
-     - ad: #TODO What is this parameter for?
-     - bd: #TODO What is this parameter for?
+    - ka: #TODO What is this parameter for?
+    - kb: #TODO What is this parameter for?
+    - alpha: #TODO What is this parameter for?
+    - beta: #TODO What is this parameter for?
+    - ad: #TODO What is this parameter for?
+    - bd: #TODO What is this parameter for?
     """
     
     default_parameters = {
@@ -45,16 +45,13 @@ class Gauss(VelocityDeflection):
         Instantiate Gauss object and pass function paramter values.
 
         Args:
-            parameter_dictionary (dict): input dictionary with the
-                following key-value pairs:
-                    {
-                        "ka": 0.3,
-                        "kb": 0.004,
-                        "alpha": 0.58,
-                        "beta": 0.077,
-                        "ad": 0.0,
-                        "bd": 0.0
-                    }
+            parameter_dictionary (dict): input dictionary with the following key-value pairs:
+                - ka
+                - kb
+                - alpha
+                - beta
+                - ad
+                - bd
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)

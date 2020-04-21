@@ -37,7 +37,8 @@ class IshiharaQian(GaussianModel):
 
    Args:
         parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
+        input_reader; it should have the following key-value pairs:
+
             -   **ishihara**: A dictionary containing the following
                 key-value pairs:
 
@@ -201,7 +202,7 @@ class IshiharaQian(GaussianModel):
     def kstar(self):
         """
         Parameter that is used to determine the linear relationship between the
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
 
         Args:
             kstar (float): Factor for relationship between the turbulence
@@ -209,7 +210,7 @@ class IshiharaQian(GaussianModel):
 
         Returns:
             float: Factor for relationship between the turbulence intensity and
-                the width of the Gaussian wake shape.
+            the width of the Gaussian wake shape.
         """
         return self._kstar
 
@@ -239,7 +240,7 @@ class IshiharaQian(GaussianModel):
     def epsilon(self):
         """
         Parameter that is used to determine the linear relationship between the
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
 
         Args:
             epsilon (float): Factor for relationship between the turbulence
@@ -247,7 +248,7 @@ class IshiharaQian(GaussianModel):
 
         Returns:
             float: Factor for relationship between the turbulence intensity and
-                the width of the Gaussian wake shape.
+            the width of the Gaussian wake shape.
         """
         return self._epsilon
 
@@ -279,7 +280,7 @@ class IshiharaQian(GaussianModel):
 
         Returns:
             float: Constant coefficient used in calculation of wake-added
-                turbulence.
+            turbulence.
         """
         return self._a
 
@@ -311,7 +312,7 @@ class IshiharaQian(GaussianModel):
 
         Returns:
             float: Linear coefficient used in calculation of wake-added
-                turbulence.
+            turbulence.
         """
         return self._b
 
@@ -343,7 +344,7 @@ class IshiharaQian(GaussianModel):
 
         Returns:
             float: Near-wake coefficient used in calculation of wake-added
-                turbulence.
+            turbulence.
         """
         return self._c
 

@@ -27,6 +27,22 @@ class TurbineMap():
     :py:class:`floris.utilities.Vec3` object. This class also provides 
     some helper methods for sorting and manipulating the turbine layout.
 
+    The underlying data structure for this class is a Python dictionary
+    mapping of :py:class:`floris.simulation.turbine.Turbine` to 
+    :py:class:`floris.utilities.Vec3` in the following form:
+
+        {
+
+            Vec3(): Turbine(),
+
+            Vec3(): Turbine(),
+
+            ...,
+
+            Vec3(): Turbine()
+
+        }
+
     Args:
         layout_x: A list of floats listing the x-coordinate locations of the
             Turbine objects in the Farm.
@@ -36,24 +52,10 @@ class TurbineMap():
 
         turbines: A list of Turbine objects corresponding to the locations
             given in layout_x and layout_y.
-        
-        The underlying data structure for this class is a Python dictionary
-        mapping of :py:class:`floris.simulation.turbine.Turbine` to 
-        :py:class:`floris.utilities.Vec3` in the following form:
-            {
-
-                Vec3(): Turbine(),
-
-                Vec3(): Turbine(),
-
-                ...,`
-
-                Vec3(): Turbine()
-
-            }
 
     Returns:
         TurbineMap: An instantiated TurbineMap object.
+
     """
 
     def __init__(self, layout_x, layout_y, turbines):
@@ -92,7 +94,7 @@ class TurbineMap():
             TurbineMap: A rotated TurbineMap.
 
         - rotates all turbines so that the wind direction at the turbine is aligned
-        with 0 degrees.
+          with 0 degrees.
 
         """
         layout_x = np.zeros(len(self.coords))

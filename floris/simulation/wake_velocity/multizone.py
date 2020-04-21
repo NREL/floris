@@ -54,8 +54,7 @@ class MultiZone(VelocityDeficit):
                     turbine normalized by the rotor diameter used in 
                     the calculation of wake-added turbulence.
 
-            - **floris**: A dictionary containing the following 
-                key-value pairs:
+            - **floris**: A dictionary containing the following key-value pairs:
 
                 -   **me**: A list of three floats that help determine 
                     the slope of the diameters of the three wake zones 
@@ -77,7 +76,7 @@ class MultiZone(VelocityDeficit):
                     used to determine the dependence of the wake 
                     velocity deficit decay rate for each of the three 
                     wake zones on the rotor yaw angle.
-
+                
     Returns:
         An instantiated Floris object.
     """
@@ -207,12 +206,14 @@ class MultiZone(VelocityDeficit):
         A list of three floats that help determine the slope of the diameters
             of the three wake zones (near wake, far wake, mixing zone) as a
             function of downstream distance.
+
         Args:
             me (list): Three floats that help determine the slope of the
                 diameters of the three wake zones.
+
         Returns:
             float: Three floats that help determine the slope of the diameters
-                of the three wake zones.
+            of the three wake zones.
         """
         return self._me
 
@@ -250,9 +251,11 @@ class MultiZone(VelocityDeficit):
             zones as a function of downstream distance, as well as the recovery
             of the velocity deficits in the wake as a function of downstream
             distance.
+
         Args:
             we (float, int): Scaling parameter used to adjust the wake
                 expansion.
+
         Returns:
             float: Scaling parameter used to adjust the wake expansion.
         """
@@ -278,12 +281,14 @@ class MultiZone(VelocityDeficit):
         """
         A float that is a parameter used to determine the dependence of the
             wake velocity deficit decay rate on the rotor yaw angle.
+
         Args:
             aU (float, int): Parameter used to determine the dependence of the
                 wake velocity deficit decay rate on the rotor yaw angle.
+
         Returns:
             float: Parameter used to determine the dependence of the wake
-                velocity deficit decay rate on the rotor yaw angle.
+            velocity deficit decay rate on the rotor yaw angle.
         """
         return self._aU
 
@@ -307,12 +312,14 @@ class MultiZone(VelocityDeficit):
         """
         A float that is a parameter used to determine the dependence of the
             wake velocity deficit decay rate on the rotor yaw angle.
+
         Args:
             bU (float, int): Parameter used to determine the dependence of the
                 wake velocity deficit decay rate on the rotor yaw angle.
+
         Returns:
             float: Parameter used to determine the dependence of the wake
-                velocity deficit decay rate on the rotor yaw angle.
+            velocity deficit decay rate on the rotor yaw angle.
         """
         return self._bU
 
@@ -337,12 +344,14 @@ class MultiZone(VelocityDeficit):
         A list of three floats that are parameters used to determine the
             dependence of the wake velocity deficit decay rate for each of the
             three wake zones on the rotor yaw angle.
+
         Args:
             me (list): Three floats that are parameters used to determine the
                 dependence of the wake velocity deficit decay rate.
+
         Returns:
             float: Three floats that are parameters used to determine the
-                dependence of the wake velocity deficit decay rate.
+            dependence of the wake velocity deficit decay rate.
         """
         return self._mU
 

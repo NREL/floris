@@ -17,20 +17,23 @@ import numpy as np
 
 class Jensen(VelocityDeficit):
     """
-    Wake velocity deficit model based on the Jensen model.
-    Jensen is a subclass of :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
+    Wake velocity deficit model based on the Jensen model. Jensen is a subclass
+    of :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
     used to compute the wake velocity deficit based on the classic
     Jensen/Park model. See Jensen, N. O., "A note on wind generator
     interaction." Tech. Rep. Risø-M-2411, Risø, 1983.
+
     Args:
         parameter_dictionary: A dictionary as generated from the
             input_reader; it should have the following key-value pairs:
+
             -   **turbulence_intensity**: A dictionary containing the
-                following key-value pairs used to calculate wake-added
-                turbulence intensity from an upstream turbine, using
-                the approach of Crespo, A. and Herna, J. "Turbulence
-                characteristics in wind-turbine wakes." *J. Wind Eng
-                Ind Aerodyn*. 1996.:
+                    following key-value pairs used to calculate wake-added
+                    turbulence intensity from an upstream turbine, using
+                    the approach of Crespo, A. and Herna, J. "Turbulence
+                    characteristics in wind-turbine wakes." *J. Wind Eng
+                    Ind Aerodyn*. 1996.:
+
                 -   **initial**: A float that is the initial ambient
                     turbulence intensity, expressed as a decimal
                     fraction.
@@ -43,12 +46,15 @@ class Jensen(VelocityDeficit):
                     applied to the distance downtream of an upstream
                     turbine normalized by the rotor diameter used in
                     the calculation of wake-added turbulence.
+
             -   **jensen**: A dictionary containing the following
                 key-value pairs:
+
                 -   **we**: A float that is the linear wake decay
                     constant that defines the cone boundary for the
                     wake as well as the velocity deficit. D/2 +/- we*x
                     is the cone boundary for the wake.
+
     Returns:
         An instantiated Jensen(WaveVelocity) object.
     """
@@ -137,14 +143,16 @@ class Jensen(VelocityDeficit):
     def we(self):
         """
         A float that is the linear wake decay constant that defines the cone
-            boundary for the wake as well as the velocity deficit. D/2 +/- we*x
-            is the cone boundary for the wake.
+        boundary for the wake as well as the velocity deficit. D/2 +/- we*x
+        is the cone boundary for the wake.
+
         Args:
             we (float, int): The linear wake decay constant that defines the
                 cone boundary for the wake as well as the velocity deficit.
+
         Returns:
             float: The linear wake decay constant that defines the cone
-                boundary for the wake as well as the velocity deficit.
+            boundary for the wake as well as the velocity deficit.
         """
         return self._we
 

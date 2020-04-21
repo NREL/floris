@@ -118,9 +118,11 @@ class LegacyGauss(GaussianModel):
     def ka(self):
         """
         Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
         Args:
             ka (float, int): Gaussian wake model coefficient.
+
         Returns:
             float: Gaussian wake model coefficient.
         """
@@ -145,9 +147,11 @@ class LegacyGauss(GaussianModel):
     def kb(self):
         """
         Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
         Args:
             kb (float, int): Gaussian wake model coefficient.
+
         Returns:
             float: Gaussian wake model coefficient.
         """
@@ -172,10 +176,12 @@ class LegacyGauss(GaussianModel):
     def alpha(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbulence
-            intensity.
+        between the near wake and far wake region on the turbulence
+        intensity.
+
         Args:
             alpha (float, int): Gaussian wake model coefficient.
+
         Returns:
             float: Gaussian wake model coefficient.
         """
@@ -200,10 +206,12 @@ class LegacyGauss(GaussianModel):
     def beta(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbine's
-            induction factor.
+        between the near wake and far wake region on the turbine's
+        induction factor.
+
         Args:
             beta (float, int): Gaussian wake model coefficient.
+            
         Returns:
             float: Gaussian wake model coefficient.
         """

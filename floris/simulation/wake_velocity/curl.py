@@ -433,9 +433,11 @@ class Curl(VelocityDeficit):
             the x, y, and z directions used for the curl wake model
             calculations. The grid resolution is specified as the number of
             grid points in the flow field domain in the x, y, and z directions.
+
         Args:
             model_grid_resolution (list): Flow field grid resolution in
                 [x, y, z] directions.
+
         Returns:
             float: Flow field grid resolution in [x, y, z] directions.
         """
@@ -474,8 +476,10 @@ class Curl(VelocityDeficit):
         Parameter that, along with the freestream velocity and the turbine's
             induction factor, is used to determine the initial wake velocity
             deficit immediately downstream of the rotor.
+
         Args:
             initial_deficit (float, int): Curled wake model coefficient.
+
         Returns:
             float: Curled wake model coefficient.
         """
@@ -502,8 +506,10 @@ class Curl(VelocityDeficit):
         """
         A scaling parameter that determines the amount of dissipation of
             the vortices with downstream distance.
+
         Args:
             dissipation (float, int): Scaling parameter for vortex dissipation.
+
         Returns:
             float: Scaling parameter for vortex dissipation.
         """
@@ -525,16 +531,17 @@ class Curl(VelocityDeficit):
                     )
                 )
 
-
     @property
     def veer_linear(self):
         """
         This parameter defines the linear change in the V velocity between the
             ground and hub height, and therefore determines the slope of the
             change in the V velocity with height.
+
         Args:
             veer_linear (float, int): The linear change in the V velocity
                 between the ground and hub height.
+
         Returns:
             float: The linear change in the V velocity between the ground and
                 hub height.

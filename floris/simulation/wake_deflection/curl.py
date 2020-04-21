@@ -19,9 +19,7 @@ class Curl(VelocityDeflection):
     """
     Subclass of the
     :py:class:`floris.simulation.wake_deflection.VelocityDeflection`
-    object. Parameters required for Curl wake model:
-
-     - model_grid_resolution: #TODO What does this do?
+    object.
     """
 
     def __init__(self, parameter_dictionary):
@@ -29,15 +27,9 @@ class Curl(VelocityDeflection):
         Instantiate Curl object and pass function paramter values.
 
         Args:
-            parameter_dictionary (dict): input dictionary with the
-                following key-value pair:
-                    {
-                        "model_grid_resolution": [
-                                                    250,
-                                                    100,
-                                                    75
-                                                ],
-                    }
+            parameter_dictionary (dict): input dictionary with the following key-value pair:
+
+                - model_grid_resolution #TODO What does this do?
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
