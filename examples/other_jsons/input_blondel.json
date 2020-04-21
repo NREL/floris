@@ -225,7 +225,12 @@
       "deflection_model": "gauss",
       "combination_model": "sosfs",
       "parameters": {
-        
+        "wake_deflection_parameters": {
+          "gauss": {
+            "dm": 1.2,
+            "use_secondary_steering":false
+          }
+          }
     }
   }
 }
