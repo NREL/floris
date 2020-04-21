@@ -16,10 +16,9 @@ import numpy as np
 
 class GaussianModel(VelocityDeficit):
     """
-    This is the super class for all the gaussian-type wake models, which will
-    inherit from it.  It includes implementations of functions they can eachuse
-    including the gaussian function itself, and also the component functions
-    needed for GCH (see [1])
+    This is the super-class for all Gaussian-type wake models. It includes
+    implementations of functions that subclasses should use to perform
+    Gaussian-related calculations (see [1]).
 
     References:
         [1] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
@@ -30,19 +29,17 @@ class GaussianModel(VelocityDeficit):
 
     def __init__(self, parameter_dictionary):
         """
-        Initialization function for Gauss wake model
-
         Args:
-            parameter_dictionary {dict} -- Dictionary of parameter values
-                non-provided values will revert to default values above
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`.
         """
-
         super().__init__(parameter_dictionary)
-
 
     def correction_steps(self, U_local, U, V, W, x_locations, y_locations,
                          turbine, turbine_coord):
         """[summary]
+        # TODO ^^
 
         Args:
             U_local ([type]): [description]
@@ -56,6 +53,7 @@ class GaussianModel(VelocityDeficit):
 
         Returns:
             [type]: [description]
+            # TODO ^^
         """
         if self.use_yaw_added_recovery:
             U = self.yaw_added_recovery_correction(U_local, U, W, \
@@ -65,6 +63,7 @@ class GaussianModel(VelocityDeficit):
     def calculate_VW(self, V, W, coord, turbine, flow_field, x_locations,
                      y_locations, z_locations):
         """[summary]
+        # TODO ^^
 
         Args:
             V ([type]): [description]
@@ -78,9 +77,11 @@ class GaussianModel(VelocityDeficit):
 
         Raises:
             ValueError: [description]
+            # TODO ^^
 
         Returns:
             [type]: [description]
+            # TODO ^^
         """
         if self.use_yaw_added_recovery:
             if not self.calculate_VW_velocities:
@@ -99,6 +100,7 @@ class GaussianModel(VelocityDeficit):
     def yaw_added_recovery_correction(self, U_local, U, W, x_locations,
                                       y_locations, turbine, turbine_coord):
         """[summary]
+        # TODO ^^
 
         Args:
             U_local ([type]): [description]
@@ -111,6 +113,7 @@ class GaussianModel(VelocityDeficit):
 
         Returns:
             [type]: [description]
+            # TODO ^^
         """
         # compute the velocity without modification
         U1 = U_local - U
@@ -140,6 +143,7 @@ class GaussianModel(VelocityDeficit):
     def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
                 z_locations):
         """[summary]
+        # TODO ^^
 
         Args:
             coord ([type]): [description]
@@ -151,6 +155,7 @@ class GaussianModel(VelocityDeficit):
 
         Returns:
             [type]: [description]
+            # TODO ^^
         """
         # turbine parameters
         D = turbine.rotor_diameter
@@ -302,9 +307,11 @@ class GaussianModel(VelocityDeficit):
     @property
     def calculate_VW_velocities(self):
         """[summary]
+        # TODO ^^
 
         Returns:
             [type]: [description]
+            # TODO ^^
         """
         return self._calculate_VW_velocities
 
@@ -347,6 +354,7 @@ class GaussianModel(VelocityDeficit):
     def eps_gain(self):
         """
         Parameter that 
+        # TODO ^^
 
         Args:
             eps_gain (float): Coeffienct for GCH
