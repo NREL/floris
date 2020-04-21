@@ -16,31 +16,26 @@ from .gaussian_model_base import GaussianModel
 import numpy as np
 from scipy.special import gamma
 
-
 class Blondel(GaussianModel):
     """
-    Blondel is a velocity deficit subclass that contains objects...
+    Blondel is a subclass of 
+    :py:class:`floris.simulation.wake_velocity.GaussianModel` and is meant to
+    be a direct implementation of the super-gaussian model described in [1]
+    with GCH disabled by default.
     
-    # TODO: update docstring
-    [extended_summary]
+    References:
+        [1] Blondel, F. and Cathelain, M. "An alternative form of the
+        super-Gaussian wind turbine wake model." *Wind Energy Science
+        Disucssions*, 2020.
 
-    [1] Blondel, F. and Cathelain, M. "An alternative form of the
-    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
-    2020.
-    
-    Args:
-        VelocityDeficit ([type]): [description]
-    
     Raises:
-        ValueError: [description]
-        ValueError: [description]
-        ValueError: [description]
-        ValueError: [description]
-        ValueError: [description]
-        ValueError: [description]
-    
-    Returns:
-        [type]: [description]
+        ValueError: Invalid value type given for a_s
+        ValueError: Invalid value type given for b_s
+        ValueError: Invalid value type given for c_s
+        ValueError: Invalid value type given for a_f
+        ValueError: Invalid value type given for b_f
+        ValueError: Invalid value type given for c_f
+
     """
 
     default_parameters = {
@@ -57,6 +52,14 @@ class Blondel(GaussianModel):
     }
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialization function for blondel wake model
+
+        Args:
+            parameter_dictionary {dict} -- Dictionary of parameter values
+                non-provided values were revert to default values above
+        """
+
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
 
@@ -85,6 +88,44 @@ class Blondel(GaussianModel):
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
+        """
+        Using the Blonel super-gaussian wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified turbine, 
+        relative to the freestream velocities at the grid of points 
+        comprising the wind farm flow field.
+
+        Args:
+            x_locations (np.array): An array of floats that contains the 
+                streamwise direction grid coordinates of the flow field 
+                domain (m).
+            y_locations (np.array: n array of floats that contains the grid 
+                coordinates of the flow field domain in the direction 
+                normal to x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid 
+                coordinates of the flow field domain in the vertical 
+                direction (m).
+            turbine (:py:obj:`floris.simulation.turbine`): object that 
+                represents the turbine creating the wake.
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): object
+                containing the coordinate of the turbine creating the 
+                wake (m).
+            deflection_field (np.array): An array of floats that contains the 
+                amount of wake deflection in meters in the y direction 
+                at each grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): object
+                containing the flow field information for the 
+                wind farm.
+
+        Returns:
+            (np.array): Three arrays of floats that contain the wake velocity 
+            deficit in m/s created by the turbine relative to the 
+            freestream velocities for the u, v, and w components, 
+            aligned with the x, y, and z directions, respectively. The 
+            three arrays contain the velocity deficits at each grid 
+            point in the flow field. 
+        """
+  
+
 
         # TODO: implement veer
         # Veer (degrees)
@@ -141,8 +182,7 @@ class Blondel(GaussianModel):
     def a_s(self):
         """
         Constant coefficient used in calculation of wake expansion. See
-            Eqn. 9 in "An alternative form of the super-Gaussian wind turbine
-            wake model", Blondel et. al., Wind Energy Science Discussions, 2020.
+        Eqn. 9 in [1]
 
         Args:
             a_s (float): Constant coefficient used in calculation of wake-added
@@ -150,7 +190,7 @@ class Blondel(GaussianModel):
 
         Returns:
             float: Constant coefficient used in calculation of wake-added
-                turbulence.
+            turbulence.
         """
         return self._a_s
 
@@ -174,8 +214,7 @@ class Blondel(GaussianModel):
     def b_s(self):
         """
         Constant coefficient used in calculation of wake expansion. See
-            Eqn. 9 in "An alternative form of the super-Gaussian wind turbine
-            wake model", Blondel et. al., Wind Energy Science Discussions, 2020.
+        Eqn. 9 in [1]
 
         Args:
             b_s (float): Constant coefficient used in calculation of
@@ -183,7 +222,7 @@ class Blondel(GaussianModel):
 
         Returns:
             float: Constant coefficient used in calculation of
-                wake-added turbulence.
+            wake-added turbulence.
         """
         return self._b_s
 
@@ -206,8 +245,7 @@ class Blondel(GaussianModel):
     def c_s(self):
         """
         Linear constant used in calculation of wake expansion. See
-            Eqn. 9 in "An alternative form of the super-Gaussian wind turbine
-            wake model", Blondel et. al., Wind Energy Science Discussions, 2020.
+        Eqn. 9 in [1]
 
         Args:
             c_s (float): Linear constant used in calculation of
@@ -238,17 +276,14 @@ class Blondel(GaussianModel):
     def a_f(self):
         """
         Constant exponent coefficient used in calculation of the super-Gaussian
-            order. See Eqn. 13 in "An alternative form of the super-Gaussian
-            wind turbine wake model", Blondel et. al., Wind Energy Science
-            Discussions, 2020.
-
+        order. See Eqn. 13 in [1]
         Args:
             a_f (float): Constant coefficient used in calculation the
                 super-Gaussian order.
 
         Returns:
             float: Constant coefficient used in calculation the
-                super-Gaussian order.
+            super-Gaussian order.
         """
         return self._a_f
 
@@ -272,9 +307,7 @@ class Blondel(GaussianModel):
     def b_f(self):
         """
         Constant exponent coefficient used in calculation of the super-Gaussian
-            order. See Eqn. 13 in "An alternative form of the super-Gaussian
-            wind turbine wake model", Blondel et. al., Wind Energy Science
-            Discussions, 2020.
+        order. See Eqn. 13 in [1]
 
         Args:
             b_f (float): Constant exponent coefficient used in calculation the
@@ -282,7 +315,7 @@ class Blondel(GaussianModel):
 
         Returns:
             float: Constant exponent coefficient used in calculation the
-                super-Gaussian order.
+            super-Gaussian order.
         """
         return self._b_f
 
@@ -306,8 +339,7 @@ class Blondel(GaussianModel):
     def c_f(self):
         """
         Linear constant used in calculation of the super-Gaussian order. See
-            Eqn. 13 in "An alternative form of the super-Gaussian wind turbine
-            wake model", Blondel et. al., Wind Energy Science Discussions, 2020.
+        Eqn. 13 in [1]
 
         Args:
             c_f (float): Linear constant used in calculation the
