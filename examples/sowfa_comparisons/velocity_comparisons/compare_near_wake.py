@@ -13,7 +13,8 @@
 # See https://floris.readthedocs.io for documentation
  
 
-# Compare 5 turbine results to SOWFA in 8 m/s, higher TI case
+# Demonstrate the performance of different models in near wake behavior compared
+# with SOWFA simulations
 
 import matplotlib.pyplot as plt
 import floris.tools as wfct
@@ -23,9 +24,13 @@ import copy
 import pickle
 
 # Parameters
-num_turbines = 4
+sowfa_TI = 0.1 # Can be 0.06 or 0.1
+
+
+# Fixed parameters
 sowfa_U0 = 8.0
-sowfa_TI = 0.1
+num_turbines = 4
+
 
 ## Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle('../sowfa_data_set/sowfa_data_set.p')
@@ -44,6 +49,10 @@ df_sowfa = df_sowfa[df_sowfa.yaw.apply(lambda x: np.max(np.abs(x)))==0.0]
 
 # Load the saved FLORIS interfaces
 fi_dict = pickle.load( open( "../floris_models.p", "rb" ) )
+
+# Add the direct BLONDEL implementation
+fi_b = wfct.floris_interface.FlorisInterface("../../other_jsons/input_blondel.json")
+fi_dict['blondel'] = (fi_b,'c','*')
 
 # Resimulate the SOWFA cases
 for floris_label in fi_dict:
