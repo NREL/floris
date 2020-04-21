@@ -14,49 +14,48 @@ from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
 import numpy as np
 
-
 class GaussianModel(VelocityDeficit):
     """
-    This is the first draft of what will hopefully become the new gaussian class 
-    Currently it contains a direct port of the Bastankhah gaussian class from previous
-    A direct implementation of the Blondel model
-    And a new GM model where we merge features a bit more of the two to ensure consistency with previous far-wake results
-    of the Gaussian model, while implementing the Blondel model's smooth near-wake
+    This is the super class for all the gaussian-type wake models, which will
+    inherit from it.  It includes implementations of functions they can eachuse
+    including the gaussian function itself, and also the component functions
+    needed for GCH (see [1])
 
-    TODO: This needs to be much more expanded and including full references
-
-    [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
-    wind-turbine wakes: A large-eddy simulation study." *Physics of
-    Fluids*, 2015.
-
-    [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
-    wind-turbine wakes." *Renewable Energy*, 2014.
-
-    [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
-    study of wind turbine wakes in yawed conditions." *J. Fluid
-    Mechanics*, 2016.
-
-    [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
-    A new approach for power prediction." *Energies*, 2016.
-
-    [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
-    blade pitch offset." *Energies*, 2017.
-
-    [6] Blondel, F. and Cathelain, M. "An alternative form of the
-    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
-    2020.
-    Notes to be written (merged)
-    """    
+    References:
+        [1] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
+        , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
+        Effects of Wake Steering, Wind Energ. Sci. Discuss., 
+        https://doi.org/10.5194/wes-2020-3, in review, 2020.
+    """
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialization function for Gauss wake model
+
+        Args:
+            parameter_dictionary {dict} -- Dictionary of parameter values
+                non-provided values will revert to default values above
+        """
 
         super().__init__(parameter_dictionary)
 
 
     def correction_steps(self, U_local, U, V, W, x_locations, y_locations,
                          turbine, turbine_coord):
-        """
-        TODO
+        """[summary]
+
+        Args:
+            U_local ([type]): [description]
+            U ([type]): [description]
+            V ([type]): [description]
+            W ([type]): [description]
+            x_locations ([type]): [description]
+            y_locations ([type]): [description]
+            turbine ([type]): [description]
+            turbine_coord ([type]): [description]
+
+        Returns:
+            [type]: [description]
         """
         if self.use_yaw_added_recovery:
             U = self.yaw_added_recovery_correction(U_local, U, W, \
@@ -65,8 +64,23 @@ class GaussianModel(VelocityDeficit):
 
     def calculate_VW(self, V, W, coord, turbine, flow_field, x_locations,
                      y_locations, z_locations):
-        """
-        # TODO
+        """[summary]
+
+        Args:
+            V ([type]): [description]
+            W ([type]): [description]
+            coord ([type]): [description]
+            turbine ([type]): [description]
+            flow_field ([type]): [description]
+            x_locations ([type]): [description]
+            y_locations ([type]): [description]
+            z_locations ([type]): [description]
+
+        Raises:
+            ValueError: [description]
+
+        Returns:
+            [type]: [description]
         """
         if self.use_yaw_added_recovery:
             if not self.calculate_VW_velocities:
@@ -84,8 +98,19 @@ class GaussianModel(VelocityDeficit):
 
     def yaw_added_recovery_correction(self, U_local, U, W, x_locations,
                                       y_locations, turbine, turbine_coord):
-        """
-        TODO
+        """[summary]
+
+        Args:
+            U_local ([type]): [description]
+            U ([type]): [description]
+            W ([type]): [description]
+            x_locations ([type]): [description]
+            y_locations ([type]): [description]
+            turbine ([type]): [description]
+            turbine_coord ([type]): [description]
+
+        Returns:
+            [type]: [description]
         """
         # compute the velocity without modification
         U1 = U_local - U
@@ -114,7 +139,19 @@ class GaussianModel(VelocityDeficit):
 
     def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
                 z_locations):
+        """[summary]
 
+        Args:
+            coord ([type]): [description]
+            turbine ([type]): [description]
+            flow_field ([type]): [description]
+            x_locations ([type]): [description]
+            y_locations ([type]): [description]
+            z_locations ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
         # turbine parameters
         D = turbine.rotor_diameter
         HH = turbine.hub_height
@@ -264,6 +301,11 @@ class GaussianModel(VelocityDeficit):
 
     @property
     def calculate_VW_velocities(self):
+        """[summary]
+
+        Returns:
+            [type]: [description]
+        """
         return self._calculate_VW_velocities
 
     @calculate_VW_velocities.setter
@@ -303,6 +345,15 @@ class GaussianModel(VelocityDeficit):
 
     @property
     def eps_gain(self):
+        """
+        Parameter that 
+
+        Args:
+            eps_gain (float): Coeffienct for GCH
+
+        Returns:
+            float: GCHcoefficient.
+        """
         return self._eps_gain
 
     @eps_gain.setter
