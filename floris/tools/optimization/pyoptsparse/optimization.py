@@ -11,7 +11,7 @@
 # the License.
  
 # See https://floris.readthedocs.io for documentation
- from ....utilities import setup_logger
+from ....utilities import setup_logger
 
 
 class Optimization():
