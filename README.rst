@@ -164,7 +164,7 @@ The requirements files can be used to install everything with:
 License
 =======
 
-Copyright 2019 NREL
+Copyright 2020 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
