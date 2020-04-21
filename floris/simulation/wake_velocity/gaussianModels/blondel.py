@@ -18,10 +18,8 @@ from scipy.special import gamma
 
 class Blondel(GaussianModel):
     """
-    Blondel is a subclass of 
-    :py:class:`floris.simulation.wake_velocity.GaussianModel` and is meant to
-    be a direct implementation of the super-gaussian model described in [1]
-    with GCH disabled by default.
+    Blondel is a direct implementation of the super-Gaussian model
+    described in [1] with GCH disabled by default.
     
     References:
         [1] Blondel, F. and Cathelain, M. "An alternative form of the
@@ -53,11 +51,10 @@ class Blondel(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
-        Initialization function for blondel wake model
-
         Args:
-            parameter_dictionary {dict} -- Dictionary of parameter values
-                non-provided values were revert to default values above
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`.
         """
 
         super().__init__(parameter_dictionary)
@@ -89,7 +86,7 @@ class Blondel(GaussianModel):
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
         """
-        Using the Blonel super-gaussian wake model, this method calculates and
+        Using the Blondel super-Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified turbine, 
         relative to the freestream velocities at the grid of points 
         comprising the wind farm flow field.
@@ -98,7 +95,7 @@ class Blondel(GaussianModel):
             x_locations (np.array): An array of floats that contains the 
                 streamwise direction grid coordinates of the flow field 
                 domain (m).
-            y_locations (np.array: n array of floats that contains the grid 
+            y_locations (np.array): An array of floats that contains the grid 
                 coordinates of the flow field domain in the direction 
                 normal to x and parallel to the ground (m).
             z_locations (np.array): An array of floats that contains the grid 
@@ -117,7 +114,7 @@ class Blondel(GaussianModel):
                 wind farm.
 
         Returns:
-            (np.array): Three arrays of floats that contain the wake velocity 
+            np.array: Three arrays of floats that contain the wake velocity 
             deficit in m/s created by the turbine relative to the 
             freestream velocities for the u, v, and w components, 
             aligned with the x, y, and z directions, respectively. The 
@@ -184,13 +181,16 @@ class Blondel(GaussianModel):
         Constant coefficient used in calculation of wake expansion. See
         Eqn. 9 in [1]
 
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
         Args:
-            a_s (float): Constant coefficient used in calculation of wake-added
-                turbulence.
+            value (float): Value to set.
 
         Returns:
-            float: Constant coefficient used in calculation of wake-added
-            turbulence.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value
         """
         return self._a_s
 
@@ -216,13 +216,16 @@ class Blondel(GaussianModel):
         Constant coefficient used in calculation of wake expansion. See
         Eqn. 9 in [1]
 
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
         Args:
-            b_s (float): Constant coefficient used in calculation of
-                wake-added turbulence.
+            value (float): Value to set.
 
         Returns:
-            float: Constant coefficient used in calculation of
-            wake-added turbulence.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value
         """
         return self._b_s
 
@@ -247,12 +250,16 @@ class Blondel(GaussianModel):
         Linear constant used in calculation of wake expansion. See
         Eqn. 9 in [1]
 
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
         Args:
-            c_s (float): Linear constant used in calculation of
-                wake-added turbulence.
+            value (float): Value to set.
 
         Returns:
-            float: Linear constant used in calculation of wake-added turbulence.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value
         """
         return self._c_s
 
@@ -277,13 +284,17 @@ class Blondel(GaussianModel):
         """
         Constant exponent coefficient used in calculation of the super-Gaussian
         order. See Eqn. 13 in [1]
+
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
         Args:
-            a_f (float): Constant coefficient used in calculation the
-                super-Gaussian order.
+            value (float): Value to set.
 
         Returns:
-            float: Constant coefficient used in calculation the
-            super-Gaussian order.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value
         """
         return self._a_f
 
@@ -309,13 +320,16 @@ class Blondel(GaussianModel):
         Constant exponent coefficient used in calculation of the super-Gaussian
         order. See Eqn. 13 in [1]
 
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
         Args:
-            b_f (float): Constant exponent coefficient used in calculation the
-                super-Gaussian order.
+            value (float): Value to set.
 
         Returns:
-            float: Constant exponent coefficient used in calculation the
-            super-Gaussian order.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value
         """
         return self._b_f
 
@@ -341,12 +355,16 @@ class Blondel(GaussianModel):
         Linear constant used in calculation of the super-Gaussian order. See
         Eqn. 13 in [1]
 
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
         Args:
-            c_f (float): Linear constant used in calculation the
-                super-Gaussian order.
+            value (float): Value to set.
 
         Returns:
-            float: Linear constant used in calculation the super-Gaussian order.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value
         """
         return self._c_f
 
