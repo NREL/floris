@@ -29,10 +29,10 @@ class GaussianModel(VelocityDeficit):
 
     def __init__(self, parameter_dictionary):
         """
+        See super-class for initialization details.
+
         Args:
             parameter_dictionary (dict): Model-specific parameters.
-                Default values are used when a parameter is not included
-                in `parameter_dictionary`.
         """
         super().__init__(parameter_dictionary)
 
