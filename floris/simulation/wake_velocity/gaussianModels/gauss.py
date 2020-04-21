@@ -70,7 +70,7 @@ class Gauss(GaussianModel):
 
         Args:
             parameter_dictionary {dict} -- Dictionary of parameter values
-                non-provided values were revert to default values above
+                non-provided values will revert to default values above
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
