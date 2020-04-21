@@ -12,11 +12,12 @@
 
 from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
+from .gaussian_model_base import GaussianModel
 import numpy as np
 from scipy.special import gamma
 
 
-class Blondel(VelocityDeficit):
+class Blondel(GaussianModel):
     """
     Blondel is a velocity deficit subclass that contains objects...
     
@@ -48,7 +49,11 @@ class Blondel(VelocityDeficit):
         "c_s": 0.2,
         "a_f": 3.11,
         "b_f": -0.68,
-        "c_f": 2.41
+        "c_f": 2.41,
+        'calculate_VW_velocities':False,
+        'use_yaw_added_recovery':False,
+        'yaw_recovery_alpha':0.03,
+        'eps_gain':0.3
     }
 
     def __init__(self, parameter_dictionary):
@@ -71,6 +76,12 @@ class Blondel(VelocityDeficit):
         self.c_f = model_dictionary["c_f"]
 
         self.model_grid_resolution = None
+
+        # GCH Parameters
+        self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
+        self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
+        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
+        self.eps_gain = model_dictionary["eps_gain"]
 
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
