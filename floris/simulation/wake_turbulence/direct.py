@@ -16,24 +16,39 @@ from .base_wake_turbulence import WakeTurbulence
 
 class Direct(WakeTurbulence):
     """
-    #TODO actually make this 'model'.
-    # Direct WakeTurbulence model class simply assigns the local TI for each 
-    # wind turbine according to observed or 'known' values. Local values of TI 
-    # are supplied as an ordered dictionary with inputs for each turbine.
+    **In Development**
 
-    Args:
-        parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
+    Direct is a subclass of 
+    :py:class:`floris.simulation.wake_velocity.WakeTurbulence` that will be
+    used to prescribe turbine-local TI values observed from SCADA or other 
+    observations.
 
-            - **direct**: A dictionary containing the following key-value pairs:
-
-                - **local_TI_dict**: an ordered dict 
-
-    Returns:
-        An instantiated Ishihara(WakeTurbulence) object.
+    #TODO Add Raises field
     """
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialize a Direct wake turbulence object with the parameter 
+        values listed below. If no parameter values are provided, default 
+        values are used.
+
+        Args:
+            parameter_dictionary (dict): A dictionary as 
+            generated from the input_reader; it should have the following key-value pairs:
+
+                - initial: A float that is the initial ambient
+                  turbulence intensity, expressed as a decimal
+                  fraction.
+                - constant: A float that is the constant used to
+                  scale the wake-added turbulence intensity.
+                - ai: A float that is the axial induction factor
+                  exponent used in in the calculation of wake-added
+                  turbulence.
+                - downstream: A float that is the exponent
+                  applied to the distance downstream of an upstream
+                  turbine normalized by the rotor diameter used in
+                  the calculation of wake-added turbulence.
+        """
         super().__init__()
         self.logger = setup_logger(name=__name__)
         self.model_string = "direct"

@@ -55,8 +55,8 @@ class CrespoHernandez(WakeTurbulence):
         values are used.
 
         Args:
-            parameter_dictionary (dict): parameter_dictionary: A dictionary as 
-            generated from the input_reader; it should have the following key-value pairs:
+            parameter_dictionary (dict): A dictionary as generated from the 
+            input_reader; it should have the following key-value pairs:
 
                 - initial: A float that is the initial ambient
                   turbulence intensity, expressed as a decimal
