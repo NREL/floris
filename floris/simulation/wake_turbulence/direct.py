@@ -16,24 +16,34 @@ from .base_wake_turbulence import WakeTurbulence
 
 class Direct(WakeTurbulence):
     """
-    #TODO actually make this 'model'.
-    # Direct WakeTurbulence model class simply assigns the local TI for each 
-    # wind turbine according to observed or 'known' values. Local values of TI 
-    # are supplied as an ordered dictionary with inputs for each turbine.
+    **In Development**
 
-    Args:
-        parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
+    Direct is a subclass of 
+    :py:class:`floris.simulation.wake_velocity.WakeTurbulence` that will be
+    used to prescribe turbine-local TI values observed from SCADA or other 
+    observations.
 
-            - **direct**: A dictionary containing the following key-value pairs:
-
-                - **local_TI_dict**: an ordered dict 
-
-    Returns:
-        An instantiated Ishihara(WakeTurbulence) object.
+    #TODO Add Raises fields.
     """
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialize a Direct wake turbulence object with the parameter 
+        values listed below. If no parameter values are provided, default 
+        values are used.
+
+        Args:
+            parameter_dictionary (dict): A dictionary as 
+            generated from the input_reader; it should have the following 
+            key-value pairs:
+
+                - **local_TI_dict**: A dictionary containing TI values for each 
+                  turbine in the wind plant.
+
+        Raises:
+            ValueError: Invalid value type given for 
+                current_turbulece_intensity.
+        """
         super().__init__()
         self.logger = setup_logger(name=__name__)
         self.model_string = "direct"
@@ -42,40 +52,33 @@ class Direct(WakeTurbulence):
         # wake model parameter
         self.local_TI_dict = model_dictionary["local_TI_dict"]
 
-    def function(self, x_locations, y_locations, z_locations, turbine,
-                 turbine_coord, flow_field, turb_u_wake, sorted_map):
+    def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """
-        This method ensures that the wake model sees local turbulence intensity 
-        values for each constituent wind turbine.
+        Main function for calculating wake added turbulence as a function of 
+        external conditions and wind turbine operation. This function is 
+        accessible through the :py:class:`floris.simulation.Wake` class as the 
+        :py:meth:`floris.simulation.Wake.turbulence_function` method.
 
-        #TODO include all these inputs? Not really necessary for the model, but 
-        # having them ensures that the function call is the same across all 
-        # turbulence models.
+        **NOTE:** Input arguments are not currently used, as no model is 
+        implemented. Arguments are retained currently for consistency of 
+        :py:meth:`floris.simulation.Wake.turbulence_function` call.
 
         Args:
-            turb_u_wake (np.array): not used for the current turbulence model,
-                included for consistency of function form
-            sorted_map (list): sorted turbine_map (coord, turbine)
-            x_locations: An array of floats that contains the
-                streamwise direction grid coordinates of the flow field
-                domain (m).
-            y_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the direction
-                normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the vertical
-                direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that
-                represents the turbine creating the wake (i.e. the 
-                upstream turbine).
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
-                containing the coordinate of the turbine creating the
-                wake (m).
-            deflection_field: An array of floats that contains the
-                amount of wake deflection in meters in the y direction
-                at each grid point of the flow field.
-            flow_field: A :py:class:`floris.simulation.flow_field`
-                object containing the flow field information for the
-                wind farm.
+            ambient_TI (float): TI of the background flowfield.
+            coord_ti (:py:class:`floris.utilities.Vec3`): Coordinate where TI 
+               is to be calculated (e.g. downstream wind turbines).
+            turbine_coord (:py:class:`floris.utilities.Vec3`): Coordinate of 
+               the wind turbine adding turbulence to the flow.
+            turbine (:py:class:`floris.simulation.Turbine`): Wind turbine 
+               adding turbulence to the flow.
+
+        Returns:
+            float: Wake-added turbulence reported for the current
+            wind turbine (**turbine**).
         """
-        #TODO write function
+        
+        #TODO develop and test function.
+        turbine.current_turbulence_intensity = self.parameter_dictionary \
+            ['local_TI_dict'][turbine]
+
+        return self.parameter_dictionary['local_TI_dict'][turbine]
