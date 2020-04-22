@@ -26,22 +26,18 @@ class Floris():
     Top-level class that describes a Floris model and initializes the
     simulation. Use the :py:class:`floris.simulation.farm` attribute to
     access other objects within the model.
-
-    Inherits:
-        From this class :py:class:`floris.simulation.farm`
     """
 
     def __init__(self, input_file=None, input_dict=None):
         """
-        Floris is the highest-level class of the Floris package. Import 
-        this class with one of the two optional inputs to create a Floris
-        model.
+        Import this class with one of the two optional input arguments
+        to create a Floris model. The `input_dict` and `input_file`
+        should both conform to the same data format.
 
         Args:
-            input_file (str, optional): Path to the input file. Defaults to
-                None.
-            input_dict (dict, optional): Dictionary containing all required
-                input quanitities. Defaults to None.
+            input_file (str, optional): Path to the input file which will
+                be parsed and converted to a Python dict.
+            input_dict (dict, optional): Python dict given directly.
         """
 
         # Parse the input into dictionaries
