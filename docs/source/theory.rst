@@ -6,30 +6,13 @@ Theory Reference
 FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al.
 2016), Gaussian, and Curl wake model.
 
-Literature on the Gaussian model can be found in the following papers:
+Literature on the Gaussian model can be found in :cite:`bastankhah2014new,abkar2015influence,niayifar2016analytical,bastankhah2016experimental,dilip2017wind` and :cite:`martinez2019aerodynamics`.
 
-1. Niayifar, A. and Porté-Agel, F.: A new analytical model for wind farm
-   power prediction, in: Journal of Physics: Conference Series, vol. 625,
-   012039, IOP Publishing, 2015.
+.. bibliography:: refs.bib
+   :cited:
+   :style: unsrt
+   :filter: docname in docnames
 
-2. Dilip, D. and Porté-Agel, F.: Wind Turbine Wake Mitigation through Blade
-   Pitch Offset, Energies, 10, 757, 2017.
-
-3. Abkar, M. and Porté-Agel, F.: Influence of atmospheric stability on
-   wind-turbine wakes: A large-eddy simulation study, Physics of Fluids,
-   27, 035 104, 2015.
-
-4. Bastankhah, M. and Porté-Agel, F.: A new analytical model for
-   wind-turbine wakes, Renewable Energy, 70, 116–123, 2014.
-
-5. Bastankhah, M. and Porté-Agel, 5 F.: Experimental and theoretical study of
-   wind turbine wakes in yawed conditions, Journal of FluidMechanics, 806,
-   506–541, 2016.
-   
-6. Martinez-Tossas, L. A., Annoni, J., Fleming, P. A., and Churchfield, M. J.: 
-   The aerodynamics of the curled wake: a simplified model in view of flow control, 
-   Wind Energ. Sci., 4, 127–138, 2019.
- 
 
 
 Curled Wake Model

@@ -31,6 +31,7 @@ headerlines = 13
 # assign input values
 if len(inputs) > 1:
     infile = inputs[1]
+    outfile = infile.split('.')[0]+'.rst'
 if len(inputs) > 2:
     outfile = inputs[2]
 if len(inputs) > 3:
@@ -51,43 +52,55 @@ codesec = False
 commentsec = False
 
 # make title and section header
-fileContents.insert(0, infile + ' \n')
-fileContents.insert(1, ''.join(['='] * len(infile) + [' \n\n']))
+title = infile.split('/')[-1]
+fileContents.insert(0, title + ' \n')
+fileContents.insert(1, ''.join(['='] * len(title) + [' \n\n']))
 
-# iterate through file contents
-for ii in range(2, len(fileContents)):
+# append 'EOF' to filecontents to signify end of list
+fileContents += ['EOF']
 
+flag = None
+ii = 2
+while flag is not 'EOF':
     # detect beginning/end of docstring
     if '"""' in fileContents[ii]:
+        fileContents[ii] = '\n'
+
         if commentsec == False:
             commentsec = True
         else:
-            commentsec = False
-        fileContents[ii] = '\n'
+            commentsec = False    
 
     # prepend lines in docstring with hash
     if commentsec:
         fileContents[ii] = '# ' + fileContents[ii]
 
-    # lines of code do NOT start with a hash
-    if fileContents[ii][0] not in ['#', '\n', ' ']:
+    # lines of code do NOT start with a hash or newline
+    if fileContents[ii][0] not in ['#', '\n', ]:
         commentsec = False
         if not codesec:
             fileContents.insert(ii, codeblock)
+            codesec = True
         else:
-            fileContents[ii] = '\t' + x
-        codesec = True
+            fileContents[ii] = '\t' + fileContents[ii]
+            codesec = True
 
     # add new line to end of code section
-    elif codesec and fileContents[ii][0] in ['#', '\n', ' ']:
-        fileContents.insert(ii, '\n')
+    elif codesec and fileContents[ii][0] in ['#', '\n']:
+        # fileContents.insert(ii, '\n')
         codesec = False
 
     # comment lines DO start with a hash
     else:
         fileContents[ii] = fileContents[ii][2:]
         codesec = False
-        # commentsec = False
+
+
+    ii += 1
+    flag = fileContents[ii]
+
+# trim off 'EOF' 
+dump = fileContents.pop(-1)
 
 # write to rst file
 with open(outfile, 'w') as filehandle:

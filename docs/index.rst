@@ -36,19 +36,14 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 
 More information on all of these models can be found in :ref:`theory`.
 
-A couple of publications with practical information on using floris as a
-modeling and simulation tool for controls research are
+See :cite:`annoni2018analysis,bay2019unlocking` for a practical information on 
+using floris as a modeling and simulation tool for controls research.
 
-1. Annoni, J., Fleming, P., Scholbrock, A., Roadman, J., Dana, S., Adcock, C.,
-    Porté-Agel, F, Raach, S., Haizmann, F., and Schlipf, D.: `Analysis of
-    control-oriented wake modeling tools using lidar field results <https://www.wind-energ-sci.net/3/819/2018/>`__,
-    in: Wind Energy Science, vol. 3, pp. 819-831, Copernicus Publications,
-    2018.
-2. Bay, C.J., King, J., Fleming, P., Mudafort, R., and Martínez-Tossas, L.A.:
-    `Unlocking the Full Potential of Wake Steering: Implementation and
-    Assessment of a Controls-Oriented Model <https://www.wind-energ-sci-discuss.net/wes-2019-19/>`__,
-    submitted to Wind Energy Science Discussions, Copernicus Publications,
-    2019.
+.. bibliography:: source/refs.bib
+   :cited:
+   :style: unsrt
+   :filter: docname in docnames
+
 
 Citation
 ========
