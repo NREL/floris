@@ -12,18 +12,23 @@
 
 class WakeTurbulence():
     """
-    WakeTurbulence is the base class of the different wake velocity model
-    classes.
-
-    An instantiated WakeTurbulence object will import parameters used to
-    calculate wake-added turbulence intensity from an upstream turbine,
-    using one of several approaches.
-
-    Returns:
-        An instantiated WakeTurbulence object.
+    WakeTurbulence is the general class for instances of specific wake-added 
+    turbulence models. 
     """
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialize the general wake turbulence class with the name of a 
+        specific turbulence model and the associated parameter values. If no 
+        parameter values are provided, default values are used.
+
+        Args:
+            parameter_dictionary (dict): Dictionary consisting of the following key-value pairs:
+
+                - model_string: name of turbulence model
+                - parameters: see turbulence model classes
+        """
+        
         self.parameter_dictionary = parameter_dictionary
 
         self.requires_resolution = False

@@ -13,36 +13,27 @@
 from ...utilities import setup_logger
 from .base_wake_turbulence import WakeTurbulence
 
-
 class CrespoHernandez(WakeTurbulence):
     """
-    CrespoHernandez is a wake turbulence subclass that contains objects related
+    CrespoHernandez is a wake-turbulence model that contains objects related
     to the wake turbulence model.
 
     CrespoHernandez is a subclass of
     :py:class:`floris.simulation.wake_velocity.WakeTurbulence` that is
-    used to compute the... #TODO finish updating docstring; add reference
+    used to compute additional variability introduced to the flowfield by 
+    operation of a wind turbine. Implementation of the model follows the 
+    original formulation and limitations outlined in [1].
 
-    Args:
-        parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
+    References:
+        [1] Crespo, A., and J. Hernandez. "Turbulence characteristics in 
+        wind-turbine wakes." Journal of wind engineering and industrial 
+        aerodynamics 61.1 (1996): 71-85.
 
-            -   **gauss**: A dictionary containing the following
-                key-value pairs:
-
-                -   **initial**: A float that is the initial ambient
-                    turbulence intensity, expressed as a decimal
-                    fraction.
-                -   **constant**: A float that is the constant used to
-                    scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor
-                    exponent used in in the calculation of wake-added
-                    turbulence.
-                -   **downstream**: A float that is the exponent
-                    applied to the distance downstream of an upstream
-                    turbine normalized by the rotor diameter used in
-                    the calculation of wake-added turbulence.
-
+    Raises:
+        ValueError: Invalid value type given for initial
+        ValueError: Invalid value type given for constant
+        ValueError: Invalid value type given for ai
+        ValueError: Invalid value type given for downstream
 
     Returns:
         An instantiated CrespoHernandez(WakeTurbulence) object.
@@ -58,6 +49,28 @@ class CrespoHernandez(WakeTurbulence):
 
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialize a CrespoHernandez wake turbulence object with the parameter 
+        values listed below. If no parameter values are provided, default 
+        values are used.
+
+        Args:
+            parameter_dictionary (dict): parameter_dictionary: A dictionary as 
+            generated from the input_reader; it should have the following key-value pairs:
+
+                - initial: A float that is the initial ambient
+                  turbulence intensity, expressed as a decimal
+                  fraction.
+                - constant: A float that is the constant used to
+                  scale the wake-added turbulence intensity.
+                - ai: A float that is the axial induction factor
+                  exponent used in in the calculation of wake-added
+                  turbulence.
+                - downstream: A float that is the exponent
+                  applied to the distance downstream of an upstream
+                  turbine normalized by the rotor diameter used in
+                  the calculation of wake-added turbulence.
+        """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "crespo_hernandez"
@@ -71,28 +84,20 @@ class CrespoHernandez(WakeTurbulence):
 
     def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """
-        #TODO update docstring
+        Main function for calculating wake added turbulence as a function of external conditions and wind turbine operation. This function is accessible through the :py:class:`floris.simulation.Wake` class as the :py:meth:`floris.simulation.Wake.turbulence_function` method.
 
         Args:
-            turb_u_wake (np.array): u-component of turbine wake field
-            sorted_map (list): sorted turbine_map (coord, turbine)
-            x_locations: An array of floats that contains the
-                streamwise direction grid coordinates of the flow field
-                domain (m).
-            y_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the direction
-                normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the vertical
-                direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that
-                represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
-                containing the coordinate of the turbine creating the
-                wake (m).
-            flow_field: A :py:class:`floris.simulation.flow_field`
-                object containing the flow field information for the
-                wind farm.
+            - ambient_TI (float): TI of the background flowfield.
+            - coord_ti (:py:class:`floris.utilities.Vec3`): Coordinate where TI 
+              is to be calculated (e.g. downstream wind turbines).
+            - turbine_coord (:py:class:`floris.utilities.Vec3`): Coordinate of 
+              the wind turbine adding turbulence to the flow.
+            - turbine (:py:class:`floris.simulation.Turbine`): Wind turbine 
+              adding turbulence to the flow.
+
+        Returns:
+            - ti_calcualtion (float): Wake-added turbulence from the current
+              wind turbine (turbine) at location specified by (coord_ti).
         """
 
         ti_initial = ambient_TI
@@ -110,10 +115,10 @@ class CrespoHernandez(WakeTurbulence):
     def ti_initial(self):
         """
         Parameter that is the initial ambient turbulence intensity, expressed as
-            a decimal fraction.
+        a decimal (e.g. 10% TI -> 0.10).
 
         Args:
-            ti_initial (float): Initial ambient turbulence intensity.
+            - ti_initial (float): Initial ambient turbulence intensity.
 
         Returns:
             float: Initial ambient turbulence intensity.
@@ -140,14 +145,14 @@ class CrespoHernandez(WakeTurbulence):
     @property
     def ti_constant(self):
         """
-        Parameter that is the constant used to scale the wake-added turbulence
-            intensity.
+        Constant parameter used to scale the wake-added turbulence
+        intensity.
 
         Args:
-            ti_constant (float): Scales the wake-added turbulence intensity.
+            - ti_constant (float): Scales the wake-added turbulence intensity.
 
         Returns:
-            float: Scales the wake-added turbulence intensity.
+            - float: Scales the wake-added turbulence intensity.
         """
         return self._ti_constant
 
@@ -170,15 +175,15 @@ class CrespoHernandez(WakeTurbulence):
     @property
     def ti_ai(self):
         """
-        Parameter that is the axial induction factor exponent used in in the
-            calculation of wake-added turbulence.
+        Axial induction factor exponent used in in the calculation of 
+        wake-added turbulence.
 
         Args:
-            ti_ai (float): Axial induction factor exponent for wake-added
-                turbulence.
+            - ti_ai (float): Axial induction factor exponent for wake-added
+              turbulence.
 
         Returns:
-            float: Axial induction factor exponent for wake-added turbulence.
+            - float: Axial induction factor exponent for wake-added turbulence.
         """
         return self._ti_ai
 
@@ -201,16 +206,15 @@ class CrespoHernandez(WakeTurbulence):
     @property
     def ti_downstream(self):
         """
-        Parameter that is the exponent applied to the distance downstream of an
-            upstream turbine normalized by the rotor diameter used in the
-            calculation of wake-added turbulence.
+        Exponent applied to the distance from an upstream turbine normalized by 
+        the rotor diameter. Used in the calculation of wake-added turbulence.
 
         Args:
-            ti_downstream (float): Downstream distance exponent for
-                wake-added turbulence.
+            - ti_downstream (float): Downstream distance exponent for
+              wake-added turbulence.
 
         Returns:
-            float: Downstream distance exponent for wake-added turbulence.
+            - float: Downstream distance exponent for wake-added turbulence.
         """
         return self._ti_downstream
 
