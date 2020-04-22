@@ -26,7 +26,6 @@ class GaussianModel(VelocityDeficit):
         Effects of Wake Steering, Wind Energ. Sci. Discuss., 
         https://doi.org/10.5194/wes-2020-3, in review, 2020.
     """
-
     def __init__(self, parameter_dictionary):
         """
         See super-class for initialization details.
@@ -38,22 +37,24 @@ class GaussianModel(VelocityDeficit):
 
     def correction_steps(self, U_local, U, V, W, x_locations, y_locations,
                          turbine, turbine_coord):
-        """[summary]
-        # TODO ^^
+        """
+        This method corrects the U-component velocities when yaw added recovery
+        is enabled. For more details on how the velocities are changed, see [1].
 
         Args:
-            U_local ([type]): [description]
-            U ([type]): [description]
-            V ([type]): [description]
-            W ([type]): [description]
-            x_locations ([type]): [description]
-            y_locations ([type]): [description]
-            turbine ([type]): [description]
-            turbine_coord ([type]): [description]
+            U_local (np.array): U-component velocities across the flow field.
+            U (np.array): U-component velocity deficits across the flow field.
+            V (np.array): V-component velocity deficits across the flow field.
+            W (np.array): W-component velocity deficits across the flow field.
+            x_locations (np.array): Streamwise locations in wake.
+            y_locations (np.array): Spanwise locations in wake.
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
+            turbine_coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
 
         Returns:
-            [type]: [description]
-            # TODO ^^
+            np.array: U-component velocity deficits across the flow field.
         """
         if self.use_yaw_added_recovery:
             U = self.yaw_added_recovery_correction(U_local, U, W, \
@@ -62,26 +63,36 @@ class GaussianModel(VelocityDeficit):
 
     def calculate_VW(self, V, W, coord, turbine, flow_field, x_locations,
                      y_locations, z_locations):
-        """[summary]
-        # TODO ^^
+        """
+        This method calculates the V- and W- component velocities using
+        methods developed in [1].
 
         Args:
-            V ([type]): [description]
-            W ([type]): [description]
-            coord ([type]): [description]
-            turbine ([type]): [description]
+            V (np.array): V-component velocity deficits across the flow field.
+            W (np.array): W-component velocity deficits across the flow field.
+            coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
             flow_field ([type]): [description]
-            x_locations ([type]): [description]
-            y_locations ([type]): [description]
-            z_locations ([type]): [description]
+            x_locations (np.array): Streamwise locations in wake.
+            y_locations (np.array): Spanwise locations in wake.
+            z_locations (np.array): Vertical locations in wake.
 
         Raises:
-            ValueError: [description]
-            # TODO ^^
+            ValueError: It appears that 'use_yaw_added_recovery' is set
+                to True and 'calculate_VW_velocities' is set to False.
+                This configuration is not valid. Please set
+                'calculate_VW_velocities' to True if you wish to use
+                yaw-added recovery.
 
         Returns:
-            [type]: [description]
-            # TODO ^^
+            tuple: tuple containing:
+
+                -   V (np.array): V-component velocity deficits across the flow
+                    field.
+                -   W (np.array): W-component velocity deficits across the flow
+                    field.
         """
         if self.use_yaw_added_recovery:
             if not self.calculate_VW_velocities:
@@ -99,21 +110,23 @@ class GaussianModel(VelocityDeficit):
 
     def yaw_added_recovery_correction(self, U_local, U, W, x_locations,
                                       y_locations, turbine, turbine_coord):
-        """[summary]
-        # TODO ^^
+        """
+        This method corrects the U-component velocities when yaw added recovery
+        is enabled. For more details on how the velocities are changed, see [1].
 
         Args:
-            U_local ([type]): [description]
-            U ([type]): [description]
-            W ([type]): [description]
-            x_locations ([type]): [description]
-            y_locations ([type]): [description]
-            turbine ([type]): [description]
-            turbine_coord ([type]): [description]
+            U_local (np.array): U-component velocities across the flow field.
+            U (np.array): U-component velocity deficits across the flow field.
+            W (np.array): W-component velocity deficits across the flow field.
+            x_locations (np.array): Streamwise locations in wake.
+            y_locations (np.array): Spanwise locations in wake.
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
+            turbine_coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
 
         Returns:
-            [type]: [description]
-            # TODO ^^
+            np.array: U-component velocity deficits across the flow field.
         """
         # compute the velocity without modification
         U1 = U_local - U
@@ -142,20 +155,27 @@ class GaussianModel(VelocityDeficit):
 
     def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
                 z_locations):
-        """[summary]
-        # TODO ^^
+        """
+        This method calculates the V- and W- component velocities using
+        methods developed in [1].
 
         Args:
-            coord ([type]): [description]
-            turbine ([type]): [description]
+            coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
             flow_field ([type]): [description]
-            x_locations ([type]): [description]
-            y_locations ([type]): [description]
-            z_locations ([type]): [description]
+            x_locations (np.array): Streamwise locations in wake.
+            y_locations (np.array): Spanwise locations in wake.
+            z_locations (np.array): Vertical locations in wake.
 
         Returns:
-            [type]: [description]
-            # TODO ^^
+            tuple: tuple containing:
+
+                -   V (np.array): V-component velocity deficits across the flow
+                    field.
+                -   W (np.array): W-component velocity deficits across the flow
+                    field.
         """
         # turbine parameters
         D = turbine.rotor_diameter
@@ -306,12 +326,20 @@ class GaussianModel(VelocityDeficit):
 
     @property
     def calculate_VW_velocities(self):
-        """[summary]
-        # TODO ^^
+        """
+        Flag to enable the calculation of V- and W-component velocities using
+        methods developed in [1].
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
 
         Returns:
-            [type]: [description]
-            # TODO ^^
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._calculate_VW_velocities
 
@@ -326,6 +354,21 @@ class GaussianModel(VelocityDeficit):
 
     @property
     def use_yaw_added_recovery(self):
+        """
+        Flag to use yaw added recovery on the wake velocity using methods
+        developed in [1].
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
         return self._use_yaw_added_recovery
 
     @use_yaw_added_recovery.setter
@@ -339,6 +382,21 @@ class GaussianModel(VelocityDeficit):
 
     @property
     def yaw_recovery_alpha(self):
+        """
+        Tuning value for yaw added recovery on the wake velocity using methods
+        developed in [1].
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
         return self._yaw_recovery_alpha
 
     @yaw_recovery_alpha.setter
@@ -353,14 +411,19 @@ class GaussianModel(VelocityDeficit):
     @property
     def eps_gain(self):
         """
-        Parameter that 
-        # TODO ^^
+        Tuning value for calculating the V- and W- component velocities using
+        methods developed in [1].
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            eps_gain (float): Coeffienct for GCH
+            value (bool): Value to set.
 
         Returns:
-            float: GCHcoefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._eps_gain
 
@@ -376,18 +439,72 @@ class GaussianModel(VelocityDeficit):
 
     @staticmethod
     def mask_upstream_wake(y_locations, turbine_coord, yaw):
+        """
+        Calculates values to be used for masking the upstream wake relative to
+        the current turbine.
+
+        Args:
+            y_locations (np.array): Spanwise locations in wake.
+            turbine_coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
+            yaw (float): The turbine yaw angle.
+
+        Returns:
+            tuple: tuple containing:
+
+                -   yR (np.array): Y locations to mask upstream wake.
+                -   xR (np.array): X locations to mask upstream wake.
+        """        
         yR = y_locations - turbine_coord.x2
         xR = yR * tand(yaw) + turbine_coord.x1
         return xR, yR
 
     @staticmethod
     def initial_velocity_deficits(U_local, Ct):
+        """
+        Calculates the initial velocity deficits used in determining the wake
+        expansion in a Gaussian wake velocity model.
+
+        Args:
+            U_local (np.array): U-component velocities across the flow field.
+            Ct (float): The thrust coefficient of a turbine at the current
+                operating conditions.
+
+        Returns:
+            tuple: tuple containing:
+
+                -   uR (np.array): Initial velocity deficit used in calculation
+                    of wake expansion.
+                -   u0 (np.array): Initial velocity deficit used in calculation
+                    of wake expansion.
+        """
         uR = U_local * Ct / (2.0 * (1 - np.sqrt(1 - Ct)))
         u0 = U_local * np.sqrt(1 - Ct)
         return uR, u0
 
     @staticmethod
     def initial_wake_expansion(turbine, U_local, veer, uR, u0):
+        """
+        Calculates the initial wake widths associated with wake expansion.
+
+        Args:
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
+            U_local (np.array): U-component velocities across the flow field.
+            veer (float): The amount of veer across the rotor.
+            uR (np.array): Initial velocity deficit used in calculation of wake
+                expansion.
+            u0 (np.array): Initial velocity deficit used in calculation of wake
+                expansion.
+
+        Returns:
+            tuple: tuple containing:
+
+                -   sigma_y0 (np.array): Initial wake width in the spanwise
+                    direction.
+                -   sigma_z0 (np.array): Initial wake width in the vertical
+                    direction.
+        """
         yaw = -1 * turbine.yaw_angle 
         sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt( uR / (U_local + u0) )
         sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
@@ -395,4 +512,20 @@ class GaussianModel(VelocityDeficit):
 
     @staticmethod
     def gaussian_function(U, C, r, n, sigma):
+        """
+        A general form of the Gaussian function used in the Gaussian wake
+        models.
+
+        Args:
+            U (np.array): U-component velocities across the flow field.
+            C (np.array): Velocity deficit at the wake center normalized by the
+                incoming wake velocity.
+            r (float): Radial distance from the wake center.
+            n (float): Exponent of radial distance from the wake center.
+            sigma (np.array): Standard deviation of the wake.
+
+        Returns:
+            np.array: U (np.array): U-component velocity deficits across the
+            flow field.
+        """
         return U * C * np.exp( -1 * r**n / (2 * sigma**2) )

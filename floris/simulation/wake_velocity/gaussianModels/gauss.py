@@ -21,8 +21,8 @@ class Gauss(GaussianModel):
     """
     The new Gauss model blends the previously implemented Gussian model based
     on [1-5] with the super-Gaussian model of [6].  The blending is meant to
-    provide consistency with previuos results in the far wake while improving
-    prediction of the near wake
+    provide consistency with previous results in the far wake while improving
+    prediction of the near wake.
 
     References:
         [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
@@ -46,11 +46,16 @@ class Gauss(GaussianModel):
         super-Gaussian wind turbine wake model." *Wind Energy Science
         Disucssions*, 2020.
 
+        [7] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
+        , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
+        Effects of Wake Steering, Wind Energ. Sci. Discuss., 
+        https://doi.org/10.5194/wes-2020-3, in review, 2020.
+
     Raises:
-        ValueError: Invalid value type given for ka
-        ValueError: Invalid value type given for kb
-        ValueError: Invalid value type given for alpha
-        ValueError: Invalid value type given for beta
+        ValueError: Invalid value type given for ka.
+        ValueError: Invalid value type given for kb.
+        ValueError: Invalid value type given for alpha.
+        ValueError: Invalid value type given for beta.
     """
     default_parameters = {
         'ka': 0.38,
@@ -65,10 +70,37 @@ class Gauss(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
+        Stores model parameters for use by methods.
+
         Args:
             parameter_dictionary (dict): Model-specific parameters.
-                 Default values are used when a parameter is not included
-                 in `parameter_dictionary`.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
+
+                    -   **ka**: Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **kb**: Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **alpha**: Parameter that determines the dependence of
+                        the downstream boundary between the near wake and far
+                        wake region on the turbulence intensity.
+                    -   **beta**: Parameter that determines the dependence of
+                        the downstream boundary between the near wake and far
+                        wake region on the turbine's induction factor.
+                    -   **calculate_VW_velocities**: Flag to enable the
+                        calculation of V- and W-component velocities using
+                        methods developed in [7].
+                    -   **use_yaw_added_recovery**: Flag to use yaw added
+                        recovery on the wake velocity using methods developed
+                        in [7].
+                    -   **yaw_recovery_alpha**: Tuning value for yaw added
+                        recovery on the wake velocity using methods developed
+                        in [7].
+                    -   **eps_gain**: Tuning value for calculating the V- and
+                        W-component velocities using methods developed in [7].
+
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
@@ -93,39 +125,36 @@ class Gauss(GaussianModel):
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
         Using the blended Gaussian wake model, this method calculates and
-        returns the wake velocity deficits, caused by the specified turbine, 
-        relative to the freestream velocities at the grid of points 
+        returns the wake velocity deficits, caused by the specified turbine,
+        relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
 
         Args:
-             x_locations (np.array): An array of floats that contains the 
-                 streamwise direction grid coordinates of the flow field 
-                 domain (m).
-             y_locations (np.array): An array of floats that contains the grid 
-                 coordinates of the flow field domain in the direction 
-                 normal to x and parallel to the ground (m).
-             z_locations (np.array): An array of floats that contains the grid 
-                 coordinates of the flow field domain in the vertical 
-                 direction (m).
-             turbine (:py:obj:`floris.simulation.turbine`): object that 
-                 represents the turbine creating the wake.
-             turbine_coord (:py:obj:`floris.utilities.Vec3`): object
-                 containing the coordinate of the turbine creating the 
-                 wake (m).
-             deflection_field (np.array): An array of floats that contains the 
-                 amount of wake deflection in meters in the y direction 
-                 at each grid point of the flow field.
-             flow_field (:py:class:`floris.simulation.flow_field`): object
-                 containing the flow field information for the 
-                 wind farm.
+            x_locations (np.array): An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
+                domain (m).
+            y_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the direction normal to
+                x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
+                direction (m).
+            turbine (:py:obj:`floris.simulation.turbine`): Object that
+                represents the turbine creating the wake.
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
+                the coordinate of the turbine creating the wake (m).
+            deflection_field (np.array): An array of floats that contains the 
+                amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): Object
+                containing the flow field information for the wind farm.
 
         Returns:
-             np.array: Three arrays of floats that contain the wake velocity 
-             deficit in m/s created by the turbine relative to the 
-             freestream velocities for the u, v, and w components, 
-             aligned with the x, y, and z directions, respectively. The 
-             three arrays contain the velocity deficits at each grid 
-             point in the flow field. 
+            np.array: Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the freestream
+            velocities for the U, V, and W components, aligned with the x, y,
+            and z directions, respectively. The three arrays contain the
+            velocity deficits at each grid point in the flow field.
         """
         # added turbulence model
         TI = turbine.current_turbulence_intensity

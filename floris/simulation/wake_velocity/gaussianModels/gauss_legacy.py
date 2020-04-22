@@ -19,8 +19,8 @@ from .gaussian_model_base import GaussianModel
 class LegacyGauss(GaussianModel):
     """
     The legacyGauss model ports the previous gauss model to the new FLORIS
-    framework of inheritance of the GaussianModel.  It is based on the gaussian
-    wake model described in refs [1-5]
+    framework of inheritance of the GaussianModel. It is based on the gaussian
+    wake model described in refs [1-5].
 
     References:
         [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
@@ -59,11 +59,26 @@ class LegacyGauss(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
-        Initialization function for GaussLegacy wake model
+        Stores model parameters for use by methods.
 
         Args:
-            parameter_dictionary {dict} -- Dictionary of parameter values
-                non-provided values will revert to default values above
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
+
+                    -   **ka**: Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **kb**: Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **alpha**: Parameter that determines the dependence of
+                        the downstream boundary between the near wake and far
+                        wake region on the turbulence intensity.
+                    -   **beta**: Parameter that determines the dependence of
+                        the downstream boundary between the near wake and far
+                        wake region on the turbine's induction factor.
+
         """
 
         super().__init__(parameter_dictionary)
@@ -95,34 +110,31 @@ class LegacyGauss(GaussianModel):
         comprising the wind farm flow field.
 
         Args:
-            x_locations (np.array): An array of floats that contains the 
-                streamwise direction grid coordinates of the flow field 
+            x_locations (np.array): An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
                 domain (m).
-            y_locations (np.array: n array of floats that contains the grid 
-                coordinates of the flow field domain in the direction 
-                normal to x and parallel to the ground (m).
-            z_locations (np.array): An array of floats that contains the grid 
-                coordinates of the flow field domain in the vertical 
+            y_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the direction normal to
+                x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
                 direction (m).
-            turbine (:py:obj:`floris.simulation.turbine`): object that 
+            turbine (:py:obj:`floris.simulation.turbine`): Object that
                 represents the turbine creating the wake.
-            turbine_coord (:py:obj:`floris.utilities.Vec3`): object
-                containing the coordinate of the turbine creating the 
-                wake (m).
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
+                the coordinate of the turbine creating the wake (m).
             deflection_field (np.array): An array of floats that contains the 
-                amount of wake deflection in meters in the y direction 
-                at each grid point of the flow field.
-            flow_field (:py:class:`floris.simulation.flow_field`): object
-                containing the flow field information for the 
-                wind farm.
+                amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): Object
+                containing the flow field information for the wind farm.
 
         Returns:
-            (np.array): Three arrays of floats that contain the wake velocity 
-            deficit in m/s created by the turbine relative to the 
-            freestream velocities for the u, v, and w components, 
-            aligned with the x, y, and z directions, respectively. The 
-            three arrays contain the velocity deficits at each grid 
-            point in the flow field. 
+            np.array: Three arrays of floats that contain the wake velocity
+            deficit in m/s created by the turbine relative to the freestream
+            velocities for the U, V, and W components, aligned with the x, y,
+            and z directions, respectively. The three arrays contain the
+            velocity deficits at each grid point in the flow field.
         """
         # veer (degrees)
         veer = flow_field.wind_veer
