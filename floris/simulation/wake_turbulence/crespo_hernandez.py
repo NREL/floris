@@ -58,12 +58,12 @@ class CrespoHernandez(WakeTurbulence):
                 - **initial**: A float that is the initial ambient
                   turbulence intensity, expressed as a decimal
                   fraction.
-                - constant: A float that is the constant used to
+                - **constant**: A float that is the constant used to
                   scale the wake-added turbulence intensity.
-                - ai: A float that is the axial induction factor
+                - **ai**: A float that is the axial induction factor
                   exponent used in in the calculation of wake-added
                   turbulence.
-                - downstream: A float that is the exponent
+                - **downstream**: A float that is the exponent
                   applied to the distance downstream of an upstream
                   turbine normalized by the rotor diameter used in
                   the calculation of wake-added turbulence.
@@ -113,12 +113,14 @@ class CrespoHernandez(WakeTurbulence):
         Parameter that is the initial ambient turbulence intensity, expressed as
         a decimal (e.g. 10% TI -> 0.10).
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
             ti_initial (float): Initial ambient turbulence intensity.
 
         Returns:
             float: Initial ambient turbulence intensity.
-        """
+        """ 
         return self._ti_initial
 
     @ti_initial.setter
@@ -143,11 +145,13 @@ class CrespoHernandez(WakeTurbulence):
         Constant parameter used to scale the wake-added turbulence
         intensity.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            - ti_constant (float): Scales the wake-added turbulence intensity.
+            ti_constant (float): Scales the wake-added turbulence intensity.
 
         Returns:
-            - float: Scales the wake-added turbulence intensity.
+            float: Scales the wake-added turbulence intensity.
         """
         return self._ti_constant
 
@@ -173,12 +177,14 @@ class CrespoHernandez(WakeTurbulence):
         Axial induction factor exponent used in in the calculation of 
         wake-added turbulence.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            - ti_ai (float): Axial induction factor exponent for wake-added
+            ti_ai (float): Axial induction factor exponent for wake-added
               turbulence.
 
         Returns:
-            - float: Axial induction factor exponent for wake-added turbulence.
+            float: Axial induction factor exponent for wake-added turbulence.
         """
         return self._ti_ai
 
@@ -204,12 +210,14 @@ class CrespoHernandez(WakeTurbulence):
         Exponent applied to the distance from an upstream turbine normalized by 
         the rotor diameter. Used in the calculation of wake-added turbulence.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            - ti_downstream (float): Downstream distance exponent for
+            ti_downstream (float): Downstream distance exponent for
               wake-added turbulence.
 
         Returns:
-            - float: Downstream distance exponent for wake-added turbulence.
+            float: Downstream distance exponent for wake-added turbulence.
         """
         return self._ti_downstream
 
