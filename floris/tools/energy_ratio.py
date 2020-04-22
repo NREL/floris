@@ -90,19 +90,30 @@ def _calculate_lower_and_upper_bound(bootstrap_array,
 
 
 def _get_confidence_bounds(confidence):
+    """
+
+    Get the upper and lower confidence bounds given a desired confidence level
+
+    Args:
+        confidence (float): [description]
+
+    Returns:
+        [type]: [description]
+    """
     return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
 
 
 def energy_ratio(ref_pow_base, test_pow_base, ws_base, ref_pow_con,
                  test_pow_con, ws_con):
     """
-    Compute the balanced energy ratio
+    Compute the balanced energy ratio for a single binned wind direction
 
     This function is typically called to compute a single balanced 
     energy ratio calculation for a particular wind direction bin.  Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
     power estimate from a measurement.  See [1,2] for documentation of method
+    Also for usage example see examples/energy ratio
 
     References:
         [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,
