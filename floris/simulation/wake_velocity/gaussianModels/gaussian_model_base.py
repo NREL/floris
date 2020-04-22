@@ -23,7 +23,7 @@ class GaussianModel(VelocityDeficit):
     References:
         [1] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
         , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
-        Effects of Wake Steering, Wind Energ. Sci. Discuss., 
+        Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
         https://doi.org/10.5194/wes-2020-3, in review, 2020.
     """
     def __init__(self, parameter_dictionary):
