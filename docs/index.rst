@@ -10,6 +10,7 @@
     source/examples
     source/developers
     source/changelog
+    source/references
 
 
 FLORIS Wake Modeling Utility
