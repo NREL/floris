@@ -34,9 +34,6 @@ class CrespoHernandez(WakeTurbulence):
         ValueError: Invalid value type given for constant
         ValueError: Invalid value type given for ai
         ValueError: Invalid value type given for downstream
-
-    Returns:
-        An instantiated CrespoHernandez(WakeTurbulence) object.
     """
 
     default_parameters = {
@@ -58,7 +55,7 @@ class CrespoHernandez(WakeTurbulence):
             parameter_dictionary (dict): A dictionary as generated from the 
             input_reader; it should have the following key-value pairs:
 
-                - initial: A float that is the initial ambient
+                - **initial**: A float that is the initial ambient
                   turbulence intensity, expressed as a decimal
                   fraction.
                 - constant: A float that is the constant used to
@@ -87,19 +84,18 @@ class CrespoHernandez(WakeTurbulence):
         Main function for calculating wake added turbulence as a function of external conditions and wind turbine operation. This function is accessible through the :py:class:`floris.simulation.Wake` class as the :py:meth:`floris.simulation.Wake.turbulence_function` method.
 
         Args:
-            - ambient_TI (float): TI of the background flowfield.
-            - coord_ti (:py:class:`floris.utilities.Vec3`): Coordinate where TI 
-              is to be calculated (e.g. downstream wind turbines).
-            - turbine_coord (:py:class:`floris.utilities.Vec3`): Coordinate of 
-              the wind turbine adding turbulence to the flow.
-            - turbine (:py:class:`floris.simulation.Turbine`): Wind turbine 
-              adding turbulence to the flow.
+            ambient_TI (float): TI of the background flowfield.
+            coord_ti (:py:class:`floris.utilities.Vec3`): Coordinate where TI 
+               is to be calculated (e.g. downstream wind turbines).
+            turbine_coord (:py:class:`floris.utilities.Vec3`): Coordinate of 
+               the wind turbine adding turbulence to the flow.
+            turbine (:py:class:`floris.simulation.Turbine`): Wind turbine 
+               adding turbulence to the flow.
 
         Returns:
-            - ti_calcualtion (float): Wake-added turbulence from the current
-              wind turbine (turbine) at location specified by (coord_ti).
+            float: Wake-added turbulence from the current
+            wind turbine (**turbine**) at location specified by (**coord_ti**).
         """
-
         ti_initial = ambient_TI
 
         # turbulence intensity calculation based on Crespo et. al.
@@ -118,7 +114,7 @@ class CrespoHernandez(WakeTurbulence):
         a decimal (e.g. 10% TI -> 0.10).
 
         Args:
-            - ti_initial (float): Initial ambient turbulence intensity.
+            ti_initial (float): Initial ambient turbulence intensity.
 
         Returns:
             float: Initial ambient turbulence intensity.
@@ -140,7 +136,6 @@ class CrespoHernandez(WakeTurbulence):
                     value, __class__.default_parameters['initial']
                 )
             )
-
 
     @property
     def ti_constant(self):
