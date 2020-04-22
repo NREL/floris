@@ -67,7 +67,7 @@ class IshiharaQian(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
-        Initializes model parameters.
+        Stores model parameters for use by methods.
 
         Args:
             parameter_dictionary (dict): Model-specific parameters.
