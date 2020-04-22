@@ -42,7 +42,7 @@ class Direct(WakeTurbulence):
 
         Raises:
             ValueError: Invalid value type given for 
-            current_turbulece_intensity.
+                current_turbulece_intensity.
         """
         super().__init__()
         self.logger = setup_logger(name=__name__)

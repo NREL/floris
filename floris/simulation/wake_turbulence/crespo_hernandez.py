@@ -53,7 +53,7 @@ class CrespoHernandez(WakeTurbulence):
 
         Args:
             parameter_dictionary (dict): A dictionary as generated from the 
-            input_reader; it should have the following key-value pairs:
+                input_reader with the following key-value pairs:
 
                 - **initial**: A float that is the initial ambient
                   turbulence intensity, expressed as a decimal
