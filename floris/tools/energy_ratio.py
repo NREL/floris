@@ -23,12 +23,12 @@ def gaussian(x, mu, sig):
     Compute gaussian function, from https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function
 
     Args:
-        x (float, np.array): input variable
+        x (np.array): input variable to gaussian
         mu (float): mean value
         sig (float): sigma
 
     Returns:
-        [float, np.array]: resulting valurs
+        np.array: resulting valurs
     """
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
@@ -41,7 +41,7 @@ def _convert_to_numpy_array(series):
         series (pd.Series): potential series object
 
     Returns:
-        np.array: array
+        np.array: numpy array
     """
     if hasattr(series, 'values'):
         return series.values
@@ -74,12 +74,17 @@ def _calculate_lower_and_upper_bound(bootstrap_array,
 
     Args:
         bootstrap_array (np.array): array of bootrapped results
-        percentiles (np.array): percentile values
-        central_estimate (float, optional): if not using simple percentile, need to provide the central estimated result. Defaults to None.
-        method (str, optional): method for computing bounds. Defaults to 'simple_percentile'.
+            percentiles (np.array): percentile values
+            central_estimate (float, optional): if not using simple percentile,
+            need to provide the central estimated result. Defaults to None.
+        method (str, optional): method for computing bounds. Defaults to
+            'simple_percentile'.
 
     Returns:
-        (float,float): lower and upper ci bounds
+        float,float: 
+        
+            -   lower ci bound
+            -   upper ci bound
     """
     if method is 'simple_percentile':
         upper, lower = np.percentile(bootstrap_array, percentiles)
@@ -98,7 +103,10 @@ def _get_confidence_bounds(confidence):
         confidence (float): [description]
 
     Returns:
-        [type]: [description]
+        float,float: 
+        
+            -   upper confidence bound
+            -   lower confidence bound
     """
     return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
 
@@ -108,7 +116,7 @@ def energy_ratio(ref_pow_base, test_pow_base, ws_base, ref_pow_con,
     """
     Compute the balanced energy ratio for a single binned wind direction
 
-    This function is typically called to compute a single balanced 
+    This function is called to compute a single balanced 
     energy ratio calculation for a particular wind direction bin.  Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
@@ -756,7 +764,7 @@ def energy_ratio_ws(ref_pow_base,
                     use_absolutes=False,
                     use_mean=False):
     """
-    Compute the balanced energy ratio
+    Compute the balanced energy ratio, however, inverted so balancing against wind direction, compute for a single wind speed bin
 
     This function is typically called to compute a single balanced 
     energy ratio calculation for a particular wind speed bin.  Note 
@@ -1119,7 +1127,7 @@ def plot_energy_ratio_ws(reference_power_baseline,
                          show_power=False,
                          show_percent_change=True):
     """
-    Plot the balanced energy ratio.
+    Plot the balanced energy ratio against wind speed
 
     Function mainly acts as a wrapper to call 
     calculate_balanced_energy_ratio and plot the results.
