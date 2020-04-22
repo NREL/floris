@@ -33,8 +33,8 @@ class IshiharaQian(GaussianModel):
     References:
         [1] Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based
         analytical wake model for wind turbines considering ambient turbulence
-        intensities and thrust coefficient effects." Journal of Wind
-        Engineering and Industrial Aerodynamics 177 (2018): 275-292.
+        intensities and thrust coefficient effects." *Journal of Wind
+        Engineering and Industrial Aerodynamics* 177 (2018): 275-292.
 
     """    
     default_parameters = {
