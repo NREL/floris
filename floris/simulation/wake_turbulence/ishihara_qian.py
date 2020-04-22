@@ -23,36 +23,23 @@ class IshiharaQian(WakeTurbulence):
     :py:class:`floris.simulation.wake_velocity.WakeTurbulence` that is
     used to compute the wake velocity deficit based on the Gaussian
     wake model with self-similarity and a near wake correction. The Ishihara
-    wake model includes a Gaussian wake velocity deficit profile in the y and z
-    directions and includes the effects of ambient turbulence, added turbulence
-    from upstream wakes, as well as wind shear and wind veer. For more info,
-    see:
+    wake model includes a Gaussian wake velocity deficit profile in the 
+    spanwise and vertical directions and includes the effects of ambient
+    turbulence, added turbulence from upstream wakes, as well as wind shear and 
+    wind veer. For more info, see [1].
 
-    Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based analytical wake
-    model for wind turbines considering ambient turbulence intensities and
-    thrust coefficient effects." Journal of Wind Engineering and Industrial
-    Aerodynamics 177 (2018): 275-292.
-
-    Args:
-        parameter_dictionary: A dictionary as generated from the input_reader;
-        it should have the following key-value pairs:
-            -   **ishihara**: A dictionary containing the following
-                key-value pairs:
-
-                -   **kstar**: A float that is a parameter used to
-                    determine the linear relationship between the
-                    turbulence intensity and the width of the Gaussian
-                    wake shape.
-                -   **epsilon**: A float that is a second parameter used to
-                    determine the linear relationship between the
-                    turbulence intensity and the width of the Gaussian
-                    wake shape.
-                -   **d**: constant coefficient used in calculation of wake-added turbulence.
-                -   **e**: linear coefficient used in calculation of wake-added turbulence.
-                -   **f**: near-wake coefficient used in calculation of wake-added turbulence.
-
-    Returns:
-        An instantiated Ishihara(WakeTurbulence) object.
+    References:
+        Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based analytical 
+        wake model for wind turbines considering ambient turbulence intensities 
+        and thrust coefficient effects." Journal of Wind Engineering and 
+        Industrial Aerodynamics 177 (2018): 275-292.
+    
+    Raises:
+        ValueError: Invalid value type given for kstar
+        ValueError: Invalid value type given for epsilon 
+        ValueError: Invalid value type given for d
+        ValueError: Invalid value type given for e 
+        ValueError: Invalid value type given for f 
     """
 
     default_parameters = {
@@ -84,6 +71,39 @@ class IshiharaQian(WakeTurbulence):
     }
 
     def __init__(self, parameter_dictionary):
+        """
+        Initialize a IshiharaQian wake turbulence object with the parameter 
+        values listed below. If no parameter values are provided, default 
+        values are used. 
+        
+        All model parameters combine a constant coefficient, 
+        the thrust coefficient of the turbine, andthe local turbulence 
+        intensity. Paremeter values are calculated with 
+        :func:`~ishihara_qian.IshiharaQian.function.parameter_value_from_dict`
+        as:
+
+        .. code-block:: python3 
+
+            value = pdict["const"] * Ct ** pdict["Ct"] * TI ** pdict["TI"]
+
+        Args:
+            parameter_dictionary: A dictionary as generated from the 
+            input_reader; it should have the following key-value pairs:
+
+                - **kstar**: A dict describing the parameters related to the 
+                  linear relationship between the turbulence intensity and the 
+                  width of the Gaussian wake shape.
+                - **epsilon**: A float that is a second parameter used to
+                  determine the linear relationship between the
+                  turbulence intensity and the width of the Gaussian
+                  wake shape.
+                - **d**: constant coefficient used in calculation of wake-added 
+                  turbulence.
+                - **e**: linear coefficient used in calculation of wake-added 
+                  turbulence.
+                - **f**: near-wake coefficient used in calculation of 
+                  wake-added turbulence.
+        """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara_qian"
@@ -100,36 +120,20 @@ class IshiharaQian(WakeTurbulence):
         # function(self, x_locations, y_locations, z_locations, turbine,
         #  turbine_coord, flow_field, turb_u_wake, sorted_map):
         """
-        Using the Gaussian wake model, this method calculates and
-        returns the wake velocity deficits, caused by the specified
-        turbine, relative to the freestream velocities at the grid of
-        points comprising the wind farm flow field.
+        Main function for calculating wake added turbulence as a function of external conditions and wind turbine operation. This function is accessible through the :py:class:`floris.simulation.Wake` class as the :py:meth:`floris.simulation.Wake.turbulence_function` method.
 
         Args:
-            turb_u_wake (np.array): not used for the current turbulence model,
-                included for consistency of function form
-            sorted_map (list): sorted turbine_map (coord, turbine)
-            x_locations: An array of floats that contains the
-                streamwise direction grid coordinates of the flow field
-                domain (m).
-            y_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the direction
-                normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid
-                coordinates of the flow field domain in the vertical
-                direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that
-                represents the turbine creating the wake (i.e. the 
-                upstream turbine).
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object
-                containing the coordinate of the turbine creating the
-                wake (m).
-            deflection_field: An array of floats that contains the
-                amount of wake deflection in meters in the y direction
-                at each grid point of the flow field.
-            flow_field: A :py:class:`floris.simulation.flow_field`
-                object containing the flow field information for the
-                wind farm.
+            ambient_TI (float): TI of the background flowfield.
+            coord_ti (:py:class:`floris.utilities.Vec3`): Coordinate where TI 
+               is to be calculated (e.g. downstream wind turbines).
+            turbine_coord (:py:class:`floris.utilities.Vec3`): Coordinate of 
+               the wind turbine adding turbulence to the flow.
+            turbine (:py:class:`floris.simulation.Turbine`): Wind turbine 
+               adding turbulence to the flow.
+
+        Returns:
+            float: Wake-added turbulence from the current
+            wind turbine (**turbine**) at location specified by (**coord_ti**).
         """
         # # compute area overlap of wake on other turbines and update downstream
         # # turbine turbulence intensities
@@ -243,15 +247,22 @@ class IshiharaQian(WakeTurbulence):
     def kstar(self):
         """
         Parameter that is used to determine the linear relationship between the
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            kstar (float): Factor for relationship between the turbulence
-                intensity and the width of the Gaussian wake shape.
+            kstar (dict): Factor for relationship between the turbulence
+            intensity and the width of the Gaussian wake shape; it should have 
+            the following key-value pairs:
+
+                - **const**: a float for the constant coefficient
+                - **Ct**: a float for the thrust coefficient exponent
+                - **TI**: a float for turbulence intensity exponent
 
         Returns:
             float: Factor for relationship between the turbulence intensity and
-                the width of the Gaussian wake shape.
+            the width of the Gaussian wake shape.
         """
         return self._kstar
 
@@ -276,15 +287,22 @@ class IshiharaQian(WakeTurbulence):
     def epsilon(self):
         """
         Parameter that is used to determine the linear relationship between the
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            epsilon (float): Factor for relationship between the turbulence
-                intensity and the width of the Gaussian wake shape.
+            epsilon (dict): Factor for relationship between the turbulence
+            intensity and the width of the Gaussian wake shape; it should have 
+            the following key-value pairs:
+
+                - **const**: a float for the constant coefficient
+                - **Ct**: a float for the thrust coefficient exponent
+                - **TI**: a float for turbulence intensity exponent
 
         Returns:
             float: Factor for relationship between the turbulence intensity and
-                the width of the Gaussian wake shape.
+            the width of the Gaussian wake shape.
         """
         return self._epsilon
 
@@ -309,14 +327,20 @@ class IshiharaQian(WakeTurbulence):
     def d(self):
         """
         Constant coefficient used in calculation of wake-added turbulence.
+        
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            d (float): Constant coefficient used in calculation of wake-added
-                turbulence.
+            d (dict): Constant coefficient used in calculation of wake-added
+            turbulence; it should have the following key-value pairs:
+
+                - **const**: a float for the constant coefficient
+                - **Ct**: a float for the thrust coefficient exponent
+                - **TI**: a float for turbulence intensity exponent
 
         Returns:
             float: Constant coefficient used in calculation of wake-added
-                turbulence.
+            turbulence.
         """
         return self._d
 
@@ -342,13 +366,19 @@ class IshiharaQian(WakeTurbulence):
         """
         Linear coefficient used in calculation of wake-added turbulence.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            e (float): Linear coefficient used in calculation of wake-added
-                turbulence.
+            e (dict): Linear coefficient used in calculation of wake-added
+            turbulence; it should have the following key-value pairs:
+
+                - **const**: a float for the constant coefficient
+                - **Ct**: a float for the thrust coefficient exponent
+                - **TI**: a float for turbulence intensity exponent
 
         Returns:
             float: Linear coefficient used in calculation of wake-added
-                turbulence.
+            turbulence.
         """
         return self._e
 
@@ -374,9 +404,15 @@ class IshiharaQian(WakeTurbulence):
         """
         Near-wake coefficient used in calculation of wake-added turbulence.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            f (float): Near-wake coefficient used in calculation of wake-added
-                turbulence.
+            f (dict): Near-wake coefficient used in calculation of wake-added
+            turbulence; it should have the following key-value pairs:
+
+                - **const**: a float for the constant coefficient
+                - **Ct**: a float for the thrust coefficient exponent
+                - **TI**: a float for turbulence intensity exponent
 
         Returns:
             float: Near-wake coefficient used in calculation of wake-added
