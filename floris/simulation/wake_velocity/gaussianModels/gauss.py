@@ -70,7 +70,7 @@ class Gauss(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
-        Stores model parameters for use by methods.
+        Initializes model parameters.
 
         Args:
             parameter_dictionary (dict): Model-specific parameters.
@@ -150,11 +150,12 @@ class Gauss(GaussianModel):
                 containing the flow field information for the wind farm.
 
         Returns:
-            np.array: Three arrays of floats that contain the wake velocity
-            deficit in m/s created by the turbine relative to the freestream
-            velocities for the U, V, and W components, aligned with the x, y,
-            and z directions, respectively. The three arrays contain the
-            velocity deficits at each grid point in the flow field.
+            np.array, np.array, np.array:
+                Three arrays of floats that contain the wake velocity
+                deficit in m/s created by the turbine relative to the freestream
+                velocities for the U, V, and W components, aligned with the x, y,
+                and z directions, respectively. The three arrays contain the
+                velocity deficits at each grid point in the flow field.
         """
         # added turbulence model
         TI = turbine.current_turbulence_intensity

@@ -40,6 +40,7 @@ class GaussianModel(VelocityDeficit):
         """
         This method corrects the U-component velocities when yaw added recovery
         is enabled. For more details on how the velocities are changed, see [1].
+        # TODO add reference to 1
 
         Args:
             U_local (np.array): U-component velocities across the flow field.
@@ -64,8 +65,10 @@ class GaussianModel(VelocityDeficit):
     def calculate_VW(self, V, W, coord, turbine, flow_field, x_locations,
                      y_locations, z_locations):
         """
-        This method calculates the V- and W- component velocities using
+        This method calculates the V- and W-component velocities using
         methods developed in [1].
+        # TODO add reference to 1
+        # TODO is this function needed? It simply calls another function
 
         Args:
             V (np.array): V-component velocity deficits across the flow field.
@@ -87,12 +90,10 @@ class GaussianModel(VelocityDeficit):
                 yaw-added recovery.
 
         Returns:
-            tuple: tuple containing:
+            np.array, np.array:
 
-                -   V (np.array): V-component velocity deficits across the flow
-                    field.
-                -   W (np.array): W-component velocity deficits across the flow
-                    field.
+                - V-component velocity deficits across the flow field.
+                - W-component velocity deficits across the flow field.
         """
         if self.use_yaw_added_recovery:
             if not self.calculate_VW_velocities:
@@ -113,6 +114,7 @@ class GaussianModel(VelocityDeficit):
         """
         This method corrects the U-component velocities when yaw added recovery
         is enabled. For more details on how the velocities are changed, see [1].
+        # TODO add reference to 1
 
         Args:
             U_local (np.array): U-component velocities across the flow field.
@@ -156,8 +158,9 @@ class GaussianModel(VelocityDeficit):
     def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
                 z_locations):
         """
-        This method calculates the V- and W- component velocities using
+        This method calculates the V- and W-component velocities using
         methods developed in [1].
+        # TODO add reference to 1
 
         Args:
             coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
@@ -170,12 +173,10 @@ class GaussianModel(VelocityDeficit):
             z_locations (np.array): Vertical locations in wake.
 
         Returns:
-            tuple: tuple containing:
+            np.array, np.array:
 
-                -   V (np.array): V-component velocity deficits across the flow
-                    field.
-                -   W (np.array): W-component velocity deficits across the flow
-                    field.
+                - V-component velocity deficits across the flow field.
+                - W-component velocity deficits across the flow field.
         """
         # turbine parameters
         D = turbine.rotor_diameter

@@ -26,8 +26,8 @@ class Blondel(GaussianModel):
         super-Gaussian wind turbine wake model." *Wind Energy Science
         Disucssions*, 2020.
 
-        [2] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
-        , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
+        [2] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J,
+        Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
         Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
         https://doi.org/10.5194/wes-2020-3, in review, 2020.
 
@@ -38,7 +38,6 @@ class Blondel(GaussianModel):
         ValueError: Invalid value type given for a_f.
         ValueError: Invalid value type given for b_f.
         ValueError: Invalid value type given for c_f.
-
     """
     default_parameters = {
         "a_s": 0.3837,
@@ -55,7 +54,7 @@ class Blondel(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
-        Stores model parameters for use by methods.
+        Initializes model parameters.
 
         Args:
             parameter_dictionary (dict): Model-specific parameters.
@@ -144,11 +143,12 @@ class Blondel(GaussianModel):
                 containing the flow field information for the wind farm.
 
         Returns:
-            np.array: Three arrays of floats that contain the wake velocity
-            deficit in m/s created by the turbine relative to the freestream
-            velocities for the U, V, and W components, aligned with the x, y,
-            and z directions, respectively. The three arrays contain the
-            velocity deficits at each grid point in the flow field.
+            np.array, np.array, np.array:
+                Three arrays of floats that contain the wake velocity
+                deficit in m/s created by the turbine relative to the freestream
+                velocities for the U, V, and W components, aligned with the x, y,
+                and z directions, respectively. The three arrays contain the
+                velocity deficits at each grid point in the flow field.
         """
         # TODO: implement veer
         # Veer (degrees)

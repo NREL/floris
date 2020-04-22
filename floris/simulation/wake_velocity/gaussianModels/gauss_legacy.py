@@ -18,7 +18,7 @@ from .gaussian_model_base import GaussianModel
 
 class LegacyGauss(GaussianModel):
     """
-    The legacyGauss model ports the previous gauss model to the new FLORIS
+    The LegacyGauss model ports the previous Gauss model to the new FLORIS
     framework of inheritance of the GaussianModel. It is based on the gaussian
     wake model described in refs [1-5].
 
@@ -59,7 +59,7 @@ class LegacyGauss(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
-        Stores model parameters for use by methods.
+        Initializes model parameters.
 
         Args:
             parameter_dictionary (dict): Model-specific parameters.
@@ -104,7 +104,7 @@ class LegacyGauss(GaussianModel):
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
         """
-        Using the gaussian wake model, this method calculates and
+        Using the Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified turbine, 
         relative to the freestream velocities at the grid of points 
         comprising the wind farm flow field.
@@ -130,11 +130,12 @@ class LegacyGauss(GaussianModel):
                 containing the flow field information for the wind farm.
 
         Returns:
-            np.array: Three arrays of floats that contain the wake velocity
-            deficit in m/s created by the turbine relative to the freestream
-            velocities for the U, V, and W components, aligned with the x, y,
-            and z directions, respectively. The three arrays contain the
-            velocity deficits at each grid point in the flow field.
+            np.array, np.array, np.array:
+                Three arrays of floats that contain the wake velocity
+                deficit in m/s created by the turbine relative to the freestream
+                velocities for the U, V, and W components, aligned with the x, y,
+                and z directions, respectively. The three arrays contain the
+                velocity deficits at each grid point in the flow field.
         """
         # veer (degrees)
         veer = flow_field.wind_veer

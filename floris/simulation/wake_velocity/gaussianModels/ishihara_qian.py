@@ -18,17 +18,11 @@ from .gaussian_model_base import GaussianModel
 
 class IshiharaQian(GaussianModel):
     """
-    IshiharaQian is a wake velocity subclass that contains objects related to
-    the Gaussian wake model that include a near-wake correction.
-
-    Ishihara is a subclass of
-    :py:class:`floris.simulation.wake_velocity.gaussianModels.GaussianModel`
-    that is used to compute the wake velocity deficit based on the Gaussian
-    wake model with self-similarity and a near wake correction. The Ishihara
-    wake model includes a Gaussian wake velocity deficit profile in the y and z
-    directions and includes the effects of ambient turbulence, added turbulence
-    from upstream wakes, as well as wind shear and wind veer. For more info,
-    see [1].
+    IshiharaQian computes the wake velocity deficit based on the Gaussian
+    wake model with self-similarity and a near wake correction. It includes
+    a Gaussian wake velocity deficit profile in the y and z directions and
+    includes the effects of ambient turbulence, added turbulence
+    from upstream wakes, and wind shear and wind veer. For more info, see [1].
 
     References:
         [1] Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based
@@ -36,7 +30,13 @@ class IshiharaQian(GaussianModel):
         intensities and thrust coefficient effects." *Journal of Wind
         Engineering and Industrial Aerodynamics* 177 (2018): 275-292.
 
-    """    
+    Raises:
+        ValueError: Invalid value type given for kstar.
+        ValueError: Invalid value type given for epsilon.
+        ValueError: Invalid value type given for a.
+        ValueError: Invalid value type given for b.
+        ValueError: Invalid value type given for c.
+    """
     default_parameters = {
         "kstar": {
             "const": 0.11,
@@ -67,11 +67,12 @@ class IshiharaQian(GaussianModel):
 
     def __init__(self, parameter_dictionary):
         """
-        Initialization function for Gauss wake model.
+        Initializes model parameters.
 
         Args:
-            parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
 
                 -   **ishihara**: A dictionary containing the following
                     key-value pairs:
@@ -137,11 +138,12 @@ class IshiharaQian(GaussianModel):
                 containing the flow field information for the wind farm.
 
         Returns:
-            np.array: Three arrays of floats that contain the wake velocity
-            deficit in m/s created by the turbine relative to the freestream
-            velocities for the U, V, and W components, aligned with the x, y,
-            and z directions, respectively. The three arrays contain the
-            velocity deficits at each grid point in the flow field.
+            np.array, np.array, np.array:
+                Three arrays of floats that contain the wake velocity
+                deficit in m/s created by the turbine relative to the freestream
+                velocities for the U, V, and W components, aligned with the x, y,
+                and z directions, respectively. The three arrays contain the
+                velocity deficits at each grid point in the flow field.
         """
         # added turbulence model
         TI = turbine._turbulence_intensity
