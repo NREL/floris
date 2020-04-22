@@ -43,12 +43,12 @@ class Gauss(GaussianModel):
         blade pitch offset." *Energies*, 2017.
 
         [6] Blondel, F. and Cathelain, M. "An alternative form of the
-        super-Gaussian wind turbine wake model." *Wind Energy Science
-        Disucssions*, 2020.
+        super-Gaussian wind turbine wake model." *Wind Energ. Sci. Discuss.*,
+        2020.
 
         [7] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
         , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
-        Effects of Wake Steering, Wind Energ. Sci. Discuss., 
+        Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
         https://doi.org/10.5194/wes-2020-3, in review, 2020.
 
     Raises:
