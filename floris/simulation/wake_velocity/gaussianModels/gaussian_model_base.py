@@ -23,29 +23,15 @@ class GaussianModel(VelocityDeficit):
     And a new GM model where we merge features a bit more of the two to ensure consistency with previous far-wake results
     of the Gaussian model, while implementing the Blondel model's smooth near-wake
 
-    TODO: This needs to be much more expanded and including full references
+    See :cite:`gmb-bastankhah2014new,gmb-abkar2015influence,gmb-bastankhah2016experimental,gmb-niayifar2016analytical,gmb-dilip2017wind,gmb-blondel2020alternative`.
+    
+    References:
+        .. bibliography:: /source/refs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: gmb
+            :keyprefix: gmb-
 
-    [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
-    wind-turbine wakes: A large-eddy simulation study." *Physics of
-    Fluids*, 2015.
-
-    [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
-    wind-turbine wakes." *Renewable Energy*, 2014.
-
-    [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
-    study of wind turbine wakes in yawed conditions." *J. Fluid
-    Mechanics*, 2016.
-
-    [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
-    A new approach for power prediction." *Energies*, 2016.
-
-    [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
-    blade pitch offset." *Energies*, 2017.
-
-    [6] Blondel, F. and Cathelain, M. "An alternative form of the
-    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
-    2020.
-    Notes to be written (merged)
     """    
 
     def __init__(self, parameter_dictionary):

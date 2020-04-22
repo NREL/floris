@@ -28,12 +28,14 @@ class IshiharaQian(GaussianModel):
     wake model includes a Gaussian wake velocity deficit profile in the y and z
     directions and includes the effects of ambient turbulence, added turbulence
     from upstream wakes, as well as wind shear and wind veer. For more info,
-    see:
-
-    Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based analytical wake
-    model for wind turbines considering ambient turbulence intensities and
-    thrust coefficient effects." Journal of Wind Engineering and Industrial
-    Aerodynamics 177 (2018): 275-292.
+    see :cite:`iqv-qian2018new`.
+    
+    References:
+        .. bibliography:: /source/refs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: iqv
+            :keyprefix: iqv-
 
    Args:
         parameter_dictionary: A dictionary as generated from the

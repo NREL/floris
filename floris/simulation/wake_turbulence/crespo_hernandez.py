@@ -22,12 +22,15 @@ class CrespoHernandez(WakeTurbulence):
     :py:class:`floris.simulation.wake_velocity.WakeTurbulence` that is
     used to compute additional variability introduced to the flowfield by 
     operation of a wind turbine. Implementation of the model follows the 
-    original formulation and limitations outlined in [1].
-
+    original formulation and limitations outlined in 
+    :cite:`cht-crespo1996turbulence`.
+    
     References:
-        [1] Crespo, A., and J. Hernandez. "Turbulence characteristics in 
-        wind-turbine wakes." Journal of wind engineering and industrial 
-        aerodynamics 61.1 (1996): 71-85.
+        .. bibliography:: /source/refs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: cht
+            :keyprefix: cht-
 
     Raises:
         ValueError: Invalid value type given for initial

@@ -36,13 +36,14 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 
 More information on all of these models can be found in :ref:`theory`.
 
-See :cite:`annoni2018analysis,bay2019unlocking` for a practical information on 
+See :cite:`ind-annoni2018analysis,ind-bay2019unlocking` for a practical information on 
 using floris as a modeling and simulation tool for controls research.
 
 .. bibliography:: source/refs.bib
-   :cited:
    :style: unsrt
    :filter: docname in docnames
+   :labelprefix: ind
+   :keyprefix: ind-
 
 
 Citation

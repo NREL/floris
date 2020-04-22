@@ -6,12 +6,14 @@ Theory Reference
 FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al.
 2016), Gaussian, and Curl wake model.
 
-Literature on the Gaussian model can be found in :cite:`bastankhah2014new,abkar2015influence,niayifar2016analytical,bastankhah2016experimental,dilip2017wind` and :cite:`martinez2019aerodynamics`.
+Literature on the Gaussian model can be found in :cite:`thy-bastankhah2014new,thy-abkar2015influence,thy-niayifar2016analytical,thy-bastankhah2016experimental,thy-dilip2017wind` and :cite:`thy-martinez2019aerodynamics`.
 
-.. bibliography:: refs.bib
-   :cited:
-   :style: unsrt
-   :filter: docname in docnames
+References:
+   .. bibliography:: refs.bib
+      :style: unsrt
+      :filter: docname in docnames
+      :labelprefix: thy
+      :keyprefix: thy-
 
 
 

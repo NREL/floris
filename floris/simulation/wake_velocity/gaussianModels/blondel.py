@@ -24,10 +24,15 @@ class Blondel(GaussianModel):
     # TODO: update docstring
     [extended_summary]
 
-    [1] Blondel, F. and Cathelain, M. "An alternative form of the
-    super-Gaussian wind turbine wake model." *Wind Energy Science Disucssions*,
-    2020.
+    See :cite:`bcv-blondel2020alternative`.
     
+    References:
+        .. bibliography:: /source/refs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: bcv
+            :keyprefix: bcv-
+
     Args:
         VelocityDeficit ([type]): [description]
     

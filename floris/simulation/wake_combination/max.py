@@ -20,12 +20,15 @@ class MAX(WakeCombination):
     MAX is a subclass of 
     :py:class:`floris.simulation.wake_combination.WakeCombination` 
     which uses the maximum wake velocity deficit to add to the 
-    base flow field. For more information, refer to [1]: 
+    base flow field. For more information, refer to
+    :cite:`max-gunn2016limitations`.
     
     References:
-        [1] K. Gunn et al., "Limitations to the validity of single wake
-        superposition in wind farm yield assessment", 2016 J. Phys.: Conf. Ser.
-        749 012003.
+        .. bibliography:: /source/refs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: max
+            :keyprefix: max-
     """
 
     def __init__(self):
