@@ -1111,8 +1111,8 @@ class FlorisInterface():
                 recovery from GCH model. Defaults to *True*.
         """
         model_params = self.get_model_parameters()
-        use_secondary_steering = model_params['Wake Deflection Parameters'\
-            ['use_secondary_steering'] 
+        use_secondary_steering = model_params['Wake Deflection Parameters']\
+            ['use_secondary_steering']
 
         if enable:
             model_params['Wake Velocity Parameters']['use_yaw_added_recovery']\
