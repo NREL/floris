@@ -31,11 +31,10 @@ from .layout_functions import visualize_layout, build_turbine_loc
 
 class FlorisInterface():
     """
-    The interface between a FLORIS instance and the Wind Farm Control (WFC)
-    tools.
-
-    Raises:
-        ValueError: Input file or dictionary must be supplied
+    FlorisInterface provides a high-level user interface to many of the
+    underlying methods within the FLORIS framework. It is meant to act as a
+    single entry-point for the majority of users, simplifying the calls to
+    methods on objects within FLORIS.
     """
     def __init__(self, input_file=None, input_dict=None):
         """
@@ -48,6 +47,9 @@ class FlorisInterface():
         Args:
             input_file (str, optional): [description]. Defaults to None.
             input_dict (dict, optional): [description]. Defaults to None.
+
+        Raises:
+            ValueError: Input file or dictionary must be supplied.
         """
         if input_file is None and input_dict is None:
             self.logger = setup_logger(name=__name__,
