@@ -66,27 +66,27 @@ class Curl(VelocityDeficit):
                     z directions used for the curl wake model calculations. The
                     grid resolution is specified as the number of grid points
                     in the flow field domain in the x, y, and z directions.
-                -   **initial_deficit**, (*float*): Parameter that, along with
+                -   **initial_deficit** (*float*): Parameter that, along with
                     the freestream velocity and the turbine's induction factor,
                     is used to determine the initial wake velocity deficit
                     immediately downstream of the rotor.
-                -   **dissipation**, (*float*): Parameter that is a scaling 
+                -   **dissipation** (*float*): Parameter that is a scaling 
                     parameter that determines the amount of dissipation 
                     of the vortices with downstream distance.
-                -   **veer_linear**, (*float*): Parameter that describes the
+                -   **veer_linear** (*float*): Parameter that describes the
                     amount of linear wind veer. This parameter defines the
                     linear change in the V velocity between the ground and hub
                     height, and therefore determines the slope of the change in
                     the V velocity with height.
-                -   **initial**, (*float*): Parameter that is the initial
+                -   **initial** (*float*): Parameter that is the initial
                     ambient turbulence intensity, expressed as a decimal
                     fraction.
-                -   **constant**, (*float*): Parameter that is the constant
+                -   **constant** (*float*): Parameter that is the constant
                     used to scale the wake-added turbulence intensity.
-                -   **ai**, (*float*): Parameter that is the axial induction
+                -   **ai** (*float*): Parameter that is the axial induction
                     factor exponent used in in the calculation of wake-added
                     turbulence.
-                -   **downstream**, (*float*): Parameter that is the exponent
+                -   **downstream** (*float*): Parameter that is the exponent
                     applied to the distance downtream of an upstream turbine
                     normalized by the rotor diameter used in the calculation of
                     wake-added turbulence.
