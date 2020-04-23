@@ -375,6 +375,7 @@ class GaussianModel(VelocityDeficit):
     @use_yaw_added_recovery.setter
     def use_yaw_added_recovery(self, value):
         if type(value) is not bool:
+            #TODO Shouldn't this be a bool?
             err_msg = "Value of use_yaw_added_recovery must be type " + \
                       "float; {} given.".format(type(value))
             self.logger.error(err_msg, stack_info=True)

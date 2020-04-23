@@ -31,10 +31,24 @@ from .layout_functions import visualize_layout, build_turbine_loc
 
 class FlorisInterface():
     """
-    The interface between a FLORIS instance and the wfc tools
-    """
+    The interface between a FLORIS instance and the Wind Farm Control (WFC)
+    tools.
 
+    Raises:
+        ValueError: Input file or dictionary must be supplied
+    """
     def __init__(self, input_file=None, input_dict=None):
+        """
+        Initialize the FLORIS interface by pointing toward and input file or 
+        dictionary. Inputs from either **input_file** or **input_dict** are 
+        parsed within the :py:class:`floris.simulation.input_reader` through 
+        the :py:class:`floris.simulation.floris` object. Either an 
+        **input_file** or **input_dict** is required.
+
+        Args:
+            input_file (str, optional): [description]. Defaults to None.
+            input_dict (dict, optional): [description]. Defaults to None.
+        """
         if input_file is None and input_dict is None:
             self.logger = setup_logger(name=__name__,
                 logging_dict={'console': {'enable': True, 'level': 'INFO'},
@@ -49,18 +63,22 @@ class FlorisInterface():
     def calculate_wake(self, yaw_angles=None, no_wake=False, points=None, \
         track_n_upstream_wakes=False):
         """
-        Wrapper to the floris flow field calculate_wake method
+        Wrapper to the 
+        :py:meth:`floris.simulation.farm.Farm.set_yaw_angles` and
+        :py:meth:`floris.simulation.flow_field.FlowField.calculate_wake` 
+        methods.
 
         Args:
             yaw_angles (np.array, optional): Turbine yaw angles.
                 Defaults to None.
             no_wake: (bool, optional): When *True* updates the turbine
                 quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to False.
+                wake to the flow field. Defaults to *False*.
             points: (np.array, optional): The x, y, and z coordinates at 
                 which the flow field velocity is to be recorded. Defaults
                 to None.
         """
+        
 
         if yaw_angles is not None:
             self.floris.farm.set_yaw_angles(yaw_angles)
@@ -87,7 +105,8 @@ class FlorisInterface():
         """
         Wrapper to
         :py:meth:`floris.simulation.flow_field.reinitialize_flow_field`.
-        All input values are used to update the flow_field instance.
+        All input values are used to update the 
+        :py:class:`floris.simulation.flow_field.FlowField` instance.
 
         Args:
             wind_speed (list, optional): background wind speed.
@@ -199,7 +218,9 @@ class FlorisInterface():
                             x1_bounds=None,
                             x2_bounds=None):
         """
-        Use points method in calculate_wake to quick extract a slice of points
+        Calculates velocity values through the 
+        :py:meth:`floris.simulation.flow_field.FlowField.calculate_wake` 
+        method at points in plane specified by inputs. 
 
         Args:
             x1_resolution (float, optional): output array resolution.
@@ -216,9 +237,8 @@ class FlorisInterface():
                 Defaults to None.
 
         Returns:
-            dataframe of x1,x2,u,v,w values
+            :py:class:`:py:class:`pandas.DataFrame``: containing values of x1, x2, u, v, w
         """
-
         # Get a copy for the flow field so don't change underlying grid points
         flow_field = copy.deepcopy(self.floris.farm.flow_field)
 
@@ -336,16 +356,17 @@ class FlorisInterface():
 
     def get_set_of_points(self, x_points, y_points, z_points):
         """
-        Use points method in calculate_wake to quick extract a slice of points
+        Calculates velocity values through the 
+        :py:meth:`floris.simulation.flow_field.FlowField.calculate_wake` 
+        method at points specified by inputs. 
 
         Args:
             x_points, float, array of floats
             y_points, float, array of floats
             z_points, float, array of floats
 
-
         Returns:
-            dataframe of x,y,z,u,v,w values
+            :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
         """
 
         # Get a copy for the flow field so don't change underlying grid points
@@ -394,81 +415,6 @@ class FlorisInterface():
         # Return the dataframe
         return df
 
-    def get_set_of_points_temp_hack(self, x_points, y_points, z_points):
-        """
-        Use points method in calculate_wake to quick extract a slice of points
-
-        Args:
-            x_points, float, array of floats
-            y_points, float, array of floats
-            z_points, float, array of floats
-
-
-        Returns:
-            dataframe of x,y,z,u,v,w values
-        """
-
-        # Get a copy for the flow field so don't change underlying grid points
-        flow_field = copy.deepcopy(self.floris.farm.flow_field)
-
-        if self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
-
-            # If this is a gridded model, must extract from full flow field
-            self.logger.info(
-                'Model identified as %s requires use of underlying grid print' \
-                % self.floris.farm.flow_field.wake.velocity_model.model_string
-            )
-            self.logger.warning('FUNCTION NOT AVAILABLE CURRENTLY')
-
-        # Set up points matrix
-        points = np.row_stack((x_points, y_points, z_points))
-
-        # Recalculate wake with these points
-        flow_field.calculate_wake(points=points)
-
-
-        # Get results vectors
-        x_flat = flow_field.x.flatten()
-        y_flat = flow_field.y.flatten()
-        z_flat = flow_field.z.flatten()
-        u_flat = flow_field.u.flatten()
-        v_flat = flow_field.v.flatten()
-        w_flat = flow_field.w.flatten()
-
-        sigma_tilde = flow_field.wake.velocity_model.sigma_tilde.flatten()
-        n = flow_field.wake.velocity_model.n.flatten()
-        beta = flow_field.wake.velocity_model.beta_out.flatten()
-        C = flow_field.wake.velocity_model.C.flatten()
-        if hasattr(flow_field.wake.velocity_model,'Cx'):
-            Cx = flow_field.wake.velocity_model.Cx.flatten()
-        else:
-            Cx = np.nan * C
-
-        df = pd.DataFrame({
-            'x': x_flat,
-            'y': y_flat,
-            'z': z_flat,
-            'u': u_flat,
-            'v': v_flat,
-            'w': w_flat,
-            'sigma_tilde':sigma_tilde,
-            'n':n,
-            'beta':beta,
-            'C':C,
-            'Cx':Cx
-        })
-
-        # Subset to points requests
-        df = df[df.x.isin(x_points)]
-        df = df[df.y.isin(y_points)]
-        df = df[df.z.isin(z_points)]
-
-        # Drop duplicates
-        df = df.drop_duplicates()
-
-        # Return the dataframe
-        return df
-
     def get_hor_plane(self,
                       height=None,
                       x_resolution=200,
@@ -476,22 +422,24 @@ class FlorisInterface():
                       x_bounds=None,
                       y_bounds=None):
         """
-        Get a horizontal cut through plane at a specific height
+        Shortcut method to instantiate a 
+        :py:class:`floris.tools.cut_plane.CutPlane` object containing the 
+        velocity field in a horizontal plane cut through the simulation domain 
+        at a specific height. 
 
         Args:
-            height (float): height of cut plane, defaults to hub-height
-                Defaults to Hub-height.
-            x1_resolution (float, optional): output array resolution.
-                Defaults to 200.
-            x2_resolution (float, optional): output array resolution.
-                Defaults to 200.
-            x1_bounds (tuple, optional): limits of output array. (in m)
+            height (float): Height of cut plane. Defaults to Hub-height.
+            x_resolution (float, optional): Output array resolution.
+                Defaults to 200 m.
+            y_resolution (float, optional): Output array resolution.
+                Defaults to 200 m.
+            x_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            x2_bounds (tuple, optional): limits of output array. (in m)
+            y_bounds (tuple, optional): limits of output array (in m).
                 Defaults to None.
 
         Returns:
-            horplane
+            :py:class:`pandas.DataFrame`: containing values of x, y, u, v, w
         """
 
         # If height not provided, use the hub height
@@ -515,36 +463,39 @@ class FlorisInterface():
 
     def get_cross_plane(self,
                         x_loc,
-                        x_resolution=200,
                         y_resolution=200,
-                        x_bounds=None,
-                        y_bounds=None):
+                        z_resolution=200,
+                        y_bounds=None,
+                        z_bounds=None):
         """
-        Get a horizontal cut through plane at a specific height
+        Shortcut method to instantiate a 
+        :py:class:`floris.tools.cut_plane.CutPlane` object containing the 
+        velocity field in a vertical plane cut through the simulation domain 
+        at perpendicular to the background flow at a specified downstream 
+        location. 
 
         Args:
-            height (float): height of cut plane, defaults to hub-height
-                Defaults to Hub-height.
-            x1_resolution (float, optional): output array resolution.
-                Defaults to 200.
-            x2_resolution (float, optional): output array resolution.
-                Defaults to 200.
-            x1_bounds (tuple, optional): limits of output array.
+            x_loc (float): Downstream location of cut plane.
+            y_resolution (float, optional): Output array resolution.
+                Defaults to 200 m.
+            z_resolution (float, optional): Output array resolution.
+                Defaults to 200 m.
+            y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            x2_bounds (tuple, optional): limits of output array.
+            z_bounds (tuple, optional): limits of output array (in m).
                 Defaults to None.
 
         Returns:
-            horplane
+            :py:class:`pandas.DataFrame`: containing values of y, z, u, v, w
         """
 
         # Get the points of data in a dataframe
-        df = self.get_plane_of_points(x1_resolution=x_resolution,
-                                      x2_resolution=y_resolution,
+        df = self.get_plane_of_points(x1_resolution=y_resolution,
+                                      x2_resolution=z_resolution,
                                       normal_vector='x',
                                       x3_value=x_loc,
-                                      x1_bounds=x_bounds,
-                                      x2_bounds=y_bounds)
+                                      x1_bounds=y_bounds,
+                                      x2_bounds=z_bounds)
 
         # Compute and return the cutplane
         return CutPlane(df)
@@ -552,35 +503,38 @@ class FlorisInterface():
     def get_y_plane(self,
                     y_loc,
                     x_resolution=200,
-                    y_resolution=200,
+                    z_resolution=200,
                     x_bounds=None,
-                    y_bounds=None):
+                    z_bounds=None):
         """
-        Get a horizontal cut through plane at a specific height
+        Shortcut method to instantiate a 
+        :py:class:`floris.tools.cut_plane.CutPlane` object containing the 
+        velocity field in a vertical plane cut through the simulation domain 
+        at parallel to the background flow at a specified spanwise 
+        location. 
 
         Args:
-            height (float): height of cut plane, defaults to hub-height
-                Defaults to Hub-height.
-            x1_resolution (float, optional): output array resolution.
-                Defaults to 200.
-            x2_resolution (float, optional): output array resolution.
-                Defaults to 200.
-            x1_bounds (tuple, optional): limits of output array.
+            y_loc (float): Spanwise location of cut plane
+            x_resolution (float, optional): Output array resolution.
+                Defaults to 200 m.
+            z_resolution (float, optional): Output array resolution.
+                Defaults to 200 m.
+            x_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            x2_bounds (tuple, optional): limits of output array.
+            z_bounds (tuple, optional): limits of output array (in m).
                 Defaults to None.
 
         Returns:
-            horplane
+            :py:class:`pandas.DataFrame`: containing values of x, z, u, v, w
         """
 
         # Get the points of data in a dataframe
         df = self.get_plane_of_points(x1_resolution=x_resolution,
-                                      x2_resolution=y_resolution,
+                                      x2_resolution=z_resolution,
                                       normal_vector='y',
                                       x3_value=y_loc,
                                       x1_bounds=x_bounds,
-                                      x2_bounds=y_bounds)
+                                      x2_bounds=z_bounds)
 
         # Compute and return the cutplane
         return CutPlane(df)
@@ -590,19 +544,23 @@ class FlorisInterface():
                       grid_spacing=10,
                       velocity_deficit=False):
         """
-        Generate FlowData object corresponding to the floris instance.
+        Generate :py:class:`floris.tools.flow_data.FlowData` object 
+        corresponding to active floris instance.
 
-        #TODO disambiguate between resolution and grid spacing.
+        Velocity and wake models requiring calculation on a grid implement a 
+        discretized domain at resolution **grid_spacing**. This is distinct 
+        from the resolution of the returned flow field domain.
 
         Args:
-            resolution (float, optional): resolution of output data.
+            resolution (float, optional): Resolution of output data.
                 Only used for wake models that require spatial
                 resolution (e.g. curl). Defaults to None.
-            grid_spacing (int, optional): resolution of output data.
+            grid_spacing (int, optional): Resolution of grid used for
+                simulation. Model results may be sensitive to resolution.
                 Defaults to 10.
-            velocity_deficit (bool, optional): normalizes velocity with 
-                respect to initial flow field velocity to show percent 
-                velocity deficit (%).
+            velocity_deficit (bool, optional): When *True*, normalizes velocity 
+            with respect to initial flow field velocity to show relative  
+            velocity deficit (%). Defaults to *False*.
 
         Returns:
             :py:class:`floris.tools.flow_data.FlowData`: FlowData object
@@ -674,10 +632,12 @@ class FlorisInterface():
 
     def get_yaw_angles(self):
         """
-        Report yaw angles of wind turbines from instance of floris.
+        Report yaw angles of wind turbines within the active 
+        :py:class:`floris.simulation.turbine_map.TurbineMap` accessible as 
+        FlorisInterface.floris.tarm.turbine_map.turbines.yaw_angle.
 
         Returns:
-            yaw_angles (np.array): wind turbine yaw angles.
+            np.array: Wind turbine yaw angles.
         """
         yaw_angles = [
             turbine.yaw_angle
@@ -699,9 +659,9 @@ class FlorisInterface():
         original wind direction and yaw angles.
 
         Args:
-            include_unc (bool): If True, uncertainty in wind direction and/or
-                yaw position is included when determining wind farm power.
-                Defaults to False.
+            include_unc (bool): When *True*, uncertainty in wind direction and/
+            or yaw position is included when determining wind farm power. 
+            Defaults to *False*.
             unc_pmfs (dictionary, optional): A dictionary containing optional
                 probability mass functions describing the distribution of wind
                 direction and yaw position deviations when wind direction and/or
@@ -741,13 +701,13 @@ class FlorisInterface():
                 1.75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
             no_wake: (bool, optional): When *True* updates the turbine
                 quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to False.
+                wake to the flow field. Defaults to *False*.
             use_turbulence_correction: (bool, optional): When *True* uses a
                 turbulence parameter to adjust power output calculations. 
-                Defaults to False.
+                Defaults to *False*.
 
         Returns:
-            plant_power (float): sum of wind turbine powers.
+            float: sum of wind turbine powers.
         """
         for turbine in self.floris.farm.turbines:
             turbine.use_turbulence_correction = use_turbulence_correction
@@ -843,16 +803,17 @@ class FlorisInterface():
         Report power from each wind turbine from instance of floris.
 
         Args:
-            include_unc (bool): If True, uncertainty in wind direction
-                and/or yaw position is included when determining wind farm power.
-                Defaults to False.
+            include_unc (bool): If *True*, uncertainty in wind direction
+                and/or yaw position is included when determining wind farm 
+                power. Defaults to *False*.
             unc_pmfs (dictionary, optional): A dictionary containing optional
                 probability mass functions describing the distribution of wind
                 direction and yaw position deviations when wind direction and/or
                 yaw position uncertainty is included in the power calculations.
                 Contains the following key-value pairs:
 
-                -   **wd_unc**: A numpy array containing wind direction deviations
+                -   **wd_unc**: A numpy array containing wind direction 
+                    deviations
                     from the original wind direction.
                 -   **wd_unc_pmf**: A numpy array containing the probability of
                     each wind direction deviation in **wd_unc** occuring.
@@ -861,35 +822,37 @@ class FlorisInterface():
                 -   **yaw_unc_pmf**: A numpy array containing the probability of
                     each yaw angle deviation in **yaw_unc** occuring.
 
-                Defaults to None, in which case default PMFs are calculated using
-                values provided in **unc_options**.
-            unc_options (dictionary, optional): A dictionary containing values used
-                to create normally-distributed, zero-mean probability mass functions
-                describing the distribution of wind direction and yaw position
-                deviations when wind direction and/or yaw position uncertainty is
-                included. This argument is only used when **unc_pmfs** is None and
-                contains the following key-value pairs:
+                Defaults to None, in which case default PMFs are calculated 
+                using values provided in **unc_options**.
+            unc_options (dictionary, optional): A dictionary containing values 
+                used to create normally-distributed, zero-mean probability mass 
+                functions describing the distribution of wind direction and yaw 
+                position deviations when wind direction and/or yaw position 
+                uncertainty is included. This argument is only used when 
+                **unc_pmfs** is None and contains the following key-value pairs:
 
-                -   **std_wd**: A float containing the standard deviation of the wind
-                        direction deviations from the original wind direction.
-                -   **std_yaw**: A float containing the standard deviation of the yaw
-                        angle deviations from the original yaw angles.
-                -   **pmf_res**: A float containing the resolution in degrees of the
-                        wind direction and yaw angle PMFs.
-                -   **pdf_cutoff**: A float containing the cumulative distribution
-                    function value at which the tails of the PMFs are truncated.
+                -   **std_wd**: A float containing the standard deviation of    
+                    the wind direction deviations from the original wind 
+                    direction.
+                -   **std_yaw**: A float containing the standard deviation of 
+                    the yaw angle deviations from the original yaw angles.
+                -   **pmf_res**: A float containing the resolution in degrees 
+                    of the wind direction and yaw angle PMFs.
+                -   **pdf_cutoff**: A float containing the cumulative 
+                    distribution function value at which the tails of the PMFs 
+                    are truncated.
 
-                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.75,
-                'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
+                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.
+                75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
             no_wake: (bool, optional): When *True* updates the turbine
                 quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to False.
+                wake to the flow field. Defaults to *False*.
             use_turbulence_correction: (bool, optional): When *True* uses a
                 turbulence parameter to adjust power output calculations. 
-                Defaults to False.
+                Defaults to *False*.
 
         Returns:
-            turb_powers (np.array): power produced by each wind turbine.
+            np.array: power produced by each wind turbine.
         """
         for turbine in self.floris.farm.turbines:
             turbine.use_turbulence_correction = use_turbulence_correction
@@ -902,7 +865,8 @@ class FlorisInterface():
                 # create normally distributed wd and yaw uncertaitny pmfs
                 if unc_options['std_wd'] > 0:
                     wd_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
-                                    scale=unc_options['std_wd'])/unc_options['pmf_res']))
+                                    scale=unc_options['std_wd'])/unc_options \
+                                        ['pmf_res']))
                     wd_unc = np.linspace(-1*wd_bnd*unc_options['pmf_res'], \
                                     wd_bnd*unc_options['pmf_res'],2*wd_bnd+1)
                     wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options['std_wd'])
@@ -914,7 +878,8 @@ class FlorisInterface():
 
                 if unc_options['std_yaw'] > 0:
                     yaw_bnd = int(np.ceil(norm.ppf(unc_options['pdf_cutoff'], \
-                                    scale=unc_options['std_yaw'])/unc_options['pmf_res']))
+                                    scale=unc_options['std_yaw'])/unc_options \
+                                        ['pmf_res']))
                     yaw_unc = np.linspace(-1*yaw_bnd*unc_options['pmf_res'], \
                                     yaw_bnd*unc_options['pmf_res'],2*yaw_bnd+1)
                     yaw_unc_pmf = norm.pdf(yaw_unc,
@@ -938,11 +903,12 @@ class FlorisInterface():
 
                 for i_yaw, delta_yaw in enumerate(unc_pmfs['yaw_unc']):
                     self.calculate_wake(
-                        yaw_angles=list(np.array(yaw_angles) + delta_yaw),
+                        yaw_angles=list(np.array(yaw_angles) + delta_yaw), \
                         no_wake=no_wake)
-                    mean_farm_power = mean_farm_power + unc_pmfs['wd_unc_pmf'][i_wd] \
-                        * unc_pmfs['yaw_unc_pmf'][i_yaw] \
-                        * np.array([turbine.power for turbine in self.floris.farm.turbines])
+                    mean_farm_power = mean_farm_power + unc_pmfs['wd_unc_pmf'] \
+                        [i_wd] * unc_pmfs['yaw_unc_pmf'][i_yaw] \
+                        * np.array([turbine.power for turbine \
+                             in self.floris.farm.turbines])
 
             # reinitialize with original values
             self.reinitialize_flow_field(wind_direction=wd_orig)
@@ -956,10 +922,11 @@ class FlorisInterface():
 
     def get_turbine_ct(self):
         """
-        Report thrust coefficient from each wind turbine from instance of floris.
+        Report thrust coefficient from each wind turbine from instance of 
+        floris.
 
         Returns:
-            turb_ct_array (np.array): thrust coefficient for each wind turbine.
+            np.array: thrust coefficient for each wind turbine.
         """
         turb_ct_array = [
             turbine.Ct
@@ -975,16 +942,63 @@ class FlorisInterface():
                                      unc_options=None,
                                      no_wake=False):
         """
+        
         Assign yaw angles to turbines, calculate wake, report power
 
         Args:
             yaw_angles (np.array): yaw to apply to each turbine
             no_wake: (bool, optional): When *True* updates the turbine
                 quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to False.
+                wake to the flow field. Defaults to *False*.
+
+        Args:
+            yaw_angles (np.array): yaw to apply to each turbine
+            include_unc (bool, optional): When *True*, includes wind direction 
+                uncertainty in estimate of wind farm power. Defaults to *False*.
+            unc_pmfs (dictionary, optional): A dictionary containing optional
+                probability mass functions describing the distribution of wind
+                direction and yaw position deviations when wind direction and/or
+                yaw position uncertainty is included in the power calculations.
+                Contains the following key-value pairs:
+
+                -   **wd_unc**: A numpy array containing wind direction 
+                    deviations
+                    from the original wind direction.
+                -   **wd_unc_pmf**: A numpy array containing the probability of
+                    each wind direction deviation in **wd_unc** occuring.
+                -   **yaw_unc**: A numpy array containing yaw angle deviations
+                    from the original yaw angles.
+                -   **yaw_unc_pmf**: A numpy array containing the probability of
+                    each yaw angle deviation in **yaw_unc** occuring.
+
+                Defaults to None, in which case default PMFs are calculated 
+                using values provided in **unc_options**.
+            unc_options (dictionary, optional): A dictionary containing values 
+                used to create normally-distributed, zero-mean probability mass 
+                functions describing the distribution of wind direction and yaw 
+                position deviations when wind direction and/or yaw position 
+                uncertainty is included. This argument is only used when 
+                **unc_pmfs** is None and contains the following key-value pairs:
+
+                -   **std_wd**: A float containing the standard deviation of    
+                    the wind direction deviations from the original wind 
+                    direction.
+                -   **std_yaw**: A float containing the standard deviation of 
+                    the yaw angle deviations from the original yaw angles.
+                -   **pmf_res**: A float containing the resolution in degrees 
+                    of the wind direction and yaw angle PMFs.
+                -   **pdf_cutoff**: A float containing the cumulative 
+                    distribution function value at which the tails of the PMFs 
+                    are truncated.
+
+                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.
+                75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the
+                wake to the flow field. Defaults to *False*.
 
         Returns:
-            power (float): wind plant power. #TODO negative? in kW?
+            float: wind plant power. #TODO negative? in kW?
         """
 
         self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
@@ -994,6 +1008,21 @@ class FlorisInterface():
                                    unc_options=unc_options)
 
     def get_farm_AEP(self, wd, ws, freq, yaw=None):
+        """
+        Estimate annual energy production (AEP) for distributions of wind 
+        speed, wind direction and yaw offset.
+
+        Args:
+            wd (iterable): List or array of wind direction values
+            ws (iterable): List or array of wind speed values
+            freq (iterable): Frequencies corresponding to wind speeds and 
+                directions in wind rose.
+            yaw (iterable, optional): List or array of yaw values if wake is 
+                steering implemented. Defaults to None.
+
+        Returns:
+            float: AEP for wind farm
+        """
         AEP_sum = 0
 
         for i in range(len(wd)):
@@ -1012,26 +1041,29 @@ class FlorisInterface():
                        turbine_change_dict,
                        update_specified_wind_height=False):
         """
-        Change turbine properties of given turbines
+        Change turbine properties for specified turbines.
 
         Args:
-            turb_num_array (list): list of turbine indices to change
-            turbine_change_dict (dict): dictionary of changes to make. All 
-                key values should be from the JSON turbine/properties set.
-                Any key values not specified will be copied from the original
-                JSON values.
-            update_specified_wind_height (bool): Update specified wind height
-                to match new hub_height
+            turb_num_array (list): List of turbine indices to change.
+            turbine_change_dict (dict): Dictionary of changes to make. All 
+                key/value pairs should correspond to the JSON turbine/
+                properties set. Any key values not specified as changes will be 
+                copied from the original JSON values.
+            update_specified_wind_height (bool): When *True*, update specified 
+                wind height to match new hub_height. Defaults to *False*.
         """
 
         # Alert user if changing hub-height and not specified wind height
-        if ('hub_height' in turbine_change_dict) and (not update_specified_wind_height):
+        if ('hub_height' in turbine_change_dict) and \
+            (not update_specified_wind_height):
             self.logger.info('Note, updating hub height but not updating ' + \
                 'the specfied_wind_height')
 
-        if ('hub_height' in turbine_change_dict) and update_specified_wind_height:
+        if ('hub_height' in turbine_change_dict) and  \
+            update_specified_wind_height:
             self.logger.info(
-                'Note, specfied_wind_height changed to hub-height: %.1f' % turbine_change_dict['hub_height']
+                'Note, specfied_wind_height changed to hub-height: %.1f' % \
+                    turbine_change_dict['hub_height']
             )
             self.reinitialize_flow_field(
                 specified_wind_height=turbine_change_dict['hub_height']
@@ -1054,7 +1086,11 @@ class FlorisInterface():
 
     def set_use_points_on_perimeter(self,use_points_on_perimeter):
         """
-        Set whether to use the points on the rotor perimieter when calculating flow
+        Set whether to use the points on the rotor diameter (perimeter) when 
+        calculating flow field and wake.
+
+        Args:
+            use_points_on_perimeter (bool): When *True*, use points at rotor perimeter in wake and flow calculations. Defaults to *False*.
         """
         for turbine in self.floris.farm.turbines:
             turbine.use_points_on_perimeter = use_points_on_perimeter
@@ -1062,15 +1098,26 @@ class FlorisInterface():
 
     def set_gch(self, enable=True):
         """
-        Enable or disable GCH's two components
+        #TODO find a fix for multi-line references
+
+        Enable or disable Gauss-Curl Hybrid (GCH) functions, :py:meth:`floris.simulation.wake_velocity.gaussianModels.gaussian_model_base.GaussianModel.calculate_VW` and :py:meth:`floris.simulation.wake_velocity.gaussianModels.gaussian_model_base.GaussianModel.yaw_added_recovery_correction`.
+
+        Args:
+            enable (bool, optional): Flag whether or not to implement flow 
+                corrections from GCH model. Defaults to *True*.
         """
         self.set_gch_yaw_added_recovery(enable)
         self.set_gch_secondary_steering(enable)
 
     def set_gch_yaw_added_recovery(self, enable=True):
         """
-        Enable/Disable GCH YAR
-        And control state of calcVW based on this and ss setting
+        Enable or Disable yaw-added recovery (YAR) from the Gauss-Curl Hybrid 
+        (GCH) model and the control state of 
+        :py:meth:`floris.simulation.wake_velocity.gaussianModels.gaussian_model_base.GaussianModel.calculate_VW_velocities`
+
+        Args:
+            enable (bool, optional): Flag whether or not to implement yaw-added 
+                recovery from GCH model. Defaults to *True*.
         """
         model_params = self.get_model_parameters()
         use_secondary_steering = model_params['Wake Deflection Parameters']['use_secondary_steering'] 
@@ -1091,11 +1138,15 @@ class FlorisInterface():
         self.set_model_parameters(model_params)
         self.reinitialize_flow_field()
 
-
     def set_gch_secondary_steering(self, enable=True):
         """
-        Enable/Disable GCH SS
-        And control state of calcVW based on this and yar setting
+        Enable or Disable secondary steering (SS) from the Gauss-Curl Hybrid 
+        (GCH) model and the control state of 
+        :py:meth:`floris.simulation.wake_velocity.gaussianModels.gaussian_model_base.GaussianModel.calculate_VW_velocities`
+
+        Args:
+            enable (bool, optional): Flag whether or not to implement secondary
+            steering from GCH model. Defaults to *True*.
         """
         model_params = self.get_model_parameters()
         use_yaw_added_recovery = model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] 
@@ -1123,7 +1174,7 @@ class FlorisInterface():
         Wind turbine coordinate information.
 
         Returns:
-            layout_x (np.array): Wind turbine x-coordinate (east-west).
+            np.array: Wind turbine x-coordinate (east-west).
         """
         coords = self.floris.farm.flow_field.turbine_map.coords
         layout_x = np.zeros(len(coords))
@@ -1137,7 +1188,7 @@ class FlorisInterface():
         Wind turbine coordinate information.
 
         Returns:
-            layout_y (np.array): Wind turbine y-coordinate (east-west).
+            np.array: Wind turbine y-coordinate (north-south).
         """
         coords = self.floris.farm.flow_field.turbine_map.coords
         layout_y = np.zeros(len(coords))
@@ -1151,13 +1202,13 @@ class FlorisInterface():
             turbulence intensity.
         
         Args:
-            turbulence_kinetic_energy (list): values of turbulence kinetic
-                energy in untis of meters squared per second squared.
-            wind_speed (list): measurements of wind speed in meters per second. 
+            turbulence_kinetic_energy (list): Values of turbulence kinetic
+                energy in units of meters squared per second squared.
+            wind_speed (list): Measurements of wind speed in meters per second. 
                 
         Returns:
-            turbulence_intensity (list): converted turbulence intensity 
-                values expressed in decimal fractions.       
+            list: converted turbulence intensity values expressed as a decimal
+                (e.g. 10%TI -> 0.10).       
         """
         turbulence_intensity = [(np.sqrt(
             (2 / 3) * turbulence_kinetic_energy[i])) / wind_speed[i]
@@ -1170,7 +1221,7 @@ class FlorisInterface():
         Assign rotor diameter to turbines.
 
         Args:
-            rotor_diameter: the rotor diameter(s) to be 
+            rotor_diameter (float): The rotor diameter(s) to be 
                 applied to the turbines in meters. 
         """
         if isinstance(rotor_diameter, float) or isinstance(
@@ -1188,26 +1239,27 @@ class FlorisInterface():
                               wake_deflection_model=True,
                               turbulence_model=True):
         """
-        Helper funtion to print the current wake model parameters and values.
+        Helper function to print the current wake model parameters and values. 
+        Shortcut to :py:meth:`floris.tools.interface_utilities.show_params`
                
         Args:
             params (list, optional): Specific model parameters to be returned,
                 supplied as a list of strings. If None, then returns all
                 parameters. Defaults to None.
-            verbose (bool, optional): If set to True, will return the
-                docstrings for each parameter. Defaults to False.
-            wake_velocity_model (bool, optional): If set to True, will return
-                parameters from the wake_velocity model. If set to False, will
+            verbose (bool, optional): If set to *True*, will return the
+                docstrings for each parameter. Defaults to *False*.
+            wake_velocity_model (bool, optional): If set to *True*, will return
+                parameters from the wake_velocity model. If set to *False*, will
                 exclude parameters from the wake velocity model. Defaults to
-                True.
-            wake_deflection_model (bool, optional): If set to True, will return
-                parameters from the wake deflection model. If set to False, will
-                exclude parameters from the wake deflection model. Defaults to
-                True.
-            turbulence_model ([type], optional): If set to True, will return
-                parameters from the wake turbulence model. If set to False,
+                *True*.
+            wake_deflection_model (bool, optional): If set to *True*, will 
+                return parameters from the wake deflection model. If set to 
+                *False*, will exclude parameters from the wake deflection 
+                model. Defaults to *True*.
+            turbulence_model (bool, optional): If set to *True*, will return
+                parameters from the wake turbulence model. If set to *False*,
                 will exclude parameters from the wake turbulence model.
-                Defaults to True.
+                Defaults to *True*.
         """
         show_params(self, params, verbose, wake_velocity_model,
                     wake_deflection_model, turbulence_model)
@@ -1218,24 +1270,25 @@ class FlorisInterface():
                              wake_deflection_model=True,
                              turbulence_model=True):
         """
-        Helper funtion to return the current wake model parameters and values.
+        Helper function to return the current wake model parameters and values.
+        Shortcut to :py:meth:`floris.tools.interface_utilities.get_params`
                
         Args:
             params (list, optional): Specific model parameters to be returned,
                 supplied as a list of strings. If None, then returns all
                 parameters. Defaults to None.
-            wake_velocity_model (bool, optional): If set to True, will return
-                parameters from the wake_velocity model. If set to False, will
+            wake_velocity_model (bool, optional): If set to *True*, will return
+                parameters from the wake_velocity model. If set to *False*, will
                 exclude parameters from the wake velocity model. Defaults to
-                True.
-            wake_deflection_model (bool, optional): If set to True, will return
-                parameters from the wake deflection model. If set to False,
-                will exclude parameters from the wake deflection model.
-                Defaults to True.
-            turbulence_model ([type], optional): If set to True, will return
-                parameters from the wake turbulence model. If set to False,
+                *True*.
+            wake_deflection_model (bool, optional): If set to *True*, will 
+                return parameters from the wake deflection model. If set to 
+                *False*, will exclude parameters from the wake deflection 
+                model. Defaults to *True*.
+            turbulence_model ([type], optional): If set to *True*, will return
+                parameters from the wake turbulence model. If set to *False*,
                 will exclude parameters from the wake turbulence model.
-                Defaults to True.
+                Defaults to *True*.
 
         Returns:
             dict: Dictionary containing model parameters and their values.
@@ -1248,12 +1301,13 @@ class FlorisInterface():
     def set_model_parameters(self, params, verbose=True):
         """
         Helper function to set current wake model parameters.
+        Shortcut to :py:meth:`floris.tools.interface_utilities.set_params`
        
         Args:
             params (dict): Specific model parameters to be set, supplied as a
                 dictionary of key:value pairs.
-            verbose (bool, optional): If set to True, will print information
-                about each model parameter that is changed. Defaults to True.
+            verbose (bool, optional): If set to *True*, will print information
+                about each model parameter that is changed. Defaults to *True*.
         """
         set_params(self, params, verbose)
 
@@ -1263,7 +1317,22 @@ class FlorisInterface():
                     limit_dist=None,
                     turbine_face_north=False,
                     one_index_turbine=False):
+        """
+        Visualize the layout of the wind farm in the floris instance.
+        Shortcut to :py:meth:`floris.tools.layout_functions.visualize_layout`.
 
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes` optional):
+                Figure axes. Defaults to None.
+            show_wake_lines (bool, optional): Flag to control plotting of
+                wake boundaries. Defaults to False.
+            limit_dist (float, optional): Downstream limit to plot wakes. D
+                Defaults to None.
+            turbine_face_north (bool, optional): Force orientation of wind
+                turbines. Defaults to False.
+            one_index_turbine (bool, optional): If *True*, 1st turbine is   
+                turbine 1.
+        """
         for i, turbine in enumerate(self.floris.farm.turbines):
             D = turbine.rotor_diameter
             break
@@ -1285,13 +1354,20 @@ class FlorisInterface():
         )
 
     def show_flow_field(self, ax=None):
+        """
+        Shortcut method to :py:meth:`floris.tools.visualization.visualize_cut_plane`.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes` optional):
+                Figure axes. Defaults to None.
+        """
         # Get horizontal plane at default height (hub-height)
         hor_plane = self.get_hor_plane()
 
         # Plot and show
         if ax is None:
             fig, ax = plt.subplots()
-        wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+        visualize_cut_plane(hor_plane, ax=ax)
         plt.show()
 
     # TODO
