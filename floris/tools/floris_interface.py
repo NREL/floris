@@ -560,7 +560,8 @@ class FlorisInterface():
         """
 
         if resolution is None:
-            if not self.floris.farm.flow_field.wake.velocity_model.requires_resolution:
+            if not self.floris.farm.flow_field.wake.velocity_model.\
+                requires_resolution:
                 self.logger.info('Assuming grid with spacing %d' % grid_spacing)
                 xmin, xmax, ymin, ymax, zmin, zmax = \
                     self.floris.farm.flow_field.domain_bounds
@@ -569,7 +570,8 @@ class FlorisInterface():
                                   1 + (zmax - zmin) / grid_spacing)
             else:
                 self.logger.info('Assuming model resolution')
-                resolution = self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
+                resolution = self.floris.farm.flow_field.wake.velocity_model.\
+                    model_grid_resolution
 
         # Get a copy for the flow field so don't change underlying grid points
         flow_field = copy.deepcopy(self.floris.farm.flow_field)
@@ -1109,20 +1111,25 @@ class FlorisInterface():
                 recovery from GCH model. Defaults to *True*.
         """
         model_params = self.get_model_parameters()
-        use_secondary_steering = model_params['Wake Deflection Parameters']['use_secondary_steering'] 
+        use_secondary_steering = model_params['Wake Deflection Parameters'\
+            ['use_secondary_steering'] 
 
         if enable:
-            model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] = True
+            model_params['Wake Velocity Parameters']['use_yaw_added_recovery']\
+                = True
 
             # If enabling be sure calc vw is on
-            model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = True
+            model_params['Wake Velocity Parameters']['calculate_VW_velocities']\
+                = True
             
         if not enable:
-            model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] = False
+            model_params['Wake Velocity Parameters']['use_yaw_added_recovery']\
+                = False
 
             # If secondary steering is also off, disable calculate_VW_velocities
             if not use_secondary_steering:
-                 model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = False
+                 model_params['Wake Velocity Parameters']\
+                     ['calculate_VW_velocities'] = False
 
         self.set_model_parameters(model_params)
         self.reinitialize_flow_field()
@@ -1139,20 +1146,25 @@ class FlorisInterface():
             steering from GCH model. Defaults to *True*.
         """
         model_params = self.get_model_parameters()
-        use_yaw_added_recovery = model_params['Wake Velocity Parameters']['use_yaw_added_recovery'] 
+        use_yaw_added_recovery = model_params['Wake Velocity Parameters']\
+            ['use_yaw_added_recovery'] 
 
         if enable:
-            model_params['Wake Deflection Parameters']['use_secondary_steering'] = True
+            model_params['Wake Deflection Parameters']\
+                ['use_secondary_steering'] = True
 
             # If enabling be sure calc vw is on
-            model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = True
+            model_params['Wake Velocity Parameters']['calculate_VW_velocities']\
+                = True
             
         if not enable:
-            model_params['Wake Deflection Parameters']['use_secondary_steering'] = False
+            model_params['Wake Deflection Parameters']\
+                ['use_secondary_steering'] = False
 
             # If yar is also off, disable calculate_VW_velocities
             if not use_yaw_added_recovery:
-                 model_params['Wake Velocity Parameters']['calculate_VW_velocities'] = False
+                 model_params['Wake Velocity Parameters']\
+                     ['calculate_VW_velocities'] = False
 
         self.set_model_parameters(model_params)
         self.reinitialize_flow_field()
