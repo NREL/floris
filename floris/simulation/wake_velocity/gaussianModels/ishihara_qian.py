@@ -74,22 +74,20 @@ class IshiharaQian(GaussianModel):
                 Default values are used when a parameter is not included
                 in `parameter_dictionary`. Possible key-value pairs include:
 
-                -   **ishihara**: A dictionary containing the following
-                    key-value pairs:
-                -   **kstar**: A float that is a parameter used to
+                -   **kstar** (*dict*): A dict that is a parameter used to
                     determine the linear relationship between the
                     turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **epsilon**: A float that is a second parameter
+                -   **epsilon** (*dict*): A dict that is a second parameter
                     used to determine the linear relationship between the
                     turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **a**: constant coefficient used in calculation of
-                    wake-added turbulence.
-                -   **b**: linear coefficient used in calculation of
-                    wake-added turbulence.
-                -   **c**: near-wake coefficient used in calculation of
-                    wake-added turbulence.
+                -   **a** (*dict*): A dict that is a constant coefficient used 
+                    in calculation of wake-added turbulence.
+                -   **b** (*dict*): A dict that is linear coefficient used in   
+                    calculation of wake-added turbulence.
+                -   **c** (*dict*): A dict that is near-wake coefficient used 
+                    in calculation of wake-added turbulence.
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
@@ -104,7 +102,8 @@ class IshiharaQian(GaussianModel):
         self.c = model_dictionary["c"]
 
         # GCH Parameters
-        self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
+        self.calculate_VW_velocities = model_dictionary\
+            ["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
@@ -161,14 +160,11 @@ class IshiharaQian(GaussianModel):
         # coordinate info
         r = np.sqrt(local_y**2 + (local_z)**2)
 
-        def parameter_value_from_dict(pdict, Ct, TI):
-            return pdict['const'] * Ct**(pdict['Ct']) * TI**(pdict['TI'])
-
-        kstar = parameter_value_from_dict(self.kstar, Ct, TI)
-        epsilon = parameter_value_from_dict(self.epsilon, Ct, TI)
-        a = parameter_value_from_dict(self.a, Ct, TI)
-        b = parameter_value_from_dict(self.b, Ct, TI)
-        c = parameter_value_from_dict(self.c, Ct, TI)
+        kstar = self.parameter_value_from_dict(self.kstar, Ct, TI)
+        epsilon = self.parameter_value_from_dict(self.epsilon, Ct, TI)
+        a = self.parameter_value_from_dict(self.a, Ct, TI)
+        b = self.parameter_value_from_dict(self.b, Ct, TI)
+        c = self.parameter_value_from_dict(self.c, Ct, TI)
 
         k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
         k1[r / D > 0.5] = 1.0
@@ -198,6 +194,20 @@ class IshiharaQian(GaussianModel):
         velDef[x_locations < xR] = 0
 
         return velDef, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
+
+    def parameter_value_from_dict(self, pdict, Ct, TI):
+            """
+            [summary]
+
+            Args:
+                pdict ([type]): [description]
+                Ct ([type]): [description]
+                TI ([type]): [description]
+
+            Returns:
+                [type]: [description]
+            """
+            return pdict['const'] * Ct**(pdict['Ct']) * TI**(pdict['TI'])
 
     @property
     def kstar(self):
