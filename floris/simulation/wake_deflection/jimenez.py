@@ -40,12 +40,14 @@ class Jimenez(VelocityDeflection):
                 Default values are used when a parameter is not included
                 in `parameter_dictionary`. Possible key-value pairs include:
 
-                    -   **kd**: Parameter used to determine the skew angle of
-                        the wake.
-                    -   **ad**: Additional tuning parameter to modify the wake
-                        deflection with a lateral offset. Defaults to 0.
-                    -   **bd**: Additional tuning parameter to modify the wake
-                        deflection with a lateral offset. Defaults to 0.
+                    -   **kd** (*float*): Parameter used to determine the skew
+                        angle of the wake.
+                    -   **ad** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
+                    -   **bd** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
 
         """
         super().__init__(parameter_dictionary)

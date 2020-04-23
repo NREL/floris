@@ -51,29 +51,33 @@ class Gauss(VelocityDeflection):
                 Default values are used when a parameter is not included
                 in `parameter_dictionary`. Possible key-value pairs include:
 
-                    -   **ka**: Parameter used to determine the linear
+                    -   **ka** (*float*): Parameter used to determine the linear
                         relationship between the turbulence intensity and the
                         width of the Gaussian wake shape.
-                    -   **kb**: Parameter used to determine the linear
+                    -   **kb** (*float*): Parameter used to determine the linear
                         relationship between the turbulence intensity and the
                         width of the Gaussian wake shape.
-                    -   **alpha**: Parameter that determines the dependence of
-                        the downstream boundary between the near wake and far
-                        wake region on the turbulence intensity.
-                    -   **beta**: Parameter that determines the dependence of
-                        the downstream boundary between the near wake and far
-                        wake region on the turbine's induction factor.
-                    -   **ad**: Additional tuning parameter to modify the wake
-                        deflection with a lateral offset. Defaults to 0.
-                    -   **bd**: Additional tuning parameter to modify the wake
-                        deflection with a lateral offset. Defaults to 0.
-                    -   **dm**: Additional tuning parameter to scale the amount
-                        of wake deflection. Defaults to 1.0
-                    -   **use_secondary_steering**: Flag to use secondary
-                        steering on the wake velocity using methods developed
-                        in [2].
-                    -   **eps_gain**: Tuning value for calculating the V- and
-                        W-component velocities using methods developed in [7].
+                    -   **alpha** (*float*): Parameter that determines the
+                        dependence of the downstream boundary between the near
+                        wake and far wake region on the turbulence intensity.
+                    -   **beta** (*float*): Parameter that determines the
+                        dependence of the downstream boundary between the near
+                        wake and far wake region on the turbine's induction
+                        factor.
+                    -   **ad** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
+                    -   **bd** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
+                    -   **dm** (*float*): Additional tuning parameter to scale
+                        the amount of wake deflection. Defaults to 1.0
+                    -   **use_secondary_steering** (*bool*): Flag to use
+                        secondary steering on the wake velocity using methods
+                        developed in [2].
+                    -   **eps_gain** (*float*): Tuning value for calculating
+                        the V- and W-component velocities using methods
+                        developed in [7].
                         TODO: Believe this should be removed, need to verify.
                         See property on super-class for more details.
         """
