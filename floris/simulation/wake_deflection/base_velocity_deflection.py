@@ -16,9 +16,10 @@ from ...utilities import cosd, sind, tand, setup_logger
 
 class VelocityDeflection():
     """
-    Base VelocityDeflection object class. This class contains methods for
-    implementing secondary steering as well as getting relevant model
-    parameters from the input dictionary.
+    This is the super-class for all wake deflection models. It includes
+    implementations of functions that subclasses should use to perform
+    secondary steering. See [1] for more details on how secondary
+    steering is calculated.
 
     References:
         [1] King, J., Fleming, P., King, R., Martínez-Tossas, L. A.,
