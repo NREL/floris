@@ -29,13 +29,6 @@ class IshiharaQian(GaussianModel):
         analytical wake model for wind turbines considering ambient turbulence
         intensities and thrust coefficient effects." *Journal of Wind
         Engineering and Industrial Aerodynamics* 177 (2018): 275-292.
-
-    Raises:
-        ValueError: Invalid value type given for kstar.
-        ValueError: Invalid value type given for epsilon.
-        ValueError: Invalid value type given for a.
-        ValueError: Invalid value type given for b.
-        ValueError: Invalid value type given for c.
     """
     default_parameters = {
         "kstar": {
@@ -71,7 +64,7 @@ class IshiharaQian(GaussianModel):
 
         All model parameters combine a constant coefficient, the thrust
         coefficient of the turbine, and the local turbulence intensity.
-        Paremeter values are calculated with 
+        Paremeter values are calculated with
         :py:meth:`~.IshiharaQian.parameter_value_from_dict` as:
         
         Args:
@@ -87,11 +80,11 @@ class IshiharaQian(GaussianModel):
                     used to determine the linear relationship between the
                     turbulence intensity and the width of the Gaussian
                     wake shape.
-                -   **a** (*dict*): A dict that is a constant coefficient used 
+                -   **a** (*dict*): A dict that is a constant coefficient used
                     in calculation of wake-added turbulence.
-                -   **b** (*dict*): A dict that is linear coefficient used in   
+                -   **b** (*dict*): A dict that is linear coefficient used in
                     calculation of wake-added turbulence.
-                -   **c** (*dict*): A dict that is near-wake coefficient used 
+                -   **c** (*dict*): A dict that is near-wake coefficient used
                     in calculation of wake-added turbulence.
         """
         super().__init__(parameter_dictionary)
@@ -116,11 +109,11 @@ class IshiharaQian(GaussianModel):
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
         """
-        Main function for calculating the IshiharaQian Gaussian wake model. 
-        This method calculates and returns the wake velocity deficits caused by 
-        the specified turbine, relative to the freestream velocities at the 
+        Main function for calculating the IshiharaQian Gaussian wake model.
+        This method calculates and returns the wake velocity deficits caused by
+        the specified turbine, relative to the freestream velocities at the
         grid of points comprising the wind farm flow field. This function is
-        accessible through the :py:class:`~.Wake` class as the 
+        accessible through the :py:class:`~.Wake` class as the
         :py:meth:`~.Wake.velocity_function` method.
 
         Args:
@@ -137,7 +130,7 @@ class IshiharaQian(GaussianModel):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the 
+            deflection_field (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
@@ -147,7 +140,7 @@ class IshiharaQian(GaussianModel):
             np.array, np.array, np.array:
                 Three arrays of floats that contain the wake velocity
                 deficit in m/s created by the turbine relative to the freestream
-                velocities for the U, V, and W components, aligned with the x, 
+                velocities for the U, V, and W components, aligned with the x,
                 y, and z directions, respectively. The three arrays contain the
                 velocity deficits at each grid point in the flow field.
         """
@@ -206,12 +199,12 @@ class IshiharaQian(GaussianModel):
         """
         Function to calculate model parameters using current conditions and
         model dictionaries.
-        
+
         Args:
             pdict (dict): Wake turbulence parameter.
             Ct (float): Thrust coefficient of the current turbine.
             ti_initial (float): Turbulence intensity.
-        
+
         Returns:
             float: Current value of model parameter.
         """
