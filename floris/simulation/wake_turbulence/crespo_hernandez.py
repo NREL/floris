@@ -69,7 +69,7 @@ class CrespoHernandez(WakeTurbulence):
         """
         Main function for calculating wake added turbulence as a function of
         external conditions and wind turbine operation. This function is
-        accessible through the :py:class:`~.simulation.Wake` class as the
+        accessible through the :py:class:`~.wake.Wake` class as the
         :py:meth:`~.Wake.turbulence_function` method.
 
         Args:
