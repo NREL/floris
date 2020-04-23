@@ -69,6 +69,11 @@ class IshiharaQian(GaussianModel):
         """
         Stores model parameters for use by methods.
 
+        All model parameters combine a constant coefficient, the thrust
+        coefficient of the turbine, and the local turbulence intensity.
+        Paremeter values are calculated with 
+        :py:meth:`~.IshiharaQian.parameter_value_from_dict` as:
+        
         Args:
             parameter_dictionary (dict): Model-specific parameters.
                 Default values are used when a parameter is not included
@@ -111,10 +116,12 @@ class IshiharaQian(GaussianModel):
     def function(self, x_locations, y_locations, z_locations, turbine,
                  turbine_coord, deflection_field, flow_field):
         """
-        Using the IshiharaQian gaussian wake model, this method calculates and
-        returns the wake velocity deficits, caused by the specified turbine, 
-        relative to the freestream velocities at the grid of points 
-        comprising the wind farm flow field.
+        Main function for calculating the IshiharaQian Gaussian wake model. 
+        This method calculates and returns the wake velocity deficits caused by 
+        the specified turbine, relative to the freestream velocities at the 
+        grid of points comprising the wind farm flow field. This function is
+        accessible through the :py:class:`~.Wake` class as the 
+        :py:meth:`~.Wake.velocity_function` method.
 
         Args:
             x_locations (np.array): An array of floats that contains the
@@ -140,8 +147,8 @@ class IshiharaQian(GaussianModel):
             np.array, np.array, np.array:
                 Three arrays of floats that contain the wake velocity
                 deficit in m/s created by the turbine relative to the freestream
-                velocities for the U, V, and W components, aligned with the x, y,
-                and z directions, respectively. The three arrays contain the
+                velocities for the U, V, and W components, aligned with the x, 
+                y, and z directions, respectively. The three arrays contain the
                 velocity deficits at each grid point in the flow field.
         """
         # added turbulence model
@@ -196,18 +203,19 @@ class IshiharaQian(GaussianModel):
         return velDef, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
 
     def parameter_value_from_dict(self, pdict, Ct, TI):
-            """
-            [summary]
-
-            Args:
-                pdict ([type]): [description]
-                Ct ([type]): [description]
-                TI ([type]): [description]
-
-            Returns:
-                [type]: [description]
-            """
-            return pdict['const'] * Ct**(pdict['Ct']) * TI**(pdict['TI'])
+        """
+        Function to calculate model parameters using current conditions and
+        model dictionaries.
+        
+        Args:
+            pdict (dict): Wake turbulence parameter.
+            Ct (float): Thrust coefficient of the current turbine.
+            ti_initial (float): Turbulence intensity.
+        
+        Returns:
+            float: Current value of model parameter.
+        """
+        return pdict['const'] * Ct**(pdict['Ct']) * TI**(pdict['TI'])
 
     @property
     def kstar(self):
@@ -230,11 +238,6 @@ class IshiharaQian(GaussianModel):
 
     @kstar.setter
     def kstar(self, value):
-        # if type(value) is dict and set(value) == set(['const', 'Ct', 'TI']):
-        #     self._kstar = value
-        # else:
-        #     raise ValueError("Invalid value given for kstar: {}".format(value))
-
         if not (
             type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
         ):
