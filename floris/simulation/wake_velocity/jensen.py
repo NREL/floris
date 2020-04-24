@@ -18,11 +18,14 @@ import numpy as np
 class Jensen(VelocityDeficit):
     """
     The Jensen model computes the wake velocity deficit based on the classic
-    Jensen/Park model [1].
+    Jensen/Park model :cite:`jvm-jensen1983note`.
 
     References:
-        [1] Jensen, N. O. (1983). A note on wind generator interaction. Risø
-        National Laboratory.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: jvm
+            :keyprefix: jvm-
     """
     default_parameters = {
         "we": 0.05
@@ -38,8 +41,9 @@ class Jensen(VelocityDeficit):
                 in `parameter_dictionary`. Possible key-value pairs include:
 
                 -   **we** (*float*): The linear wake decay constant that
-                defines the cone boundary for the wake as well as the velocity
-                deficit. D/2 +/- we*x is the cone boundary for the wake.
+                    defines the cone boundary for the wake as well as the 
+                    velocity deficit. D/2 +/- we*x is the cone boundary for the 
+                    wake.
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
