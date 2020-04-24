@@ -45,8 +45,10 @@ class FlorisInterface():
         **input_file** or **input_dict** is required.
 
         Args:
-            input_file (str, optional): [description]. Defaults to None.
-            input_dict (dict, optional): [description]. Defaults to None.
+            input_file (str, optional): A string path to the json input file.
+                Defaults to None.
+            input_dict (dict, optional): A Python dictionary of inputs.
+                Defaults to None.
 
         Raises:
             ValueError: Input file or dictionary must be supplied.
@@ -540,7 +542,7 @@ class FlorisInterface():
                       velocity_deficit=False):
         """
         Generate :py:class:`~.tools.flow_data.FlowData` object corresponding to
-        active floris instance.
+        active FLORIS instance.
 
         Velocity and wake models requiring calculation on a grid implement a 
         discretized domain at resolution **grid_spacing**. This is distinct 
