@@ -29,6 +29,7 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, D, color=None):
         layout_y (np.array): wind turbine locations (north-south).
         yaw_angles (np.array): yaw angles of each wind turbine.
         D (float): wind turbine rotor diameter.
+        color (str): pyplot color option to plot the turbines
     """
     if color == None: color = 'k'
     for x, y, yaw in zip(layout_x, layout_y, yaw_angles):
@@ -46,7 +47,7 @@ def line_contour_cut_plane(cut_plane,
                            colors=None,
                            **kwargs):
     """
-    Visualize the scan as a simple contour.
+    Visualize a cut_plane as a line contour plot
 
     Args:
         cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 
@@ -86,7 +87,7 @@ def visualize_cut_plane(cut_plane,
                         cmap='coolwarm',
                         levels=None):
     """
-    Generate pseudocolor mesh plot of the scan.
+    Generate pseudocolor mesh plot of the cut_plane.
 
     Args:
         cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 2D 
@@ -149,14 +150,8 @@ def visualize_quiver(cut_plane,
                      maxSpeed=None,
                      downSamp=1,
                      **kw):
-    """ Visualize the scan
-        
-        Args:
-            ax: axes for plotting, if none, create a new one  
-            minSpeed, maxSpeed, values used for plotting, if not provide assume to data max min
-        """
     """
-        Visualize the in-plane flows in a cut_plane
+        Visualize the in-plane flows in a cut_plane using quiver
 
         Args:
             cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 2D 
@@ -167,7 +162,8 @@ def visualize_quiver(cut_plane,
                 contours. Defaults to None.
             maxSpeed (float, optional): Maximum value of wind speed for
                 contours. Defaults to None.
-            downSamp (int, optional): downSamp the number of quiver arrows from underlying grid
+            downSamp (int, optional): downSamp the number of quiver arrows
+                from underlying grid
 
         Returns:
             im (plt.pcolormesh): image handle
