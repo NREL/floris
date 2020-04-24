@@ -40,7 +40,7 @@ def plot_slice_shortcut(fi, ax, title):
     # Get horizontal plane at default height (hub-height)
     hor_plane = fi.get_hor_plane()
     wfct.visualization.visualize_cut_plane(hor_plane, ax=ax, minSpeed=4.0, maxSpeed=8.0)
-    ax.set_title(title)
+
 
 # Define a plot
 fig, axarr = plt.subplots(3,3,sharex=True,figsize=(12,5))
@@ -56,7 +56,7 @@ fi.calculate_wake()
 plot_slice_shortcut(fi, axarr[1], 'WS=7')
 
 # Change the wind direction
-fi.reinitialize_flow_field(wind_direction=280.)
+fi.reinitialize_flow_field(wind_direction=320.)
 fi.calculate_wake()
 plot_slice_shortcut(fi, axarr[2], 'WD=280')
 
@@ -84,11 +84,12 @@ plot_slice_shortcut(fi, axarr[6], 'Air Density=1.0')
 fi.reinitialize_flow_field(layout_array=[[0,500],[0,0]]) #TODO IS THIS RIGHT?
 fi.calculate_wake()
 plot_slice_shortcut(fi, axarr[7], 'Change layout')
+wfct.visualization.plot_turbines_with_fi(axarr[7], fi)
 
 # Changes the yaw angles
 fi.calculate_wake(yaw_angles=[25,10])
 plot_slice_shortcut(fi, axarr[8], 'Change yaw angles')
-
+wfct.visualization.plot_turbines_with_fi(axarr[8], fi)
 
 
 plt.show()
