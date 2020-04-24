@@ -25,14 +25,7 @@ class CrespoHernandez(WakeTurbulence):
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: cht
-            :keyprefix: cht-
-
-    Raises:
-        ValueError: Invalid value type given for initial
-        ValueError: Invalid value type given for constant
-        ValueError: Invalid value type given for ai
-        ValueError: Invalid value type given for downstream
-    
+            :keyprefix: cht-    
     """
     default_parameters = {
         "initial": 0.5,

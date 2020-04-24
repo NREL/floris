@@ -21,13 +21,15 @@ class IshiharaQian(WakeTurbulence):
     a near wake correction. The Ishihara wake model includes a Gaussian wake
     velocity deficit profile in the spanwise and vertical directions and
     includes the effects of ambient turbulence, added turbulence from upstream
-    wakes, as well as wind shear and wind veer. For more info, see [1].
-
+    wakes, as well as wind shear and wind veer. For more info, see 
+    :cite:`iqt-qian2018new`.
+    
     References:
-        [1] Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based
-        analytical wake model for wind turbines considering ambient turbulence
-        intensities and thrust coefficient effects." *Journal of Wind
-        Engineering and Industrial Aerodynamics* 177 (2018): 275-292.
+        .. bibliography:: /source/refs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: iqt
+            :keyprefix: iqt-.
     """
     default_parameters = {
         "kstar": {
@@ -361,9 +363,15 @@ class IshiharaQian(WakeTurbulence):
             f (dict): Near-wake coefficient used in calculation of wake-added
                 turbulence with the following key-value pairs:
 
+<<<<<<< HEAD
+                - **const**: a float for the constant coefficient
+                - **Ct**: a float for the thrust coefficient exponent
+                - **TI**: a float for turbulence intensity exponent
+=======
                 - **const** (*float*): The constant coefficient.
                 - **Ct** (*float*): The thrust coefficient exponent.
                 - **TI** (*float*): The turbulence intensity exponent.
+>>>>>>> docstrings
 
         Returns:
             dict: Near-wake coefficient used in calculation of wake-added
