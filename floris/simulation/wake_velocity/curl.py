@@ -410,10 +410,9 @@ class Curl(VelocityDeficit):
     @property
     def model_grid_resolution(self):
         """
-        A list of three floats that define the flow field grid resolution in
-        the x, y, and z directions used for the curl wake model
-        calculations. The grid resolution is specified as the number of
-        grid points in the flow field domain in the x, y, and z directions.
+        The flow field grid resolution in the x, y, and z directions. The
+        grid resolution is specified as the number of grid points in the
+        flow field domain in the x, y, and z directions.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
 
@@ -421,7 +420,7 @@ class Curl(VelocityDeficit):
             value (list): Value to set.
 
         Returns:
-            list: Value currently set.
+            list(float): Value currently set.
 
         Raises:
             ValueError: Invalid value.

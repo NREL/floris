@@ -17,7 +17,7 @@ import numpy as np
 
 class MultiZone(VelocityDeficit):
     """
-    The MultiZone modle that is used to compute the wake velocity deficit based
+    The MultiZone model computes the wake velocity deficit based
     on the original multi-zone FLORIS model. See [1,2] for more details.
 
     References:

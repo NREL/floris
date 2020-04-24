@@ -17,7 +17,7 @@ import numpy as np
 
 class Jensen(VelocityDeficit):
     """
-    Wake velocity deficit model based on the Jensen model used to compute the wake velocity deficit based on the classic
+    The Jensen model computes the wake velocity deficit based on the classic
     Jensen/Park model [1].
 
     References:
