@@ -23,28 +23,9 @@ from scipy.interpolate import griddata
 
 class FlowField():
     """
-    Object containing flow field information.
-
-    FlowField is at the core of the FLORIS package. This class handles
-    the domain creation and initialization and computes the flow field
-    based on the input wake model and turbine map. It also contains
-    helper functions for quick flow field visualization.
-
-    Args:
-        wind_shear: A float that is the wind shear coefficient.
-        wind_veer: A float that is the amount of veer across the rotor.
-        wake: A container class :py:class:`floris.simulation.wake` with 
-            wake model information used to calculate the flow field.
-        wake_combination: A container class
-            :py:class:`floris.simulation.wake_combination` with wake
-            combination information.
-        turbine_map: A :py:obj:`floris.simulation.turbine_map` object 
-            that holds turbine information. 
-        wind_map: A :py:obj:`floris.simulation.wind_map` object that 
-            holds atmospheric input.
-
-    Returns:
-        FlowField: An instantiated FlowField object.
+    FlowField is at the core of the FLORIS software. This class handles
+    creating the wind farm domain and initializing and computing the flow field
+    based on the chosen wake models and farm model.
     """
     def __init__(self,
                  wind_shear,
@@ -54,7 +35,25 @@ class FlowField():
                  turbine_map,
                  wind_map,
                  specified_wind_height):
+        """
+        Calls :py:meth:`~.flow_field.FlowField.reinitialize_flow_field`
+        to initialize the required data.
 
+        Args:
+            wind_shear (float): Wind shear coefficient.
+            wind_veer (float): Amount of veer across the rotor.
+            air_density (float): Wind farm air density.
+            wake (:py:class:`floris.simulation.wake.Wake`): The object
+                containing the model definition for the wake calculation.
+            turbine_map (:py:obj:`floris.simulation.turbine_map.TurbineMap`):
+                The object describing the farm layout and turbine location.
+            wind_map (:py:obj:`floris.simulation.wind_map.WindMap`):
+                The object describing the atmospheric conditions throughout
+                the farm.
+            specified_wind_height (float): The focal center of the farm in
+                elevation; this value sets where the given wind speed is set
+                and about where initial velocity profile is applied.
+        """
         self.reinitialize_flow_field(
             wind_shear=wind_shear,
             wind_veer=wind_veer,
@@ -359,27 +358,22 @@ class FlowField():
 
     def set_bounds(self, bounds_to_set=None):
         """
-        A method that will set the domain bounds for the wake model.
+        [summary]
 
-        This method allows a user to customize the domain bounds for 
-        the current wake model being used, unless the wake model is the 
-        Curl model, then a predefined domain is specified and used. If 
-        the bounds are not specified, then a pre-defined set of bounds 
-        will be used based on the mean wind direction at the turbines. 
-        The bounds consist of the minimum and maximum values
+        Calculates the domain bounds for the current wake model. The bounds can
+        be given directly of calculated based on preset extents from the
+        given layout. The bounds consist of the minimum and maximum values
         in the x-, y-, and z-directions.
+        
+        If the Curl model is used, the predefined bounds are always set.
+
+        # TODO: describe how the bounds are set based on the wind direction.
 
         Args:
-            bounds_to_set: A list of values representing the minimum
-                and maximum values for the domain
-                [xmin, xmax, ymin, ymax, zmin, zmax]
-                (default is *None*).
-
-        Returns:
-            *None* -- The flow field is updated directly in the
-            :py:class:`floris.simulation.floris.flow_field` object.
+            bounds_to_set (list(float), optional): Values representing the
+            minimum and maximum values for the domain in each direction:
+            [xmin, xmax, ymin, ymax, zmin, zmax]. Defaults to None.
         """
-
         if self.wake.velocity_model.model_string == 'curl':
             # For the curl model, bounds are hard coded
             coords = self.turbine_map.coords
@@ -460,31 +454,34 @@ class FlowField():
         conditions.
 
         Args:
-            wind_shear: A float that is the wind shear coefficient 
-                (default is *None*).
-            wind_veer: A float that is the amount of veer across the
-                rotor (default is *None*).
-            air_density: A float that is the air density (default is 
-                *None*).
-            wake: A container class :py:class:`floris.simulation.wake`
-                with wake model information used to calculate the flow
-                field (default is *None*).
-            turbine_map: A :py:obj:`floris.simulation.turbine_map`
-                object that holds turbine information (default is
-                *None*).
-            with_resolution: A :py:class:`floris.utilities.Vec3` object
+            wind_shear (float, optional): Wind shear coefficient.
+                Defaults to None.
+            wind_veer (float, optional): Amount of veer across the rotor.
+                Defaults to None.
+            air_density (float, optional): Wind farm air density.
+                Defaults to None.
+            wake (:py:class:`floris.simulation.wake.Wake`, optional):
+                The object containing the model definition for the
+                wake calculation. Defaults to None.
+            turbine_map (:py:obj:`floris.simulation.turbine_map.TurbineMap`, optional):
+                The object describing the farm layout and turbine location.
+                Defaults to None.
+            wind_map (:py:obj:`floris.simulation.wind_map.WindMap`, optional):
+                The object describing the atmospheric conditions throughout
+                the farm. Defaults to None.
+            with_resolution (:py:class:`floris.utilities.Vec3`, optional):
+                Resolution components to use for the gridded domain in the
+                flow field wake calculation. Defaults to None.
+            with_resolution: A  object
                 that defines the flow field resolution at which to
                 calculate the wake (default is *None*).
-            wind_map: A :py:obj:`floris.simulation.wind_map` object that 
-                holds atmospheric input information.
-            bounds_to_set: A list of values representing the mininum 
-                and maximum values for the domain 
-                [xmin, xmax, ymin, ymax, zmin, zmax] 
-                (default is *None*).
-
-        Returns:
-            *None* -- The flow field is updated directly in the
-            :py:class:`floris.simulation.floris` object.
+            bounds_to_set (list(float), optional): Values representing the
+                minimum and maximum values for the domain in each direction:
+                [xmin, xmax, ymin, ymax, zmin, zmax]. Defaults to None.
+            specified_wind_height (float, optional): The focal center of the
+                farm in elevation; this value sets where the given wind speed
+                is set and about where initial velocity profile is applied.
+                Defaults to None.
         """
         # reset the given parameters
         if turbine_map is not None:
@@ -540,18 +537,15 @@ class FlowField():
         deflection/deficit, and combines the wake with the flow field.
 
         Args:
-            no_wake: A bool that when *True* updates the turbine
-                quantities without calculating the wake or adding the
-                wake to the flow field.
-            points: An array that contains the x, y, and z coordinates of 
-                user-specified points at which the flow field velocity 
-                is recorded. 
-
-        Returns:
-            *None* -- The flow field and turbine properties are updated
-            directly in the :py:class:`floris.simulation.floris` object.
+            no_wake (bool, optional): Flag to enable updating the turbine
+                properties without adding the wake calculation to the
+                freestream flow field. Defaults to False.
+            points (list(), optional): An array that contains the x, y, and z
+                coordinates of user-specified points at which the flow field
+                velocity is recorded. Defaults to None.
+            track_n_upstream_wakes (bool, optional): #TODO - what does
+                this do? Defaults to False.
         """
-
         if points is not None:
             # add points to flow field grid points
             self._compute_initialized_domain(points=points)
@@ -734,17 +728,10 @@ class FlowField():
     @property
     def domain_bounds(self):
         """
-        Property that returns the bounds of the flow field domain.
+        The minimum and maximum values of the bounds of the flow field domain.
 
         Returns:
-            floats: xmin, xmax, ymin, ymax, zmin, zmax
-
-            The minimum and maximum values of the domain in the x, y, and z directions.
-
-        Examples:
-            To get the domain bounds:
-
-            >>> xmin, xmax, ymin, ymax, zmin, zmax =
-            ... floris.farm.flow_field.domain_bounds()
+            float, float, float, float, float, float:
+                minimum-x, maximum-x, minimum-y, maximum-y, minimum-z, maximum-z
         """
         return self._xmin, self._xmax, self._ymin, self._ymax, self._zmin, self._zmax
