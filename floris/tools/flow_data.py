@@ -22,12 +22,10 @@ from sklearn import neighbors
 class FlowData():
     """
     FlowData objects represent a saved 3D flow from a FLORIS simulation
-    or other data source
-
-
+    or other data source.
     """
-
-    #TODO handle none case, maybe defaul values apply like 0 origin and auto determine spacing and dimensions
+    # TODO handle none case, maybe default values apply like 0 origin and auto
+    # determine spacing and dimensions
     def __init__(self,
                  x,
                  y,
@@ -40,7 +38,7 @@ class FlowData():
                  origin=None):
         """
         Initialize FlowData object with coordinates, velocity fields,
-        and meta data.
+        and meta-data.
 
         Args:
             x (np.array): Cartesian coordinate data.
@@ -51,7 +49,7 @@ class FlowData():
             w (np.array): z-component of velocity.
             spacing (float, optional): Spatial resolution.
                 Defaults to None.
-            dimensions (iterable, optional): named dimensions
+            dimensions (iterable, optional): Named dimensions
                 (e.g. x1, x2, x3). Defaults to None.
             origin (iterable, optional): Coordinates of origin.
                 Defaults to None.
@@ -75,10 +73,10 @@ class FlowData():
 
     def save_as_vtk(self, filename):
         """
-        Save FlowData Object to vtk
+        Save FlowData Object to vtk format.
 
         Args:
-            filename (str): Write-to path for vtk file
+            filename (str): Write-to path for vtk file.
         """
         n_points = self.dimensions.x1 * self.dimensions.x2 * self.dimensions.x3
 
@@ -103,15 +101,15 @@ class FlowData():
         Crop FlowData object to within stated bounds.
 
         Args:
-            ff (:py:class:`floris.tools.flow_data.FlowData`):
+            ff (:py:class:`~.tools.flow_data.FlowData`):
                 FlowData object.
-            x_bnds (iterable): min and max of x-coordinate.
-            y_bnds (iterable): min and max of y-coordinate.
-            z_bnds (iterable): min and max of z-coordinate.
+            x_bnds (iterable): Min and max of x-coordinate.
+            y_bnds (iterable): Min and max of y-coordinate.
+            z_bnds (iterable): Min and max of z-coordinate.
 
         Returns:
-            (:py:class:`floris.tools.flow_data.FlowData`):
-            cropped FlowData object.
+            (:py:class:`~.tools.flow_data.FlowData`):
+            Cropped FlowData object.
         """
 
         map_values = (ff.x > x_bnds[0]) & (ff.x < x_bnds[1]) & (
@@ -149,17 +147,16 @@ class FlowData():
 
     def get_points_from_flow_data(self,x_points,y_points,z_points):
         """
-        Return the u-value of a set of points from with a FlowData object
-        Use a simple nearest neighbor regressor to do internal
-        interpolation
+        Return the u-value of a set of points from with a FlowData object.
+        Use a simple nearest neighbor regressor to do internal interpolation.
 
         Args:
-            x_points (np.array): array of x-locations of points
-            y_points (np.array): array of y-locations of points
-            z_points (np.array): array of z-locations of points
+            x_points (np.array): Array of x-locations of points.
+            y_points (np.array): Array of y-locations of points.
+            z_points (np.array): Array of z-locations of points.
 
         Returns:
-            np.array: array of u-velocity at specified points
+            np.array: Array of u-velocity at specified points.
         """
         # print(x_points,y_points,z_points)
         X = np.column_stack([self.x,self.y,self.z])

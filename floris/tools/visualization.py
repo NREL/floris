@@ -24,12 +24,12 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, D, color=None):
     Plot wind plant layout from turbine locations.
 
     Args:
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.
-        layout_x (np.array): wind turbine locations (east-west).
-        layout_y (np.array): wind turbine locations (north-south).
-        yaw_angles (np.array): yaw angles of each wind turbine.
-        D (float): wind turbine rotor diameter.
-        color (str): pyplot color option to plot the turbines
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
+        layout_x (np.array): Wind turbine locations (east-west).
+        layout_y (np.array): Wind turbine locations (north-south).
+        yaw_angles (np.array): Yyaw angles of each wind turbine.
+        D (float): Wind turbine rotor diameter.
+        color (str): Pyplot color option to plot the turbines.
     """
     if color == None: color = 'k'
     for x, y, yaw in zip(layout_x, layout_y, yaw_angles):
@@ -47,17 +47,18 @@ def line_contour_cut_plane(cut_plane,
                            colors=None,
                            **kwargs):
     """
-    Visualize a cut_plane as a line contour plot
+    Visualize a cut_plane as a line contour plot.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 
+        cut_plane (:py:class:`~.tools.cut_plane._CutPlane`): 
             CutPlane Object.
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults 
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults 
             to None.
-        levels (np.array, optional): contour levels for plot.
+        levels (np.array, optional): Contour levels for plot.
             Defaults to None.
-        colors (list, optional): strings of color specification info.
+        colors (list, optional): Strings of color specification info.
             Defaults to None.
+        **kwargs: Additional parameters to pass to `ax.contour`.
     """
 
     if not ax:
@@ -90,9 +91,9 @@ def visualize_cut_plane(cut_plane,
     Generate pseudocolor mesh plot of the cut_plane.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 2D 
+        cut_plane (:py:class:`~.tools.cut_plane._CutPlane`): 2D 
             plane through wind plant.
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults 
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults 
             to None.
         minSpeed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
@@ -102,7 +103,7 @@ def visualize_cut_plane(cut_plane,
             'coolwarm'.
 
     Returns:
-        im (plt.pcolormesh): image handle
+        im (:py:class:`matplotlib.plt.pcolormesh): Image handle.
     """
 
     if not ax:
@@ -149,24 +150,25 @@ def visualize_quiver(cut_plane,
                      minSpeed=None,
                      maxSpeed=None,
                      downSamp=1,
-                     **kw):
+                     **kwargs):
     """
-        Visualize the in-plane flows in a cut_plane using quiver
+        Visualize the in-plane flows in a cut_plane using quiver.
 
         Args:
-            cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`): 2D 
+            cut_plane (:py:class:`~.tools.cut_plane._CutPlane`): 2D 
                 plane through wind plant.
-            ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults 
+            ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults 
                 to None.
             minSpeed (float, optional): Minimum value of wind speed for
                 contours. Defaults to None.
             maxSpeed (float, optional): Maximum value of wind speed for
                 contours. Defaults to None.
-            downSamp (int, optional): downSamp the number of quiver arrows
-                from underlying grid
+            downSamp (int, optional): Down sample the number of quiver arrows
+                from underlying grid.
+            **kwargs: Additional parameters to pass to `ax.streamplot`.
 
         Returns:
-            im (plt.pcolormesh): image handle
+            im (:py:class:`matplotlib.plt.pcolormesh): Image handle.
         """
     if not ax:
         fig, ax = plt.subplots()
@@ -188,7 +190,7 @@ def visualize_quiver(cut_plane,
                     w_mesh[::downSamp, ::downSamp],
                     # scale=80.0,
                     # alpha=0.75,
-                    # **kw
+                    # **kwargs
                     )
 
     # ax.quiverkey(QV1, -.75, -0.4, 1, '1 m/s', coordinates='data')
@@ -202,6 +204,6 @@ def reverse_cut_plane_x_axis_in_plot(ax):
     Shortcut method to reverse direction of x-axis.
 
     Args:
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
     """
     ax.invert_xaxis()
