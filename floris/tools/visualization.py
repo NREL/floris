@@ -50,7 +50,7 @@ def line_contour_cut_plane(cut_plane,
     Visualize a cut_plane as a line contour plot.
 
     Args:
-        cut_plane (:py:class:`~.tools.cut_plane._CutPlane`): 
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 
             CutPlane Object.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults 
             to None.
@@ -91,7 +91,7 @@ def visualize_cut_plane(cut_plane,
     Generate pseudocolor mesh plot of the cut_plane.
 
     Args:
-        cut_plane (:py:class:`~.tools.cut_plane._CutPlane`): 2D 
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D 
             plane through wind plant.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults 
             to None.
@@ -155,7 +155,7 @@ def visualize_quiver(cut_plane,
         Visualize the in-plane flows in a cut_plane using quiver.
 
         Args:
-            cut_plane (:py:class:`~.tools.cut_plane._CutPlane`): 2D 
+            cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D 
                 plane through wind plant.
             ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults 
                 to None.

@@ -42,9 +42,9 @@ def get_plane_from_flow_data(flow_data,
                             normal_vector='z',
                             x3_value=100):
     """
-    Get a plane of data, in form of dataframe, from a flow_data object
-    This is used to get planes from SOWFA results and FLORIS sims with fixed
-    grids, i.e. curl.
+    Get a plane of data, in form of dataframe, from a :py:class:`~.FlowData`
+    object. This is used to get planes from SOWFA results and FLORIS sims with
+    fixed grids, i.e. curl.
 
     Args:
         flow_data (np.array): 3D vector field of velocity data. #TODO: is this
@@ -118,7 +118,7 @@ class CutPlane():
         Initialize CutPlane object, storing the DataFrame and resolution.
 
         Args:
-            df (pd.DataFrame): Pandas DataFrame of data with
+            df (pandas.DataFrame): Pandas DataFrame of data with
                 columns x1, x2, u, v, w.
         """
         self.df = df
