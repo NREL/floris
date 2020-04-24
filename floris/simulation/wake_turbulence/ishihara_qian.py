@@ -16,16 +16,16 @@ from .base_wake_turbulence import WakeTurbulence
 
 class IshiharaQian(WakeTurbulence):
     """
-    Ishihara is a wake velocity subclass that is used to compute the wake
-    velocity deficit based on the Gaussian wake model with self-similarity and
-    a near wake correction. The Ishihara wake model includes a Gaussian wake
-    velocity deficit profile in the spanwise and vertical directions and
-    includes the effects of ambient turbulence, added turbulence from upstream
+    IshiharaQian is a wake velocity subclass that is used to compute the wake 
+    velocity deficit based on the Gaussian wake model with self-similarity and 
+    a near wake correction. The IshiharaQian wake model includes a Gaussian 
+    wake velocity deficit profile in the spanwise and vertical directions and 
+    includes the effects of ambient turbulence, added turbulence from upstream 
     wakes, as well as wind shear and wind veer. For more info, see 
     :cite:`iqt-qian2018new`.
     
     References:
-        .. bibliography:: /source/refs.bib
+        .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: iqt

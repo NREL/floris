@@ -21,7 +21,7 @@ class GaussianModel(VelocityDeficit):
     Gaussian-related calculations (see :cite:`gmb-King2019Controls`)
     
     References:
-        .. bibliography:: /source/refs.bib
+        .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: gmb

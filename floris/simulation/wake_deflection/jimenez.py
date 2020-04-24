@@ -17,13 +17,14 @@ import numpy as np
 
 class Jimenez(VelocityDeflection):
     """
-    Jiménez wake deflection model, dervied from [1].
+    Jiménez wake deflection model, dervied fro :cite:`jdm-jimenez2010application`.
 
     References:
-
-        [1] Jiménez, Ángel, Antonio Crespo, and Emilio Migoya. "Application of
-        a LES technique to characterize the wake deflection of a wind turbine
-        in yaw." Wind energy 13.6 (2010): 559-572.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: jdm
+            :keyprefix: jdm-.
     """
     default_parameters = {
         "kd": 0.05,

@@ -26,7 +26,7 @@ class Gauss(GaussianModel):
     See :cite:`gvm-bastankhah2014new,gvm-abkar2015influence,gvm-bastankhah2016experimental,gvm-niayifar2016analytical,gvm-dilip2017wind,gvm-blondel2020alternative,gvm-King2019Controls` for mor information on Gaussian wake velocity deficit models.
     
     References:
-        .. bibliography:: /source/refs.bib
+        .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: gvm

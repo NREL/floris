@@ -22,7 +22,7 @@ class Blondel(GaussianModel):
     described in :cite:`bcv-blondel2020alternative` with GCH disabled by default. See :cite:`bcv-King2019Controls` for info on GCH.
     
     References:
-        .. bibliography:: /source/refs.bib
+        .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: bcv

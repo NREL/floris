@@ -19,7 +19,16 @@ class Curl(VelocityDeflection):
     """
     Stand-in class for the curled wake model. Wake deflection with the curl
     model is handled inherently in the wake velocity portion of the model.
-    Passes zeros for deflection values.
+    Passes zeros for deflection values. See 
+    :cite:`cdm-martinez2019aerodynamics` for additional info on the curled wake 
+    model.
+
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: cdm
+            :keyprefix: cdm-
     """
 
     def __init__(self, parameter_dictionary):

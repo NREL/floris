@@ -9,7 +9,7 @@ FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al.
 Literature on the Gaussian model can be found in :cite:`thy-bastankhah2014new,thy-abkar2015influence,thy-niayifar2016analytical,thy-bastankhah2016experimental,thy-dilip2017wind` and :cite:`thy-martinez2019aerodynamics`.
 
 References:
-   .. bibliography:: refs.bib
+   .. bibliography:: zrefs.bib
       :style: unsrt
       :filter: docname in docnames
       :labelprefix: thy

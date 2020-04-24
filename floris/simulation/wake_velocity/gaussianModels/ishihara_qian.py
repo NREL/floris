@@ -31,7 +31,7 @@ class IshiharaQian(GaussianModel):
     see :cite:`iqv-qian2018new`.
     
     References:
-        .. bibliography:: /source/refs.bib
+        .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: iqv

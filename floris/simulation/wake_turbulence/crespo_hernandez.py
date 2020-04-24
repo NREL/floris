@@ -21,7 +21,7 @@ class CrespoHernandez(WakeTurbulence):
     limitations outlined in :cite:`cht-crespo1996turbulence`.
     
     References:
-        .. bibliography:: /source/refs.bib
+        .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: cht

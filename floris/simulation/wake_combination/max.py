@@ -24,7 +24,7 @@ class MAX(WakeCombination):
     :cite:`max-gunn2016limitations`.
     
     References:
-        .. bibliography:: /source/refs.bib
+        .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :labelprefix: max

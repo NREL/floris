@@ -18,14 +18,15 @@ class VelocityDeflection():
     """
     This is the super-class for all wake deflection models. It includes
     implementations of functions that subclasses should use to perform
-    secondary steering. See [1] for more details on how secondary
-    steering is calculated.
-
+    secondary steering. See :cite:`bvd-King2019Controls`. for more details on
+    how secondary steering is calculated.
+  
     References:
-        [1] King, J., Fleming, P., King, R., Martínez-Tossas, L. A.,
-        Bay, C. J, Mudafort, R., and Simley, E.: Controls-Oriented Model
-        for Secondary Effects of Wake Steering, *Wind Energ. Sci.
-        Discuss.*, https://doi.org/10.5194/wes-2020-3, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :labelprefix: bvd
+            :keyprefix: bvd-
     """
 
     def __init__(self, parameter_dictionary):
@@ -85,7 +86,7 @@ class VelocityDeflection():
         """
         This method determines the effective yaw angle to be used when
         secondary steering is enabled. For more details on how the effective
-        yaw angle is calculated, see [1].
+        yaw angle is calculated, see :cite:`bvd-King2019Controls`.
 
         Args:
             x_locations (np.array): Streamwise locations in wake.
@@ -175,7 +176,7 @@ class VelocityDeflection():
     def use_secondary_steering(self):
         """
         Flag to use secondary steering on the wake deflection using methods
-        developed in [1].
+        developed in :cite:`bvd-King2019Controls`.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
 
@@ -203,7 +204,7 @@ class VelocityDeflection():
     def eps_gain(self):
         """
         Tuning value for yaw added recovery on the wake velocity using methods
-        developed in [1].
+        developed in :cite:`bvd-King2019Controls`.
 
         TODO: Don't believe this needs to be defined here. Already defined in
         gaussian_model_model.py. Verify that it can be removed.
