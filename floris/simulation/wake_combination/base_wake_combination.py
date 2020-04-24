@@ -12,8 +12,9 @@
 
 class WakeCombination():
     """
-    The WakeCombination class provides methods for combining the base flow
-    field with the velocity deficits from the wake models.
+    This is the super-class for all combination models included in FLORIS.
+    These models define how the wake velocity deficits are combined with each
+    other and the freestream velocity field.
     """
 
     def __init__(self):
