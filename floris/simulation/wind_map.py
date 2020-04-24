@@ -20,24 +20,7 @@ import scipy as sp
 
 class WindMap():
     """
-    WindMap contains the properties that characterize the initial state of the
-    wind farm atmosphere.
-
-    Args:
-        -   **wind_speed**: A list that contains the wind speed  
-                values (in m/s) at each measurement location.
-        -   **wind_direction**: A list that contains the wind 
-                direction values (in deg) at each measurement location.
-        -   **turbulence_intensity**: A list that contains the 
-                turbulence intensity values at each measurement 
-                location (expressed as a decimal fraction).
-        -   **layout_array**: An array that contains the
-                x and y coordinates of each turbine.
-        -   **wind_layout**: A tuple that contains the x and y 
-                coordinates of the atmospheric measurement locations.
-                
-    Returns:
-        WindMap: An instantiated WindMap object.
+    Container object to describe initial state of the wind farm atmosphere.
     """
 
     def __init__(self,
@@ -46,6 +29,32 @@ class WindMap():
                  turbulence_intensity=None,
                  wind_direction=None,
                  wind_speed=None):
+        """
+        Computes initial states for the wind direction, wind speed, and
+        turbulence intensity, if they are not given directly.
+
+        Args:
+            wind_layout ( tuple( list(float), list(float) ) ): The x and y
+                coordinates of the atmospheric measurement location. This
+                argument has the shape:
+
+                    - 0th element: list( x-coordinates)
+                    - 1th element: list( y-coordinates)
+
+            layout_array ( list( list(float), list(float) ) ): The x and y
+                coordinates of each turbine. This argument has the shape:
+
+                    - 0th element: list( x-coordinates)
+                    - 1th element: list( y-coordinates)
+
+            turbulence_intensity (list(float), optional): Turbulence intensity
+                values at each measurement location (expressed as a decimal
+                fraction). Defaults to None.
+            wind_direction (list(float), optional): The wind directions
+                (in degrees) at each measurement location. Defaults to None.
+            wind_speed (list(float), optional): The wind speed values (in m/s)
+                at each measurement location. Defaults to None.
+        """
         self.wind_layout = wind_layout
         self.layout_array = layout_array
         self.input_direction = wind_direction
@@ -63,22 +72,19 @@ class WindMap():
             self.calculate_turbulence_intensity()
 
     # Public functions
+
     def calculate_wind_speed(self, grid=None, interpolate=False):
         """
         This method calculates the wind speeds at each point, 
         interpolated and extrapolated from the input measurements.
+        # TODO: describe in detail how this is done.
 
         Args:
-            -   **grid**: If set to True, this method calculates the
-                resulting output values at gridpoint coordinates instead
-                of turbine coordinates. Defaults to None.
-            -   **interpolate**: A parameter that is switched to True
-                if the wind measurement input values are not all
-                equal. Defaults to False.
-
-        Returns:
-            *None* -- The values are updated directly in the
-            :py:class:`floris.simulation.wind_map` object.
+            grid (bool, optional): Switch to enable calculating values
+                at grid point coordinates instead of turbine coordinates.
+                Defaults to None.
+            interpolate (bool, optional): Switch for enabling interpolation
+                between given values. Defaults to False.
         """
         speed = self.input_speed
         if grid is not True:
@@ -137,19 +143,15 @@ class WindMap():
     def calculate_wind_direction(self, grid=None, interpolate=False):
         """
         This method calculates the wind direction at each point, 
-            interpolated and extrapolated from the input measurements.
-            
+        interpolated and extrapolated from the input measurements.
+        # TODO: describe in detail how this is done.
+
         Args:
-            -   **grid**: If set to True, this method calculates the 
-                resulting output values at gridpoint coordinates instead 
-                of turbine coordinates. Defaults to None.
-            -   **interpolate**: A parameter that is switched to True
-                if the wind measurement input values are not all 
-                equal. Defaults to False.
-        
-        Returns:
-            *None* -- The values are updated directly in the 
-            :py:class:`floris.simulation.wind_map` object.
+            grid (bool, optional): Switch to enable calculating values
+                at grid point coordinates instead of turbine coordinates.
+                Defaults to None.
+            interpolate (bool, optional): Switch for enabling interpolation
+                between given values. Defaults to False.
         """
         wdir = self.input_direction
         if grid is not True:
@@ -227,22 +229,18 @@ class WindMap():
 
     def calculate_turbulence_intensity(self, grid=None, interpolate=False):
         """
-        This method calculates the turbulence intensity at each turbine, 
-            interpolated and extrapolated from the input measurements.
-            
+        This method calculates the turbulence intensity at each point, 
+        interpolated and extrapolated from the input measurements.
+        # TODO: describe in detail how this is done.
+
         Args:
-            -   **grid**: If set to True, this method calculates the 
-                resulting output values at gridpoint coordinates instead 
-                of turbine coordinates. Defaults to None.
-            -   **interpolate**: A parameter that is switched to True
-                if the wind measurement input values are not all 
-                equal. Defaults to False.
-        
-        Returns:
-            *None* -- The values are updated directly in the 
-            :py:class:`floris.simulation.wind_map` object.
+            grid (bool, optional): Switch to enable calculating values
+                at grid point coordinates instead of turbine coordinates.
+                Defaults to None.
+            interpolate (bool, optional): Switch for enabling interpolation
+                between given values. Defaults to False.
         """
-        #TODO i can haz comments pls?
+        #TODO Add comments!
         ti = self.input_ti
         if grid is not True:
             if all(elem == ti[0] for elem in ti):
@@ -304,21 +302,22 @@ class WindMap():
         """
         This method analyzes interpolation errors having to do with 
         the wind layout coordinates, and provides a solution.
-            
+
         Args:
-            -   **recalculate**: A string that indicates which 
+            recalculate (str): A string that indicates which 
                 method was interupted in order to fix the
                 wind layout. The indicated method will be restarted 
                 after the inputs have been fixed, if not a case of 
                 unequal input lengths.
-            -   **grid**: Boolean. When True, this indicates that
+            grid (bool, optional): [description]. When True, this indicates that
                 the method being interrupted is interpolating 
                 is calculating values at flow field grid points. 
                 Defaults to None.
-        
-        Returns:
-            *None* -- The values are updated directly in the 
-            :py:class:`floris.simulation.wind_map` object.
+
+        #TODO: Have to describe this better.
+
+        Raises:
+            SystemExit
         """
         x, y = self.wind_layout[0], self.wind_layout[1]
         xp, yp = x, y
@@ -403,6 +402,8 @@ class WindMap():
                 pass
 
     # Getters & Setters
+
+    # TODO: describe these properties better.
 
     @property
     def turbine_wind_speed(self):
