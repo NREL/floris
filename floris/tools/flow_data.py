@@ -21,7 +21,10 @@ from sklearn import neighbors
 
 class FlowData():
     """
-    Generate a FlowData object to handle data I/O
+    FlowData objects represent a saved 3D flow from a FLORIS simulation
+    or other data source
+
+
     """
 
     #TODO handle none case, maybe defaul values apply like 0 origin and auto determine spacing and dimensions
@@ -145,6 +148,19 @@ class FlowData():
 
 
     def get_points_from_flow_data(self,x_points,y_points,z_points):
+        """
+        Return the u-value of a set of points from with a FlowData object
+        Use a simple nearest neighbor regressor to do internal
+        interpolation
+
+        Args:
+            x_points (np.array): array of x-locations of points
+            y_points (np.array): array of y-locations of points
+            z_points (np.array): array of z-locations of points
+
+        Returns:
+            np.array: array of u-velocity at specified points
+        """
         # print(x_points,y_points,z_points)
         X = np.column_stack([self.x,self.y,self.z])
         n_neighbors = 1
