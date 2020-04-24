@@ -17,10 +17,8 @@ from .base_wake_combination import WakeCombination
 
 class MAX(WakeCombination):
     """
-    MAX is a subclass of 
-    :py:class:`floris.simulation.wake_combination.WakeCombination` 
-    which uses the maximum wake velocity deficit to add to the 
-    base flow field. For more information, refer to [1]: 
+    MAX selects the maximum wake velocity deficit to add to the
+    base flow field. For more information, refer to [1].
     
     References:
         [1] K. Gunn et al., "Limitations to the validity of single wake
@@ -35,15 +33,15 @@ class MAX(WakeCombination):
 
     def function(self, u_field, u_wake):
         """
-        This method combines the base flow field with the maximum velocity 
-        deficits.
+        Incorporates the velicty deficits into the base flow field by
+        selecting the maximum of the two for each point.
 
         Args:
             u_field (np.array): The base flow field.
-            u_wake (np.array): The wake velocity deficits.
+            u_wake (np.array): The wake to apply to the base flow field.
 
         Returns:
-            array: A maximum combination of the base flow field 
-            and the velocity deficits.
+            np.array: The resulting flow field after applying the wake to the
+                base.
         """
         return np.maximum(u_wake, u_field)
