@@ -16,7 +16,7 @@ from .base_wake_turbulence import WakeTurbulence
 class CrespoHernandez(WakeTurbulence):
     """
     CrespoHernandez is a wake-turbulence model that is used to compute
-    additional variability introduced to the flowfield by operation of a wind
+    additional variability introduced to the flow field by operation of a wind
     turbine. Implementation of the model follows the original formulation and
     limitations outlined in [1].
 
@@ -31,8 +31,6 @@ class CrespoHernandez(WakeTurbulence):
         "ai": 0.75,
         "downstream": -0.325
     }
-
-
 
     def __init__(self, parameter_dictionary):
         """
@@ -67,13 +65,13 @@ class CrespoHernandez(WakeTurbulence):
 
     def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """
-        Main function for calculating wake added turbulence as a function of
+        Calculates wake-added turbulence as a function of
         external conditions and wind turbine operation. This function is
         accessible through the :py:class:`~.wake.Wake` class as the
         :py:meth:`~.Wake.turbulence_function` method.
 
         Args:
-            ambient_TI (float): TI of the background flowfield.
+            ambient_TI (float): TI of the background flow field.
             coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI 
                 is to be calculated (e.g. downstream wind turbines).
             turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of 
@@ -83,7 +81,8 @@ class CrespoHernandez(WakeTurbulence):
 
         Returns:
             float: Wake-added turbulence from the current
-            wind turbine (**turbine**) at location specified by (**coord_ti**).
+                wind turbine (**turbine**) at location specified
+                by (**coord_ti**).
         """
         ti_initial = ambient_TI
 

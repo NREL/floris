@@ -13,15 +13,16 @@
 class WakeTurbulence():
     """
     This is the super-class for all wake turbulence models. It includes
-    implementations of functions that subclasses should use to retrieve model-specific parameters from the input dictionary.
+    implementations of functions that subclasses should use to retrieve
+    model-specific parameters from the input dictionary.
     """
     def __init__(self, parameter_dictionary):
         """
         Stores the parameter dictionary for the wake deflection model.
 
         Args:
-            parameter_dictionary (dict): Dictionary containing the wake
-                turbulence model parameters. See individual wake turbulence
+            parameter_dictionary (dict): Contains the wake turbulence
+                model parameters. See individual wake turbulence
                 models for details of specific key-value pairs.
         """
         self.parameter_dictionary = parameter_dictionary

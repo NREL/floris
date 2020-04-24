@@ -52,7 +52,7 @@ class Direct(WakeTurbulence):
 
     def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """
-        Main function for calculating wake added turbulence as a function of
+        Calculates wake-added turbulence as a function of
         external conditions and wind turbine operation. This function is
         accessible through the :py:class:`~.wake.Wake` class as the
         :py:meth:`~.Wake.turbulence_function` method.
@@ -62,7 +62,7 @@ class Direct(WakeTurbulence):
         :py:meth:`~.wake.Wake.turbulence_function` call.
 
         Args:
-            ambient_TI (float): TI of the background flowfield.
+            ambient_TI (float): TI of the background flow field.
             coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI 
                 is to be calculated (e.g. downstream wind turbines).
             turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of 
@@ -72,9 +72,9 @@ class Direct(WakeTurbulence):
 
         Returns:
             float: Wake-added turbulence from the current
-            wind turbine (**turbine**) at location specified by (**coord_ti**).
+                wind turbine (**turbine**) at location specified
+                by (**coord_ti**).
         """
-        
         #TODO develop and test function.
         turbine.current_turbulence_intensity = self.parameter_dictionary \
             ['local_TI_dict'][turbine]

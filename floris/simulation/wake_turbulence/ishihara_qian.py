@@ -104,23 +104,24 @@ class IshiharaQian(WakeTurbulence):
         # function(self, x_locations, y_locations, z_locations, turbine,
         #  turbine_coord, flow_field, turb_u_wake, sorted_map):
         """
-        Main function for calculating wake added turbulence as a function of
+        Calculates wake-added turbulence as a function of
         external conditions and wind turbine operation. This function is
         accessible through the :py:class:`~.wake.Wake` class as the
         :py:meth:`~.Wake.turbulence_function` method.
 
         Args:
-            ambient_TI (float): TI of the background flowfield.
-            coord_ti (:py:class:`~floris.utilities.Vec3`): Coordinate where TI 
+            ambient_TI (float): TI of the background flow field.
+            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI 
                 is to be calculated (e.g. downstream wind turbines).
-            turbine_coord (:py:class:`~floris.utilities.Vec3`): Coordinate of 
+            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of 
                 the wind turbine adding turbulence to the flow.
             turbine (:py:class:`~.turbine.Turbine`): Wind turbine 
                 adding turbulence to the flow.
 
         Returns:
             float: Wake-added turbulence from the current
-            wind turbine (**turbine**) at location specified by (**coord_ti**).
+                wind turbine (**turbine**) at location specified
+                by (**coord_ti**).
         """
         # # compute area overlap of wake on other turbines and update downstream
         # # turbine turbulence intensities
@@ -228,11 +229,11 @@ class IshiharaQian(WakeTurbulence):
 
     def parameter_value_from_dict(pdict, Ct, ti_initial):
         """
-        Function to calculate model parameters using current conditions and
+        Calculates model parameters using current conditions and
         model dictionaries.
 
         Args:
-            pdict (dict): Wake turbulence parameter.
+            pdict (dict): Wake turbulence parameters.
             Ct (float): Thrust coefficient of the current turbine.
             ti_initial (float): Turbulence intensity.
 
