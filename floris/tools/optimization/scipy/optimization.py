@@ -23,12 +23,16 @@ except ImportError:
 
 class Optimization():
     """
-    Optimization is the base optimization class for `floris.tools.optimization.scipy` subclasses. Contains some common methods and properties that can be used by the individual optimization classes. 
+    Optimization is the base optimization class for
+    `floris.tools.optimization.scipy` subclasses. Contains some common
+    methods and properties that can be used by the individual optimization
+    classes.
     """
 
     def __init__(self, fi):
         """
-        Initializes an Optimization object by assigning a FlorisInterface object. 
+        Initializes an Optimization object by assigning a
+        FlorisInterface object. 
 
         Args:
             fi (:py:class:`floris.tools.floris_interface.FlorisInterface`):    
@@ -52,10 +56,10 @@ class Optimization():
     @property
     def nturbs(self):
         """
-        Get the number of turbines in the Floris Farm object.
+        Number of turbines in the Floris Farm object.
 
         Returns:
-            int: Number of turbines in the Floris Farm object.
+            int
         """
         self._nturbs = len(self.fi.floris.farm.turbine_map.turbines)
         return self._nturbs
