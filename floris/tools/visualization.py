@@ -27,7 +27,7 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, D, color=None):
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
         layout_x (np.array): Wind turbine locations (east-west).
         layout_y (np.array): Wind turbine locations (north-south).
-        yaw_angles (np.array): Yyaw angles of each wind turbine.
+        yaw_angles (np.array): Yaw angles of each wind turbine.
         D (float): Wind turbine rotor diameter.
         color (str): Pyplot color option to plot the turbines.
     """

@@ -23,10 +23,13 @@ from ..utilities import setup_logger
 
 def nudge_outward(x):
     """
-    Avoid numerical issue in grid data by sligly expanding input x.
+    Avoid numerical issue in grid data by slightly expanding input x.
+    TODO: expand this description
+    - What numerical issues?
+    - Whats the scenario when I would need this?
 
     Args:
-        x (np.array): Vector to be slightly expanded.
+        x (np.array): Vector of values.
 
     Returns:
         np.array: Expanded vector.
@@ -42,9 +45,9 @@ def get_plane_from_flow_data(flow_data,
                             normal_vector='z',
                             x3_value=100):
     """
-    Get a plane of data, in form of dataframe, from a :py:class:`~.FlowData`
-    object. This is used to get planes from SOWFA results and FLORIS sims with
-    fixed grids, i.e. curl.
+    Get a plane of data, in form of DataFrame, from a :py:class:`~.FlowData`
+    object. This is used to get planes from SOWFA results and FLORIS
+    simulations with fixed grids, i.e. curl.
 
     Args:
         flow_data (np.array): 3D vector field of velocity data. #TODO: is this
@@ -55,7 +58,7 @@ def get_plane_from_flow_data(flow_data,
             Defaults to 100.
 
     Returns:
-        pandas.DataFrame: Results in a dataframe.
+        pandas.DataFrame: Extracted data.
     """
     order = "f"
     if normal_vector == 'z':
