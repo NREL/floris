@@ -18,31 +18,29 @@ class Direct(WakeTurbulence):
     """
     **In Development**
 
-    Direct is a subclass of 
-    :py:class:`floris.simulation.wake_velocity.WakeTurbulence` that will be
-    used to prescribe turbine-local TI values observed from SCADA or other 
-    observations.
-
-    #TODO Add Raises fields.
+    Direct is a wake-turbulence model that will be used to prescribe
+    turbine-local TI values observed from SCADA or other observations.
     """
 
     def __init__(self, parameter_dictionary):
         """
-        Initialize a Direct wake turbulence object with the parameter 
-        values listed below. If no parameter values are provided, default 
-        values are used.
+        Stores model parameters for use by methods.
 
         Args:
-            parameter_dictionary (dict): A dictionary as 
-            generated from the input_reader; it should have the following 
-            key-value pairs:
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
 
-                - **local_TI_dict**: A dictionary containing TI values for each 
-                  turbine in the wind plant.
-
-        Raises:
-            ValueError: Invalid value type given for 
-                current_turbulece_intensity.
+                -   **initial** (*float*): The initial ambient turbulence
+                    intensity, expressed as a decimal fraction.
+                -   **constant** (*float*): The constant used to scale the
+                    wake-added turbulence intensity.
+                -   **ai** (*float*): The axial induction factor exponent used
+                    in in the calculation of wake-added turbulence.
+                -   **downstream** (*float*): The exponent applied to the
+                    distance downstream of an upstream turbine normalized by
+                    the rotor diameter used in the calculation of wake-added
+                    turbulence.
         """
         super().__init__()
         self.logger = setup_logger(name=__name__)
@@ -54,29 +52,29 @@ class Direct(WakeTurbulence):
 
     def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
         """
-        Main function for calculating wake added turbulence as a function of 
-        external conditions and wind turbine operation. This function is 
-        accessible through the :py:class:`floris.simulation.Wake` class as the 
-        :py:meth:`floris.simulation.Wake.turbulence_function` method.
+        Calculates wake-added turbulence as a function of
+        external conditions and wind turbine operation. This function is
+        accessible through the :py:class:`~.wake.Wake` class as the
+        :py:meth:`~.Wake.turbulence_function` method.
 
         **NOTE:** Input arguments are not currently used, as no model is 
         implemented. Arguments are retained currently for consistency of 
-        :py:meth:`floris.simulation.Wake.turbulence_function` call.
+        :py:meth:`~.wake.Wake.turbulence_function` call.
 
         Args:
-            ambient_TI (float): TI of the background flowfield.
-            coord_ti (:py:class:`floris.utilities.Vec3`): Coordinate where TI 
-               is to be calculated (e.g. downstream wind turbines).
-            turbine_coord (:py:class:`floris.utilities.Vec3`): Coordinate of 
-               the wind turbine adding turbulence to the flow.
-            turbine (:py:class:`floris.simulation.Turbine`): Wind turbine 
-               adding turbulence to the flow.
+            ambient_TI (float): TI of the background flow field.
+            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI 
+                is to be calculated (e.g. downstream wind turbines).
+            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of 
+                the wind turbine adding turbulence to the flow.
+            turbine (:py:class:`~.turbine.Turbine`): Wind turbine 
+                adding turbulence to the flow.
 
         Returns:
-            float: Wake-added turbulence reported for the current
-            wind turbine (**turbine**).
+            float: Wake-added turbulence from the current
+                wind turbine (**turbine**) at location specified
+                by (**coord_ti**).
         """
-        
         #TODO develop and test function.
         turbine.current_turbulence_intensity = self.parameter_dictionary \
             ['local_TI_dict'][turbine]

@@ -38,15 +38,15 @@ class MAX(WakeCombination):
 
     def function(self, u_field, u_wake):
         """
-        This method combines the base flow field with the maximum velocity 
-        deficits.
+        Incorporates the velicty deficits into the base flow field by
+        selecting the maximum of the two for each point.
 
         Args:
             u_field (np.array): The base flow field.
-            u_wake (np.array): The wake velocity deficits.
+            u_wake (np.array): The wake to apply to the base flow field.
 
         Returns:
-            array: A maximum combination of the base flow field 
-            and the velocity deficits.
+            np.array: The resulting flow field after applying the wake to the
+                base.
         """
         return np.maximum(u_wake, u_field)
