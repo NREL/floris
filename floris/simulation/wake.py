@@ -46,14 +46,7 @@ class Wake():
     """
     Wake is a container class for the wake velocity, deflection,
     turbulence, and combination models.
-
-    Raises:
-        ValueError: Invalid value given for VelocityDeficit
-        ValueError: Invalid value given for WakeTurbulence
-        ValueError: Invalid value given for WakeCombination
-        ValueError: Invalid value given for VelocityDeflection
     """
-
     def __init__(self, instance_dictionary):
         """
         Configures the mapping from model strings to their respective classes
@@ -63,13 +56,16 @@ class Wake():
             instance_dictionary (dict): Dictionary consisting of the following
                 items:
 
-                - velocity_model
-                - turbulence_model
-                - deflection_model
-                - combination_model
-                - parameters - see model classes
+                - velocity_model (str): The name of the velocity model to be
+                    instantiated.
+                - turbulence_model (str): The name of the turbulence model to be
+                    instantiated.
+                - deflection_model (str): The name of the deflection model to be
+                    instantiated.
+                - combination_model (str): The name of the combination model to
+                    be instantiated.
+                - parameters (dict): See specific model classes for parameters.
         """
-
         properties = instance_dictionary["properties"]
         if "parameters" not in properties.keys():
             self.parameters = {}
@@ -120,11 +116,11 @@ class Wake():
         **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            value (str, :py:class:`~.wake_velocity.base_velocity_deficit.VelocityDeficit`):
+            value (str, :py:class:`~.base_velocity_deficit.VelocityDeficit`):
                 A string for the model to set or the model instance itself.
 
         Returns:
-            :py:class:`~.wake_velocity.base_velocity_deficit.VelocityDeficit`:
+            :py:class:`~.base_velocity_deficit.VelocityDeficit`:
                 Model currently set.
 
         Raises:
@@ -154,11 +150,11 @@ class Wake():
         **Note**: This is a virtual property used to "get" or "set" a value.
 
         Args:
-            value (str, :py:class:`~.wake_turbulence.base_wake_turbulence.WakeTurbulence`):
+            value (str, :py:class:`~.base_wake_turbulence.WakeTurbulence`):
                 A string for the model to set or the model instance itself.
 
         Returns:
-            :py:class:`~.wake_turbulence.base_wake_turbulence.WakeTurbulence`:
+            :py:class:`~.base_wake_turbulence.WakeTurbulence`:
                 Model currently set.
 
         Raises:
@@ -188,11 +184,11 @@ class Wake():
         **Note**: This is a virtual property used to "get" or "set" a value.
 
         Args:
-            value (str, :py:class:`~.wake_deflection.base_wake_deflection.VelocityDeflection`):
+            value (str, :py:class:`~.base_velocity_deflection.VelocityDeflection`):
                 A string for the model to set or the model instance itself.
 
         Returns:
-            :py:class:`~.wake_deflection.base_wake_deflection.VelocityDeflection`:
+            :py:class:`~.base_velocity_deflection.VelocityDeflection`:
                 Model currently set.
 
         Raises:
@@ -222,11 +218,11 @@ class Wake():
         **Note**: This is a virtual property used to "get" or "set" a value.
 
         Args:
-            value (str, :py:class:`~.wake_combination.base_wake_combination.WakeCombination`):
+            value (str, :py:class:`~.base_wake_combination.WakeCombination`):
                 A string for the model to set or the model instance itself.
 
         Returns:
-            :py:class:`~.wake_combination.base_wake_combination.WakeCombination`:
+            :py:class:`~.base_wake_combination.WakeCombination`:
                 Model currently set.
 
         Raises:
@@ -251,7 +247,7 @@ class Wake():
         gotten from the currently set model.
 
         Returns:
-            :py:class:`~.wake_deflection.base_wake_deflection.VelocityDeflection`
+            :py:class:`~.base_velocity_deflection.VelocityDeflection`
         """
         return self.deflection_model.function
 
@@ -262,7 +258,7 @@ class Wake():
         gotten from the currently set model.
 
         Returns:
-            :py:class:`~.wake_velocity.base_velocity_deficit.VelocityDeficit`
+            :py:class:`~.base_velocity_deficit.VelocityDeficit`
         """
         return self.velocity_model.function
 

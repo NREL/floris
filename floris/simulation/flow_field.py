@@ -43,13 +43,12 @@ class FlowField():
             wind_shear (float): Wind shear coefficient.
             wind_veer (float): Amount of veer across the rotor.
             air_density (float): Wind farm air density.
-            wake (:py:class:`floris.simulation.wake.Wake`): The object
-                containing the model definition for the wake calculation.
-            turbine_map (:py:obj:`floris.simulation.turbine_map.TurbineMap`):
-                The object describing the farm layout and turbine location.
-            wind_map (:py:obj:`floris.simulation.wind_map.WindMap`):
-                The object describing the atmospheric conditions throughout
-                the farm.
+            wake (:py:class:`~.wake.Wake`): The object containing the model
+                definition for the wake calculation.
+            turbine_map (:py:obj:`~.turbine_map.TurbineMap`): The object
+                describing the farm layout and turbine location.
+            wind_map (:py:obj:`~.wind_map.WindMap`): The object describing the
+                atmospheric conditions throughout the farm.
             specified_wind_height (float): The focal center of the farm in
                 elevation; this value sets where the given wind speed is set
                 and about where initial velocity profile is applied.
@@ -358,8 +357,6 @@ class FlowField():
 
     def set_bounds(self, bounds_to_set=None):
         """
-        [summary]
-
         Calculates the domain bounds for the current wake model. The bounds can
         be given directly of calculated based on preset extents from the
         given layout. The bounds consist of the minimum and maximum values
@@ -460,21 +457,17 @@ class FlowField():
                 Defaults to None.
             air_density (float, optional): Wind farm air density.
                 Defaults to None.
-            wake (:py:class:`floris.simulation.wake.Wake`, optional):
-                The object containing the model definition for the
-                wake calculation. Defaults to None.
-            turbine_map (:py:obj:`floris.simulation.turbine_map.TurbineMap`, optional):
+            wake (:py:class:`~.wake.Wake`, optional): The object containing the
+                model definition for the wake calculation. Defaults to None.
+            turbine_map (:py:obj:`~.turbine_map.TurbineMap`, optional):
                 The object describing the farm layout and turbine location.
                 Defaults to None.
-            wind_map (:py:obj:`floris.simulation.wind_map.WindMap`, optional):
-                The object describing the atmospheric conditions throughout
-                the farm. Defaults to None.
-            with_resolution (:py:class:`floris.utilities.Vec3`, optional):
+            wind_map (:py:obj:`~.wind_map.WindMap`, optional): The object
+                describing the atmospheric conditions throughout the farm.
+                Defaults to None.
+            with_resolution (:py:class:`~.utilities.Vec3`, optional):
                 Resolution components to use for the gridded domain in the
                 flow field wake calculation. Defaults to None.
-            with_resolution: A  object
-                that defines the flow field resolution at which to
-                calculate the wake (default is *None*).
             bounds_to_set (list(float), optional): Values representing the
                 minimum and maximum values for the domain in each direction:
                 [xmin, xmax, ymin, ymax, zmin, zmax]. Defaults to None.
@@ -539,12 +532,13 @@ class FlowField():
         Args:
             no_wake (bool, optional): Flag to enable updating the turbine
                 properties without adding the wake calculation to the
-                freestream flow field. Defaults to False.
-            points (list(), optional): An array that contains the x, y, and z
-                coordinates of user-specified points at which the flow field
+                freestream flow field. Defaults to *False*.
+            points (list(), optional): An array that contains the x-, y-, and
+                z-coordinates of user-specified points at which the flow field
                 velocity is recorded. Defaults to None.
-            track_n_upstream_wakes (bool, optional): #TODO - what does
-                this do? Defaults to False.
+            track_n_upstream_wakes (bool, optional): When *True*, will keep
+                track of the number of upstream wakes a turbine is
+                experiencing. Defaults to *False*.
         """
         if points is not None:
             # add points to flow field grid points

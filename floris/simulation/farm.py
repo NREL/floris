@@ -35,38 +35,37 @@ class Farm():
         The initialization method unpacks some of the data from the input
         dictionary in order to create a couple of unerlying data structures:
 
-            - :py:obj:`floris.simulation.wind_map.WindMap`
-            - :py:obj:`floris.simulation.turbine_map.TurbineMap`
+            - :py:obj:`~.wind_map.WindMap`
+            - :py:obj:`~.turbine_map.TurbineMap`
 
         Args:
             instance_dictionary (dict): The required keys in this dictionary
                 are:
 
-                    -   **wind_speed**: A list that contains the wind speed 
-                        measurements at hub height (m/s).
-                    -   **wind_x**: a list that contains the x coordinates
-                        of the wind speed measurements.
-                    -   **wind_y**: a list that contains the y coordinates
-                        of the wind speed measurements.
-                    -   **wind_direction**: A list that contains the wind 
-                        direction measurements (deg).
-                    -   **turbulence_intensity**: A list containing turbulence 
-                        intensity measurements at hub height (%).
-                    -   **wind_shear**: A float that is the power law wind 
-                        shear exponent.
-                    -   **wind_veer**: A float that is the vertical change 
-                        in wind direction across the rotor.
-                    -   **air_density**: A float that is the air 
-                        density (kg/m^3).
-                    -   **layout_x**: A list that contains the 
-                        x coordinates of the turbines.
-                    -   **layout_y**: A list that contains the 
-                        y coordinates of the turbines.
+                    -   **wind_speed** (*list*): The wind speed measurements at
+                        hub height (m/s).
+                    -   **wind_x** (*list*): The x-coordinates of the wind
+                        speed measurements.
+                    -   **wind_y** (*list*): The y-coordinates of the wind
+                        speed measurements.
+                    -   **wind_direction** (*list*): The wind direction
+                        measurements (deg).
+                    -   **turbulence_intensity** (*list*): Turbulence intensity
+                        measurements at hub height (%).
+                    -   **wind_shear** (*float*): The power law wind shear
+                        exponent.
+                    -   **wind_veer** (*float*): The vertical change in wind
+                        direction across the rotor.
+                    -   **air_density** (*float*): The air density (kg/m^3).
+                    -   **layout_x** (*list*): The x-coordinates of the
+                        turbines.
+                    -   **layout_y** (*list*): The y-coordinates of the
+                        turbines.
 
-            turbine (:py:obj:`floris.simulation.turbine.Turbine`): The
-                turbine models used throughout the farm.
-            wake (:py:obj:`floris.simulation.wake.Wake`): The wake model
-                used to simulate the freestream flow and wakes.
+            turbine (:py:obj:`~.turbine.Turbine`): The turbine models used
+                throughout the farm.
+            wake (:py:obj:`~.wake.Wake`): The wake model used to simulate the
+                freestream flow and wakes.
         """
         self.name = instance_dictionary["name"]
         properties = instance_dictionary["properties"]
@@ -137,7 +136,7 @@ class Farm():
     def set_yaw_angles(self, yaw_angles):
         """
         Sets the yaw angles for all turbines on the
-        :py:obj:`floris.simulation.turbine.Turbine` objects directly.
+        :py:obj:`~.turbine.Turbine` objects directly.
 
         Args:
             yaw_angles (float or list( float )): A single value to set
@@ -223,8 +222,11 @@ class Farm():
         """
         WindMap object attached to the Farm.
 
+        Args:
+            value (:py:obj:`~.wind_map.WindMap`): WindMap object to be set.
+
         Returns:
-            :py:obj:`floris.simulation.wind_map.WindMap`
+            :py:obj:`~.wind_map.WindMap`
         """
         # TODO: Does this need to be a virtual propert?
         return self._wind_map
@@ -236,13 +238,12 @@ class Farm():
     @property
     def turbine_map(self):
         """
-        TurbineMap attached to the Farm's
-        :py:obj:`floris.simulation.flow_field` object. This is used to reduce
-        the depth of the object-hierachy required to modify the wake models
-        from a script.
+        TurbineMap attached to the Farm's :py:obj:`~.flow_field.FlowField`
+        object. This is used to reduce the depth of the object-hierachy
+        required to modify the wake models from a script.
 
         Returns:
-            :py:obj:`floris.simulation.turbine_map.TurbineMap`
+            :py:obj:`~.turbine_map.TurbineMap`
         """
         return self.flow_field.turbine_map
 
@@ -252,7 +253,7 @@ class Farm():
         All turbines included in the model.
 
         Returns:
-            list(:py:obj:`floris.simulation.turbine.Turbine`) 
+            list(:py:obj:`~.turbine.Turbine`) 
         """
         return self.turbine_map.turbines
 
@@ -263,6 +264,6 @@ class Farm():
         object-hierachy required to modify the wake models from a script.
 
         Returns:
-            :py:obj:`floris.simulation.wake.Wake`.
+            :py:obj:`~.wake.Wake`.
         """
         return self.flow_field.wake

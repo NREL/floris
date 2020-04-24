@@ -20,9 +20,8 @@ from ..utilities import setup_logger
 class InputReader():
     """
     InputReader parses JSON input files into inputs for the
-    :py:class:`floris.simulation.floris.Floris` class. It
-    handles input validation regarding input type, but does not
-    enforce value checking.
+    :py:class:`~.floris.Floris` class. It handles input validation regarding
+    input type, but does not enforce value checking.
     """
     def __init__(self):
         """
@@ -87,13 +86,13 @@ class InputReader():
         to appropriate values based on the predefined type maps.
 
         Args:
-            input_dict (dict): Input data
+            input_dict (dict): Input data.
             type_map (dict): Predefined type-map for type checking inputs;
                 structured as {"property": type}.
 
         Raises:
-            KeyError
-            ValueError
+            KeyError: Missing/invalid key.
+            ValueError: Invalid value type.
 
         Returns:
             dict: Validated and correctly typed input data.
@@ -147,43 +146,40 @@ class InputReader():
 
     def validate_turbine(self, input_dict):
         """
-        Checks for the required values and types of input in the
-        given input dictionary as required by the
-        :py:obj:`floris.simulation.turbine.Turbine` object.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.turbine.Turbine` object.
 
         Args:
-            input_dict: Input dictionary describing a turbine model.
+            input_dict (dict): Input dictionary describing a turbine model.
 
         Returns:
-            dict: A validated dictionary
+            dict: A validated dictionary.
         """
         return self._validate_dict(input_dict, self._turbine_properties)
 
     def validate_wake(self, input_dict):
         """
-        Checks for the required values and types of input in the
-        given input dictionary as required by the
-        :py:obj:`floris.simulation.wake.Wake` object.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.wake.Wake` object.
 
         Args:
-            input_dict: dict - Input dictionary describing a wake model.
+            input_dict (dict): Input dictionary describing a wake model.
 
         Returns:
-            dict: A validated dictionary
+            dict: A validated dictionary.
         """
         return self._validate_dict(input_dict, self._wake_properties)
 
     def validate_farm(self, input_dict):
         """
-        Checks for the required values and types of input in the
-        given input dictionary as required by the
-        :py:obj:`floris.simulation.farm.Farm` object.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.farm.Farm` object.
 
         Args:
-            input_dict: Input dictionary describing a farm model.
+            input_dict (dict): Input dictionary describing a farm model.
 
         Returns:
-            dict: A validated dictionary
+            dict: A validated dictionary.
         """
         return self._validate_dict(input_dict, self._farm_properties)
 
@@ -193,13 +189,13 @@ class InputReader():
         contents.
 
         Args:
-            input_file (str, optional): A string path to the json input file.
+            input_file (str, optional): A string path to the JSON input file.
                 Defaults to None.
             input_dict (dict, optional): A Python dictionary of inputs.
                 Defaults to None.
 
         Raises:
-            ValueError: Input file or dictionary must be provided
+            ValueError: Input file or dictionary must be provided.
 
         Returns:
             dict, dict, dict, dict:

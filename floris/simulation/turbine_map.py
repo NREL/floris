@@ -21,10 +21,9 @@ import numpy as np
 
 class TurbineMap():
     """
-    Container object that maps a :py:class:`floris.simulation.turbine.Turbine`
-    instance to a :py:class:`floris.utilities.Vec3` object. This class also
-    provides some helper methods for sorting and manipulating the turbine
-    layout.
+    Container object that maps a :py:class:`~.turbine.Turbine` instance to a
+    :py:class:`~.utilities.Vec3` object. This class also provides some helper
+    methods for sorting and manipulating the turbine layout.
 
     The underlying data structure for this class is a Python dictionary
     in the following form:
@@ -42,12 +41,11 @@ class TurbineMap():
 
     def __init__(self, layout_x, layout_y, turbines):
         """
-        Converts input coordinates into :py:class:`floris.utilities.Vec3`
-        and constructs the underlying mapping to
-        :py:class:`floris.simulation.turbine.Turbine`. It is assumed that all
-        arguments are of the same length and that the Turbine at a particular
-        index corresponds to the coordinate at the same index in the layout
-        arguments.
+        Converts input coordinates into :py:class:`~.utilities.Vec3` and
+        constructs the underlying mapping to :py:class:`~.turbine.Turbine`.
+        It is assumed that all arguments are of the same length and that the
+        Turbine at a particular index corresponds to the coordinate at the same
+        index in the layout arguments.
 
         Args:
             layout_x ( list(float) ): X-coordinate of the turbine locations.
@@ -80,12 +78,12 @@ class TurbineMap():
 
         Args:
             angles ( list(float) ): Angles in degrees to rotate each turbine.
-            center_of_rotation ( :py:class:`floris.utilities.Vec3` ):
+            center_of_rotation ( :py:class:`~.utilities.Vec3` ):
                 The center of rotation.
 
         Returns:
-            :py:class:`floris.simulation.turbine_map.TurbineMap`: A new
-            TurbineMap object whose turbines are rotated from the original.
+            :py:class:`~.turbine_map.TurbineMap`: A new TurbineMap object whose
+            turbines are rotated from the original.
         """
         layout_x = np.zeros(len(self.coords))
         layout_y = np.zeros(len(self.coords))
@@ -100,10 +98,10 @@ class TurbineMap():
         Sorts the turbines based on their x-coordinates in ascending order.
 
         Returns:
-            list( (:py:class:`floris.utilities.Vec3`, :py:class:`floris.simulation.turbine.Turbine`) ):
-                The sorted coordinates and corresponding turbines. This is a
-                list of tuples where each tuple contains the coordinate
-                and turbine in the first and last element, respectively.
+            list((:py:class:`~.utilities.Vec3`, :py:class:`~.turbine.Turbine`)):
+            The sorted coordinates and corresponding turbines. This is a
+            list of tuples where each tuple contains the coordinate
+            and turbine in the first and last element, respectively.
         """
         coords = sorted(self._turbine_map_dict, key=lambda coord: coord.x1)
         return [(c, self._turbine_map_dict[c]) for c in coords]
@@ -113,19 +111,21 @@ class TurbineMap():
         Finds the number of turbines waking each turbine for the given
         wind direction. Waked directions are determined using the formula 
         in Figure A.1 in Annex A of the IEC 61400-12-1:2017 standard.
+        # TODO: Add the IEC standard as a reference.
 
         Args:
             wd (float): Wind direction for determining waked turbines.
             return_turbines (bool, optional): Switch to return turbines.
                 Defaults to True.
+
         Returns:
-            list(int) or list( (:py:class:`floris.simulation.turbine.Turbine`, int ) ):
-                Number of turbines waking each turbine and, optionally,
-                the list of Turbine objects in the map.
+            list(int) or list( (:py:class:`~.turbine.Turbine`, int ) ):
+            Number of turbines waking each turbine and, optionally,
+            the list of Turbine objects in the map.
         
         TODO:
-        - This could be reworked so that they return type is more consistent.
-        - Describe the method used to find upstream turbines
+        - This could be reworked so that the return type is more consistent.
+        - Describe the method used to find upstream turbines.
         """
         wake_list =[]
         for coord0, turbine0 in self.items:
@@ -156,8 +156,7 @@ class TurbineMap():
     @property
     def turbines(self):
         """
-        Turbines contained in the
-        :py:class:`floris.simulation.turbine_map.TurbineMap`.
+        Turbines contained in the :py:class:`~.turbine_map.TurbineMap`.
 
         Returns:
             list(:py:class:`floris.simulation.turbine.Turbine`)
@@ -168,10 +167,10 @@ class TurbineMap():
     def coords(self):
         """
         Coordinates of the turbines contained in the
-        :py:class:`floris.simulation.turbine_map.TurbineMap`.
+        :py:class:`~.turbine_map.TurbineMap`.
 
         Returns:
-            list(:py:class:`floris.utilities.Vec3`)
+            list(:py:class:`~.utilities.Vec3`)
         """
         return [coord for coord, _ in self.items]
 
@@ -182,12 +181,9 @@ class TurbineMap():
         and coordinates.
 
         Returns:
-            dict_items: List of dictionary key and value pairs of 
-            coordinates and Turbine objects.
-        Returns:
             dict_items: Iterable object containing tuples of key-value pairs
             where the first index is the coordinate
-            (:py:class:`floris.utilities.Vec3`) and the second index is the
-            :py:class:`floris.simulation.turbine.Turbine`.
+            (:py:class:`~.utilities.Vec3`) and the second index is the
+            :py:class:`~.turbine.Turbine`.
         """
         return self._turbine_map_dict.items()

@@ -24,10 +24,9 @@ from ..utilities import setup_logger, LogClass
 class Floris():
     """
     Top-level class that describes a Floris model and initializes the
-    simulation. Use the :py:class:`floris.simulation.farm` attribute to
+    simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to
     access other objects within the model.
     """
-
     def __init__(self, input_file=None, input_dict=None):
         """
         Import this class with one of the two optional input arguments
@@ -39,7 +38,6 @@ class Floris():
                 be parsed and converted to a Python dict.
             input_dict (dict, optional): Python dict given directly.
         """
-
         # Parse the input into dictionaries
         input_reader = InputReader()
         self.meta_dict, turbine_dict, wake_dict, farm_dict \
@@ -56,7 +54,7 @@ class Floris():
 
     def export_pickle(self, pickle_file):
         """
-        Exports the :py:class:`floris.simulation.farm` object to a
+        Exports the :py:class:`~.farm.Farm` object to a
         Pickle binary file.
         
         Args:
@@ -66,10 +64,10 @@ class Floris():
 
     def import_pickle(self, pickle_file):
         """
-        Imports the :py:class:`floris.simulation.farm` object from a
+        Imports the :py:class:`~.farm.Farm` object from a
         Pickle binary file.
         
-        Inherits:
+        Args:
             pickle_file (str): Name of the Pickle file to load.
         """
         self.farm = pickle.load(open(pickle_file, "rb"))

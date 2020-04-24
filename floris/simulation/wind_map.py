@@ -22,7 +22,6 @@ class WindMap():
     """
     Container object to describe initial state of the wind farm atmosphere.
     """
-
     def __init__(self,
                  wind_layout,
                  layout_array,
@@ -34,8 +33,8 @@ class WindMap():
         turbulence intensity, if they are not given directly.
 
         Args:
-            wind_layout ( tuple( list(float), list(float) ) ): The x and y
-                coordinates of the atmospheric measurement location. This
+            wind_layout ( tuple( list(float), list(float) ) ): The x- and 
+                y-coordinates of the atmospheric measurement location. This
                 argument has the shape:
 
                     - 0th element: list( x-coordinates)
@@ -84,7 +83,7 @@ class WindMap():
                 at grid point coordinates instead of turbine coordinates.
                 Defaults to None.
             interpolate (bool, optional): Switch for enabling interpolation
-                between given values. Defaults to False.
+                between given values. Defaults to *False*.
         """
         speed = self.input_speed
         if grid is not True:
@@ -151,7 +150,7 @@ class WindMap():
                 at grid point coordinates instead of turbine coordinates.
                 Defaults to None.
             interpolate (bool, optional): Switch for enabling interpolation
-                between given values. Defaults to False.
+                between given values. Defaults to *False*.
         """
         wdir = self.input_direction
         if grid is not True:
@@ -238,7 +237,7 @@ class WindMap():
                 at grid point coordinates instead of turbine coordinates.
                 Defaults to None.
             interpolate (bool, optional): Switch for enabling interpolation
-                between given values. Defaults to False.
+                between given values. Defaults to *False*.
         """
         #TODO Add comments!
         ti = self.input_ti
@@ -309,7 +308,7 @@ class WindMap():
                 wind layout. The indicated method will be restarted 
                 after the inputs have been fixed, if not a case of 
                 unequal input lengths.
-            grid (bool, optional): [description]. When True, this indicates that
+            grid (bool, optional): When *True*, this indicates that
                 the method being interrupted is interpolating 
                 is calculating values at flow field grid points. 
                 Defaults to None.
@@ -409,9 +408,11 @@ class WindMap():
     def turbine_wind_speed(self):
         """
         This property returns the wind speeds at each turbine.
+
+        **Note:** This is a virtual property used to "get" a value.
         
         Returns:
-            A list of wind speeds at each turbine in m/s.
+            list(float): Wind speeds at each turbine in m/s.
         """
         return self._turbine_wind_speed
 
@@ -419,19 +420,23 @@ class WindMap():
     def grid_wind_speed(self):
         """
         This property returns the wind speeds at each gridpoint.
+
+        **Note:** This is a virtual property used to "get" a value.
         
         Returns:
-            An array of wind speeds at each turbine in m/s.
+            np.array: Wind speeds at each turbine in m/s.
         """
         return self._grid_wind_speed
 
     @property
     def turbine_wind_direction(self):
         """
-        This property returns the wind direction at each turbine. 
+        This property returns the wind direction at each turbine.
+
+        **Note:** This is a virtual property used to "get" a value.
         
         Returns:
-            A list of wind directions at each turbine in degrees.
+            list(float): Wind directions at each turbine in degrees.
         """
         return self._turbine_wind_direction
 
@@ -440,18 +445,22 @@ class WindMap():
         """
         This property returns the wind direction at each gridpoint.
 
+        **Note:** This is a virtual property used to "get" a value.
+
         Returns:
-            An array of wind directions at each gridpoint in degrees.
+            np.array: Wind directions at each gridpoint in degrees.
         """
         return self._grid_wind_direction
 
     @property
     def turbine_turbulence_intensity(self):
         """
-        This property returns the turbulence intensity at each turbine
+        This property returns the turbulence intensity at each turbine.
+
+        **Note:** This is a virtual property used to "get" a value.
 
         Returns:
-            A list of turbulence intensities at each turbine in decimal fractions.
+            list(float): Turbulence intensities at each turbine in decimal fractions.
         """
         return self._turbine_turbulence_intensity
 
@@ -460,9 +469,10 @@ class WindMap():
         """
         This property returns the turbulence intensity at each gridpoint.
         
+        **Note:** This is a virtual property used to "get" a value.
         
         Returns:
-            An array of the turbulence intensity at each gridpoint as a decimal fraction.
+            np.array: Turbulence intensity at each gridpoint as a decimal fraction.
         """
         return self._grid_turbulence_intensity
 
@@ -472,8 +482,10 @@ class WindMap():
         This property stores and returns the wind directions at each 
             input measurement location.
 
+        **Note:** This is a virtual property used to "get" a value.
+
         Returns:
-            A list of wind directions expressed in degrees.
+            list(float): Wind directions expressed in degrees.
         """
         return self._input_direction
 
@@ -487,8 +499,14 @@ class WindMap():
         This property stores and returns the wind speeds at each 
             input measurement location.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (list(float)): Wind speeds expressed
+                in meters per second.
+
         Returns:
-            A list of wind speeds expressed in meters per second.
+            list(float)): Wind speeds expressed in meters per second.
         """
         return self._input_speed
 
@@ -502,8 +520,14 @@ class WindMap():
         This property stores and returns the turbulence intensity 
             at each input measurement location.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (list(float)): Turbulence intensities
+                expressed in decimal fraction.
+
         Returns:
-            A list of turbulence intensities expressed in decimal fraction.
+            list(float): Turbulence intensities expressed in decimal fraction.
         """
         return self._input_ti
 
@@ -517,8 +541,14 @@ class WindMap():
         This property stores and returns an array that contains the
             x and y coordinates of each gridpoint in the flow field.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (np.array): The x- and y-coordinates for each 
+                gridpoint location.
+
         Returns:
-            An array containing the x and y coordinates for each 
+            np.array: The x- and y-coordinates for each 
             gridpoint location.
         """
         return self._grid_layout
@@ -533,8 +563,13 @@ class WindMap():
         This property stores and returns a tuple that contains the
             x and y coordinates of each wind measurement location.
 
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (tuple): Coordinates for each wind measurement location.
+
         Returns:
-            A tuple of coordinates for each wind measurement location.
+            tuple: Coordinates for each wind measurement location.
         """
         return self._wind_layout
 
