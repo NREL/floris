@@ -20,28 +20,30 @@ import pandas as pd
 
 def gaussian(x, mu, sig):
     """
-    Compute gaussian function, from https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function
+    Compute gaussian function, from https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function.
 
     Args:
-        x (np.array): input variable to gaussian
-        mu (float): mean value
-        sig (float): sigma
+        x (np.array): Input variable to Gaussian.
+        mu (float): Mean value.
+        sig (float): Standard deviation.
 
     Returns:
-        np.array: resulting valurs
+        np.array: The resulting Gaussian distribution.
     """
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
 
 def _convert_to_numpy_array(series):
     """
-    If passed a pandas serires, convert to numpy array
+    Convert an input series to NumPy array. Currently, this function
+    checks if an object has a `values` attribute and returns that if it does.
+    Otherwise, it returns the given input if that input is a `np.ndarray`.
 
     Args:
-        series (pd.Series): potential series object
+        series (pd.Series): Series to convert.
 
     Returns:
-        np.array: numpy array
+        np.array: Converted Series.
     """
     if hasattr(series, 'values'):
         return series.values
@@ -51,13 +53,14 @@ def _convert_to_numpy_array(series):
 
 def _calculate_bootstrap_iterations(n):
     """
-    Calculate number of bootstrap iterations given length
+    Calculate number of bootstrap iterations given length.
+    # TODO: What are `bootstrap iterations`?
 
     Args:
-        n (int): Number of points
+        n (int): Number of points.
 
     Returns:
-        int: number of bootstrap iterations
+        int: Number of bootstrap iterations.
     """
     maximum = 10000
     minimum = 2000
@@ -69,8 +72,8 @@ def _calculate_lower_and_upper_bound(bootstrap_array,
                                      central_estimate=None,
                                      method='simple_percentile'):
     """
-    Given resultant bootstrap output array compute lower and upper bound 
-    of confidence interval
+    Given resultant bootstrap output array, compute lower and upper bound 
+    of confidence interval.
 
     Args:
         bootstrap_array (np.array): array of bootrapped results
@@ -81,7 +84,7 @@ def _calculate_lower_and_upper_bound(bootstrap_array,
             'simple_percentile'.
 
     Returns:
-        float,float: 
+        float, float: 
         
             -   lower ci bound
             -   upper ci bound
@@ -97,13 +100,14 @@ def _calculate_lower_and_upper_bound(bootstrap_array,
 def _get_confidence_bounds(confidence):
     """
 
-    Get the upper and lower confidence bounds given a desired confidence level
+    Get the upper and lower confidence bounds given a desired confidence level.
 
     Args:
         confidence (float): [description]
+        # TODO: ^^
 
     Returns:
-        float,float: 
+        float, float: 
         
             -   upper confidence bound
             -   lower confidence bound
@@ -114,14 +118,14 @@ def _get_confidence_bounds(confidence):
 def energy_ratio(ref_pow_base, test_pow_base, ws_base, ref_pow_con,
                  test_pow_con, ws_con):
     """
-    Compute the balanced energy ratio for a single binned wind direction
+    Compute the balanced energy ratio for a single binned wind direction.
 
     This function is called to compute a single balanced 
-    energy ratio calculation for a particular wind direction bin.  Note 
+    energy ratio calculation for a particular wind direction bin. Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
-    power estimate from a measurement.  See [1,2] for documentation of method
-    Also for usage example see examples/energy ratio
+    power estimate from a measurement. See [1,2] for documentation of method
+    Also for usage example see examples/energy ratio.
 
     References:
         [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,

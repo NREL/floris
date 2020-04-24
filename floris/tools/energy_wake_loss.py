@@ -20,13 +20,15 @@ from ..utilities import setup_logger
 
 def _convert_to_numpy_array(series):
     """
-    If passed a pandas serires, convert to numpy array
+    Convert an input series to NumPy array. Currently, this function
+    checks if an object has a `values` attribute and returns that if it does.
+    Otherwise, it returns the given input if that input is a `np.ndarray`.
 
     Args:
-        series (pd.Series): potential series object
+        series (pd.Series): Series to convert.
 
     Returns:
-        np.array: array
+        np.array: Converted Series.
     """
     if hasattr(series, 'values'):
         return series.values
@@ -37,14 +39,14 @@ def _convert_to_numpy_array(series):
 # Define ci function
 def ci(data, confidence=0.95):
     """
-    Compute confidence interval
+    Compute confidence interval.
 
     Args:
-        data (np.array): array of floats
-        confidence (float, optional): confidence value. Defaults to 0.95.
+        data (np.array): Input data.
+        confidence (float, optional): Confidence value. Defaults to 0.95.
 
     Returns:
-        float: confidence interval
+        float: Computed confidence interval.
     """
     a = 1.0 * np.array(data)
     n = len(a)
@@ -63,7 +65,7 @@ def calculate_balanced_wake_loss(reference_power_baseline,
                                     wind_direction_array_controlled
                                     ):
     """
-    Calculate balanced wake loss  See [1] for documentation of method
+    Calculate balanced wake loss. See [1] for documentation of method.
 
     References:
         [1]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
@@ -74,27 +76,25 @@ def calculate_balanced_wake_loss(reference_power_baseline,
         Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
 
     Args:
-        reference_power_baseline (np.array): Array of power of 
-            reference turbine in baseline conditions.
-        test_power_baseline (np.array): Array of power of test turbine 
-            in baseline conditions.
-        wind_speed_array_baseline (np.array): Array of wind speeds in 
+        reference_power_baseline (np.array): Power of reference turbine in
             baseline conditions.
-        wind_direction_array_baseline (np.array): Array of wind 
-            directions in baseline case.
-        reference_power_controlled (np.array): Array of power of 
-            reference turbine in controlled conditions.
-        test_power_controlled (np.array): Array of power of test 
-            turbine in controlled conditions.
-        wind_speed_array_controlled (np.array): Array of wind speeds in 
+        test_power_baseline (np.array): Power of test turbine in baseline
+            conditions.
+        wind_speed_array_baseline (np.array): Wind speeds in baseline
+            conditions.
+        wind_direction_array_baseline (np.array): Wind  directions in baseline
+            case.
+        reference_power_controlled (np.array): Power of reference turbine in
             controlled conditions.
-        wind_direction_array_controlled (np.array): Array of wind 
-            directions in controlled case.
-        
+        test_power_controlled (np.array): Power of test turbine in controlled
+            conditions.
+        wind_speed_array_controlled (np.array): Wind speeds in controlled
+            conditions.
+        wind_direction_array_controlled (np.array): Wind directions in
+            controlled case.
 
     Returns:
-        dataframe: balanced wake loss result
-
+        dataframe: Balanced wake loss result.
     """
 
     # Ensure that input arrays are np.ndarray
@@ -171,7 +171,7 @@ def plot_balanced_wake_loss(reference_power_baseline,
                                     axarr
                                     ):
     """
-    Plot balanced wake loss
+    Plot balanced wake loss.
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -195,7 +195,7 @@ def plot_balanced_wake_loss(reference_power_baseline,
 
     Returns:
         dataframe
-
+        # TODO ^^ inaccaurate.
     """
 
     # Get the result frame
