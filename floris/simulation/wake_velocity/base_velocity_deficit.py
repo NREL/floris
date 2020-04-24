@@ -16,40 +16,19 @@ from ...utilities import cosd, sind, tand, setup_logger
 
 class VelocityDeficit():
     """
-    VelocityDeficit is the base class of the different velocity deficit model 
-    classes.
-
-    An instantiated VelocityDeficit object will import parameters used to 
-    calculate wake-added turbulence intensity from an upstream turbine, 
-    using the approach of Crespo, A. and Herna, J., "Turbulence 
-    characteristics in wind-turbine wakes." *J. Wind Eng Ind Aerodyn*. 
-    1996.
-
-    Args:
-        parameter_dictionary: A dictionary as generated from the 
-            input_reader; it should have the following key-value pairs:
-
-            -   **turbulence_intensity**: A dictionary containing the 
-                following key-value pairs:
-
-                -   **initial**: A float that is the initial ambient 
-                    turbulence intensity, expressed as a decimal 
-                    fraction.
-                -   **constant**: A float that is the constant used to 
-                    scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor 
-                    exponent used in in the calculation of wake-added 
-                    turbulence.
-                -   **downstream**: A float that is the exponent 
-                    applied to the distance downtream of an upstream 
-                    turbine normalized by the rotor diameter used in 
-                    the calculation of wake-added turbulence.
-
-    Returns:
-        An instantiated VelocityDeficit object.
+    Base VelocityDeficit object class. This class contains a method for getting
+    the relavent model parameters from the input dictionary, or for supplying
+    default values if none are supplied.
     """
-
     def __init__(self, parameter_dictionary):
+        """
+        Stores the parameter dictionary for the wake velocity model.
+
+        Args:
+            parameter_dictionary (dict): Dictionary containing the wake
+                velocity model parameters. See individual wake velocity
+                models for details of specific key-value pairs.
+        """
         self.logger = setup_logger(name=__name__)
 
         self.requires_resolution = False
@@ -57,6 +36,7 @@ class VelocityDeficit():
         self.model_grid_resolution = None
         self.parameter_dictionary = parameter_dictionary
 
+        # TODO: verify we can remove the commented code here
         # if 'calculate_VW_velocities' in self.parameter_dictionary:
         #     self.calculate_VW_velocities = \
         #         bool(self.parameter_dictionary["calculate_VW_velocities"])
