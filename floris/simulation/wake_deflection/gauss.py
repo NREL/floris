@@ -16,18 +16,20 @@ import numpy as np
 
 class Gauss(VelocityDeflection):
     """
-    Subclass of the
-    :py:class:`floris.simulation.wake_deflection.VelocityDeflection`
-    object. Parameters required for Gauss wake model:
+    The Gauss deflection model is a blend of the models described in [1] and
+    [2], calculating the deflection field in turbine wakes.
 
-    - ka: #TODO What is this parameter for?
-    - kb: #TODO What is this parameter for?
-    - alpha: #TODO What is this parameter for?
-    - beta: #TODO What is this parameter for?
-    - ad: #TODO What is this parameter for?
-    - bd: #TODO What is this parameter for?
+    References:
+
+        [1] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
+        study of wind turbine wakes in yawed conditions." *J. Fluid
+        Mechanics*, 2016.
+
+        [2] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
+        , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
+        Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
+        https://doi.org/10.5194/wes-2020-3, in review, 2020.
     """
-    
     default_parameters = {
         "ka": 0.38,
         "kb": 0.004,
@@ -42,16 +44,42 @@ class Gauss(VelocityDeflection):
 
     def __init__(self, parameter_dictionary):
         """
-        Instantiate Gauss object and pass function paramter values.
+        Stores model parameters for use by methods.
 
         Args:
-            parameter_dictionary (dict): input dictionary with the following key-value pairs:
-                - ka
-                - kb
-                - alpha
-                - beta
-                - ad
-                - bd
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
+
+                    -   **ka** (*float*): Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **kb** (*float*): Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **alpha** (*float*): Parameter that determines the
+                        dependence of the downstream boundary between the near
+                        wake and far wake region on the turbulence intensity.
+                    -   **beta** (*float*): Parameter that determines the
+                        dependence of the downstream boundary between the near
+                        wake and far wake region on the turbine's induction
+                        factor.
+                    -   **ad** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
+                    -   **bd** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
+                    -   **dm** (*float*): Additional tuning parameter to scale
+                        the amount of wake deflection. Defaults to 1.0
+                    -   **use_secondary_steering** (*bool*): Flag to use
+                        secondary steering on the wake velocity using methods
+                        developed in [2].
+                    -   **eps_gain** (*float*): Tuning value for calculating
+                        the V- and W-component velocities using methods
+                        developed in [7].
+                        TODO: Believe this should be removed, need to verify.
+                        See property on super-class for more details.
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
@@ -70,24 +98,28 @@ class Gauss(VelocityDeflection):
     def function(self, x_locations, y_locations, z_locations, turbine, coord,
                  flow_field):
         """
-        This function defines the angle at which the wake deflects in
-        relation to the yaw of the turbine. This is coded as defined in
-        the Bastankah and Porte_Agel paper.
+        Calculates the deflection field of the wake. See [1] and [2] for
+        details on the methods used.
 
         Args:
-            x_locations (np.array): streamwise locations in wake
-            y_locations (np.array): spanwise locations in wake
-            turbine (:py:class:`floris.simulation.turbine.Turbine`):
-                Turbine object
-            coord
-                (:py:meth:`floris.simulation.turbine_map.TurbineMap.coords`):
-                Spatial coordinates of wind turbine.
-            flow_field
-                (:py:class:`floris.simulation.flow_field.FlowField`):
-                Flow field object.
-        
+            x_locations (np.array): An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
+                domain (m).
+            y_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the direction normal to
+                x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
+                direction (m).
+            turbine (:py:obj:`floris.simulation.turbine`): Object that
+                represents the turbine creating the wake.
+            coord (:py:obj:`floris.utilities.Vec3`): Object containing
+                the coordinate of the turbine creating the wake (m).
+            flow_field (:py:class:`floris.simulation.flow_field`): Object
+                containing the flow field information for the wind farm.
+
         Returns:
-            deflection (np.array): Deflected wake centerline.
+            np.array: Deflection field for the wake.
         """
         # ==============================================================
         # free-stream velocity (m/s)
@@ -185,13 +217,18 @@ class Gauss(VelocityDeflection):
     def ka(self):
         """
         Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            ka (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._ka
 
@@ -214,13 +251,18 @@ class Gauss(VelocityDeflection):
     def kb(self):
         """
         Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            kb (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._kb
 
@@ -243,14 +285,19 @@ class Gauss(VelocityDeflection):
     def alpha(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbulence
-            intensity.
+        between the near wake and far wake region on the turbulence
+        intensity.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            alpha (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._alpha
 
@@ -273,14 +320,19 @@ class Gauss(VelocityDeflection):
     def beta(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbine's
-            induction factor.
+        between the near wake and far wake region on the turbine's
+        induction factor.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            beta (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._beta
 
@@ -302,13 +354,21 @@ class Gauss(VelocityDeflection):
     @property
     def ad(self):
         """
-        ... #TODO: update docstring
+        Parameter available for additional tuning of the wake deflection with a
+        lateral offset.
+        
+        ****TODO: Should this be removed? Not sure if it has been used.****
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            ad (float, int): ... #TODO: update docstring
+            value (float): Value to set.
 
         Returns:
-            float: ... #TODO: update docstring
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._ad
 
@@ -330,13 +390,21 @@ class Gauss(VelocityDeflection):
     @property
     def bd(self):
         """
-        ... #TODO: update docstring
+        Parameter available for additional tuning of the wake deflection with a
+        lateral offset.
+        
+        ****TODO: Should this be removed? Not sure if it has been used.****
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            bd (float, int): ... #TODO: update docstring
+            value (float): Value to set.
 
         Returns:
-            float: ... #TODO: update docstring
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._bd
 
