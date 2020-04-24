@@ -23,10 +23,13 @@ from ..utilities import setup_logger
 
 def nudge_outward(x):
     """
-    Avoid numerical issue in grid data by sligly expanding input x,y
+    Avoid numerical issue in grid data by sligly expanding input x
 
     Args:
-        x (np.arraym float): Vector to be slightly expanded
+        x (np.array): Vector to be slightly expanded
+
+    Returns:
+        np.array: Expanded vector
     """
     nudge_val = 0.001
     min_x = np.min(x)
@@ -51,7 +54,7 @@ def get_plane_from_flow_data(flow_data,
             Defaults to 100.
 
     Returns:
-        dataframe of x1,x2,u,v,w values
+        pd.DataFrame: Results in a dataframe
     """
     order = "f"
     if normal_vector == 'z':
@@ -105,13 +108,16 @@ def get_plane_from_flow_data(flow_data,
 
 
 class CutPlane():
+    """
+    A CutPlane object represents a 2D slice through the flow of a 
+    FLORIS simulation, or other such as SOWFA result
+    """
     def __init__(self, df):
         """
-        Initialize CutPlane object. Used to extract a 2D plane from a
-        3D vectoral velocity field
+        Initialize CutPlane object
 
         Args:
-            df (pd.DataFrame): Pandas DataFrame of data with columns x1,x2, u,v,w
+            df (pd.DataFrame): Pandas DataFrame of data with columns x1,x2, u,v, w
         """
         self.df = df
 
