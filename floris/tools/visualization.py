@@ -103,7 +103,7 @@ def visualize_cut_plane(cut_plane,
             'coolwarm'.
 
     Returns:
-        im (:py:class:`matplotlib.plt.pcolormesh): Image handle.
+        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
     """
 
     if not ax:
@@ -168,7 +168,7 @@ def visualize_quiver(cut_plane,
             **kwargs: Additional parameters to pass to `ax.streamplot`.
 
         Returns:
-            im (:py:class:`matplotlib.plt.pcolormesh): Image handle.
+            im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
         """
     if not ax:
         fig, ax = plt.subplots()

@@ -22,7 +22,19 @@ from datetime import datetime
 class Vec3():
     def __init__(self, x1, x2=None, x3=None, string_format=None):
         """
-        Object containing vector information for coordinates.
+        Contains 3-component vector information. All arithmetic operators are
+        set so that Vec3 objects can operate on and with each other directly.
+
+        Args:
+            x1 (list(numeric, numeric, numeric), numeric): All three vector 
+                components or simply the first component of the vector.
+            x2 (numeric, optional): Second component of the vector if the
+                first argument is not a list. Defaults to None.
+            x3 (numeric, optional): Third component of the vector if the
+                first argument is not a list. Defaults to None.
+            string_format (str, optional): Format to use in the
+                overloaded __str__ function. Defaults to None.
+        """
 
         # TODO: possibility to store components as np.array or Python list
         # and use x1, x2, x3 virtual properties. This would simplify the
@@ -30,17 +42,6 @@ class Vec3():
         # operations. It may add some performance gain, too, but that is
         # likely negligible.
 
-        Args:
-            x1: [numeric, numeric, numeric] or numeric -- The first argument
-                can be a list of the three vector components or simply the
-                first component of the vector.
-            x2: numeric (optional) -- The second component of the vector
-                if the first argument is not a list.
-            x3: numeric (optional) -- The third component of the vector
-                if the first argument is not a list.
-            string_format: str (optional) -- The string format to use in the
-                overloaded __str__ function.
-        """
         if isinstance(x1, list):
             self.x1, self.x2, self.x3 = x1
         else:
@@ -66,11 +67,18 @@ class Vec3():
 
     def rotate_on_x3(self, theta, center_of_rotation=None):
         """
-        Rotate about the x3 coordinate axis by a given angle
-        and center of rotation.
-        The angle theta should be given in degrees.
+        Rotates about the `x3` coordinate axis by a given angle
+        and center of rotation. This function sets additional attributes on
+        the rotated Vec3:
 
-        Sets the rotated components on this object and returns
+            - x1prime
+            - x2prime
+            - x3prime
+
+        Args:
+            theta (float): Angle of rotation in degrees.
+            center_of_rotation (Vec3, optional): Center of rotation.
+                Defaults to Vec3(0.0, 0.0, 0.0).
         """
         if center_of_rotation is None:
             center_of_rotation = Vec3(0.0, 0.0, 0.0)
@@ -122,62 +130,71 @@ class Vec3():
 
 def cosd(angle):
     """
-    cosine of an angle with the angle given in degrees
+    Cosine of an angle with the angle given in degrees.
+
+    Args:
+        angle (float): Angle in degrees.
 
     Returns:
-        [float]: cosine of angle in degrees
+        float
     """
     return np.cos(np.radians(angle))
 
 
 def sind(angle):
     """
-    sine of an angle with the angle given in degrees
+    Sine of an angle with the angle given in degrees.
+
+    Args:
+        angle (float): Angle in degrees.
 
     Returns:
-        [float]: sine of angle in degrees
+        float
     """
     return np.sin(np.radians(angle))
 
 
 def tand(angle):
     """
-    tangent of an angle with the angle given in degrees
+    Tangent of an angle with the angle given in degrees.
+
+    Args:
+        angle (float): Angle in degrees.
 
     Returns:
-        [float]: tangent of angle in degrees
+        float
     """
     return np.tan(np.radians(angle))
 
 
 def wrap_180(x):
     """
-    If the given angle is less than -180 or greater than or equal to
-    180 degrees, correct it to lie within the range (-180, 180].
+    Shift the given values to within the range (-180, 180].
 
-    x can be a scalar or numpy array
+    Args:
+        x (numeric or np.array): Scalar value or np.array of values to shift.
 
     Returns:
-        The corrected angle
+        np.array: Shifted values.
     """
     x = np.where(x <= -180., x + 360., x)
     x = np.where(x > 180., x - 360., x)
-    return (x)
+    return x
 
 
 def wrap_360(x):
     """
-    If the given angle is less than 0 or greater than or equal to
-    360 degrees, correct it to lie within the range (0, 360].
+    Shift the given values to within the range (0, 360].
 
-    x can be a scalar or numpy array
+    Args:
+        x (numeric or np.array): Scalar value or np.array of values to shift.
 
     Returns:
-        The corrected angle
+        np.array: Shifted values.
     """
     x = np.where(x < 0., x + 360., x)
     x = np.where(x >= 360., x - 360., x)
-    return (x)
+    return x
 
 
 class LogClass:
