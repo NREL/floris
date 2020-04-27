@@ -124,24 +124,14 @@ def energy_ratio(ref_pow_base, test_pow_base, ws_base, ref_pow_con,
     energy ratio calculation for a particular wind direction bin. Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
-    power estimate from a measurement. See [1,2] for documentation of method
-    Also for usage example see examples/energy ratio.
+    power estimate from a measurement. See :cite:`er-fleming2019initial` and 
+    :cite:`er-fleming2019continued` for more information.
 
     References:
-        [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,
-        Scholbrock, A., Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K
-        , van Dam, J , Bay, C., Mudafort, R., Lopez, H., Skopek, J., Scott, M.,
-        Ryan, B., Guernsey, C., and Brake, D.: Initial results from a field
-        campaign of wake steering applied at a commercial wind farm – Part 1,
-        Wind Energ. Sci., 4, 273–285, https://doi.org/10.5194/wes-4-273-2019,
-        2019.
-
-        [2]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
-        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
-        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
-        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
-        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
-        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: er-
 
     Args:
         ref_pow_base (np.array): Array of baseline reference turbine 
@@ -251,24 +241,14 @@ def calculate_balanced_energy_ratio(
     and lower uncertaintity bounds computed through bootstrapping, are 
     returned.  Note the reference turbine should not be the turbine 
     implementing control, but should be an unaffected nearby turbine, 
-    or a synthetic power estimate from a measurement  See [1,2] for
-    documentation of method
+    or a synthetic power estimate from a measurement  See :cite:`er-fleming2019initial` and 
+    :cite:`er-fleming2019continued` for more information.
 
     References:
-        [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,
-        Scholbrock, A., Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K
-        , van Dam, J , Bay, C., Mudafort, R., Lopez, H., Skopek, J., Scott, M.,
-        Ryan, B., Guernsey, C., and Brake, D.: Initial results from a field
-        campaign of wake steering applied at a commercial wind farm – Part 1,
-        Wind Energ. Sci., 4, 273–285, https://doi.org/10.5194/wes-4-273-2019,
-        2019.
-
-        [2]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
-        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
-        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
-        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
-        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
-        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: er-
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -893,7 +873,7 @@ def calculate_balanced_energy_ratio_ws(reference_power_baseline,
     function is called and used to ensure a similar distribution of 
     wind speeds is used in the computation, per wind speed bin, for 
     baseline and controlled results.  Resulting arrays, including upper 
-    and lower uncertaintity bounds computed through bootstrapping, are 
+    and lower uncertainty bounds computed through bootstrapping, are 
     returned.  Note the reference turbine should not be the turbine 
     implementing control, but should be an unaffected nearby turbine, 
     or a synthetic power estimate from a measurement

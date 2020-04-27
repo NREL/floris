@@ -125,23 +125,14 @@ def energy_ratio(ref_pow_base, test_pow_base):
     energy ratio calculation for a particular wind direction bin.  Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
-    power estimate from a measurement.  See [1,2] for documentation of method
+    power estimate from a measurement.  See :cite:`ers-fleming2019initial` and 
+    :cite:`ers-fleming2019continued` for more information.
 
     References:
-        [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,
-        Scholbrock, A., Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K
-        , van Dam, J , Bay, C., Mudafort, R., Lopez, H., Skopek, J., Scott, M.,
-        Ryan, B., Guernsey, C., and Brake, D.: Initial results from a field
-        campaign of wake steering applied at a commercial wind farm – Part 1,
-        Wind Energ. Sci., 4, 273–285, https://doi.org/10.5194/wes-4-273-2019,
-        2019.
-
-        [2]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
-        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
-        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
-        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
-        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
-        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: ers-
 
     Args:
         ref_pow_base (np.array): Array of baseline reference turbine 
@@ -199,27 +190,18 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     function is called and used to ensure a similar distribution of 
     wind speeds is used in the computation, per wind direction bin, for 
     baseline and controlled results.  Resulting arrays, including upper 
-    and lower uncertaintity bounds computed through bootstrapping, are 
+    and lower uncertainty bounds computed through bootstrapping, are 
     returned.  Note the reference turbine should not be the turbine 
     implementing control, but should be an unaffected nearby turbine, 
-    or a synthetic power estimate from a measurement  See [1,2] for
-    documentation of method
+    or a synthetic power estimate from a measurement  See 
+    :cite:`ers-fleming2019initial` and 
+    :cite:`ers-fleming2019continued` for more information.
 
     References:
-        [1] Fleming, P., King, J., Dykes, K., Simley, E., Roadman, J.,
-        Scholbrock, A., Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K
-        , van Dam, J , Bay, C., Mudafort, R., Lopez, H., Skopek, J., Scott, M.,
-        Ryan, B., Guernsey, C., and Brake, D.: Initial results from a field
-        campaign of wake steering applied at a commercial wind farm – Part 1,
-        Wind Energ. Sci., 4, 273–285, https://doi.org/10.5194/wes-4-273-2019,
-        2019.
-
-        [2]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
-        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
-        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
-        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
-        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
-        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: ers-
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -246,8 +228,6 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             **lower_ratio_array_base** (*np.array*): Lower confidence bound of baseline energy ratio at each wind direction bin.
             **upper_ratio_array_base** (*np.array*): Upper confidence bound of baseline energy ratio at each wind direction bin.
             **counts_ratio_array_base** (*np.array*): Counts per wind direction bin in baseline.
-            
-
     """
 
     # Ensure that input arrays are np.ndarray
@@ -390,21 +370,19 @@ def plot_energy_ratio(reference_power_baseline,
     if label_pchange is None:
         label_pchange = 'Energy Gain'
 
-    ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, counts_ratio_array_base,  = calculate_balanced_energy_ratio(reference_power_baseline,
-                                                                                                                                                                                                                                                                                                                                                                             test_power_baseline,
-                                                                                                                                                                                                                                                                                                                                                                             wind_direction_array_baseline,
-                                                                                                                                                                                                                                                                                                                                                                             wind_direction_bins,
-                                                                                                                                                                                                                                                                                                                                                                             confidence=95,
-                                                                                                                                                                                                                                                                                                                                                                             n_boostrap=None,
-                                                                                                                                                                                                                                                                                                                                                                             wind_direction_bin_p_overlap=wind_direction_bin_p_overlap,
-                                                                                                                                                                                                                                                                                                                                                                             )
+    ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, \
+        counts_ratio_array_base,  = calculate_balanced_energy_ratio \
+            (reference_power_baseline, test_power_baseline, \
+                wind_direction_array_baseline, wind_direction_bins, \
+                    confidence=95,n_boostrap=None, \
+                        wind_direction_bin_p_overlap = 
+                        wind_direction_bin_p_overlap, )
 
     if plot_simple:
         ax.plot(wind_direction_bins, ratio_array_base,
                 label=label_array[0], color=base_color, ls='--')
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
-
 
     else:
 

@@ -65,15 +65,14 @@ def calculate_balanced_wake_loss(reference_power_baseline,
                                     wind_direction_array_controlled
                                     ):
     """
-    Calculate balanced wake loss. See [1] for documentation of method.
+    Calculate balanced wake loss. See :cite:`erl-fleming2019continued` for more 
+    information.
 
     References:
-        [1]  Fleming, P., King, J., Simley, E., Roadman, J., Scholbrock, A.,
-        Murphy, P., Lundquist, J. K., Moriarty, P., Fleming, K., van Dam, J.,
-        Bay, C., Mudafort, R., Jager, D., Skopek, J., Scott, M., Ryan, B.,
-        Guernsey, C., and Brake, D.: Continued Results from a Field Campaign of
-        Wake Steering Applied at a Commercial Wind Farm: Part 2, Wind Energ.
-        Sci. Discuss., https://doi.org/10.5194/wes-2019-104, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: erl-
 
     Args:
         reference_power_baseline (np.array): Power of reference turbine in
@@ -195,7 +194,7 @@ def plot_balanced_wake_loss(reference_power_baseline,
 
     Returns:
         dataframe
-        # TODO ^^ inaccaurate.
+        # TODO ^^ inaccurate.
     """
 
     # Get the result frame
