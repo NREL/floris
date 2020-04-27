@@ -1,14 +1,16 @@
 # Copyright 2020 NREL
-
+ 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
-
+ 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+ 
+# See https://floris.readthedocs.io for documentation
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,19 +23,19 @@ except ImportError:
 
 class Optimization():
     """
-    Base optimization class.
-
-    Args:
-        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
-            Interface from FLORIS to the tools package.
-
-    Returns:
-        Optimization: An instantiated Optimization object.
+    Optimization is the base optimization class for
+    `~.tools.optimization.scipy` subclasses. Contains some common
+    methods and properties that can be used by the individual optimization
+    classes.
     """
-
     def __init__(self, fi):
         """
-        Instantiate Optimization object and its parameters.
+        Initializes an Optimization object by assigning a
+        FlorisInterface object. 
+
+        Args:
+            fi (:py:class:`~.tools.floris_interface.FlorisInterface`):    
+                Interface used to interact with the Floris object.
         """
         self.fi = fi
 
@@ -53,11 +55,10 @@ class Optimization():
     @property
     def nturbs(self):
         """
-        This property returns the number of turbines in the FLORIS 
-        object.
+        Number of turbines in the :py:class:`~.farm.Farm` object.
 
         Returns:
-            nturbs (int): The number of turbines in the FLORIS object.
+            int
         """
         self._nturbs = len(self.fi.floris.farm.turbine_map.turbines)
         return self._nturbs
