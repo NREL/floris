@@ -1,14 +1,16 @@
 # Copyright 2020 NREL
-
+ 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
-
+ 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+ 
+# See https://floris.readthedocs.io for documentation
 
 from .optimization import Optimization
 from scipy.optimize import minimize
@@ -18,8 +20,9 @@ import matplotlib.pyplot as plt
 
 class LayoutOptimization(Optimization):
     """
-    Sub class of the :py:class`floris.tools.optimization.Optimization`
-    object class that performs layout optimization.
+    Layout is a subclass of the 
+    :py:class:`floris.tools.optimization.scipy.optimization.Optimization` class
+    that is used to perform layout optimization.
     """
 
     def __init__(self, fi, boundaries,
@@ -33,39 +36,40 @@ class LayoutOptimization(Optimization):
                            opt_method='SLSQP',
                            opt_options=None):
         """
-        Instantiate LayoutOptimization object and parameter values.
+        Instantiate LayoutOptimization object with a FlorisInterface object and
+        assign parameter values.
         
         Args:
             fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
-                Interface from FLORIS to the tools package.
+                Interface used to interact with the Floris object.
             boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices. Defaults to None.
-            wd (np.array): An array of wind directions. 
-                Defaults to None.
-            ws (np.array): An array of wind speeds. Defaults 
-                to None.
-            freq (np.array): An array of wind direction 
-                frequency values. Defaults to None.
-            AEP_initial (float): Initial Annual Energy 
-                Production used in normalizing optimization. Defaults 
-                to None. Initializes to the AEP of the current FLORIS 
-                object.
+                represent the boundary's vertices (m).
+            wd (np.array): An array of wind directions (deg).
+            ws (np.array): An array of wind speeds (m/s).
+            freq (np.array): An array of the frequencies of occurance
+                correponding to each pair of wind direction and wind speed
+                values.
+            AEP_initial (float): The initial Annual Energy 
+                Production used for normalization in the optimization (Wh)
+                (TODO: Is Watt-hours the correct unit?).
             x0 (iterable, optional): The initial turbine locations, 
                 ordered by x-coordinate and then y-coordiante 
-                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]). Defaults to 
-                None. Initializes to the current turbine locations.
+                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]) (m). If none are
+                provided, x0 initializes to the current turbine locations.
+                Defaults to None. 
             bnds (iterable, optional): Bounds for the optimization 
-                variables (pairs of min/max values for each variable). 
-                Defaults to None. Initializes to the min. and max. 
-                values of the boundaries iterable.
+                variables (pairs of min/max values for each variable (m)). If
+                none are specified, they are set to the min. and max. of the
+                boundaries iterable. Defaults to None.
             min_dist (float, optional): The minimum distance to be 
-                maitained between turbines during the optimization. 
-                Defaults to None. Initializes to 2 rotor diamters.
-            opt_method (str, optional): The optimization method for 
-                scipy.optimize.minize to use. Defaults to None. 
-                Initializes to 'SLSQP'.
-            opt_options (dict, optional): Dicitonary for setting the 
-                optimization options. Defaults to None.
+                maintained between turbines during the optimization (m). If not
+                specified, initializes to 2 rotor diameters. Defaults to None. 
+            opt_method (str, optional): The optimization method used by 
+                scipy.optimize.minize. Defaults to 'SLSQP'.
+            opt_options (dict, optional): Optimization options used by 
+                scipy.optimize.minize. If none are specified, they are set to
+                {'maxiter': 100, 'disp': True, 'iprint': 2, 'ftol': 1e-9}.
+                Defaults to None.
         """
         super().__init__(fi)
         self.epsilon = np.finfo(float).eps
@@ -245,11 +249,13 @@ class LayoutOptimization(Optimization):
 
     def optimize(self):
         """
-        Find optimized layout of wind turbines for power production given
-        fixed atmospheric conditions (wind speed, direction, etc.).
+        This method finds the optimized layout of wind turbines for power
+        production given the provided frequencies of occurance of wind
+        conditions (wind speed, direction).
         
         Returns:
-            opt_locs (iterable): optimized locations of each turbine.
+            opt_locs (iterable): A list of the optimized locations of each
+            turbine (m).
         """
         print('=====================================================')
         print('Optimizing turbine layout...')
@@ -278,38 +284,35 @@ class LayoutOptimization(Optimization):
                            opt_method=None,
                            opt_options=None):
         """
-        Reintializes parameter values for the optimization.
-        
-        This method reinitializes the optimization parameters and 
-        bounds to the supplied values or uses what is currently stored.
+        This method reinitializes any optimization parameters that are
+        specified. Otherwise, the current parameter values are kept.
         
         Args:
             boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices. Defaults to None.
-            wd (np.array, optional): An array of wind directions. 
-                Defaults to None.
-            ws (np.array, optional): An array of wind speeds. Defaults 
-                to None.
-            freq (np.array, optional): An array of wind direction 
-                frequency values. Defaults to None.
-            AEP_initial (float, optional): Initial Annual Energy 
-                Production used in normalizing optimization. Defaults 
-                to None. Initializes to the AEP of the current FLORIS 
-                object.
+                represent the boundary's vertices (m). Defaults to None.
+            wd (np.array): An array of wind directions (deg). Defaults to None.
+            ws (np.array): An array of wind speeds (m/s). Defaults to None.
+            freq (np.array): An array of the frequencies of occurance
+                correponding to each pair of wind direction and wind speed
+                values. Defaults to None.
+            AEP_initial (float): The initial Annual Energy 
+                Production used for normalization in the optimization (Wh). If
+                not specified, initializes to the AEP of the current Floris 
+                object. Defaults to None.
             x0 (iterable, optional): The initial turbine locations, 
-                ordered by x-coordinate and then y-coordiante 
-                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]). Defaults to 
-                None. Initializes to the current turbine locations.
+                ordered by x-coordinate and then y-coordiante (ie. [x1, x2, ...
+                , xn, y1, y2, ..., yn] (m)). If none are provided, x0
+                initializes to the current turbine locations. Defaults to None. 
             bnds (iterable, optional): Bounds for the optimization 
-                variables (pairs of min/max values for each variable). 
-                Defaults to None. Initializes to the min. and max. 
-                values of the boundaries iterable.
-            min_dist (float, optional): The minimum distance to be 
-                maitained between turbines during the optimization. 
-                Defaults to None. Initializes to 2 rotor diameters.
+                variables (pairs of min/max values for each variable (m)). If
+                none are specified, they are set to the min. and max. of the
+                boundaries iterable. Defaults to None.
+            min_dist (float, optional): The minimum distance to be maintained
+                between turbines during the optimization (m). If not specified,
+                initializes to 2 rotor diameters. Defaults to None.
             opt_method (str, optional): The optimization method for 
-                scipy.optimize.minize to use. Defaults to None. 
-                Initializes to 'SLSQP'.
+                scipy.optimize.minize to use. If none is specified, initializes
+                to 'SLSQP'. Defaults to None.
             opt_options (dict, optional): Dicitonary for setting the 
                 optimization options. Defaults to None.
         """
@@ -358,7 +361,8 @@ class LayoutOptimization(Optimization):
 
     def plot_layout_opt_results(self):
         """
-        Method to plot the old and new locations of the layout optimization.
+        This method plots the original and new locations of the turbines in a
+        wind farm after layout optimization.
         """
         locsx_old = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
                      for valx in self.x0[0:self.nturbs]]

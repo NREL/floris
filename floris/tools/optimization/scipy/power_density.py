@@ -1,14 +1,16 @@
 # Copyright 2020 NREL
-
+ 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
-
+ 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+ 
+# See https://floris.readthedocs.io for documentation
 
 from .layout import LayoutOptimization
 from scipy.optimize import minimize
@@ -17,6 +19,11 @@ import matplotlib.pyplot as plt
 
 
 class PowerDensityOptimization(LayoutOptimization):
+    """
+    PowerDensityOptimization is a subclass of the 
+    :py:class:`floris.tools.optimization.scipy.layout.LayoutOptimization` class
+    that performs power density optimization.
+    """
     def __init__(self, fi, boundaries,
                            wd,
                            ws,
@@ -28,6 +35,41 @@ class PowerDensityOptimization(LayoutOptimization):
                            min_dist=None,
                            opt_method='SLSQP',
                            opt_options=None):
+        """
+        Instantiate PowerDensityOptimization object with a FlorisInterface
+        object and assigns parameter values.
+        
+        Args:
+            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
+                Interface used to interact with the Floris object.
+            wd (np.array): An array of wind directions (deg).
+            ws (np.array): An array of wind speeds (m/s).
+            freq (np.array): An array of the frequencies of occurance
+                correponding to each pair of wind direction and wind speed
+                values.
+            AEP_initial (float): The initial Annual Energy 
+                Production used for normalization in the optimization (Wh)
+                (TODO: Is Watt-hours the correct unit?).
+            yawbnds: TODO: This parameter isn't used. Remove it? 
+            x0 (iterable, optional): The initial turbine locations, 
+                ordered by x-coordinate and then y-coordiante 
+                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]) (m). If none are
+                provided, x0 initializes to the current turbine locations.
+                Defaults to None. 
+            bnds (iterable, optional): Bounds for the optimization 
+                variables (pairs of min/max values for each variable (m)). If
+                none are specified, they are set to (0, 1) for each turbine.
+                Defaults to None. TODO: Explain significance of (0, 1).
+            min_dist (float, optional): The minimum distance to be 
+                maintained between turbines during the optimization (m). If not
+                specified, initializes to 4 rotor diameters. Defaults to None. 
+            opt_method (str, optional): The optimization method used by 
+                scipy.optimize.minize. Defaults to 'SLSQP'.
+            opt_options (dict, optional): Optimization options used by 
+                scipy.optimize.minize. If none are specified, they are set t
+                {'maxiter': 100, 'disp': True, 'iprint': 2, 'ftol': 1e-9}.
+                Defaults to None.
+        """
 
         super().__init__(fi, boundaries,
                          wd,
@@ -141,13 +183,16 @@ class PowerDensityOptimization(LayoutOptimization):
         return opt_results
 
     def optimize(self):
-        # TODO: update docs
         """
-        Find optimized layout of wind turbines for power production given
-        fixed atmospheric conditions (wind speed, direction, etc.).
+        This method finds the optimized layout of wind turbines for power
+        production given the provided frequencies of occurance of wind
+        conditions (wind speed, direction).
+
+        TODO: update the doc
         
         Returns:
-            opt_locs (iterable): optimized locations of each turbine.
+            iterable: A list of the optimized x, y locations of each
+            turbine (m).
         """
         print('=====================================================')
         print('Optimizing turbine layout...')
@@ -177,40 +222,41 @@ class PowerDensityOptimization(LayoutOptimization):
                            opt_method=None,
                            opt_options=None):
         """
-        Reintializes parameter values for the optimization.
-        
-        This method reinitializes the optimization parameters and 
-        bounds to the supplied values or uses what is currently stored.
+        This method reinitializes any optimization parameters that are
+        specified. Otherwise, the current parameter values are kept.
         
         Args:
             boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices. Defaults to None.
-            wd (np.array, optional): An array of wind directions. 
-                Defaults to None.
-            ws (np.array, optional): An array of wind speeds. Defaults 
+                represent the boundary's vertices (m). Defaults to None.
+            yawbnds (iterable): A list of the min. and max. yaw offset that is
+                allowed during the optimization (deg). If none are specified,
+                initialized to (0, 25.0). Defaults to None.
+            wd (np.array): An array of wind directions (deg). Defaults to None.
+            ws (np.array): An array of wind speeds (m/s). Defaults to None.
+            freq (np.array): An array of the frequencies of occurance
+                correponding to each pair of wind direction and wind speed
+                values. Defaults to None.
+            AEP_initial (float): The initial Annual Energy 
+                Production used for normalization in the optimization (Wh)
+                (TODO: Is Watt-hours the correct unit?). If not specified,
+                initializes to the AEP of the current Floris object. Defaults
                 to None.
-            freq (np.array, optional): An array of wind direction 
-                frequency values. Defaults to None.
-            AEP_initial (float, optional): Initial Annual Energy 
-                Production used in normalizing optimization. Defaults 
-                to None. Initializes to the AEP of the current FLORIS 
-                object.
             x0 (iterable, optional): The initial turbine locations, 
                 ordered by x-coordinate and then y-coordiante 
-                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]). Defaults to 
-                None. Initializes to the current turbine locations.
+                (ie. [x1, x2, ..., xn, y1, y2, ..., yn]) (m). If none are
+                provided, x0 initializes to the current turbine locations.
+                Defaults to None. 
             bnds (iterable, optional): Bounds for the optimization 
-                variables (pairs of min/max values for each variable). 
-                Defaults to None. Initializes to the min. and max. 
-                values of the boundaries iterable.
+                variables (pairs of min/max values for each variable (m)). If
+                none are specified, they are set to (0, 1) for each turbine.
+                Defaults to None.
             min_dist (float, optional): The minimum distance to be 
-                maitained between turbines during the optimization. 
-                Defaults to None. Initializes to 2 rotor diameters.
-            opt_method (str, optional): The optimization method for 
-                scipy.optimize.minize to use. Defaults to None. 
-                Initializes to 'SLSQP'.
-            opt_options (dict, optional): Dicitonary for setting the 
-                optimization options. Defaults to None.
+                maintained between turbines during the optimization (m). If not
+                specified, initializes to 4 rotor diameters. Defaults to None. 
+            opt_method (str, optional): The optimization method used by 
+                scipy.optimize.minize. Defaults to None.
+            opt_options (dict, optional): Optimization options used by 
+                scipy.optimize.minize. Defaults to None.
         """
         if boundaries is not None:
             self.boundaries = boundaries
@@ -271,6 +317,16 @@ class PowerDensityOptimization(LayoutOptimization):
                                     self.layout_x_orig + self.layout_y_orig)
 
     def find_layout_area(self, locs):
+        """
+        This method returns the area occupied by the wind farm.
+
+        Args:
+            locs (iterable): A list of the turbine coordinates, organized as
+                [x1, x2, ..., xn, y1, y2, ..., yn] (m).
+
+        Returns:
+            float: The area occupied by the wind farm (m^2).
+        """
         locsx = locs[0:self.nturbs]
         locsy = locs[self.nturbs:]
 
@@ -284,6 +340,15 @@ class PowerDensityOptimization(LayoutOptimization):
         return area
 
     def convex_hull(self, points):
+        """
+        TODO: Describe this method, not quite sure what it is doing.
+
+        Args:
+            points (iterable): TODO: Description.
+
+        Returns:
+            list: TODO: Description.
+        """
         # find two hull points, U, V, and split to left and right search
         u = min(points, key=lambda p: p[0])
         v = max(points, key=lambda p: p[0])
@@ -293,6 +358,16 @@ class PowerDensityOptimization(LayoutOptimization):
         return [v] + self.extend(u, v, left) + [u] + self.extend(v, u, right) + [v]
 
     def polygon_area(self, x, y):
+        """
+        TODO: Provide description.
+
+        Args:
+            x (iterable): TODO: description.
+            y (iterable): TODO: description.
+
+        Returns:
+            float: TODO: descrption.
+        """
         # coordinate shift
         x_ = x - x.mean()
         y_ = y - y.mean()
@@ -302,10 +377,12 @@ class PowerDensityOptimization(LayoutOptimization):
         return 0.5*np.abs(main_area + correction)
 
     def split(self, u, v, points):
+        # TODO: Provide description of this method.
         # return points on left side of UV
         return [p for p in points if np.cross(p - u, v - u) < 0]
 
     def extend(self, u, v, points):
+        # TODO: Provide description of this method.
         if not points:
             return []
 
@@ -316,7 +393,8 @@ class PowerDensityOptimization(LayoutOptimization):
 
     def plot_opt_results(self):
         """
-        Method to plot the old and new locations of the layout opitimization.
+        This method plots the original and new locations of the turbines in a
+        wind farm after layout optimization.
         """
         locsx_old = [self._unnorm(valx, self.bndx_min, self.bndx_max) \
                      for valx in self.x0[0:self.nturbs]]

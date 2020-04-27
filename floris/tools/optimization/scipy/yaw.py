@@ -20,9 +20,7 @@ import numpy as np
 
 class YawOptimization(Optimization):
     """
-    YawOptimization optimizes the yaw angles of all turbines in a Floris
-    Farm for a single set of inflow conditions using the SciPy optimize
-    package.
+    YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.Optimization` that is used to optimize the yaw angles of all turbines in a Floris Farm for a single set of inflow conditions using the SciPy optimize package.
     """
 
     def __init__(self, fi, minimum_yaw_angle=0.0,
