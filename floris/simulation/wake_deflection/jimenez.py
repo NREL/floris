@@ -17,11 +17,15 @@ import numpy as np
 
 class Jimenez(VelocityDeflection):
     """
-    Subclass of the
-    :py:class:`floris.simulation.wake_deflection.VelocityDeflection`
-    object class. Parameters required for Jimenez wake model:
+    Jiménez wake deflection model, dervied from
+    :cite:`jdm-jimenez2010application`.
+
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: jdm-
     """
-    
     default_parameters = {
         "kd": 0.05,
         "ad": 0.0,
@@ -30,14 +34,22 @@ class Jimenez(VelocityDeflection):
 
     def __init__(self, parameter_dictionary):
         """
-        Instantiate Jimenez object and pass function paramter values.
+        Stores model parameters for use by methods.
 
         Args:
-            parameter_dictionary (dict): input dictionary with the following key-value pairs:
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
 
-                - kd #TODO What is this parameter for?
-                - ad #TODO What is this parameter for?
-                - bd #TODO What is this parameter for?
+                    -   **kd** (*float*): Parameter used to determine the skew
+                        angle of the wake.
+                    -   **ad** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
+                    -   **bd** (*float*): Additional tuning parameter to modify
+                        the wake deflection with a lateral offset.
+                        Defaults to 0.
+
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
@@ -50,15 +62,14 @@ class Jimenez(VelocityDeflection):
     def function(self, x_locations, y_locations, z_locations, turbine, coord,
                  flow_field):
         """
-        This function defines the angle at which the wake deflects in
-        relation to the yaw of the turbine. This is coded as defined in
-        the Jimenez et. al. paper.
+        Calcualtes the deflection field of the wake in relation to the yaw of
+        the turbine. This is coded as defined in [1].
 
         Args:
             x_locations (np.array): streamwise locations in wake
             y_locations (np.array): spanwise locations in wake
             z_locations (np.array): vertical locations in wake
-                (not used in Jimenez)
+                (not used in Jiménez)
             turbine (:py:class:`floris.simulation.turbine.Turbine`):
                 Turbine object
             coord
@@ -79,13 +90,8 @@ class Jimenez(VelocityDeflection):
         x_locations = x_locations - coord.x1
 
         # yaw displacement
-        yYaw_init = ( xi_init \
-            * ( 15 * (2 * self.kd * x_locations \
-            / turbine.rotor_diameter + 1)**4. + xi_init**2. ) \
-            / ((30 * self.kd / turbine.rotor_diameter) \
-            * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**5.)) \
-            - (xi_init * turbine.rotor_diameter \
-            * (15 + xi_init**2.) / (30 * self.kd))
+        yYaw_init = ( xi_init * ( 15 * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**4. + xi_init**2. ) / ((30 * self.kd / turbine.rotor_diameter) 
+            * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**5.)) - (xi_init * turbine.rotor_diameter * (15 + xi_init**2.) / (30 * self.kd))
 
         # corrected yaw displacement with lateral offset
         deflection = yYaw_init + self.ad + self.bd * x_locations
@@ -100,13 +106,18 @@ class Jimenez(VelocityDeflection):
     @property
     def kd(self):
         """
-        ... #TODO: Update docstring
+        Parameter used to determine the skew angle of the wake.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            kd (float, int): ... #TODO: Update docstring
+            value (float): Value to set.
 
         Returns:
-            float: ... #TODO: Update docstring
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._kd
 
@@ -128,13 +139,19 @@ class Jimenez(VelocityDeflection):
     @property
     def ad(self):
         """
-        ... #TODO: Update docstring
+        Parameter available for additional tuning of the wake deflection with a
+        lateral offset.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            ad (float, int): ... #TODO: Update docstring
+            value (float): Value to set.
 
         Returns:
-            float: ... #TODO: Update docstring
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._ad
 
@@ -156,13 +173,19 @@ class Jimenez(VelocityDeflection):
     @property
     def bd(self):
         """
-        ... #TODO: Update docstring
+        Parameter available for additional tuning of the wake deflection with a
+        lateral offset.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            bd (float, int): ... #TODO: Update docstring
+            value (float): Value to set.
 
         Returns:
-            float: ... #TODO: Update docstring
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._bd
 

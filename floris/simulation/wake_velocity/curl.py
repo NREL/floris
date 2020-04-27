@@ -19,76 +19,21 @@ from scipy.ndimage.filters import gaussian_filter
 
 class Curl(VelocityDeficit):
     """
-    Curl is a wake velocity subclass that contains objects related to 
-    the Curled Wake model.
+    The Curl model class computes the wake velocity deficit based on the curled
+    wake model developed in 
+    :cite:`cvm-martinez2019aerodynamics`. The curled wake 
+    model includes the change in the shape of the wake profile under yawed 
+    conditions due to vortices that are shed from the rotor plane of a yawed 
+    turbine. For more information about the curled wake model theory, see 
+    :cite:`cvm-martinez2019aerodynamics`. For more 
+    information about the impact of the curled wake behavior on wake steering, 
+    see :cite:`cvm-fleming2018simulation`.
 
-    Curl is a subclass of 
-    :py:class:`floris.simulation.wake_velocity.VelocityDeficit` that is 
-    used to compute the wake velocity deficit based on the curled wake 
-    model developed by Martinez-Tossas et al. The curled wake model 
-    includes the change in the shape of the wake profile under yawed 
-    conditions due to vortices that are shed from the rotor plane of a 
-    yawed turbine. The model includes the impact of turbulence 
-    intensity, wind veer, and the tip-speed ratio of the turbine. For 
-    more information about the curled wake model theory, see: 
-    Martinez-Tossas, L. A. et al. "The aerodynamics of the curled wake: 
-    a simplified model in view of flow control." *Wind Energy Science*, 
-    2019. 
-
-    For more information about the impact of the curled wake behavior 
-    on wake steering, see: Fleming, P. et al. "A simulation study 
-    demonstreating the importance of large-scale trailing vortices in 
-    wake steering." *Wind Energy Science*, 2018. 
-
-    Args:
-        parameter_dictionary: A dictionary as generated from the 
-            input_reader; it should have the following key-value pairs:
-
-            -   **turbulence_intensity**: A dictionary containing the 
-                following key-value pairs used to calculate wake-added 
-                turbulence intensity from an upstream turbine, using 
-                the approach of Crespo, A. and Herna, J. "Turbulence 
-                characteristics in wind-turbine wakes." *J. Wind Eng 
-                Ind Aerodyn*. 1996.:
-
-                -   **initial**: A float that is the initial ambient 
-                    turbulence intensity, expressed as a decimal 
-                    fraction.
-                -   **constant**: A float that is the constant used to 
-                    scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor 
-                    exponent used in in the calculation of wake-added 
-                    turbulence.
-                -   **downstream**: A float that is the exponent 
-                    applied to the distance downtream of an upstream 
-                    turbine normalized by the rotor diameter used in 
-                    the calculation of wake-added turbulence.
-
-            -   **curl**: A dictionary containing the following 
-                key-value pairs:
-
-                -   **model_grid_resolution**: A list of three floats 
-                    that define the flow field grid resolution in the x,
-                    y, and z directions used for the curl wake model 
-                    calculations. The grid resolution is specified as 
-                    the number of grid points in the flow field domain 
-                    in the x, y, and z directions. 
-                -   **initial_deficit**: A float that, along with the 
-                    freestream velocity and the turbine's induction 
-                    factor, is used to determine the initial wake 
-                    velocity deficit immediately downstream of the 
-                    rotor.
-                -   **dissipation**: A float that is a scaling 
-                    parameter that determines the amount of dissipation 
-                    of the vortices with downstream distance.
-                -   **veer_linear**: A float that describes the amount 
-                    of linear wind veer. This parameter defines the 
-                    linear change in the V velocity between the ground 
-                    and hub height, and therefore determines the slope 
-                    of the change in the V velocity with height. 
-
-    Returns:
-        An instantiated Curl object.
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: cvm-
     """
 
     default_parameters = {
@@ -107,6 +52,44 @@ class Curl(VelocityDeficit):
     }
 
     def __init__(self, parameter_dictionary):
+        """
+        Stores model parameters for use by methods.
+
+        Args:
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
+
+                -   **model_grid_resolution** (*list*): A list of three floats  
+                    that define the flow field grid resolution in the x, y, and
+                    z directions used for the curl wake model calculations. The
+                    grid resolution is specified as the number of grid points
+                    in the flow field domain in the x, y, and z directions.
+                -   **initial_deficit** (*float*): Parameter that, along with
+                    the freestream velocity and the turbine's induction factor,
+                    is used to determine the initial wake velocity deficit
+                    immediately downstream of the rotor.
+                -   **dissipation** (*float*): Parameter that is a scaling 
+                    parameter that determines the amount of dissipation 
+                    of the vortices with downstream distance.
+                -   **veer_linear** (*float*): Parameter that describes the
+                    amount of linear wind veer. This parameter defines the
+                    linear change in the V velocity between the ground and hub
+                    height, and therefore determines the slope of the change in
+                    the V velocity with height.
+                -   **initial** (*float*): Parameter that is the initial
+                    ambient turbulence intensity, expressed as a decimal
+                    fraction.
+                -   **constant** (*float*): Parameter that is the constant
+                    used to scale the wake-added turbulence intensity.
+                -   **ai** (*float*): Parameter that is the axial induction
+                    factor exponent used in in the calculation of wake-added
+                    turbulence.
+                -   **downstream** (*float*): Parameter that is the exponent
+                    applied to the distance downstream of an upstream turbine
+                    normalized by the rotor diameter used in the calculation of
+                    wake-added turbulence.
+        """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "curl"
@@ -131,40 +114,37 @@ class Curl(VelocityDeficit):
         comprising the wind farm flow field.
 
         Args:
-            x_locations: An array of floats that contains the 
-                streamwise direction grid coordinates of the flow field 
+            x_locations (np.array): An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
                 domain (m).
-            y_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the direction 
-                normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the vertical 
+            y_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the direction normal to
+                x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
                 direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that 
+            turbine (:py:obj:`floris.simulation.turbine`): Object that
                 represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the turbine creating the 
-                wake (m).
-            deflection_field: An array of floats that contains the 
-                amount of wake deflection in meters in the y direction 
-                at each grid point of the flow field.
-            flow_field: A :py:class:`floris.simulation.flow_field` 
-                object containing the flow field information for the 
-                wind farm.
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
+                the coordinate of the turbine creating the wake (m).
+            deflection_field (np.array): An array of floats that contains the 
+                amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): Object
+                containing the flow field information for the wind farm.
 
         Returns:
-            Three arrays of floats that contain the wake velocity 
-            deficit in m/s created by the turbine relative to the 
-            freestream velocities for the u, v, and w components, 
-            aligned with the x, y, and z directions, respectively. The 
-            three arrays contain the velocity deficits at each grid 
-            point in the flow field. 
+            np.array, np.array, np.array:
+                Three arrays of floats that contain the wake velocity
+                deficit in m/s created by the turbine relative to the freestream
+                velocities for the U, V, and W components, aligned with the
+                x, y, and z directions, respectively. The three arrays contain
+                the velocity deficits at each grid point in the flow field.
         """
-
         # parameters available for tuning to match high-fidelity data
-        # parameter for defining initial velocity deficity in the
+        # parameter for defining initial velocity deficit in the
         # flow field at a turbine
-        intial_deficit = self.initial_deficit
+        initial_deficit = self.initial_deficit
         # scaling parameter that adjusts the amount of dissipation
         # of the vortexes
         dissipation = self.dissipation
@@ -196,7 +176,7 @@ class Curl(VelocityDeficit):
 
         # add initial velocity deficit at the rotor to the flow field
         uw_initial = -1 * (flow_field.wind_map.grid_wind_speed * \
-                           intial_deficit * turbine.aI)
+                           initial_deficit * turbine.aI)
         uw[idx, :, :] = gaussian_filter(
             uw_initial[idx,:,:] * (r1 <= turbine.rotor_diameter / 2), sigma=1)
 
@@ -217,7 +197,7 @@ class Curl(VelocityDeficit):
         HH = turbine.hub_height     # hub height of the turbine
         # the free-stream velocity of the flow field
         Uinf = flow_field.wind_map.grid_wind_speed[idx,:,:]
-        # the tip-speed ratior of the turbine
+        # the tip-speed ratio of the turbine
         TSR = turbine.tsr
         # the axial induction factor of the turbine
         aI = turbine.aI
@@ -429,17 +409,20 @@ class Curl(VelocityDeficit):
     @property
     def model_grid_resolution(self):
         """
-        A list of three floats that define the flow field grid resolution in
-            the x, y, and z directions used for the curl wake model
-            calculations. The grid resolution is specified as the number of
-            grid points in the flow field domain in the x, y, and z directions.
+        The flow field grid resolution in the x, y, and z directions. The
+        grid resolution is specified as the number of grid points in the
+        flow field domain in the x, y, and z directions.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            model_grid_resolution (list): Flow field grid resolution in
-                [x, y, z] directions.
+            value (list): Value to set.
 
         Returns:
-            float: Flow field grid resolution in [x, y, z] directions.
+            list(float): Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._model_grid_resolution
 
@@ -474,14 +457,19 @@ class Curl(VelocityDeficit):
     def initial_deficit(self):
         """
         Parameter that, along with the freestream velocity and the turbine's
-            induction factor, is used to determine the initial wake velocity
-            deficit immediately downstream of the rotor.
+        induction factor, is used to determine the initial wake velocity
+        deficit immediately downstream of the rotor.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            initial_deficit (float, int): Curled wake model coefficient.
+            value (float): Value to set.
 
         Returns:
-            float: Curled wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._initial_deficit
 
@@ -505,13 +493,18 @@ class Curl(VelocityDeficit):
     def dissipation(self):
         """
         A scaling parameter that determines the amount of dissipation of
-            the vortices with downstream distance.
+        the vortices with downstream distance.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            dissipation (float, int): Scaling parameter for vortex dissipation.
+            value (float): Value to set.
 
         Returns:
-            float: Scaling parameter for vortex dissipation.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._dissipation
 
@@ -535,16 +528,19 @@ class Curl(VelocityDeficit):
     def veer_linear(self):
         """
         This parameter defines the linear change in the V velocity between the
-            ground and hub height, and therefore determines the slope of the
-            change in the V velocity with height.
+        ground and hub height, and therefore determines the slope of the
+        change in the V velocity with height.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
-            veer_linear (float, int): The linear change in the V velocity
-                between the ground and hub height.
+            value (float): Value to set.
 
         Returns:
-            float: The linear change in the V velocity between the ground and
-                hub height.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._veer_linear
 
