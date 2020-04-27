@@ -18,17 +18,23 @@ from .gaussian_model_base import GaussianModel
 
 class IshiharaQian(GaussianModel):
     """
-    IshiharaQian computes the wake velocity deficit based on the Gaussian
-    wake model with self-similarity and a near wake correction. It includes
-    a Gaussian wake velocity deficit profile in the y and z directions and
-    includes the effects of ambient turbulence, added turbulence
-    from upstream wakes, and wind shear and wind veer. For more info, see [1].
+    Ishihara is a wake velocity subclass that contains objects related to the
+    Gaussian wake model that include a near-wake correction.
 
+    Ishihara is a subclass of
+    :py:class:`floris.simulation.wake_velocity.VelocityDeficit` that is
+    used to compute the wake velocity deficit based on the Gaussian
+    wake model with self-similarity and a near wake correction. The Ishihara
+    wake model includes a Gaussian wake velocity deficit profile in the y and z
+    directions and includes the effects of ambient turbulence, added turbulence
+    from upstream wakes, as well as wind shear and wind veer. For more info,
+    see :cite:`iqv-qian2018new`.
+    
     References:
-        [1] Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based
-        analytical wake model for wind turbines considering ambient turbulence
-        intensities and thrust coefficient effects." *Journal of Wind
-        Engineering and Industrial Aerodynamics* 177 (2018): 275-292.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: iqv-
     """
     default_parameters = {
         "kstar": {
@@ -86,6 +92,7 @@ class IshiharaQian(GaussianModel):
                     calculation of wake-added turbulence.
                 -   **c** (*dict*): A dict that is near-wake coefficient used
                     in calculation of wake-added turbulence.
+
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)

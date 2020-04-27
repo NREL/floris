@@ -20,21 +20,20 @@ from scipy.ndimage.filters import gaussian_filter
 class Curl(VelocityDeficit):
     """
     The Curl model class computes the wake velocity deficit based on the curled
-    wake model developed in [1]. The curled wake model includes the change in
-    the shape of the wake profile under yawed conditions due to vortices that
-    are shed from the rotor plane of a yawed turbine. For more information
-    about the curled wake model theory, see [1]. For more information about the
-    impact of the curled wake behavior on wake steering, see [2].
+    wake model developed in 
+    :cite:`cvm-martinez2019aerodynamics`. The curled wake 
+    model includes the change in the shape of the wake profile under yawed 
+    conditions due to vortices that are shed from the rotor plane of a yawed 
+    turbine. For more information about the curled wake model theory, see 
+    :cite:`cvm-martinez2019aerodynamics`. For more 
+    information about the impact of the curled wake behavior on wake steering, 
+    see :cite:`cvm-fleming2018simulation`.
 
     References:
-        [1] Fleming, P., Annoni, J., Churchfield, M., Martinez-Tossas, L. A.,
-        Gruchalla, K., Lawson, M., & Moriarty, P., "A simulation study
-        demonstrating the importance of large-scale trailing vortices in wake
-        steering." *Wind Energy Science*, 2018.
-
-        [2] Martínez-Tossas, L.A., Annoni, J., Fleming, P., and
-        Churchfield, M., "The aerodynamics of the curled wake: A simplified
-        model in view of flow control." *Wind Energy Science*, 2019.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: cvm-
     """
 
     default_parameters = {
@@ -87,7 +86,7 @@ class Curl(VelocityDeficit):
                     factor exponent used in in the calculation of wake-added
                     turbulence.
                 -   **downstream** (*float*): Parameter that is the exponent
-                    applied to the distance downtream of an upstream turbine
+                    applied to the distance downstream of an upstream turbine
                     normalized by the rotor diameter used in the calculation of
                     wake-added turbulence.
         """
@@ -143,9 +142,9 @@ class Curl(VelocityDeficit):
                 the velocity deficits at each grid point in the flow field.
         """
         # parameters available for tuning to match high-fidelity data
-        # parameter for defining initial velocity deficity in the
+        # parameter for defining initial velocity deficit in the
         # flow field at a turbine
-        intial_deficit = self.initial_deficit
+        initial_deficit = self.initial_deficit
         # scaling parameter that adjusts the amount of dissipation
         # of the vortexes
         dissipation = self.dissipation
@@ -177,7 +176,7 @@ class Curl(VelocityDeficit):
 
         # add initial velocity deficit at the rotor to the flow field
         uw_initial = -1 * (flow_field.wind_map.grid_wind_speed * \
-                           intial_deficit * turbine.aI)
+                           initial_deficit * turbine.aI)
         uw[idx, :, :] = gaussian_filter(
             uw_initial[idx,:,:] * (r1 <= turbine.rotor_diameter / 2), sigma=1)
 
@@ -198,7 +197,7 @@ class Curl(VelocityDeficit):
         HH = turbine.hub_height     # hub height of the turbine
         # the free-stream velocity of the flow field
         Uinf = flow_field.wind_map.grid_wind_speed[idx,:,:]
-        # the tip-speed ratior of the turbine
+        # the tip-speed ratio of the turbine
         TSR = turbine.tsr
         # the axial induction factor of the turbine
         aI = turbine.aI

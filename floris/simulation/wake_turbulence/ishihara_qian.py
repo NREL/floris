@@ -16,18 +16,19 @@ from .base_wake_turbulence import WakeTurbulence
 
 class IshiharaQian(WakeTurbulence):
     """
-    Ishihara is a wake velocity subclass that is used to compute the wake
-    velocity deficit based on the Gaussian wake model with self-similarity and
-    a near wake correction. The Ishihara wake model includes a Gaussian wake
-    velocity deficit profile in the spanwise and vertical directions and
-    includes the effects of ambient turbulence, added turbulence from upstream
-    wakes, as well as wind shear and wind veer. For more info, see [1].
-
+    IshiharaQian is a wake velocity subclass that is used to compute the wake 
+    velocity deficit based on the Gaussian wake model with self-similarity and 
+    a near wake correction. The IshiharaQian wake model includes a Gaussian 
+    wake velocity deficit profile in the spanwise and vertical directions and 
+    includes the effects of ambient turbulence, added turbulence from upstream 
+    wakes, as well as wind shear and wind veer. For more info, see 
+    :cite:`iqt-qian2018new`.
+    
     References:
-        [1] Ishihara, Takeshi, and Guo-Wei Qian. "A new Gaussian-based
-        analytical wake model for wind turbines considering ambient turbulence
-        intensities and thrust coefficient effects." *Journal of Wind
-        Engineering and Industrial Aerodynamics* 177 (2018): 275-292.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: iqt-
     """
     default_parameters = {
         "kstar": {
@@ -119,68 +120,9 @@ class IshiharaQian(WakeTurbulence):
                 adding turbulence to the flow.
 
         Returns:
-            float: Wake-added turbulence from the current
-                wind turbine (**turbine**) at location specified
-                by (**coord_ti**).
+            float: Wake-added turbulence from the current wind turbine
+            (**turbine**) at location specified by (**coord_ti**).
         """
-        # # compute area overlap of wake on other turbines and update downstream
-        # # turbine turbulence intensities
-        # for coord_ti, turbine_ti in sorted_map:
-
-        #     if coord_ti.x1 > turbine_coord.x1 and np.abs(
-        #             turbine_coord.x2 -
-        #             coord_ti.x2) < 2 * turbine.rotor_diameter:
-        #         # only assess the effects of the current wake
-
-        #         # added turbulence model
-        #         ti_initial = turbine.turbulence_intensity
-
-        #         # turbine parameters
-        #         D = turbine.rotor_diameter
-        #         HH = turbine.hub_height
-        #         Ct = turbine.Ct
-
-        #         local_x = x_locations - turbine_coord.x1
-        #         local_y = y_locations - turbine_coord.x2
-        #         local_z = z_locations - turbine_coord.x3
-        #         # coordinate info
-        #         r = np.sqrt(local_y**2 + (local_z)**2)
-
-        #         def parameter_value_from_dict(pdict, Ct, ti_initial):
-        #             return pdict['const'] * Ct**(pdict['Ct']) * ti_initial**(
-        #                 pdict['TI'])
-
-        #         kstar = parameter_value_from_dict(self.kstar, Ct, ti_initial)
-        #         epsilon = parameter_value_from_dict(self.epsilon, Ct,
-        #                                             ti_initial)
-
-        #         d = parameter_value_from_dict(self.d, Ct, ti_initial)
-        #         e = parameter_value_from_dict(self.e, Ct, ti_initial)
-        #         f = parameter_value_from_dict(self.f, Ct, ti_initial)
-
-        #         k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
-        #         k1[r / D > 0.5] = 1.0
-
-        #         k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
-        #         k2[r / D > 0.5] = 0.0
-
-        #         # Representative wake width = \sigma / D
-        #         wake_width = kstar * (local_x / D) + epsilon
-
-        #         # Added turbulence intensity = \Delta I_1 (x,y,z)
-        #         delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH)**2
-        #         delta[local_z >= HH] = 0.0
-        #         ti_calculation = 1 / (
-        #             d + e * (local_x / D) + f * (1 + (local_x / D))**(-2)) * (
-        #                 (k1 * np.exp(-(r - D / 2)**2 /
-        #                              (2 * (wake_width * D)**2))) +
-        #                 (k2 * np.exp(-(r + D / 2)**2 /
-        #                              (2 * (wake_width * D)**2)))) - delta
-
-        #         # Update turbulence intensity of downstream turbines
-        #         turbine_ti.turbulence_intensity = np.sqrt(
-        #             ti_calculation**2 + flow_field.turbulence_intensity**2)
-
         # added turbulence model
         ti_initial = ambient_TI
 
@@ -222,9 +164,6 @@ class IshiharaQian(WakeTurbulence):
                                                (2 *
                                                 (wake_width * D)**2)))) - delta
 
-        # Update turbulence intensity of downstream turbines
-        # turbine_ti.turbulence_intensity = np.sqrt(
-        #     ti_calculation**2 + flow_field.turbulence_intensity**2)
         return ti_calculation
 
     def parameter_value_from_dict(pdict, Ct, ti_initial):

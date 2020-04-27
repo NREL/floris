@@ -16,8 +16,6 @@ Submodules
    floris.tools.cc_blade_utilities
    floris.tools.cut_plane
    floris.tools.energy_ratio
-   floris.tools.energy_ratio_ml_knr
-   floris.tools.energy_ratio_ml_rf
    floris.tools.energy_ratio_single
    floris.tools.energy_wake_loss
    floris.tools.floris_interface

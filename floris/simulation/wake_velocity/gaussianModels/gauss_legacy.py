@@ -20,31 +20,15 @@ class LegacyGauss(GaussianModel):
     """
     The LegacyGauss model ports the previous Gauss model to the new FLORIS
     framework of inheritance of the GaussianModel. It is based on the gaussian
-    wake model described in refs [1-5].
-
+    wake models described in :cite:`glvm-bastankhah2014new`,
+    :cite:`glvm-abkar2015influence`, :cite:`glvm-bastankhah2016experimental`,
+    :cite:`glvm-niayifar2016analytical`, and :cite:`glvm-dilip2017wind`.
+    
     References:
-        [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
-        wind-turbine wakes: A large-eddy simulation study." *Physics of
-        Fluids*, 2015.
-
-        [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
-        wind-turbine wakes." *Renewable Energy*, 2014.
-
-        [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
-        study of wind turbine wakes in yawed conditions." *J. Fluid
-        Mechanics*, 2016.
-
-        [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
-        A new approach for power prediction." *Energies*, 2016.
-
-        [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
-        blade pitch offset." *Energies*, 2017.
-
-    Raises:
-        ValueError: Invalid value type given for ka
-        ValueError: Invalid value type given for kb
-        ValueError: Invalid value type given for alpha
-        ValueError: Invalid value type given for beta
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: glvm-
     """
     default_parameters = {
         'ka': 0.38,

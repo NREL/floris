@@ -16,19 +16,15 @@ import numpy as np
 
 class Gauss(VelocityDeflection):
     """
-    The Gauss deflection model is a blend of the models described in [1] and
-    [2], calculating the deflection field in turbine wakes.
+    The Gauss deflection model is a blend of the models described in 
+    :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for
+    calculating the deflection field in turbine wakes.
 
     References:
-
-        [1] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
-        study of wind turbine wakes in yawed conditions." *J. Fluid
-        Mechanics*, 2016.
-
-        [2] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
-        , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
-        Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
-        https://doi.org/10.5194/wes-2020-3, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: gdm-
     """
     default_parameters = {
         "ka": 0.38,
@@ -98,8 +94,9 @@ class Gauss(VelocityDeflection):
     def function(self, x_locations, y_locations, z_locations, turbine, coord,
                  flow_field):
         """
-        Calculates the deflection field of the wake. See [1] and [2] for
-        details on the methods used.
+        Calculates the deflection field of the wake. See 
+        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` 
+        for details on the methods used.
 
         Args:
             x_locations (np.array): An array of floats that contains the

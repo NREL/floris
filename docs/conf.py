@@ -29,7 +29,8 @@ extensions = [
     'readthedocs_ext.readthedocs',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
-    'sphinx.ext.intersphinx'
+    'sphinx.ext.intersphinx',
+    'sphinxcontrib.bibtex'
 ]
 
 autosummary_generate = True

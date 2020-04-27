@@ -18,16 +18,14 @@ import numpy as np
 class MultiZone(VelocityDeficit):
     """
     The MultiZone model computes the wake velocity deficit based
-    on the original multi-zone FLORIS model. See [1,2] for more details.
+    on the original multi-zone FLORIS model. See 
+    :cite:`mvm-gebraad2014data,mvm-gebraad2016wind` for more details.
 
     References:
-        [1] Gebraad, P. M. O. et al., "A Data-driven model for wind plant power
-        optimization by yaw control." *Proc. American Control Conference*,
-        Portland, OR, 2014.
-
-        [2] Gebraad, P. M. O. et al., "Wind plant power optimization through
-        yaw control using a parametric model for wake effects - a CFD
-        simulation study." *Wind Energy*, 2016.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: mvm-
     """
     default_parameters = {
             "me": [

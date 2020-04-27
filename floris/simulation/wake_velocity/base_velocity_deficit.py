@@ -17,7 +17,7 @@ from ...utilities import cosd, sind, tand, setup_logger
 class VelocityDeficit():
     """
     Base VelocityDeficit object class. This class contains a method for getting
-    the relavent model parameters from the input dictionary, or for supplying
+    the relevant model parameters from the input dictionary, or for supplying
     default values if none are supplied.
     """
     def __init__(self, parameter_dictionary):

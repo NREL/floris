@@ -18,12 +18,13 @@ class CrespoHernandez(WakeTurbulence):
     CrespoHernandez is a wake-turbulence model that is used to compute
     additional variability introduced to the flow field by operation of a wind
     turbine. Implementation of the model follows the original formulation and
-    limitations outlined in [1].
-
+    limitations outlined in :cite:`cht-crespo1996turbulence`.
+    
     References:
-        [1] Crespo, A., and J. Hernandez. "Turbulence characteristics in 
-        wind-turbine wakes." *Journal of Wind Engineering and Industrial
-        Aerodynamics* 61.1 (1996): 71-85.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: cht-    
     """
     default_parameters = {
         "initial": 0.5,
