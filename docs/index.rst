@@ -29,11 +29,27 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 
 - Jensen model for velocity deficit
 - Jimenez model for wake deflection
-- Gauss model for wake deflection and velocity deficit
-- Multi zone model for wake deflection and velocity deficit
+- Multi zone model for velocity deficit
+- Gaussian models for wake deflection and velocity deficit
+- Gauss-Curl-Hybrid (GCH) model for second-order wake steering effects
 - Curl  model for wake deflection and velocity deficit
 
-More information on all of these models can be found in :ref:`theory`.
+Further, all wake models can now be overlayed onto spatially heterogenous
+inflows. More information on all models can be found in :ref:`theory`.
+
+FLORIS further includes a suite of design and analysis tools useful in wind farm
+control and co-designed layout optimization.  Examples include:
+
+- Methods for optimization and design of wind farm control and layout
+- Visualization methods for flow analysis
+- Methods for wind rose and annual energy production analysis
+- Methods for analysis of field campaigns of wind farm control
+- Coupling methods to other tools, including SOWFA and CC-Blade
+- Methods to model heterogenous atmospheric conditions
+
+Example applications of these tools are provided in the `examples/` folder, and
+it is highly recommended that new users begin with those in
+`examples/_getting_started`.
 
 See :cite:`ind-annoni2018analysis` for practical information on using floris as
 a modeling and simulation tool for controls research.
@@ -43,7 +59,6 @@ References:
         :style: unsrt
         :filter: docname in docnames
         :keyprefix: ind-
-
 
 Citation
 ========
