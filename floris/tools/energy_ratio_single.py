@@ -19,7 +19,8 @@ import pandas as pd
 
 def gaussian(x, mu, sig):
     """
-    Compute gaussian function, from https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function.
+    Compute gaussian function, from
+    https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function.
 
     Args:
         x (np.array): Input variable to Gaussian.

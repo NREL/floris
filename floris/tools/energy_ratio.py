@@ -231,17 +231,18 @@ def calculate_balanced_energy_ratio(
     """
     Calculate a balanced energy ratio for each wind direction bin.
 
-    Calculate a balanced energy ratio for each wind direction bin.  A 
-    reference and test turbine are provided for the ratio, as well as 
-    wind speed and wind directions. These data are further divided into 
-    baseline and controlled conditions.  The balanced energy ratio 
-    function is called and used to ensure a similar distribution of 
-    wind speeds is used in the computation, per wind direction bin, for 
-    baseline and controlled results.  Resulting arrays, including upper 
-    and lower uncertaintity bounds computed through bootstrapping, are 
-    returned.  Note the reference turbine should not be the turbine 
-    implementing control, but should be an unaffected nearby turbine, 
-    or a synthetic power estimate from a measurement  See :cite:`er-fleming2019initial` and 
+    Calculate a balanced energy ratio for each wind direction bin.  A
+    reference and test turbine are provided for the ratio, as well as
+    wind speed and wind directions. These data are further divided into
+    baseline and controlled conditions.  The balanced energy ratio
+    function is called and used to ensure a similar distribution of
+    wind speeds is used in the computation, per wind direction bin, for
+    baseline and controlled results.  Resulting arrays, including upper
+    and lower uncertaintity bounds computed through bootstrapping, are
+    returned.  Note the reference turbine should not be the turbine
+    implementing control, but should be an unaffected nearby turbine,
+    or a synthetic power estimate from a measurement. See
+    :cite:`er-fleming2019initial` and
     :cite:`er-fleming2019continued` for more information.
 
     References:
