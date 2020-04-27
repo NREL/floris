@@ -23,10 +23,16 @@ from ..utilities import setup_logger
 
 def nudge_outward(x):
     """
-    Avoid numerical issue in grid data by sligly expanding input x,y
+    Avoid numerical issue in grid data by slightly expanding input x.
+    TODO: expand this description
+    - What numerical issues?
+    - Whats the scenario when I would need this?
 
     Args:
-        x (np.arraym float): Vector to be slightly expanded
+        x (np.array): Vector of values.
+
+    Returns:
+        np.array: Expanded vector.
     """
     nudge_val = 0.001
     min_x = np.min(x)
@@ -39,19 +45,20 @@ def get_plane_from_flow_data(flow_data,
                             normal_vector='z',
                             x3_value=100):
     """
-    Get a plane of data, in form of dataframe, from a flow_data object
-    This is used to get planes from SOWFA results and FLORIS sims with fixed
-    grids, ie curl.
+    Get a plane of data, in form of DataFrame, from a :py:class:`~.FlowData`
+    object. This is used to get planes from SOWFA results and FLORIS
+    simulations with fixed grids, i.e. curl.
 
     Args:
-        flow_data (np.array): 3D vector field of velocity data
-        normal_vector (string, optional): vector normal to plane
+        flow_data (np.array): 3D vector field of velocity data. #TODO: is this
+            supposed to be a :py:class:`~.FlowData` object?
+        normal_vector (string, optional): Vector normal to plane.
             Defaults to z.
-        x3_value (float, optional): value of normal vector to slice through
+        x3_value (float, optional): Value of normal vector to slice through.
             Defaults to 100.
 
     Returns:
-        dataframe of x1,x2,u,v,w values
+        pandas.DataFrame: Extracted data.
     """
     order = "f"
     if normal_vector == 'z':
@@ -105,13 +112,17 @@ def get_plane_from_flow_data(flow_data,
 
 
 class CutPlane():
+    """
+    A CutPlane object represents a 2D slice through the flow of a 
+    FLORIS simulation, or other such as SOWFA result.
+    """
     def __init__(self, df):
         """
-        Initialize CutPlane object. Used to extract a 2D plane from a
-        3D vectoral velocity field
+        Initialize CutPlane object, storing the DataFrame and resolution.
 
         Args:
-            df (pd.DataFrame): Pandas DataFrame of data with columns x1,x2, u,v,w
+            df (pandas.DataFrame): Pandas DataFrame of data with
+                columns x1, x2, u, v, w.
         """
         self.df = df
 
@@ -127,16 +138,16 @@ def set_origin(cut_plane, center_x1=0.0, center_x2=0.0):
     Establish the origin of a CutPlane object.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data.
-        center_x1 (float, optional): x1-coordinate of orign.
-                Defaults to 0.0.
-        center_x2 (float, optional): x2-coordinate of orign.
-                Defaults to 0.0.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data.
+        center_x1 (float, optional): x1-coordinate of origin.
+            Defaults to 0.0.
+        center_x2 (float, optional): x2-coordinate of origin.
+            Defaults to 0.0.
 
     Returns:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-                updated plane of data.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Updated plane of data.
     """
     # Store the un-interpolated input arrays at this slice
     cut_plane.df.x1 = cut_plane.df.x1 - center_x1
@@ -150,14 +161,14 @@ def change_resolution(cut_plane, resolution=(100, 100)):
     Modify default resolution of a CutPlane object.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data.
         resolution (tuple, optional): Desired resolution in x1 and x2.
             Defaults to (100, 100).
 
     Returns:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-                updated plane of data.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Updated plane of data.
     """
 
     # Linearize the data
@@ -223,14 +234,14 @@ def interpolate_onto_array(cut_plane_in, x1_array, x2_array):
     Interpolate a CutPlane object onto specified coordinate arrays.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data.
-        x1_array (np.array): specified x1-coordinate.
-        x2_array (np.array): specified x2-coordinate.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data.
+        x1_array (np.array): Specified x1-coordinate.
+        x2_array (np.array): Specified x2-coordinate.
 
     Returns:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-                updated plane of data.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Updated plane of data.
     """
     cut_plane = copy.deepcopy(cut_plane_in)
 
@@ -295,14 +306,14 @@ def rescale_axis(cut_plane, x1_factor=1.0, x2_factor=1.0):
     Stretch or compress CutPlane coordinates.
 
     Args:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data.
-        x1_factor (float): scaling factor for x1-coordinate.
-        x2_factor (float): scaling factor for x2-coordinate.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data.
+        x1_factor (float): Scaling factor for x1-coordinate.
+        x2_factor (float): Scaling factor for x2-coordinate.
 
     Returns:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-                updated plane of data.
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Updated plane of data.
     """
     # Store the un-interpolated input arrays at this slice
     cut_plane.df.x1 = cut_plane.df.x1 / x1_factor
@@ -316,15 +327,14 @@ def project_onto(cut_plane_a, cut_plane_b):
     Project cut_plane_a onto the x1, x2 of cut_plane_b
 
     Args:
-        cut_plane_a (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data to project from
-        cut_plane_b (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data to project onto
-
+        cut_plane_a (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data to project from.
+        cut_plane_b (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data to project onto.
 
     Returns:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-                a projected onto b's axis
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Cut_plane_a projected onto cut_plane_b's axis.
     """
 
     return interpolate_onto_array(
@@ -335,15 +345,14 @@ def subtract(cut_plane_a_in, cut_plane_b_in):
     Subtract u,v,w terms of cut_plane_b from cut_plane_a
 
     Args:
-        cut_plane_a_in (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data to subtract from
-        cut_plane_b_in (:py:class:`floris.tools.cut_plane._CutPlane`):
-            plane of data to subtract b
-
+        cut_plane_a_in (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data to subtract from.
+        cut_plane_b_in (:py:class:`~.tools.cut_plane.CutPlane`):
+            Plane of data to subtract b.
 
     Returns:
-        cut_plane (:py:class:`floris.tools.cut_plane._CutPlane`):
-                difference
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
+            Difference of cut_plane_a_in minus cut_plane_b_in.
     """
 
     # First make copies of original

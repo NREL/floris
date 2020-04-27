@@ -29,12 +29,11 @@ Examples:
     
     >>> dir(floris.simulation)
     ['Farm', 'Floris', 'FlowField', 'InputReader', 'Turbine',
-    'TurbineMap', 'Wake', 'WakeCombination', 'VelocityDeflection',
-    'VelocityDeficit', '__builtins__', '__cached__', '__doc__',
-    '__file__', '__loader__', '__name__', '__package__', '__path__',
-    '__spec__', 'farm', 'floris', 'flow_field', 'input_reader',
-    'turbine', 'turbine_map', 'wake', 'wake_combination',
-    'wake_deflection', 'wake_velocity']
+    'TurbineMap', 'Wake', 'WindMap', '__builtins__', '__cached__',
+    '__doc__', '__file__', '__loader__', '__name__', '__package__',
+    '__path__', '__spec__', 'farm', 'floris', 'flow_field', 'input_reader',
+    'turbine', 'turbine_map', 'wake', 'wake_combination', 'wake_deflection',
+    'wake_turbulence', 'wake_velocity', 'wind_map']
 """
 
 from .farm import Farm

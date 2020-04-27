@@ -21,44 +21,37 @@ import numpy as np
 
 class TurbineMap():
     """
-    TurbineMap contains instances of Turbine for the wind farm.
+    Container object that maps a :py:class:`~.turbine.Turbine` instance to a
+    :py:class:`~.utilities.Vec3` object. This class also provides some helper
+    methods for sorting and manipulating the turbine layout.
 
-    TurbineMap is container object which maps a Turbine instance to a 
-    :py:class:`floris.utilities.Vec3` object. This class also provides 
-    some helper methods for sorting and manipulating the turbine layout.
+    The underlying data structure for this class is a Python dictionary
+    in the following form:
 
-    Args:
-        layout_x: A list of floats listing the x-coordinate locations of the
-            Turbine objects in the Farm.
+        {
 
-        layout_y: A list of floats listing the y-coordinate locations of the
-            Turbine objects in the Farm.
+            Vec3(): Turbine(),
 
-        turbines: A list of Turbine objects corresponding to the locations
-            given in layout_x and layout_y.
-        
-        The underlying data structure for this class is a Python dictionary
-        mapping of :py:class:`floris.simulation.turbine.Turbine` to 
-        :py:class:`floris.utilities.Vec3` in the following form:
-            {
+            Vec3(): Turbine(),
 
-                Vec3(): Turbine(),
+            ...,
 
-                Vec3(): Turbine(),
-
-                ...,`
-
-                Vec3(): Turbine()
-
-            }
-
-    Returns:
-        TurbineMap: An instantiated TurbineMap object.
+        }
     """
 
     def __init__(self, layout_x, layout_y, turbines):
         """
-        all are lists
+        Converts input coordinates into :py:class:`~.utilities.Vec3` and
+        constructs the underlying mapping to :py:class:`~.turbine.Turbine`.
+        It is assumed that all arguments are of the same length and that the
+        Turbine at a particular index corresponds to the coordinate at the same
+        index in the layout arguments.
+
+        Args:
+            layout_x ( list(float) ): X-coordinate of the turbine locations.
+            layout_y ( list(float) ): Y-coordinate of the turbine locations.
+            turbines ( list(float) ): Turbine objects corresponding to
+                the locations given in layout_x and layout_y.
         """
         coordinates = [Vec3(x1,x2,0 ) for x1, x2 in list(zip(layout_x, layout_y))]
         self._turbine_map_dict = self._build_internal_dict(coordinates, turbines)
@@ -72,28 +65,25 @@ class TurbineMap():
 
     def update_hub_heights(self):
         """
-        If turbine hub-heights have changed make sure to
-        update in coordinates
+        Triggers a rebuild of the internal Python dictionary. This may be
+        used to update the z-component of the turbine coordinates if
+        the hub height has changed.
         """
         self._turbine_map_dict = self._build_internal_dict(self.coords, self.turbines)
 
     def rotated(self, angles, center_of_rotation):
         """
-        Rotate each turbine coordinate in the turbine list by a given
-        angle about a center of rotation. This function returns
-        a new TurbineMap object whose turbines are rotated from the original.
-        The original TurbineMap is not modified.
+        Rotates each turbine coordinate by a given angle about a center
+        of rotation.
 
         Args:
-            [angles]: A list of angles (degrees) to rotate each turbine.
-            center_of_rotation: The center of rotation as a Vec3.
+            angles ( list(float) ): Angles in degrees to rotate each turbine.
+            center_of_rotation ( :py:class:`~.utilities.Vec3` ):
+                The center of rotation.
 
         Returns:
-            TurbineMap: A rotated TurbineMap.
-
-        - rotates all turbines so that the wind direction at the turbine is aligned
-        with 0 degrees.
-
+            :py:class:`~.turbine_map.TurbineMap`: A new TurbineMap object whose
+            turbines are rotated from the original.
         """
         layout_x = np.zeros(len(self.coords))
         layout_y = np.zeros(len(self.coords))
@@ -105,34 +95,38 @@ class TurbineMap():
 
     def sorted_in_x_as_list(self):
         """
-        Returns a sorted list of turbine coordinates and turbines from 
-        smallest x1 coordinate to largest x1 coordinate.
+        Sorts the turbines based on their x-coordinates in ascending order.
 
         Returns:
-            [Vec3, Turbine]: A sorted list of turbine coordinates and 
-            turbines.
+            list((:py:class:`~.utilities.Vec3`, :py:class:`~.turbine.Turbine`)):
+            The sorted coordinates and corresponding turbines. This is a
+            list of tuples where each tuple contains the coordinate
+            and turbine in the first and last element, respectively.
         """
         coords = sorted(self._turbine_map_dict, key=lambda coord: coord.x1)
         return [(c, self._turbine_map_dict[c]) for c in coords]
 
     def number_of_wakes_iec(self, wd, return_turbines=True):
         """
-        Returns a dictionary containing the list of turbines in 
-        TurbineMap and the total number of wakes from other turbines 
-        that interact with each turbine for the provided wind 
-        direction. Waked directions are determined using the formula 
-        in Figure A.1 in Annex A of the IEC 61400-12-1:2017 standard. 
+        Finds the number of turbines waking each turbine for the given
+        wind direction. Waked directions are determined using the formula 
+        in Figure A.1 in Annex A of the IEC 61400-12-1:2017 standard.
+        # TODO: Add the IEC standard as a reference.
 
         Args:
             wd (float): Wind direction for determining waked turbines.
-
-            return_turbines (bool): Should turbines be returned with list
+            return_turbines (bool, optional): Switch to return turbines.
+                Defaults to True.
 
         Returns:
-            wake_list: List of Turbine objects and number of upstream 
-            turbines waking them.
+            list(int) or list( (:py:class:`~.turbine.Turbine`, int ) ):
+            Number of turbines waking each turbine and, optionally,
+            the list of Turbine objects in the map.
+        
+        TODO:
+        - This could be reworked so that the return type is more consistent.
+        - Describe the method used to find upstream turbines.
         """
-
         wake_list =[]
         for coord0, turbine0 in self.items:
 
@@ -162,32 +156,34 @@ class TurbineMap():
     @property
     def turbines(self):
         """
-        Property that returns list of Turbine objects in wind farm.
+        Turbines contained in the :py:class:`~.turbine_map.TurbineMap`.
 
         Returns:
-            [Turbine]: A list of Turbine objects.
+            list(:py:class:`floris.simulation.turbine.Turbine`)
         """
         return [turbine for _, turbine in self.items]
 
     @property
     def coords(self):
         """
-        Property that returns a list of coordinates of the turbines in 
-        a wind farm.
+        Coordinates of the turbines contained in the
+        :py:class:`~.turbine_map.TurbineMap`.
 
         Returns:
-            [Vec3]: A list of turbine coordinates.
+            list(:py:class:`~.utilities.Vec3`)
         """
         return [coord for coord, _ in self.items]
 
     @property
     def items(self):
         """
-        Property that returns a list with dictionary pairs of 
-        coordinates and Turbine objects.
+        Contents of the internal Python dictionary mapping of the turbine
+        and coordinates.
 
         Returns:
-            dict_items: List of dictionary key and value pairs of 
-            coordinates and Turbine objects.
+            dict_items: Iterable object containing tuples of key-value pairs
+            where the first index is the coordinate
+            (:py:class:`~.utilities.Vec3`) and the second index is the
+            :py:class:`~.turbine.Turbine`.
         """
         return self._turbine_map_dict.items()

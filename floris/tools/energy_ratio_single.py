@@ -17,23 +17,78 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# From https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function
 def gaussian(x, mu, sig):
+    """
+    Compute gaussian function, from
+    https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function.
+
+    Args:
+        x (np.array): Input variable to Gaussian.
+        mu (float): Mean value.
+        sig (float): Standard deviation.
+
+    Returns:
+        np.array: The resulting Gaussian distribution.
+    """
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
+
 def _convert_to_numpy_array(series):
+    """
+    Convert an input series to NumPy array. Currently, this function
+    checks if an object has a `values` attribute and returns that if it does.
+    Otherwise, it returns the given input if that input is a `np.ndarray`.
+
+    Args:
+        series (pd.Series): Series to convert.
+
+    Returns:
+        np.array: Converted Series.
+    """
     if hasattr(series, 'values'):
         return series.values
     elif isinstance(series, np.ndarray):
         return series
 
+
 def _calculate_bootstrap_iterations(n):
+    """
+    Calculate number of bootstrap iterations given length.
+    # TODO: What are `bootstrap iterations`?
+
+    Args:
+        n (int): Number of points.
+
+    Returns:
+        int: Number of bootstrap iterations.
+    """
     maximum = 10000
     minimum = 2000
     return int(np.round(max(min(n * np.log10(n), maximum), minimum)))
 
 
-def _calculate_lower_and_upper_bound(bootstrap_array, percentiles, central_estimate=None, method='simple_percentile'):
+def _calculate_lower_and_upper_bound(bootstrap_array,
+                                     percentiles,
+                                     central_estimate=None,
+                                     method='simple_percentile'):
+    """
+    Given resultant bootstrap output array, compute lower and upper bound 
+    of confidence interval.
+
+    Args:
+        bootstrap_array (np.array): array of bootrapped results
+            percentiles (np.array): percentile values
+            central_estimate (float, optional): if not using simple percentile,
+            need to provide the central estimated result. Defaults to None.
+        method (str, optional): method for computing bounds. Defaults to
+            'simple_percentile'.
+
+    Returns:
+        float, float: 
+        
+            -   lower ci bound
+            -   upper ci bound
+    """
     if method is 'simple_percentile':
         upper, lower = np.percentile(bootstrap_array, percentiles)
     else:
@@ -43,52 +98,60 @@ def _calculate_lower_and_upper_bound(bootstrap_array, percentiles, central_estim
 
 
 def _get_confidence_bounds(confidence):
+    """
+
+    Get the upper and lower confidence bounds given a desired confidence level.
+
+    Args:
+        confidence (float): [description]
+        # TODO: ^^
+
+    Returns:
+        float, float: 
+        
+            -   upper confidence bound
+            -   lower confidence bound
+    """
     return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
 
 
 
 def energy_ratio(ref_pow_base, test_pow_base):
     """
-    Compute the balanced energy ratio
+    Compute the balanced energy ratio for a single binned wind direction
 
-    This function is typically called to compute a single balanced 
+    Single version, not comparing controller on controller off
+
+    This function is called to compute a single balanced 
     energy ratio calculation for a particular wind direction bin.  Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
-    power estimate from a measurement.
+    power estimate from a measurement.  See :cite:`ers-fleming2019initial` and 
+    :cite:`ers-fleming2019continued` for more information.
+
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: ers-
 
     Args:
         ref_pow_base (np.array): Array of baseline reference turbine 
             power.
         test_pow_base (np.array): Array of baseline test turbine power.
-        ref_pow_con (np.array): Array of controlled reference turbine 
-            power.
-        test_pow_con (np.array): Array of controlled test turbine power.
-        ws_con (np.array): Array of wind speeds in control.
+
 
     Returns:
         tuple: tuple containing:
 
             -   **ratio_base** (*float*): Baseline energy ratio.
-            -   **ratio_con** (*float*): Controlled enery ratio.
-            -   **ratio_diff** (*float*): Difference in energy ratios.
-            -   **p_change** (*float*): Percent change in energy ratios.
             -   **counts_base** (*float*): Number of points in baseline.
-            -   **counts_con** (*float*): Number of points in 
-                controlled.
-            -   **counts_diff** (*float*): Number of points in diff (min
-                (baseline,controlled)).
-            -   **counts_pchange** (*float*): Number of points in 
-                pchange (min(baseline,controlled)).
     """
 
 
     if len(ref_pow_base) == 0:
         return np.nan, np.nan
 
-
-
-    
 
     # Weighted sums
     weight_sum_ref_base = np.sum(ref_pow_base)
@@ -119,6 +182,8 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     """
     Calculate a balanced energy ratio for each wind direction bin.
 
+    Single version, not divided into baseline and controlled
+
     Calculate a balanced energy ratio for each wind direction bin.  A 
     reference and test turbine are provided for the ratio, as well as 
     wind speed and wind directions. These data are further divided into 
@@ -126,10 +191,18 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
     function is called and used to ensure a similar distribution of 
     wind speeds is used in the computation, per wind direction bin, for 
     baseline and controlled results.  Resulting arrays, including upper 
-    and lower uncertaintity bounds computed through bootstrapping, are 
+    and lower uncertainty bounds computed through bootstrapping, are 
     returned.  Note the reference turbine should not be the turbine 
     implementing control, but should be an unaffected nearby turbine, 
-    or a synthetic power estimate from a measurement
+    or a synthetic power estimate from a measurement  See 
+    :cite:`ers-fleming2019initial` and 
+    :cite:`ers-fleming2019continued` for more information.
+
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: ers-
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -140,14 +213,6 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             baseline conditions.
         wind_direction_array_baseline (np.array): Array of wind 
             directions in baseline case.
-        reference_power_controlled (np.array): Array of power of 
-            reference turbine in controlled conditions.
-        test_power_controlled (np.array): Array of power of test 
-            turbine in controlled conditions.
-        wind_speed_array_controlled (np.array): Array of wind speeds in 
-            controlled conditions.
-        wind_direction_array_controlled (np.array): Array of wind 
-            directions in controlled case.
         wind_direction_bins (np.array): Wind directions bins.
         confidence (int, optional): Confidence level to use.  Defaults 
             to 95.
@@ -164,19 +229,6 @@ def calculate_balanced_energy_ratio(reference_power_baseline,
             **lower_ratio_array_base** (*np.array*): Lower confidence bound of baseline energy ratio at each wind direction bin.
             **upper_ratio_array_base** (*np.array*): Upper confidence bound of baseline energy ratio at each wind direction bin.
             **counts_ratio_array_base** (*np.array*): Counts per wind direction bin in baseline.
-            **ratio_array_con** (*np.array*): Controlled energy ratio at each wind direction bin.
-            **lower_ratio_array_con** (*np.array*): Lower confidence bound of controlled energy ratio at each wind direction bin.
-            **upper_ratio_array_con** (*np.array*): Upper confidence bound of controlled energy ratio at each wind direction bin.
-            **counts_ratio_array_con** (*np.array*): Counts per wind direction bin in controlled.
-            **diff_array** (*np.array*): Difference in baseline and controlled energy ratio per wind direction bin.
-            **lower_diff_array** (*np.array*): Lower confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
-            **upper_diff_array** (*np.array*): Upper confidence bound of difference in baseline and controlled energy ratio per wind direction bin.
-            **counts_diff_array** (*np.array*): Counts in difference (minimum of baseline and controlled).
-            **p_change_array** (*np.array*): Percent change in baseline and controlled energy ratio per wind direction bin.
-            **lower_p_change_array** (*np.array*): Lower confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
-            **upper_p_change_array** (*np.array*): Upper confidence bound of percent change in baseline and controlled energy ratio per wind direction bin.
-            **counts_p_change_array** (*np.array*): Counts in percent change bins (minimum of baseline and controlled).
-
     """
 
     # Ensure that input arrays are np.ndarray
@@ -319,21 +371,19 @@ def plot_energy_ratio(reference_power_baseline,
     if label_pchange is None:
         label_pchange = 'Energy Gain'
 
-    ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, counts_ratio_array_base,  = calculate_balanced_energy_ratio(reference_power_baseline,
-                                                                                                                                                                                                                                                                                                                                                                             test_power_baseline,
-                                                                                                                                                                                                                                                                                                                                                                             wind_direction_array_baseline,
-                                                                                                                                                                                                                                                                                                                                                                             wind_direction_bins,
-                                                                                                                                                                                                                                                                                                                                                                             confidence=95,
-                                                                                                                                                                                                                                                                                                                                                                             n_boostrap=None,
-                                                                                                                                                                                                                                                                                                                                                                             wind_direction_bin_p_overlap=wind_direction_bin_p_overlap,
-                                                                                                                                                                                                                                                                                                                                                                             )
+    ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, \
+        counts_ratio_array_base,  = calculate_balanced_energy_ratio \
+            (reference_power_baseline, test_power_baseline, \
+                wind_direction_array_baseline, wind_direction_bins, \
+                    confidence=95,n_boostrap=None, \
+                        wind_direction_bin_p_overlap = 
+                        wind_direction_bin_p_overlap, )
 
     if plot_simple:
         ax.plot(wind_direction_bins, ratio_array_base,
                 label=label_array[0], color=base_color, ls='--')
         ax.axhline(1, color='k')
         ax.set_ylabel('Energy Ratio (-)')
-
 
     else:
 

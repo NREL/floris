@@ -17,47 +17,33 @@ import numpy as np
 
 class Jensen(VelocityDeficit):
     """
-    Wake velocity deficit model based on the Jensen model.
-    Jensen is a subclass of :py:class:`floris.simulation.wake_velocity.WakeVelocity` that is
-    used to compute the wake velocity deficit based on the classic
-    Jensen/Park model. See Jensen, N. O., "A note on wind generator
-    interaction." Tech. Rep. Risø-M-2411, Risø, 1983.
-    Args:
-        parameter_dictionary: A dictionary as generated from the
-            input_reader; it should have the following key-value pairs:
-            -   **turbulence_intensity**: A dictionary containing the
-                following key-value pairs used to calculate wake-added
-                turbulence intensity from an upstream turbine, using
-                the approach of Crespo, A. and Herna, J. "Turbulence
-                characteristics in wind-turbine wakes." *J. Wind Eng
-                Ind Aerodyn*. 1996.:
-                -   **initial**: A float that is the initial ambient
-                    turbulence intensity, expressed as a decimal
-                    fraction.
-                -   **constant**: A float that is the constant used to
-                    scale the wake-added turbulence intensity.
-                -   **ai**: A float that is the axial induction factor
-                    exponent used in in the calculation of wake-added
-                    turbulence.
-                -   **downstream**: A float that is the exponent
-                    applied to the distance downtream of an upstream
-                    turbine normalized by the rotor diameter used in
-                    the calculation of wake-added turbulence.
-            -   **jensen**: A dictionary containing the following
-                key-value pairs:
-                -   **we**: A float that is the linear wake decay
-                    constant that defines the cone boundary for the
-                    wake as well as the velocity deficit. D/2 +/- we*x
-                    is the cone boundary for the wake.
-    Returns:
-        An instantiated Jensen(WaveVelocity) object.
-    """
+    The Jensen model computes the wake velocity deficit based on the classic
+    Jensen/Park model :cite:`jvm-jensen1983note`.
 
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: jvm-
+    """
     default_parameters = {
         "we": 0.05
     }
 
     def __init__(self, parameter_dictionary):
+        """
+        Stores model parameters for use by methods.
+
+        Args:
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
+
+                -   **we** (*float*): The linear wake decay constant that
+                    defines the cone boundary for the wake as well as the 
+                    velocity deficit. D/2 +/- we*x is the cone boundary for the 
+                    wake.
+        """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
         self.model_string = "jensen"
@@ -73,34 +59,32 @@ class Jensen(VelocityDeficit):
         comprising the wind farm flow field.
 
         Args:
-            x_locations: An array of floats that contains the 
-                streamwise direction grid coordinates of the flow field 
+            x_locations (np.array): An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
                 domain (m).
-            y_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the direction 
-                normal to x and parallel to the ground (m).
-            z_locations: An array of floats that contains the grid 
-                coordinates of the flow field domain in the vertical 
+            y_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the direction normal to
+                x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
                 direction (m).
-            turbine: A :py:obj:`floris.simulation.turbine` object that 
+            turbine (:py:obj:`floris.simulation.turbine`): Object that
                 represents the turbine creating the wake.
-            turbine_coord: A :py:obj:`floris.utilities.Vec3` object 
-                containing the coordinate of the turbine creating the 
-                wake (m).
-            deflection_field: An array of floats that contains the 
-                amount of wake deflection in meters in the y direction 
-                at each grid point of the flow field.
-            flow_field: A :py:class:`floris.simulation.flow_field` 
-                object containing the flow field information for the 
-                wind farm.
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
+                the coordinate of the turbine creating the wake (m).
+            deflection_field (np.array): An array of floats that contains the 
+                amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): Object
+                containing the flow field information for the wind farm.
 
         Returns:
-            Three arrays of floats that contain the wake velocity 
-            deficit in m/s created by the turbine relative to the 
-            freestream velocities for the u, v, and w components, 
-            aligned with the x, y, and z directions, respectively. The 
-            three arrays contain the velocity deficits at each grid 
-            point in the flow field. 
+            np.array, np.array, np.array:
+                Three arrays of floats that contain the wake velocity
+                deficit in m/s created by the turbine relative to the freestream
+                velocities for the U, V, and W components, aligned with the
+                x, y, and z directions, respectively. The three arrays contain
+                the velocity deficits at each grid point in the flow field.
         """
 
         # define the boundary of the wake model ... y = mx + b
@@ -136,15 +120,20 @@ class Jensen(VelocityDeficit):
     @property
     def we(self):
         """
-        A float that is the linear wake decay constant that defines the cone
-            boundary for the wake as well as the velocity deficit. D/2 +/- we*x
-            is the cone boundary for the wake.
+        The linear wake decay constant that defines the cone boundary for the
+        wake as well as the velocity deficit. D/2 +/- we*x is the cone boundary
+        for the wake.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            we (float, int): The linear wake decay constant that defines the
-                cone boundary for the wake as well as the velocity deficit.
+            value (float): Value to set.
+
         Returns:
-            float: The linear wake decay constant that defines the cone
-                boundary for the wake as well as the velocity deficit.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._we
 
