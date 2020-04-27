@@ -34,7 +34,7 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 - Curl  model for wake deflection and velocity deficit
 
 Further, all wake models can now be overlayed onto spatially heterogenous
-inflows
+inflows.
 
 More information on all of these models can be found in :ref:`theory`.
 
@@ -46,12 +46,11 @@ control and co-designed layout optimization.  Examples include:
 - Methods for wind rose and annual energy production analysis
 - Methods for analysis of field campaigns of wind farm control
 - Coupling methods to other tools, including SOWFA and CC-Blade
-- Methods to model heterogenous 
+- Methods to model heterogenous atmospheric conditions
 
-Example applications of all these tools are provided in examples/ folder, and
-it is highly recommended that new users begin with those in 
-examples/_getting_started
-
+Example applications of all these tools are provided in the `examples/` folder, and
+it is highly recommended that new users begin with those in
+`examples/_getting_started`.
 
 
 Citation
@@ -71,7 +70,7 @@ For LaTeX users:
 
     @misc{FLORIS_2019,
     author = {NREL},
-    title = {{FLORIS. Version 2.0.0}},
+    title = {{FLORIS. Version 1.0.0}},
     year = {2019},
     publisher = {GitHub},
     journal = {GitHub repository},
