@@ -10,6 +10,7 @@ FLORIS implements a 3D version of the Jensen, original FLORIS (Gebraad et. al.
 Jensen
 ======
 The Jensen wake model is defined in:
+
 1. Jensen, N. O. (1983). A note on wind generator interaction. Risø
         National Laboratory.
 
@@ -28,7 +29,7 @@ The multi-zone wake model is defined in:
 
 Gaussian Wake Models
 ====================
-Several gaussian wake models are now implemented within FLORIS.  
+Several Gaussian wake models are now implemented within FLORIS.  
 
 Literature on the Gaussian model can be found in the following papers:
 
@@ -62,8 +63,9 @@ Literature on the Gaussian model can be found in the following papers:
 Gauss Curl Hybrid Model
 =======================
 
-The Gauss-Curly-Hybrid model combines with gaussian wake models to model
-second-order effects of wake steering using curl-based methods
+The Gauss-Curly-Hybrid model combines with Gaussian wake models to model
+second-order effects of wake steering using curl-based methods, as
+described in:
 
 1. King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J,
    Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
@@ -72,7 +74,7 @@ second-order effects of wake steering using curl-based methods
 
 Jimenez Wake Model
 ==================
-Describe the jimenez model of wake deflection is defined in:
+The Jimenez model of wake deflection is defined in:
 
 1. Jiménez, Ángel, Antonio Crespo, and Emilio Migoya. "Application of
         a LES technique to characterize the wake deflection of a wind turbine
@@ -97,6 +99,6 @@ and comptutational expense is not a priority.
 
 Other models to describe
 ========================
-possible other models to describe
+Possible other models to describe
 - Flow field initialization ... boundary layer/log law?
 - combination schemes
