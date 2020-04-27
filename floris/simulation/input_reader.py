@@ -1,38 +1,34 @@
-# Copyright 2019 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
-
-from .turbine import Turbine
-from .wake import Wake
-from .farm import Farm
+# Copyright 2020 NREL
+ 
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+ 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+ 
+# See https://floris.readthedocs.io for documentation
+ 
 import json
 import numpy as np
+from ..utilities import setup_logger
 
 
 class InputReader():
     """
-    InputReader parses json input files into inputs for FLORIS objects.
-
-    InputReader is a helper class which parses json input files and 
-    provides an interface to instantiate model objects in FLORIS. This 
-    class handles input validation regarding input type, but does not 
-    enforce value checking. It is designed to function as a singleton 
-    object, but that is not enforced or required.
-
-    Returns:
-        InputReader:  An instantiated InputReader object
+    InputReader parses JSON input files into inputs for the
+    :py:class:`~.floris.Floris` class. It handles input validation regarding
+    input type, but does not enforce value checking.
     """
-
     def __init__(self):
+        """
+        Initializes the parameter types expected in the input data.
+        """
 
-        self._validObjects = ["turbine", "wake", "farm"]
+        self._valid_objects = ["turbine", "wake", "farm"]
 
         self._turbine_properties = {
             "rotor_diameter": float,
@@ -49,177 +45,175 @@ class InputReader():
 
         self._wake_properties = {
             "velocity_model": str,
+            "turbulence_model": str,
             "deflection_model": str,
             "combination_model": str,
             "parameters": dict
         }
 
         self._farm_properties = {
-            "wind_speed": float,
-            "wind_direction": float,
-            "turbulence_intensity": float,
+            "wind_speed": list,
+            "wind_direction": list,
+            "turbulence_intensity": list,
             "wind_shear": float,
             "wind_veer": float,
             "air_density": float,
             "layout_x": list,
-            "layout_y": list
+            "layout_y": list,
+            "wind_x": list,
+            "wind_y": list
         }
 
     def _parseJSON(self, filename):
         """
-        Opens the input json file and parses the contents into a python 
+        Opens the input JSON file and parses the contents into a Python
         dict.
 
         Args:
-            filename:  A string that is the path to the json input file.
+            filename (str): Path to the JSON input file.
 
         Returns:
-            dict:  A dictionary *data* that contains the json input 
-            file.
+            dict: The data parsed from the input file.
         """
         with open(filename) as jsonfile:
             data = json.load(jsonfile)
         return data
 
-    def _validateJSON(self, json_dict, type_map):
+    def _validate_dict(self, input_dict, type_map):
         """
-        Verifies that the expected fields exist in the json input file 
-        and validates the type of the input data by casting the fields 
-        to appropriate values based on the predefined type maps in.
+        Verifies that the expected fields exist in the JSON input file
+        and validates the type of the input data by casting the fields
+        to appropriate values based on the predefined type maps.
 
         Args:
-            json_dict: Input dictionary with all elements of type str.
-            type_map: Predefined type map dictionary for type checking 
-                inputs structured as {"property": type}.
+            input_dict (dict): Input data.
+            type_map (dict): Predefined type-map for type checking inputs;
+                structured as {"property": type}.
+
+        Raises:
+            KeyError: Missing/invalid key.
+            ValueError: Invalid value type.
 
         Returns:
-            dict: Validated and correctly typed input property 
-            dictionary.
+            dict: Validated and correctly typed input data.
         """
-
         validated = {}
 
         # validate the object type
-        if "type" not in json_dict:
-            raise KeyError("'type' key is required")
+        if "type" not in input_dict:
+            raise KeyError("'type' key is required in input")
+        if input_dict["type"] not in self._valid_objects:
+            raise ValueError("'type' must be one of {}".format(", ".join(self._valid_objects)))
+        validated["type"] = input_dict["type"]
 
-        if json_dict["type"] not in self._validObjects:
-            raise ValueError("'type' must be one of {}".format(
-                ", ".join(self._validObjects)))
-
-        validated["type"] = json_dict["type"]
-
-        # validate the description
-        if "description" not in json_dict:
-            raise KeyError("'description' key is required")
-
-        validated["description"] = json_dict["description"]
+        # validate the name
+        if "name" not in input_dict:
+            raise KeyError("'name' key is required in input")
+        validated["name"] = input_dict["name"]
 
         # validate the properties dictionary
-        if "properties" not in json_dict:
-            raise KeyError("'properties' key is required")
+        if "properties" not in input_dict:
+            raise KeyError("'properties' key is required in input")
+
         # check every attribute in the predefined type dictionary for existence
         # and proper type in the given inputs
-        propDict = {}
-        properties = json_dict["properties"]
+        prop_dict = {}
+        properties = input_dict["properties"]
         for element in type_map:
             if element not in properties:
-                raise KeyError("'{}' is required for object type '{}'".format(
-                    element, validated["type"]))
+                raise KeyError("'{}' is required for object type '{}'".format(element, validated["type"]))
+            prop_dict[element] = self._cast(type_map[element], properties[element])
+        validated["properties"] = prop_dict
 
-            value, error = self._cast_to_type(
-                type_map[element], properties[element])
-            if error is not None:
-                raise error("'{}' must be of type '{}'".format(
-                    element, type_map[element]))
-
-            propDict[element] = value
-
-        validated["properties"] = propDict
-
+        for element in properties:
+            if element not in type_map:
+                raise KeyError("'{}' is given but not required for object type '{}'".format(element, validated["type"]))
+        
         return validated
 
-    def _cast_to_type(self, typecast, value):
+    def _cast(self, typecast, value):
         """
-        Casts the string input to the type in typecast.
+        Casts the input to the given type in `typecast`.
 
         Args:
-            typcast: type - the type class to use on value.
-            value: str - the input string to cast to 'typecast'.
+            typecast (type): Type class to use for casting.
+            value (str): Input to cast to 'typecast'.
 
         Returns:
-            type or None: position 0 - the casted value.
-            None or Error: position 1 - the caught error.
+            typecast
         """
-        try:
-            return typecast(value), None
-        except ValueError:
-            return None, ValueError
+        return typecast(value)
 
-    def _build_turbine(self, json_dict):
+    def validate_turbine(self, input_dict):
         """
-        Instantiates a Turbine object from a given input file.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.turbine.Turbine` object.
 
         Args:
-            json_dict: Input dictionary describing a turbine model.
+            input_dict (dict): Input dictionary describing a turbine model.
 
         Returns:
-            Turbine: An instantiated Turbine object.
+            dict: A validated dictionary.
         """
-        propertyDict = self._validateJSON(json_dict, self._turbine_properties)
-        propertyDict["properties"]["yaw_angle"] = propertyDict["properties"]["yaw_angle"]
-        propertyDict["properties"]["tilt_angle"] = propertyDict["properties"]["tilt_angle"]
-        return Turbine(propertyDict)
+        return self._validate_dict(input_dict, self._turbine_properties)
 
-    def _build_wake(self, json_dict):
+    def validate_wake(self, input_dict):
         """
-        Instantiates a Wake object from a given input file.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.wake.Wake` object.
 
         Args:
-            json_dict: dict - Input dictionary describing a wake model.
+            input_dict (dict): Input dictionary describing a wake model.
 
         Returns:
-            Wake: An instantiated Wake object.
+            dict: A validated dictionary.
         """
-        propertyDict = self._validateJSON(json_dict, self._wake_properties)
-        return Wake(propertyDict)
+        return self._validate_dict(input_dict, self._wake_properties)
 
-    def _build_farm(self, json_dict, turbine, wake):
+    def validate_farm(self, input_dict):
         """
-        Instantiates a Farm object from a given input file.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.farm.Farm` object.
 
         Args:
-            json_dict: Input dictionary describing a farm model.
-            turbine: :py:class:`floris.simulation.turbine.Turbine` 
-                instance used in 
-                :py:class:`floris.simulation.farm.Farm`.
-            wake: :py:class:`floris.simulation.wake.Wake` instance used 
-                in :py:class:`floris.simulation.farm.Farm`.
+            input_dict (dict): Input dictionary describing a farm model.
 
         Returns:
-            Farm: An instantiated Farm object.
+            dict: A validated dictionary.
         """
-        propertyDict = self._validateJSON(json_dict, self._farm_properties)
-        return Farm(propertyDict, turbine, wake)
+        return self._validate_dict(input_dict, self._farm_properties)
 
     def read(self, input_file=None, input_dict=None):
         """
-        Parses main input file and instantiates floris objects.
+        Parses a given input file or input dictionary and validates the
+        contents.
 
         Args:
-            input_file: A string path to the json input file.
+            input_file (str, optional): A string path to the JSON input file.
+                Defaults to None.
+            input_dict (dict, optional): A Python dictionary of inputs.
+                Defaults to None.
+
+        Raises:
+            ValueError: Input file or dictionary must be provided.
 
         Returns:
-            Farm: An instantiated FLORIS model of wind farm.
+            dict, dict, dict, dict:
+
+                - Meta data from the input dictionary.
+                - Validated "turbine" section from the input dictionary.
+                - Validated "wake" section from the input dictionary.
+                - Validated "farm" section from the input dictionary.
         """
         if input_file is not None:
-            json_dict = self._parseJSON(input_file)
+            input_dict = self._parseJSON(input_file)
         elif input_dict is not None:
-            json_dict = input_dict.copy()
+            input_dict = input_dict.copy()
         else:
             raise ValueError("Input file or dictionary must be provided")
 
-        turbine = self._build_turbine(json_dict["turbine"])
-        wake = self._build_wake(json_dict["wake"])
-        farm = self._build_farm(json_dict["farm"], turbine, wake)
-        return farm
+        turbine_dict = input_dict.pop("turbine")
+        wake_dict = input_dict.pop("wake")
+        farm_dict = input_dict.pop("farm")
+        meta_dict = input_dict
+        return meta_dict, turbine_dict, wake_dict, farm_dict

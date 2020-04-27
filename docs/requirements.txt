@@ -2,3 +2,4 @@
 readthedocs-sphinx-ext
 Sphinx
 sphinxcontrib-napoleon
+sphinxcontrib-bibtex

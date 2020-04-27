@@ -1,17 +1,19 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
 from ..utilities import Vec3
-from .wake_combination import WakeCombination
+from ..utilities import setup_logger
 from .flow_field import FlowField
+from .wind_map import WindMap
 from .turbine_map import TurbineMap
 import copy
 import numpy as np
@@ -26,134 +28,121 @@ class Farm():
     Wake, FlowField) and packages everything into the appropriate data 
     type. Farm should also be used as an entry point to probe objects 
     for generating output.
-
-    Args:
-        instance_dictionary: A dictionary as generated from the 
-            input_reader; it should have the following key-value pairs:
-
-            -   **description**: A string containing a description of 
-                the wind farm.
-            -   **properties**: A dictionary containing the following 
-                key-value pairs:
-
-                -   **wind_speed**: A float that is the wind speed at 
-                    hub height (m/s).
-                -   **wind_direction**: A float that is the wind 
-                    direction (deg).
-                -   **turbulence_intensity**: A float that is the 
-                    turbulence intensity (expressed as a decimal 
-                    fraction).
-                -   **wind_shear**: A float that is the power law wind 
-                    shear exponent.
-                -   **wind_veer**: A float that is the vertical change 
-                    in wind direction across the rotor.
-                -   **air_density**: A float that is the air 
-                    density (kg/m^3).
-                -   **layout_x**: A list that contains the 
-                    x coordinates of the turbines.
-                -   **layout_y**: A list that contains the 
-                    y coordinates of the turbines.
-
-        turbine: The Turbine object used in Farm.
-        wake: The Wake object used in Farm.
-
-    Returns:
-        Farm: An instantiated Farm object.
     """
 
     def __init__(self, instance_dictionary, turbine, wake):
-        self.description = instance_dictionary["description"]
+        """
+        The initialization method unpacks some of the data from the input
+        dictionary in order to create a couple of unerlying data structures:
+
+            - :py:obj:`~.wind_map.WindMap`
+            - :py:obj:`~.turbine_map.TurbineMap`
+
+        Args:
+            instance_dictionary (dict): The required keys in this dictionary
+                are:
+
+                    -   **wind_speed** (*list*): The wind speed measurements at
+                        hub height (m/s).
+                    -   **wind_x** (*list*): The x-coordinates of the wind
+                        speed measurements.
+                    -   **wind_y** (*list*): The y-coordinates of the wind
+                        speed measurements.
+                    -   **wind_direction** (*list*): The wind direction
+                        measurements (deg).
+                    -   **turbulence_intensity** (*list*): Turbulence intensity
+                        measurements at hub height (%).
+                    -   **wind_shear** (*float*): The power law wind shear
+                        exponent.
+                    -   **wind_veer** (*float*): The vertical change in wind
+                        direction across the rotor.
+                    -   **air_density** (*float*): The air density (kg/m^3).
+                    -   **layout_x** (*list*): The x-coordinates of the
+                        turbines.
+                    -   **layout_y** (*list*): The y-coordinates of the
+                        turbines.
+
+            turbine (:py:obj:`~.turbine.Turbine`): The turbine models used
+                throughout the farm.
+            wake (:py:obj:`~.wake.Wake`): The wake model used to simulate the
+                freestream flow and wakes.
+        """
+        self.name = instance_dictionary["name"]
         properties = instance_dictionary["properties"]
         layout_x = properties["layout_x"]
         layout_y = properties["layout_y"]
-        self.wake = wake
+        wind_x = properties["wind_x"]
+        wind_y = properties["wind_y"]
+
+        self.wind_map = WindMap(
+            wind_speed=properties["wind_speed"],
+            layout_array=(layout_x, layout_y),
+            wind_layout=(wind_x, wind_y),
+            turbulence_intensity=properties["turbulence_intensity"],
+            wind_direction=properties["wind_direction"])
 
         self.flow_field = FlowField(
-            wind_speed=properties["wind_speed"],
-            wind_direction=properties["wind_direction"],
             wind_shear=properties["wind_shear"],
             wind_veer=properties["wind_veer"],
-            turbulence_intensity=properties["turbulence_intensity"],
             air_density=properties["air_density"],
             turbine_map=TurbineMap(
-                layout_x,
-                layout_y,
+                layout_x, layout_y,
                 [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
-            wake=wake
-        )
+            wake=wake,
+            wind_map=self.wind_map,
+            specified_wind_height=properties["specified_wind_height"])
 
     def __str__(self):
         return \
-            "Description: {}\n".format(self.description) + \
+            "Name: {}\n".format(self.name) + \
             "Wake Model: {}\n".format(self.flow_field.wake.velocity_model) + \
             "Deflection Model: {}\n".format(
                 self.flow_field.wake.deflection_model)
 
     def set_wake_model(self, wake_model):
         """
-        This method sets the wake model used.
+        Sets the velocity deficit model to use as given, and determines the
+        wake deflection model based on the selected velocity deficit model.
 
         Args:
-            wake_model: A string containing the wake model used to 
-                calculate the wake; Valid wake model options are: 
-                "curl", "gauss", "jensen", and "multizone".
+            wake_model (str): The desired wake model.
 
-        Returns:
-            *None* -- The wake model and flow field are updated in 
-            the :py:obj:`floris.simulation.flow_field` object.
-
-        Examples:
-            To set the wake model:
-
-            >>> floris.farm.set_wake_model('curl')
+        Raises:
+            Exception: Invalid wake model.
         """
-
-        valid_wake_models = ['curl', 'gauss', 'jensen', 'multizone']
+        valid_wake_models = [
+             'jensen', 'multizone', 'gauss', 'gauss_legacy',
+             'blondel', 'ishihara_qian', 'curl'
+        ]
         if wake_model not in valid_wake_models:
-            raise Exception("Invalid wake model. Valid options include: {}.".format(
-                ", ".join(valid_wake_models)))
+            # TODO: logging
+            raise Exception(
+                "Invalid wake model. Valid options include: {}.".format(
+                    ", ".join(valid_wake_models)))
 
-        if wake_model == 'jensen':
-            self.flow_field.wake.velocity_model = 'jensen'
+        self.flow_field.wake.velocity_model = wake_model
+        if wake_model == 'jensen' or wake_model == 'multizone':
             self.flow_field.wake.deflection_model = 'jimenez'
-        elif wake_model == 'multizone':
-            self.flow_field.wake.velocity_model = 'multizone'
-            self.flow_field.wake.deflection_model = 'jimenez'
-        elif wake_model == 'gauss':
-            self.flow_field.wake.velocity_model = 'gauss'
-            self.flow_field.wake.deflection_model = 'gauss'
-        elif wake_model == 'curl':
-            self.flow_field.wake.velocity_model = 'curl'
-            self.flow_field.wake.deflection_model = 'curl'
+        elif wake_model == 'blondel' or wake_model == 'ishihara_qian' \
+            or 'gauss' in wake_model:
+                self.flow_field.wake.deflection_model = 'gauss'
+        else:
+            self.flow_field.wake.deflection_model = wake_model
 
         self.flow_field.reinitialize_flow_field(
-            with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution)
+            with_resolution=self.flow_field.wake.velocity_model.
+            model_grid_resolution)
 
     def set_yaw_angles(self, yaw_angles):
         """
-        This method sets yaw angles for all turbines and optionally 
-        calculates the new wake velocities and updates them in the 
-        flow field.
+        Sets the yaw angles for all turbines on the
+        :py:obj:`~.turbine.Turbine` objects directly.
 
         Args:
-            yaw_angles: A single float that sets a constant yaw angle 
-                for all turbines or a list of floats that are unique 
-                yaw angles for each turbine in degrees.
-
-        Returns:
-            *None* -- The turbines are updated directly and the flow 
-            field is updated in the 
-            :py:obj:`floris.simulation.flow_field` object.
-
-        Examples:
-            To set all the yaw angles to one value:
-
-            >>> floris.farm.set_yaw_angles(20.0)
-
-            To set unique yaw angles for the turbines (for example, 
-            a 3 turbine array):
-
-            >>> floris.farm.set_yaw_angles([20.0, 10.0, 0.0])
+            yaw_angles (float or list( float )): A single value to set
+                all turbine yaw angles or a list of yaw angles corresponding
+                to individual turbine yaw angles. Yaw angles are expected
+                in degrees.
         """
         if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
             yaw_angles = [yaw_angles] * len(self.turbines)
@@ -166,132 +155,115 @@ class Farm():
     @property
     def wind_speed(self):
         """
-        This property returns the wind speed for the wind farm.
+        Wind speed at each wind turbine.
 
         Returns:
-            float: The current wind speed in the wind farm in m/s.
-
-        Examples:
-            To get the wind speed for the wind farm:
-
-            >>> wind_speed = floris.farm.wind_speed()
+            list(float)
         """
-        return self.flow_field.wind_speed
+        return self.wind_map.turbine_wind_speed
 
     @property
     def wind_direction(self):
         """
-        This property returns the wind direction for the wind farm.
+        Wind direction at each wind turbine.
+        # TODO: Explain the wind direction change here.
+        #       - Is there a transformation on wind map?
+        #       - Is this always from a particular direction?
 
         Returns:
-            float: The current wind direction in the wind farm in 
-            degrees.
-
-        Examples:
-            To get the wind direction for the wind farm:
-
-            >>> wind_direction = floris.farm.wind_direction()
+            list(float)
         """
-        return self.flow_field.wind_direction
+        return list(
+            (np.array(self.wind_map.turbine_wind_direction) - 90) % 360)
 
     @property
     def wind_shear(self):
         """
-        This property returns the wind shear power law exponent for 
-        the wind farm.
+        Wind shear power law exponent for the flow field.
 
         Returns:
-            float: The current wind shear power law exponent in the 
-            wind farm.
-
-        Examples:
-            To get the wind shear for the wind farm:
-
-            >>> wind_shear = floris.farm.wind_shear()
+            float
         """
         return self.flow_field.wind_shear
 
     @property
     def wind_veer(self):
         """
-        This property returns the wind veer -- the vertical change in 
-        wind direction across the rotor.
+        Wind veer (vertical change in wind direction) for the flow field.
 
         Returns:
-            float: The current vertical change in wind direction 
-            across the rotor in degrees.
-
-        Examples:
-            To get the wind veer for the wind farm:
-
-            >>> wind_veer = floris.farm.wind_veer()
+            float
         """
         return self.flow_field.wind_veer
 
     @property
     def turbulence_intensity(self):
         """
-        This property returns the turbulence intensity for the 
-        wind farm.
+        Initial turbulence intensity at each turbine expressed as a
+        decimal fraction.
 
         Returns:
-            float: The current turbulence intensity expressed as a 
-            decimal fraction.
-
-        Examples:
-            To get the turbulence intensity for the wind farm:
-
-            >>> TI = floris.farm.turbulence_intensity()
+            list(float)
         """
-        return self.flow_field.turbulence_intensity
+        return self.wind_map.turbine_turbulence_intensity
 
     @property
     def air_density(self):
         """
-        This property returns the air density for the wind farm.
+        Air density for the wind farm in kg/m^3.
 
         Returns:
-            float: The current air density in kg/m^3.
-
-        Examples:
-            To get the air density for the wind farm:
-
-            >>> air_density = floris.farm.air_density()
+            float
         """
         return self.flow_field.air_density
 
     @property
-    def turbine_map(self):
+    def wind_map(self):
         """
-        This property returns the turbine map of the 
-        :py:obj:`floris.simulation.flow_field` object associated with 
-        the wind farm.
+        WindMap object attached to the Farm.
+
+        Args:
+            value (:py:obj:`~.wind_map.WindMap`): WindMap object to be set.
 
         Returns:
-            TurbineMap: A :py:obj:`floris.simulation.turbine_map` 
-            object that holds turbine information for the farm.
+            :py:obj:`~.wind_map.WindMap`
+        """
+        # TODO: Does this need to be a virtual propert?
+        return self._wind_map
 
-        Examples:
-            To get the turbine map for the wind farm:
+    @wind_map.setter
+    def wind_map(self, value):
+        self._wind_map = value
 
-            >>> turbine_map = floris.farm.turbine_map()
+    @property
+    def turbine_map(self):
+        """
+        TurbineMap attached to the Farm's :py:obj:`~.flow_field.FlowField`
+        object. This is used to reduce the depth of the object-hierachy
+        required to modify the wake models from a script.
+
+        Returns:
+            :py:obj:`~.turbine_map.TurbineMap`
         """
         return self.flow_field.turbine_map
 
     @property
     def turbines(self):
         """
-        This property returns the list of 
-        :py:obj:`floris.simulation.turbine` objects contained in the 
-        :py:obj:`floris.simulation.turbine_map` object.
+        All turbines included in the model.
 
         Returns:
-            [Turbine]: A list of :py:obj:`floris.simulation.turbine` 
-            objects that hold the turbine information for the wind farm.
-
-        Examples:
-            To get a list of turbine objects from the wind farm:
-
-            >>> turbines = floris.farm.turbines()
+            list(:py:obj:`~.turbine.Turbine`) 
         """
         return self.turbine_map.turbines
+
+    @property
+    def wake(self):
+        """
+        The Farm's Wake object. This is used to reduce the depth of the
+        object-hierachy required to modify the wake models from a script.
+
+        Returns:
+            :py:obj:`~.wake.Wake`.
+        """
+        return self.flow_field.wake

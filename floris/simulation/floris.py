@@ -1,135 +1,73 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
+ 
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+ 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+ 
+# See https://floris.readthedocs.io for documentation
+ 
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
-
+from .turbine import Turbine
+from .wake import Wake
+from .farm import Farm
 import pickle
 from .input_reader import InputReader
+from ..utilities import setup_logger, LogClass
 
 
 class Floris():
     """
-    Top-level class that contains a Floris model.
-
-    Floris is the highest level class of the Floris package. Import 
-    this class and instantiate it with a path to an input file to 
-    create a Floris model. Use the ``farm`` attribute to access other 
-    objects within the model.
-
-    Args:
-        input_file: A string that is the path to the json input file.
-        input_dict: A dictionary as generated from the input_reader.
-
-    Returns:
-        Floris: An instantiated Floris object.
+    Top-level class that describes a Floris model and initializes the
+    simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to
+    access other objects within the model.
     """
-
     def __init__(self, input_file=None, input_dict=None):
-        self.input_reader = InputReader()
-        self.input_file = input_file
-        self.input_dict = input_dict
-        self._farm = []
-        self.add_farm(
-            input_file=self.input_file,
-            input_dict=self.input_dict
-        )
-
-    @property
-    def farm(self):
         """
-        Property of the Floris object that returns the farm(s) 
-        contained within the object.
+        Import this class with one of the two optional input arguments
+        to create a Floris model. The `input_dict` and `input_file`
+        should both conform to the same data format.
 
-        Returns:
-            Farm: A Farm object, or if multiple farms, a list of Farm 
-            objects.
-
-        Examples:
-            To get the Farm object(s) stored in a Floris object:
-
-            >>> farms = floris.farm()
+        Args:
+            input_file (str, optional): Path to the input file which will
+                be parsed and converted to a Python dict.
+            input_dict (dict, optional): Python dict given directly.
         """
-        if len(self._farm) == 1:
-            return self._farm[0]
-        else:
-            return self._farm
+        # Parse the input into dictionaries
+        input_reader = InputReader()
+        self.meta_dict, turbine_dict, wake_dict, farm_dict \
+            = input_reader.read(input_file, input_dict)
 
-    @farm.setter
-    def farm(self, value):
-        if not hasattr(self._farm):
-            self._farm = value
+        # Configure logging
+        logging_dict = self.meta_dict["logging"]
+        self.logger = setup_logger(name=__name__, logging_dict=logging_dict)
 
-    def add_farm(self, input_file=None, input_dict=None):
-        """
-        A method that adds a farm with user-defined input file to the 
-        Floris object.
-
-        Returns:
-            *None* -- The :py:class:`floris.simulation.floris` object 
-            is updated directly.
-
-        Examples:
-            To add a farm to a Floris object using a specific input 
-            file:
-
-            >>> floris.add_farm(input_file='input.json')
-
-            To add a farm to a Floris object using the stored input 
-            file:
-
-            >>> floris.add_farm()
-        """
-        self._farm.append(self.input_reader.read(input_file=input_file,
-                                                 input_dict=input_dict))
-
-    def list_farms(self):
-        """
-        A method that lists the farms and relevant farm details stored 
-        in Floris object.
-
-        Returns:
-            *None* -- The farm infomation is printed to the console.
-
-        Examples:
-            To list the current farms in Floris object:
-
-            >>> floris.list_farms()
-        """
-        for num, farm in enumerate(self._farm):
-            print('Farm {}'.format(num))
-            print(farm)
+        # Initialize the simulation objects
+        turbine = Turbine(turbine_dict)
+        wake = Wake(wake_dict)
+        self.farm = Farm(farm_dict, turbine, wake)
 
     def export_pickle(self, pickle_file):
         """
-        A method that exports a farm to a pickle file.
-
-        Returns:
-            *None* -- Creates a pickle file.
-
-        Examples:
-            To export a farm to a pickle file:
-
-            >>> floris.export_pickle('saved_farm.p')
+        Exports the :py:class:`~.farm.Farm` object to a
+        Pickle binary file.
+        
+        Args:
+            pickle_file (str): Name of the resulting output file.
         """
         pickle.dump(self.farm, open(pickle_file, "wb"))
 
     def import_pickle(self, pickle_file):
         """
-        A method that imports a farm from a pickle file.
-
-        Returns:
-            *None* - Loads the farm into the 
-            :py:class:`floris.simulation.floris.farm` object.
-
-        Examples:
-            To load a pickled farm:
-
-            >>> floris.import_pickle('saved_farm.p')
+        Imports the :py:class:`~.farm.Farm` object from a
+        Pickle binary file.
+        
+        Args:
+            pickle_file (str): Name of the Pickle file to load.
         """
         self.farm = pickle.load(open(pickle_file, "rb"))

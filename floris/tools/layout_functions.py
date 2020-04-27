@@ -1,21 +1,28 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
+ 
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+ 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+ 
+# See https://floris.readthedocs.io for documentation
+ 
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
-
-# Defines a bunch of tools for plotting and manipulating layouts for quick visualizations
+# Defines a bunch of tools for plotting and manipulating 
+# layouts for quick visualizations
 
 import numpy as np
 import math
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.spatial.distance import squareform, pdist
+from floris.utilities import wrap_360
+from ..utilities import setup_logger
 
 # All functions assume a dataframe with index turbine, and columns x and y
 
@@ -41,9 +48,10 @@ def visualize_layout(turbineLoc,
                      ax=None,
                      show_wake_lines=False,
                      limit_dist=None,
-                     turbine_face_north=False):
+                     turbine_face_north=False,
+                     one_index_turbine=False):
     """
-    Make a plot which shows the turbine locations, and important wakes
+    Make a plot which shows the turbine locations, and important wakes.
 
     Args:
         turbineLoc (pd.DataFrame): turbine location data
@@ -56,6 +64,7 @@ def visualize_layout(turbineLoc,
             Defaults to None.
         turbine_face_north (bool, optional): Force orientation of wind
             turbines. Defaults to False.
+        one_index_turbine (bool, optional): if true, 1st turbine is turbine 1
     """
 
     turbines = turbineLoc.index.values
@@ -67,13 +76,16 @@ def visualize_layout(turbineLoc,
     # Plot turbine points
     # ax.scatter(turbineLoc.x,turbineLoc.y,alpha=0)
 
-    # Make ordered list of pairs sorted by distance if the distance and angle matrices are provided
+    # Make ordered list of pairs sorted by distance if the distance 
+    # and angle matrices are provided
     if show_wake_lines:
 
         # Make a dataframe of distances
-        dist = pd.DataFrame(squareform(pdist(turbineLoc)),
-                            index=turbineLoc.index,
-                            columns=turbineLoc.index)
+        dist = pd.DataFrame(
+            squareform(pdist(turbineLoc)),
+            index=turbineLoc.index,
+            columns=turbineLoc.index
+        )
 
         # Make a DF of turbine angles
         angle = pd.DataFrame()
@@ -119,38 +131,70 @@ def visualize_layout(turbineLoc,
                 continue
 
             l, = ax.plot(x, y)
-            # linetext = '%.2f m --- %.2f D --- %.2f Deg --- %.2f Deg' % (dist.loc[t1,t2],dist.loc[t1,t2]/D,angle.loc[t1,t2],angle.loc[t2,t1])
-            linetext = '%.2f D --- %.2f Deg' % (dist.loc[t1, t2] / D,
-                                                angle.loc[t2, t1])
-            label_line(l,
-                       linetext,
-                       ax,
-                       near_i=1,
-                       near_x=None,
-                       near_y=None,
-                       rotation_offset=180)
+            # linetext = '%.2f m --- %.2f D --- %.2f Deg --- %.2f Deg' % (
+            #     dist.loc[t1,t2],
+            #     dist.loc[t1,t2]/D,
+            #     angle.loc[t1,t2],
+            #     angle.loc[t2,t1]
+            # )
+            # linetext = '%.2f D --- %.2f Deg' % (dist.loc[t1, t2] / D,
+            #                                     angle.loc[t2, t1])
+            linetext = '%.2f D --- %.1f/%.1f' % (
+                dist.loc[t1, t2] / D,
+                np.min([angle.loc[t2, t1], angle.loc[t1, t2]]),
+                np.max([angle.loc[t2, t1], angle.loc[t1, t2]])
+            )
+            # wrap_360(angle.loc[t2, t1]-180.))
+            label_line(
+                l,
+                linetext,
+                ax,
+                near_i=1,
+                near_x=None,
+                near_y=None,
+                rotation_offset=180
+            )
 
     # Plot turbines
     for t1 in turbines:
         # print(t1)
-        #ax.annotate(t1,(turbineLoc03.loc[t1].x,turbineLoc03.loc[t1].y),xycoords='data')
+        # ax.annotate(
+        #     t1,
+        #     (turbineLoc03.loc[t1].x,turbineLoc03.loc[t1].y),
+        #     xycoords='data'
+        # )
         if not turbine_face_north:
-            ax.plot([turbineLoc.loc[t1].x, turbineLoc.loc[t1].x], [
-                turbineLoc.loc[t1].y - 0.5 * D / 2.,
-                turbineLoc.loc[t1].y + 0.5 * D / 2.
-            ],
-                    color='k')
+            ax.plot(
+                [turbineLoc.loc[t1].x, turbineLoc.loc[t1].x],
+                [
+                    turbineLoc.loc[t1].y - 0.5 * D / 2.,
+                    turbineLoc.loc[t1].y + 0.5 * D / 2.
+                ],
+                color='k'
+            )
         else:
-            ax.plot([
-                turbineLoc.loc[t1].x - 0.5 * D / 2.,
-                turbineLoc.loc[t1].x + 0.5 * D / 2.
-            ], [turbineLoc.loc[t1].y, turbineLoc.loc[t1].y],
-                    color='k')
-        ax.text(turbineLoc.loc[t1].x + D / 2,
+            ax.plot(
+                [
+                    turbineLoc.loc[t1].x - 0.5 * D / 2.,
+                    turbineLoc.loc[t1].x + 0.5 * D / 2.
+                ],
+                [turbineLoc.loc[t1].y, turbineLoc.loc[t1].y],
+                color='k'
+            )
+        if not one_index_turbine:
+            ax.text(
+                turbineLoc.loc[t1].x + D / 2,
                 turbineLoc.loc[t1].y,
                 t1,
-                bbox=dict(boxstyle="round", ec='red', fc='white'))
-
+                bbox=dict(boxstyle="round", ec='red', fc='white')
+            )
+        else:
+            ax.text(
+                turbineLoc.loc[t1].x + D / 2,
+                turbineLoc.loc[t1].y,
+                t1+1,
+                bbox=dict(boxstyle="round", ec='red', fc='white')
+            )
     ax.set_aspect('equal')
 
 

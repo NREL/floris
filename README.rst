@@ -6,11 +6,15 @@ FLORIS Wake Modeling Utility
 For technical questions regarding FLORIS usage please first search for or post
 your questions to
 `stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
-the **floris** tag. Alternatively, please contact
-`Jen King <mailto:jennifer.king@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_,
-`Chris Bay <mailto:chris.bay@nrel.gov>`_, and
-`Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
+the **floris** tag. Alternatively, email the NREL FLORIS team at
+`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_ or contact
+`Jen King <mailto:jennifer.king@nrel.gov>`_ and
+`Paul Fleming <mailto:paul.fleming@nrel.gov>`_ directly.
+
+.. image:: https://github.com/nrel/floris/workflows/Automated%20tests%20%26%20code%20coverage/badge.svg
+  :target: https://github.com/nrel/floris/actions
+.. image:: https://codecov.io/gh/nrel/floris/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/nrel/floris
 
 Background and Objectives
 =========================
@@ -51,16 +55,16 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 1.1.5 (2019). Available at https://github.com/nrel/floris.
+   FLORIS. Version 2.0.0 (2020). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
 .. code-block:: latex
 
-    @misc{FLORIS_2019,
+    @misc{FLORIS_2020,
     author = {NREL},
-    title = {{FLORIS. Version 1.1.5}},
-    year = {2019},
+    title = {{FLORIS. Version 2.0.0}},
+    year = {2020},
     publisher = {GitHub},
     journal = {GitHub repository},
     url = {https://github.com/NREL/floris}
@@ -70,10 +74,28 @@ For LaTeX users:
 
 Installation
 ============
-Using ``pip``, FLORIS can be installed in two ways
+The FLORIS repository consists of two primary branches:
+
+- `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
+  release corresponding to a specific version number.
+- `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
+  updates including bug fixes and improvements.
+
+These can be cloned (i.e. downloaded) directly from GitHub with one of the
+following commands:
+
+.. code-block:: bash
+
+    # master branch
+    git clone https://github.com/nrel/floris -b master
+
+    # develop branch
+    git clone https://github.com/nrel/floris -b develop
+
+After obtaining the source code, it can be "installed" using ``pip`` or another
+Python package manager. With ``pip``, there are two options:
 
 - local editable install
-
 - using a tagged release version from the ``pip`` repo
 
 For consistency between all developers, it is recommended to use Python
@@ -141,7 +163,7 @@ The requirements files can be used to install everything with:
 License
 =======
 
-Copyright 2019 NREL
+Copyright 2020 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

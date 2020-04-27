@@ -45,8 +45,8 @@ Testing
 =======
 
 In order to maintain a level of confidence in the software, FLORIS is expected
-to maintain a reasonable level of test coverage. To that end, there are unit
-and regression tests included in the package.
+to maintain a reasonable level of test coverage. To that end, unit
+tests for a small subset of the `simulation` package are included. 
 
 The full testing suite can by executed by running the command ``pytest`` from
 the highest directory in the repository. A testing-only class is included
@@ -63,6 +63,14 @@ directory in the repository.
 
 Regression Tests
 ~~~~~~~~~~~~~~~~
+
+.. note::
+
+    The regression tests have been disabled. Before reenabling, the baseline
+    tests should be reworked to test against deliberate and meaningful data.
+    The result of the tests should also be tightly integrated into the dev
+    team's workflow.
+
 Regression tests are included in FLORIS through the same
 `pytest <https://docs.pytest.org/en/latest/>`_ framework as the unit tests.
 Functionally, the only difference is that the regression tests take more
