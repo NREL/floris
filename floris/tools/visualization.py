@@ -19,7 +19,8 @@ from matplotlib import rcParams
 import numpy as np
 
 
-def plot_turbines(ax, layout_x, layout_y, yaw_angles, D, color=None):
+def plot_turbines(ax, layout_x, layout_y, yaw_angles, D, color=None, 
+        wind_direction=270.):
     """
     Plot wind plant layout from turbine locations.
 
@@ -30,7 +31,12 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, D, color=None):
         yaw_angles (np.array): Yaw angles of each wind turbine.
         D (float): Wind turbine rotor diameter.
         color (str): Pyplot color option to plot the turbines.
+        wind_direction (float): Wind direction (rotates farm)
     """
+
+    # Correct for the wind direction
+    yaw_angles = np.array(yaw_angles) - wind_direction - 270
+
     if color == None: color = 'k'
     for x, y, yaw in zip(layout_x, layout_y, yaw_angles):
         R = D / 2.
@@ -39,6 +45,25 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, D, color=None):
         y_0 = y - np.cos(np.deg2rad(yaw)) * R
         y_1 = y + np.cos(np.deg2rad(yaw)) * R
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
+
+def plot_turbines_with_fi(ax,fi,color=None):
+    """
+    Wrapper function to plot turbines which extracts the data
+    from a FLORIS interface object
+
+    Args:
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults 
+            to None.
+        fi (:py:class:`floris.tools.flow_data.FlowData`):
+                FlowData object.
+        color (str, optional): Color to plot turbines
+    """
+    # Grab D
+    for i, turbine in enumerate(fi.floris.farm.turbines):
+        D = turbine.rotor_diameter
+        break
+
+    plot_turbines(ax, fi.layout_x, fi.layout_y, fi.get_yaw_angles(), D, color=color,  wind_direction=fi.floris.farm.wind_map.input_direction)
 
 
 def line_contour_cut_plane(cut_plane,
