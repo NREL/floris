@@ -19,19 +19,14 @@ from ..utilities import setup_logger
 
 class InputReader():
     """
-    InputReader parses json input files into inputs for FLORIS objects.
-
-    InputReader is a helper class which parses json input files and
-    provides an interface to instantiate model objects in FLORIS. This
-    class handles input validation regarding input type, but does not
-    enforce value checking. It is designed to function as a singleton
-    object, but that is not enforced or required.
-
-    Returns:
-        InputReader:  An instantiated InputReader object
+    InputReader parses JSON input files into inputs for the
+    :py:class:`~.floris.Floris` class. It handles input validation regarding
+    input type, but does not enforce value checking.
     """
-
     def __init__(self):
+        """
+        Initializes the parameter types expected in the input data.
+        """
 
         self._valid_objects = ["turbine", "wake", "farm"]
 
@@ -71,15 +66,14 @@ class InputReader():
 
     def _parseJSON(self, filename):
         """
-        Opens the input json file and parses the contents into a python
+        Opens the input JSON file and parses the contents into a Python
         dict.
 
         Args:
-            filename:  A string that is the path to the json input file.
+            filename (str): Path to the JSON input file.
 
         Returns:
-            dict:  A dictionary *data* that contains the json input
-            file.
+            dict: The data parsed from the input file.
         """
         with open(filename) as jsonfile:
             data = json.load(jsonfile)
@@ -87,20 +81,22 @@ class InputReader():
 
     def _validate_dict(self, input_dict, type_map):
         """
-        Verifies that the expected fields exist in the json input file
+        Verifies that the expected fields exist in the JSON input file
         and validates the type of the input data by casting the fields
-        to appropriate values based on the predefined type maps in.
+        to appropriate values based on the predefined type maps.
 
         Args:
-            input_dict: Input dictionary with all elements of type str.
-            type_map: Predefined type map dictionary for type checking 
-                inputs structured as {"property": type}.
+            input_dict (dict): Input data.
+            type_map (dict): Predefined type-map for type checking inputs;
+                structured as {"property": type}.
+
+        Raises:
+            KeyError: Missing/invalid key.
+            ValueError: Invalid value type.
 
         Returns:
-            dict: Validated and correctly typed input property
-            dictionary.
+            dict: Validated and correctly typed input data.
         """
-
         validated = {}
 
         # validate the object type
@@ -137,71 +133,77 @@ class InputReader():
 
     def _cast(self, typecast, value):
         """
-        Casts the string input to the type in typecast.
+        Casts the input to the given type in `typecast`.
 
         Args:
-            typcast: type - the type class to use on value.
-            value: str - the input string to cast to 'typecast'.
+            typecast (type): Type class to use for casting.
+            value (str): Input to cast to 'typecast'.
 
         Returns:
-            type or None: position 0 - the casted value.
-            None or Error: position 1 - the caught error.
+            typecast
         """
         return typecast(value)
 
     def validate_turbine(self, input_dict):
         """
-        Checks for the required values and types of input in the
-        given input dictionary as required by the
-        :py:obj:`floris.simulation.turbine` object.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.turbine.Turbine` object.
 
         Args:
-            input_dict: Input dictionary describing a turbine model.
+            input_dict (dict): Input dictionary describing a turbine model.
 
         Returns:
-            dict: A validated dictionary
+            dict: A validated dictionary.
         """
         return self._validate_dict(input_dict, self._turbine_properties)
 
     def validate_wake(self, input_dict):
         """
-        Checks for the required values and types of input in the
-        given input dictionary as required by the
-        :py:obj:`floris.simulation.wake` object.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.wake.Wake` object.
 
         Args:
-            input_dict: dict - Input dictionary describing a wake model.
+            input_dict (dict): Input dictionary describing a wake model.
 
         Returns:
-            dict: A validated dictionary
+            dict: A validated dictionary.
         """
         return self._validate_dict(input_dict, self._wake_properties)
 
     def validate_farm(self, input_dict):
         """
-        Checks for the required values and types of input in the
-        given input dictionary as required by the
-        :py:obj:`floris.simulation.farm` object.
+        Checks for the required values and types of input in the given input
+        dictionary as required by the :py:obj:`~.farm.Farm` object.
 
         Args:
-            input_dict: Input dictionary describing a farm model.
+            input_dict (dict): Input dictionary describing a farm model.
 
         Returns:
-            dict: A validated dictionary
+            dict: A validated dictionary.
         """
         return self._validate_dict(input_dict, self._farm_properties)
 
     def read(self, input_file=None, input_dict=None):
         """
-        Parses a given input file or input dictionary and validated the
+        Parses a given input file or input dictionary and validates the
         contents.
 
         Args:
-            input_file: A string path to the json input file.
-            input_dict: A Python dictionary of inputs
+            input_file (str, optional): A string path to the JSON input file.
+                Defaults to None.
+            input_dict (dict, optional): A Python dictionary of inputs.
+                Defaults to None.
+
+        Raises:
+            ValueError: Input file or dictionary must be provided.
 
         Returns:
-            input_dict: A validated dictionary
+            dict, dict, dict, dict:
+
+                - Meta data from the input dictionary.
+                - Validated "turbine" section from the input dictionary.
+                - Validated "wake" section from the input dictionary.
+                - Validated "farm" section from the input dictionary.
         """
         if input_file is not None:
             input_dict = self._parseJSON(input_file)
