@@ -135,11 +135,22 @@ class FlorisInterface():
                     [copy.deepcopy(self.floris.farm.turbines[0]) \
                      for ii in range(len(layout_array[0]))])
             if wind_layout is None: wind_layout = wind_map.wind_layout
-            if wind_speed is None: wind_speed = wind_map.input_speed
+            if wind_speed is None: 
+                wind_speed = wind_map.input_speed
+            else:
+                wind_speed = \
+                    wind_speed if isinstance(wind_speed, list) else [wind_speed]
             if wind_direction is None:
                 wind_direction = wind_map.input_direction
+            else:
+                wind_direction = wind_direction if \
+                    isinstance(wind_direction, list) else [wind_direction]
             if turbulence_intensity is None:
                 turbulence_intensity = wind_map.input_ti
+            else:
+                turbulence_intensity = turbulence_intensity if \
+                    isinstance(turbulence_intensity, list) \
+                    else [turbulence_intensity]
 
             wind_map = WindMap(wind_speed=wind_speed,
                                layout_array=layout_array,
