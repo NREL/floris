@@ -16,46 +16,24 @@ from ....utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_base import GaussianModel
 
-
 class Gauss(GaussianModel):
     """
     The new Gauss model blends the previously implemented Gussian model based
     on [1-5] with the super-Gaussian model of [6].  The blending is meant to
     provide consistency with previous results in the far wake while improving
     prediction of the near wake.
-
+    
+    See :cite:`gvm-bastankhah2014new`, :cite:`gvm-abkar2015influence`,
+    :cite:`gvm-bastankhah2016experimental`, :cite:`gvm-niayifar2016analytical`,
+    :cite:`gvm-dilip2017wind`, :cite:`gvm-blondel2020alternative`, and
+    :cite:`gvm-King2019Controls` for more information on Gaussian wake velocity
+    deficit models.
+    
     References:
-        [1] Abkar, M. and Porte-Agel, F. "Influence of atmospheric stability on
-        wind-turbine wakes: A large-eddy simulation study." *Physics of
-        Fluids*, 2015.
-
-        [2] Bastankhah, M. and Porte-Agel, F. "A new analytical model for
-        wind-turbine wakes." *Renewable Energy*, 2014.
-
-        [3] Bastankhah, M. and Porte-Agel, F. "Experimental and theoretical
-        study of wind turbine wakes in yawed conditions." *J. Fluid
-        Mechanics*, 2016.
-
-        [4] Niayifar, A. and Porte-Agel, F. "Analytical modeling of wind farms:
-        A new approach for power prediction." *Energies*, 2016.
-
-        [5] Dilip, D. and Porte-Agel, F. "Wind turbine wake mitigation through
-        blade pitch offset." *Energies*, 2017.
-
-        [6] Blondel, F. and Cathelain, M. "An alternative form of the
-        super-Gaussian wind turbine wake model." *Wind Energ. Sci. Discuss.*,
-        2020.
-
-        [7] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
-        , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
-        Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
-        https://doi.org/10.5194/wes-2020-3, in review, 2020.
-
-    Raises:
-        ValueError: Invalid value type given for ka.
-        ValueError: Invalid value type given for kb.
-        ValueError: Invalid value type given for alpha.
-        ValueError: Invalid value type given for beta.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: gvm-
     """
     default_parameters = {
         'ka': 0.38,

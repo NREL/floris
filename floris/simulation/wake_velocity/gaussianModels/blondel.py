@@ -19,25 +19,14 @@ from scipy.special import gamma
 class Blondel(GaussianModel):
     """
     Blondel is a direct implementation of the super-Gaussian model
-    described in [1] with GCH disabled by default.
+    described in :cite:`bcv-blondel2020alternative` with GCH disabled by
+    default. See :cite:`bcv-King2019Controls` for info on GCH.
     
     References:
-        [1] Blondel, F. and Cathelain, M. "An alternative form of the
-        super-Gaussian wind turbine wake model." *Wind Energy Science
-        Disucssions*, 2020.
-
-        [2] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J,
-        Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
-        Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
-        https://doi.org/10.5194/wes-2020-3, in review, 2020.
-
-    Raises:
-        ValueError: Invalid value type given for a_s.
-        ValueError: Invalid value type given for b_s.
-        ValueError: Invalid value type given for c_s.
-        ValueError: Invalid value type given for a_f.
-        ValueError: Invalid value type given for b_f.
-        ValueError: Invalid value type given for c_f.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: bcv-
     """
     default_parameters = {
         "a_s": 0.3837,
@@ -78,15 +67,16 @@ class Blondel(GaussianModel):
                         order.
                     -   **calculate_VW_velocities**: Flag to enable the
                         calculation of V- and W-component velocities using
-                        methods developed in [2].
+                        methods developed in :cite:`bcv-King2019Controls`.
                     -   **use_yaw_added_recovery**: Flag to use yaw added
                         recovery on the wake velocity using methods developed
-                        in [2].
+                        in :cite:`bcv-King2019Controls`.
                     -   **yaw_recovery_alpha**: Tuning value for yaw added
                         recovery on the wake velocity using methods developed
-                        in [2].
-                    -    **eps_gain**: Tuning value for calculating the V- and
-                        W-component velocities using methods developed in [2].  
+                        in :cite:`bcv-King2019Controls`.
+                    -   **eps_gain**: Tuning value for calculating the V- and
+                        W-component velocities using methods developed in
+                        :cite:`bcv-King2019Controls`.
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)

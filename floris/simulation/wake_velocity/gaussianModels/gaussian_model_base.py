@@ -18,13 +18,13 @@ class GaussianModel(VelocityDeficit):
     """
     This is the super-class for all Gaussian-type wake models. It includes
     implementations of functions that subclasses should use to perform
-    Gaussian-related calculations (see [1]).
-
+    Gaussian-related calculations (see :cite:`gmb-King2019Controls`)
+    
     References:
-        [1] King, J., Fleming, P., King, R., Martínez-Tossas, L. A., Bay, C. J
-        , Mudafort, R., and Simley, E.: Controls-Oriented Model for Secondary
-        Effects of Wake Steering, *Wind Energ. Sci. Discuss.*, 
-        https://doi.org/10.5194/wes-2020-3, in review, 2020.
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: gmb-
     """
     def __init__(self, parameter_dictionary):
         """
