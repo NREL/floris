@@ -18,7 +18,6 @@
 
 import os
 import dateutil
-import h5pyd
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
@@ -1053,6 +1052,8 @@ class WindRose():
                 - **wd** (*float*) - Raw wind direction data (deg).
                 - **ws** (*float*) - Raw wind speed data (m/s).
         """
+        import h5pyd
+
         # Open the wind data "file"
         # server endpoint, username, password is found via a config file
         f = h5pyd.File("/nrel/wtk-us.h5", 'r')

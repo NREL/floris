@@ -39,28 +39,25 @@ VERSION = '1.1.4'
 REQUIRED = [
     # simulation
     'matplotlib>=3',
-    'numpy==1.16.3',
+    'numpy>=1.16',
     'pytest>=4',
-    'scipy==1.1.0',
-    'coloredlogs==10.0',
+    'scipy>=1.1',
+    'coloredlogs>=10.0',
 
     # tools
-    'h5pyd==0.3.3',
-    'pandas==0.24.2',
-    'pyproj==2.1.3',
-    'seaborn==0.9.0',
+    'h5pyd>=0.3',
+    'pandas>=0.24',
+    'pyproj>=2.1',
+    'seaborn>=0.9',
     'sklearn>=0.0',
-
-    # utilities
-    'coloredlogs>=10.0'
 ]
 
 # What packages are optional?
 EXTRAS = {
     'docs': {
-        'readthedocs-sphinx-ext==0.5.15',
-        'Sphinx==2.0',
-        'sphinxcontrib-napoleon==0.7'
+        'readthedocs-sphinx-ext',
+        'Sphinx',
+        'sphinxcontrib-napoleon'
     }
 }
 
