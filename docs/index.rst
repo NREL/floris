@@ -9,7 +9,7 @@
     source/inputs
     source/examples
     source/developers
-    source/changelog
+    source/references
 
 
 FLORIS Wake Modeling Utility
@@ -18,9 +18,7 @@ For technical questions regarding FLORIS usage please first search for or post
 your questions to
 `stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
 the **floris** tag. Alternatively, email the NREL FLORIS team at
-`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_ or contact
-`Jen King <mailto:jennifer.king@nrel.gov>`_ or
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_ directly.
+`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_.
 
 Background and Objectives
 =========================
@@ -30,25 +28,36 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 
 - Jensen model for velocity deficit
 - Jimenez model for wake deflection
-- Gauss model for wake deflection and velocity deficit
-- Multi zone model for wake deflection and velocity deficit
+- Multi zone model for velocity deficit
+- Gaussian models for wake deflection and velocity deficit
+- Gauss-Curl-Hybrid (GCH) model for second-order wake steering effects
 - Curl  model for wake deflection and velocity deficit
 
-More information on all of these models can be found in :ref:`theory`.
+Further, all wake models can now be overlayed onto spatially heterogenous
+inflows. More information on all models can be found in :ref:`theory`.
 
-A couple of publications with practical information on using floris as a
-modeling and simulation tool for controls research are
+FLORIS further includes a suite of design and analysis tools useful in wind farm
+control and co-designed layout optimization.  Examples include:
 
-1. Annoni, J., Fleming, P., Scholbrock, A., Roadman, J., Dana, S., Adcock, C.,
-    Porté-Agel, F, Raach, S., Haizmann, F., and Schlipf, D.: `Analysis of
-    control-oriented wake modeling tools using lidar field results <https://www.wind-energ-sci.net/3/819/2018/>`__,
-    in: Wind Energy Science, vol. 3, pp. 819-831, Copernicus Publications,
-    2018.
-2. Bay, C.J., King, J., Fleming, P., Mudafort, R., and Martínez-Tossas, L.A.:
-    `Unlocking the Full Potential of Wake Steering: Implementation and
-    Assessment of a Controls-Oriented Model <https://www.wind-energ-sci-discuss.net/wes-2019-19/>`__,
-    submitted to Wind Energy Science Discussions, Copernicus Publications,
-    2019.
+- Methods for optimization and design of wind farm control and layout
+- Visualization methods for flow analysis
+- Methods for wind rose and annual energy production analysis
+- Methods for analysis of field campaigns of wind farm control
+- Coupling methods to other tools, including SOWFA and CC-Blade
+- Methods to model heterogenous atmospheric conditions
+
+Example applications of these tools are provided in the `examples/` folder, and
+it is highly recommended that new users begin with those in
+`examples/_getting_started`.
+
+See :cite:`ind-annoni2018analysis` for practical information on using floris as
+a modeling and simulation tool for controls research.
+
+References:
+    .. bibliography:: /source/zrefs.bib
+        :style: unsrt
+        :filter: docname in docnames
+        :keyprefix: ind-
 
 Citation
 ========
@@ -83,8 +92,7 @@ The FLORIS repository consists of two primary branches:
 - `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
   release corresponding to a specific version number.
 - `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
-  updates including bug fixes and improvements. See :ref:`changelog` for
-  details.
+  updates including bug fixes and improvements.
 
 These can be cloned (i.e. downloaded) directly from GitHub with one of the
 following commands:

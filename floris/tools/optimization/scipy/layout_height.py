@@ -1,14 +1,16 @@
 # Copyright 2020 NREL
-
+ 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
-
+ 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+ 
+# See https://floris.readthedocs.io for documentation
 
 from .layout import LayoutOptimization
 from .base_COE import BaseCOE
@@ -19,17 +21,14 @@ import matplotlib.pyplot as plt
 
 class LayoutHeightOptimization(LayoutOptimization):
     """
-    Sub class of the 
-    :py:class`floris.tools.optimization.LayoutOptimization`
-    object class that performs layout and turbine height optimization.
-
-    This optimization method aims to minimize Cost of Energy (COE) by 
-    changing individual turbine locations and all turbine heights 
-    across the wind farm. Note that the changing turbine height 
-    applies to all turbines, i.e. although the turbine height is 
-    changing, all turbines will be assigned the same turbine height.
+    LayoutHeightOptimization is a subclass of 
+    :py:class:`~.tools.optimization.scipy.layout.LayoutOptimization` that
+    performs layout and turbine height optimization. This optimization method
+    aims to minimize Cost of Energy (COE) by changing individual turbine
+    locations and all turbine heights across the wind farm. Note that the
+    changing turbine height applies to all turbines, i.e. although the turbine
+    height is changing, all turbines will be assigned the same turbine height.
     """
-
     def __init__(self, fi, boundaries,
                            height_lims,
                            wd,
@@ -44,46 +43,49 @@ class LayoutHeightOptimization(LayoutOptimization):
                            opt_method='SLSQP',
                            opt_options=None):
         """
-        Instantiate LayoutHeightOptimization object and parameter 
-        values.
+        Instantiate LayoutHeightOptimization object with a FlorisInterface
+        object and assign parameter values.
         
         Args:
-            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
-                Interface from FLORIS to the tools package.
-            boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices.
+            fi (:py:class:`~.tools.floris_interface.FlorisInterface`): 
+                Interface used to interact with the Floris object.
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
             height_lims (iterable): A list of the minimum and maximum 
-                height limits for the optimization. Each value only 
+                height limits for the optimization (m). Each value only 
                 needs to be defined once since all the turbine heights 
                 are the same (ie. [h_min, h_max]).
-            wd (np.array): An array of wind directions.
-            ws (np.array): An array of wind speeds.
-            freq (np.array): An array of wind direction 
-                frequency values.
-            AEP_initial (float): Initial Annual Energy 
-                Production used in normalizing optimization.
-            COE_initial (float): Initial Cost of Energy used in 
-                normalizing optimization.
-            plant_kw (float): The rating of the entire wind plant, in 
-                kW. Defaults to None.
+            wd (np.array): An array of wind directions (deg).
+            ws (np.array): An array of wind speeds (m/s).
+            freq (np.array): An array of the frequencies of occurance
+                correponding to each pair of wind direction and wind speed
+                values.
+            AEP_initial (float): The initial Annual Energy 
+                Production used for normalization in the optimization (Wh)
+                (TODO: Is Watt-hours the correct unit?).
+            COE_initial (float): Initial Cost of Energy used for 
+                normalization in the optimization ($/kWh).
+            plant_kw (float): The rating of the entire wind plant (kW). 
             x0 (iterable, optional): The initial turbine locations, 
                 ordered by x-coordinate and then y-coordiante 
                 (ie. [x1, x2, ..., xn, y1, y2, ..., yn]), and the 
-                initial turbine hub height. Defaults to None. 
-                Initializes to the current turbine locations and hub 
-                height.
+                initial turbine hub height (m). If none are provided, x0
+                initializes to the current turbine locations and hub height.
+                Defaults to None. 
             bnds (iterable, optional): Bounds for the optimization 
-                variables (pairs of min/max values for each variable). 
-                Defaults to None. Initializes to the min. and max. of 
-                the boundaries iterable.
+                variables (TODO: just coordinates, or height too?) (pairs of
+                min/max values for each variable (m)). If none are specified,
+                they are set to the min. and max. of the boundaries iterable.
+                Defaults to None.
             min_dist (float, optional): The minimum distance to be 
-                maitained between turbines during the optimization. 
-                Defaults to None. Initializes to 2 rotor diameters.
-            opt_method (str, optional): The optimization method for 
-                scipy.optimize.minize to use. Defaults to None. 
-                Initializes to 'SLSQP'.
-            opt_options (dict, optional): Dicitonary for setting the 
-                optimization options. Defaults to None.
+                maintained between turbines during the optimization (m). If not
+                specified, initializes to 2 rotor diameters. Defaults to None. 
+            opt_method (str, optional): The optimization method used by 
+                scipy.optimize.minize. Defaults to 'SLSQP'.
+            opt_options (dict, optional): Optimization options used by 
+                scipy.optimize.minize. If none are specified, they are set to
+                {'maxiter': 100, 'disp': True, 'iprint': 2, 'ftol': 1e-9}.
+                Defaults to None.
         """
         super().__init__(fi, boundaries, wd, ws, freq, AEP_initial)
         self.epsilon = np.finfo(float).eps
@@ -176,53 +178,49 @@ class LayoutHeightOptimization(LayoutOptimization):
                            opt_method=None,
                            opt_options=None):
         """
-        Reintializes parameter values for the optimization.
-        
-        This method reinitializes the optimization parameters and 
-        bounds to the supplied values or uses what is currently stored.
+        This method reinitializes any optimization parameters that are
+        specified. Otherwise, the current parameter values are kept.
         
         Args:
-            boundaries (iterable, optional): A list of pairs of floats 
-                that represent the boundary's vertices. Defaults to 
-                None.
-            height_lims (iterable, optional): A list of the minimum 
-                and maximum height limits for the optimization. Each 
-                value only needs to be defined once since all the 
-                turbine heights are the same (ie. [h_min, h_max]). 
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
+            height_lims (iterable): A list of the minimum and maximum 
+                height limits for the optimization (m). Each value only 
+                needs to be defined once since all the turbine heights 
+                are the same (ie. [h_min, h_max]). Defaults to None.
+            wd (np.array): An array of wind directions (deg). Defaults to None.
+            ws (np.array): An array of wind speeds (m/s). Defaults to None.
+            freq (np.array): An array of the frequencies of occurance
+                correponding to each pair of wind direction and wind speed
+                values. Defaults to None.
+            AEP_initial (float): The initial Annual Energy 
+                Production used for normalization in the optimization (Wh).
                 Defaults to None.
-            wd (np.array, optional): An array of wind directions. 
+            COE_initial (float): Initial Cost of Energy used for 
+                normalization in the optimization ($/kWh). Defaults to None.
+            plant_kw (float): The rating of the entire wind plant (kW).
                 Defaults to None.
-            ws (np.array, optional): An array of wind speeds. Defaults 
-                to None.
-            freq (np.array, optional): An array of wind direction 
-                frequency values. Defaults to None.
-            AEP_initial (float, optional): Initial Annual Energy 
-                Production used in normalizing optimization. Defaults 
-                to None.
-            COE_initial (float, optional): Initial Cost of Energy used 
-                in normalizing optimization. Defaults to None.
-            plant_kw (float, optional): The rating of the entire wind 
-                plant, in kW. Defaults to None.
             x0 (iterable, optional): The initial turbine locations, 
                 ordered by x-coordinate and then y-coordiante 
                 (ie. [x1, x2, ..., xn, y1, y2, ..., yn]), and the 
-                initial turbine hub height. Defaults to None. 
-                Initializes to the current turbine locations and hub 
-                height.
+                initial turbine hub height (m). If none are provided, x0
+                initializes to the current turbine locations and hub height.
+                Defaults to None. 
             bnds (iterable, optional): Bounds for the optimization 
-                variables (pairs of min/max values for each variable). 
-                Defaults to None. Initializes to the min. and max. of 
-                the boundaries iterable.
+                variables (TODO: just coordinates, or height too?) (pairs of
+                min/max values for each variable (m)). If none are specified,
+                they are set to the min. and max. of the boundaries iterable.
+                Defaults to None.
             min_dist (float, optional): The minimum distance to be 
-                maitained between turbines during the optimization. 
-                Defaults to None. Initializes to 2 rotor diameters. 
-            opt_method (str, optional): The optimization method for 
-                scipy.optimize.minize to use. Defaults to None. 
-                Initializes to 'SLSQP'.
-            opt_options (dict, optional): Dicitonary for setting the 
-                optimization options. Defaults to None.
+                maintained between turbines during the optimization (m). If not
+                specified, initializes to 2 rotor diameters. Defaults to None. 
+            opt_method (str, optional): The optimization method used by 
+                scipy.optimize.minize. Defaults to 'SLSQP'.
+            opt_options (dict, optional): Optimization options used by 
+                scipy.optimize.minize. If none are specified, they are set to
+                {'maxiter': 100, 'disp': True, 'iprint': 2, 'ftol': 1e-9}.
+                Defaults to None.
         """
-
         LayoutOptimization.reinitialize_opt(self, boundaries=boundaries,
                            wd=wd,
                            ws=ws,
@@ -247,13 +245,14 @@ class LayoutHeightOptimization(LayoutOptimization):
 
     def optimize(self):
         """
-        Find optimized layout of wind turbines and wind turbine height 
-        for power production and cost of energy given fixed 
-        atmospheric conditions (wind speed, direction, etc.).
+        This method finds the optimized layout of wind turbines and wind
+        turbine height for power production and cost of energy given the
+        provided frequencies of occurance of wind conditions (wind speed,
+        direction).
         
         Returns:
-            (iterable): A list containing the optimized locations of 
-                each turbine and the optimized height for all turbines.
+            (iterable): A list containing the optimized (x, y) locations of
+            each turbine followed by the optimized height for all turbines (m).
         """
         print('=====================================================')
         print('Optimizing turbine layout and height...')
@@ -275,6 +274,12 @@ class LayoutHeightOptimization(LayoutOptimization):
         return [opt_locs, opt_height]
 
     def get_farm_COE(self):
+        """
+        This method returns the cost of energy (COE) for the wind farm.
+
+        Returns:
+            float: The cost of energy for a wind plant in units of $/kWh.
+        """
         AEP_sum = self._AEP_loop_wd()
         height = self.fi.floris.farm.turbines[0].hub_height
         return self.COE_model.COE(height, AEP_sum)

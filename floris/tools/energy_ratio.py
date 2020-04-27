@@ -18,28 +18,50 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-# From https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function
 def gaussian(x, mu, sig):
+    """
+    Compute gaussian function, from https://stackoverflow.com/questions/14873203/plotting-of-1-dimensional-gaussian-distribution-function.
+
+    Args:
+        x (np.array): Input variable to Gaussian.
+        mu (float): Mean value.
+        sig (float): Standard deviation.
+
+    Returns:
+        np.array: The resulting Gaussian distribution.
+    """
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
 
 def _convert_to_numpy_array(series):
+    """
+    Convert an input series to NumPy array. Currently, this function
+    checks if an object has a `values` attribute and returns that if it does.
+    Otherwise, it returns the given input if that input is a `np.ndarray`.
+
+    Args:
+        series (pd.Series): Series to convert.
+
+    Returns:
+        np.array: Converted Series.
+    """
     if hasattr(series, 'values'):
         return series.values
     elif isinstance(series, np.ndarray):
         return series
 
 
-# def _ratio_of_mean(x, y):
-#     """
-#     Arguments
-#         x: numerator
-#         y: denominator
-#     """
-#     return np.mean(x) / np.mean(y)
-
-
 def _calculate_bootstrap_iterations(n):
+    """
+    Calculate number of bootstrap iterations given length.
+    # TODO: What are `bootstrap iterations`?
+
+    Args:
+        n (int): Number of points.
+
+    Returns:
+        int: Number of bootstrap iterations.
+    """
     maximum = 10000
     minimum = 2000
     return int(np.round(max(min(n * np.log10(n), maximum), minimum)))
@@ -49,6 +71,24 @@ def _calculate_lower_and_upper_bound(bootstrap_array,
                                      percentiles,
                                      central_estimate=None,
                                      method='simple_percentile'):
+    """
+    Given resultant bootstrap output array, compute lower and upper bound 
+    of confidence interval.
+
+    Args:
+        bootstrap_array (np.array): array of bootrapped results
+            percentiles (np.array): percentile values
+            central_estimate (float, optional): if not using simple percentile,
+            need to provide the central estimated result. Defaults to None.
+        method (str, optional): method for computing bounds. Defaults to
+            'simple_percentile'.
+
+    Returns:
+        float, float: 
+        
+            -   lower ci bound
+            -   upper ci bound
+    """
     if method is 'simple_percentile':
         upper, lower = np.percentile(bootstrap_array, percentiles)
     else:
@@ -58,19 +98,40 @@ def _calculate_lower_and_upper_bound(bootstrap_array,
 
 
 def _get_confidence_bounds(confidence):
+    """
+
+    Get the upper and lower confidence bounds given a desired confidence level.
+
+    Args:
+        confidence (float): [description]
+        # TODO: ^^
+
+    Returns:
+        float, float: 
+        
+            -   upper confidence bound
+            -   lower confidence bound
+    """
     return [50 + 0.5 * confidence, 50 - 0.5 * confidence]
 
 
 def energy_ratio(ref_pow_base, test_pow_base, ws_base, ref_pow_con,
                  test_pow_con, ws_con):
     """
-    Compute the balanced energy ratio
+    Compute the balanced energy ratio for a single binned wind direction.
 
-    This function is typically called to compute a single balanced 
-    energy ratio calculation for a particular wind direction bin.  Note 
+    This function is called to compute a single balanced 
+    energy ratio calculation for a particular wind direction bin. Note 
     the reference turbine should not be the turbine implementing 
     control, but should be an unaffected nearby turbine, or a synthetic 
-    power estimate from a measurement.
+    power estimate from a measurement. See :cite:`er-fleming2019initial` and 
+    :cite:`er-fleming2019continued` for more information.
+
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: er-
 
     Args:
         ref_pow_base (np.array): Array of baseline reference turbine 
@@ -170,17 +231,25 @@ def calculate_balanced_energy_ratio(
     """
     Calculate a balanced energy ratio for each wind direction bin.
 
-    Calculate a balanced energy ratio for each wind direction bin.  A 
-    reference and test turbine are provided for the ratio, as well as 
-    wind speed and wind directions. These data are further divided into 
-    baseline and controlled conditions.  The balanced energy ratio 
-    function is called and used to ensure a similar distribution of 
-    wind speeds is used in the computation, per wind direction bin, for 
-    baseline and controlled results.  Resulting arrays, including upper 
-    and lower uncertaintity bounds computed through bootstrapping, are 
-    returned.  Note the reference turbine should not be the turbine 
-    implementing control, but should be an unaffected nearby turbine, 
-    or a synthetic power estimate from a measurement
+    Calculate a balanced energy ratio for each wind direction bin.  A
+    reference and test turbine are provided for the ratio, as well as
+    wind speed and wind directions. These data are further divided into
+    baseline and controlled conditions.  The balanced energy ratio
+    function is called and used to ensure a similar distribution of
+    wind speeds is used in the computation, per wind direction bin, for
+    baseline and controlled results.  Resulting arrays, including upper
+    and lower uncertaintity bounds computed through bootstrapping, are
+    returned.  Note the reference turbine should not be the turbine
+    implementing control, but should be an unaffected nearby turbine,
+    or a synthetic power estimate from a measurement. See
+    :cite:`er-fleming2019initial` and
+    :cite:`er-fleming2019continued` for more information.
+
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: er-
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -680,7 +749,7 @@ def energy_ratio_ws(ref_pow_base,
                     use_absolutes=False,
                     use_mean=False):
     """
-    Compute the balanced energy ratio
+    Compute the balanced energy ratio, however, inverted so balancing against wind direction, compute for a single wind speed bin
 
     This function is typically called to compute a single balanced 
     energy ratio calculation for a particular wind speed bin.  Note 
@@ -805,7 +874,7 @@ def calculate_balanced_energy_ratio_ws(reference_power_baseline,
     function is called and used to ensure a similar distribution of 
     wind speeds is used in the computation, per wind speed bin, for 
     baseline and controlled results.  Resulting arrays, including upper 
-    and lower uncertaintity bounds computed through bootstrapping, are 
+    and lower uncertainty bounds computed through bootstrapping, are 
     returned.  Note the reference turbine should not be the turbine 
     implementing control, but should be an unaffected nearby turbine, 
     or a synthetic power estimate from a measurement
@@ -1043,7 +1112,7 @@ def plot_energy_ratio_ws(reference_power_baseline,
                          show_power=False,
                          show_percent_change=True):
     """
-    Plot the balanced energy ratio.
+    Plot the balanced energy ratio against wind speed
 
     Function mainly acts as a wrapper to call 
     calculate_balanced_energy_ratio and plot the results.

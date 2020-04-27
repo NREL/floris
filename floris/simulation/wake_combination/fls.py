@@ -16,12 +16,9 @@ from ...utilities import setup_logger
 
 class FLS(WakeCombination):
     """
-    FLS is a subclass of 
-    :py:class:`floris.simulation.wake_combination.WakeCombination` 
-    which uses freestream linear superposition to combine the base flow 
-    field with the wake velocity deficits.
+    FLS uses freestream linear superposition to apply the wake velocity
+    deficits to the freestream flow field.
     """
-
     def __init__(self):
         super().__init__()
         self.logger = setup_logger(name=__name__)
@@ -29,16 +26,16 @@ class FLS(WakeCombination):
 
     def function(self, u_field, u_wake):
         """
-        This method combines the base flow field with the velocity 
-        deficits using freestream linear superpostion.
+        Combines the base flow field with the velocity deficits
+        using freestream linear superpostion. In other words, the wake
+        field and base fields are simply added together.
 
         Args:
             u_field (np.array): The base flow field.
-            u_wake (np.array): The wake to add to the rest of the flow 
-                field.
+            u_wake (np.array): The wake to apply to the base flow field.
 
         Returns:
-            array: A linear combination of the base flow field and the 
-            velocity deficits.
+            np.array: The resulting flow field after applying the wake to the
+                base.
         """
         return u_field + u_wake

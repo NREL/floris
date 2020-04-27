@@ -51,7 +51,7 @@ def visualize_layout(turbineLoc,
                      turbine_face_north=False,
                      one_index_turbine=False):
     """
-    Make a plot which shows the turbine locations, and important wakes
+    Make a plot which shows the turbine locations, and important wakes.
 
     Args:
         turbineLoc (pd.DataFrame): turbine location data

@@ -35,7 +35,7 @@ jobs:
     - name: Run tests
       run: |
         pip install pytest
-        pytest --ignore examples --ignore examples_new --ignore tests/reg_tests
+        pytest --ignore examples --ignore tests/reg_tests
     - name: Generate coverage report
       # Run these tests on unit tests only so that we avoid inflating our code
       # coverage through the regression tests

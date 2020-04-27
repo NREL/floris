@@ -6,8 +6,8 @@ Subpackages
 
 .. toctree::
 
-    floris.simulation
-    floris.tools
+   floris.simulation
+   floris.tools
 
 Submodules
 ----------
@@ -20,6 +20,6 @@ Module contents
 ---------------
 
 .. automodule:: floris
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

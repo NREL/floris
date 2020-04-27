@@ -1,6 +1,16 @@
 floris.simulation package
 =========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   floris.simulation.wake_combination
+   floris.simulation.wake_deflection
+   floris.simulation.wake_turbulence
+   floris.simulation.wake_velocity
+
 Submodules
 ----------
 
@@ -13,14 +23,12 @@ Submodules
    floris.simulation.turbine
    floris.simulation.turbine_map
    floris.simulation.wake
-   floris.simulation.wake_combination
-   floris.simulation.wake_deflection
-   floris.simulation.wake_velocity
+   floris.simulation.wind_map
 
 Module contents
 ---------------
 
 .. automodule:: floris.simulation
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

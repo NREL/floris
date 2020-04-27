@@ -19,6 +19,17 @@ import scipy.stats
 from ..utilities import setup_logger
 
 def _convert_to_numpy_array(series):
+    """
+    Convert an input series to NumPy array. Currently, this function
+    checks if an object has a `values` attribute and returns that if it does.
+    Otherwise, it returns the given input if that input is a `np.ndarray`.
+
+    Args:
+        series (pd.Series): Series to convert.
+
+    Returns:
+        np.array: Converted Series.
+    """
     if hasattr(series, 'values'):
         return series.values
     elif isinstance(series, np.ndarray):
@@ -27,6 +38,16 @@ def _convert_to_numpy_array(series):
 
 # Define ci function
 def ci(data, confidence=0.95):
+    """
+    Compute confidence interval.
+
+    Args:
+        data (np.array): Input data.
+        confidence (float, optional): Confidence value. Defaults to 0.95.
+
+    Returns:
+        float: Computed confidence interval.
+    """
     a = 1.0 * np.array(data)
     n = len(a)
     m, se = np.mean(a), scipy.stats.sem(a)
@@ -44,30 +65,35 @@ def calculate_balanced_wake_loss(reference_power_baseline,
                                     wind_direction_array_controlled
                                     ):
     """
-    Calculate balanced wake loss
+    Calculate balanced wake loss. See :cite:`erl-fleming2019continued` for more 
+    information.
+
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: erl-
 
     Args:
-        reference_power_baseline (np.array): Array of power of 
-            reference turbine in baseline conditions.
-        test_power_baseline (np.array): Array of power of test turbine 
-            in baseline conditions.
-        wind_speed_array_baseline (np.array): Array of wind speeds in 
+        reference_power_baseline (np.array): Power of reference turbine in
             baseline conditions.
-        wind_direction_array_baseline (np.array): Array of wind 
-            directions in baseline case.
-        reference_power_controlled (np.array): Array of power of 
-            reference turbine in controlled conditions.
-        test_power_controlled (np.array): Array of power of test 
-            turbine in controlled conditions.
-        wind_speed_array_controlled (np.array): Array of wind speeds in 
+        test_power_baseline (np.array): Power of test turbine in baseline
+            conditions.
+        wind_speed_array_baseline (np.array): Wind speeds in baseline
+            conditions.
+        wind_direction_array_baseline (np.array): Wind  directions in baseline
+            case.
+        reference_power_controlled (np.array): Power of reference turbine in
             controlled conditions.
-        wind_direction_array_controlled (np.array): Array of wind 
-            directions in controlled case.
-        
+        test_power_controlled (np.array): Power of test turbine in controlled
+            conditions.
+        wind_speed_array_controlled (np.array): Wind speeds in controlled
+            conditions.
+        wind_direction_array_controlled (np.array): Wind directions in
+            controlled case.
 
     Returns:
-        dataframe
-
+        dataframe: Balanced wake loss result.
     """
 
     # Ensure that input arrays are np.ndarray
@@ -144,7 +170,7 @@ def plot_balanced_wake_loss(reference_power_baseline,
                                     axarr
                                     ):
     """
-    Calculate balanced wake loss
+    Plot balanced wake loss.
 
     Args:
         reference_power_baseline (np.array): Array of power of 
@@ -163,11 +189,12 @@ def plot_balanced_wake_loss(reference_power_baseline,
             controlled conditions.
         wind_direction_array_controlled (np.array): Array of wind 
             directions in controlled case.
+        axarr (list of plt.ax): A list of axes to plot onto
         
 
     Returns:
         dataframe
-
+        # TODO ^^ inaccurate.
     """
 
     # Get the result frame
@@ -221,6 +248,29 @@ def overall_wake_loss(reference_power_baseline,
                                     wind_speed_array_controlled,
                                     wind_direction_array_controlled
                                     ):
+    """
+    Compute the overall wake losses and changes
+
+    Args:
+        reference_power_baseline (np.array): Array of power of 
+            reference turbine in baseline conditions.
+        test_power_baseline (np.array): Array of power of test turbine 
+            in baseline conditions.
+        wind_speed_array_baseline (np.array): Array of wind speeds in 
+            baseline conditions.
+        wind_direction_array_baseline (np.array): Array of wind 
+            directions in baseline case.
+        reference_power_controlled (np.array): Array of power of 
+            reference turbine in controlled conditions.
+        test_power_controlled (np.array): Array of power of test 
+            turbine in controlled conditions.
+        wind_speed_array_controlled (np.array): Array of wind speeds in 
+            controlled conditions.
+        wind_direction_array_controlled (np.array): Array of wind 
+            directions in controlled case.
+
+
+    """
     # Get the result frame
     df_sum = calculate_balanced_wake_loss(reference_power_baseline,
                                     test_power_baseline,
@@ -236,4 +286,3 @@ def overall_wake_loss(reference_power_baseline,
     print('Baseline Energy Loss:\t%d%%' % (100*(df_sum['wt_loss_base'].sum() / df_sum['ref_en'].sum())))
     print('Controlled Energy Loss:\t%d%%' % (100*(df_sum['wt_loss_con'].sum() / df_sum['ref_en'].sum())))
     print('Reduction Energy Loss:\t%d%%' % (100*(df_sum['energy_loss_mean_base'].sum() - df_sum['energy_loss_mean_con'].sum())/df_sum['energy_loss_mean_base'].sum()))
-    # print('%.1f%%' % (100*(df_sum['energy_loss%s_mean_base' % suffix].sum() - df_sum['energy_loss%s_mean_con' % suffix].sum())/df_sum['energy_loss%s_mean_base' % suffix].sum()))

@@ -35,50 +35,43 @@ class Turbine():
         instance_dictionary: A dictionary that is generated from the
             input_reader; it should have the following key-value pairs:
 
-            -   **description**: A string containing a description of
+            -   **description** (*str*): A string containing a description of
                 the turbine.
-            -   **properties**: A dictionary containing the following
+            -   **properties** (*dict*): A dictionary containing the following
                 key-value pairs:
 
-                -   **rotor_diameter**: A float that is the rotor 
-                    diameter (m).
-                -   **hub_height**: A float that is the hub height (m).
-                -   **blade_count**: An integer that is the number of
-                    blades.
-                -   **pP**: A float that is the cosine exponent
-                    relating the yaw misalignment angle to power.
-                -   **pT**: A float that is the cosine exponent
-                    relating the rotor tilt angle to power.
-                -   **generator_efficiency**: A float that is the
-                    generator efficiency factor used to scale the power
-                    production.
-                -   **power_thrust_table**: A dictionary containing the
+                -   **rotor_diameter** (*float*): The rotor diameter (m).
+                -   **hub_height** (*float*): The hub height (m).
+                -   **blade_count** (*int*): The number of blades.
+                -   **pP** (*float*): The cosine exponent relating the yaw
+                    misalignment angle to power.
+                -   **pT** (*float*): The cosine exponent relating the rotor
+                    tilt angle to power.
+                -   **generator_efficiency** (*float*): The generator
+                    efficiency factor used to scale the power production.
+                -   **power_thrust_table** (*dict*): A dictionary containing the
                     following key-value pairs:
 
-                    -   **power**: A list of floats describing the
-                        coefficient of power at different wind speeds.
-                    -   **thrust**: A list of floats describing the
-                        coefficient of thrust at different wind speeds.
-                    -   **wind_speed**: A list of floats containing the
-                        wind speeds for which the power and thrust
-                        values are provided (m/s).
+                    -   **power** (*list(float)*): The coefficient of power at
+                        different wind speeds.
+                    -   **thrust** (*list(float)*): The coefficient of thrust
+                        at different wind speeds.
+                    -   **wind_speed** (*list(float)*): The wind speeds for
+                        which the power and thrust values are provided (m/s).
 
-                -   **yaw_angle**: A float that is the yaw angle of the
-                    turbine relative to the wind direction (deg). A
-                    positive value represents a counter-clockwise
-                    rotation relative to the wind direction.
-                -   **tilt_angle**: A float that is the tilt angle of
-                    the turbine (deg). Positive values correspond to a
-                    downward rotation of the rotor for an upstream
-                    turbine.
-                -   **TSR**: A float that is the tip-speed ratio of the
-                    turbine. This parameter is used in the "curl" wake
-                    model.
+                -   **yaw_angle** (*float*): The yaw angle of the turbine
+                    relative to the wind direction (deg). A positive value
+                    represents a counter-clockwise rotation relative to the
+                    wind direction.
+                -   **tilt_angle** (*float*): The tilt angle of the turbine
+                    (deg). Positive values correspond to a downward rotation of
+                    the rotor for an upstream turbine.
+                -   **TSR** (*float*): The tip-speed ratio of the turbine. This
+                    parameter is used in the "curl" wake model.
 
     Returns:
         Turbine: An instantiated Turbine object.
     """
-
     def __init__(self, instance_dictionary):
         self.logger = setup_logger(name=__name__)
         self.description = instance_dictionary["description"]
@@ -197,11 +190,10 @@ class Turbine():
 
     def change_turbine_parameters(self, turbine_change_dict):
         """
-        Change a turbine parameter and call the initialize function
+        Change a turbine parameter and call the initialize function.
 
         Args:
-            turbine_change_dict: A dictionary of parameters to change
-
+            turbine_change_dict (dict): A dictionary of parameters to change.
         """
         for param in turbine_change_dict:
             self.logger.info(
@@ -218,22 +210,17 @@ class Turbine():
         the flow field grid.
 
         Args:
-            wind_direction: A float that is the wind farm wind
-                direction (deg).
-            local_wind_speed: An array of floats that contains the wind
-                speed at each grid point in the flow field (m/s).
-            coord: A :py:obj:`floris.utilities.Vec3` object containing
-                the coordinate of the turbine.
-            x: An array of floats containing the "x" coordinates of the
-                flow field grid.
-            y: An array of floats containing the "y" coordinates of the
-                flow field grid.
-            z: An array of floats containing the "z" coordinates of the
-                flow field grid.
+            wind_direction (float): The wind farm wind direction (deg).
+            local_wind_speed (np.array): The wind speed at each grid point in
+                the flow field (m/s).
+            coord (:py:obj:`~.utilities.Vec3`): The coordinate of the turbine.
+            x (np.array): The x-coordinates of the flow field grid.
+            y (np.array): The y-coordinates of the flow field grid.
+            z (np.array): The z-coordinates of the flow field grid.
 
         Returns:
-            numpy.ndarray: A numpy array of floats containing the wind
-            speed at each rotor grid point for the turbine (m/s).
+            np.array: The wind speed at each rotor grid point
+            for the turbine (m/s).
         """
         u_at_turbine = local_wind_speed
 
@@ -274,6 +261,19 @@ class Turbine():
         return np.array(u_at_turbine.flatten()[ii])
 
     def return_grid_points(self, coord):
+        """
+        Retrieve the x, y, and z grid points on the rotor.
+
+        Args:
+            coord (:py:obj:`~.utilities.Vec3`): The coordinate of the turbine.
+
+        Returns:
+            np.array, np.array, np.array:
+
+                - x grid points on the rotor.
+                - y grid points on the rotor.
+                - xzgrid points on the rotor.
+        """
         y_array = np.array(self.grid)[:, 0] + coord.x2
         z_array = np.array(self.grid)[:, 1] + self.hub_height
         x_array = np.ones_like(y_array) * coord.x1
@@ -290,27 +290,17 @@ class Turbine():
         velocities.
 
         Args:
-            u_wake: An array of floats containing the wake deficit
-                velocities at all grid points in the flow field (m/s).
-            coord: A :py:obj:`floris.utilities.Vec3` object containing
-                the coordinate of the turbine.
-            flow_field: A :py:class:`floris.simulation.flow_field`
-                object.
-            rotated_x: An array of floats containing the "x"
-                coordinates of the flow field grid rotated so the new
-                "x" axis is aligned with the wind direction.
-            rotated_y: An array of floats containing the "y"
-                coordinates of the flow field grid rotated so the new
-                "x" axis is aligned with the wind direction.
-            rotated_z: An array of floats containing the "z"
-                coordinates of the flow field grid rotated so the new
-                "x" axis is aligned with the wind direction.
-
-        Returns:
-            *None* -- The velocities are updated directly in the
-            :py:class:`floris.simulation.turbine` object.
+            u_wake (np.array): The wake deficit velocities at all grid points
+                in the flow field (m/s).
+            coord (:py:obj:`~.utilities.Vec3`): The coordinate of the turbine.
+            flow_field (:py:class:`~.flow_field.FlowField`): The flow field.
+            rotated_x (np.array): The x-coordinates of the flow field grid
+                rotated so the new x axis is aligned with the wind direction.
+            rotated_y (np.array): The y-coordinates of the flow field grid
+                rotated so the new x axis is aligned with the wind direction.
+            rotated_z (np.array): The z-coordinates of the flow field grid
+                rotated so the new x axis is aligned with the wind direction.
         """
-
         # reset the waked velocities
         local_wind_speed = flow_field.u_initial - u_wake
         self.velocities = self.calculate_swept_area_velocities(
@@ -320,10 +310,6 @@ class Turbine():
         """
         This method sets the velocities at the turbine's rotor swept
         area grid points to zero.
-
-        Returns:
-            *None* -- The velocities are updated directly in the
-            :py:class:`floris.simulation.turbine` object.
         """
         self.velocities = [0.0] * self.grid_point_count
 
@@ -332,11 +318,7 @@ class Turbine():
         This method sets the turbine's yaw angle.
 
         Args:
-            yaw_angle: A float that is the new yaw angle (deg).
-
-        Returns:
-            **None** -- The yaw angle is stored in the
-            :py:class:`floris.simulation.turbine` object.
+            yaw_angle (float): The new yaw angle (deg).
 
         Examples:
             To set a turbine's yaw angle:
@@ -355,10 +337,8 @@ class Turbine():
         change in power output due to the effects of turbulence.
 
         Returns:
-            numpy.float64: a float that is the value of the turbulence
-            parameter.
+            float: The value of the turbulence parameter.
         """
-
         if self.use_turbulence_correction is False:
             return 1.0
         else:
@@ -394,10 +374,15 @@ class Turbine():
     def current_turbulence_intensity(self):
         """
         This method returns the current turbulence intensity at 
-            the turbine expressed as a decimal fraction.
-       
+        the turbine expressed as a decimal fraction.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (float): Value to set.
+
         Returns:
-            float: The turbulence intensity at the turbine.
+            float: Value currently set.
 
         Examples:
             To get the turbulence intensity for a turbine:
@@ -408,25 +393,14 @@ class Turbine():
 
     @current_turbulence_intensity.setter
     def current_turbulence_intensity(self, value):
-        """
-        This method sets the turbulence intensity at each 
-        turbine as it is calculated.
-
-        Args:
-            value: A float that is the current turbulence intensity 
-            expressed as a decimal fraction.
-
-        Returns:
-            **None** -- The turbulence intensity is stored in the 
-            :py:class:`floris.simulation.turbine` object.
-
-        """
         self._turbulence_intensity = value
 
     @property
     def rotor_radius(self):
         """
         This method returns the rotor radius of the turbine (m).
+
+        **Note:** This is a virtual property used to "get" a value.
 
         Returns:
             float: The rotor radius of the turbine.
@@ -443,11 +417,13 @@ class Turbine():
         """
         This method gets or sets the turbine's yaw angle.
 
+        **Note:** This is a virtual property used to "get"  or "set" a value.
+
         Args:
-            value: A float that is the new yaw angle (deg).
+            value (float): Value to set.
 
         Returns:
-            float: The current yaw angle (deg).
+            float: Value currently set.
 
         Examples:
             To set the yaw angle for each turbine in the wind farm:
@@ -475,11 +451,13 @@ class Turbine():
         """
         This method gets the turbine's tilt angle.
 
+        **Note:** This is a virtual property used to "get"  or "set" a value.
+
         Args:
-            value: A float that is the new tilt angle (deg).
+            value (float): Value to set.
 
         Returns:
-            float: The current tilt angle (deg).
+            float: Value currently set.
 
         Examples:
             To get the current tilt angle for a turbine:
@@ -499,7 +477,7 @@ class Turbine():
         mean cubed velocity in the turbine's rotor swept area (m/s).
 
         Returns:
-            numpy.float64: The average velocity across a rotor.
+            float: The average velocity across a rotor.
 
         Examples:
             To get the average velocity for a turbine:
@@ -525,7 +503,7 @@ class Turbine():
         calculated as the cube root of the mean cubed velocity in the
         rotor area.
 
-        Note, the velocity is scalled to an effective velocity by the yaw
+        **Note:** The velocity is scalled to an effective velocity by the yaw.
 
         Returns:
             float: The power coefficient of a turbine at the current

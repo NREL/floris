@@ -17,6 +17,19 @@ from .gaussian_model_base import GaussianModel
 
 
 class LegacyGauss(GaussianModel):
+    """
+    The LegacyGauss model ports the previous Gauss model to the new FLORIS
+    framework of inheritance of the GaussianModel. It is based on the gaussian
+    wake models described in :cite:`glvm-bastankhah2014new`,
+    :cite:`glvm-abkar2015influence`, :cite:`glvm-bastankhah2016experimental`,
+    :cite:`glvm-niayifar2016analytical`, and :cite:`glvm-dilip2017wind`.
+    
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: glvm-
+    """
     default_parameters = {
         'ka': 0.38,
         'kb': 0.004,
@@ -29,6 +42,28 @@ class LegacyGauss(GaussianModel):
     }
 
     def __init__(self, parameter_dictionary):
+        """
+        Stores model parameters for use by methods.
+
+        Args:
+            parameter_dictionary (dict): Model-specific parameters.
+                Default values are used when a parameter is not included
+                in `parameter_dictionary`. Possible key-value pairs include:
+
+                    -   **ka**: Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **kb**: Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.
+                    -   **alpha**: Parameter that determines the dependence of
+                        the downstream boundary between the near wake and far
+                        wake region on the turbulence intensity.
+                    -   **beta**: Parameter that determines the dependence of
+                        the downstream boundary between the near wake and far
+                        wake region on the turbine's induction factor.
+
+        """
 
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)
@@ -52,6 +87,40 @@ class LegacyGauss(GaussianModel):
 
 
     def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
+        """
+        Using the Gaussian wake model, this method calculates and
+        returns the wake velocity deficits, caused by the specified turbine, 
+        relative to the freestream velocities at the grid of points 
+        comprising the wind farm flow field.
+
+        Args:
+            x_locations (np.array): An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
+                domain (m).
+            y_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the direction normal to
+                x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
+                direction (m).
+            turbine (:py:obj:`floris.simulation.turbine`): Object that
+                represents the turbine creating the wake.
+            turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
+                the coordinate of the turbine creating the wake (m).
+            deflection_field (np.array): An array of floats that contains the 
+                amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            flow_field (:py:class:`floris.simulation.flow_field`): Object
+                containing the flow field information for the wind farm.
+
+        Returns:
+            np.array, np.array, np.array:
+                Three arrays of floats that contain the wake velocity
+                deficit in m/s created by the turbine relative to the freestream
+                velocities for the U, V, and W components, aligned with the x, y,
+                and z directions, respectively. The three arrays contain the
+                velocity deficits at each grid point in the flow field.
+        """
         # veer (degrees)
         veer = flow_field.wind_veer
 
@@ -118,11 +187,18 @@ class LegacyGauss(GaussianModel):
     def ka(self):
         """
         Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            ka (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
+
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._ka
 
@@ -144,12 +220,19 @@ class LegacyGauss(GaussianModel):
     @property
     def kb(self):
         """
-        Parameter used to determine the linear relationship between the 
-            turbulence intensity and the width of the Gaussian wake shape.
+        Parameter used to determine the linear relationship between the
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            kb (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
+
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._kb
 
@@ -172,12 +255,19 @@ class LegacyGauss(GaussianModel):
     def alpha(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbulence
-            intensity.
+        between the near wake and far wake region on the turbulence
+        intensity.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            alpha (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
+
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._alpha
 
@@ -200,12 +290,19 @@ class LegacyGauss(GaussianModel):
     def beta(self):
         """
         Parameter that determines the dependence of the downstream boundary
-            between the near wake and far wake region on the turbine's
-            induction factor.
+        between the near wake and far wake region on the turbine's
+        induction factor.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
         Args:
-            beta (float, int): Gaussian wake model coefficient.
+            value (float): Value to set.
+
         Returns:
-            float: Gaussian wake model coefficient.
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
         """
         return self._beta
 
