@@ -23,23 +23,17 @@ class Gauss(GaussianModel):
     provide consistency with previous results in the far wake while improving
     prediction of the near wake.
     
-    See :cite:`gvm-bastankhah2014new,gvm-abkar2015influence,gvm-bastankhah2016experimental,gvm-niayifar2016analytical,gvm-dilip2017wind,gvm-blondel2020alternative,gvm-King2019Controls` for mor information on Gaussian wake velocity deficit models.
+    See :cite:`gvm-bastankhah2014new`, :cite:`gvm-abkar2015influence`,
+    :cite:`gvm-bastankhah2016experimental`, :cite:`gvm-niayifar2016analytical`,
+    :cite:`gvm-dilip2017wind`, :cite:`gvm-blondel2020alternative`, and
+    :cite:`gvm-King2019Controls` for more information on Gaussian wake velocity
+    deficit models.
     
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: gvm
             :keyprefix: gvm-
-
-    Args:
-        GaussianModel ([type]): [description]
-
-    Raises:
-        ValueError: [description]
-        ValueError: [description]
-        ValueError: [description]
-        ValueError: [description]
     """
     default_parameters = {
         'ka': 0.38,

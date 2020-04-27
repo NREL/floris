@@ -19,13 +19,13 @@ from scipy.special import gamma
 class Blondel(GaussianModel):
     """
     Blondel is a direct implementation of the super-Gaussian model
-    described in :cite:`bcv-blondel2020alternative` with GCH disabled by default. See :cite:`bcv-King2019Controls` for info on GCH.
+    described in :cite:`bcv-blondel2020alternative` with GCH disabled by
+    default. See :cite:`bcv-King2019Controls` for info on GCH.
     
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: bcv
             :keyprefix: bcv-
     """
     default_parameters = {
@@ -67,15 +67,16 @@ class Blondel(GaussianModel):
                         order.
                     -   **calculate_VW_velocities**: Flag to enable the
                         calculation of V- and W-component velocities using
-                        methods developed in [2].
+                        methods developed in :cite:`bcv-King2019Controls`.
                     -   **use_yaw_added_recovery**: Flag to use yaw added
                         recovery on the wake velocity using methods developed
-                        in [2].
+                        in :cite:`bcv-King2019Controls`.
                     -   **yaw_recovery_alpha**: Tuning value for yaw added
                         recovery on the wake velocity using methods developed
-                        in [2].
-                    -    **eps_gain**: Tuning value for calculating the V- and
-                        W-component velocities using methods developed in [2].  
+                        in :cite:`bcv-King2019Controls`.
+                    -   **eps_gain**: Tuning value for calculating the V- and
+                        W-component velocities using methods developed in
+                        :cite:`bcv-King2019Controls`.
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)

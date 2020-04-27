@@ -27,7 +27,6 @@ class Curl(VelocityDeflection):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: cdm
             :keyprefix: cdm-
     """
 

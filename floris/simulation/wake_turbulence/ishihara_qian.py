@@ -28,8 +28,7 @@ class IshiharaQian(WakeTurbulence):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: iqt
-            :keyprefix: iqt-.
+            :keyprefix: iqt-
     """
     default_parameters = {
         "kstar": {
@@ -121,9 +120,8 @@ class IshiharaQian(WakeTurbulence):
                 adding turbulence to the flow.
 
         Returns:
-            float: Wake-added turbulence from the current
-                wind turbine (**turbine**) at location specified
-                by (**coord_ti**).
+            float: Wake-added turbulence from the current wind turbine
+            (**turbine**) at location specified by (**coord_ti**).
         """
         # added turbulence model
         ti_initial = ambient_TI
@@ -363,15 +361,9 @@ class IshiharaQian(WakeTurbulence):
             f (dict): Near-wake coefficient used in calculation of wake-added
                 turbulence with the following key-value pairs:
 
-<<<<<<< HEAD
-                - **const**: a float for the constant coefficient
-                - **Ct**: a float for the thrust coefficient exponent
-                - **TI**: a float for turbulence intensity exponent
-=======
                 - **const** (*float*): The constant coefficient.
                 - **Ct** (*float*): The thrust coefficient exponent.
                 - **TI** (*float*): The turbulence intensity exponent.
->>>>>>> docstrings
 
         Returns:
             dict: Near-wake coefficient used in calculation of wake-added

@@ -21,19 +21,18 @@ class Curl(VelocityDeficit):
     """
     The Curl model class computes the wake velocity deficit based on the curled
     wake model developed in 
-    :cite:`cvm-jimenez20fleming2018simulation10application`. The curled wake 
+    :cite:`cvm-martinez2019aerodynamics`. The curled wake 
     model includes the change in the shape of the wake profile under yawed 
     conditions due to vortices that are shed from the rotor plane of a yawed 
     turbine. For more information about the curled wake model theory, see 
-    :cite:`cvm-jimenez20fleming2018simulation10application`. For more 
+    :cite:`cvm-martinez2019aerodynamics`. For more 
     information about the impact of the curled wake behavior on wake steering, 
-    see :cite:`cvm-martinez2019aerodynamics`.
+    see :cite:`cvm-fleming2018simulation`.
 
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: cvm
             :keyprefix: cvm-
     """
 

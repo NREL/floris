@@ -25,7 +25,6 @@ class VelocityDeflection():
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: bvd
             :keyprefix: bvd-
     """
 

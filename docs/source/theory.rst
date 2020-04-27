@@ -12,7 +12,6 @@ References:
    .. bibliography:: zrefs.bib
       :style: unsrt
       :filter: docname in docnames
-      :labelprefix: thy
       :keyprefix: thy-
 
 

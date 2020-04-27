@@ -24,7 +24,6 @@ class Jensen(VelocityDeficit):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: jvm
             :keyprefix: jvm-
     """
     default_parameters = {

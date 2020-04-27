@@ -24,7 +24,6 @@ class GaussianModel(VelocityDeficit):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: gmb
             :keyprefix: gmb-
     """
     def __init__(self, parameter_dictionary):

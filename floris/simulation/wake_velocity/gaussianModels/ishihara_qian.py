@@ -34,7 +34,6 @@ class IshiharaQian(GaussianModel):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: iqv
             :keyprefix: iqv-
     """
     default_parameters = {
@@ -93,6 +92,7 @@ class IshiharaQian(GaussianModel):
                     calculation of wake-added turbulence.
                 -   **c** (*dict*): A dict that is near-wake coefficient used
                     in calculation of wake-added turbulence.
+
         """
         super().__init__(parameter_dictionary)
         self.logger = setup_logger(name=__name__)

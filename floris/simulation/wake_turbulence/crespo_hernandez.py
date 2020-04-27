@@ -24,7 +24,6 @@ class CrespoHernandez(WakeTurbulence):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: cht
             :keyprefix: cht-    
     """
     default_parameters = {

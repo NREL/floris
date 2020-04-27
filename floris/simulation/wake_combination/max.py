@@ -27,7 +27,6 @@ class MAX(WakeCombination):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: max
             :keyprefix: max-
     """
 

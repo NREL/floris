@@ -25,7 +25,6 @@ class MultiZone(VelocityDeficit):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: mvm
             :keyprefix: mvm-
     """
     default_parameters = {

@@ -17,14 +17,14 @@ import numpy as np
 
 class Jimenez(VelocityDeflection):
     """
-    Jiménez wake deflection model, dervied fro :cite:`jdm-jimenez2010application`.
+    Jiménez wake deflection model, dervied from
+    :cite:`jdm-jimenez2010application`.
 
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: jdm
-            :keyprefix: jdm-.
+            :keyprefix: jdm-
     """
     default_parameters = {
         "kd": 0.05,

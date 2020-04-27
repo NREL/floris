@@ -24,7 +24,6 @@ class Gauss(VelocityDeflection):
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :labelprefix: gdm
             :keyprefix: gdm-
     """
     default_parameters = {
