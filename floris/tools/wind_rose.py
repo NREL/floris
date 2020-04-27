@@ -31,15 +31,26 @@ from ..utilities import setup_logger
 
 class WindRose():
     """
-    The WindRose class is used to organize information about the frequency of occurance of different combinations of wind speed and wind direction (and other optimal wind variables). A WindRose object can be used to help calculate annual energy production (AEP) when combined with Floris power calculations for different wind conditions. Several methods exist for populating a WindRose object with wind data. WindRose also contains methods for visualizing wind roses.   
-    """
+    The WindRose class is used to organize information about the frequency of
+    occurance of different combinations of wind speed and wind direction (and
+    other optimal wind variables). A WindRose object can be used to help
+    calculate annual energy production (AEP) when combined with Floris power
+    calculations for different wind conditions. Several methods exist for
+    populating a WindRose object with wind data. WindRose also contains methods
+    for visualizing wind roses.
 
+    References:
+        .. bibliography:: /source/zrefs.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: wr-
+    """
     def __init__(self, ):
         """
         Instantiate a WindRose object and set some initial parameter values.
-        No explicit arguments required, and an additional method will need to be called to populate the WindRose object with data.
+        No explicit arguments required, and an additional method will need to
+        be called to populate the WindRose object with data.
         """
-
         # Initialize some varibles
         self.num_wd = 0
         self.num_ws = 0
@@ -51,7 +62,8 @@ class WindRose():
 
     def save(self, filename):
         """
-        This method saves the WindRose data as a pickle file so that it can be imported into a WindRose object later.
+        This method saves the WindRose data as a pickle file so that it can be
+        imported into a WindRose object later.
 
         Args:
             filename (str): Path and filename of pickle file to save.
@@ -63,7 +75,8 @@ class WindRose():
 
     def load(self, filename):
         """
-        This method loads data from a previously saved WindRose pickle file into a WindRose object.
+        This method loads data from a previously saved WindRose pickle file
+        into a WindRose object.
 
         Args:
             filename (str): Path and filename of pickle file to load.
@@ -81,7 +94,8 @@ class WindRose():
 
                     - **wd** (*float*) - Wind direction bin center values (deg).
                     - **ws** (*float*) - Wind speed bin center values (m/s).
-                    - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns. 
+                    - **freq_val** (*float*) - The frequency of occurance of
+                    the wind conditions in the other columns. 
         """
         self.num_wd, self.num_ws, self.wd_step, self.ws_step, self.wd, self.ws, self.df = pickle.load(
             open(filename, "rb"))
@@ -90,7 +104,8 @@ class WindRose():
 
     def resample_wind_speed(self, df, ws=np.arange(0, 26, 1.)):
         """
-        This method resamples the wind speed bins using the specified wind speed bin center values. The frequency values are adjusted accordingly.
+        This method resamples the wind speed bins using the specified wind
+        speed bin center values. The frequency values are adjusted accordingly.
 
         Args:
             df (pandas.DataFrame): Wind rose DataFrame containing at least the 
@@ -98,17 +113,20 @@ class WindRose():
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
 
             ws (np.array, optional): List of new wind speed center bins (m/s). 
                 Defaults to np.arange(0, 26, 1.).
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame with the resampled wind speed bins and frequencies containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame with the resampled wind speed
+            bins and frequencies containing at least the following columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - New wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the new wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -141,7 +159,9 @@ class WindRose():
 
     def internal_resample_wind_speed(self, ws=np.arange(0, 26, 1.)):
         """
-        Internal method for resampling wind speed into desired bins. The frequency values are adjusted accordingly. Modifies data within WindRose object without explicit return.
+        Internal method for resampling wind speed into desired bins. The
+        frequency values are adjusted accordingly. Modifies data within
+        WindRose object without explicit return.
 
         TODO: make a private method
 
@@ -159,7 +179,9 @@ class WindRose():
 
     def resample_wind_direction(self, df, wd=np.arange(0, 360, 5.)):
         """
-        This method resamples the wind direction bins using the specified wind direction bin center values. The frequency values are adjusted accordingly.
+        This method resamples the wind direction bins using the specified wind
+        direction bin center values. The frequency values are adjusted
+        accordingly.
 
         Args:
             df (pandas.DataFrame): Wind rose DataFrame containing at least the 
@@ -167,17 +189,21 @@ class WindRose():
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
 
             wd (np.array, optional): List of new wind direction center bins
                 (deg). Defaults to np.arange(0, 360, 5.).
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame with the resampled wind direction bins and frequencies containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame with the resampled wind
+            direction bins and frequencies containing at least the following
+            columns:
 
                 - **wd** (*float*) - New wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the new wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -193,7 +219,8 @@ class WindRose():
         negative_overhang = wd_edges[0]
         positive_overhang = wd_edges[-1] - 360.
 
-        # Need potentially to wrap high angle direction to negative for correct binning
+        # Need potentially to wrap high angle direction to negative for correct
+        # binning
         df['wd'] = geo.wrap_360(df.wd)
         if negative_overhang < 0:
             print('Correcting negative Overhang:%.1f' % negative_overhang)
@@ -228,7 +255,9 @@ class WindRose():
 
     def internal_resample_wind_direction(self, wd=np.arange(0, 360, 5.)):
         """
-        Internal method for resampling wind direction into desired bins. The frequency values are adjusted accordingly. Modifies data within WindRose object without explicit return.
+        Internal method for resampling wind direction into desired bins. The
+        frequency values are adjusted accordingly. Modifies data within
+        WindRose object without explicit return.
 
         TODO: make a private method
 
@@ -246,26 +275,32 @@ class WindRose():
 
     def resample_column(self, df, col, bins):
         """
-        This method resamples the specified wind parameter column using the specified bin center values. The frequency values are adjusted accordingly.
+        This method resamples the specified wind parameter column using the
+        specified bin center values. The frequency values are adjusted
+        accordingly.
 
         Args:
-            df (pandas.DataFrame): Wind rose DataFrame containing at least the 
+            df (pandas.DataFrame): Wind rose DataFrame containing at least the
                 following columns as well as *col*:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
 
             col (str): The name of the column to resample.
-            bins (np.array): List of new bin center values for the specified 
+            bins (np.array): List of new bin center values for the specified
                 column.
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame with the resampled wind parameter bins and frequencies containing at least the following columns as well as *col*:
+            pandas.DataFrame: Wind rose DataFrame with the resampled wind
+            parameter bins and frequencies containing at least the following
+            columns as well as *col*:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the new wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -292,21 +327,24 @@ class WindRose():
 
     def internal_resample_column(self, col, bins):
         """
-        Internal method for resampling column into desired bins. The frequency values are adjusted accordingly. Modifies data within WindRose object without explicit return.
+        Internal method for resampling column into desired bins. The frequency
+        values are adjusted accordingly. Modifies data within WindRose object
+        without explicit return.
 
         TODO: make a private method
 
         Args:
             col (str): Name of column to resample.
-            bins (np.array): Vector of bins for the WindRose column
+            bins (np.array): Vector of bins for the WindRose column.
         """
-
         # Update internal data frame
         self.df = self.resample_column(self.df, col, bins)
 
     def resample_average_ws_by_wd(self, df):
         """
-        This method calculates the mean wind speed for each wind direction bin and resamples the wind rose, resulting in a single mean wind speed per wind direction bin. The frequency values are adjusted accordingly.
+        This method calculates the mean wind speed for each wind direction bin
+        and resamples the wind rose, resulting in a single mean wind speed per
+        wind direction bin. The frequency values are adjusted accordingly.
 
         Args:
             df (pandas.DataFrame): Wind rose DataFrame containing at least the
@@ -314,14 +352,18 @@ class WindRose():
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame with the resampled wind speed bins and frequencies containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame with the resampled wind speed
+            bins and frequencies containing at least the following columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
-                - **ws** (*float*) - The average wind speed for each wind direction bin (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the new wind conditions in the other columns.
+                - **ws** (*float*) - The average wind speed for each wind
+                direction bin (m/s).
+                - **freq_val** (*float*) - The frequency of occurance of the
+                new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -350,19 +392,26 @@ class WindRose():
 
     def internal_resample_average_ws_by_wd(self, wd=np.arange(0, 360, 5.)):
         """
-        This internal method calculates the mean wind speed for each specified wind direction bin and resamples the wind rose, resulting in a single mean wind speed per wind direction bin. The frequency values are adjusted accordingly.
+        This internal method calculates the mean wind speed for each specified
+        wind direction bin and resamples the wind rose, resulting in a single
+        mean wind speed per wind direction bin. The frequency values are
+        adjusted accordingly.
 
         TODO: make an internal method
 
         Args:
-            wd (np.arange, optional): Wind direction bin centers (deg). Defaults to np.arange(0, 360, 5.).
+            wd (np.arange, optional): Wind direction bin centers (deg).
+            Defaults to np.arange(0, 360, 5.).
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame with the resampled wind speed bins and frequencies containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame with the resampled wind speed
+            bins and frequencies containing at least the following columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
-                - **ws** (*float*) - The average wind speed for each wind direction bin (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the new wind conditions in the other columns.
+                - **ws** (*float*) - The average wind speed for each wind
+                direction bin (m/s).
+                - **freq_val** (*float*) - The frequency of occurance of the
+                new wind conditions in the other columns.
         """
         # Update ws and wd binning
         self.wd = wd
@@ -374,7 +423,9 @@ class WindRose():
 
     def weibull(self, x, k=2.5, lam=8.0):
         """
-        This method returns a Weibull distribution corresponding to the input data array (typically wind speed) using the specified Weibull parameters.
+        This method returns a Weibull distribution corresponding to the input
+        data array (typically wind speed) using the specified Weibull
+        parameters.
 
         Args:
             x (np.array): List of input data (typically binned wind speed
@@ -383,7 +434,8 @@ class WindRose():
             lam (float, optional): Weibull scale parameter. Defaults to 8.0.
 
         Returns:
-            np.array: Weibull distribution probabilities corresponding to values in the input array.
+            np.array: Weibull distribution probabilities corresponding to
+            values in the input array.
         """
         return (k / lam) * (x / lam)**(k - 1) * np.exp(-(x / lam)**k)
 
@@ -391,19 +443,24 @@ class WindRose():
                                     wd=np.arange(0, 360, 5.),
                                     ws=np.arange(0, 26, 1.)):
         """
-        Populate WindRose object with an example wind rose with wind speed frequencies given by a Weibull distribution. The wind direction frequencies are initialized according to an example distribution.
+        Populate WindRose object with an example wind rose with wind speed
+        frequencies given by a Weibull distribution. The wind direction
+        frequencies are initialized according to an example distribution.
 
         Args:
-            wd (np.array, optional): Wind direciton bin centers (deg). Defaults to np.arange(0, 360, 5.).
+            wd (np.array, optional): Wind direciton bin centers (deg). Defaults
+            to np.arange(0, 360, 5.).
             ws (np.array, optional): Wind speed bin centers (m/s). Defaults to 
                 np.arange(0, 26, 1.).
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame containing at least the
+            following columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
         """
         # Use an assumed wind-direction for dir frequency
         wind_dir = [
@@ -437,7 +494,8 @@ class WindRose():
         # Load the wind toolkit data into a dataframe
         df = pd.DataFrame()
 
-        # Start by simply round and wrapping the wind direction and wind speed columns
+        # Start by simply round and wrapping the wind direction and wind speed
+        # columns
         df['wd'] = wd_tot
         df['ws'] = ws_tot
 
@@ -456,7 +514,10 @@ class WindRose():
                                       wd=np.arange(0, 360, 5.),
                                       ws=np.arange(0, 26, 1.)):   
         """
-        This method populates the WindRose object given user-specified observations of wind direction, wind speed, and additional optional variables. The wind parameters are binned and the frequencies of occurance of each binned wind condition combination are calculated.
+        This method populates the WindRose object given user-specified
+        observations of wind direction, wind speed, and additional optional
+        variables. The wind parameters are binned and the frequencies of
+        occurance of each binned wind condition combination are calculated.
 
         Args:
             wd_raw (array-like): An array-like list of all wind direction   
@@ -479,11 +540,13 @@ class WindRose():
                 np.arange(0, 26, 1.).
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame containing at least the
+            following columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
         """
         df = pd.DataFrame()
 
@@ -491,18 +554,24 @@ class WindRose():
         wd_raw = np.array(wd_raw)
         ws_raw = np.array(ws_raw)
 
-        # Start by simply round and wrapping the wind direction and wind speed columns
+        # Start by simply round and wrapping the wind direction and wind speed
+        # columns
         df['wd'] = geo.wrap_360(wd_raw.round())
         df['ws'] = ws_raw.round()
 
-        # Loop through *args and assign new dataframe columns after cutting into possibly irregularly-spaced bins
+        # Loop through *args and assign new dataframe columns after cutting
+        # into possibly irregularly-spaced bins
         for in_var in range(0,len(args),3):
             df[args[in_var]] = np.array(args[in_var+1])
             
             # Cut into bins, make first and last bins extend to -/+ infinity
-            var_edges = np.append(0.5*(args[in_var+2][1:]+args[in_var+2][:-1]),np.inf)
+            var_edges = np.append(
+                0.5*(args[in_var+2][1:]+args[in_var+2][:-1]),np.inf
+            )
             var_edges = np.append(-np.inf,var_edges)
-            df[args[in_var]] = pd.cut(df[args[in_var]], var_edges, labels=args[in_var+2])
+            df[args[in_var]] = pd.cut(
+                df[args[in_var]], var_edges, labels=args[in_var+2]
+            )
 
         # Now group up
         df['freq_val'] = 1.
@@ -527,7 +596,11 @@ class WindRose():
                                       wd=np.arange(0, 360, 5.),
                                       ws=np.arange(0, 26, 1.)):
         """
-        This method populates the WindRose object given user-specified combinations of wind direction, wind speed, additional optional variables, and the corresponding frequencies of occurance. The wind parameters are binned using the specified wind parameter bin center values and the corresponding frequencies of occrance are calculated.
+        This method populates the WindRose object given user-specified
+        combinations of wind direction, wind speed, additional optional
+        variables, and the corresponding frequencies of occurance. The wind
+        parameters are binned using the specified wind parameter bin center
+        values and the corresponding frequencies of occrance are calculated.
 
         Args:
             wd_raw (array-like): An array-like list of wind directions
@@ -535,7 +608,7 @@ class WindRose():
             wd_raw (array-like): An array-like list of wind speeds
                 corresponding to the specified frequencies of occurance (m/s).
             freq_val (array-like): An array-like list of normalized frequencies
-                corresponding to the provided wind parameter combinations
+                corresponding to the provided wind parameter combinations.
             *args: Variable length argument list consisting of a sequence of
                 the following alternating arguments:
                 
@@ -552,13 +625,14 @@ class WindRose():
                 np.arange(0, 26, 1.).
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame containing at least the
+            following columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
         """
-
         df = pd.DataFrame()
 
         # convert inputs to np.array
@@ -597,7 +671,12 @@ class WindRose():
                                   ws=np.arange(0, 26, 1.),
                                   limit_month=None):
         """
-        This method populates the WindRose object given raw wind direction and wind speed data saved in csv files downloaded from the WIND Toolkit application (see https://www.nrel.gov/grid/wind-toolkit.html for more information). The wind parameters are binned using the specified wind parameter bin center values and the corresponding frequencies of occrance are calculated.
+        This method populates the WindRose object given raw wind direction and
+        wind speed data saved in csv files downloaded from the WIND Toolkit
+        application (see https://www.nrel.gov/grid/wind-toolkit.html for more
+        information). The wind parameters are binned using the specified wind
+        parameter bin center values and the corresponding frequencies of
+        occurance are calculated.
 
         Args:
             folder_name (str): Path to the folder containing the WIND Toolkit
@@ -606,21 +685,26 @@ class WindRose():
                 to np.arange(0, 360, 5.).
             ws (np.array, optional): Wind speed bin centers (m/s). Defaults to 
                 np.arange(0, 26, 1.).
-            limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
-                3...) to consider when calculating the wind condition frequencies. If none are specified, all months will be used. Defaults to None.
+            limit_month (list, optional): List of ints of month(s) (e.g., 1, 2
+                3...) to consider when calculating the wind condition
+                frequencies. If none are specified, all months will be used.
+                Defaults to None.
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame containing the following columns:
+            pandas.DataFrame: Wind rose DataFrame containing the following
+            columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
         """
         # Load the wind toolkit data into a dataframe
         df = self.load_wind_toolkit_folder(folder_name,
                                            limit_month=limit_month)
 
-        # Start by simply round and wrapping the wind direction and wind speed columns
+        # Start by simply round and wrapping the wind direction and wind speed
+        # columns
         df['wd'] = geo.wrap_360(df.wd.round())
         df['ws'] = geo.wrap_360(df.ws.round())
 
@@ -641,7 +725,10 @@ class WindRose():
 
     def load_wind_toolkit_folder(self, folder_name, limit_month=None):
         """
-        This method imports raw wind direction and wind speed data saved in csv files in the specified folder downloaded from the WIND Toolkit application (see https://www.nrel.gov/grid/wind-toolkit.html for more information). 
+        This method imports raw wind direction and wind speed data saved in csv
+        files in the specified folder downloaded from the WIND Toolkit
+        application (see https://www.nrel.gov/grid/wind-toolkit.html for more
+        information). 
 
         TODO: make private method?
 
@@ -649,7 +736,9 @@ class WindRose():
             folder_name (str): Path to the folder containing the WIND Toolkit
                 csv data files.
             limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
-                3...) to consider when calculating the wind condition frequencies. If none are specified, all months will be used. Defaults to None.
+                3...) to consider when calculating the wind condition
+                frequencies. If none are specified, all months will be used.
+                Defaults to None.
 
         Returns:
             pandas.DataFrame: DataFrame containing the following columns:
@@ -657,7 +746,6 @@ class WindRose():
                 - **wd** (*float*) - Raw wind direction data (deg).
                 - **ws** (*float*) - Raw wind speed data (m/s).
         """
-
         file_list = os.listdir(folder_name)
         file_list = [
             os.path.join(folder_name, f) for f in file_list if '.csv' in f
@@ -673,17 +761,22 @@ class WindRose():
 
     def load_wind_toolkit_file(self, filename, limit_month=None):
         """
-        This method imports raw wind direction and wind speed data saved in the specified csv file downloaded from the WIND Toolkit application (see https://www.nrel.gov/grid/wind-toolkit.html for more information). 
+        This method imports raw wind direction and wind speed data saved in the
+        specified csv file downloaded from the WIND Toolkit application (see
+        https://www.nrel.gov/grid/wind-toolkit.html for more information). 
 
         TODO: make private method?
 
         Args:
             filename (str): Path to the WIND Toolkit csv file.
             limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
-                3...) to consider when calculating the wind condition frequencies. If none are specified, all months will be used. Defaults to None.
+                3...) to consider when calculating the wind condition
+                frequencies. If none are specified, all months will be used.
+                Defaults to None.
 
         Returns:
-            pandas.DataFrame: DataFrame containing the following columns with data from the WIND Toolkit file:
+            pandas.DataFrame: DataFrame containing the following columns with
+            data from the WIND Toolkit file:
 
                 - **wd** (*float*) - Raw wind direction data (deg).
                 - **ws** (*float*) - Raw wind speed data (m/s).
@@ -716,9 +809,15 @@ class WindRose():
                                       st_date=None,
                                       en_date=None):
         """
-        This method populates the WindRose object using wind data from the WIND Toolkit dataset (https://www.nrel.gov/grid/wind-toolkit.html) for the specified lat/long coordinate in the continental US. The wind data
-        are obtained from the WIND Toolkit dataset using the HSDS service (see https://github.com/NREL/hsds-examples). The wind data returned is obtained from the nearest 2km x 2km grid point to the input
-        coordinate and is limited to the years 2007-2013. The wind parameters are binned using the specified wind parameter bin center values and the corresponding frequencies of occrance are calculated.
+        This method populates the WindRose object using wind data from the WIND
+        Toolkit dataset (https://www.nrel.gov/grid/wind-toolkit.html) for the
+        specified lat/long coordinate in the continental US. The wind data
+        are obtained from the WIND Toolkit dataset using the HSDS service (see
+        https://github.com/NREL/hsds-examples). The wind data returned is
+        obtained from the nearest 2km x 2km grid point to the input
+        coordinate and is limited to the years 2007-2013. The wind parameters
+        are binned using the specified wind parameter bin center values and the
+        corresponding frequencies of occrance are calculated.
 
         Requires h5pyd package, which can be installed using:
             pip install --user git+http://github.com/HDFGroup/h5pyd.git
@@ -749,22 +848,29 @@ class WindRose():
             ws (np.array, optional): Wind speed bin centers (m/s). Defaults to 
                 np.arange(0, 26, 1.).
             include_ti (bool, optional): Determines whether turbulence
-                intensity is included as an additional parameter. If True, TI is added as an additional wind rose variable, estimated based on the Obukhov length from WIND Toolkit. Defaults to False.
+                intensity is included as an additional parameter. If True, TI
+                is added as an additional wind rose variable, estimated based
+                on the Obukhov length from WIND Toolkit. Defaults to False.
             limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
-                3...) to consider when calculating the wind condition frequencies. If none are specified, all months will be used. Defaults to None.
+                3...) to consider when calculating the wind condition
+                frequencies. If none are specified, all months will be used.
+                Defaults to None.
             st_date (str, optional): The start date to consider when creating
-                the wind rose, formatted as 'MM-DD-YYYY'. If not specified data beginning in 2007 will be used. Defaults to None.
+                the wind rose, formatted as 'MM-DD-YYYY'. If not specified data
+                beginning in 2007 will be used. Defaults to None.
             en_date (str, optional): The end date to consider when creating
-                the wind rose, formatted as 'MM-DD-YYYY'. If not specified data through 2013 will be used. Defaults to None.
+                the wind rose, formatted as 'MM-DD-YYYY'. If not specified data
+                through 2013 will be used. Defaults to None.
 
         Returns:
-            pandas.DataFrame: Wind rose DataFrame containing at least the following columns:
+            pandas.DataFrame: Wind rose DataFrame containing at least the
+            following columns:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns.
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns.
         """
-
          # Check inputs
         
         # Array of hub height data avaliable on Toolkit
@@ -774,7 +880,8 @@ class WindRose():
             if dateutil.parser.parse(st_date) > dateutil.parser.parse(
                     '12-13-2013 23:00'):
                 print(
-                    'Error, invalid date range. Valid range: 01-01-2007 - 12/31/2013'
+                    'Error, invalid date range. Valid range: 01-01-2007 - ' + \
+                    '12/31/2013'
                 )
                 return None
         
@@ -782,21 +889,25 @@ class WindRose():
             if dateutil.parser.parse(en_date) < dateutil.parser.parse(
                     '01-01-2007 00:00'):
                 print(
-                    'Error, invalid date range. Valid range: 01-01-2007 - 12/31/2013'
+                    'Error, invalid date range. Valid range: 01-01-2007 - ' + \
+                    '12/31/2013'
                 )
                 return None
 
         if (h_range[0] > ht):
-            print('Error, height is not in the range of avaliable WindToolKit data. Minimum height = 10m')
+            print('Error, height is not in the range of avaliable ' + \
+            'WindToolKit data. Minimum height = 10m')
             return None
         
         if (h_range[-1] < ht):
-            print('Error, height is not in the range of avaliable WindToolKit data. Maxiumum height = 200m')
+            print('Error, height is not in the range of avaliable ' + \
+            'WindToolKit data. Maxiumum height = 200m')
             return None
                 
         # Load wind speeds and directions from WimdToolkit 
 
-        # Case for turbine height (ht) matching discrete avaliable height (h_range) 
+        # Case for turbine height (ht) matching discrete avaliable height
+        # (h_range) 
         if ht in h_range:
              
             d = self.load_wind_toolkit_hsds(lat, 
@@ -873,7 +984,8 @@ class WindRose():
             df= pd.DataFrame({'ws': ws_new,
                               'wd': wd_new})
                 
-        # Start by simply round and wrapping the wind direction and wind speed columns
+        # Start by simply round and wrapping the wind direction and wind speed
+        # columns
         df['wd'] = geo.wrap_360(df.wd.round())
         df['ws'] = df.ws.round()
         
@@ -902,7 +1014,15 @@ class WindRose():
                                st_date=None,
                                en_date=None):
         """
-        This method returns a pandas DataFrame containing hourly wind speed, wind direction, and optionally estimated turbulence intensity data using wind data from the WIND Toolkit dataset (https://www.nrel.gov/grid/wind-toolkit.html) for the specified lat/long coordinate in the continental US. The wind data are obtained from the WIND Toolkit dataset using the HSDS service (see https://github.com/NREL/hsds-examples). The wind data returned is obtained from the nearest 2km x 2km grid point to the input coordinate and is limited to the years 2007-2013. 
+        This method returns a pandas DataFrame containing hourly wind speed,
+        wind direction, and optionally estimated turbulence intensity data
+        using wind data from the WIND Toolkit dataset
+        (https://www.nrel.gov/grid/wind-toolkit.html) for the specified
+        lat/long coordinate in the continental US. The wind data are obtained
+        from the WIND Toolkit dataset using the HSDS service
+        (see https://github.com/NREL/hsds-examples). The wind data returned is
+        obtained from the nearest 2km x 2km grid point to the input coordinate
+        and is limited to the years 2007-2013. 
 
         TODO: make private method?
 
@@ -912,24 +1032,33 @@ class WindRose():
             ht (int, optional): The height above ground where wind
                 information is obtained (m). Defaults to 100.
             include_ti (bool, optional): Determines whether turbulence
-                intensity is included as an additional parameter. If True, TI is added as an additional wind rose variable, estimated based on the Obukhov length from WIND Toolkit. Defaults to False.
+                intensity is included as an additional parameter. If True, TI
+                is added as an additional wind rose variable, estimated based
+                on the Obukhov length from WIND Toolkit. Defaults to False.
             limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
-                3...) to consider when calculating the wind condition frequencies. If none are specified, all months will be used. Defaults to None.
-            st_date (str, optional): The start date to consider, formatted as 'MM-DD-YYYY'. If not specified data beginning in 2007 will be used. Defaults to None.
-            en_date (str, optional): The end date to consider, formatted as 'MM-DD-YYYY'. If not specified data through 2013 will be used. Defaults to None.
+                3...) to consider when calculating the wind condition
+                frequencies. If none are specified, all months will be used.
+                Defaults to None.
+            st_date (str, optional): The start date to consider, formatted as
+                'MM-DD-YYYY'. If not specified data beginning in 2007 will be
+                used. Defaults to None.
+            en_date (str, optional): The end date to consider, formatted as
+                'MM-DD-YYYY'. If not specified data through 2013 will be used.
+                Defaults to None.
 
         Returns:
-            pandas.DataFrame: DataFrame containing the following columns (abd optionally turbulence intensity) with hourly data from WIND Toolkit:
+            pandas.DataFrame: DataFrame containing the following columns(abd
+            optionally turbulence intensity) with hourly data from WIND Toolkit:
 
                 - **wd** (*float*) - Raw wind direction data (deg).
                 - **ws** (*float*) - Raw wind speed data (m/s).
         """
-
         # Open the wind data "file"
         # server endpoint, username, password is found via a config file
         f = h5pyd.File("/nrel/wtk-us.h5", 'r')
 
-        # assign wind direction, wind speed, optional ti, and time datasets for the desired height
+        # assign wind direction, wind speed, optional ti, and time datasets for
+        # the desired height
         wd_dset = f['winddirection_' + str(ht) + 'm']
         ws_dset = f['windspeed_' + str(ht) + 'm']
         if include_ti:
@@ -945,7 +1074,8 @@ class WindRose():
         if (Location_idx[0] < 0) | (Location_idx[0] >= wd_dset.shape[1]) | (
                 Location_idx[1] < 0) | (Location_idx[1] >= wd_dset.shape[2]):
             print(
-                'Error, coordinates out of bounds. WIND Toolkit database covers the continental United States.'
+                'Error, coordinates out of bounds. WIND Toolkit database ' + \
+                'covers the continental United States.'
             )
             return None
 
@@ -979,7 +1109,8 @@ class WindRose():
 
     def obkv_dset_to_L(self, obkv_dset, Location_idx):
         """
-        This function returns an array containing hourly Obukhov lengths from the WIND Toolkit dataset for the specified Lat/Lon coordinate indices.
+        This function returns an array containing hourly Obukhov lengths from
+        the WIND Toolkit dataset for the specified Lat/Lon coordinate indices.
         
         Args: 
             obkv_dset (np.ndarray): Dataset for Obukhov lengths from WIND
@@ -988,9 +1119,9 @@ class WindRose():
                 indices of interest in the Obukhov length dataset. 
 
         Returns:
-            np.array: An array containing Obukhov lengths for each time index in the Wind Toolkit dataset (m).
+            np.array: An array containing Obukhov lengths for each time index
+            in the Wind Toolkit dataset (m).
         """
-
         linv = obkv_dset[:,Location_idx[0], Location_idx[1]]
         # avoid divide by zero
         linv[linv == 0.0] = 0.0003
@@ -999,16 +1130,16 @@ class WindRose():
     
     def ti_calculator_IU2(self, L):
         """
-        This function estimates the turbulence intensity corresponding to each Obukhov length value in the input list using the relationship between Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of [1].
+        This function estimates the turbulence intensity corresponding to each
+        Obukhov length value in the input list using the relationship between
+        Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of
+        :cite:`wr-wharton2010assessing`.
         
         Args: 
             L (iterable): A list of Obukhov Length values (m).  
 
         Returns:
             list: A list of turbulence intensity values expressed as fractions.
-
-        References:
-            [1]: Wharton, S. and Lundquist, J. "Assessing Artmospheric Stability and the Impacts on Wind Characteristics at an Onshore Wind Farm," 19th Symposium on Boundary Layers and Turbulence, 2010
         """
         ti_set=[]
         for i in L:        
@@ -1034,9 +1165,15 @@ class WindRose():
 
     def indices_for_coord(self, f, lat_index, lon_index):
         """
-        This method finds the nearest x/y indices of the WIND Toolkit dataset for a given lat/lon coordinate in the continental US. Rather than fetching the entire coordinates database, which is 500+ MB, this uses the Proj4 library to find a nearby point and then converts to x/y indices. 
+        This method finds the nearest x/y indices of the WIND Toolkit dataset
+        for a given lat/lon coordinate in the continental US. Rather than
+        fetching the entire coordinates database, which is 500+ MB, this uses
+        the Proj4 library to find a nearby point and then converts to x/y
+        indices. 
         
-        **Note**: This method is obtained directly from: https://github.com/NREL/hsds-examples/blob/master/notebooks/01_WTK_introduction.ipynb, where it is called "indicesForCoord."
+        **Note**: This method is obtained directly from:
+        https://github.com/NREL/hsds-examples/blob/master/notebooks/01_WTK_introduction.ipynb,
+        where it is called "indicesForCoord."
 
         Args:
             f (h5pyd.File): A HDF5 "file" used to access the WIND Toolkit data.
@@ -1046,9 +1183,9 @@ class WindRose():
                 are to be found (degrees).
 
         Returns:
-            tuple: A tuple containing the Lat/Lon coordinate indices of interest in the WIND Toolkit dataset.
+            tuple: A tuple containing the Lat/Lon coordinate indices of
+            interest in the WIND Toolkit dataset.
         """
-
         dset_coords = f['coordinates']
         projstring = """+proj=lcc +lat_1=30 +lat_2=60
                         +lat_0=38.47240422490422 +lon_0=-96.0
@@ -1067,10 +1204,13 @@ class WindRose():
 
     def plot_wind_speed_all(self, ax=None):
         """
-        This method plots the wind speed frequency distribution of the WindRose object averaged across all wind directions. If no axis is provided, a new one is created.
+        This method plots the wind speed frequency distribution of the WindRose
+        object averaged across all wind directions. If no axis is provided, a
+        new one is created.
 
         Args:
-            ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes on which data should be plotted. Defaults to None.
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes on
+                which data should be plotted. Defaults to None.
         """
         if ax is None:
             _, ax = plt.subplots()
@@ -1080,7 +1220,11 @@ class WindRose():
 
     def plot_wind_speed_by_direction(self, dirs, ax=None):
         """
-        This method plots the wind speed frequency distribution of the WindRose object for each specified wind direction bin center. The wind directions are resampled using the specified bin centers and the frequencies of occurance of the wind conditions are modified accordingly. If no axis is provided, a new one is created.
+        This method plots the wind speed frequency distribution of the WindRose
+        object for each specified wind direction bin center. The wind
+        directions are resampled using the specified bin centers and the
+        frequencies of occurance of the wind conditions are modified
+        accordingly. If no axis is provided, a new one is created.
 
         Args:
             dirs (np.array): A list of wind direction bin centers for which
@@ -1105,9 +1249,12 @@ class WindRose():
                        ws_right_edges=np.array([5, 10, 15, 20, 25]),
                        wd_bins=np.arange(0, 360, 15.)):
         """
-        This method creates a wind rose plot showing the frequency of occurance of the specified wind direction and wind speed bins. If no axis is provided, a new one is created.
+        This method creates a wind rose plot showing the frequency of occurance
+        of the specified wind direction and wind speed bins. If no axis is
+        provided, a new one is created.
 
-        **Note**: Based on code provided by Patrick Murphy from the University of Colorado Boulder.
+        **Note**: Based on code provided by Patrick Murphy from the University
+        of Colorado Boulder.
 
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
@@ -1120,9 +1267,9 @@ class WindRose():
                 for plotting (deg). Defaults to np.arange(0, 360, 15.).
 
         Returns:
-            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing the plotted wind rose.
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind rose.
         """
-         
         # Resample data onto bins
         df_plot = self.resample_wind_direction(self.df, wd=wd_bins)
 
@@ -1169,21 +1316,27 @@ class WindRose():
                        ti_right_edges=np.array([0.06, 0.1, 0.14, 0.18,0.22]),
                        wd_bins=np.arange(0, 360, 15.)):
         """
-        This method creates a wind rose plot showing the frequency of occurance of the specified wind direction and turbulence intensity bins. This requires turbulence intensity to already be included as a parameter in the wind rose. If no axis is provided,a new one is created.
+        This method creates a wind rose plot showing the frequency of occurance
+        of the specified wind direction and turbulence intensity bins. This
+        requires turbulence intensity to already be included as a parameter in
+        the wind rose. If no axis is provided,a new one is created.
 
-        **Note**: Based on code provided by Patrick Murphy from the University of Colorado Boulder.
+        **Note**: Based on code provided by Patrick Murphy from the University
+        of Colorado Boulder.
 
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
                 on which the wind rose is plotted. Defaults to None.
             color_map (str, optional): Colormap to use. Defaults to 'viridis_r'.
-            ti_right_edges (np.array, optional): The upper bounds of the turbulence intensity bins. The first bin begins at 0. Defaults to 
-                np.array([0.06, 0.1, 0.14, 0.18,0.22]).
+            ti_right_edges (np.array, optional): The upper bounds of the
+                turbulence intensity bins. The first bin begins at 0. Defaults
+                to np.array([0.06, 0.1, 0.14, 0.18,0.22]).
             wd_bins (np.array, optional): The wind direction bin centers used
                 for plotting (deg). Defaults to np.arange(0, 360, 15.).
 
         Returns:
-            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing the plotted wind rose.
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind rose.
         """
 
         # Resample data onto bins
@@ -1227,16 +1380,22 @@ class WindRose():
 
     def plot_ti_ws(self, ax=None, ws_bins=np.arange(0, 26, 1.)):
         """
-        This method plots the wind speed frequency distribution of the WindRose object for each turbulence intensity bin. The wind speeds are resampled using the specified bin centers and the frequencies of occurance of the wind conditions are modified accordingly. This method assumes there are five TI bins. If no axis is provided, a new one is created.
+        This method plots the wind speed frequency distribution of the WindRose
+        object for each turbulence intensity bin. The wind speeds are resampled
+        using the specified bin centers and the frequencies of occurance of the
+        wind conditions are modified accordingly. This method assumes there are
+        five TI bins. If no axis is provided, a new one is created.
 
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes on
                 which data should be plotted. Defaults to None.
             ws_bins (np.array, optional): A list of wind speed bin centers on
-                which the wind speeds are resampled before plotting (m/s). Defaults to np.arange(0, 26, 1.).
+                which the wind speeds are resampled before plotting (m/s).
+                Defaults to np.arange(0, 26, 1.).
 
         Returns:
-            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing the plotted wind speed distributions.
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind speed distributions.
         """
 
         # Resample data onto bins
@@ -1255,7 +1414,14 @@ class WindRose():
         for num, ti in enumerate(tis):
             values = list(df_plot[df_plot['ti'] == ti].loc[:, 'freq_val'])
         
-            df_plot[df_plot['ti'] == ti].plot.bar(x='ws',y='freq_val', ax=ax, bottom = margin_bottom, color=colors[num],label=ti) 
+            df_plot[df_plot['ti'] == ti].plot.bar(
+                x='ws',
+                y='freq_val',
+                ax=ax,
+                bottom = margin_bottom,
+                color=colors[num],
+                label=ti
+            )
                                             
             margin_bottom += values
 
@@ -1267,10 +1433,14 @@ class WindRose():
 
     def export_for_floris_opt(self):
         """
-        This method returns a list of tuples of at least wind speed, wind direction, and frequency of occurance, which can be used to help loop through different wind conditions for Floris power calculations.
+        This method returns a list of tuples of at least wind speed, wind
+        direction, and frequency of occurance, which can be used to help loop
+        through different wind conditions for Floris power calculations.
 
         Returns:
-            list: A list of tuples containing all combinations of wind parameters and frequencies of occurance in the WindRose object's wind rose DataFrame values.
+            list: A list of tuples containing all combinations of wind
+            parameters and frequencies of occurance in the WindRose object's
+            wind rose DataFrame values.
         """
         # Return a list of tuples, where each tuple is (ws,wd,freq)
         return [tuple(x) for x in self.df.values]

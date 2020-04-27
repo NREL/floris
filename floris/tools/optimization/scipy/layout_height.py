@@ -22,14 +22,13 @@ import matplotlib.pyplot as plt
 class LayoutHeightOptimization(LayoutOptimization):
     """
     LayoutHeightOptimization is a subclass of 
-    :py:class:`floris.tools.optimization.scipy.layout.LayoutOptimization` that
+    :py:class:`~.tools.optimization.scipy.layout.LayoutOptimization` that
     performs layout and turbine height optimization. This optimization method
     aims to minimize Cost of Energy (COE) by changing individual turbine
     locations and all turbine heights across the wind farm. Note that the
     changing turbine height applies to all turbines, i.e. although the turbine
     height is changing, all turbines will be assigned the same turbine height.
     """
-
     def __init__(self, fi, boundaries,
                            height_lims,
                            wd,
@@ -48,11 +47,10 @@ class LayoutHeightOptimization(LayoutOptimization):
         object and assign parameter values.
         
         Args:
-            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
+            fi (:py:class:`~.tools.floris_interface.FlorisInterface`): 
                 Interface used to interact with the Floris object.
-            boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices (m) (TODO: Is this just the
-                x, y coordinates, or height too?).
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
             height_lims (iterable): A list of the minimum and maximum 
                 height limits for the optimization (m). Each value only 
                 needs to be defined once since all the turbine heights 
@@ -184,9 +182,8 @@ class LayoutHeightOptimization(LayoutOptimization):
         specified. Otherwise, the current parameter values are kept.
         
         Args:
-            boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices (m). Defaults to None. (TODO:
-                Is this just the x, y coordinates, or height too?)
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
             height_lims (iterable): A list of the minimum and maximum 
                 height limits for the optimization (m). Each value only 
                 needs to be defined once since all the turbine heights 
@@ -197,7 +194,7 @@ class LayoutHeightOptimization(LayoutOptimization):
                 correponding to each pair of wind direction and wind speed
                 values. Defaults to None.
             AEP_initial (float): The initial Annual Energy 
-                Production used for normalization in the optimization (Wh).\
+                Production used for normalization in the optimization (Wh).
                 Defaults to None.
             COE_initial (float): Initial Cost of Energy used for 
                 normalization in the optimization ($/kWh). Defaults to None.
@@ -224,7 +221,6 @@ class LayoutHeightOptimization(LayoutOptimization):
                 {'maxiter': 100, 'disp': True, 'iprint': 2, 'ftol': 1e-9}.
                 Defaults to None.
         """
-
         LayoutOptimization.reinitialize_opt(self, boundaries=boundaries,
                            wd=wd,
                            ws=ws,

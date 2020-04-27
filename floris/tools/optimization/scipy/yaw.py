@@ -22,7 +22,6 @@ class YawOptimization(Optimization):
     """
     YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.Optimization` that is used to optimize the yaw angles of all turbines in a Floris Farm for a single set of inflow conditions using the SciPy optimize package.
     """
-
     def __init__(self, fi, minimum_yaw_angle=0.0,
                            maximum_yaw_angle=25.0,
                            x0=None,
@@ -37,7 +36,7 @@ class YawOptimization(Optimization):
         and assign parameter values.
 
         Args:
-            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
+            fi (:py:class:`~.tools.floris_interface.FlorisInterface`): 
                 Interface used to interact with the Floris object.
             minimum_yaw_angle (float, optional): Minimum constraint on yaw 
                 angle (deg). Defaults to 0.0.
@@ -69,13 +68,13 @@ class YawOptimization(Optimization):
                 and/or yaw position uncertainty is included in the power
                 calculations. Contains the following key-value pairs:
 
-                -   **wd_unc**: A numpy.array containing wind direction
+                -   **wd_unc** (*np.array*): The wind direction
                     deviations from the intended wind direction (deg).
-                -   **wd_unc_pmf**: A numpy.array containing the probability
+                -   **wd_unc_pmf** (*np.array*): The probability
                     of each wind direction deviation in **wd_unc** occuring.
-                -   **yaw_unc**: A numpy.array containing yaw angle deviations
+                -   **yaw_unc** (*np.array*): The yaw angle deviations
                     from the intended yaw angles (deg).
-                -   **yaw_unc_pmf**: A numpy.array containing the probability
+                -   **yaw_unc_pmf** (*np.array*): The probability
                     of each yaw angle deviation in **yaw_unc** occuring.
 
                 If none are specified, default PMFs are calculated using 
@@ -87,14 +86,14 @@ class YawOptimization(Optimization):
                 uncertainty is included. This argument is only used when
                 **unc_pmfs** is None and contains the following key-value pairs:
 
-                -   **std_wd**: A float containing the standard deviation of
+                -   **std_wd** (*float*): The standard deviation of
                     the wind direction deviations from the original wind
                     direction (deg).
-                -   **std_yaw**: A float containing the standard deviation of
+                -   **std_yaw** (*float*): The standard deviation of
                     the yaw angle deviations from the original yaw angles (deg).
-                -   **pmf_res**: A float containing the resolution in degrees
+                -   **pmf_res** (*float*): The resolution in degrees
                     of the wind direction and yaw angle PMFs.
-                -   **pdf_cutoff**: A float containing the cumulative
+                -   **pdf_cutoff** (*float*): The cumulative
                     distribution function value at which the tails of the
                     PMFs are truncated.
 
@@ -225,20 +224,17 @@ class YawOptimization(Optimization):
                 and/or yaw position uncertainty is included in the power
                 calculations. Contains the following key-value pairs:  
 
-                -   **wd_unc**: A numpy array containing wind direction
-                    deviations from the intended wind direction (deg). 
-                -   **wd_unc_pmf**: A numpy array containing the probability
-                    of each wind direction deviation in **wd_unc** occuring. 
-                -   **yaw_unc**: A numpy array containing yaw angle deviations
-                    from the intended yaw angles (deg). 
-                -   **yaw_unc_pmf**: A numpy array containing the probability
+                -   **wd_unc** (*np.array*): The wind direction
+                    deviations from the intended wind direction (deg).
+                -   **wd_unc_pmf** (*np.array*): The probability
+                    of each wind direction deviation in **wd_unc** occuring.
+                -   **yaw_unc** (*np.array*): The yaw angle deviations
+                    from the intended yaw angles (deg).
+                -   **yaw_unc_pmf** (*np.array*): The probability
                     of each yaw angle deviation in **yaw_unc** occuring.
 
-                If the object's **include_unc** parameter is True, the
-                object's **unc_pmfs** parameter has not been initialized,
-                and **unc_pmfs** is None, initializes using
-                normally-distributed, zero-mean PMFs based on the values
-                in **unc_options**. Defaults to None.
+                If none are specified, default PMFs are calculated using 
+                values provided in **unc_options**. Defaults to None.
             unc_options (dictionary, optional): A dictionary containing values
                 used to create normally-distributed, zero-mean probability mass
                 functions describing the distribution of wind direction and yaw
@@ -246,16 +242,16 @@ class YawOptimization(Optimization):
                 uncertainty is included. This argument is only used when
                 **unc_pmfs** is None and contains the following key-value pairs:
 
-                -   **std_wd**: A float containing the standard deviation of
+                -   **std_wd** (*float*): The standard deviation of
                     the wind direction deviations from the original wind
                     direction (deg).
-                -   **std_yaw**: A float containing the standard deviation of
+                -   **std_yaw** (*float*): The standard deviation of
                     the yaw angle deviations from the original yaw angles (deg).
-                -   **pmf_res**: A float containing the resolution in
-                    degrees of the wind direction and yaw angle PMFs.
-                -   **pdf_cutoff**: A float containing the cumulative
+                -   **pmf_res** (*float*): The resolution in degrees
+                    of the wind direction and yaw angle PMFs.
+                -   **pdf_cutoff** (*float*): The cumulative
                     distribution function value at which the tails of the
-                    PMFs are truncated. 
+                    PMFs are truncated.
 
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,

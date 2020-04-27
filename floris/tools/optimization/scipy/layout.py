@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 class LayoutOptimization(Optimization):
     """
     Layout is a subclass of the 
-    :py:class:`floris.tools.optimization.scipy.optimization.Optimization` class
+    :py:class:`~.tools.optimization.scipy.optimization.Optimization` class
     that is used to perform layout optimization.
     """
 
@@ -40,10 +40,10 @@ class LayoutOptimization(Optimization):
         assign parameter values.
         
         Args:
-            fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
+            fi (:py:class:`~.tools.floris_interface.FlorisInterface`): 
                 Interface used to interact with the Floris object.
-            boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices (m).
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
             wd (np.array): An array of wind directions (deg).
             ws (np.array): An array of wind speeds (m/s).
             freq (np.array): An array of the frequencies of occurance
@@ -288,8 +288,8 @@ class LayoutOptimization(Optimization):
         specified. Otherwise, the current parameter values are kept.
         
         Args:
-            boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices (m). Defaults to None.
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
             wd (np.array): An array of wind directions (deg). Defaults to None.
             ws (np.array): An array of wind speeds (m/s). Defaults to None.
             freq (np.array): An array of the frequencies of occurance

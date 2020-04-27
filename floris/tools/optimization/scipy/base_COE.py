@@ -19,17 +19,18 @@ class BaseCOE():
     """
     BaseCOE is the base cost of energy (COE) class that is used to determine
     the cost of energy associated with a 
-    :py:class:`floris.tools.optimization.scipy.layout_height.LayoutHeightOptimization` object.
+    :py:class:`~.optimization.scipy.layout_height.LayoutHeightOptimization`
+    object.
 
     TODO: 1) Add references to NREL 2016 Cost of Wind Energy Review throughout?
     """
-
     def __init__(self, opt_obj):
         """
         Instantiate a COE model object with a LayoutHeightOptimization object.
         
         Args:
-            opt_obj (:py:class:`floris.tools.optimization.scipy.layout_height.LayoutHeightOptimization`): The optimization object.
+            opt_obj (:py:class:`~.layout_height.LayoutHeightOptimization`):
+            The optimization object.
         """
         self.opt_obj = opt_obj
 
@@ -56,7 +57,7 @@ class BaseCOE():
         assumed for the needed steel. Tower height is passed directly 
         while the turbine rotor diameter is pulled directly from the 
         turbine object within the 
-        :py:class:`floris.tools.floris_interface.FlorisInterface`:.
+        :py:class:`~.tools.floris_interface.FlorisInterface`:.
 
         TODO: Turbine capital cost or tower capital cost?
         

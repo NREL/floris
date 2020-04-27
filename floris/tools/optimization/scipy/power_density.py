@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 class PowerDensityOptimization(LayoutOptimization):
     """
     PowerDensityOptimization is a subclass of the 
-    :py:class:`floris.tools.optimization.scipy.layout.LayoutOptimization` class
+    :py:class:`~.tools.optimization.scipy.layout.LayoutOptimization` class
     that performs power density optimization.
     """
     def __init__(self, fi, boundaries,
@@ -42,6 +42,8 @@ class PowerDensityOptimization(LayoutOptimization):
         Args:
             fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): 
                 Interface used to interact with the Floris object.
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
             wd (np.array): An array of wind directions (deg).
             ws (np.array): An array of wind speeds (m/s).
             freq (np.array): An array of the frequencies of occurance
@@ -70,7 +72,6 @@ class PowerDensityOptimization(LayoutOptimization):
                 {'maxiter': 100, 'disp': True, 'iprint': 2, 'ftol': 1e-9}.
                 Defaults to None.
         """
-
         super().__init__(fi, boundaries,
                          wd,
                          ws,
@@ -226,8 +227,8 @@ class PowerDensityOptimization(LayoutOptimization):
         specified. Otherwise, the current parameter values are kept.
         
         Args:
-            boundaries (iterable): A list of pairs of floats that 
-                represent the boundary's vertices (m). Defaults to None.
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
             yawbnds (iterable): A list of the min. and max. yaw offset that is
                 allowed during the optimization (deg). If none are specified,
                 initialized to (0, 25.0). Defaults to None.
@@ -335,19 +336,23 @@ class PowerDensityOptimization(LayoutOptimization):
 
         hull = self.convex_hull(points)
 
-        area = self.polygon_area(np.array([val[0] for val in hull]), np.array([val[1] for val in hull]))
+        area = self.polygon_area(
+            np.array([val[0] for val in hull]),
+            np.array([val[1] for val in hull])
+        )
 
         return area
 
     def convex_hull(self, points):
         """
-        TODO: Describe this method, not quite sure what it is doing.
+        Finds the vertices that describe the convex hull shape given the input
+        coordinates.
 
         Args:
-            points (iterable): TODO: Description.
+            points (iterable((float, float))): Coordinates of interest.
 
         Returns:
-            list: TODO: Description.
+            list: Vertices describing convex hull shape.
         """
         # find two hull points, U, V, and split to left and right search
         u = min(points, key=lambda p: p[0])
@@ -359,14 +364,14 @@ class PowerDensityOptimization(LayoutOptimization):
 
     def polygon_area(self, x, y):
         """
-        TODO: Provide description.
+        Calculates the area of a polygon defined by its (x, y) vertices.
 
         Args:
-            x (iterable): TODO: description.
-            y (iterable): TODO: description.
+            x (iterable(float)): X-coordinates of polygon vertices.
+            y (iterable(float)): Y-coordinates of polygon vertices.
 
         Returns:
-            float: TODO: descrption.
+            float: Area of polygon.
         """
         # coordinate shift
         x_ = x - x.mean()

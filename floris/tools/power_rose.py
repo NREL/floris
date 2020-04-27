@@ -24,17 +24,30 @@ from ..utilities import setup_logger
 
 class PowerRose():
     """
-    The PowerRose class is used to organize information about wind farm power production for different wind conditions (e.g., wind speed, wind direction) along with their frequencies of occurance to calculate the resulting annual energy production (AEP). Power production and AEP are considered for baseline operation, ideal operation without wake losses, and optionally optimal operation with wake steering. The primary purpose of the PowerRose class is for visualizing and reporting energy production and energy gains from wake steering. A PowerRose object can be populated with user-specified wind rose and power data (for example, using a :py:class:`floris.tools.WindRose` object) or data from a previously saved PowerRose object can be loaded. 
+    The PowerRose class is used to organize information about wind farm power
+    production for different wind conditions (e.g., wind speed, wind direction)
+    along with their frequencies of occurance to calculate the resulting annual
+    energy production (AEP). Power production and AEP are considered for
+    baseline operation, ideal operation without wake losses, and optionally
+    optimal operation with wake steering. The primary purpose of the PowerRose
+    class is for visualizing and reporting energy production and energy gains
+    from wake steering. A PowerRose object can be populated with user-specified
+    wind rose and power data (for example, using a :py:class:`~.tools
+    WindRose` object) or data from a previously saved PowerRose object can be
+    loaded. 
     """
 
     def __init__(self, ):
         """
-        Instantiate a PowerRose object. No explicit arguments required, and an additional method will need to be called to populate the PowerRose object with data.
+        Instantiate a PowerRose object. No explicit arguments required, and an
+        additional method will need to be called to populate the PowerRose
+        object with data.
         """
 
     def load(self, filename):
         """
-        This method loads data from a previously saved PowerRose pickle file into a PowerRose object.
+        This method loads data from a previously saved PowerRose pickle file
+        into a PowerRose object.
 
         Args:
             filename (str): Path and filename of pickle file to load.
@@ -43,11 +56,14 @@ class PowerRose():
         # self.name, self.df_power, self.df_yaw, self.df_turbine_power_no_wake, self.df_turbine_power_baseline, self.df_turbine_power_opt, self.df_combine = pickle.load(
         #    open(filename, "rb"))
 
-        self.name, self.df_windrose, self.power_no_wake, self.power_baseline, self.power_opt, \
-            self.use_opt = pickle.load(open(filename, "rb"))
+        self.name, self.df_windrose, self.power_no_wake, self.power_baseline, \
+            self.power_opt, self.use_opt = pickle.load(open(filename, "rb"))
 
         # Compute energies
-        self.df_power = pd.DataFrame({'wd': self.df_windrose['wd'], 'ws': self.df_windrose['ws']})
+        self.df_power = pd.DataFrame(
+            {'wd': self.df_windrose['wd'],
+            'ws': self.df_windrose['ws']}
+        )
         self._compute_energy()
 
         # Compute totals
@@ -55,14 +71,17 @@ class PowerRose():
 
     def save(self, filename):
         """
-        This method saves PowerRose data as a pickle file so that it can be imported into a PowerRose object later.
+        This method saves PowerRose data as a pickle file so that it can be
+        imported into a PowerRose object later.
 
         Args:
             filename (str): Path and filename of pickle file to save.
         """
         pickle.dump([
-            self.name, self.df_windrose, self.power_no_wake, self.power_baseline, self.power_opt, \
-            self.use_opt], open(filename, "wb"))
+            self.name, self.df_windrose, self.power_no_wake, \
+            self.power_baseline, self.power_opt, \
+            self.use_opt], open(filename, "wb")
+        )
 
     # def _all_combine(self):
     #     df_power = self.df_power.copy(deep=True)
@@ -144,7 +163,11 @@ class PowerRose():
                                     name, df_windrose, power_no_wake, 
                                     power_baseline, power_opt=None):
         """
-        This method populates the PowerRose object with a user-specified wind rose containing wind direction, wind speed, and additional optional variables, as well as baseline wind farm power, ideal wind farm power without wake losses, and optionally optimal wind farm power with wake steering corresponding to each wind condition. 
+        This method populates the PowerRose object with a user-specified wind
+        rose containing wind direction, wind speed, and additional optional
+        variables, as well as baseline wind farm power, ideal wind farm power
+        without wake losses, and optionally optimal wind farm power with wake
+        steering corresponding to each wind condition. 
 
         TODO: Add inputs for turbine-level power and optimal yaw offsets.
 
@@ -156,14 +179,17 @@ class PowerRose():
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
-                - **freq_val** (*float*) - The frequency of occurance of the wind conditions in the other columns. 
+                - **freq_val** (*float*) - The frequency of occurance of the
+                wind conditions in the other columns. 
 
             power_no_wake (iterable): A list of wind farm power without wake
                 losses corresponding to the wind conditions in df_windrose (W).
             power_baseline (iterable): A list of baseline wind farm power with
-                wake losses corresponding to the wind conditions in df_windrose (W).
+                wake losses corresponding to the wind conditions in df_windrose
+                (W).
             power_opt (iterable, optional): A list of optimal wind farm power
-                with wake steering corresponding to the wind conditions in df_windrose (W). Defaults to None.
+                with wake steering corresponding to the wind conditions in
+                df_windrose (W). Defaults to None.
         """
         self.name = name
         if df_windrose is not None:
@@ -182,7 +208,9 @@ class PowerRose():
         # self.df_combine = self._all_combine()
 
         # Compute energies
-        self.df_power = pd.DataFrame({'wd': df_windrose['wd'], 'ws': df_windrose['ws']})
+        self.df_power = pd.DataFrame(
+            {'wd': df_windrose['wd'],'ws': df_windrose['ws']}
+        )
         self._compute_energy()
 
         # Compute totals
@@ -190,7 +218,15 @@ class PowerRose():
 
     def report(self):
         """
-        This method prints information about annual energy production (AEP) using the PowerRose object data. The AEP in GWh is listed for ideal operation without wake losses, baseline operation, and optimal operation with wake steering, if optimal power data are stored. The wind farm efficiency (% of ideal energy production) and wake loss percentages are listed for baseline and optimal operation (if optimal power is stored), along with the AEP gain from wake steering (again, if optimal power is stored). The AEP gain from wake steering is also listed as a percentage of wake losses recovered, if applicable. 
+        This method prints information about annual energy production (AEP)
+        using the PowerRose object data. The AEP in GWh is listed for ideal
+        operation without wake losses, baseline operation, and optimal
+        operation with wake steering, if optimal power data are stored. The
+        wind farm efficiency (% of ideal energy production) and wake loss
+        percentages are listed for baseline and optimal operation (if optimal
+        power is stored), along with the AEP gain from wake steering (again, if
+        optimal power is stored). The AEP gain from wake steering is also
+        listed as a percentage of wake losses recovered, if applicable. 
         """
         if self.use_opt:
             print('=============================================')
@@ -222,18 +258,31 @@ class PowerRose():
 
     def plot_by_direction(self,axarr=None):
         """
-        This method plots energy production, wind farm efficiency, and energy gains from wake steering (if applicable) as a function of wind direction. If axes are not provided, new ones are created. The plots include: 
+        This method plots energy production, wind farm efficiency, and energy
+        gains from wake steering (if applicable) as a function of wind
+        direction. If axes are not provided, new ones are created. The plots
+        include: 
 
-        1) The energy production as a function of wind direction for the baseline and, if applicable, optimal wake steering cases normalized by the maximum energy production. 
-        2) The wind farm efficiency (energy production relative to energy production without wake losses) as a function of wind direction for the baseline and, if applicable, optimal wake steering cases. 
-        3) Percent gain in energy production with optimal wake steering as a function of wind direction. This third plot is only created if optimal power data are stored in the PowerRose object.
+        1) The energy production as a function of wind direction for the
+        baseline and, if applicable, optimal wake steering cases normalized by
+        the maximum energy production. 
+        2) The wind farm efficiency (energy production relative to energy
+        production without wake losses) as a function of wind direction for the
+        baseline and, if applicable, optimal wake steering cases. 
+        3) Percent gain in energy production with optimal wake steering as a
+        function of wind direction. This third plot is only created if optimal
+        power data are stored in the PowerRose object.
 
         Args:
             axarr (numpy.ndarray, optional): An array of 2 or 3 
-                matplotlib.axes._subplots.AxesSubplot axes objects on which data are plotted. Three axes are rquired if the PowerRose object contains optimal power data. Default is None. 
+                :py:class:`matplotlib.axes._subplots.AxesSubplot` axes objects
+                on which data are plotted. Three axes are rquired if the
+                PowerRose object contains optimal power data. Default is None. 
 
         Returns:
-            numpy.ndarray: An array of 2 or 3 matplotlib.axes._subplots.AxesSubplot axes objects on which the data are plotted.
+            numpy.ndarray: An array of 2 or 3
+            :py:class:`matplotlib.axes._subplots.AxesSubplot` axes objects on
+            which the data are plotted.
         """
 
         df = self.df_power.copy(deep=True)
@@ -287,12 +336,15 @@ class PowerRose():
             ax = axarr[2]
             ax.plot(
                 df.wd,
-                100. * (df.energy_opt - df.energy_baseline) / df.energy_baseline,
-                'r')
-            ax.axhline(100. * (df.energy_opt.mean() - df.energy_baseline.mean()) /
-                    df.energy_baseline.mean(),
-                    color='r',
-                    ls='--')
+                100.*(df.energy_opt - df.energy_baseline) / df.energy_baseline,
+                'r'
+            )
+            ax.axhline(
+                100.*(df.energy_opt.mean() - df.energy_baseline.mean())
+                df.energy_baseline.mean(),
+                color='r',
+                ls='--'
+            )
             ax.set_ylabel('Percent Gain')
             ax.set_xlabel('Wind Direction (deg)')
 

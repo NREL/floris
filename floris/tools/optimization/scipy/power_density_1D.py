@@ -21,11 +21,10 @@ import matplotlib.pyplot as plt
 class PowerDensityOptimization1D(Optimization):
     """
     PowerDensityOptimization1D is a subclass of the 
-    :py:class:`floris.tools.optimization.scipy.optimization.Optimization` class
+    :py:class:`~.tools.optimization.scipy.optimization.Optimization` class
     that performs layout optimization in 1 dimension. TODO: What is this single
     dimension?
     """
-
     def __init__(self, fi, wd,
                            ws,
                            freq,
