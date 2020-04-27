@@ -9,7 +9,6 @@
     source/inputs
     source/examples
     source/developers
-    source/changelog
 
 
 FLORIS Wake Modeling Utility
@@ -86,8 +85,7 @@ The FLORIS repository consists of two primary branches:
 - `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
   release corresponding to a specific version number.
 - `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
-  updates including bug fixes and improvements. See :ref:`changelog` for
-  details.
+  updates including bug fixes and improvements.
 
 These can be cloned (i.e. downloaded) directly from GitHub with one of the
 following commands:
