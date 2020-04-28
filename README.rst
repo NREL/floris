@@ -7,9 +7,7 @@ For technical questions regarding FLORIS usage please first search for or post
 your questions to
 `stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
 the **floris** tag. Alternatively, email the NREL FLORIS team at
-`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_ or contact
-`Jen King <mailto:jennifer.king@nrel.gov>`_ and
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_ directly.
+`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`.
 
 .. image:: https://github.com/nrel/floris/workflows/Automated%20tests%20%26%20code%20coverage/badge.svg
   :target: https://github.com/nrel/floris/actions
@@ -40,11 +38,6 @@ modeling and simulation tool for controls research are
    control-oriented wake modeling tools using lidar field results <https://www.wind-energ-sci.net/3/819/2018/>`__,
    in: Wind Energy Science, vol. 3, pp. 819-831, Copernicus Publications,
    2018.
-2. Bay, C.J., King, J., Fleming, P., Mudafort, R., and Martínez-Tossas, L.A.:
-   `Unlocking the Full Potential of Wake Steering: Implementation and
-   Assessment of a Controls-Oriented Model <https://www.wind-energ-sci-discuss.net/wes-2019-19/>`__,
-   submitted to Wind Energy Science Discussions, Copernicus Publications,
-   2019.
 
 Citation
 ========
@@ -55,7 +48,7 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 2.0.0 (2020). Available at https://github.com/NREL/floris.
+   FLORIS. Version 2.0.1 (2020). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
@@ -63,7 +56,7 @@ For LaTeX users:
 
     @misc{FLORIS_2020,
     author = {NREL},
-    title = {{FLORIS. Version 2.0.0}},
+    title = {{FLORIS. Version 2.0.1},
     year = {2020},
     publisher = {GitHub},
     journal = {GitHub repository},

@@ -33,7 +33,7 @@ URL = 'https://github.com/NREL/FLORIS'
 EMAIL = 'rafael.mudafort@nrel.gov'
 AUTHOR = 'NREL National Wind Technology Center'
 REQUIRES_PYTHON = '>=3.3.0'
-VERSION = '2.0.0'
+VERSION = '2.0.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
