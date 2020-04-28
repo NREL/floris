@@ -3,3 +3,4 @@ readthedocs-sphinx-ext
 Sphinx
 sphinxcontrib-napoleon
 sphinxcontrib-bibtex
+-r ../requirements.txt
