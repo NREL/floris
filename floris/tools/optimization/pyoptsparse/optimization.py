@@ -11,10 +11,11 @@
 # the License.
  
 # See https://floris.readthedocs.io for documentation
-from ....utilities import setup_logger
+
+from ....logging import LoggerMixin
 
 
-class Optimization():
+class Optimization(LoggerMixin):
     """
     Base optimization class.
 
@@ -30,8 +31,6 @@ class Optimization():
         """
         Instantiate Optimization object and its parameters.
         """
-        self.logger = setup_logger(name=__name__)
-
         self.model = model
         self.solver_choices = ['SNOPT', 'IPOPT', 'SLSQP', 'NLPQLP',
                              'FSQP', 'NSGA2', 'PSQP', 'ParOpt',

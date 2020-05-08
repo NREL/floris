@@ -7,19 +7,7 @@ from os import path
 import numpy as np
 import pickle
 import copy
-from ..utilities import setup_logger
-
-logging_dict = {
-    "console": {
-        "enable": True,
-        "level": "INFO"
-    },
-    "file": {
-        "enable": False,
-        "level": "INFO"
-    }
-}
-logger = setup_logger(name=__name__, logging_dict=logging_dict)
+from ..logging import LoggerMixin
 
 try:
     from ccblade import CCAirfoil, CCBlade
@@ -27,6 +15,7 @@ except ImportError:
     err_msg = ('It appears you do not have CCBlade installed. ' + \
         'Please refer to http://wisdem.github.io/CCBlade/ for ' + \
         'guidance on how to properly install the module.')
+    logger = LoggerMixin()
     logger.error(err_msg, stack_info=True)
     raise ImportError(err_msg)
 
