@@ -11,10 +11,11 @@
 # the License.
 
 import numpy as np
-from ...utilities import cosd, sind, tand, setup_logger
+from ...utilities import cosd, sind, tand
+from ...logging import LoggerMixin
 
 
-class VelocityDeflection():
+class VelocityDeflection(LoggerMixin):
     """
     This is the super-class for all wake deflection models. It includes
     implementations of functions that subclasses should use to perform
@@ -39,7 +40,6 @@ class VelocityDeflection():
         """
 
         self.model_string = None
-        self.logger = setup_logger(name=__name__)
 
         self.parameter_dictionary = parameter_dictionary
 

@@ -10,7 +10,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import setup_logger
 from .base_velocity_deflection import VelocityDeflection
 import numpy as np
 
@@ -40,7 +39,6 @@ class Curl(VelocityDeflection):
             parameter_dictionary (dict): Model-specific parameters.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "curl"
 
     def function(self, x_locations, y_locations, z_locations, turbine, coord,

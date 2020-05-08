@@ -16,7 +16,6 @@
 import numpy as np
 from ..utilities import Vec3
 from ..utilities import cosd, sind, tand
-from ..utilities import setup_logger
 import scipy as sp
 from scipy.interpolate import griddata
 

@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import setup_logger
 from .base_wake_turbulence import WakeTurbulence
+
 
 class CrespoHernandez(WakeTurbulence):
     """
@@ -54,7 +54,6 @@ class CrespoHernandez(WakeTurbulence):
                     turbulence.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "crespo_hernandez"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 

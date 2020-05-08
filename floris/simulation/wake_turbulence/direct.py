@@ -10,7 +10,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import setup_logger
 from .base_wake_turbulence import WakeTurbulence
 
 
@@ -43,7 +42,6 @@ class Direct(WakeTurbulence):
                     turbulence.
         """
         super().__init__()
-        self.logger = setup_logger(name=__name__)
         self.model_string = "direct"
         model_dictionary = parameter_dictionary[self.model_string]
 

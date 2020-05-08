@@ -18,11 +18,11 @@ from scipy.interpolate import interp1d
 from scipy.spatial import distance_matrix
 import math
 from ..utilities import cosd, sind, tand
-from ..utilities import setup_logger
 import scipy.stats as stats
+from ..logging import LoggerMixin
 
 
-class Turbine():
+class Turbine(LoggerMixin):
     """
     Turbine is a class containing objects pertaining to the individual
     turbines.
@@ -73,7 +73,6 @@ class Turbine():
         Turbine: An instantiated Turbine object.
     """
     def __init__(self, instance_dictionary):
-        self.logger = setup_logger(name=__name__)
         self.description = instance_dictionary["description"]
 
         properties = instance_dictionary["properties"]
