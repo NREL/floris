@@ -24,6 +24,26 @@ LOG_TO_FILE = False
 FILE_LEVEL = 'INFO'
 
 def configure_console_log(enabled=True, level="INFO"):
+    """
+    Sets whether the log statements are displayed in the console logging, and,
+    if enabled, the log level to use. If not explicitly configured, console
+    logging is ON at the INFO level.
+
+    Args:
+        enabled (bool, optional): Whether to enable console logging.
+            Defaults to True.
+        level (str, optional): If `enabled` is True, sets the level that the
+            logging module displays. This level is the minimum and all
+            messages at a higher level are included. Valid values are
+
+                - CRITICAL
+                - ERROR
+                - WARNING
+                - INFO
+                - DEBUG
+
+            Defaults to "INFO".
+    """
     global LOG_TO_CONSOLE
     global CONSOLE_LEVEL
     LOG_TO_CONSOLE = enabled
@@ -31,6 +51,26 @@ def configure_console_log(enabled=True, level="INFO"):
     _setup_logger()
 
 def configure_file_log(enabled=True, level="INFO"):
+    """
+    Sets whether the log statements are exported to a log file, and,
+    if enabled, the log level to use. If not explicitly configured, file
+    logging is OFF.
+
+    Args:
+        enabled (bool, optional): Whether to enable file logging.
+            This argument defaults to True.
+        level (str, optional): If `enabled` is True, sets the level that the
+            logging module displays. This level is the minimum and all
+            messages at a higher level are included. Valid values are
+
+                - CRITICAL
+                - ERROR
+                - WARNING
+                - INFO
+                - DEBUG
+
+            Defaults to "INFO".
+    """
     global LOG_TO_FILE
     global FILE_LEVEL
     LOG_TO_FILE = enabled
@@ -38,6 +78,15 @@ def configure_file_log(enabled=True, level="INFO"):
     _setup_logger()
 
 def _setup_logger():
+    """
+    Configures the root logger based on the default or user-specified settings.
+    As needed, a StreamHandler is created for console logging or FileHandler
+    is created for file logging. Either or both are attached to the root
+    logger for use throughout FLORIS.
+
+    Returns:
+        logging.Logger: The root logger from the `logging` module.
+    """
     # Configure logging for the root logger
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
