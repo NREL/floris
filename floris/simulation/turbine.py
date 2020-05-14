@@ -19,10 +19,10 @@ from scipy.spatial import distance_matrix
 import math
 from ..utilities import cosd, sind, tand
 import scipy.stats as stats
-from ..logging import LoggerMixin
+from ..logging_manager import LoggerBase
 
 
-class Turbine(LoggerMixin):
+class Turbine(LoggerBase):
     """
     Turbine is a class containing objects pertaining to the individual
     turbines.

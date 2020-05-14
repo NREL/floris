@@ -15,14 +15,14 @@
 import numpy as np
 from .flow_data import FlowData
 from ..utilities import Vec3
-from ..logging import LoggerMixin
+from ..logging_manager import LoggerBase
 import pandas as pd
 import os
 import re
 from .cut_plane import CutPlane, get_plane_from_flow_data
 
 
-class SowfaInterface(LoggerMixin):
+class SowfaInterface(LoggerBase):
     """
     Object to facilitate interaction with flow data output by SOWFA.
 

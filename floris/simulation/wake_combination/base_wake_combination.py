@@ -10,10 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...logging import LoggerMixin
+from ...logging_manager import LoggerBase
 
 
-class WakeCombination(LoggerMixin):
+class WakeCombination(LoggerBase):
     """
     This is the super-class for all combination models included in FLORIS.
     These models define how the wake velocity deficits are combined with each

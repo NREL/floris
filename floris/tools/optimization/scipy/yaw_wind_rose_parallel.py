@@ -18,10 +18,10 @@ from scipy.optimize import minimize
 from itertools import repeat
 from floris.tools.optimization.scipy.yaw_wind_rose \
 	import YawOptimizationWindRose
-from ....logging import LoggerMixin
+from ....logging_manager import LoggerBase
 
 
-class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerMixin):
+class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
     """
     YawOptimizationWindRose is a subclass of
     :py:class:`~.tools.optimizationscipy.YawOptimizationWindRose` that is used

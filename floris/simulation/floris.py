@@ -18,10 +18,10 @@ from .wake import Wake
 from .farm import Farm
 import pickle
 from .input_reader import InputReader
-import logging
+import floris.logging_manager as logging_manager
 
 
-class Floris():
+class Floris(logging_manager.LoggerBase):
     """
     Top-level class that describes a Floris model and initializes the
     simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to
@@ -45,10 +45,14 @@ class Floris():
 
         # Configure logging
         self.meta_dict["logging"]
-        logging.LOG_TO_CONSOLE = self.meta_dict["logging"]["console"]["enable"]
-        logging.CONSOLE_LEVEL = self.meta_dict["logging"]["console"]["level"]
-        logging.LOG_TO_FILE = self.meta_dict["logging"]["file"]["enable"]
-        logging.FILE_LEVEL = self.meta_dict["logging"]["file"]["level"]
+        logging_manager.configure_console_log(
+            self.meta_dict["logging"]["console"]["enable"],
+            self.meta_dict["logging"]["console"]["level"]
+        )
+        logging_manager.configure_file_log(
+            self.meta_dict["logging"]["file"]["enable"],
+            self.meta_dict["logging"]["file"]["level"]
+        )
 
         # Initialize the simulation objects
         turbine = Turbine(turbine_dict)

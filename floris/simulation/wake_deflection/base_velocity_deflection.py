@@ -12,10 +12,10 @@
 
 import numpy as np
 from ...utilities import cosd, sind, tand
-from ...logging import LoggerMixin
+from ...logging_manager import LoggerBase
 
 
-class VelocityDeflection(LoggerMixin):
+class VelocityDeflection(LoggerBase):
     """
     This is the super-class for all wake deflection models. It includes
     implementations of functions that subclasses should use to perform

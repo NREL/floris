@@ -12,10 +12,10 @@
 
 import numpy as np
 from ...utilities import cosd, sind, tand
-from ...logging import LoggerMixin
+from ...logging_manager import LoggerBase
 
 
-class VelocityDeficit(LoggerMixin):
+class VelocityDeficit(LoggerBase):
     """
     Base VelocityDeficit object class. This class contains a method for getting
     the relevant model parameters from the input dictionary, or for supplying

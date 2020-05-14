@@ -20,7 +20,7 @@ from floris.simulation import TurbineMap, Turbine
 from .flow_data import FlowData
 from ..utilities import Vec3
 import copy
-from ..logging import LoggerMixin
+from ..logging_manager import LoggerBase
 from scipy.stats import norm
 from floris.simulation import WindMap
 from .cut_plane import CutPlane, get_plane_from_flow_data
@@ -30,7 +30,7 @@ from .visualization import visualize_cut_plane
 from .layout_functions import visualize_layout, build_turbine_loc
 
 
-class FlorisInterface(LoggerMixin):
+class FlorisInterface(LoggerBase):
     """
     FlorisInterface provides a high-level user interface to many of the
     underlying methods within the FLORIS framework. It is meant to act as a

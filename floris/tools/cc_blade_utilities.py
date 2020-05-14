@@ -7,7 +7,7 @@ from os import path
 import numpy as np
 import pickle
 import copy
-from ..logging import LoggerMixin
+from ..logging_manager import LoggerBase
 
 try:
     from ccblade import CCAirfoil, CCBlade
@@ -15,7 +15,7 @@ except ImportError:
     err_msg = ('It appears you do not have CCBlade installed. ' + \
         'Please refer to http://wisdem.github.io/CCBlade/ for ' + \
         'guidance on how to properly install the module.')
-    logger = LoggerMixin()
+    logger = LoggerBase()
     logger.error(err_msg, stack_info=True)
     raise ImportError(err_msg)
 

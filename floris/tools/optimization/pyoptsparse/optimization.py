@@ -12,10 +12,10 @@
  
 # See https://floris.readthedocs.io for documentation
 
-from ....logging import LoggerMixin
+from ....logging_manager import LoggerBase
 
 
-class Optimization(LoggerMixin):
+class Optimization(LoggerBase):
     """
     Base optimization class.
 
