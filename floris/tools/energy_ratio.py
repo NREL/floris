@@ -364,9 +364,13 @@ def calculate_balanced_energy_ratio(
 
         # else:
         #     baseline_weight = np.ones_like(reference_power_baseline_wd)
-        baseline_weight = gaussian(wind_dir_array_baseline_wd,
-                                   wind_direction_bin,
-                                   wind_direction_bin_radius / 2.0)
+        # if wind_direction_bin_radius > 1.5:
+        if wind_direction_bin_p_overlap > 5.:
+            baseline_weight = gaussian(wind_dir_array_baseline_wd,
+                                    wind_direction_bin,
+                                    wind_direction_bin_radius / 2.0)
+        else:
+            baseline_weight = np.ones_like(wind_dir_array_baseline_wd)                           
         baseline_weight = baseline_weight / np.sum(baseline_weight)
 
         reference_power_controlled_wd = reference_power_controlled[
@@ -377,9 +381,14 @@ def calculate_balanced_energy_ratio(
             wind_dir_mask_controlled]
         wind_dir_array_controlled_wd = wind_direction_array_controlled[
             wind_dir_mask_controlled]
-        controlled_weight = gaussian(wind_dir_array_controlled_wd,
-                                     wind_direction_bin,
-                                     wind_direction_bin_radius / 2.0)
+        # if wind_direction_bin_radius > 1.5:
+        if wind_direction_bin_p_overlap > 5.:
+            controlled_weight = gaussian(wind_dir_array_controlled_wd,
+                                        wind_direction_bin,
+                                        wind_direction_bin_radius / 2.0)
+        else:
+            controlled_weight = np.ones_like(wind_dir_array_controlled_wd)  
+        
 
         controlled_weight = controlled_weight / np.sum(controlled_weight)
         # wd_controlled_dist = (wind_dir_array_controlled_wd - wind_direction_bin)**2
@@ -463,35 +472,63 @@ def calculate_balanced_energy_ratio(
         percentiles = _get_confidence_bounds(confidence)
 
         # Compute the central over from the bootstrap runs
-        ratio_array_base[i] = np.mean(ratio_base_bs)
-        ratio_array_con[i] = np.mean(ratio_con_bs)
-        diff_array[i] = np.mean(diff_bs)
-        p_change_array[i] = np.mean(p_change_bs)
+        # print('wd',wind_direction_bin)
+        # print(ratio_base_bs)
+        # print(np.mean(ratio_base_bs))
 
-        lower_ratio_array_base[i], upper_ratio_array_base[
-            i] = _calculate_lower_and_upper_bound(
-                ratio_base_bs,
-                percentiles,
-                central_estimate=ratio_array_base[i],
-                method='simple_percentile')
-        lower_ratio_array_con[i], upper_ratio_array_con[
-            i] = _calculate_lower_and_upper_bound(
-                ratio_con_bs,
-                percentiles,
-                central_estimate=ratio_array_con[i],
-                method='simple_percentile')
-        lower_diff_array[i], upper_diff_array[
-            i] = _calculate_lower_and_upper_bound(
-                diff_bs,
-                percentiles,
-                central_estimate=diff_array[i],
-                method='simple_percentile')
-        lower_p_change_array[i], upper_p_change_array[
-            i] = _calculate_lower_and_upper_bound(
-                p_change_bs,
-                percentiles,
-                central_estimate=p_change_array[i],
-                method='simple_percentile')
+        # Trim out the nans
+        # print('size before',len(ratio_base_bs))
+        is_not_nan = (~np.isnan(ratio_base_bs)) & (~np.isnan(ratio_con_bs)) & (~np.isnan(diff_bs)) & (~np.isnan(p_change_bs))
+        ratio_base_bs = ratio_base_bs[is_not_nan]
+        ratio_con_bs = ratio_con_bs[is_not_nan]
+        diff_bs = diff_bs[is_not_nan]
+        p_change_bs = p_change_bs[is_not_nan]
+
+        # print('size after',len(ratio_base_bs))
+
+        if len(ratio_base_bs) == 0:
+            ratio_array_base[i] = np.nan
+            ratio_array_con[i] = np.nan
+            diff_array[i] = np.nan
+            p_change_array[i] = np.nan
+            lower_ratio_array_base[i] = np.nan
+            upper_ratio_array_base[i] = np.nan
+            lower_ratio_array_con[i] = np.nan
+            upper_ratio_array_con[i] = np.nan
+            lower_diff_array[i] = np.nan
+            upper_diff_array[i] = np.nan
+            lower_p_change_array[i] = np.nan
+            upper_p_change_array[i] = np.nan
+        else:
+            ratio_array_base[i] = np.mean(ratio_base_bs)
+            ratio_array_con[i] = np.mean(ratio_con_bs)
+            diff_array[i] = np.mean(diff_bs)
+            p_change_array[i] = np.mean(p_change_bs)
+
+            lower_ratio_array_base[i], upper_ratio_array_base[
+                i] = _calculate_lower_and_upper_bound(
+                    ratio_base_bs,
+                    percentiles,
+                    central_estimate=ratio_array_base[i],
+                    method='simple_percentile')
+            lower_ratio_array_con[i], upper_ratio_array_con[
+                i] = _calculate_lower_and_upper_bound(
+                    ratio_con_bs,
+                    percentiles,
+                    central_estimate=ratio_array_con[i],
+                    method='simple_percentile')
+            lower_diff_array[i], upper_diff_array[
+                i] = _calculate_lower_and_upper_bound(
+                    diff_bs,
+                    percentiles,
+                    central_estimate=diff_array[i],
+                    method='simple_percentile')
+            lower_p_change_array[i], upper_p_change_array[
+                i] = _calculate_lower_and_upper_bound(
+                    p_change_bs,
+                    percentiles,
+                    central_estimate=p_change_array[i],
+                    method='simple_percentile')
 
     return ratio_array_base, lower_ratio_array_base, upper_ratio_array_base, counts_ratio_array_base, ratio_array_con, lower_ratio_array_con, upper_ratio_array_con, counts_ratio_array_con, diff_array, lower_diff_array, upper_diff_array, counts_diff_array, p_change_array, lower_p_change_array, upper_p_change_array, counts_p_change_array
 
@@ -593,7 +630,7 @@ def plot_energy_ratio(reference_power_baseline,
         wind_direction_array_controlled,
         wind_direction_bins,
         confidence=95,
-        n_boostrap=None,
+        n_boostrap=n_boostrap,
         wind_direction_bin_p_overlap=wind_direction_bin_p_overlap,
     )
 
