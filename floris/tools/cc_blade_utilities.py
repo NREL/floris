@@ -8,20 +8,19 @@ import numpy as np
 import pickle
 import copy
 from ..logging_manager import LoggerBase
+from scipy import interpolate
 
+# Attempt CCBlade import and raise error if no success
 try:
     from ccblade import CCAirfoil, CCBlade
 except ImportError:
-    err_msg = ('It appears you do not have CCBlade installed. ' + \
-        'Please refer to http://wisdem.github.io/CCBlade/ for ' + \
-        'guidance on how to properly install the module.')
+    err_msg = (
+        'CCBlade was not found. See http://wisdem.github.io/CCBlade for ' + \
+            'installation instructions.'
+    )
     logger = LoggerBase()
     logger.error(err_msg, stack_info=True)
     raise ImportError(err_msg)
-
-# from ccblade import CCAirfoil, CCBlade
-
-from scipy import interpolate
 
 
 # Some useful constants
