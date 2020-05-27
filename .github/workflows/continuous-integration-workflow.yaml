@@ -9,8 +9,7 @@ jobs:
     strategy:
       matrix:
         # 3.5 fails with a bad comparison in TurbineMap unit tests
-        # 3.6 has trouble pickling arbitrary objects (I guess?)
-        python-version: [3.7, 3.8] # 3.5, 3.6
+        python-version: [3.6, 3.7, 3.8] # 3.5
         # windows-latest fails in codecov
         os: [ubuntu-latest, macos-latest]
       fail-fast: False
