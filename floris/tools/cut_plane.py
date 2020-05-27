@@ -18,8 +18,6 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 import pandas as pd
 import copy
-from ..utilities import setup_logger
-# logger = setup_logger(name='__name__')
 
 def nudge_outward(x):
     """
@@ -83,7 +81,6 @@ def get_plane_from_flow_data(flow_data,
     search_values = np.array(sorted(np.unique(x3_array)))
     nearest_idx = (np.abs(search_values - x3_value)).argmin()
     nearest_value = search_values[nearest_idx]
-    # logger.info('Nearest value to %.2f is %.2f' % (x3_value, nearest_value))
     print('Nearest value to %.2f is %.2f' %
         (x3_value, nearest_value))
 

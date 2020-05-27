@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind, tand, setup_logger
+from ...utilities import cosd, sind, tand
 from .base_velocity_deflection import VelocityDeflection
 import numpy as np
 
@@ -78,7 +78,6 @@ class Gauss(VelocityDeflection):
                         See property on super-class for more details.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "gauss"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.ka = model_dictionary["ka"]

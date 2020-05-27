@@ -11,7 +11,7 @@
 # the License.
 
 import numpy as np
-from ....utilities import cosd, sind, tand, setup_logger
+from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
 from .gaussian_model_base import GaussianModel
 
@@ -95,7 +95,6 @@ class IshiharaQian(GaussianModel):
 
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara_qian"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 

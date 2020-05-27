@@ -10,7 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-class WakeTurbulence():
+from ...logging_manager import LoggerBase
+
+
+class WakeTurbulence(LoggerBase):
     """
     This is the super-class for all wake turbulence models. It includes
     implementations of functions that subclasses should use to retrieve

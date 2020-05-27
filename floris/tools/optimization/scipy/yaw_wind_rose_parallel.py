@@ -18,10 +18,10 @@ from scipy.optimize import minimize
 from itertools import repeat
 from floris.tools.optimization.scipy.yaw_wind_rose \
 	import YawOptimizationWindRose
-from ....utilities import setup_logger
+from ....logging_manager import LoggerBase
 
 
-class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
+class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
     """
     YawOptimizationWindRose is a subclass of
     :py:class:`~.tools.optimizationscipy.YawOptimizationWindRose` that is used
@@ -130,8 +130,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
         """
-        self.logger = setup_logger(name=__name__)
-
         super().__init__(
             fi,
             wd,
