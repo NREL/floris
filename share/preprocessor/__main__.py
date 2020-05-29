@@ -2,6 +2,7 @@
 import argparse
 import os
 import json
+import warnings
 from src.v1_0_0 import V1_0_0
 from src.v2_0_0 import V2_0_0
 
@@ -47,19 +48,23 @@ def main():
     elif args.input_file:
         with open(args.input_file) as jsonfile:
             data = json.load(jsonfile)
-            if "floris_version" not in data:
-                raise ValueError("Given input file does not contain a FLORIS version flag.")
-            elif data["floris_version"] >= "v2.0.0":
-                raise ValueError("The given input file version is up to date with or newer than the latest supported version.")
-            elif data["floris_version"] not in VERSION_MAP:
-                raise ValueError("Given FLORIS version is not currently supported.")
+            if "floris_version" in data:
+                floris_version = data["floris_version"]
             else:
-                starting_version = VERSION_MAP[data["floris_version"]](
-                    turbine_dict = data.pop("turbine"),
-                    wake_dict = data.pop("wake"),
-                    farm_dict = data.pop("farm"),
-                    meta_dict = data,
-                )
+                floris_version = "v1.0.0"
+                warnings.warn("No FLORIS version found in input, assuming v1.0.0.")
+    
+            if floris_version >= "v2.0.0":
+                raise ValueError("The given input file version is up to date with or newer than the latest supported version.")
+            elif floris_version not in VERSION_MAP:
+                raise ValueError("Given FLORIS version is not currently supported.")
+
+            starting_version = VERSION_MAP[floris_version](
+                turbine_dict = data.pop("turbine"),
+                wake_dict = data.pop("wake"),
+                farm_dict = data.pop("farm"),
+                meta_dict = data,
+            )
     
     ending_version = V2_0_0(
         starting_version.meta_dict,
