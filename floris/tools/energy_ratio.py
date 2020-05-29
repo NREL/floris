@@ -1037,18 +1037,10 @@ def calculate_balanced_energy_ratio_ws(reference_power_baseline,
             continue
 
         # Convert wind speeds to integers
-
-        # Temp round to 2 code
-        # wind_dir_array_baseline_ws = wind_dir_array_baseline_ws/2.0
-        # wind_dir_array_controlled_ws = wind_dir_array_controlled_ws/2.0
-
         wind_dir_array_baseline_ws = wind_dir_array_baseline_ws.round().astype(
             int)
         wind_dir_array_controlled_ws = wind_dir_array_controlled_ws.round(
         ).astype(int)
-
-        # wind_dir_array_baseline_ws = wind_dir_array_baseline_ws * 2
-        # wind_dir_array_controlled_ws = wind_dir_array_controlled_ws * 2
 
         # compute the energy ratio
         ratio_array_base[i], ratio_array_con[i], diff_array[i], p_change_array[
