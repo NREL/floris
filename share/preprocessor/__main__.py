@@ -48,9 +48,9 @@ def main():
         with open(args.input_file) as jsonfile:
             data = json.load(jsonfile)
             if "floris_version" not in data:
-                raise ValueError("Given input file does not contain a FLORIS.")
+                raise ValueError("Given input file does not contain a FLORIS version flag.")
             elif data["floris_version"] >= "v2.0.0":
-                raise ValueError("The given input file version is up to date with or newer than the latest supported verion.")
+                raise ValueError("The given input file version is up to date with or newer than the latest supported version.")
             elif data["floris_version"] not in VERSION_MAP:
                 raise ValueError("Given FLORIS version is not currently supported.")
             else:
