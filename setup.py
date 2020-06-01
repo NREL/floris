@@ -61,6 +61,13 @@ EXTRAS = {
         'Sphinx',
         'sphinxcontrib-napoleon'
     }
+    "develop": {
+        "pre-commit",
+        "black",
+        "isort",
+        "flake8",
+        "pylint",
+    }
 }
 
 # The rest you shouldn't have to touch too much :)
