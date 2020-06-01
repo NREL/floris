@@ -16,8 +16,14 @@
 import pytest
 import numpy as np
 from floris.simulation import Floris
-from .gauss_regression_test import GaussRegressionTest
-from .curl_regression_test import CurlRegressionTest
+try:
+    from .gauss_regression_test import GaussRegressionTest
+except ImportError:
+    from gauss_regression_test import GaussRegressionTest
+try:
+    from .curl_regression_test import CurlRegressionTest
+except ImportError:
+    from curl_regression_test import CurlRegressionTest
 
 class ChangeModelTest():
     """

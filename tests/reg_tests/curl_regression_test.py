@@ -18,7 +18,10 @@ import numpy as np
 import copy
 from floris.simulation import Floris
 from floris.simulation import TurbineMap
-from .sample_inputs import SampleInputs
+try:
+    from .sample_inputs import SampleInputs
+except ImportError:
+    from sample_inputs import SampleInputs
 
 
 class CurlRegressionTest():
