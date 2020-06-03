@@ -19,8 +19,8 @@ from floris.simulation import Floris
 from floris.simulation import TurbineMap, Turbine
 from .flow_data import FlowData
 from ..utilities import Vec3
-from ..utilities import setup_logger
 import copy
+from ..logging_manager import LoggerBase
 from scipy.stats import norm
 from floris.simulation import WindMap
 from .cut_plane import CutPlane, get_plane_from_flow_data
@@ -29,7 +29,8 @@ import matplotlib.pyplot as plt
 from .visualization import visualize_cut_plane
 from .layout_functions import visualize_layout, build_turbine_loc
 
-class FlorisInterface():
+
+class FlorisInterface(LoggerBase):
     """
     FlorisInterface provides a high-level user interface to many of the
     underlying methods within the FLORIS framework. It is meant to act as a
@@ -54,15 +55,11 @@ class FlorisInterface():
             ValueError: Input file or dictionary must be supplied.
         """
         if input_file is None and input_dict is None:
-            self.logger = setup_logger(name=__name__,
-                logging_dict={'console': {'enable': True, 'level': 'INFO'},
-                'file': {'enable': False, 'level': 'INFO'} })
             err_msg = 'Input file or dictionary must be supplied'
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self.input_file = input_file
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
-        self.logger = setup_logger(name=__name__)
 
     def calculate_wake(self, yaw_angles=None, no_wake=False, points=None, \
         track_n_upstream_wakes=False):

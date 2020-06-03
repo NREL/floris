@@ -11,10 +11,11 @@
 # the License.
 
 import numpy as np
-from ...utilities import cosd, sind, tand, setup_logger
+from ...utilities import cosd, sind, tand
+from ...logging_manager import LoggerBase
 
 
-class VelocityDeficit():
+class VelocityDeficit(LoggerBase):
     """
     Base VelocityDeficit object class. This class contains a method for getting
     the relevant model parameters from the input dictionary, or for supplying
@@ -29,8 +30,6 @@ class VelocityDeficit():
                 velocity model parameters. See individual wake velocity
                 models for details of specific key-value pairs.
         """
-        self.logger = setup_logger(name=__name__)
-
         self.requires_resolution = False
         self.model_string = None
         self.model_grid_resolution = None

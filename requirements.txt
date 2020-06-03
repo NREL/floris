@@ -7,7 +7,6 @@ pytest>=4
 scipy>=1.1
 
 # tools
-h5pyd>=0.3
 pandas>=0.24
 pyproj>=2.1
 seaborn>=0.9

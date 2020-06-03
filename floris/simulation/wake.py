@@ -234,7 +234,7 @@ class Wake():
     def combination_model(self, value):
         if type(value) is str:
             self._combination_model = self._combination_models[value]()
-        elif isinstance(value, wake_combination.WakeCombination):
+        elif isinstance(value, WakeCombination):
             self._combination_model = value
         else:
             raise ValueError(

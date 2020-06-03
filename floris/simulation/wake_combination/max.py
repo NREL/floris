@@ -11,7 +11,6 @@
 # the License.
 
 import numpy as np
-from ...utilities import setup_logger
 from .base_wake_combination import WakeCombination
 
 
@@ -32,7 +31,6 @@ class MAX(WakeCombination):
 
     def __init__(self):
         super().__init__()
-        self.logger = setup_logger(name=__name__)
         self.model_string = "max"
 
     def function(self, u_field, u_wake):

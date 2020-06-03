@@ -11,7 +11,6 @@
 # the License.
 
 from .base_wake_combination import WakeCombination
-from ...utilities import setup_logger
 
 
 class FLS(WakeCombination):
@@ -21,7 +20,6 @@ class FLS(WakeCombination):
     """
     def __init__(self):
         super().__init__()
-        self.logger = setup_logger(name=__name__)
         self.model_string = "fls"
 
     def function(self, u_field, u_wake):
