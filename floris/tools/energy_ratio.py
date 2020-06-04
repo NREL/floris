@@ -88,7 +88,7 @@ def _calculate_lower_and_upper_bound(
             -   lower ci bound
             -   upper ci bound
     """
-    if method is "simple_percentile":
+    if method == "simple_percentile":
         upper, lower = np.percentile(bootstrap_array, percentiles)
     else:
         lower, upper = 2 * central_estimate - np.percentile(
