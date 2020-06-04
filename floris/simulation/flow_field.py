@@ -718,6 +718,18 @@ class FlowField():
                 -1 * self.wind_map.grid_wind_direction, center_of_rotation)
 
     # Getters & Setters
+
+    @property
+    def specified_wind_height(self):
+        return self._specified_wind_height
+
+    @specified_wind_height.setter
+    def specified_wind_height(self, value):
+        if value == -1:
+            self._specified_wind_height = self.turbine_map.turbines[0].hub_height
+        else:
+            self._specified_wind_height = value
+
     @property
     def domain_bounds(self):
         """

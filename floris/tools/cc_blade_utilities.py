@@ -8,7 +8,9 @@ import numpy as np
 import pickle
 import copy
 from ..logging_manager import LoggerBase
+from scipy import interpolate
 
+# Attempt CCBlade import and raise error if no success
 try:
     from ccblade import CCAirfoil, CCBlade
 except ImportError:
@@ -18,10 +20,6 @@ except ImportError:
     logger_base = LoggerBase()
     logger_base.logger.error(err_msg, stack_info=True)
     raise ImportError(err_msg)
-
-# from ccblade import CCAirfoil, CCBlade
-
-from scipy import interpolate
 
 
 # Some useful constants
