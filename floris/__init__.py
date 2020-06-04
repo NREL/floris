@@ -60,6 +60,10 @@ Examples:
 """
 
 from . import utilities
+from . import logging_manager
 from . import simulation
 from . import tools
 from .tools import optimization
+
+# initialize the logger
+logging_manager._setup_logger()

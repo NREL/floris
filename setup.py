@@ -45,7 +45,6 @@ REQUIRED = [
     'coloredlogs>=10.0',
 
     # tools
-    'h5pyd>=0.3',
     'pandas>=0.24',
     'pyproj>=2.1',
     'seaborn>=0.9',
@@ -54,6 +53,9 @@ REQUIRED = [
 
 # What packages are optional?
 EXTRAS = {
+    'wind_tool_kit': {
+        'h5pyd>=0.3',
+    },
     'docs': {
         'readthedocs-sphinx-ext',
         'Sphinx',

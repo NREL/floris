@@ -11,7 +11,6 @@
 # the License.
 
 from ..utilities import Vec3
-from ..utilities import setup_logger
 from .flow_field import FlowField
 from .wind_map import WindMap
 from .turbine_map import TurbineMap

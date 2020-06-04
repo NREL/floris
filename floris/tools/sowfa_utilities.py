@@ -15,14 +15,14 @@
 import numpy as np
 from .flow_data import FlowData
 from ..utilities import Vec3
-from ..utilities import setup_logger
+from ..logging_manager import LoggerBase
 import pandas as pd
 import os
 import re
 from .cut_plane import CutPlane, get_plane_from_flow_data
 
 
-class SowfaInterface():
+class SowfaInterface(LoggerBase):
     """
     Object to facilitate interaction with flow data output by SOWFA.
 
@@ -59,17 +59,6 @@ class SowfaInterface():
             assumed_settling_time (float, optional): Time to account
                 for startup transients in simulation. Defaults to None.
         """
-        logging_dict = {
-            "console": {
-                "enable": True,
-                "level": "INFO"
-            },
-            "file": {
-                "enable": False,
-                "level": "INFO"
-            }
-        }
-        self.logger = setup_logger(name=__name__, logging_dict=logging_dict)
         self.logger.info(case_folder)
 
         # Save the case_folder and sub_paths
