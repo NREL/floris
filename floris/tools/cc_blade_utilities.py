@@ -80,7 +80,7 @@ def CCrotor(Rtip=base_R, Rhub=1.5, hubHt=90.0, shearExp = 0.2, rho = 1.225, mu =
 # This is based on the torque controller within SOWFA and using the control parameters within the SOWFA example
 def trq_cont(turbine_dict, genSpeedF):
     """
-    Compue the torque control at a given gen speed (based on SOWFA)
+    Compute the torque control at a given gen speed (based on SOWFA)
     """
     #print(genSpeedF,turbine_dict['Region2StartGenSpeed'])
     # Region 1.
@@ -234,8 +234,10 @@ def generate_base_lut(rotor, turbine_dict):
     tsr_flat = (fixed_rpm * (np.pi / 30.) * Rtip)  / ws_flat
 
     # Get values from cc-blade
-    P, T, Q, M, CP, CT, CQ, CM = rotor.evaluate(ws_flat, omega_flat, pitch_flat, coefficients=True)
-
+    outputs, derivs = rotor.evaluate([ws_flat], omega_flat, pitch_flat, coefficients=True)
+    CP = outputs['CP']
+    CT = outputs['CT']
+    CQ = outputs['CQ']
 
     # Reshape Cp, Ct and Cq
     CP = np.reshape(CP, (len(pitch_initial), len(TSR_initial)))
@@ -259,10 +261,13 @@ def generate_base_lut(rotor, turbine_dict):
 
 
 def get_aero_torque(rotor,ws,rot_speed,fluidDensity,R,pitch_angle=0.0):
-    P, T, Q, M, Cp, Ct, cq, CM = rotor.evaluate([ws], 
-                                                    [rot_speed/rpmRadSec], 
-                                                    [pitch_angle], 
-                                                    coefficients=True)
+    outputs, _ = rotor.evaluate([ws], 
+                            [rot_speed/rpmRadSec], 
+                            [pitch_angle], 
+                            coefficients=True)
+
+    cq = outputs['CQ']
+
     # print(cq[0])
     return 0.5 * fluidDensity * (np.pi * R**2) * cq[0] * R * ws**2
 
@@ -318,7 +323,7 @@ def get_steady_state(turbine_dict,rotor,ws,dt=0.5,sim_time=5,title=None,show_plo
 
 
     # Create the arrays
-    t_array = nt_array = np.arange(0,sim_time,dt)
+    t_array =  np.arange(0,sim_time,dt)
     pitch = np.ones_like(t_array) * init_pitch
     rot_speed = np.ones_like(t_array) * init_rotor # represent rot speed in rad / s
     gen_speed = np.ones_like(t_array) * init_rotor * GBRatio / rpmRadSec # represent gen speed in rpm
@@ -352,10 +357,15 @@ def get_steady_state(turbine_dict,rotor,ws,dt=0.5,sim_time=5,title=None,show_plo
             # Update the aero torque
             #cq = cq_lut(tsr,pitch[i-1])
             try:
-                P, T, Q, M, Cp, Ct, cq, CM = rotor.evaluate([ws], 
-                                                        [rot_speed[i-1]/rpmRadSec], 
-                                                        [pitch[i-1]], 
-                                                        coefficients=True)
+                outputs, _ = rotor.evaluate([ws], 
+                                                [rot_speed[i-1]/rpmRadSec], 
+                                                [pitch[i-1]], 
+                                                coefficients=True)
+                M = outputs['M']
+                Cp = outputs['CP']
+                Ct = outputs['CT']
+                cq = outputs['CQ']
+
             except:
                 print('CC BLADE PROBLEM')
                 if i > 0:
