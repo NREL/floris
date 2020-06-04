@@ -143,7 +143,7 @@ class FlorisInterface(LoggerBase):
         wind_map = self.floris.farm.wind_map
         turbine_map = self.floris.farm.flow_field.turbine_map
         if turbulence_kinetic_energy is not None:
-            if wind_speed == None:
+            if wind_speed is None:
                 wind_map.input_speed
             turbulence_intensity = self.TKE_to_TI(turbulence_kinetic_energy, wind_speed)
 
@@ -652,7 +652,7 @@ class FlorisInterface(LoggerBase):
         w = flow_field.w.flatten(order=order)
 
         # find percent velocity deficit
-        if velocity_deficit == True:
+        if velocity_deficit:
             u = (
                 abs(u - flow_field.u_initial.flatten(order=order))
                 / flow_field.u_initial.flatten(order=order)
