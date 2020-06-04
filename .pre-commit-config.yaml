@@ -29,9 +29,3 @@ repos:
         args: [--autofix]
     -   id: flake8
         exclude: ^tests/
-
--   repo: https://github.com/pre-commit/mirrors-pylint
-    rev: v2.1.1
-    hooks:
-    -   id: pylint
-        exclude: ^tests/

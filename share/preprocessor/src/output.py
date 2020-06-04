@@ -1,10 +1,11 @@
-
 import json
 
-class Output():
+
+class Output:
     """
     Output is a helper class for generating output files.
     """
+
     def __init__(self, filename):
         self.filename = filename
         self.file = open(self.filename, "w")
@@ -18,7 +19,7 @@ class Output():
 
     def end(self):
         self.file.close()
-    
+
     def write_dictionary(self, dictionary):
         self.file.write(
             json.dumps(

@@ -1,25 +1,25 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
-# See https://floris.readthedocs.io for documentation
- 
 
-from ..utilities import Vec3
-from ..utilities import wrap_180
-from .turbine import Turbine
+# See https://floris.readthedocs.io for documentation
+
+
 import numpy as np
 
+from .turbine import Turbine
+from ..utilities import Vec3, wrap_180
 
-class TurbineMap():
+
+class TurbineMap:
     """
     Container object that maps a :py:class:`~.turbine.Turbine` instance to a
     :py:class:`~.utilities.Vec3` object. This class also provides some helper
@@ -53,7 +53,7 @@ class TurbineMap():
             turbines ( list(float) ): Turbine objects corresponding to
                 the locations given in layout_x and layout_y.
         """
-        coordinates = [Vec3(x1,x2,0 ) for x1, x2 in list(zip(layout_x, layout_y))]
+        coordinates = [Vec3(x1, x2, 0) for x1, x2 in list(zip(layout_x, layout_y))]
         self._turbine_map_dict = self._build_internal_dict(coordinates, turbines)
 
     def _build_internal_dict(self, coordinates, turbines):
@@ -109,7 +109,7 @@ class TurbineMap():
     def number_of_wakes_iec(self, wd, return_turbines=True):
         """
         Finds the number of turbines waking each turbine for the given
-        wind direction. Waked directions are determined using the formula 
+        wind direction. Waked directions are determined using the formula
         in Figure A.1 in Annex A of the IEC 61400-12-1:2017 standard.
         # TODO: Add the IEC standard as a reference.
 
@@ -122,35 +122,50 @@ class TurbineMap():
             list(int) or list( (:py:class:`~.turbine.Turbine`, int ) ):
             Number of turbines waking each turbine and, optionally,
             the list of Turbine objects in the map.
-        
+
         TODO:
         - This could be reworked so that the return type is more consistent.
         - Describe the method used to find upstream turbines.
         """
-        wake_list =[]
+        wake_list = []
         for coord0, turbine0 in self.items:
 
-            other_turbines = [(coord, turbine) for coord,turbine in \
-                self.items if turbine != turbine0]
+            other_turbines = [
+                (coord, turbine) for coord, turbine in self.items if turbine != turbine0
+            ]
 
-            dists = np.array([np.hypot(coord.x1-coord0.x1,coord.x2-coord0.x2)/ \
-                turbine.rotor_diameter for coord,turbine in other_turbines])
+            dists = np.array(
+                [
+                    np.hypot(coord.x1 - coord0.x1, coord.x2 - coord0.x2)
+                    / turbine.rotor_diameter
+                    for coord, turbine in other_turbines
+                ]
+            )
 
-            angles = np.array([np.degrees(np.arctan2(coord.x1-coord0.x1, \
-                coord.x2-coord0.x2)) for coord,turbine in self.items if \
-                turbine != turbine0])
+            angles = np.array(
+                [
+                    np.degrees(np.arctan2(coord.x1 - coord0.x1, coord.x2 - coord0.x2))
+                    for coord, turbine in self.items
+                    if turbine != turbine0
+                ]
+            )
 
             # angles = (-angles - 90) % 360
-            
-            waked = dists <= 2.
-            waked = waked | ((dists <= 20.) & (np.abs(wrap_180(wd-angles)) \
-                <= 0.5*(1.3*np.degrees(np.arctan(2.5/dists+0.15))+10)))
+
+            waked = dists <= 2.0
+            waked = waked | (
+                (dists <= 20.0)
+                & (
+                    np.abs(wrap_180(wd - angles))
+                    <= 0.5 * (1.3 * np.degrees(np.arctan(2.5 / dists + 0.15)) + 10)
+                )
+            )
 
             if return_turbines:
-                wake_list.append((turbine0,waked.sum()))
+                wake_list.append((turbine0, waked.sum()))
             else:
                 wake_list.append(waked.sum())
-        
+
         return wake_list
 
     @property
