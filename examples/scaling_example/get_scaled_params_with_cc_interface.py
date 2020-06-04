@@ -29,7 +29,7 @@ degRad = np.pi/180.
 rpmRadSec = 2.0*(np.pi)/60.0
 
 # Load the sowfa case for an example turbine input file for the NREL 5MW
-sowfa_case = wfct.sowfa_utilities.SowfaInterface('../sowfa_example')
+sowfa_case = wfct.sowfa_utilities.SowfaInterface('../sowfa_comparisons/sowfa_example')
 
 # Grab the turbine dict in order to have controller values
 turbine_dict = wfct.sowfa_utilities.read_foam_file(os.path.join(sowfa_case.case_folder, sowfa_case.turbine_sub_path, sowfa_case.turbine_name))
@@ -42,7 +42,7 @@ turbine_dict_scaled_2mw, rotor_scaled_2mw = ccb.scale_controller_and_rotor(turbi
 # Compare the torque curves
 fig, ax = plt.subplots()
 ccb.show_torque_curve(turbine_dict_base,ax,label='Baseline')
-ccb.show_torque_curve(turbine_dict_scaled_2mw,ax,label='Scaed')
+ccb.show_torque_curve(turbine_dict_scaled_2mw,ax,label='Scaled')
 
 # Generate the baseline lut
 # if it doesn't yet exist
