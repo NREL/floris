@@ -53,9 +53,9 @@ REQUIRED = [
 
 # What packages are optional?
 EXTRAS = {
-    "wind_tool_kit": {"h5pyd>=0.3",},
+    "wind_tool_kit": {"h5pyd>=0.3"},
     "docs": {"readthedocs-sphinx-ext", "Sphinx", "sphinxcontrib-napoleon"},
-    "develop": {"pre-commit", "black", "isort", "flake8",},
+    "develop": {"pre-commit", "black", "isort", "flake8"},
 }
 
 # The rest you shouldn't have to touch too much :)
@@ -152,5 +152,5 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     # $ setup.py publish support.
-    cmdclass={"upload": UploadCommand,},
+    cmdclass={"upload": UploadCommand},
 )
