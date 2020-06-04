@@ -141,8 +141,6 @@ def set_params(fi, params, verbose=True):
                     exec(obj + '.' + prop + ' = ' + \
                          str(params[param_dict][prop]))
                     if verbose is True:
-                        msg = 'Wake velocity parameter ' + prop + ' set to ' + \
-                            str(params[param_dict][prop])
                         print('Wake velocity parameter ' + prop + ' set to ' + \
                             str(params[param_dict][prop]))
                 else:
