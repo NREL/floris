@@ -15,8 +15,8 @@ except ImportError:
     err_msg = ('It appears you do not have CCBlade installed. ' + \
         'Please refer to http://wisdem.github.io/CCBlade/ for ' + \
         'guidance on how to properly install the module.')
-    logger = LoggerBase()
-    logger.error(err_msg, stack_info=True)
+    logger_base = LoggerBase()
+    logger_base.logger.error(err_msg, stack_info=True)
     raise ImportError(err_msg)
 
 # from ccblade import CCAirfoil, CCBlade

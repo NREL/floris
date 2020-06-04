@@ -103,6 +103,7 @@ def get_params(fi, params=None, wake_velocity_model=True,
         else:
             wake_vel_vals = get_prop_values(obj, fi, props)
         model_params['Wake Velocity Parameters'] = wake_vel_vals
+        del model_params['Wake Velocity Parameters']['logger']
 
     if wake_deflection_model is True:
         wake_defl_vals = {}
@@ -114,17 +115,19 @@ def get_params(fi, params=None, wake_velocity_model=True,
         else:
             wake_defl_vals = get_prop_values(obj, fi, props)
         model_params['Wake Deflection Parameters'] = wake_defl_vals
+        del model_params['Wake Deflection Parameters']['logger']
 
     if turbulence_model is True:
-        wake_defl_vals = {}
+        wake_turb_vals = {}
         obj = 'fi.floris.farm.wake.turbulence_model'
         props = get_props(obj, fi)
         if params is not None:
             props_subset = get_props_subset(params, props)
-            wake_defl_vals = get_prop_values(obj, fi, props_subset)
+            wake_turb_vals = get_prop_values(obj, fi, props_subset)
         else:
-            wake_defl_vals = get_prop_values(obj, fi, props)
-        model_params['Wake Turbulence Parameters'] = wake_defl_vals
+            wake_turb_vals = get_prop_values(obj, fi, props)
+        model_params['Wake Turbulence Parameters'] = wake_turb_vals
+        del model_params['Wake Turbulence Parameters']['logger']
 
     return model_params
 
@@ -138,6 +141,8 @@ def set_params(fi, params, verbose=True):
                     exec(obj + '.' + prop + ' = ' + \
                          str(params[param_dict][prop]))
                     if verbose is True:
+                        msg = 'Wake velocity parameter ' + prop + ' set to ' + \
+                            str(params[param_dict][prop])
                         print('Wake velocity parameter ' + prop + ' set to ' + \
                             str(params[param_dict][prop]))
                 else:
