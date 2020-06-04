@@ -14,12 +14,11 @@ from scipy import interpolate
 try:
     from ccblade import CCAirfoil, CCBlade
 except ImportError:
-    err_msg = (
-        'CCBlade was not found. See http://wisdem.github.io/CCBlade for ' + \
-            'installation instructions.'
-    )
-    logger = LoggerBase()
-    logger.error(err_msg, stack_info=True)
+    err_msg = ('It appears you do not have CCBlade installed. ' + \
+        'Please refer to http://wisdem.github.io/CCBlade/ for ' + \
+        'guidance on how to properly install the module.')
+    logger_base = LoggerBase()
+    logger_base.logger.error(err_msg, stack_info=True)
     raise ImportError(err_msg)
 
 
