@@ -5,7 +5,7 @@
   "floris_version": "v2.0.0",
   "logging": {
     "console": {
-      "enable": false,
+      "enable": true,
       "level": "INFO"
     },
     "file": {
@@ -28,8 +28,7 @@
         0.06
       ],
       "wind_shear": 0.12,
-      "__comment__": "specified_wind_height of -1 uses the first turbine's hub height; After initialization, specified_wind_height is a free parameter.",
-      "specified_wind_height": -1,
+      "specified_wind_height": 90.0,
       "wind_veer": 0.0,
       "air_density": 1.225,
       "layout_x": [
@@ -51,7 +50,7 @@
     "name": "nrel_5mw",
     "description": "NREL 5MW",
     "properties": {
-      "use_points_on_perimeter": true,
+      "use_points_on_perimeter": false,
       "rotor_diameter": 126.0,
       "hub_height": 90.0,
       "blade_count": 3,
@@ -218,37 +217,14 @@
   },
   "wake": {
     "type": "wake",
-    "name": "wake_default",
+    "name": "wake_jensen",
     "description": "wake",
     "properties": {
-      "velocity_model": "gauss",
+      "velocity_model": "jensen",
       "turbulence_model": "crespo_hernandez",
-      "deflection_model": "gauss",
-      "combination_model": "sosfs",
-      "parameters": {
-        "wake_velocity_parameters": {
-          "gauss": {
-            "ka": 0.38,
-            "kb": 0.004,
-            "calculate_VW_velocities": true,
-            "use_yaw_added_recovery": true
-          }
-        },
-        "wake_deflection_parameters": {
-          "gauss": {
-            "dm": 1.0,
-            "use_secondary_steering":true
-          }
-        },
-        "wake_turbulence_parameters": {
-          "crespo_hernandez": {
-            "initial": 0.5,
-            "constant": 0.9,
-            "ai": 0.75,
-            "downstream": -0.325
-          }
-        }
-    }
-    }
+      "deflection_model": "jimenez",
+      "combination_model": "sosfs"
+      
   }
+}
 }

@@ -14,12 +14,16 @@
  
 
 import numpy as np
+import math
 from scipy.interpolate import interp1d
 from scipy.spatial import distance_matrix
-import math
-from ..utilities import cosd, sind, tand
-import scipy.stats as stats
+from scipy.stats import norm
 from ..logging_manager import LoggerBase
+from ..utilities import (
+    cosd,
+    sind,
+    tand
+)
 
 
 class Turbine(LoggerBase):
@@ -124,7 +128,6 @@ class Turbine(LoggerBase):
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
 
-
     def _create_swept_area_grid(self):
         # TODO: add validity check:
         # rotor points has a minimum in order to always include points inside
@@ -198,7 +201,6 @@ class Turbine(LoggerBase):
             self.logger.info(
                 'Setting {} to {}'.format(param, turbine_change_dict[param])
             )
-            # print("Setting {} to {}".format(param, turbine_change_dict[param]))
             setattr(self, param, turbine_change_dict[param])
         self._initialize_turbine()
 
@@ -361,7 +363,7 @@ class Turbine(LoggerBase):
                     xp = np.linspace((mu - sigma), cows, 100)
                 else:
                     xp = np.linspace((mu - sigma), (mu + sigma), 100)
-                pdf = stats.norm.pdf(xp, mu, sigma)
+                pdf = norm.pdf(xp, mu, sigma)
                 npdf = np.array(pdf) * (1 / np.sum(pdf))
 
                 # calculate turbulence parameter (ratio of corrected power to original power)
