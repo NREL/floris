@@ -534,7 +534,7 @@ def read_foam_file(filename):
         if raw[i][0:2] == "/*":
             bloc_comment_test = True
 
-        if bloc_comment_test is False:
+        if not bloc_comment_test:
 
             # Check if the string is a comment and skip line
             if raw[i].strip()[0:2] == "//" or raw[i].strip()[0:1] == "#":

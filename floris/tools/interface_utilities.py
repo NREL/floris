@@ -22,11 +22,11 @@ def show_params(
     turbulence_model=True,
 ):
 
-    if wake_velocity_model is True:
+    if wake_velocity_model:
         obj = "fi.floris.farm.wake.velocity_model"
         props = get_props(obj, fi)
 
-        if verbose is True:
+        if verbose:
             print("=".join(["="] * 39))
         else:
             print("=".join(["="] * 19))
@@ -38,22 +38,22 @@ def show_params(
 
         if params is not None:
             props_subset = get_props_subset(params, props)
-            if verbose is False:
+            if not verbose:
                 print_props(obj, fi, props_subset)
             else:
                 print_prop_docs(obj, fi, props_subset)
 
         else:
-            if verbose is False:
+            if not verbose:
                 print_props(obj, fi, props)
             else:
                 print_prop_docs(obj, fi, props)
 
-    if wake_deflection_model is True:
+    if wake_deflection_model:
         obj = "fi.floris.farm.wake.deflection_model"
         props = get_props(obj, fi)
 
-        if verbose is True:
+        if verbose:
             print("=".join(["="] * 39))
         else:
             print("=".join(["="] * 19))
@@ -66,22 +66,22 @@ def show_params(
         if params is not None:
             props_subset = get_props_subset(params, props)
             if props_subset:  # true if the subset is not empty
-                if verbose is False:
+                if not verbose:
                     print_props(obj, fi, props_subset)
                 else:
                     print_prop_docs(obj, fi, props_subset)
 
         else:
-            if verbose is False:
+            if not verbose:
                 print_props(obj, fi, props)
             else:
                 print_prop_docs(obj, fi, props)
 
-    if turbulence_model is True:
+    if turbulence_model:
         obj = "fi.floris.farm.wake.turbulence_model"
         props = get_props(obj, fi)
 
-        if verbose is True:
+        if verbose:
             print("=".join(["="] * 39))
         else:
             print("=".join(["="] * 19))
@@ -94,13 +94,13 @@ def show_params(
         if params is not None:
             props_subset = get_props_subset(params, props)
             if props_subset:  # true if the subset is not empty
-                if verbose is False:
+                if not verbose:
                     print_props(obj, fi, props_subset)
                 else:
                     print_prop_docs(obj, fi, props_subset)
 
         else:
-            if verbose is False:
+            if not verbose:
                 print_props(obj, fi, props)
             else:
                 print_prop_docs(obj, fi, props)
@@ -115,7 +115,7 @@ def get_params(
 ):
     model_params = {}
 
-    if wake_velocity_model is True:
+    if wake_velocity_model:
         wake_vel_vals = {}
         obj = "fi.floris.farm.wake.velocity_model"
         props = get_props(obj, fi)
@@ -127,7 +127,7 @@ def get_params(
         model_params["Wake Velocity Parameters"] = wake_vel_vals
         del model_params["Wake Velocity Parameters"]["logger"]
 
-    if wake_deflection_model is True:
+    if wake_deflection_model:
         wake_defl_vals = {}
         obj = "fi.floris.farm.wake.deflection_model"
         props = get_props(obj, fi)
@@ -139,7 +139,7 @@ def get_params(
         model_params["Wake Deflection Parameters"] = wake_defl_vals
         del model_params["Wake Deflection Parameters"]["logger"]
 
-    if turbulence_model is True:
+    if turbulence_model:
         wake_turb_vals = {}
         obj = "fi.floris.farm.wake.turbulence_model"
         props = get_props(obj, fi)
@@ -162,7 +162,7 @@ def set_params(fi, params, verbose=True):
             for prop in params[param_dict]:
                 if prop in [val[0] for val in props]:
                     exec(obj + "." + prop + " = " + str(params[param_dict][prop]))
-                    if verbose is True:
+                    if verbose:
                         print(
                             "Wake velocity parameter "
                             + prop
@@ -184,7 +184,7 @@ def set_params(fi, params, verbose=True):
             for prop in params[param_dict]:
                 if prop in [val[0] for val in props]:
                     exec(obj + "." + prop + " = " + str(params[param_dict][prop]))
-                    if verbose is True:
+                    if verbose:
                         print(
                             "Wake deflection parameter "
                             + prop
@@ -206,7 +206,7 @@ def set_params(fi, params, verbose=True):
             for prop in params[param_dict]:
                 if prop in [val[0] for val in props]:
                     exec(obj + "." + prop + " = " + str(params[param_dict][prop]))
-                    if verbose is True:
+                    if verbose:
                         print(
                             "Wake turbulence parameter "
                             + prop

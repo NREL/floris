@@ -89,7 +89,7 @@ class WindMap:
                 between given values. Defaults to *False*.
         """
         speed = self.input_speed
-        if grid is not True:
+        if not grid:
             if all(elem == speed[0] for elem in speed):
                 self._turbine_wind_speed = [speed[0]] * len(self.layout_array[0])
             else:
@@ -101,7 +101,7 @@ class WindMap:
             else:
                 interpolate = True
 
-        if interpolate is True:
+        if interpolate:
             if self.duplicated_wind_layout and len(self.input_speed) == len(
                 self.wind_layout[0]
             ) - len(self.input_speed):
@@ -153,7 +153,7 @@ class WindMap:
                 between given values. Defaults to *False*.
         """
         wdir = self.input_direction
-        if grid is not True:
+        if not grid:
             if all(elem == wdir[0] for elem in wdir):
                 self._turbine_wind_direction = list(
                     (np.array([wdir[0] - 270] * len(self.layout_array[0])) % 360 + 360)
@@ -169,13 +169,13 @@ class WindMap:
             else:
                 interpolate = True
 
-        if interpolate is True:
+        if interpolate:
             if self.duplicated_wind_layout and len(self.input_direction) == len(
                 self.wind_layout[0]
             ) - len(self.input_direction):
                 self._input_direction = self.input_direction + self.input_direction
 
-            if grid is not True:
+            if not grid:
                 layout_array = np.array(self.layout_array)
                 xp, yp = layout_array[0], layout_array[1]
                 newpts = list(zip(xp, yp))
@@ -217,7 +217,7 @@ class WindMap:
                     wd[i] = wind_dir
             widi = (np.arctan2(wd[0], wd[1]) * 180 / np.pi) - 270 % 360
             widi = (widi + 360) % 360
-            if grid is not True:
+            if not grid:
                 self._turbine_wind_direction = widi.tolist()
             else:
                 twidi = (np.arctan2(turb_wd[0], turb_wd[1]) * 180 / np.pi) - 270 % 360
@@ -241,7 +241,7 @@ class WindMap:
         """
         # TODO Add comments!
         ti = self.input_ti
-        if grid is not True:
+        if not grid:
             if all(elem == ti[0] for elem in ti):
                 self._turbine_turbulence_intensity = [ti[0]] * len(self.layout_array[0])
             else:
@@ -255,7 +255,7 @@ class WindMap:
             else:
                 interpolate = True
 
-        if interpolate is True:
+        if interpolate:
             if self.duplicated_wind_layout and len(self.input_ti) == len(
                 self.wind_layout[0]
             ) - len(self.input_ti):

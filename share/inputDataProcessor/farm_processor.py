@@ -189,7 +189,7 @@ def generate():
 
     # replace relevant values in template
     for farm in data["farms"]:
-        if farm["missing_data"] is False:
+        if not farm["missing_data"]:
             new_file = copy.deepcopy(template)
             new_file["description"] = farm["description"] + " FLORIS Input File"
             # farm

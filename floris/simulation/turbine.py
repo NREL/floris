@@ -336,7 +336,7 @@ class Turbine(LoggerBase):
         Returns:
             float: The value of the turbulence parameter.
         """
-        if self.use_turbulence_correction is False:
+        if not self.use_turbulence_correction:
             return 1.0
         else:
             # define wind speed, ti, and power curve components

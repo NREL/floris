@@ -228,7 +228,7 @@ class MultiZone(VelocityDeficit):
         if (
             type(value) is not list
             or len(value) != 3
-            or all(type(val) is float for val in value) is False
+            or not all(type(val) is float for val in value)
         ):
             err_msg = (
                 "Invalid value type given for me: {}, " + "expected list of length 3."
@@ -384,7 +384,7 @@ class MultiZone(VelocityDeficit):
         if (
             type(value) is not list
             or len(value) != 3
-            or all(type(val) is float for val in value) is False
+            or not all(type(val) is float for val in value)
         ):
             err_msg = (
                 "Invalid value type given for mU: {}, " + "expected list of length 3."
