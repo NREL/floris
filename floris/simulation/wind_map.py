@@ -208,7 +208,7 @@ class WindMap:
                     else:
                         nearpts = list(zip(xp[idx], yp[idx]))
                         near = sp.interpolate.NearestNDInterpolator(nearpts, zz[idx])
-                    if grid :
+                    if grid:
                         turb_wd[i] = near(new_turb_pts)
                     wind_dir = interp(newpts)
                     neardir = near(newpts)
