@@ -26,7 +26,7 @@ def show_params(
         obj = "fi.floris.farm.wake.velocity_model"
         props = get_props(obj, fi)
 
-        if verbose == True:
+        if verbose is True:
             print("=".join(["="] * 39))
         else:
             print("=".join(["="] * 19))
@@ -53,7 +53,7 @@ def show_params(
         obj = "fi.floris.farm.wake.deflection_model"
         props = get_props(obj, fi)
 
-        if verbose == True:
+        if verbose is True:
             print("=".join(["="] * 39))
         else:
             print("=".join(["="] * 19))
@@ -81,7 +81,7 @@ def show_params(
         obj = "fi.floris.farm.wake.turbulence_model"
         props = get_props(obj, fi)
 
-        if verbose == True:
+        if verbose is True:
             print("=".join(["="] * 39))
         else:
             print("=".join(["="] * 19))
