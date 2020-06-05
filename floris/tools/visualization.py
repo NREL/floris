@@ -39,7 +39,7 @@ def plot_turbines(
     # Correct for the wind direction
     yaw_angles = np.array(yaw_angles) - wind_direction - 270
 
-    if color == None:
+    if color is None:
         color = "k"
     for x, y, yaw in zip(layout_x, layout_y, yaw_angles):
         R = D / 2.0
