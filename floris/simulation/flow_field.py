@@ -617,7 +617,7 @@ class FlowField:
 
         for coord, turbine in sorted_map:
             xloc, yloc = np.array(rx == coord.x1), np.array(ry == coord.x2)
-            idx = int(np.where(np.logical_and(yloc == True, xloc == True))[0])
+            idx = int(np.where(np.logical_and(yloc is True, xloc is True))[0])
 
             if np.unique(self.wind_map.grid_wind_direction).size == 1:
                 # only rotate grid once for homogeneous wind direction
@@ -676,7 +676,7 @@ class FlowField:
                         np.array(rx == coord_ti.x1),
                         np.array(ry == coord_ti.x2),
                     )
-                    idx = int(np.where(np.logical_and(yloc == True, xloc == True))[0])
+                    idx = int(np.where(np.logical_and(yloc is True, xloc is True))[0])
 
                     if (
                         coord_ti.x1 > coord.x1

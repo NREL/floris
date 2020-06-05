@@ -831,7 +831,7 @@ class WindRose:
         df = pd.read_csv(filename, header=3, sep=",")
 
         # If asked to limit to particular months
-        if not limit_month is None:
+        if limit_month is not None:
             df = df[df.Month.isin(limit_month)]
 
         # Save just what I want
@@ -1163,7 +1163,7 @@ class WindRose:
             df = df[df.datetime < en_date]
 
         # limit to certain months if specified
-        if not limit_month is None:
+        if limit_month is not None:
             df["month"] = df["datetime"].map(lambda x: x.month)
             df = df[df.month.isin(limit_month)]
         if include_ti:

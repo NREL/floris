@@ -348,7 +348,7 @@ class Turbine(LoggerBase):
             speed = self.average_velocity
             ti = self.current_turbulence_intensity
 
-            if ciws >= speed or cows <= speed or ti == 0.0 or math.isnan(speed) == True:
+            if ciws >= speed or cows <= speed or ti == 0.0 or math.isnan(speed):
                 return 1.0
             else:
                 # define mean and standard deviation to create normalized pdf with sum = 1
@@ -481,11 +481,11 @@ class Turbine(LoggerBase):
             >>> avg_vel = floris.farm.turbines[0].average_velocity()
         """
         # remove all invalid numbers from interpolation
-        data = self.velocities[np.where(np.isnan(self.velocities) == False)]
+        data = self.velocities[np.where(~np.isnan(self.velocities))]
         avg_vel = np.cbrt(np.mean(data ** 3))
-        if np.isnan(avg_vel) == True:
+        if np.isnan(avg_vel):
             avg_vel = 0
-        elif np.isinf(avg_vel) == True:
+        elif np.isinf(avg_vel):
             avg_vel = 0
 
         return avg_vel
