@@ -102,7 +102,7 @@ class WindMap:
                 interpolate = True
 
         if interpolate is True:
-            if self.duplicated_wind_layout == True and len(self.input_speed) == len(
+            if self.duplicated_wind_layout and len(self.input_speed) == len(
                 self.wind_layout[0]
             ) - len(self.input_speed):
                 self._input_speed = self.input_speed + self.input_speed
@@ -124,7 +124,7 @@ class WindMap:
                 self.fix_wind_layout(recalculate="speed", grid=grid)
             else:
                 zz = interp(newpts)
-                idx = np.where(np.isnan(zz) == False)
+                idx = np.where(~np.isnan(zz))
                 if np.shape(idx) == (xp.ndim, 0):
                     near = sp.interpolate.NearestNDInterpolator(pts, z)
                 else:
@@ -132,7 +132,7 @@ class WindMap:
                     near = sp.interpolate.NearestNDInterpolator(nearpts, zz[idx])
                 wind_sp = interp(newpts)
                 nearspeed = near(newpts)
-                idx = np.where(np.isnan(wind_sp) == True)
+                idx = np.where(np.isnan(wind_sp))
                 wind_sp[idx] = nearspeed[idx]
                 if grid is None:
                     self._turbine_wind_speed = wind_sp.tolist()
@@ -170,7 +170,7 @@ class WindMap:
                 interpolate = True
 
         if interpolate is True:
-            if self.duplicated_wind_layout == True and len(self.input_direction) == len(
+            if self.duplicated_wind_layout and len(self.input_direction) == len(
                 self.wind_layout[0]
             ) - len(self.input_direction):
                 self._input_direction = self.input_direction + self.input_direction
@@ -202,17 +202,17 @@ class WindMap:
                     self.fix_wind_layout(recalculate="direction", grid=grid)
                 else:
                     zz = interp(newpts)
-                    idx = np.where(np.isnan(zz) == False)
+                    idx = np.where(~np.isnan(zz))
                     if np.shape(idx) == (xp.ndim, 0):
                         near = sp.interpolate.NearestNDInterpolator(pts, z)
                     else:
                         nearpts = list(zip(xp[idx], yp[idx]))
                         near = sp.interpolate.NearestNDInterpolator(nearpts, zz[idx])
-                    if grid == True:
+                    if grid :
                         turb_wd[i] = near(new_turb_pts)
                     wind_dir = interp(newpts)
                     neardir = near(newpts)
-                    idx = np.where(np.isnan(wind_dir) == True)
+                    idx = np.where(np.isnan(wind_dir))
                     wind_dir[idx] = neardir[idx]
                     wd[i] = wind_dir
             widi = (np.arctan2(wd[0], wd[1]) * 180 / np.pi) - 270 % 360
@@ -256,7 +256,7 @@ class WindMap:
                 interpolate = True
 
         if interpolate is True:
-            if self.duplicated_wind_layout == True and len(self.input_ti) == len(
+            if self.duplicated_wind_layout and len(self.input_ti) == len(
                 self.wind_layout[0]
             ) - len(self.input_ti):
                 self._input_ti = self.input_ti + self.input_ti
@@ -279,7 +279,7 @@ class WindMap:
                 self.fix_wind_layout(recalculate="direction", grid=grid)
             else:
                 zz = interp(newpts)
-                idx = np.where(np.isnan(zz) == False)
+                idx = np.where(~np.isnan(zz))
                 if np.shape(idx) == (xp.ndim, 0):
                     near = sp.interpolate.NearestNDInterpolator(pts, z)
                 else:
@@ -287,7 +287,7 @@ class WindMap:
                     near = sp.interpolate.NearestNDInterpolator(nearpts, zz[idx])
                 wind_t = interp(newpts)
                 neart = near(newpts)
-                idx = np.where(np.isnan(wind_t) == True)
+                idx = np.where(np.isnan(wind_t))
                 wind_t[idx] = neart[idx]
                 if grid is None:
                     self._turbine_turbulence_intensity = wind_t.tolist()
@@ -380,7 +380,7 @@ class WindMap:
                     yp = yp + [y[i] + (dx * scaling_param)]
 
             # reset input parameters
-            if self.duplicated_wind_layout == False:
+            if not self.duplicated_wind_layout:
                 self.wind_layout = (xp, yp)
                 if len(self.input_direction) != 1:
                     self.input_direction = self.input_direction + self.input_direction
