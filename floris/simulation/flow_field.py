@@ -684,9 +684,15 @@ class FlowField():
                             # multiply by area overlap
                             ti_added = area_overlap * ti_calculation
 
-                            turbine_ti.current_turbulence_intensity = np.sqrt(
-                                ti_added**2 +
-                                turbine.current_turbulence_intensity**2)
+                            turbine_ti.current_turbulence_intensity = np.max(
+                                (
+                                    np.sqrt(
+                                        ti_added**2 \
+                                        + self.wind_map.turbine_turbulence_intensity[idx]**2
+                                    ),
+                                    turbine_ti.current_turbulence_intensity
+                                )
+                            )
 
                             if track_n_upstream_wakes:
                                 # increment by one for each upstream wake
