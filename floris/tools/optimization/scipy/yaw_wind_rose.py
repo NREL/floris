@@ -156,6 +156,10 @@ class YawOptimizationWindRose(Optimization):
             unc_options=unc_options
         )
 
+        self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
+            [0.0]*self.nturbs
+        )
+
     # Private methods
 
     def _get_power_for_yaw_angle_opt(self, yaw_angles):
@@ -324,11 +328,17 @@ class YawOptimizationWindRose(Optimization):
         else:
             self.x0 = [turbine.yaw_angle for turbine in \
                        self.fi.floris.farm.turbine_map.turbines]
+        self.x0_norm = self._norm(
+            np.array(self.x0),
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle
+        )
         if bnds is not None:
             self.bnds = bnds
         else:
             self._set_opt_bounds(self.minimum_yaw_angle, 
                                  self.maximum_yaw_angle)
+        self.bnds_norm = [(0.0, 1.0) for _ in range(self.nturbs)]
         if include_unc is not None:
             self.include_unc = include_unc
         if unc_pmfs is not None:
