@@ -20,7 +20,9 @@ import numpy as np
 
 class YawOptimization(Optimization):
     """
-    YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.Optimization` that is used to optimize the yaw angles of all turbines in a Floris Farm for a single set of inflow conditions using the SciPy optimize package.
+    YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.
+    Optimization` that is used to optimize the yaw angles of all turbines in a Floris
+    Farm for a single set of inflow conditions using the SciPy optimize package.
     """
     def __init__(self, fi, minimum_yaw_angle=0.0,
                            maximum_yaw_angle=25.0,
@@ -104,8 +106,8 @@ class YawOptimization(Optimization):
         super().__init__(fi)
 
         if opt_options is None:
-            self.opt_options = {'maxiter': 100, 'disp': False, \
-                        'iprint': 1, 'ftol': 1e-7, 'eps': 0.01}
+            self.opt_options = {'maxiter': 100, 'disp': True, \
+                        'iprint': 2, 'ftol': 1e-5} #, 'eps': 0.01}
 
         self.unc_pmfs = unc_pmfs
 
@@ -125,15 +127,24 @@ class YawOptimization(Optimization):
             unc_options=unc_options
         )
 
+        self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
+            [0.0]*self.nturbs
+        )
+
     # Private methods
 
     def _yaw_power_opt(self, yaw_angles):
+        yaw_angles = self._unnorm(
+            np.array(yaw_angles),
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle
+        )
         return -1 * self.fi.get_farm_power_for_yaw_angle(
             yaw_angles,
             include_unc=self.include_unc,
             unc_pmfs=self.unc_pmfs,
             unc_options=self.unc_options
-        )
+        )/self.initial_farm_power
 
     def _optimize(self):
         """
@@ -145,12 +156,16 @@ class YawOptimization(Optimization):
         """
 
         self.residual_plant = minimize(self._yaw_power_opt,
-                                self.x0,
+                                self.x0_norm,
                                 method=self.opt_method,
-                                bounds=self.bnds,
+                                bounds=self.bnds_norm,
                                 options=self.opt_options)
 
-        opt_yaw_angles = self.residual_plant.x
+        opt_yaw_angles = self._unnorm(
+            self.residual_plant.x,
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle
+        )
 
         return opt_yaw_angles
 
@@ -266,11 +281,17 @@ class YawOptimization(Optimization):
         else:
             self.x0 = [turbine.yaw_angle for turbine in \
                        self.fi.floris.farm.turbine_map.turbines]
+        self.x0_norm = self._norm(
+            np.array(self.x0),
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle
+        )
         if bnds is not None:
             self.bnds = bnds
         else:
             self._set_opt_bounds(self.minimum_yaw_angle, 
                                  self.maximum_yaw_angle)
+        self.bnds_norm = [(0.0, 1.0) for _ in range(self.nturbs)]
         if opt_method is not None:
             self.opt_method = opt_method
         if opt_options is not None:
