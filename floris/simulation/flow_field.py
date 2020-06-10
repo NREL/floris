@@ -80,10 +80,14 @@ class FlowField():
 
         for i, (coord, turbine) in enumerate(self.turbine_map.items):
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(coord.x2 - turbine.rotor_radius,
-                             coord.x2 + turbine.rotor_radius, rotor_points)
-            zt = np.linspace(coord.x3 - turbine.rotor_radius,
-                             coord.x3 + turbine.rotor_radius, rotor_points)
+            if rotor_points == 1:
+                yt = np.array([coord.x2])
+                zt = np.array([coord.x3])
+            else:
+                yt = np.linspace(coord.x2 - turbine.rotor_radius,
+                                 coord.x2 + turbine.rotor_radius, rotor_points)
+                zt = np.linspace(coord.x3 - turbine.rotor_radius,
+                                 coord.x3 + turbine.rotor_radius, rotor_points)
 
             for j in range(len(yt)):
                 for k in range(len(zt)):
