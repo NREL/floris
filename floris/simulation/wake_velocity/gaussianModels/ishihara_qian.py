@@ -61,7 +61,11 @@ class IshiharaQian(GaussianModel):
             "const": 0.15,
             "Ct": -0.25,
             "TI": -0.7
-        }
+        },
+        'calculate_VW_velocities':False,
+        'use_yaw_added_recovery':False,
+        'yaw_recovery_alpha':0.03,
+        'eps_gain':0.3
     }
 
     def __init__(self, parameter_dictionary):
