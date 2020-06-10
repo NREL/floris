@@ -684,6 +684,7 @@ class FlowField():
                             # multiply by area overlap
                             ti_added = area_overlap * ti_calculation
 
+                            # TODO: need to revisit when we are returning fields of TI
                             turbine_ti.current_turbulence_intensity = np.max(
                                 (
                                     np.sqrt(
