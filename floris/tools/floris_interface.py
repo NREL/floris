@@ -852,6 +852,35 @@ class FlorisInterface(LoggerBase):
             turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
             return np.sum(turb_powers)
 
+    def get_turbine_layout(self, z=False):
+        """
+        Get turbine layout
+
+        Args:
+            z (bool): When *True*, return lists of x, y, and z coords,
+            otherwise, return x and y only. Defaults to *False*.
+
+        Returns:
+            lists: coordinates of each turbine
+        """
+        xcoords = [
+            turbine.x1
+            for turbine in self.floris.farm.turbine_map.coords
+        ]
+        ycoords = [
+            turbine.x2
+            for turbine in self.floris.farm.turbine_map.coords
+        ]
+        if z:
+            zcoords = [
+                turbine.x3
+                for turbine in self.floris.farm.turbine_map.coords
+            ]
+            return xcoords, ycoords, zcoords
+        else:
+            return xcoords, ycoords
+
+
     def get_turbine_power(
         self,
         include_unc=False,
