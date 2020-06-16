@@ -881,7 +881,6 @@ class FlorisInterface(LoggerBase):
         else:
             return xcoords, ycoords
 
-
     def get_turbine_power(
         self,
         include_unc=False,
