@@ -50,7 +50,7 @@ class Farm():
                     -   **wind_direction** (*list*): The wind direction
                         measurements (deg).
                     -   **turbulence_intensity** (*list*): Turbulence intensity
-                        measurements at hub height (%).
+                        measurements at hub height (as a decimal fraction).
                     -   **wind_shear** (*float*): The power law wind shear
                         exponent.
                     -   **wind_veer** (*float*): The vertical change in wind
