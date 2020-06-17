@@ -861,21 +861,22 @@ class FlorisInterface(LoggerBase):
             otherwise, return x and y only. Defaults to *False*.
 
         Returns:
-            lists: coordinates of each turbine
+            np.array: lists of x, y, and (optionally) z coordinates of
+                      each turbine
         """
-        xcoords = [
+        xcoords = np.array([
             turbine.x1
             for turbine in self.floris.farm.turbine_map.coords
-        ]
-        ycoords = [
+        ])
+        ycoords = np.array([
             turbine.x2
             for turbine in self.floris.farm.turbine_map.coords
-        ]
+        ])
         if z:
-            zcoords = [
+            zcoords = np.array([
                 turbine.x3
                 for turbine in self.floris.farm.turbine_map.coords
-            ]
+            ])
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
