@@ -150,7 +150,7 @@ class FlorisInterface(LoggerBase):
         if wind_layout or layout_array is not None:
             # Build turbine map and wind map (convenience layer for user)
             if layout_array is None:
-                layout_array = (self.layout_x, self.layout_y)
+                layout_array = self.get_turbine_layout()
             else:
                 turbine_map = TurbineMap(
                     layout_array[0],
@@ -1504,9 +1504,7 @@ class FlorisInterface(LoggerBase):
         for i, turbine in enumerate(self.floris.farm.turbines):
             D = turbine.rotor_diameter
             break
-        coords = self.floris.farm.turbine_map.coords
-        layout_x = np.array([c.x1 for c in coords])
-        layout_y = np.array([c.x2 for c in coords])
+        layout_x, layout_y = self.get_turbine_layout()
 
         turbineLoc = build_turbine_loc(layout_x, layout_y)
 
