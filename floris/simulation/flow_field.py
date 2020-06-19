@@ -632,6 +632,9 @@ class FlowField():
                     self
                 )
 
+            # print('=====================')
+            # print('TI: ', turbine._turbulence_intensity)
+
             ###########
             # include turbulence model for the gaussian wake model from
             # Porte-Agel
@@ -683,7 +686,7 @@ class FlowField():
                             )
                             # multiply by area overlap
                             ti_added = area_overlap * ti_calculation
-
+                            # print('AI: ', turbine.aI)
                             # TODO: need to revisit when we are returning fields of TI
                             turbine_ti.current_turbulence_intensity = np.max(
                                 (
@@ -707,11 +710,8 @@ class FlowField():
                     self.v = turb_v_wake
                     self.w = turb_w_wake
                 else:
-                    # v_wake = (v_wake + turb_v_wake)
-                    # w_wake = (w_wake + turb_w_wake)
-
-                    self.v = self.wake.combination_function(turb_v_wake, self.v)
-                    self.w = self.wake.combination_function(turb_w_wake, self.w)
+                    self.v = self.v + turb_v_wake
+                    self.w = self.w + turb_w_wake
 
         # apply the velocity deficit field to the freestream
         if not no_wake:

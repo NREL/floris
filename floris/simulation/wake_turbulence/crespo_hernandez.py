@@ -92,6 +92,8 @@ class CrespoHernandez(WakeTurbulence):
             * ti_initial**self.ti_initial \
             * ((coord_ti.x1 - turbine_coord.x1) / turbine.rotor_diameter)**self.ti_downstream
 
+        # print('Check: ', self.ti_constant, turbine.aI, self.ti_ai, ti_calculation)
+
         # Update turbulence intensity of downstream turbines
         return ti_calculation
 
