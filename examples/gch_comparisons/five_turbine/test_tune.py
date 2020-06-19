@@ -133,6 +133,6 @@ print('==========================================')
 # # Plot and show
 # fig, ax = plt.subplots()
 # wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-
-plt.show()
+#
+# plt.show()
 
