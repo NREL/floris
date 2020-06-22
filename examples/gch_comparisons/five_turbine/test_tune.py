@@ -119,20 +119,41 @@ print('Total Power Gain = %.1f%%' %
       (100.*(power_opt - power_initial)/power_initial))
 print('==========================================')
 
-# # =============================================================================
-# print('Plotting the FLORIS flowfield with yaw...')
-# # =============================================================================
+## For tuning TI model
+
+SB =  [2419000.,  915100.,  945100., 1046200., 1037700., 1077700.]
+SOC =  [2046400., 1062300., 1239500., 1353700., 1421400., 1761700.]
+layout_x =  [1145.6, 1791.2, 2436.8, 3082.4, 3728.,  4373.6]
+layout_y = [2436.8, 2436.8, 2436.8, 2436.8, 2436.8, 2436.8]
+yaw = [23.6, 23.2, 21.,  18.1, 13.9,  0. ]
+
+# no yaw
+fi.reinitialize_flow_field(layout_array=(layout_x,layout_y),turbulence_intensity=0.09)
+fi.calculate_wake(yaw_angles=np.zeros(len(layout_x)))
+GCH_Base = fi.get_turbine_power()
+
+# yaw
+fi.reinitialize_flow_field(layout_array=(layout_x,layout_y),turbulence_intensity=0.09)
+fi.calculate_wake(yaw_angles=yaw)
+GCH_opt = fi.get_turbine_power()
+
+plt.figure()
+turb = np.linspace(0,5,6)
+plt.plot(turb,SB,'ko--',label='sowfa_base')
+plt.plot(turb,GCH_Base,'ro--',label='gch_base')
+plt.plot(turb,SOC,'ko-',label='sowfa_opt')
+plt.plot(turb,GCH_opt,'ro-',label='gch_opt')
+plt.grid()
+plt.legend()
+plt.title('Baseline Power (middle row)')
+
+# # Get horizontal plane at default height (hub-height)
+# hor_plane = fi.get_hor_plane()
 #
-# for i in range(len(l_x)):
-#     print('Turbine ', i, ' power = ', fi.floris.farm.turbines[i].average_velocity, fi.floris.farm.turbines[i].power/(10**3))
-#
-# hor_plane = wfct.cut_plane.HorPlane(
-#     fi.get_flow_data(),
-#     fi.floris.farm.turbines[0].hub_height
-# )
 # # Plot and show
 # fig, ax = plt.subplots()
 # wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-#
-# plt.show()
+plt.show()
+
+
 

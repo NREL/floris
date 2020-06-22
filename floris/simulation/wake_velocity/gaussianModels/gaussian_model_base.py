@@ -138,7 +138,7 @@ class GaussianModel(VelocityDeficit):
         xLocs = x_locations - turbine_coord.x1
         # print('yaw alpha = ', self.yaw_recovery_alpha)
         # print('W: ', np.mean(W), np.mean(U1))
-        U2 = (np.mean(W) * xLocs) / ((self.yaw_recovery_alpha * xLocs + D / 2))
+        U2 = (np.mean(W) * xLocs) / ((self.yaw_recovery_alpha/2 * xLocs + D / 2))
         U_total = U1 + np.nan_to_num(U2)
 
         # turn it back into a deficit
@@ -190,7 +190,7 @@ class GaussianModel(VelocityDeficit):
         vel_bottom = (Uinf * ((HH - D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear) / Uinf
         Gamma_top = scale * (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
         Gamma_bottom = -scale * (np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
-        Gamma_wake_rotation = 0.125 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+        Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
 
         # compute the spanwise and vertical velocities induced by yaw
         eps = self.eps_gain * D  # Use set value
@@ -273,7 +273,6 @@ class GaussianModel(VelocityDeficit):
         # no spanwise and vertical velocity upstream of the turbine
         V[x_locations < coord.x1 + 10] = 0.0
         W[x_locations < coord.x1 + 10] = 0.0
-
         W[W < 0] = 0
 
         return V, W
