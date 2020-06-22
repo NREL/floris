@@ -138,7 +138,8 @@ class GaussianModel(VelocityDeficit):
         xLocs = x_locations - turbine_coord.x1
         # print('yaw alpha = ', self.yaw_recovery_alpha)
         # print('W: ', np.mean(W), np.mean(U1))
-        U2 = (np.mean(W) * xLocs) / ((self.yaw_recovery_alpha/2 * xLocs + D / 2))
+        ky = self.ka * turbine.current_turbulence_intensity + self.kb
+        U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
         U_total = U1 + np.nan_to_num(U2)
 
         # turn it back into a deficit

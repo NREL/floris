@@ -230,7 +230,6 @@
           "gauss_legacy": {
             "ka": 0.38,
             "kb": 0.004,
-            "yaw_recovery_alpha": 0.38,
             "eps_gain": 0.2,
             "calculate_VW_velocities": true,
             "use_yaw_added_recovery": true
@@ -245,10 +244,10 @@
         },
         "wake_turbulence_parameters": {
           "crespo_hernandez": {
-            "initial": 0.55,
-            "constant": 0.65,
-            "ai": 0.1,
-            "downstream": -0.45
+            "initial": 0.5,
+            "constant": 0.9,
+            "ai": 0.6,
+            "downstream": -0.35
           }
         }
     }
