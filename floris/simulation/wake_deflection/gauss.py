@@ -38,7 +38,7 @@ class Gauss(VelocityDeflection):
         "bd": 0.0,
         "dm": 1.0,
         "use_secondary_steering": True,
-        "eps_gain": 0.3,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):

@@ -45,8 +45,7 @@ class Gauss(GaussianModel):
         "beta": 0.077,
         "calculate_VW_velocities": True,
         "use_yaw_added_recovery": True,
-        "yaw_recovery_alpha": 0.03,
-        "eps_gain": 0.3,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):
@@ -76,9 +75,6 @@ class Gauss(GaussianModel):
                     -   **use_yaw_added_recovery**: Flag to use yaw added
                         recovery on the wake velocity using methods developed
                         in [7].
-                    -   **yaw_recovery_alpha**: Tuning value for yaw added
-                        recovery on the wake velocity using methods developed
-                        in [7].
                     -   **eps_gain**: Tuning value for calculating the V- and
                         W-component velocities using methods developed in [7].
 
@@ -99,7 +95,6 @@ class Gauss(GaussianModel):
         # GCH Parameters
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
-        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
 
     def function(

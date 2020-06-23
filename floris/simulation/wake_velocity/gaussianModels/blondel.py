@@ -40,8 +40,7 @@ class Blondel(GaussianModel):
         "c_f": 2.41,
         "calculate_VW_velocities": False,
         "use_yaw_added_recovery": False,
-        "yaw_recovery_alpha": 0.03,
-        "eps_gain": 0.3,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):
@@ -74,9 +73,6 @@ class Blondel(GaussianModel):
                     -   **use_yaw_added_recovery**: Flag to use yaw added
                         recovery on the wake velocity using methods developed
                         in :cite:`bcv-King2019Controls`.
-                    -   **yaw_recovery_alpha**: Tuning value for yaw added
-                        recovery on the wake velocity using methods developed
-                        in :cite:`bcv-King2019Controls`.
                     -   **eps_gain**: Tuning value for calculating the V- and
                         W-component velocities using methods developed in
                         :cite:`bcv-King2019Controls`.
@@ -103,7 +99,6 @@ class Blondel(GaussianModel):
         # GCH Parameters
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
-        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
 
     def function(
@@ -152,7 +147,7 @@ class Blondel(GaussianModel):
         """
         # TODO: implement veer
         # Veer (degrees)
-        veer = flow_field.wind_veer
+        # veer = flow_field.wind_veer
 
         # Turbulence intensity for wake width calculation
         TI = turbine.current_turbulence_intensity

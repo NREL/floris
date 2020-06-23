@@ -28,7 +28,7 @@ import floris.tools as wfct
 # Parameters
 num_turbines = 5
 sowfa_U0 = 8.0
-sowfa_TI = 0.06  # High = 0.1, low = 0.06
+sowfa_TI = 0.1  # High = 0.1, low = 0.06
 layout_x = (1000.0, 1756.0, 2512.0, 3268.0, 4024.0)
 layout_y = (1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
 yaw_cases_to_select = [
@@ -37,7 +37,7 @@ yaw_cases_to_select = [
     np.array([25.0, 25.0, 0.0, 0.0, 0.0]),
 ]
 
-## Grab certain hi-TI five simulations from saved SOWFA data set
+# Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle("../sowfa_data_set/sowfa_data_set.p")
 
 # Limit number of turbines

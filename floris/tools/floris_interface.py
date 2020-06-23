@@ -1018,6 +1018,19 @@ class FlorisInterface(LoggerBase):
         ]
         return turb_ct_array
 
+    def get_turbine_ti(self):
+        """
+        Reports turbulence intensity  from each wind turbine.
+
+        Returns:
+            list: Thrust ti for each wind turbine.
+        """
+        turb_ti_array = [
+            turbine.current_turbulence_intensity
+            for turbine in self.floris.farm.flow_field.turbine_map.turbines
+        ]
+        return turb_ti_array
+
         # calculate the power under different yaw angles
 
     def get_farm_power_for_yaw_angle(

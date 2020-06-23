@@ -44,6 +44,9 @@ class IshiharaQian(GaussianModel):
         "a": {"const": 0.93, "Ct": -0.75, "TI": 0.17},
         "b": {"const": 0.42, "Ct": 0.6, "TI": 0.2},
         "c": {"const": 0.15, "Ct": -0.25, "TI": -0.7},
+        "calculate_VW_velocities": False,
+        "use_yaw_added_recovery": False,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):
@@ -90,7 +93,6 @@ class IshiharaQian(GaussianModel):
         # GCH Parameters
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
-        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
 
     def function(

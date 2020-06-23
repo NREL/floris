@@ -708,7 +708,7 @@ class FlowField:
                             area_overlap > 0.0
                             and coord_ti.x1 <= downstream_influence_length + coord.x1
                         ):
-                            ##### Call wake turbulence model
+                            # Call wake turbulence model
                             # wake.turbulence_function(inputs)
                             ti_calculation = self._compute_turbine_wake_turbulence(
                                 self.wind_map.turbine_turbulence_intensity[idx],
@@ -719,9 +719,18 @@ class FlowField:
                             # multiply by area overlap
                             ti_added = area_overlap * ti_calculation
 
-                            turbine_ti.current_turbulence_intensity = np.sqrt(
-                                ti_added ** 2
-                                + turbine.current_turbulence_intensity ** 2
+                            # TODO: need to revisit when we are returning fields of TI
+                            turbine_ti.current_turbulence_intensity = np.max(
+                                (
+                                    np.sqrt(
+                                        ti_added ** 2
+                                        + self.wind_map.turbine_turbulence_intensity[
+                                            idx
+                                        ]
+                                        ** 2
+                                    ),
+                                    turbine_ti.current_turbulence_intensity,
+                                )
                             )
 
                             if track_n_upstream_wakes:
@@ -736,11 +745,8 @@ class FlowField:
                     self.v = turb_v_wake
                     self.w = turb_w_wake
                 else:
-                    # v_wake = (v_wake + turb_v_wake)
-                    # w_wake = (w_wake + turb_w_wake)
-
-                    self.v = self.wake.combination_function(turb_v_wake, self.v)
-                    self.w = self.wake.combination_function(turb_w_wake, self.w)
+                    self.v = self.v + turb_v_wake
+                    self.w = self.w + turb_w_wake
 
         # apply the velocity deficit field to the freestream
         if not no_wake:

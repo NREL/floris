@@ -28,10 +28,10 @@ class CrespoHernandez(WakeTurbulence):
     """
 
     default_parameters = {
-        "initial": 0.5,
+        "initial": 0.4,
         "constant": 0.9,
-        "ai": 0.75,
-        "downstream": -0.325,
+        "ai": 0.7,
+        "downstream": -0.35,
     }
 
     def __init__(self, parameter_dictionary):
