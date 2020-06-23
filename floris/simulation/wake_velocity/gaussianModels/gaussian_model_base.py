@@ -335,33 +335,6 @@ class GaussianModel(VelocityDeficit):
             raise ValueError(err_msg)
         self._use_yaw_added_recovery = value
 
-    @property
-    def yaw_recovery_alpha(self):
-        """
-        Tuning value for yaw added recovery on the wake velocity using methods
-        developed in [1].
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (bool): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._yaw_recovery_alpha
-
-    @yaw_recovery_alpha.setter
-    def yaw_recovery_alpha(self, value):
-        if type(value) is not float:
-            err_msg = "Value of yaw_recovery_alpha must be type " + \
-                      "float; {} given.".format(type(value))
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
-        self._yaw_recovery_alpha = value
 
     @property
     def eps_gain(self):
