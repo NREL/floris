@@ -25,7 +25,7 @@ import pickle
 # Parameters
 num_turbines = 38
 sowfa_U0 = 8.0
-sowfa_TI = 0.06 # High = 0.1, low = 0.06
+sowfa_TI = 0.1 # High = 0.1, low = 0.06
 layout_x = (1000.0, 1756.0, 2512.0, 3268.0, 4024.0)
 layout_y = (1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
 # yaw_cases_to_select = [
