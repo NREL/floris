@@ -632,9 +632,6 @@ class FlowField():
                     self
                 )
 
-            # print('=====================')
-            # print('TI: ', turbine._turbulence_intensity)
-
             ###########
             # include turbulence model for the gaussian wake model from
             # Porte-Agel
@@ -686,7 +683,7 @@ class FlowField():
                             )
                             # multiply by area overlap
                             ti_added = area_overlap * ti_calculation
-                            # print('AI: ', turbine.aI)
+
                             # TODO: need to revisit when we are returning fields of TI
                             turbine_ti.current_turbulence_intensity = np.max(
                                 (

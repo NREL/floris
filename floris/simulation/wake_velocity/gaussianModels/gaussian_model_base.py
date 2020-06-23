@@ -136,8 +136,6 @@ class GaussianModel(VelocityDeficit):
         # set dimensions
         D = turbine.rotor_diameter
         xLocs = x_locations - turbine_coord.x1
-        # print('yaw alpha = ', self.yaw_recovery_alpha)
-        # print('W: ', np.mean(W), np.mean(U1))
         ky = self.ka * turbine.current_turbulence_intensity + self.kb
         U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
         U_total = U1 + np.nan_to_num(U2)
@@ -148,8 +146,6 @@ class GaussianModel(VelocityDeficit):
         # zero out anything before the turbine
         U[x_locations < turbine_coord.x1] = 0
 
-        # print('U: ', np.mean(U))
-        #
         return U
 
     def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
