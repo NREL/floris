@@ -64,8 +64,7 @@ class IshiharaQian(GaussianModel):
         },
         'calculate_VW_velocities':False,
         'use_yaw_added_recovery':False,
-        'yaw_recovery_alpha':0.03,
-        'eps_gain':0.3
+        'eps_gain':0.2
     }
 
     def __init__(self, parameter_dictionary):
@@ -113,7 +112,6 @@ class IshiharaQian(GaussianModel):
         self.calculate_VW_velocities = model_dictionary\
             ["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
-        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
 
     def function(self, x_locations, y_locations, z_locations, turbine,

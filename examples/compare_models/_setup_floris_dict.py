@@ -29,6 +29,7 @@ fi_dict = dict()
 # Same as legacy but with deflection multiplier = 1.0
 fi_4 = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
 fi_4.floris.farm.wake._deflection_model.dm = 1.0
+fi_4.reinitialize_flow_field(wind_speed=[8.0],wind_direction=[270.],turbulence_intensity=[0.06])
 fi_dict['gauss'] = (fi_4, 'k', '.')
 
 # Legacy version
@@ -36,6 +37,7 @@ fi_dict['gauss'] = (fi_4, 'k', '.')
 # of FLORIS, including the legacy gaussian model, TI settings, and GCH disabled,
 # With a deflection multiplier of 1.2
 fi_3 = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
+fi_3.reinitialize_flow_field(wind_speed=[8.0],wind_direction=[270.],turbulence_intensity=[0.06])
 fi_dict['legacy'] = (fi_3, 'm', '^')
 
 # Merged Class 
@@ -47,6 +49,7 @@ fi_dict['legacy'] = (fi_3, 'm', '^')
 # far wake values consistent with previous resaults
 # The TI model is as in the default case, and GCH is enabled
 fi_2 = wfct.floris_interface.FlorisInterface("../other_jsons/input_merge.json")
+fi_2.reinitialize_flow_field(wind_speed=[8.0],wind_direction=[270.],turbulence_intensity=[0.06])
 fi_dict['merge'] = (fi_2,'r','o')
 
 # Default Class 
@@ -54,6 +57,7 @@ fi_dict['merge'] = (fi_2,'r','o')
 # Crespo-Hernandez Turbulence Model has been retuned to match available data
 # GCH is used for deflection in place of the deflection model
 fi_1 = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi_1.reinitialize_flow_field(wind_speed=[8.0],wind_direction=[270.],turbulence_intensity=[0.06])
 fi_dict['default'] = (fi_1,'b','d') # Define a fixed color and marker
 
 pickle.dump( fi_dict, open( "floris_models.p", "wb" ) )

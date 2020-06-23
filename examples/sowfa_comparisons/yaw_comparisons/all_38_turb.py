@@ -23,16 +23,16 @@ import copy
 import pickle
 
 # Parameters
-num_turbines = 5
+num_turbines = 38
 sowfa_U0 = 8.0
 sowfa_TI = 0.1 # High = 0.1, low = 0.06
 layout_x = (1000.0, 1756.0, 2512.0, 3268.0, 4024.0)
 layout_y = (1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
-yaw_cases_to_select = [
-    np.array([0.,0.,0.,0.,0.]),
-    np.array([25.,0.,0.,0.,0.]),
-    np.array([25.,25.,0.,0.,0.])
-]
+# yaw_cases_to_select = [
+#     np.array([0.,0.,0.,0.,0.]),
+#     np.array([25.,0.,0.,0.,0.]),
+#     np.array([25.,25.,0.,0.,0.])
+# ]
 
 ## Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle('../sowfa_data_set/sowfa_data_set.p')
@@ -80,35 +80,35 @@ for floris_label in fi_dict:
 num_cases = df_sowfa.shape[0]
 num_col = np.min([4,num_cases])
 num_row = int(np.ceil(num_cases/num_col))
-fig, axarr = plt.subplots(
-    num_row,
-    num_col,
-    figsize=(10,5),
-    sharex=True,
-    sharey=True
-)
-axarr = axarr.flatten()
-for idx, (i, row) in enumerate(df_sowfa.iterrows()):
-    ax = axarr[idx]
+# fig, axarr = plt.subplots(
+#     num_row,
+#     num_col,
+#     figsize=(10,5),
+#     sharex=True,
+#     sharey=True
+# )
+# axarr = axarr.flatten()
+# for idx, (i, row) in enumerate(df_sowfa.iterrows()):
+#     ax = axarr[idx]
 
-    # Plot the sowfa result
-    ax.plot(row.power,'ks-',label='SOWFA')
+#     # Plot the sowfa result
+#     ax.plot(row.power,'ks-',label='SOWFA')
 
-    # Plot the FLORIS results
-    for floris_label in fi_dict:
-        (fi, floris_color, floris_marker) = fi_dict[floris_label]
-        ax.plot(
-            row[floris_label],
-            color=floris_color,
-            marker=floris_marker,
-            label=floris_label
-        )
+#     # Plot the FLORIS results
+#     for floris_label in fi_dict:
+#         (fi, floris_color, floris_marker) = fi_dict[floris_label]
+#         ax.plot(
+#             row[floris_label],
+#             color=floris_color,
+#             marker=floris_marker,
+#             label=floris_label
+#         )
 
-    ax.set_title(row.yaw)
-    ax.grid(True)
-    ax.set_xlabel('Turbine')
-    ax.set_ylabel('Power (kW)')
-axarr[0].legend()
+#     ax.set_title(row.yaw)
+#     ax.grid(True)
+#     ax.set_xlabel('Turbine')
+#     ax.set_ylabel('Power (kW)')
+# axarr[0].legend()
 
 # Compare the change in total power
 fig, ax = plt.subplots(figsize=(7,4))
@@ -139,44 +139,51 @@ fig, ax = plt.subplots(figsize=(7,4))
 case_names = df_sowfa.yaw.apply(lambda x: '/'.join(x.astype(int).astype(str)))
 sowfa_total = df_sowfa.power.apply(np.sum)
 
-# Normalize
-base_total = df_baseline.power.apply(np.sum).values[0]
-sowfa_total = sowfa_total / base_total
-ax.plot(sowfa_total,case_names,'ks-',label='SOWFA')
+# Normalized vetsion
+# Assign a unique case to TI/layout pairs
+df_sowfa['sim_case'] = df_sowfa.apply(lambda x: 'case_' + str(int(np.floor(x.d_spacing))+1),axis=1)
 
-# Plot the FLORIS results
-for floris_label in fi_dict:
-    (fi, floris_color, floris_marker) = fi_dict[floris_label]
-    total = df_sowfa[floris_label].apply(np.sum)
+# Do the norms
+df_norm = df_sowfa.copy(deep=True)
+# Switch to totals
+df_norm['power'] = df_norm['power'].apply(np.sum)
+df_norm['default'] = df_norm['default'].apply(np.sum)
+df_norm['merge'] = df_norm['merge'].apply(np.sum)
+df_norm['legacy'] = df_norm['legacy'].apply(np.sum)
+# df_norm.head()
+df_norm['power']  = df_norm['power'] / df_norm.groupby('sim_case').transform(np.min)['power']
+df_norm['default']  = df_norm['default'] / df_norm.groupby('sim_case').transform(np.min)['default']
+df_norm['merge']  = df_norm['merge'] / df_norm.groupby('sim_case').transform(np.min)['merge']
+df_norm['legacy']  = df_norm['legacy'] / df_norm.groupby('sim_case').transform(np.min)['legacy']
 
-    # Normalize
-    base_total = df_baseline[floris_label].apply(np.sum).values[0]
-    total = total / base_total
-    ax.plot(
-        total,
-        case_names,
-        color=floris_color,
-        marker=floris_marker,
-        label=floris_label
-    )
+# Compare the change in total power
+fig, axarr = plt.subplots(2,1,figsize=(7,4),sharex=True)
 
-ax.grid(True)
-ax.set_xlabel('Normalized Power')
-ax.set_ylabel('Case')
-ax.legend()
-fig.tight_layout()
+for idx in range(2):
+    ax = axarr[idx]
+    
+    df_sub = df_norm[df_norm.sim_case == 'case_%d' % (idx+1)]
+    
+    case_names = df_sub.yaw.apply(lambda x: '/'.join(x.astype(int).astype(str)))
+    sowfa_total = df_sub.power.values
+    ax.plot(sowfa_total,case_names,'ks-',label='SOWFA')
+    # Plot the FLORIS results
+    for floris_label in fi_dict:
+        (fi, floris_color, floris_marker) = fi_dict[floris_label]
+        total = df_sub[floris_label]#.apply(np.sum)
+        ax.plot(
+            total,
+            case_names,
+            color=floris_color,
+            marker=floris_marker,
+            label=floris_label
+        )
+
+    ax.grid(True)
+    ax.set_xlabel('Total Power (kW)')
+    ax.set_ylabel('Case')
+    ax.legend()
+    ax.set_title('case_%d' % (idx+1))
+    fig.tight_layout()
+
 plt.show()
-
-# Write out SOWFA results
-
-sowfa_results = np.array([
-    [1940,843.9,856.9,893.1,926.2,0,0,0,0,0],
-    [1575.3,1247.3,1008.4,955.4,887.1,25,0,0,0,0],
-    [1576.4,1065,1147.5,1185.2,1198.5,25,20,15,10,0],
-    [1577,986.9,1338.7,1089.4,999.8,25,25,0,0,0],
-    [1941.1,918.6,945.3,948,968.2,0,0,0,0,0]
-])
-df_sowfa = pd.DataFrame(
-    sowfa_results, 
-    columns = ['p0','p1','p2','p3','p4','y0','y1','y2','y3','y4']
-)

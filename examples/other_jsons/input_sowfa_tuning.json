@@ -232,7 +232,6 @@
             "kb": 0.002,
             "calculate_VW_velocities": true,
             "use_yaw_added_recovery": true,
-            "yaw_recovery_alpha":0.055,
             "eps_gain":0.25
           }
         },

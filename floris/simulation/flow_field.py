@@ -707,11 +707,8 @@ class FlowField():
                     self.v = turb_v_wake
                     self.w = turb_w_wake
                 else:
-                    # v_wake = (v_wake + turb_v_wake)
-                    # w_wake = (w_wake + turb_w_wake)
-
-                    self.v = self.wake.combination_function(turb_v_wake, self.v)
-                    self.w = self.wake.combination_function(turb_w_wake, self.w)
+                    self.v = self.v + turb_v_wake
+                    self.w = self.w + turb_w_wake
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
