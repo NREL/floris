@@ -156,11 +156,56 @@ class YawOptimizationWindRose(Optimization):
             unc_options=unc_options
         )
 
-        self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
-            [0.0]*self.nturbs
-        )
+        self._get_initial_farm_power()
 
     # Private methods
+
+    def _get_initial_farm_power(self):
+        self.initial_farm_powers = []
+
+        for i in range(len(self.wd)):
+            if (self.ws[i] >= self.minimum_ws) & (self.ws[i] <= self.maximum_ws):
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=[self.wd[i]],
+                        wind_speed=[self.ws[i]]
+                    )
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=[self.wd[i]],
+                        wind_speed=[self.ws[i]],
+                        turbulence_intensity=self.ti[i]
+                    )
+ 
+                # optimized power
+                self.fi.calculate_wake()
+                power_opt = self.fi.get_turbine_power(
+                    include_unc=self.include_unc,
+                    unc_pmfs=self.unc_pmfs,
+                    unc_options=self.unc_options
+                )
+            elif self.ws[i] >= self.maximum_ws:
+                if self.ti is None:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=[self.wd[i]], wind_speed=[self.ws[i]])
+                else:
+                    self.fi.reinitialize_flow_field(
+                        wind_direction=[self.wd[i]],
+                        wind_speed=[self.ws[i]],
+                        turbulence_intensity=self.ti[i]
+                    )
+                self.fi.calculate_wake()
+                opt_yaw_angles = self.nturbs*[0.0]
+                power_opt = self.fi.get_turbine_power(
+                    include_unc=self.include_unc,
+                    unc_pmfs=self.unc_pmfs,
+                    unc_options=self.unc_options
+                )
+            else:
+                opt_yaw_angles = self.nturbs*[0.0]
+                power_opt = self.nturbs*[0.0]
+
+            self.initial_farm_powers.append(np.sum(power_opt))
 
     def _get_power_for_yaw_angle_opt(self, yaw_angles):
         """
@@ -177,7 +222,7 @@ class YawOptimizationWindRose(Optimization):
             include_unc=self.include_unc, unc_pmfs=self.unc_pmfs, \
             unc_options=self.unc_options)
 
-        return power / (10**3)
+        return power / self.initial_farm_power
 
     def _set_opt_bounds(self, minimum_yaw_angle, maximum_yaw_angle):
         """
@@ -197,9 +242,9 @@ class YawOptimizationWindRose(Optimization):
         """
         wind_map = self.fi.floris.farm.wind_map
         self.residual_plant = minimize(self._get_power_for_yaw_angle_opt,
-                                self.x0,
+                                self.x0_norm,
                                 method=self.opt_method,
-                                bounds=self.bnds,
+                                bounds=self.bnds_norm,
                                 options=self.opt_options)
 
         opt_yaw_angles = self.residual_plant.x
@@ -207,7 +252,7 @@ class YawOptimizationWindRose(Optimization):
                               wind_direction = wind_map.input_direction,
                               turbulence_intensity = wind_map.input_ti)
 
-        return opt_yaw_angles
+        return self._unnorm(opt_yaw_angles, self.minimum_yaw_angle, self.maximum_yaw_angle)
 
     # Public methods
 
@@ -569,8 +614,7 @@ class YawOptimizationWindRose(Optimization):
 
             # Optimizing wake redirection control
 
-            if (self.ws[i] >= self.minimum_ws) \
-                                            & (self.ws[i] <= self.maximum_ws):
+            if (self.ws[i] >= self.minimum_ws) & (self.ws[i] <= self.maximum_ws):
                 if self.ti is None:
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
@@ -583,6 +627,7 @@ class YawOptimizationWindRose(Optimization):
                         turbulence_intensity=self.ti[i]
                     )
 
+                self.initial_farm_power = self.initial_farm_powers[i]
                 opt_yaw_angles = self._optimize()
 
                 if np.sum(opt_yaw_angles) == 0:
