@@ -1,25 +1,25 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
- 
+
 
 import numpy as np
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import pandas as pd
 
 
-class PlotDefaults():
+class PlotDefaults:
     """
     This class sets journal-ready styles for plots.
     """
@@ -32,35 +32,37 @@ class PlotDefaults():
         # color palette from colorbrewer (up to 4 colors, good for print and black&white printing)
         # color_brewer_palette = ['#e66101', '#5e3c99', '#fdb863', '#b2abd2']
 
-        #most journals: 300dpi
-        plt.rcParams['savefig.dpi'] = 300
+        # most journals: 300dpi
+        plt.rcParams["savefig.dpi"] = 300
 
-        #most journals: 9 cm (or 3.5 inch) for single column width and 18.5 cm (or 7.3 inch) for double column width.
-        plt.rcParams['figure.autolayout'] = False
-        plt.rcParams['figure.figsize'] = 7.3, 4
-        plt.rcParams['axes.labelsize'] = 16
-        plt.rcParams['axes.titlesize'] = 16
-        plt.rcParams['xtick.labelsize'] = 16
-        plt.rcParams['ytick.labelsize'] = 16
-        plt.rcParams['font.size'] = 32
-        plt.rcParams['lines.linewidth'] = 2.0
-        plt.rcParams['lines.markersize'] = 8
-        plt.rcParams['legend.fontsize'] = 14
+        # most journals: 9 cm (or 3.5 inch) for single column width and 18.5 cm (or 7.3 inch) for double column width.
+        plt.rcParams["figure.autolayout"] = False
+        plt.rcParams["figure.figsize"] = 7.3, 4
+        plt.rcParams["axes.labelsize"] = 16
+        plt.rcParams["axes.titlesize"] = 16
+        plt.rcParams["xtick.labelsize"] = 16
+        plt.rcParams["ytick.labelsize"] = 16
+        plt.rcParams["font.size"] = 32
+        plt.rcParams["lines.linewidth"] = 2.0
+        plt.rcParams["lines.markersize"] = 8
+        plt.rcParams["legend.fontsize"] = 14
 
 
-def data_plot(x,
-              y,
-              color='b',
-              label='_nolegend_',
-              x_bins=None,
-              x_radius=None,
-              ax=None,
-              show_scatter=True,
-              show_bin_points=True,
-              show_confidence=True,
-              min_vals=1,
-              seaborn=False,
-              show_80=False):
+def data_plot(
+    x,
+    y,
+    color="b",
+    label="_nolegend_",
+    x_bins=None,
+    x_radius=None,
+    ax=None,
+    show_scatter=True,
+    show_bin_points=True,
+    show_confidence=True,
+    min_vals=1,
+    seaborn=False,
+    show_80=False,
+):
     """
     Plot data to a single axis (no subfigrures). Method includes flags
     to provide additional statistical context in plot (e.g. scatter,
@@ -109,14 +111,13 @@ def data_plot(x,
         show_bin_points = False
         show_scatter = False
 
-    df = pd.DataFrame({'x': x, 'y': y})
+    df = pd.DataFrame({"x": x, "y": y})
 
     if df.shape[0] > 0:
 
         # If bins not provided, just use ints
         if x_bins is None:
-            x_bins = np.arange(df['x'].astype(int).min(),
-                               df['x'].astype(int).max(), 1)
+            x_bins = np.arange(df["x"].astype(int).min(), df["x"].astype(int).max(), 1)
 
         # if no radius provided, use bins to determine
         if x_radius is None:
@@ -134,10 +135,9 @@ def data_plot(x,
 
         for x_idx, x_cent in enumerate(x_bins):
 
-            df_sub = df[(df.x >= x_cent - x_radius)
-                        & (df.x <= x_cent + x_radius)]
+            df_sub = df[(df.x >= x_cent - x_radius) & (df.x <= x_cent + x_radius)]
 
-            #TODO this conditional statement contains a lot of stuff to be cleaned up. Why all the commented content?
+            # TODO this conditional statement contains a lot of stuff to be cleaned up. Why all the commented content?
             if df_sub.shape[0] > min_vals:
 
                 # Get statistics via bootstrapping
@@ -153,7 +153,8 @@ def data_plot(x,
                 # median_vals[x_idx] = np.nanmedian(df_sub.y)
                 median_vals[x_idx] = np.mean(df_sub.y)
                 vals_80_down[x_idx], vals_80_up[x_idx] = np.percentile(
-                    df_sub.y, [50 + 0.5 * 80., 50 - 0.5 * 80.])
+                    df_sub.y, [50 + 0.5 * 80.0, 50 - 0.5 * 80.0]
+                )
                 # mean_vals[x_idx] = np.median(ratio_array)
                 count_vals[x_idx] = df_sub.shape[0]
                 # ci_vals[x_idx] = scipy.stats.sem(ratio_array, ddof=1) * 1.96 # df_sub.y.apply(lambda x: scipy.stats.sem(x, ddof=1) * 1.96)
@@ -163,33 +164,32 @@ def data_plot(x,
                 confidence = 95
                 conf_bounds = [50 + 0.5 * confidence, 50 - 0.5 * confidence]
                 # lower[x_idx], upper[x_idx] = (2*med_vals[x_idx]-np.percentile(med_array, conf_bounds))
-                lower[x_idx], upper[x_idx] = np.percentile(
-                    med_array, conf_bounds)
+                lower[x_idx], upper[x_idx] = np.percentile(med_array, conf_bounds)
 
         # # Plot the underlying points
         if show_scatter:
-            ax.scatter(df['x'],
-                       df['y'],
-                       color=color,
-                       label='_nolegend_',
-                       alpha=1.0,
-                       s=35,
-                       marker='.')
+            ax.scatter(
+                df["x"],
+                df["y"],
+                color=color,
+                label="_nolegend_",
+                alpha=1.0,
+                s=35,
+                marker=".",
+            )
         if show_bin_points:
-            ax.scatter(x_bins,
-                       median_vals,
-                       color=color,
-                       s=count_vals,
-                       label='_nolegend_',
-                       alpha=0.6,
-                       marker='s')
+            ax.scatter(
+                x_bins,
+                median_vals,
+                color=color,
+                s=count_vals,
+                label="_nolegend_",
+                alpha=0.6,
+                marker="s",
+            )
         if show_80:
-            ax.plot(x_bins,
-                    vals_80_down,
-                    '--',
-                    color=color,
-                    label='_nolegend_')
-            ax.plot(x_bins, vals_80_up, '--', color=color, label='_nolegend_')
+            ax.plot(x_bins, vals_80_down, "--", color=color, label="_nolegend_")
+            ax.plot(x_bins, vals_80_up, "--", color=color, label="_nolegend_")
 
         # Plot the main trend
         if not seaborn:
@@ -199,19 +199,13 @@ def data_plot(x,
 
         if show_confidence:
             if not seaborn:
-                ax.fill_between(x_bins,
-                                lower,
-                                upper,
-                                alpha=0.2,
-                                color=color,
-                                label='_nolegend_')
+                ax.fill_between(
+                    x_bins, lower, upper, alpha=0.2, color=color, label="_nolegend_"
+                )
             else:
-                plt.fill_between(x_bins,
-                                 lower,
-                                 upper,
-                                 alpha=0.2,
-                                 color=color,
-                                 label='_nolegend_')
+                plt.fill_between(
+                    x_bins, lower, upper, alpha=0.2, color=color, label="_nolegend_"
+                )
 
         return x_bins, median_vals, lower, upper
 
@@ -248,8 +242,7 @@ def stacked_plot(x, groups, x_bins, ax, color_array=None):
 
     for x_idx, x_cent in enumerate(x_bins):
 
-        x_mask = (x >= x_cent - x_radius) \
-                    & (x < x_cent + x_radius)
+        x_mask = (x >= x_cent - x_radius) & (x < x_cent + x_radius)
 
         # y_bin = y[x_mask]
         g_bin = groups[x_mask]
@@ -257,34 +250,37 @@ def stacked_plot(x, groups, x_bins, ax, color_array=None):
 
         if num_points > 0:
             for g_idx, g in enumerate(group_vals):
-                p_array[g_idx, x_idx] = np.sum(
-                    g_bin == g)  # / float(num_points)
+                p_array[g_idx, x_idx] = np.sum(g_bin == g)  # / float(num_points)
     p = list()
 
-    if not color_array is None:
+    if color_array is not None:
         p.append(
-            ax.bar(x_bins,
-                   p_array[0, :],
-                   width=x_radius * 1.5,
-                   color=color_array[0]))
+            ax.bar(x_bins, p_array[0, :], width=x_radius * 1.5, color=color_array[0])
+        )
     else:
         p.append(ax.bar(x_bins, p_array[0, :], width=x_radius * 1.5))
 
     for g_idx in range(1, num_groups):
-        if not color_array is None:
+        if color_array is not None:
             p.append(
-                ax.bar(x_bins,
-                       p_array[g_idx, :],
-                       bottom=p_array[g_idx - 1, :],
-                       width=x_radius * 1.5,
-                       color=color_array[g_idx]))
+                ax.bar(
+                    x_bins,
+                    p_array[g_idx, :],
+                    bottom=p_array[g_idx - 1, :],
+                    width=x_radius * 1.5,
+                    color=color_array[g_idx],
+                )
+            )
         else:
             p.append(
-                ax.bar(x_bins,
-                       p_array[g_idx, :],
-                       bottom=p_array[g_idx - 1, :],
-                       width=x_radius * 1.5))
-    #ax.set_xticks(ind,x_bins)
+                ax.bar(
+                    x_bins,
+                    p_array[g_idx, :],
+                    bottom=p_array[g_idx - 1, :],
+                    width=x_radius * 1.5,
+                )
+            )
+    # ax.set_xticks(ind,x_bins)
     ax.legend(group_vals)
     # return group_vals,p_array
 
@@ -315,8 +311,7 @@ def stacked_percent_plot(x, groups, x_bins, ax, color_array=None):
 
     for x_idx, x_cent in enumerate(x_bins):
 
-        x_mask = (x >= x_cent - x_radius) \
-                    & (x < x_cent + x_radius)
+        x_mask = (x >= x_cent - x_radius) & (x < x_cent + x_radius)
 
         # y_bin = y[x_mask]
         g_bin = groups[x_mask]
@@ -327,28 +322,32 @@ def stacked_percent_plot(x, groups, x_bins, ax, color_array=None):
                 p_array[g_idx, x_idx] = np.sum(g_bin == g) / float(num_points)
     p = list()
 
-    if not color_array is None:
+    if color_array is not None:
         p.append(
-            ax.bar(x_bins,
-                   p_array[0, :],
-                   width=x_radius * 1.5,
-                   color=color_array[0]))
+            ax.bar(x_bins, p_array[0, :], width=x_radius * 1.5, color=color_array[0])
+        )
     else:
         p.append(ax.bar(x_bins, p_array[0, :], width=x_radius * 1.5))
     for g_idx in range(1, num_groups):
-        if not color_array is None:
+        if color_array is not None:
             p.append(
-                ax.bar(x_bins,
-                       p_array[g_idx, :],
-                       bottom=p_array[g_idx - 1, :],
-                       width=x_radius * 1.5,
-                       color=color_array[g_idx]))
+                ax.bar(
+                    x_bins,
+                    p_array[g_idx, :],
+                    bottom=p_array[g_idx - 1, :],
+                    width=x_radius * 1.5,
+                    color=color_array[g_idx],
+                )
+            )
         else:
             p.append(
-                ax.bar(x_bins,
-                       p_array[g_idx, :],
-                       bottom=p_array[g_idx - 1, :],
-                       width=x_radius * 1.5))
-    #ax.set_xticks(ind,x_bins)
+                ax.bar(
+                    x_bins,
+                    p_array[g_idx, :],
+                    bottom=p_array[g_idx - 1, :],
+                    width=x_radius * 1.5,
+                )
+            )
+    # ax.set_xticks(ind,x_bins)
     ax.legend(group_vals, bbox_to_anchor=(1.0, 1.0))
     # return group_vals,p_array

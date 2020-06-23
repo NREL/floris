@@ -1,27 +1,29 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
 
 import logging
-import coloredlogs
 from datetime import datetime
+
+import coloredlogs
 
 
 # Global variables for logging
 LOG_TO_CONSOLE = True
-CONSOLE_LEVEL = 'INFO'
+CONSOLE_LEVEL = "INFO"
 LOG_TO_FILE = False
-FILE_LEVEL = 'INFO'
+FILE_LEVEL = "INFO"
+
 
 def configure_console_log(enabled=True, level="INFO"):
     """
@@ -50,6 +52,7 @@ def configure_console_log(enabled=True, level="INFO"):
     CONSOLE_LEVEL = level
     _setup_logger()
 
+
 def configure_file_log(enabled=True, level="INFO"):
     """
     Sets whether the log statements are exported to a log file, and,
@@ -77,6 +80,7 @@ def configure_file_log(enabled=True, level="INFO"):
     FILE_LEVEL = level
     _setup_logger()
 
+
 def _setup_logger():
     """
     Configures the root logger based on the default or user-specified settings.
@@ -91,10 +95,10 @@ def _setup_logger():
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     # level_styles = {'warning': {'color': 'red', 'bold': False}}
-    fmt_console = '%(name)s %(levelname)s %(message)s'
-    fmt_file = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    fmt_console = "%(name)s %(levelname)s %(message)s"
+    fmt_file = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
-    file_name = 'floris_{:%Y-%m-%d-%H_%M_%S}.log'.format(datetime.now())
+    file_name = "floris_{:%Y-%m-%d-%H_%M_%S}.log".format(datetime.now())
 
     # TODO: understand why this doesnt work and fix it!
     # if logger.hasHandlers():
@@ -114,7 +118,8 @@ def _setup_logger():
         console_handler.setLevel(CONSOLE_LEVEL)
         console_format = coloredlogs.ColoredFormatter(
             # level_styles=level_styles,
-            fmt=fmt_console)
+            fmt=fmt_console
+        )
         console_handler.setFormatter(console_format)
         console_handler.addFilter(TracebackInfoFilter(clear=True))
         logger.addHandler(console_handler)
@@ -130,6 +135,7 @@ def _setup_logger():
 
     return logger
 
+
 class TracebackInfoFilter(logging.Filter):
     """Clear or restore the exception on log records"""
 
@@ -138,19 +144,20 @@ class TracebackInfoFilter(logging.Filter):
 
     def filter(self, record):
         if self.clear:
-            record._stack_info_hidden, record.stack_info = \
-                                                        record.stack_info, None
+            record._stack_info_hidden, record.stack_info = record.stack_info, None
         elif hasattr(record, "_stack_info_hidden"):
             record.stack_info = record._stack_info_hidden
             del record._stack_info_hidden
         return True
 
-class LoggerBase():
+
+class LoggerBase:
     """
     Convenience super-class to any class requiring access to the logging
     module. The virtual property here allows a simple and dynamic method
     for obtaining the correct logger for the calling class.
     """
+
     @property
     def logger(self):
         return logging.getLogger(

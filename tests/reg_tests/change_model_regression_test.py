@@ -1,25 +1,35 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
- 
 
-import pytest
+
 import numpy as np
-from floris.simulation import Floris
-from .gauss_regression_test import GaussRegressionTest
-from .curl_regression_test import CurlRegressionTest
+import pytest
 
-class ChangeModelTest():
+from floris.simulation import Floris
+
+
+try:
+    from .gauss_regression_test import GaussRegressionTest
+except ImportError:
+    from gauss_regression_test import GaussRegressionTest
+try:
+    from .curl_regression_test import CurlRegressionTest
+except ImportError:
+    from curl_regression_test import CurlRegressionTest
+
+
+class ChangeModelTest:
     """
     This test checks the ability to change the wake models programmatically.
     These tests use the baselines from other regression tests.
@@ -32,6 +42,7 @@ class ChangeModelTest():
 
     def __init__(self):
         self.debug = False
+
 
 def test_gauss_to_curl_to_gauss():
     """
@@ -47,7 +58,15 @@ def test_gauss_to_curl_to_gauss():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = gauss_test_class.baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -62,7 +81,15 @@ def test_gauss_to_curl_to_gauss():
     curl_test_class = CurlRegressionTest()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = curl_test_class.baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -75,7 +102,15 @@ def test_gauss_to_curl_to_gauss():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = gauss_test_class.baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]

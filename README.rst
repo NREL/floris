@@ -13,6 +13,8 @@ the **floris** tag. Alternatively, email the NREL FLORIS team at
   :target: https://github.com/nrel/floris/actions
 .. image:: https://codecov.io/gh/nrel/floris/branch/develop/graph/badge.svg
   :target: https://codecov.io/gh/nrel/floris
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 Background and Objectives
 =========================

@@ -1,27 +1,33 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
- 
 
-import pytest
-import numpy as np
+
 import copy
-from floris.simulation import Floris
-from floris.simulation import TurbineMap
-from .sample_inputs import SampleInputs
+
+import numpy as np
+import pytest
+
+from floris.simulation import Floris, TurbineMap
 
 
-class GaussRegressionTest():
+try:
+    from .sample_inputs import SampleInputs
+except ImportError:
+    from sample_inputs import SampleInputs
+
+
+class GaussRegressionTest:
     """
     """
 
@@ -36,7 +42,7 @@ class GaussRegressionTest():
         baseline = [
             (0.4632706, 0.7655828, 1793661.6494183, 0.2579167, 7.9736330),
             (0.4529770, 0.8363843, 729117.4390409, 0.2977528, 5.9510659),
-            (0.4574196, 0.8192350, 881978.4823849, 0.2874177, 6.3202663)
+            (0.4574196, 0.8192350, 881978.4823849, 0.2874177, 6.3202663),
         ]
         return baseline[turbine_index]
 
@@ -44,7 +50,7 @@ class GaussRegressionTest():
         baseline = [
             (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
             (0.4534739, 0.8344660, 745219.1570045, 0.2965706, 5.9923643),
-            (0.4574952, 0.8189433, 884755.7595666, 0.2872462, 6.3265451)
+            (0.4574952, 0.8189433, 884755.7595666, 0.2872462, 6.3265451),
         ]
         return baseline[turbine_index]
 
@@ -52,7 +58,7 @@ class GaussRegressionTest():
         baseline = [
             (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
             (0.4535845, 0.8340392, 748834.7449840, 0.2963086, 6.0015520),
-            (0.4579510, 0.8171837, 901641.6247690, 0.2862149, 6.3644267)
+            (0.4579510, 0.8171837, 901641.6247690, 0.2862149, 6.3644267),
         ]
         return baseline[turbine_index]
 
@@ -60,7 +66,7 @@ class GaussRegressionTest():
         baseline = [
             (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
             (0.4535845, 0.8340392, 748834.7449840, 0.2963086, 6.0015520),
-            (0.4572521, 0.8198817, 875841.5697827, 0.2877983, 6.3063432)
+            (0.4572521, 0.8198817, 875841.5697827, 0.2877983, 6.3063432),
         ]
         return baseline[turbine_index]
 
@@ -70,9 +76,10 @@ class GaussRegressionTest():
         baseline = [
             (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
             (0.4534739, 0.8344660, 745219.1570045, 0.2965706, 5.9923643),
-            (0.4574952, 0.8189433, 884755.7595666, 0.2872462, 6.3265451)
+            (0.4574952, 0.8189433, 884755.7595666, 0.2872462, 6.3265451),
         ]
         return baseline[turbine_index]
+
 
 def test_regression_tandem():
     """
@@ -83,7 +90,15 @@ def test_regression_tandem():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -101,15 +116,33 @@ def test_regression_rotation():
     floris = Floris(input_dict=test_class.input_dict)
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
     wind_map = floris.farm.wind_map
- 
+
     ### unrotated
     floris.farm.flow_field.calculate_wake()
     turbine = floris.farm.turbine_map.turbines[0]
-    unwaked_baseline = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+    unwaked_baseline = (
+        turbine.Cp,
+        turbine.Ct,
+        turbine.power,
+        turbine.aI,
+        turbine.average_velocity,
+    )
     turbine = floris.farm.turbine_map.turbines[1]
-    first_waked_baseline = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+    first_waked_baseline = (
+        turbine.Cp,
+        turbine.Ct,
+        turbine.power,
+        turbine.aI,
+        turbine.average_velocity,
+    )
     turbine = floris.farm.turbine_map.turbines[2]
-    second_waked_baseline = (turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity)
+    second_waked_baseline = (
+        turbine.Cp,
+        turbine.Ct,
+        turbine.power,
+        turbine.aI,
+        turbine.average_velocity,
+    )
 
     ### rotated
     wind_map.input_direction = [360]
@@ -124,12 +157,11 @@ def test_regression_rotation():
         [
             copy.deepcopy(fresh_turbine),
             copy.deepcopy(fresh_turbine),
-            copy.deepcopy(fresh_turbine)
-        ]
+            copy.deepcopy(fresh_turbine),
+        ],
     )
     floris.farm.flow_field.reinitialize_flow_field(
-        turbine_map=new_map,
-        wind_map=wind_map
+        turbine_map=new_map, wind_map=wind_map
     )
     floris.farm.flow_field.calculate_wake()
 
@@ -168,7 +200,15 @@ def test_regression_yaw():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.yawed_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -190,7 +230,15 @@ def test_regression_gch():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.yawed_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -204,7 +252,15 @@ def test_regression_gch():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.gch_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -227,7 +283,15 @@ def test_regression_yaw_added_recovery():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.yawed_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -240,7 +304,15 @@ def test_regression_yaw_added_recovery():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.yaw_added_recovery_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -262,7 +334,15 @@ def test_regression_secondary_steering():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.yawed_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
@@ -275,7 +355,15 @@ def test_regression_secondary_steering():
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
-            print("({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity))
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
         baseline = test_class.secondary_steering_baseline(i)
         assert pytest.approx(turbine.Cp) == baseline[0]
         assert pytest.approx(turbine.Ct) == baseline[1]
