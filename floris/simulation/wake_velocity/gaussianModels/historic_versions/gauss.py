@@ -10,10 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ....utilities import cosd, sind, tand
-from ....utilities import setup_logger
-from ..base_velocity_deficit import VelocityDeficit
 import numpy as np
+
+from ....utilities import cosd, sind, tand, setup_logger
+from ..base_velocity_deficit import VelocityDeficit
 
 
 class Gauss(VelocityDeficit):
@@ -98,16 +98,10 @@ class Gauss(VelocityDeficit):
         An instantiated Gauss object.
     """
 
-    default_parameters = {
-        'ka': 0.38,
-        'kb': 0.004,
-        'alpha': 0.58,
-        'beta': 0.077
-    }
+    default_parameters = {"ka": 0.38, "kb": 0.004, "alpha": 0.58, "beta": 0.077}
 
     def __init__(self, parameter_dictionary):
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "gauss"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 
@@ -119,8 +113,16 @@ class Gauss(VelocityDeficit):
         self.alpha = float(model_dictionary["alpha"])
         self.beta = float(model_dictionary["beta"])
 
-    def function(self, x_locations, y_locations, z_locations, turbine,
-                 turbine_coord, deflection_field, flow_field):
+    def function(
+        self,
+        x_locations,
+        y_locations,
+        z_locations,
+        turbine,
+        turbine_coord,
+        deflection_field,
+        flow_field,
+    ):
         """
         Using the Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified
@@ -144,8 +146,8 @@ class Gauss(VelocityDeficit):
             deflection_field: An array of floats that contains the
                 amount of wake deflection in meters in the y direction
                 at each grid point of the flow field.
-            flow_field: A :py:class:`floris.simulation.flow_field` 
-                object containing the flow field information for the 
+            flow_field: A :py:class:`floris.simulation.flow_field`
+                object containing the flow field information for the
                 wind farm.
         Returns:
             Three arrays of floats that contain the wake velocity
@@ -155,7 +157,7 @@ class Gauss(VelocityDeficit):
             three arrays contain the velocity deficits at each grid
             point in the flow field.
         """
-        
+
         # veer (degrees)
         veer = flow_field.wind_veer
 
@@ -181,9 +183,15 @@ class Gauss(VelocityDeficit):
         sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
 
         # quantity that determines when the far wake starts
-        x0 = D * (cosd(yaw) * (1 + np.sqrt(1 - Ct))) / (np.sqrt(2) \
-            * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))) \
+        x0 = (
+            D
+            * (cosd(yaw) * (1 + np.sqrt(1 - Ct)))
+            / (
+                np.sqrt(2)
+                * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))
+            )
             + turbine_coord.x1
+        )
 
         # wake expansion parameters
         ky = self.ka * TI + self.kb
@@ -194,26 +202,41 @@ class Gauss(VelocityDeficit):
         xR = yR * tand(yaw) + turbine_coord.x1
 
         # velocity deficit in the near wake
-        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * \
-            D * np.sqrt(Ct / 2.) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
-        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * \
-            D * np.sqrt(Ct / 2.) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
+        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
+            Ct / 2.0
+        ) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
+        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
+            Ct / 2.0
+        ) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
 
         sigma_y[x_locations < xR] = 0.5 * D
         sigma_z[x_locations < xR] = 0.5 * D
 
-        a = (cosd(veer)**2) / (2 * sigma_y**2) + \
-            (sind(veer)**2) / (2 * sigma_z**2)
-        b = -(sind(2 * veer)) / (4 * sigma_y**2) + \
-            (sind(2 * veer)) / (4 * sigma_z**2)
-        c = (sind(veer)**2) / (2 * sigma_y**2) + \
-            (cosd(veer)**2) / (2 * sigma_z**2)
-        totGauss = np.exp(-(a * ((y_locations - turbine_coord.x2) - delta)**2 \
-                - 2 * b * ((y_locations - turbine_coord.x2) - delta) \
-                * ((z_locations - HH)) + c * ((z_locations - HH))**2))
+        a = (cosd(veer) ** 2) / (2 * sigma_y ** 2) + (sind(veer) ** 2) / (
+            2 * sigma_z ** 2
+        )
+        b = -(sind(2 * veer)) / (4 * sigma_y ** 2) + (sind(2 * veer)) / (
+            4 * sigma_z ** 2
+        )
+        c = (sind(veer) ** 2) / (2 * sigma_y ** 2) + (cosd(veer) ** 2) / (
+            2 * sigma_z ** 2
+        )
+        totGauss = np.exp(
+            -(
+                a * ((y_locations - turbine_coord.x2) - delta) ** 2
+                - 2
+                * b
+                * ((y_locations - turbine_coord.x2) - delta)
+                * ((z_locations - HH))
+                + c * ((z_locations - HH)) ** 2
+            )
+        )
 
-        velDef = (U_local * (1 - np.sqrt(1 - ((Ct * cosd(yaw)) \
-                / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
+        velDef = (
+            U_local
+            * (1 - np.sqrt(1 - ((Ct * cosd(yaw)) / (8.0 * sigma_y * sigma_z / D ** 2))))
+            * totGauss
+        )
         velDef[x_locations < xR] = 0
         velDef[x_locations > x0] = 0
 
@@ -225,28 +248,44 @@ class Gauss(VelocityDeficit):
         sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         # velocity deficit outside the near wake
-        a = (cosd(veer)**2) / (2 * sigma_y**2) + \
-            (sind(veer)**2) / (2 * sigma_z**2)
-        b = -(sind(2 * veer)) / (4 * sigma_y**2) + \
-            (sind(2 * veer)) / (4 * sigma_z**2)
-        c = (sind(veer)**2) / (2 * sigma_y**2) + \
-            (cosd(veer)**2) / (2 * sigma_z**2)
-        totGauss = np.exp(-(a * ((y_locations - turbine_coord.x2) - delta)**2 \
-                - 2 * b * ((y_locations - turbine_coord.x2) - delta) \
-                * ((z_locations - HH)) + c * ((z_locations - HH))**2))
+        a = (cosd(veer) ** 2) / (2 * sigma_y ** 2) + (sind(veer) ** 2) / (
+            2 * sigma_z ** 2
+        )
+        b = -(sind(2 * veer)) / (4 * sigma_y ** 2) + (sind(2 * veer)) / (
+            4 * sigma_z ** 2
+        )
+        c = (sind(veer) ** 2) / (2 * sigma_y ** 2) + (cosd(veer) ** 2) / (
+            2 * sigma_z ** 2
+        )
+        totGauss = np.exp(
+            -(
+                a * ((y_locations - turbine_coord.x2) - delta) ** 2
+                - 2
+                * b
+                * ((y_locations - turbine_coord.x2) - delta)
+                * ((z_locations - HH))
+                + c * ((z_locations - HH)) ** 2
+            )
+        )
 
         # compute velocities in the far wake
-        velDef1 = (U_local * (1 - np.sqrt(1 - ((Ct * cosd(yaw)) \
-                / (8.0 * sigma_y * sigma_z / D**2)))) * totGauss)
+        velDef1 = (
+            U_local
+            * (1 - np.sqrt(1 - ((Ct * cosd(yaw)) / (8.0 * sigma_y * sigma_z / D ** 2))))
+            * totGauss
+        )
         velDef1[x_locations < x0] = 0
 
-        return np.sqrt(velDef**2 + velDef1**2), np.zeros(np.shape(velDef)), \
-                       np.zeros(np.shape(velDef))
+        return (
+            np.sqrt(velDef ** 2 + velDef1 ** 2),
+            np.zeros(np.shape(velDef)),
+            np.zeros(np.shape(velDef)),
+        )
 
     @property
     def ka(self):
         """
-        Parameter used to determine the linear relationship between the 
+        Parameter used to determine the linear relationship between the
             turbulence intensity and the width of the Gaussian wake shape.
         Args:
             ka (float, int): Gaussian wake model coefficient.
@@ -267,7 +306,7 @@ class Gauss(VelocityDeficit):
     @property
     def kb(self):
         """
-        Parameter used to determine the linear relationship between the 
+        Parameter used to determine the linear relationship between the
             turbulence intensity and the width of the Gaussian wake shape.
         Args:
             kb (float, int): Gaussian wake model coefficient.

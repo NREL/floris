@@ -1,4 +1,3 @@
-
 from .version_class import VersionClass
 from .data_transform import DataTransform
 
@@ -19,14 +18,8 @@ class V2_0_0(VersionClass, DataTransform):
 
     def build_meta_dict(self):
         self.base_meta["logging"] = {
-            "console": {
-                "enable": True,
-                "level": "INFO"
-            },
-            "file": {
-                "enable": False,
-                "level": "INFO"
-            }
+            "console": {"enable": True, "level": "INFO"},
+            "file": {"enable": False, "level": "INFO"},
         }
         self.base_meta["version"] = V2_0_0.version_string
         return self.base_meta
@@ -38,42 +31,40 @@ class V2_0_0(VersionClass, DataTransform):
             self.base_farm,
             ["farm", "properties", "wind_speed"],
             DataTransform.to_list(
-                DataTransform.deep_get(self.base_farm, ["farm", "properties", "wind_speed"])
-            )
+                DataTransform.deep_get(
+                    self.base_farm, ["farm", "properties", "wind_speed"]
+                )
+            ),
         )
 
         DataTransform.deep_put(
             self.base_farm,
             ["farm", "properties", "wind_direction"],
             DataTransform.to_list(
-                DataTransform.deep_get(self.base_farm, ["farm", "properties", "wind_direction"])
-            )
+                DataTransform.deep_get(
+                    self.base_farm, ["farm", "properties", "wind_direction"]
+                )
+            ),
         )
 
         DataTransform.deep_put(
             self.base_farm,
             ["farm", "properties", "turbulence_intensity"],
             DataTransform.to_list(
-                DataTransform.deep_get(self.base_farm, ["farm", "properties", "turbulence_intensity"])
-            )
+                DataTransform.deep_get(
+                    self.base_farm, ["farm", "properties", "turbulence_intensity"]
+                )
+            ),
         )
 
-        DataTransform.deep_put(
-            self.base_farm,
-            ["farm", "properties", "wind_x"],
-            [0.0]
-        )
+        DataTransform.deep_put(self.base_farm, ["farm", "properties", "wind_x"], [0.0])
 
-        DataTransform.deep_put(
-            self.base_farm,
-            ["farm", "properties", "wind_y"],
-            [0.0]            
-        )
+        DataTransform.deep_put(self.base_farm, ["farm", "properties", "wind_y"], [0.0])
 
         DataTransform.deep_put(
             self.base_farm,
             ["farm", "properties", "specified_wind_height"],
-            self.base_turbine["turbine"]["properties"]["hub_height"]
+            self.base_turbine["turbine"]["properties"]["hub_height"],
         )
 
         return self.base_farm
@@ -83,7 +74,7 @@ class V2_0_0(VersionClass, DataTransform):
         DataTransform.deep_put(
             self.base_wake,
             ["wake", "properties", "turbulence_model"],
-            "crespo_hernandez"
+            "crespo_hernandez",
         )
         del self.base_wake["wake"]["properties"]["parameters"]
 

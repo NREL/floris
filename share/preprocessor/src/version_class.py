@@ -1,6 +1,7 @@
+from abc import ABC, abstractmethod
 
 from .output import Output
-from abc import ABC, abstractmethod
+
 
 class VersionClass(ABC):
     version_string = "v0.0.0"
@@ -36,13 +37,13 @@ class VersionClass(ABC):
     @abstractmethod
     def wake_dict(self):
         pass
-    
+
     def build_input_file_data(self):
         return {
             **self.meta_dict,
             **self.farm_dict,
             **self.turbine_dict,
-            **self.wake_dict
+            **self.wake_dict,
         }
 
     def export(self, filename=version_string + ".json"):

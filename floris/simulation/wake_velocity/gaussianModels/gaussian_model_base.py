@@ -10,22 +10,25 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+import numpy as np
+
 from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
-import numpy as np
+
 
 class GaussianModel(VelocityDeficit):
     """
     This is the super-class for all Gaussian-type wake models. It includes
     implementations of functions that subclasses should use to perform
     Gaussian-related calculations (see :cite:`gmb-King2019Controls`)
-    
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: gmb-
     """
+
     def __init__(self, parameter_dictionary):
         """
         See super-class for initialization details.
@@ -35,8 +38,9 @@ class GaussianModel(VelocityDeficit):
         """
         super().__init__(parameter_dictionary)
 
-    def correction_steps(self, U_local, U, V, W, x_locations, y_locations,
-                         turbine, turbine_coord):
+    def correction_steps(
+        self, U_local, U, V, W, x_locations, y_locations, turbine, turbine_coord
+    ):
         """
         This method corrects the U-component velocities when yaw added recovery
         is enabled. For more details on how the velocities are changed, see [1].
@@ -58,12 +62,14 @@ class GaussianModel(VelocityDeficit):
             np.array: U-component velocity deficits across the flow field.
         """
         if self.use_yaw_added_recovery:
-            U = self.yaw_added_recovery_correction(U_local, U, W, \
-                            x_locations, y_locations, turbine, turbine_coord)
+            U = self.yaw_added_recovery_correction(
+                U_local, U, W, x_locations, y_locations, turbine, turbine_coord
+            )
         return U
 
-    def calculate_VW(self, V, W, coord, turbine, flow_field, x_locations,
-                     y_locations, z_locations):
+    def calculate_VW(
+        self, V, W, coord, turbine, flow_field, x_locations, y_locations, z_locations
+    ):
         """
         This method calculates the V- and W-component velocities using
         methods developed in [1].
@@ -97,20 +103,24 @@ class GaussianModel(VelocityDeficit):
         """
         if self.use_yaw_added_recovery:
             if not self.calculate_VW_velocities:
-                err_msg = "It appears that 'use_yaw_added_recovery' is set " + \
-                "to True and 'calculate_VW_velocities' is set to False. " + \
-                "This configuration is not valid. Please set " + \
-                "'calculate_VW_velocities' to True if you wish to use " + \
-                "yaw-added recovery."
+                err_msg = (
+                    "It appears that 'use_yaw_added_recovery' is set "
+                    + "to True and 'calculate_VW_velocities' is set to False. "
+                    + "This configuration is not valid. Please set "
+                    + "'calculate_VW_velocities' to True if you wish to use "
+                    + "yaw-added recovery."
+                )
                 self.logger.error(err_msg, stack_info=True)
                 raise ValueError(err_msg)
         if self.calculate_VW_velocities:
-            V, W = self.calc_VW(coord, turbine, flow_field, x_locations,
-                                y_locations, z_locations)
+            V, W = self.calc_VW(
+                coord, turbine, flow_field, x_locations, y_locations, z_locations
+            )
         return V, W
 
-    def yaw_added_recovery_correction(self, U_local, U, W, x_locations,
-                                      y_locations, turbine, turbine_coord):
+    def yaw_added_recovery_correction(
+        self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord
+    ):
         """
         This method corrects the U-component velocities when yaw added recovery
         is enabled. For more details on how the velocities are changed, see [1].
@@ -134,17 +144,10 @@ class GaussianModel(VelocityDeficit):
         U1 = U_local - U
 
         # set dimensions
-        xLocs = x_locations - turbine_coord.x1
-        yLocs = y_locations - turbine_coord.x2
-        # zLocs = z_locations
         D = turbine.rotor_diameter
-
-        numerator = -1 * W * xLocs * np.abs(yLocs)
-        denom = np.pi * (self.yaw_recovery_alpha * xLocs + D / 2)**2
-        U2 = numerator / denom
-
-        # add velocity modification from yaw (U2)
-        # TODO: where would U2 be nan and should this be handled betteer?
+        xLocs = x_locations - turbine_coord.x1
+        ky = self.ka * turbine.current_turbulence_intensity + self.kb
+        U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
         U_total = U1 + np.nan_to_num(U2)
 
         # turn it back into a deficit
@@ -155,8 +158,9 @@ class GaussianModel(VelocityDeficit):
 
         return U
 
-    def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations,
-                z_locations):
+    def calc_VW(
+        self, coord, turbine, flow_field, x_locations, y_locations, z_locations
+    ):
         """
         This method calculates the V- and W-component velocities using
         methods developed in [1].
@@ -187,141 +191,170 @@ class GaussianModel(VelocityDeficit):
         aI = turbine.aI
 
         # flow parameters
-        rho = flow_field.air_density
-
-        # Update to wind map
-        # Uinf = flow_field.wind_speed
-        Uinf = np.mean(flow_field.wind_map.input_speed)  # TODO Is this right?
-
-        # top point of the rotor
-        dist_top = np.sqrt((coord.x1 - x_locations) ** 2 \
-                            + ((coord.x2) - y_locations) ** 2 \
-                            + (z_locations - (turbine.hub_height + D / 2)) ** 2)
-        idx_top = np.where(dist_top == np.min(dist_top))
-
-        # bottom point of the rotor
-        dist_bottom = np.sqrt((coord.x1 - x_locations) ** 2 \
-                            + ((coord.x2) - y_locations) ** 2 \
-                            + (z_locations - (turbine.hub_height - D / 2)) ** 2)
-        idx_bottom = np.where(dist_bottom == np.min(dist_bottom))
-
-        if len(idx_top) > 1:
-            idx_top = idx_top[0]
-        if len(idx_bottom) > 1:
-            idx_bottom = idx_bottom[0]
+        Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
 
         scale = 1.0
-        Gamma_top = scale * (np.pi / 8) * rho * D * turbine.average_velocity \
-                    * Ct * sind(yaw) * cosd(yaw) ** 2
-        Gamma_bottom = scale*(np.pi/8) * rho * D * turbine.average_velocity \
-                       * Ct * sind(yaw) * cosd(yaw)**2
-        Gamma_wake_rotation = 0.5 * 2 * np.pi * D * (aI - aI ** 2) \
-                              * turbine.average_velocity / TSR
+        vel_top = (
+            Uinf
+            * ((HH + D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear
+        ) / Uinf
+        vel_bottom = (
+            Uinf
+            * ((HH - D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear
+        ) / Uinf
+        Gamma_top = (
+            scale * (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+        )
+        Gamma_bottom = (
+            -scale * (np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+        )
+        Gamma_wake_rotation = (
+            0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+        )
 
         # compute the spanwise and vertical velocities induced by yaw
-        # Use set value
-        eps = self.eps_gain * D
+        eps = self.eps_gain * D  # Use set value
 
         # decay the vortices as they move downstream - using mixing length
-        lmda = D / 8  #D/4 #D/4 #D/2
+        lmda = D / 8
         kappa = 0.41
         lm = kappa * z_locations / (1 + kappa * z_locations / lmda)
-        z = np.linspace(np.min(z_locations), np.max(z_locations), \
-                        np.shape(flow_field.u_initial)[2])
+        z = np.linspace(
+            np.min(z_locations), np.max(z_locations), np.shape(flow_field.u_initial)[2]
+        )
         dudz_initial = np.gradient(flow_field.u_initial, z, axis=2)
-        nu = lm**2 * np.abs(dudz_initial[0, :, :])
+        nu = lm ** 2 * np.abs(dudz_initial[0, :, :])
 
         # top vortex
         yLocs = y_locations + 0.01 - (coord.x2)
-        zLocs = z_locations + 0.01 - (HH + D / 2)
-        V1 = (((yLocs * Gamma_top) / (2 * np.pi * (yLocs**2 + zLocs**2))) \
-                * (1 - np.exp(-(yLocs**2 + zLocs**2)/(eps**2))) ) * \
-                eps**2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps**2)
+        zT = z_locations + 0.01 - (HH + D / 2)
+        rT = yLocs ** 2 + zT ** 2
+        V1 = (
+            (zT * Gamma_top)
+            / (2 * np.pi * rT)
+            * (1 - np.exp(-rT / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        W1 = ((zLocs * Gamma_top) / (2 * np.pi * (yLocs**2 + zLocs**2))) \
-               * (1 - np.exp(-(yLocs**2 + zLocs**2)/(eps**2))) * \
-               eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        W1 = (
+            (-yLocs * Gamma_top)
+            / (2 * np.pi * rT)
+            * (1 - np.exp(-rT / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
         # bottom vortex
-        yLocs = y_locations + 0.01 - (coord.x2)
-        zLocs = z_locations + 0.01 - (HH - D / 2)
-        V2 = (((yLocs * -Gamma_bottom) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        zB = z_locations + 0.01 - (HH - D / 2)
+        rB = yLocs ** 2 + zB ** 2
+        V2 = (
+            (zB * Gamma_bottom)
+            / (2 * np.pi * rB)
+            * (1 - np.exp(-rB / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        W2 = ((zLocs * -Gamma_bottom) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        W2 = (
+            ((-yLocs * Gamma_bottom) / (2 * np.pi * rB))
+            * (1 - np.exp(-rB / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
         # top vortex - ground
         yLocs = y_locations + 0.01 - (coord.x2)
         zLocs = z_locations + 0.01 + (HH + D / 2)
-        V3 = (((yLocs * -Gamma_top) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) + 0.0) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        V3 = (
+            (
+                ((zLocs * -Gamma_top) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+                * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+                + 0.0
+            )
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        W3 = ((zLocs * -Gamma_top) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        W3 = (
+            ((-yLocs * -Gamma_top) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
         # bottom vortex - ground
         yLocs = y_locations + 0.01 - (coord.x2)
         zLocs = z_locations + 0.01 + (HH - D / 2)
-        V4 = (((yLocs * Gamma_bottom) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) + 0.0) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        V4 = (
+            (
+                ((zLocs * -Gamma_bottom) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+                * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+                + 0.0
+            )
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        W4 = ((zLocs * Gamma_bottom) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        W4 = (
+            ((-yLocs * -Gamma_bottom) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
         # wake rotation vortex
-        yLocs = y_locations + 0.01 - coord.x2
-        zLocs = z_locations + 0.01 - HH
-        V5 = (((yLocs * Gamma_wake_rotation) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) + 0.0) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        zC = z_locations + 0.01 - (HH)
+        rC = yLocs ** 2 + zC ** 2
+        V5 = (
+            (zC * Gamma_wake_rotation)
+            / (2 * np.pi * rC)
+            * (1 - np.exp(-rC / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        W5 = ((zLocs * Gamma_wake_rotation) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        W5 = (
+            (-yLocs * Gamma_wake_rotation)
+            / (2 * np.pi * rC)
+            * (1 - np.exp(-rC / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
         # wake rotation vortex - ground effect
         yLocs = y_locations + 0.01 - coord.x2
         zLocs = z_locations + 0.01 + HH
-        V6 = (((yLocs * Gamma_wake_rotation) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) + 0.0) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        V6 = (
+            (
+                (
+                    (zLocs * -Gamma_wake_rotation)
+                    / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))
+                )
+                * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+                + 0.0
+            )
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        W6 = ((zLocs * Gamma_wake_rotation) \
-            / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))) \
-            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2))) \
-            * eps ** 2 / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        W6 = (
+            ((-yLocs * -Gamma_wake_rotation) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
+
+        # print(Gamma_wake_rotation, np.mean(W5), np.mean(W6))
 
         # total spanwise velocity
         V = V1 + V2 + V3 + V4 + V5 + V6
-
-        # total vertical velocity
         W = W1 + W2 + W3 + W4 + W5 + W6
 
-        # compute velocity deficit
-        # yR = y_locations - coord.x2
-        # xR = yR * tand(yaw) + coord.x1
+        # no spanwise and vertical velocity upstream of the turbine
         V[x_locations < coord.x1 + 10] = 0.0
         W[x_locations < coord.x1 + 10] = 0.0
-
-        # cut off in the spanwise direction
-        V[np.abs(y_locations - coord.x2) > D] = 0.0
-        W[np.abs(y_locations - coord.x2) > D] = 0.0
+        W[W < 0] = 0
 
         return V, W
 
@@ -347,8 +380,10 @@ class GaussianModel(VelocityDeficit):
     @calculate_VW_velocities.setter
     def calculate_VW_velocities(self, value):
         if type(value) is not bool:
-            err_msg = "Value of calculate_VW_velocities must be type " + \
-                      "float; {} given.".format(type(value))
+            err_msg = (
+                "Value of calculate_VW_velocities must be type "
+                + "float; {} given.".format(type(value))
+            )
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._calculate_VW_velocities = value
@@ -375,40 +410,14 @@ class GaussianModel(VelocityDeficit):
     @use_yaw_added_recovery.setter
     def use_yaw_added_recovery(self, value):
         if type(value) is not bool:
-            #TODO Shouldn't this be a bool?
-            err_msg = "Value of use_yaw_added_recovery must be type " + \
-                      "float; {} given.".format(type(value))
+            # TODO Shouldn't this be a bool?
+            err_msg = (
+                "Value of use_yaw_added_recovery must be type "
+                + "float; {} given.".format(type(value))
+            )
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._use_yaw_added_recovery = value
-
-    @property
-    def yaw_recovery_alpha(self):
-        """
-        Tuning value for yaw added recovery on the wake velocity using methods
-        developed in [1].
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (bool): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._yaw_recovery_alpha
-
-    @yaw_recovery_alpha.setter
-    def yaw_recovery_alpha(self, value):
-        if type(value) is not float:
-            err_msg = "Value of yaw_recovery_alpha must be type " + \
-                      "float; {} given.".format(type(value))
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
-        self._yaw_recovery_alpha = value
 
     @property
     def eps_gain(self):
@@ -432,12 +441,12 @@ class GaussianModel(VelocityDeficit):
     @eps_gain.setter
     def eps_gain(self, value):
         if type(value) is not float:
-            err_msg = "Value of eps_gain must be type " + \
-                      "float; {} given.".format(type(value))
+            err_msg = "Value of eps_gain must be type " + "float; {} given.".format(
+                type(value)
+            )
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._eps_gain = value
-
 
     @staticmethod
     def mask_upstream_wake(y_locations, turbine_coord, yaw):
@@ -456,7 +465,7 @@ class GaussianModel(VelocityDeficit):
 
                 -   yR (np.array): Y locations to mask upstream wake.
                 -   xR (np.array): X locations to mask upstream wake.
-        """        
+        """
         yR = y_locations - turbine_coord.x2
         xR = yR * tand(yaw) + turbine_coord.x1
         return xR, yR
@@ -507,8 +516,8 @@ class GaussianModel(VelocityDeficit):
                 -   sigma_z0 (np.array): Initial wake width in the vertical
                     direction.
         """
-        yaw = -1 * turbine.yaw_angle 
-        sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt( uR / (U_local + u0) )
+        yaw = -1 * turbine.yaw_angle
+        sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt(uR / (U_local + u0))
         sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
         return sigma_y0, sigma_z0
 
@@ -530,4 +539,4 @@ class GaussianModel(VelocityDeficit):
             np.array: U (np.array): U-component velocity deficits across the
             flow field.
         """
-        return U * C * np.exp( -1 * r**n / (2 * sigma**2) )
+        return U * C * np.exp(-1 * r ** n / (2 * sigma ** 2))
