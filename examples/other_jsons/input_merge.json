@@ -242,10 +242,10 @@
         },
         "wake_turbulence_parameters": {
           "crespo_hernandez": {
-            "initial": 0.5,
-            "constant": 0.9,
-            "ai": 0.75,
-            "downstream": -0.325
+            "initial": 0.1,
+            "constant": 0.37,
+            "ai": 0.8,
+            "downstream": -0.275
           }
         }
     }
