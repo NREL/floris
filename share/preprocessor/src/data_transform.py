@@ -1,6 +1,4 @@
-
-class DataTransform():
-
+class DataTransform:
     @staticmethod
     def deep_get(_dict, keys, default=None):
         """
@@ -34,7 +32,7 @@ class DataTransform():
             traverse_dict = traverse_dict.get(key)
             if i == len(keys) - 2:
                 traverse_dict[keys[-1]] = value
-                break            
+                break
         return _dict
 
     @staticmethod

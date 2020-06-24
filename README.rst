@@ -13,6 +13,8 @@ the **floris** tag. Alternatively, email the NREL FLORIS team at
   :target: https://github.com/nrel/floris/actions
 .. image:: https://codecov.io/gh/nrel/floris/branch/develop/graph/badge.svg
   :target: https://codecov.io/gh/nrel/floris
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 Background and Objectives
 =========================
@@ -48,7 +50,7 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 2.0.1 (2020). Available at https://github.com/NREL/floris.
+   FLORIS. Version 2.1.0 (2020). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
@@ -56,7 +58,7 @@ For LaTeX users:
 
     @misc{FLORIS_2020,
     author = {NREL},
-    title = {{FLORIS. Version 2.0.1},
+    title = {{FLORIS. Version 2.1.0},
     year = {2020},
     publisher = {GitHub},
     journal = {GitHub repository},

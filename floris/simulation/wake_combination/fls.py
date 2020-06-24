@@ -18,6 +18,7 @@ class FLS(WakeCombination):
     FLS uses freestream linear superposition to apply the wake velocity
     deficits to the freestream flow field.
     """
+
     def __init__(self):
         super().__init__()
         self.model_string = "fls"
