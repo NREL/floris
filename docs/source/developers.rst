@@ -14,7 +14,8 @@ The majority of the collaboration and development for FLORIS takes place
 in the `GitHub repository <http://github.com/nrel/floris>`__. There,
 `issues <http://github.com/nrel/floris/issues>`__ and
 `pull requests <http://github.com/nrel/floris/pulls>`__
-are discussed and new versions are released. It is the best mechanism for
+are discussed and `new versions <http://github.com/nrel/floris/releases>`__
+are released. It is the best mechanism for
 engaging with the NREL team and other developers throughout
 the FLORIS community.
 
@@ -24,6 +25,41 @@ pulling commits to a shared repository. Maintaining this workflow is critical
 to prevent remote changes from blocking your local development. The Git Flow
 process is detailed nicely
 `here <http://nvie.com/posts/a-successful-git-branching-model>`__.
+
+Syncing a local repository with NREL/FLORIS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The "main" FLORIS repository is continuously updated along with ongoing
+research at NREL. From time to time, developers of FLORIS using their own
+"local" repositories (versions of the software that exist on a local computer)
+may want to sync with NREL/FLORIS. To do this, use the following git commands:
+
+.. code-block:: bash
+
+    # Move into the FLORIS source code directory;
+    # this may be named differently on your computer.
+    cd floris/
+
+    # Find the remote name that corresponds to
+    # NREL/FLORIS; usually "origin" or "upstream".
+    git remote -v
+
+    # Fetch the changes on all remotes.
+    git fetch --all
+
+    # Decide which branch to sync with
+    # NREL/FLORIS. Generally, this will be "master".
+    git checkout master
+    git pull origin master
+
+    # Update any local working branches with the
+    # latest from NREL/FLORIS.
+    git checkout feature/working_branch
+    git merge master
+
+Note that the example above is a general case and may need to be modified
+to fit a specific use case or purpose. If significant development has
+happened locally, then `merge conflicts <https://www.atlassian.com/git/tutorials/using-branches/merge-conflicts>`__
+are likely and should be resolved as soon as possible.
 
 Building Documentation Locally
 ==============================
