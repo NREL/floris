@@ -264,7 +264,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
 
         return df_base
 
-    def _optimize_one_case(self, ws, wd, ti=None):
+    def _optimize_one_case(self, ws, wd, initial_farm_power, ti=None):
         """
         For a single (wind speed, direction, ti (optional)) combination, finds
         the power resulting from optimal wake steering.
@@ -323,6 +323,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                     wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
                 )
 
+            self.initial_farm_power = initial_farm_power
             opt_yaw_angles = self._optimize()
 
             if np.sum(opt_yaw_angles) == 0:
@@ -460,6 +461,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
 
         df_base.reset_index(drop=True, inplace=True)
 
+        self.df_base = df_base
         return df_base
 
     def optimize(self):
@@ -513,7 +515,10 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
         with MPIPoolExecutor() as executor:
             if self.ti is None:
                 for df_opt_one in executor.map(
-                    self._optimize_one_case, self.ws.values, self.wd.values
+                    self._optimize_one_case,
+                    self.ws.values,
+                    self.wd.values,
+                    self.df_base.power_baseline.values,
                 ):
 
                     # add variables to dataframe
@@ -523,6 +528,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                     self._optimize_one_case,
                     self.ws.values,
                     self.wd.values,
+                    self.df_base.power_baseline.values,
                     self.ti.values,
                 ):
 

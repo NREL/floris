@@ -24,8 +24,14 @@ import floris.tools.cut_plane as cp
 import floris.tools.wind_rose as rose
 import floris.tools.power_rose as pr
 import floris.tools.visualization as vis
-from floris.tools.optimization.scipy.yaw_wind_rose import importYawOptimizationWindRose
+from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRose
 
+opt_options = {
+    "maxiter": 100,
+    "disp": True,
+    "iprint": 2,
+    "ftol": 1e-7, #     "eps": 0.01,
+}
 
 # Define wind farm coordinates and layout
 wf_coordinate = [39.8283, -98.5795]
@@ -105,13 +111,25 @@ if calculate_new_wind_rose:
 else:
     df = wind_rose.load(os.path.join(file_dir, "../windtoolkit_geo_center_us.p"))
 
-# plot wind rose
-wind_rose.plot_wind_rose()
-
 # =============================================================================
 print("Finding baseline and optimal yaw angles in FLORIS...")
 # =============================================================================
 
+# wd = np.arange(0.0, 360.0, 15.0)
+# np.random.seed(1)
+# ws = 8.0 + np.random.randn(len(wd)) * 0.5
+# freq = np.abs(np.sort(np.random.randn(len(wd))))
+# freq = freq / freq.sum()
+
+# print(ws)
+
+# df = wind_rose.make_wind_rose_from_user_data(wd, ws)
+
+# plot wind rose
+wind_rose.plot_wind_rose()
+# plt.show()
+
+# lkj
 # Instantiate the Optimization object
 yaw_opt = YawOptimizationWindRose(
     fi,
@@ -121,6 +139,7 @@ yaw_opt = YawOptimizationWindRose(
     maximum_yaw_angle=max_yaw,
     minimum_ws=minimum_ws,
     maximum_ws=maximum_ws,
+    opt_options=opt_options,
 )
 
 # Determine baseline power with and without wakes
@@ -128,6 +147,9 @@ df_base = yaw_opt.calc_baseline_power()
 
 # Perform optimization
 df_opt = yaw_opt.optimize()
+
+print('base: ', df_base["power_baseline"])
+print('opt: ', df_opt["power_opt"])
 
 # Initialize power rose
 case_name = "Example " + str(N_row) + " x " + str(N_row) + " Wind Farm"

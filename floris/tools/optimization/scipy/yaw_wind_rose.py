@@ -232,6 +232,11 @@ class YawOptimizationWindRose(Optimization):
         Returns:
             power (float): Wind plant power. #TODO negative? in kW?
         """
+        yaw_angles = self._unnorm(
+            np.array(yaw_angles),
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle
+        )
 
         power = -1 * self.fi.get_farm_power_for_yaw_angle(
             yaw_angles,
