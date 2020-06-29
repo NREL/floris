@@ -152,6 +152,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
+            calc_init_power=False
         )
 
     # Private methods
