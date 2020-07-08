@@ -128,6 +128,42 @@ FLORIS:
 
     import floris
 
+Developer Installation
+~~~~~~~~~~~~~~~~~~~~~~
+The developer installation allows developers who are interested in contributing
+to the code base to maintain an editable instance of FLORIS much like the above
+instructions with the added benefit of automatic code formatting and linting
+through `pre-commit` hooks. The use of `pre-commit` hooks enables contributors'
+code to adhere to newly adopted style guidelines adopted by FLORIS without
+having contributors change their own style in the development phase.
+
+First, clone the repository from GitHub:
+
+.. code-block:: bash
+
+    git clone https://github.com/nrel/floris
+
+Then, install the local editable "developer" version that has some additional
+dependencies:
+
+.. code-block:: bash
+
+    pip install -e 'floris[develop]'
+
+Next, be sure to activate the `pre-commit` workflow:
+
+.. code-block:: bash
+
+    pre-commit install
+
+Finally, test the installation by opening a python terminal and importing FLORIS:
+
+.. code-block:: bash
+
+    import floris
+    floris.__version__
+
+
 pip Repo Installation
 ~~~~~~~~~~~~~~~~~~~~~
 The FLORIS version available through the pip repository is typically the latest
