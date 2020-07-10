@@ -213,14 +213,12 @@ class YawOptimizationWindRose(Optimization):
                         turbulence_intensity=self.ti[i]
                     )
                 self.fi.calculate_wake()
-                opt_yaw_angles = self.nturbs*[0.0]
                 power_opt = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
                     unc_options=self.unc_options
                 )
             else:
-                opt_yaw_angles = self.nturbs*[0.0]
                 power_opt = self.nturbs*[0.0]
 
             self.initial_farm_powers.append(np.sum(power_opt))

@@ -141,10 +141,6 @@ class YawOptimization(Optimization):
             unc_options=unc_options,
         )
 
-        self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
-            [0.0]*self.nturbs
-        )
-
     # Private methods
 
     def _yaw_power_opt(self, yaw_angles):
@@ -383,6 +379,13 @@ class YawOptimization(Optimization):
                 "yaw_unc": yaw_unc,
                 "yaw_unc_pmf": yaw_unc_pmf,
             }
+
+        self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
+            [0.0]*self.nturbs,
+            include_unc=include_unc,
+            unc_pmfs=unc_pmfs,
+            unc_options=unc_options
+        )
 
     # Properties
 
