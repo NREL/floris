@@ -38,6 +38,7 @@ Examples:
 
 from . import (
     rews,
+    batch_process,
     plotting,
     cut_plane,
     flow_data,
