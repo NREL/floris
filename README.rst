@@ -163,7 +163,7 @@ Install `floris` with the developer add-ons. Pease note the quotes and dot!:
 
 .. code-block:: bash
 
-    pip installe -e '.[develop]'
+    pip install -e '.[develop]'
 
 Install the pre-commit workflow:
 
