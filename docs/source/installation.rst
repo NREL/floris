@@ -40,6 +40,7 @@ Developer Installation
 As v2.1.0, `floris` has instantiated automatic code linting and formatting that
 is performed with every commit. This is accomplished through the follwing
 add-ons:
+
 - `pre-commit`
 - `isort`
 - `black`
@@ -48,24 +49,24 @@ add-ons:
 As such, there are a couple of extra steps involved so the following workflow
 should be adhered to:
 
-1. Clone the repository and checkout the `develop` branch:
+Clone the repository and checkout the `develop` branch:
 
 .. code-block:: bash
     git clone https://github.com/NREL/floris.git
     cd floris/
     git checkout develop
 
-2. Install `floris` with the developer add-ons. Pease note the quotes and dot!
+Install `floris` with the developer add-ons. Pease note the quotes and dot!
 
 .. code-block:: bash
     pip install -e '.[develop]'
 
-3. Install the pre-commit workflow:
+Install the pre-commit workflow:
 
 .. code-block:: bash
     pre-commit install
 
-4. Happy developing!
+Happy developing!
 
 OLD INSTRUCTIONS!!
 ==================
