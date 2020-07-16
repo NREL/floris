@@ -153,19 +153,25 @@ should be adhered to:
 Clone the repository and checkout the `develop` branch:
 
 .. code-block:: bash
+
     git clone https://github.com/NREL/floris.git
-    cd floris/
+    cd floris
     git checkout develop
+
 
 Install `floris` with the developer add-ons. Pease note the quotes and dot!:
 
 .. code-block:: bash
+
     pip installe -e '.[develop]'
+
 
 Install the pre-commit workflow:
 
 .. code-block:: bash
+
     pre-commit install
+
 
 Happy developing!
 
