@@ -142,6 +142,7 @@ Developer Installation
 As v2.1.0, `floris` has instantiated automatic code linting and formatting that
 is performed with every commit. This is accomplished through the follwing
 add-ons:
+
 - `pre-commit`
 - `isort`
 - `black`
