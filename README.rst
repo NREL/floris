@@ -137,31 +137,35 @@ through `pre-commit` hooks. The use of `pre-commit` hooks enables contributors'
 code to adhere to newly adopted style guidelines adopted by FLORIS without
 having contributors change their own style in the development phase.
 
-First, clone the repository from GitHub:
+Developer Installation
+======================
+As v2.1.0, `floris` has instantiated automatic code linting and formatting that
+is performed with every commit. This is accomplished through the follwing
+add-ons:
+- `pre-commit`
+- `isort`
+- `black`
+- `flake8`
+
+As such, there are a couple of extra steps involved so the following workflow
+should be adhered to:
+1. Clone the repository and checkout the `develop` branch:
 
 .. code-block:: bash
+    git clone https://github.com/NREL/floris.git
+    cd floris/
+    git checkout develop
 
-    git clone https://github.com/nrel/floris
-
-Then, install the local editable "developer" version that has some additional
-dependencies:
-
-.. code-block:: bash
-
-    pip install -e 'floris[develop]'
-
-Next, be sure to activate the `pre-commit` workflow:
+2. Install `floris` with the developer add-ons. Pease not the quotes and dot!:
 
 .. code-block:: bash
+    pip installe -e '.[develop]'
 
+3. Install the pre-commit workflow:
+.. code-block:: bash
     pre-commit install
 
-Finally, test the installation by opening a python terminal and importing FLORIS:
-
-.. code-block:: bash
-
-    import floris
-    floris.__version__
+4. Happy developing!
 
 
 pip Repo Installation
