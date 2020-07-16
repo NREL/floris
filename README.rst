@@ -162,12 +162,12 @@ Install `floris` with the developer add-ons. Pease note the quotes and dot!:
 .. code-block:: bash
     pip installe -e '.[develop]'
 
-3. Install the pre-commit workflow:
+Install the pre-commit workflow:
 
 .. code-block:: bash
     pre-commit install
 
-4. Happy developing!
+Happy developing!
 
 
 pip Repo Installation
