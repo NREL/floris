@@ -1,27 +1,72 @@
 
 Installing FLORIS
 -----------------
- TODO: describe whats here.
+There are a number of ways that FLORIS can be installed. The following document
+will provide instructions ranging from entry level users to contributors.
 
 Basic Installation
 ==================
-If you just want to run FLORIS, do this
-pip install floris
-conda install floris
+If you only want to run FLORIS, you can install via `pip` or `conda` with:
+
+.. code-block:: bash
+    pip install floris
+
+OR
+
+.. code-block:: bash
+    conda install floris
+
 
 Advanced Installation
 =====================
+If you prefer to install from source you can install via:
 i.e. source code installation
-git clone
-pip install -e
 
-Developer addons
-================
-black
-flake8
+.. code-block:: bash
 
-.. _installation:
+    # master branch for the latest release version
+    git clone https://github.com/NREL/floris.git -b master
 
+    # or develop branch branch for the latest updates to the code base
+    git clone https://github.com/NREL/floris.git -b develop
+
+    # then install into your Python environment
+    pip install -e floris
+
+
+
+Developer Installation
+======================
+As v2.1.0, `floris` has instantiated automatic code linting and formatting that
+is performed with every commit. This is accomplished through the follwing
+add-ons:
+- `pre-commit`
+- `isort`
+- `black`
+- `flake8`
+
+As such, there are a couple of extra steps involved so the following workflow
+should be adhered to:
+1. Clone the repository and checkout the `develop` branch:
+
+.. code-block:: bash
+    git clone https://github.com/NREL/floris.git
+    cd floris/
+    git checkout develop
+
+2. Install `floris` with the developer add-ons. Pease not the quotes and dot!:
+
+.. code-block:: bash
+    pip installe -e '.[develop]'
+
+3. Install the pre-commit workflow:
+.. code-block:: bash
+    pre-commit install
+
+4. Happy developing!
+
+OLD INSTRUCTIONS!!
+==================
 Installation
 ============
 The FLORIS repository consists of two primary branches:
