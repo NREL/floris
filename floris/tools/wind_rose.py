@@ -1314,6 +1314,7 @@ class WindRose:
         color_map="viridis_r",
         ws_right_edges=np.array([5, 10, 15, 20, 25]),
         wd_bins=np.arange(0, 360, 15.0),
+        legend_kwargs={},
     ):
         """
         This method creates a wind rose plot showing the frequency of occurance
@@ -1332,6 +1333,8 @@ class WindRose:
                 np.array([5, 10, 15, 20, 25]).
             wd_bins (np.array, optional): The wind direction bin centers used
                 for plotting (deg). Defaults to np.arange(0, 360, 15.).
+            legend_kwargs (dict, optional): Keyword arguments to be passed to
+                ax.legend().
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
@@ -1373,7 +1376,7 @@ class WindRose:
             # break
 
         # Configure the plot
-        ax.legend(reversed(rects), ws_labels)
+        ax.legend(reversed(rects), ws_labels, **legend_kwargs)
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
