@@ -1,53 +1,82 @@
 
 Installing FLORIS
 -----------------
-There are a number of ways that FLORIS can be installed. The following document
-will provide instructions ranging from entry level users to contributors.
+The installation procedure for FLORIS varies depending on the inteded usage.
+Developers of FLORIS will download the source code and install it in a manner
+that allows running the local source code. On the other hand, those who want
+to run the "released" version of FLORIS in their own script can install
+with a package manager.
 
 Basic Installation
 ==================
-If you only want to run FLORIS, you can install via `pip` or `conda` with:
+To run a released version of FLORIS, you can install via `pip` or `conda`.
+By default, this installs that latest released version. To install a specific
+version, specify that as shown below.
 
 .. code-block:: bash
-    pip install floris
 
-OR
+    # Using pip...
+    pip install floris         # Latest version
+    pip install floris==1.1.0  # Specified version number
+    
+    # Using conda...
+    conda install floris        # Latest version
+    conda install floris=1.1.0  # Specified version number
 
-.. code-block:: bash
-    conda install floris
 
+After installation, the FLORIS package can by imported in a Python
+program similar to any other package.
+
+.. code-block:: python
+    
+    import floris
+    print( help( floris ) )
+    print( dir( floris ) )
+    print( help( floris.simulation ) )
 
 Advanced Installation
 =====================
-If you prefer to install from source you can install via:
-i.e. source code installation
+You may prefer to download the source code of FLORIS and install
+it on your system. This is required for developing FLORIS, but it
+is also useful to study the software since an extensive set
+of examples are provided with the repository.
+
+The FLORIS repository consists of two primary branches:
+
+- `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
+  release corresponding to a specific version number.
+- `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
+  updates including bug fixes and improvements but possibly unstable.
+
+To download the source code, use `git clone`. Then, add it to
+your Python path with the "local editable install" through `pip`.
 
 .. code-block:: bash
 
-    # master branch for the latest release version
-    git clone https://github.com/NREL/floris.git -b master
+    # Download the source code.
+    git clone https://github.com/NREL/floris.git
 
-    # or develop branch branch for the latest updates to the code base
-    git clone https://github.com/NREL/floris.git -b develop
-
-    # then install into your Python environment
+    # Install into your Python environment
     pip install -e floris
 
-
+If everything is configured correctly, any changes made to the source
+code will be available directly through your local Python. Remember
+to re-import the FLORIS module when changes are made if you are working
+in an interactive environment like Jupyter.
 
 Developer Installation
 ======================
-As v2.1.0, `floris` has instantiated automatic code linting and formatting that
-is performed with every commit. This is accomplished through the follwing
-add-ons:
+The FLORIS development team has included automatic code linting and
+formatting utilities that are executed at every commit. This is
+accomplished through the following add-ons:
 
-- `pre-commit`
-- `isort`
-- `black`
-- `flake8`
+- `pre-commit <https://pre-commit.com/>`_
+- `isort <https://timothycrosley.github.io/isort/>`_
+- `black <https://black.readthedocs.io/en/stable/>`_
+- `flake8 <https://flake8.pycqa.org/en/latest/>`_
 
-As such, there are a couple of extra steps involved so the following workflow
-should be adhered to:
+There are some extra steps required to align your development
+environment with the FLORIS development team's.
 
 Clone the repository and checkout the `develop` branch:
 
@@ -57,106 +86,23 @@ Clone the repository and checkout the `develop` branch:
     cd floris
     git checkout develop
 
-Install `floris` with the developer add-ons. Pease note the quotes and dot!:
+Install FLORIS with the developer add-ons
+
+.. important::
+
+    You must include the two quotes `'` and the dot `.`!
 
 .. code-block:: bash
 
     pip install -e '.[develop]'
 
-Install the pre-commit workflow:
+Install the pre-commit utility:
 
 .. code-block:: bash
 
     pre-commit install
 
-Happy developing!
+Finally, check out :ref:`for_developers` for guidance on merging
+your updates to FLORIS with the NREL repository.
 
-OLD INSTRUCTIONS!!
-==================
-Installation
-============
-The FLORIS repository consists of two primary branches:
-
-- `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
-  release corresponding to a specific version number.
-- `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
-  updates including bug fixes and improvements.
-
-These can be cloned (i.e. downloaded) directly from GitHub with one of the
-following commands:
-
-.. code-block:: bash
-
-    # master branch
-    git clone https://github.com/nrel/floris -b master
-
-    # develop branch
-    git clone https://github.com/nrel/floris -b develop
-
-After obtaining the source code, it can be "installed" using ``pip`` or another
-Python package manager. With ``pip``, there are two options:
-
-- local editable install
-- using a tagged release version from the ``pip`` repo
-
-For consistency between all developers, it is recommended to use Python
-virtual environments;
-`this link <https://realpython.com/blog/python/python-virtual-environments-a-primer/>`_
-provides a great introduction. Using virtual environments in a Jupyter Notebook
-is described `here <https://help.pythonanywhere.com/pages/IPythonNotebookVirtualenvs/>`_.
-
-Local Editable Installation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The local editable installation allows developers to maintain an importable
-instance of FLORIS while continuing to extend it. The alternative is to
-constantly update python paths within the package to match the local
-environment.
-
-Before doing the local install, the source code repository must be cloned
-directly from GitHub:
-
-.. code-block:: bash
-
-    git clone https://github.com/nrel/floris
-
-Then, using the local editable installation is as simple as running the
-following command from the parent directory of the
-cloned repository:
-
-.. code-block:: bash
-
-    pip install -e floris
-
-Finally, test the installation by starting a python terminal and importing
-FLORIS:
-
-.. code-block:: bash
-
-    import floris
-
-pip Repo Installation
-~~~~~~~~~~~~~~~~~~~~~
-The FLORIS version available through the pip repository is typically the latest
-tagged and released major version. This version represents the most recent
-stable, tested, and validated code.
-
-In this case, there is no need to download the source code directly. FLORIS
-and its dependencies can be installed with:
-
-.. code-block:: bash
-
-    pip install floris
-
-Dependencies
-============
-FLORIS has dependencies on various math, statistics, and plotting libraries in
-addition to other general purpose packages. For the simulation and tool
-modules, the dependencies are listed in ``floris/requirements.txt``. The
-documentation has additional requirements listed in
-``floris/docs/requirements.txt``.
-
-The requirements files can be used to install everything with:
-
-.. code-block:: bash
-
-    pip install -r requirements.txt
+Happy coding!

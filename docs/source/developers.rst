@@ -1,3 +1,5 @@
+.. _for_developers:
+
 For Developers
 --------------
 FLORIS is currently maintained at NREL's National Wind Technology Center by
