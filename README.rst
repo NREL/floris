@@ -70,7 +70,7 @@ For LaTeX users:
 Installation
 ============
 For full installation instructions, see
-https://floris.readthedocs.io/en/master/source/installation.html.
+https://floris.readthedocs.io/en/latest/source/installation.html.
 
 Users who want to run FLORIS without downloading the full source code
 can install with `pip` or `conda`, as shown below.
