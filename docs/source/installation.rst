@@ -70,8 +70,10 @@ This documentation is generated with Sphinx and hosted on readthedocs. However,
 it can be built locally by running this command in the ``floris/docs/``
 directory:
 
-**Note** that a few additional dependencies required to build the documentation
-locally are listed at ``floris/docs/requirements.txt``.
+.. important::
+
+    A few additional dependencies required to build the documentation
+    locally are listed at ``floris/docs/requirements.txt``.
 
 .. code-block:: bash
 
