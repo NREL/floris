@@ -64,27 +64,6 @@ code will be available directly through your local Python. Remember
 to re-import the FLORIS module when changes are made if you are working
 in an interactive environment like Jupyter.
 
-Building Documentation Locally
-==============================
-This documentation is generated with Sphinx and hosted on readthedocs. However,
-it can be built locally by running this command in the ``floris/docs/``
-directory:
-
-.. important::
-
-    A few additional dependencies required to build the documentation
-    locally are listed at ``floris/docs/requirements.txt``.
-
-.. code-block:: bash
-
-    cd floris/docs
-    pip install -r requirements.txt
-    make html
-
-This will create a file at ``floris/docs/_build/html/index.html`` which
-can be opened in any web browser.
-
-
 Developer Installation
 ======================
 The FLORIS development team has included automatic code linting and
@@ -124,6 +103,7 @@ Install the pre-commit utility:
     pre-commit install
 
 Finally, check out :ref:`for_developers` for guidance on merging
-your updates to FLORIS with the NREL repository.
+your updates to FLORIS with the NREL repository as well as for building the
+documentation locally.
 
 Happy coding!
