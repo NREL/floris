@@ -90,7 +90,7 @@ Install FLORIS with the developer add-ons
 
 .. important::
 
-    You must include the two quotes `'` and the dot `.`!
+    You must include the two quotes (`'`) and the dot (`.`)!
 
 .. code-block:: bash
 
