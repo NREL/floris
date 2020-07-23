@@ -18,7 +18,7 @@ version, specify that as shown below.
     # Using pip...
     pip install floris         # Latest version
     pip install floris==1.1.0  # Specified version number
-    
+
     # Using conda...
     conda install floris        # Latest version
     conda install floris=1.1.0  # Specified version number
@@ -28,7 +28,7 @@ After installation, the FLORIS package can by imported in a Python
 program similar to any other package.
 
 .. code-block:: python
-    
+
     import floris
     print( help( floris ) )
     print( dir( floris ) )
@@ -63,6 +63,25 @@ If everything is configured correctly, any changes made to the source
 code will be available directly through your local Python. Remember
 to re-import the FLORIS module when changes are made if you are working
 in an interactive environment like Jupyter.
+
+Building Documentation Locally
+==============================
+This documentation is generated with Sphinx and hosted on readthedocs. However,
+it can be built locally by running this command in the ``floris/docs/``
+directory:
+
+**Note** that a few additional dependencies required to build the documentation
+locally are listed at ``floris/docs/requirements.txt``.
+
+.. code-block:: bash
+
+    cd floris/docs
+    pip install -r requirements.txt
+    make html
+
+This will create a file at ``floris/docs/_build/html/index.html`` which
+can be opened in any web browser.
+
 
 Developer Installation
 ======================
