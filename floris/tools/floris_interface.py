@@ -17,9 +17,9 @@ import copy
 
 import numpy as np
 import pandas as pd
+
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
 from .cut_plane import CutPlane, get_plane_from_flow_data
@@ -859,6 +859,7 @@ class FlorisInterface(LoggerBase):
         unc_options=None,
         no_wake=False,
         use_turbulence_correction=False,
+        use_new=False,
     ):
         """
         Report power from each wind turbine.
@@ -1003,8 +1004,36 @@ class FlorisInterface(LoggerBase):
             self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
             return list(mean_farm_power)
         else:
-            turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
+            if use_new:
+                turb_powers = [
+                    turbine.new_power for turbine in self.floris.farm.turbines
+                ]
+            else:
+                turb_powers = [turbine.power for turbine in self.floris.farm.turbines]
             return turb_powers
+
+    def get_power_curve(self, wind_speeds, use_new=False):
+        """
+        Return the power curve given a set of wind speeds
+
+        Args:
+            wind_speeds (np.array): array of wind speeds to get power curve
+        """
+
+        # Temporarily set the farm to a single turbine
+        saved_layout_x = self.layout_x
+        saved_layout_y = self.layout_y
+        self.reinitialize_flow_field(layout_array=([0], [0]))
+        power_return_array = []
+        for ws in wind_speeds:
+            self.reinitialize_flow_field(wind_speed=ws)
+            self.calculate_wake()
+            power_return_array.append(self.get_turbine_power(use_new=use_new)[0])
+
+        # Set it back
+        self.reinitialize_flow_field(layout_array=(saved_layout_x, saved_layout_y))
+
+        return np.array(power_return_array)
 
     def get_turbine_ct(self):
         """

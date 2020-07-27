@@ -16,6 +16,7 @@
 import math
 
 import numpy as np
+
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
 from scipy.interpolate import interp1d
@@ -125,6 +126,10 @@ class Turbine(LoggerBase):
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
+
+        # Compute list of inner powers
+        inner_power = np.array([self.power_inner_function(ws) for ws in wind_speed])
+        self.powInterp = interp1d(wind_speed, inner_power, fill_value="extrapolate")
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
@@ -540,6 +545,31 @@ class Turbine(LoggerBase):
         """
         return self._fCt(self.average_velocity) * cosd(self.yaw_angle)  # **self.pP
 
+    def power_inner_function(self, yaw_effective_velocity):
+        """
+        Might be a temporary inner function
+
+        Returns:
+            [type]: [description]
+        """
+        # Compute the yaw effective velocity
+        # pW = self.pP / 3.0  # Convert from pP to w
+        # yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
+
+        # Now compute the power
+        cptmp = self._fCp(
+            yaw_effective_velocity
+        )  # Note Cp is also now based on yaw effective velocity
+        return (
+            0.5
+            # * self.air_density
+            * (np.pi * self.rotor_radius ** 2)
+            * cptmp
+            * self.generator_efficiency
+            # * self.turbulence_parameter
+            * yaw_effective_velocity ** 3
+        )
+
     @property
     def power(self):
         """
@@ -576,6 +606,40 @@ class Turbine(LoggerBase):
             * self.generator_efficiency
             * self.turbulence_parameter
             * yaw_effective_velocity ** 3
+        )
+
+    @property
+    def new_power(self):
+        """
+        This property returns the power produced by turbine (W),
+        adjusted for yaw and tilt.
+
+        Returns:
+            float: Power of a turbine in watts.
+
+        Examples:
+            To get the power for a turbine:
+
+            >>> power = floris.farm.turbines[0].power()
+        """
+        # Update to power calculation which replaces the fixed pP exponent with
+        # an exponent pW, that changes the effective wind speed input to the power
+        # calculation, rather than scaling the power.  This better handles power
+        # loss to yaw in above rated conditions
+        #
+        # based on the paper "Optimising yaw control at wind farm level" by
+        # Ervin Bossanyi
+
+        # Compute the yaw effective velocity
+        pW = self.pP / 3.0  # Convert from pP to w
+        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
+
+        # Now compute the power
+        # cptmp = self.Cp  # Note Cp is also now based on yaw effective velocity
+        return (
+            self.air_density
+            * self.powInterp(yaw_effective_velocity)
+            * self.turbulence_parameter
         )
 
     @property
