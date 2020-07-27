@@ -129,6 +129,7 @@ class VelocityDeflection(LoggerBase):
             D = turbine.rotor_diameter
             HH = turbine.hub_height
             aI = turbine.aI
+            yaw_turbine = turbine.yaw_angle
             TSR = turbine.tsr
             V = flow_field.v
             Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
@@ -152,7 +153,7 @@ class VelocityDeflection(LoggerBase):
             rC = yLocs ** 2 + zC ** 2
 
             # find wake deflection from CRV
-            test_gamma = np.linspace(-45, 45, 91)
+            test_gamma = np.arange(-90, 90, 1)
             avg_V = np.mean(V[idx])
             minYaw = 10000
             target_yaw_ix = None
@@ -170,15 +171,17 @@ class VelocityDeflection(LoggerBase):
                     * ((HH - D / 2) / flow_field.specified_wind_height)
                     ** flow_field.wind_shear
                 ) / Uinf
+                
+                # In order to be consistent with Shapiro "Modelling yawed wind turbine wakes: a lifting line approach"
+                # since Ct already accounts for the yaw angle of the turbine
                 Gamma_top = (
-                    (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+                    (1 / 2) * D * vel_top * Uinf * Ct * cosd(yaw_turbine) * sind(yaw)
                 )
                 Gamma_bottom = (
-                    -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+                    -(1 / 2) * D * vel_bottom * Uinf * Ct * cosd(yaw_turbine) * sind(yaw)
                 )
                 Gamma_wake_rotation = (
-                    0.25
-                    * 2
+                    2
                     * np.pi
                     * D
                     * (aI - aI ** 2)
