@@ -203,13 +203,13 @@ class GaussianModel(VelocityDeficit):
             * ((HH - D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear
         ) / Uinf
         Gamma_top = (
-            scale * (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+            scale * (1 / 2) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
         )
         Gamma_bottom = (
-            -scale * (np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+            -scale * (1 / 2) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
         )
         Gamma_wake_rotation = (
-            0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+            2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
         )
 
         # compute the spanwise and vertical velocities induced by yaw
