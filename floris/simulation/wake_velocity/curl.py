@@ -13,7 +13,7 @@
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-from ...utilities import Vec3, sind
+from ...utilities import Vec3, sind, cosd
 from .base_velocity_deficit import VelocityDeficit
 
 
@@ -216,11 +216,9 @@ class Curl(VelocityDeficit):
         # calculate the curled wake effects due to the yaw and tilt
         # of the turbine
         Gamma_Yaw = (
-            flow_field.air_density
-            * np.pi
-            * D
-            / 8
-            * Ct
+            D
+            / 2
+            * Ct * cosd(yaw)
             * turbine.average_velocity
             * sind(yaw)
         )
@@ -229,11 +227,9 @@ class Curl(VelocityDeficit):
         else:
             YawFlag = 0
         Gamma_Tilt = (
-            flow_field.air_density
-            * np.pi
-            * D
-            / 8
-            * Ct
+            D
+            / 2
+            * Ct * cosd(tilt)
             * turbine.average_velocity
             * sind(tilt)
         )
@@ -242,7 +238,7 @@ class Curl(VelocityDeficit):
         else:
             TiltFlag = 0
 
-        Gamma = Gamma_Yaw + Gamma_Tilt
+        Gamma0 = Gamma_Yaw + Gamma_Tilt
 
         # calculate the curled wake effects due to the rotation
         # of the turbine rotor
@@ -254,24 +250,25 @@ class Curl(VelocityDeficit):
         eps = 0.2 * D
 
         # distribute rotation across the blade
-        z_vector = np.linspace(0, D / 2, 100)
+        nb_vortex = 50
+        z_vector = np.linspace(0, D / 2, nb_vortex)
 
         # length of each section dz
         dz = z_vector[1] - z_vector[0]
 
-        # scale the circulation of each section dz
-        if yaw != 0 or tilt != 0:
-            Gamma0 = 4 / np.pi * Gamma
-        else:
-            Gamma0 = 0.0
+        z_vector_medium = np.linspace(0 + dz / 2, D / 2 - dz / 2, nb_vortex - 1)
+        z_left = z_vector[:-1]
+        z_right = z_vector[1:]
+
+        # Compute the non-dimensional circulation
+        # Discretization based on the trapezoidal rule, to ensure the conservativeness of the circulation
+        Gamma_vector = (-self._circulation_radius(Gamma0, D, z_left) + self._circulation_radius(Gamma0, D, z_right))
 
         # loop through all the vortices from an elliptic wind distribution
-        # skip the last point because it has zero circulation
-        for z in z_vector[:-1]:
+        for i, z in enumerate(z_vector_medium):
 
-            # Compute the non-dimensional circulation
-            Gamma = -4 * Gamma0 * z * dz / (D ** 2 * np.sqrt(1 - (2 * z / D) ** 2))
-
+            Gamma = Gamma_vector[i]
+            
             # locations of the tip vortices
             # top
             y_vortex_1 = turbine_coord.x2 + z * TiltFlag
@@ -461,7 +458,10 @@ class Curl(VelocityDeficit):
         uw[x_locations < turbine_coord.x1] = 0.0
 
         return uw, V, W
-
+    
+    def _circulation_radius(self, Gamma, D, r):
+        return Gamma / (D / 2) * np.sqrt((D / 2) ** 2 - r ** 2)
+    
     def _vortex(self, x, y, z, Gamma, eps, U):
         # compute the vortex velocity
         v = (
