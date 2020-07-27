@@ -1,3 +1,5 @@
+.. _for_developers:
+
 For Developers
 --------------
 FLORIS is currently maintained at NREL's National Wind Technology Center by
@@ -67,22 +69,29 @@ This documentation is generated with Sphinx and hosted on readthedocs. However,
 it can be built locally by running this command in the ``floris/docs/``
 directory:
 
+.. important::
+
+    A few additional dependencies required to build the documentation
+    locally are listed at ``floris/docs/requirements.txt``.
+
 .. code-block:: bash
 
+    cd floris/docs
+    pip install -r requirements.txt
     make html
 
 This will create a file at ``floris/docs/_build/html/index.html`` which
 can be opened in any web browser.
 
-**Note** that a few additional dependencies required to build the documentation
-locally are listed at ``floris/docs/requirements.txt``.
+This will create a file at ``floris/docs/_build/html/index.html`` which
+can be opened in any web browser.
 
 Testing
 =======
 
 In order to maintain a level of confidence in the software, FLORIS is expected
 to maintain a reasonable level of test coverage. To that end, unit
-tests for a small subset of the `simulation` package are included. 
+tests for a small subset of the `simulation` package are included.
 
 The full testing suite can by executed by running the command ``pytest`` from
 the highest directory in the repository. A testing-only class is included
