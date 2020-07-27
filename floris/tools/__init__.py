@@ -45,6 +45,7 @@ from . import (
     power_rose,
     energy_ratio,
     optimization,
+    batch_process,
     visualization,
     sowfa_utilities,
     floris_interface,
