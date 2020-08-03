@@ -53,14 +53,14 @@ timing_result = []
 for r in range(repeats):
     start = time.time()
     for i in range(N):
-        fi.reinitialize_flow_field(wind_speed=8.0, wind_direction=270.0)
+        fi.reinitialize_flow_field(wind_speed=8.0 + i / N, wind_direction=270.0 + i / N)
     end = time.time()
     elapsed_time = (end - start) / N
     timing_result.append(elapsed_time)
 
 timing_result = np.array(timing_result)
 
-# Collect the turbine powers
+# Collect the turbine powers of the last run case
 fi.calculate_wake()
 turbine_powers = np.array(fi.get_turbine_power())
 
