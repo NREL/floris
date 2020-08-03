@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 # PARAMETERS
 recompute_baseline = False
 show_layout = False
+turn_off_gch = False
 
 # Fixed parameters
 N_row = 3
@@ -36,6 +37,9 @@ N_row = 3
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
 fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
+
+if turn_off_gch:
+    fi.set_gch(False)
 
 # Set to a 5 turbine case
 D = fi.floris.farm.turbines[0].rotor_diameter
@@ -67,6 +71,7 @@ freq = np.ones_like(ws_list) / num_cases
 
 
 # # Now check the timing
+print("===START TEST===")
 start = time.time()
 power_result = fi.get_farm_AEP(wd_list, ws_list, freq)
 end = time.time()
@@ -80,9 +85,9 @@ print("*** exact result in s -> %f" % elapsed_time)
 
 # Now check if result has changed
 if recompute_baseline:
-    pickle.dump(power_result, open("result_case_5.p", "wb"))
+    pickle.dump(power_result, open("result_case_5b.p", "wb"))
 else:
-    saved_result = pickle.load(open("result_case_5.p", "rb"))
+    saved_result = pickle.load(open("result_case_5b.p", "rb"))
 
     power_difference = power_result - saved_result
 
