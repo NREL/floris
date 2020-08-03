@@ -24,17 +24,21 @@ import matplotlib.pyplot as plt
 
 
 # PARAMETERS
-recompute_baseline = False
+recompute_baseline = True
 show_layout = False
 repeats = 10  # Number of times to repeat the analysis
 N = 50  # Number of iterations in timing loop
 num_turbine = 5
+turn_off_gch = False
 
 
 # Initialize the FLORIS interface fi
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
 fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
+
+if turn_off_gch:
+    fi.set_gch(False)
 
 # Set to a 5 turbine case
 D = 126.0
@@ -49,6 +53,7 @@ fi.reinitialize_flow_field(
 fi.calculate_wake()
 
 # Now check the timing
+print("===START TEST===")
 timing_result = []
 for r in range(repeats):
     start = time.time()
@@ -78,9 +83,9 @@ print("*** exact result in s -> %f" % timing_result.mean())
 
 # Now check if result has changed
 if recompute_baseline:
-    pickle.dump(turbine_powers, open("result_case_2.p", "wb"))
+    pickle.dump(turbine_powers, open("result_case_2b.p", "wb"))
 else:
-    saved_result = pickle.load(open("result_case_2.p", "rb"))
+    saved_result = pickle.load(open("result_case_2b.p", "rb"))
     new_total = turbine_powers.sum()
     saved_total = saved_result.sum()
     power_difference = turbine_powers - saved_result
