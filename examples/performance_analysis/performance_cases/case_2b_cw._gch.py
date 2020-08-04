@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 
 # PARAMETERS
-recompute_baseline = True
+recompute_baseline = False
 show_layout = False
 repeats = 10  # Number of times to repeat the analysis
 N = 50  # Number of iterations in timing loop
