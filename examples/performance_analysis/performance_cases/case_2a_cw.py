@@ -72,7 +72,7 @@ turbine_powers = np.array(fi.get_turbine_power())
 # Report the timing
 print("====RESULT====")
 print(
-    "*** reinitialize_flow_field takes on average %.1f ms, and ranges (%.1f -- %.1f)"
+    "*** calculate wake takes on average %.1f ms, and ranges (%.1f -- %.1f)"
     % (
         timing_result.mean() * 1000,
         timing_result.min() * 1000,
