@@ -19,9 +19,9 @@ import pickle
 import itertools
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 import floris.tools as wfct
+import matplotlib.pyplot as plt
 
 
 # PARAMETERS
