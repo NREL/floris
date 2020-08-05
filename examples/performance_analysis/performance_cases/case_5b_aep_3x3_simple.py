@@ -19,9 +19,9 @@ import pickle
 import itertools
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 import floris.tools as wfct
+import matplotlib.pyplot as plt
 
 
 # PARAMETERS
@@ -58,7 +58,7 @@ fi.reinitialize_flow_field(
 fi.calculate_wake()
 
 # Set up the wind rose assuming every wind speed and direction equaly likely
-ws_list = np.arange(1, 26, 1)
+ws_list = np.arange(3, 26, 1)
 wd_list = np.arange(0, 360, 5)
 combined = np.array(list(itertools.product(ws_list, wd_list)))
 ws_list = combined[:, 0]
