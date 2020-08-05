@@ -19,9 +19,9 @@ import pickle
 import itertools
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 import floris.tools as wfct
-import matplotlib.pyplot as plt
 
 
 # PARAMETERS
@@ -72,9 +72,9 @@ freq = np.ones_like(ws_list) / num_cases
 
 # # Now check the timing
 print("===START TEST===")
-start = time.time()
+start = time.perf_counter()
 power_result = fi.get_farm_AEP(wd_list, ws_list, freq)
-end = time.time()
+end = time.perf_counter()
 elapsed_time = end - start
 
 
