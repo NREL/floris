@@ -18,9 +18,9 @@ import time
 import pickle
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 import floris.tools as wfct
-import matplotlib.pyplot as plt
 
 
 # PARAMETERS
@@ -51,10 +51,10 @@ fi.calculate_wake()
 # Now check the timing
 timing_result = []
 for r in range(repeats):
-    start = time.time()
+    start = time.perf_counter()
     for i in range(N):
         fi.reinitialize_flow_field(wind_speed=8.0 + i / N, wind_direction=270.0 + i / N)
-    end = time.time()
+    end = time.perf_counter()
     elapsed_time = (end - start) / N
     timing_result.append(elapsed_time)
 

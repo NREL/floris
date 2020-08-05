@@ -51,11 +51,11 @@ for n_row, ax in zip([5, 6, 7, 8], axarr.flatten()):
     fi.calculate_wake()
 
     # Use the new method=====================================
-    start = time.time()
+    start = time.perf_counter()
 
     hor_plane = fi.get_hor_plane()
     wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-    end = time.time()
+    end = time.perf_counter()
     ax.set_title("%d Turbs, time = %.1fs" % (n_row * n_row, end - start))
 
 # Show the plot

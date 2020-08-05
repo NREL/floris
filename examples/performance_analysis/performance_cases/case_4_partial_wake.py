@@ -18,13 +18,13 @@ import time
 import pickle
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 import floris.tools as wfct
-import matplotlib.pyplot as plt
 
 
 # PARAMETERS
-recompute_baseline = True
+recompute_baseline = False
 show_layout = True
 repeats = 10  # Number of times to repeat the analysis
 N = 10  # Number of iterations in timing loop
@@ -51,10 +51,10 @@ fi.calculate_wake()
 # Now check the timing
 timing_result = []
 for r in range(repeats):
-    start = time.time()
+    start = time.perf_counter()
     for i in range(N):
         fi.calculate_wake()
-    end = time.time()
+    end = time.perf_counter()
     elapsed_time = (end - start) / N
     timing_result.append(elapsed_time)
 
