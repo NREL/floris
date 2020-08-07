@@ -13,6 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 import numpy as np
+
 from numba import jit
 
 
@@ -129,6 +130,7 @@ class Vec3:
     def __hash__(self):
         return hash((self.x1, self.x2, self.x3))
 
+
 @jit(nopython=True)
 def cosd(angle):
     """
@@ -141,6 +143,7 @@ def cosd(angle):
         float
     """
     return np.cos(np.radians(angle))
+
 
 @jit(nopython=True)
 def sind(angle):
@@ -155,6 +158,7 @@ def sind(angle):
     """
     return np.sin(np.radians(angle))
 
+
 @jit(nopython=True)
 def tand(angle):
     """
@@ -168,7 +172,42 @@ def tand(angle):
     """
     return np.tan(np.radians(angle))
 
+
 @jit(nopython=True)
+def wrap_180_fast(x):
+    """
+    Shift the given values to within the range (-180, 180].
+
+    Args:
+        x (numeric or np.array): Scalar value or np.array of values to shift.
+
+    Returns:
+        np.array: Shifted values.
+    """
+    x = np.where(x <= -180.0, x + 360.0, x)
+    x = np.where(x > 180.0, x - 360.0, x)
+    return x
+
+
+@jit(nopython=True)
+def wrap_360_fast(x):
+    """
+    Shift the given values to within the range (0, 360].
+
+    Args:
+        x (numeric or np.array): Scalar value or np.array of values to shift.
+
+    Returns:
+        np.array: Shifted values.
+    """
+    x = np.where(x < 0.0, x + 360.0, x)
+    x = np.where(x >= 360.0, x - 360.0, x)
+    return x
+
+
+# NEED TO LEAVE UNCOMPILED FOR EXTERNAL DEPENDENTS USING PANDAS-->
+
+
 def wrap_180(x):
     """
     Shift the given values to within the range (-180, 180].
@@ -183,7 +222,7 @@ def wrap_180(x):
     x = np.where(x > 180.0, x - 360.0, x)
     return x
 
-@jit(nopython=True)
+
 def wrap_360(x):
     """
     Shift the given values to within the range (0, 360].
