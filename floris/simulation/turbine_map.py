@@ -16,7 +16,7 @@
 import numpy as np
 
 from .turbine import Turbine
-from ..utilities import Vec3, wrap_180
+from ..utilities import Vec3, wrap_180_fast
 
 
 class TurbineMap:
@@ -156,7 +156,7 @@ class TurbineMap:
             waked = waked | (
                 (dists <= 20.0)
                 & (
-                    np.abs(wrap_180(wd - angles))
+                    np.abs(wrap_180_fast(wd - angles))
                     <= 0.5 * (1.3 * np.degrees(np.arctan(2.5 / dists + 0.15)) + 10)
                 )
             )
