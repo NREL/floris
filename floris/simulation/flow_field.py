@@ -14,6 +14,7 @@
 
 
 import numpy as np
+
 import scipy as sp
 from scipy.interpolate import griddata
 
@@ -81,13 +82,13 @@ class FlowField:
         for i, (coord, turbine) in enumerate(self.turbine_map.items):
             xt = [coord.x1 for coord in self.turbine_map.coords]
             yt = np.linspace(
-                coord.x2 - turbine.rotor_radius,
-                coord.x2 + turbine.rotor_radius,
+                coord.x2 - turbine.rotor_radius / 2,
+                coord.x2 + turbine.rotor_radius / 2,
                 rotor_points,
             )
             zt = np.linspace(
-                coord.x3 - turbine.rotor_radius,
-                coord.x3 + turbine.rotor_radius,
+                coord.x3 - turbine.rotor_radius / 2,
+                coord.x3 + turbine.rotor_radius / 2,
                 rotor_points,
             )
 
@@ -330,7 +331,7 @@ class FlowField:
         Rotate the discrete flow field grid and turbine map.
         """
         # get new boundaries for the wind farm once rotated
-        
+
         # x_coord = []
         # y_coord = []
         # for coord in rotated_map.coords:
@@ -375,6 +376,7 @@ class FlowField:
         compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
         """
         count = np.sum(freestream_velocities - wake_velocities <= 0.05)
+
         return (turbine.grid_point_count - count) / turbine.grid_point_count
 
     # Public methods
@@ -706,9 +708,16 @@ class FlowField:
                         #     rotated_z,
                         # )
 
-                        freestream_velocities, wake_velocities = turbine_ti.calculate_swept_area_velocities(
-                            self.u_initial, coord_ti, rotated_x, rotated_y, rotated_z,
-                            additional_wind_speed=self.u_initial - turb_u_wake
+                        (
+                            freestream_velocities,
+                            wake_velocities,
+                        ) = turbine_ti.calculate_swept_area_velocities(
+                            self.u_initial,
+                            coord_ti,
+                            rotated_x,
+                            rotated_y,
+                            rotated_z,
+                            additional_wind_speed=self.u_initial - turb_u_wake,
                         )
 
                         area_overlap = self._calculate_area_overlap(
@@ -719,9 +728,7 @@ class FlowField:
                         # wakes (and wake added TI) propagate downstream
                         downstream_influence_length = 15 * turbine.rotor_diameter
 
-                        if (
-                            area_overlap > 0.0
-                        ):
+                        if area_overlap > 0.0:
                             # Call wake turbulence model
                             # wake.turbulence_function(inputs)
                             ti_calculation = self._compute_turbine_wake_turbulence(
