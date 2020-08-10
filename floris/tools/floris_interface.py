@@ -260,9 +260,9 @@ class FlorisInterface(LoggerBase):
 
         Args:
             x1_resolution (float, optional): Output array resolution.
-                Defaults to 200.
+                Defaults to 200 points.
             x2_resolution (float, optional): Output array resolution.
-                Defaults to 200.
+                Defaults to 200 points.
             normal_vector (string, optional): Vector normal to plane.
                 Defaults to z.
             x3_value (float, optional): Value of normal vector to slice through.
@@ -472,9 +472,9 @@ class FlorisInterface(LoggerBase):
         Args:
             height (float): Height of cut plane. Defaults to Hub-height.
             x_resolution (float, optional): Output array resolution.
-                Defaults to 200 m.
+                Defaults to 200 points.
             y_resolution (float, optional): Output array resolution.
-                Defaults to 200 m.
+                Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
@@ -516,9 +516,9 @@ class FlorisInterface(LoggerBase):
         Args:
             x_loc (float): Downstream location of cut plane.
             y_resolution (float, optional): Output array resolution.
-                Defaults to 200 m.
+                Defaults to 200 points.
             z_resolution (float, optional): Output array resolution.
-                Defaults to 200 m.
+                Defaults to 200 points.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
             z_bounds (tuple, optional): limits of output array (in m).
@@ -553,9 +553,9 @@ class FlorisInterface(LoggerBase):
         Args:
             y_loc (float): Spanwise location of cut plane.
             x_resolution (float, optional): Output array resolution.
-                Defaults to 200 m.
+                Defaults to 200 points.
             z_resolution (float, optional): Output array resolution.
-                Defaults to 200 m.
+                Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
             z_bounds (tuple, optional): limits of output array (in m).

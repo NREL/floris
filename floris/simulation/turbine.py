@@ -16,6 +16,7 @@
 import math
 
 import numpy as np
+
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
 from scipy.interpolate import interp1d
@@ -102,6 +103,8 @@ class Turbine(LoggerBase):
 
         self._initialize_turbine()
 
+        self.saved_points = None  # initialize to none
+
     # Private methods
 
     def _initialize_turbine(self):
@@ -117,7 +120,8 @@ class Turbine(LoggerBase):
         self.fCtInterp = interp1d(wind_speed, ct, fill_value="extrapolate")
 
         # constants
-        self.grid_point_count = 5 * 5
+        # self.grid_point_count = 5 * 5
+        self.grid_point_count = 3 * 3
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
             raise ValueError("Turbine.grid_point_count must be the square of a number")
 
@@ -141,8 +145,13 @@ class Turbine(LoggerBase):
         # determine the dimensions of the square grid
         num_points = int(np.round(np.sqrt(self.grid_point_count)))
         # syntax: np.linspace(min, max, n points)
-        horizontal = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
-        vertical = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
+        horizontal = np.linspace(
+            -self.rotor_radius / 2, self.rotor_radius / 2, num_points
+        )
+
+        vertical = np.linspace(
+            -self.rotor_radius / 2, self.rotor_radius / 2, num_points
+        )
 
         # build the grid with all of the points
         grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
@@ -160,7 +169,6 @@ class Turbine(LoggerBase):
                 for point in grid
                 if np.hypot(point[0], point[1]) < self.rotor_radius
             ]
-
         return grid
 
     def _fCp(self, at_wind_speed):
@@ -201,7 +209,9 @@ class Turbine(LoggerBase):
             setattr(self, param, turbine_change_dict[param])
         self._initialize_turbine()
 
-    def calculate_swept_area_velocities(self, local_wind_speed, coord, x, y, z):
+    def calculate_swept_area_velocities(
+        self, local_wind_speed, coord, x, y, z, additional_wind_speed=None
+    ):
         """
         This method calculates and returns the wind speeds at each
         rotor swept area grid point for the turbine, interpolated from
@@ -242,20 +252,30 @@ class Turbine(LoggerBase):
         # data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
         # # PREVIOUS METHOD========================
 
-        # # NEW METHOD========================
-        # Sort by distance
-        flow_grid_points = np.column_stack([x.flatten(), y.flatten(), z.flatten()])
+        # Use this if no saved points (curl)
+        if self.saved_points is None:
+            # # NEW METHOD========================
+            # Sort by distance
+            flow_grid_points = np.column_stack([x.flatten(), y.flatten(), z.flatten()])
 
-        # Set up a grid array
-        y_array = np.array(self.grid)[:, 0] + coord.x2
-        z_array = np.array(self.grid)[:, 1] + self.hub_height
-        x_array = np.ones_like(y_array) * coord.x1
-        grid_array = np.column_stack([x_array, y_array, z_array])
+            # Set up a grid array
+            y_array = np.array(self.grid)[:, 0] + coord.x2
+            z_array = np.array(self.grid)[:, 1] + self.hub_height
+            x_array = np.ones_like(y_array) * coord.x1
+            grid_array = np.column_stack([x_array, y_array, z_array])
 
-        ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
+            ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
+        else:
+            ii = self.saved_points
 
         # return np.array(data)
-        return np.array(u_at_turbine.flatten()[ii])
+        if additional_wind_speed is not None:
+            return (
+                np.array(u_at_turbine.flatten()[ii]),
+                np.array(additional_wind_speed.flatten()[ii]),
+            )
+        else:
+            return np.array(u_at_turbine.flatten()[ii])
 
     def return_grid_points(self, coord):
         """
