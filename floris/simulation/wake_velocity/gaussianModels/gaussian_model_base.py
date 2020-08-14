@@ -11,9 +11,60 @@
 # the License.
 
 import numpy as np
+from numba import njit
 
 from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
+
+
+@njit
+def _gaussian_function(U, C, r, n, sigma):
+    """
+    A general form of the Gaussian function used in the Gaussian wake
+    models.
+
+    Args:
+        U (np.array): U-component velocities across the flow field.
+        C (np.array): Velocity deficit at the wake center normalized by the
+            incoming wake velocity.
+        r (float): Radial distance from the wake center.
+        n (float): Exponent of radial distance from the wake center.
+        sigma (np.array): Standard deviation of the wake.
+
+    Returns:
+        np.array: U (np.array): U-component velocity deficits across the
+        flow field.
+    """
+    return U * C * np.exp(-1 * r ** n / (2 * sigma ** 2))
+
+
+@njit
+def initial_wake_expansion(yaw_angle, rotor_diameter, U_local, veer, uR, u0):
+    """
+    Calculates the initial wake widths associated with wake expansion.
+
+    Args:
+        turbine (:py:class:`floris.simulation.turbine.Turbine`):
+            Turbine object.
+        U_local (np.array): U-component velocities across the flow field.
+        veer (float): The amount of veer across the rotor.
+        uR (np.array): Initial velocity deficit used in calculation of wake
+            expansion.
+        u0 (np.array): Initial velocity deficit used in calculation of wake
+            expansion.
+
+    Returns:
+        tuple: tuple containing:
+
+            -   sigma_y0 (np.array): Initial wake width in the spanwise
+                direction.
+            -   sigma_z0 (np.array): Initial wake width in the vertical
+                direction.
+    """
+    yaw = -1 * yaw_angle
+    sigma_z0 = rotor_diameter * 0.5 * np.sqrt(uR / (U_local + u0))
+    sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
+    return sigma_y0, sigma_z0
 
 
 class GaussianModel(VelocityDeficit):
@@ -516,10 +567,13 @@ class GaussianModel(VelocityDeficit):
                 -   sigma_z0 (np.array): Initial wake width in the vertical
                     direction.
         """
-        yaw = -1 * turbine.yaw_angle
-        sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt(uR / (U_local + u0))
-        sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
-        return sigma_y0, sigma_z0
+        # yaw = -1 * turbine.yaw_angle
+        # sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt(uR / (U_local + u0))
+        # sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
+        # return sigma_y0, sigma_z0
+        return initial_wake_expansion(
+            turbine.yaw_angle, turbine.rotor_diameter, U_local, veer, uR, u0
+        )
 
     @staticmethod
     def gaussian_function(U, C, r, n, sigma):
@@ -539,4 +593,5 @@ class GaussianModel(VelocityDeficit):
             np.array: U (np.array): U-component velocity deficits across the
             flow field.
         """
-        return U * C * np.exp(-1 * r ** n / (2 * sigma ** 2))
+        # return U * C * np.exp(-1 * r ** n / (2 * sigma ** 2))
+        return _gaussian_function(U, C, r, n, sigma)
