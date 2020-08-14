@@ -16,7 +16,6 @@
 import math
 
 import numpy as np
-
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
 from scipy.interpolate import interp1d
@@ -504,9 +503,9 @@ class Turbine(LoggerBase):
         data = self.velocities[np.where(~np.isnan(self.velocities))]
         avg_vel = np.cbrt(np.mean(data ** 3))
         if np.isnan(avg_vel):
-            avg_vel = 0
+            return 0
         elif np.isinf(avg_vel):
-            avg_vel = 0
+            return 0
 
         return avg_vel
 
