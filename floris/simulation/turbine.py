@@ -16,12 +16,19 @@
 import math
 
 import numpy as np
+from numba import njit
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
 from scipy.interpolate import interp1d
 
 from ..utilities import cosd, sind, tand
 from ..logging_manager import LoggerBase
+
+
+@njit
+def _average_velocity_intermediate(velocities):
+    # remove all invalid numbers from interpolation
+    return np.mean(velocities[np.where(~np.isnan(velocities))] ** 3)
 
 
 class Turbine(LoggerBase):
@@ -499,9 +506,7 @@ class Turbine(LoggerBase):
 
             >>> avg_vel = floris.farm.turbines[0].average_velocity()
         """
-        # remove all invalid numbers from interpolation
-        data = self.velocities[np.where(~np.isnan(self.velocities))]
-        avg_vel = np.cbrt(np.mean(data ** 3))
+        avg_vel = np.cbrt(_average_velocity_intermediate(self.velocities))
         if np.isnan(avg_vel):
             return 0
         elif np.isinf(avg_vel):

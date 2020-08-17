@@ -16,6 +16,134 @@ from ...utilities import cosd, sind, tand
 from ...logging_manager import LoggerBase
 
 
+def calculate_effective_yaw_angle(
+    x_locations,
+    y_locations,
+    z_locations,
+    D,
+    HH,
+    yaw_angle,
+    Ct,
+    TSR,
+    aI,
+    average_velocity,
+    coord_x1,
+    coord_x2,
+    V,
+    grid_wind_speed,
+    specified_wind_height,
+    wind_shear,
+    eps,
+):
+    """
+    This method determines the effective yaw angle to be used when
+    secondary steering is enabled. For more details on how the effective
+    yaw angle is calculated, see :cite:`bvd-King2019Controls`.
+
+    Args:
+        x_locations (np.array): Streamwise locations in wake.
+        y_locations (np.array): Spanwise locations in wake.
+        z_locations (np.array): Vertical locations in wake.
+        coord_x1 (float): X-coordinate of wind turbine.
+        coord_x2 (float): Y-coordinate of wind turbine.
+        D (float): `floris.simulation.turbine.Turbine.rotor_diameter`.
+        HH (float): `floris.simulation.turbine.Turbine.hub_height`.
+        yaw (float): `floris.simulation.turbine.Turbine.yaw_angle`.
+        Ct (float): `floris.simulation.turbine.Turbine.Ct`.
+        TSR (float): `floris.simulation.turbine.Turbine.tsr`.
+        aI (float): `floris.simulation.turbine.Turbine.aI`.
+        average_velocity (float): `turbine.Turbine.average_velocity`.
+        v (float): `floris.simulation.flow_field.FlowField.v`
+        grid_wind_speed (float): `floris.simulation.flow_field.FlowField.wind_map.grid_wind_speed`.
+        specified_wind_height (float): `floris.simulation.flow_field.FlowField.specified_wind_height`
+        wind_shear (float): `floris.simulation.flow_field.FlowField.wind_shear`
+        eps (float): `GaussianModel.eps_gain`
+
+    Raises:
+        ValueError: It appears that 'use_secondary_steering' is set
+            to True and 'calculate_VW_velocities' is set to False.
+            This configuration is not valid. Please set
+            'use_secondary_steering' to True if you wish to use
+            yaw-added recovery.
+
+    Returns:
+        float: The turbine yaw angle, including any effective yaw if
+        secondary steering is enabled.
+    """
+    # turbine parameters
+    Uinf = np.mean(grid_wind_speed)
+
+    eps *= D  # Use set value
+    eps = eps ** 2
+
+    idx = np.where((np.abs(x_locations - coord_x1) < D / 4))
+
+    yLocs = y_locations[idx] + 0.01 - coord_x2
+
+    # location of top vortex
+    zT = z_locations[idx] + 0.01 - (HH + D / 2)
+    rT = yLocs ** 2 + zT ** 2
+
+    # location of bottom vortex
+    zB = z_locations[idx] + 0.01 - (HH - D / 2)
+    rB = yLocs ** 2 + zB ** 2
+
+    # wake rotation vortex
+    zC = z_locations[idx] + 0.01 - (HH)
+    rC = yLocs ** 2 + zC ** 2
+
+    # find wake deflection from CRV
+    test_gamma = np.linspace(-45, 45, 91)
+    avg_V = np.mean(V[idx])
+    minYaw = 10000
+    target_yaw_ix = None
+    # for i in range(len(test_gamma)):
+
+    # what yaw angle would have produced that same average spanwise velocity
+    yaw = test_gamma  # [i]
+    vel_top = (Uinf * ((HH + D / 2) / specified_wind_height) ** wind_shear) / Uinf
+    vel_bottom = (Uinf * ((HH - D / 2) / specified_wind_height) ** wind_shear) / Uinf
+    Gamma_top = (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+    Gamma_bottom = -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+    Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * average_velocity / TSR
+    # Veff = (
+    #     (zT * Gamma_top) / (2 * np.pi * rT) * (1 - np.exp(-rT / eps))
+    #     + (zB * Gamma_bottom)
+    #     / (2 * np.pi * rB)
+    #     * (1 - np.exp(-rB / eps))
+    #     + (zC * Gamma_wake_rotation)
+    #     / (2 * np.pi * rC)
+    #     * (1 - np.exp(-rC / eps))
+    # )
+
+    Veff = (
+        np.divide(np.einsum("i,j", Gamma_top, zT), (2 * np.pi * rT))
+        * (1 - np.exp(-rT / eps))
+        + np.einsum("i,j", Gamma_bottom, zB)
+        / (2 * np.pi * rB)
+        * (1 - np.exp(-rB / eps))
+        + (zC * Gamma_wake_rotation) / (2 * np.pi * rC) * (1 - np.exp(-rC / eps))
+    )
+
+    # tmp = avg_V - np.mean(Veff)
+    # print(np.mean(Veff, axis=1))
+    # lkj
+    tmp = avg_V - np.mean(Veff, axis=1)
+    target_yaw_ix = np.argmin(np.abs(tmp))
+    # if np.abs(tmp) < minYaw:
+    #     minYaw = np.abs(tmp)
+    #     target_yaw_ix = i
+
+    if target_yaw_ix is not None:
+        yaw_effective = test_gamma[target_yaw_ix]
+        err_msg = None
+    else:
+        err_msg = "No effective yaw angle is found. Set to 0."
+        yaw_effective = 0.0
+
+    return yaw_effective + yaw_angle, err_msg
+
+
 class VelocityDeflection(LoggerBase):
     """
     This is the super-class for all wake deflection models. It includes
@@ -113,120 +241,42 @@ class VelocityDeflection(LoggerBase):
             float: The turbine yaw angle, including any effective yaw if
             secondary steering is enabled.
         """
-        if self.use_secondary_steering:
-            if not flow_field.wake.velocity_model.calculate_VW_velocities:
-                err_msg = (
-                    "It appears that 'use_secondary_steering' is set "
-                    + "to True and 'calculate_VW_velocities' is set to False. "
-                    + "This configuration is not valid. Please set "
-                    + "'use_secondary_steering' to True if you wish to use "
-                    + "yaw-added recovery."
-                )
-                self.logger.error(err_msg, stack_info=True)
-                raise ValueError(err_msg)
-            # turbine parameters
-            Ct = turbine.Ct
-            D = turbine.rotor_diameter
-            HH = turbine.hub_height
-            aI = turbine.aI
-            TSR = turbine.tsr
-            V = flow_field.v
-            Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
-
-            eps = self.eps_gain * D  # Use set value
-            xLocs = x_locations - coord.x1
-            idx = np.where((np.abs(xLocs) < D / 4))
-
-            yLocs = y_locations[idx] + 0.01 - coord.x2
-
-            # location of top vortex
-            zT = z_locations[idx] + 0.01 - (HH + D / 2)
-            rT = yLocs ** 2 + zT ** 2
-
-            # location of bottom vortex
-            zB = z_locations[idx] + 0.01 - (HH - D / 2)
-            rB = yLocs ** 2 + zB ** 2
-
-            # wake rotation vortex
-            zC = z_locations[idx] + 0.01 - (HH)
-            rC = yLocs ** 2 + zC ** 2
-
-            # find wake deflection from CRV
-            test_gamma = np.linspace(-45, 45, 91)
-            avg_V = np.mean(V[idx])
-            minYaw = 10000
-            target_yaw_ix = None
-            # for i in range(len(test_gamma)):
-
-            # what yaw angle would have produced that same average spanwise velocity
-            yaw = test_gamma#[i]
-            vel_top = (
-                Uinf
-                * ((HH + D / 2) / flow_field.specified_wind_height)
-                ** flow_field.wind_shear
-            ) / Uinf
-            vel_bottom = (
-                Uinf
-                * ((HH - D / 2) / flow_field.specified_wind_height)
-                ** flow_field.wind_shear
-            ) / Uinf
-            Gamma_top = (
-                (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
-            )
-            Gamma_bottom = (
-                -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
-            )
-            Gamma_wake_rotation = (
-                0.25
-                * 2
-                * np.pi
-                * D
-                * (aI - aI ** 2)
-                * turbine.average_velocity
-                / TSR
-            )
-            # Veff = (
-            #     (zT * Gamma_top) / (2 * np.pi * rT) * (1 - np.exp(-rT / (eps ** 2)))
-            #     + (zB * Gamma_bottom)
-            #     / (2 * np.pi * rB)
-            #     * (1 - np.exp(-rB / (eps ** 2)))
-            #     + (zC * Gamma_wake_rotation)
-            #     / (2 * np.pi * rC)
-            #     * (1 - np.exp(-rC / (eps ** 2)))
-            # )
-
-            # print(rT)
-            # print(type(rT))
-            Veff = (
-                np.divide(np.einsum('i,j', Gamma_top, zT), (2 * np.pi * rT)) * (1 - np.exp(-rT / (eps ** 2)))
-                + np.einsum('i,j', Gamma_bottom, zB)
-                / (2 * np.pi * rB)
-                * (1 - np.exp(-rB / (eps ** 2)))
-                + (zC * Gamma_wake_rotation)
-                / (2 * np.pi * rC)
-                * (1 - np.exp(-rC / (eps ** 2)))
-            )
-
-                # tmp = avg_V - np.mean(Veff)
-            # print(np.mean(Veff, axis=1))
-            # lkj
-            tmp = avg_V - np.mean(Veff, axis=1)
-            target_yaw_ix = np.argmin(np.abs(tmp))
-                # if np.abs(tmp) < minYaw:
-                #     minYaw = np.abs(tmp)
-                #     target_yaw_ix = i
-
-            if target_yaw_ix is not None:
-                yaw_effective = test_gamma[target_yaw_ix]
-            else:
-                err_msg = "No effective yaw angle is found. Set to 0."
-                self.logger.warning(err_msg, stack_info=True)
-                yaw_effective = 0.0
-
-            return yaw_effective + turbine.yaw_angle
-
-        else:
+        if not self.use_secondary_steering:
             return turbine.yaw_angle
+
+        if not flow_field.wake.velocity_model.calculate_VW_velocities:
+            err_msg = (
+                "It appears that 'use_secondary_steering' is set "
+                + "to True and 'calculate_VW_velocities' is set to False. "
+                + "This configuration is not valid. Please set "
+                + "'use_secondary_steering' to True if you wish to use "
+                + "yaw-added recovery."
+            )
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+
+        yaw_effective, err = calculate_effective_yaw_angle(
+            x_locations,
+            y_locations,
+            z_locations,
+            turbine.rotor_diameter,
+            turbine.hub_height,
+            turbine.yaw_angle,
+            turbine.Ct,
+            turbine.tsr,
+            turbine.aI,
+            turbine.average_velocity,
+            coord.x1,
+            coord.x2,
+            flow_field.v,
+            flow_field.wind_map.grid_wind_speed,
+            flow_field.specified_wind_height,
+            flow_field.wind_shear,
+            self.eps_gain,
+        )
+        if err is not None:
+            self.logger.warning(err_msg, stack_info=True)
+        return yaw_effective
 
     @property
     def use_secondary_steering(self):
