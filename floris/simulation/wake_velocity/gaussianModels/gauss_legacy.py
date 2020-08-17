@@ -11,10 +11,97 @@
 # the License.
 
 import numpy as np
+from numba import njit
 
 from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
 from ..base_velocity_deficit import VelocityDeficit
+
+
+@njit
+def far_wake_start(D, Ct, yaw, alpha, beta, TI, x1):
+    """Determines where the far wake starts.
+
+    Args:
+        D (type) :
+        Ct (type) :
+        yaw (type) :
+        alpha (type) : `LegacyGauss.alpha`
+        beta (type) : `LegacyGauss.beta`
+        TI (type) :
+        x1 (type) : `turbine_coord.x1`
+
+    Returns:
+        x0 (type): starting point of the far wake.
+    """
+    ct = np.sqrt(1 - Ct)
+    x0 = D
+    x0 *= cosd(yaw)
+    x0 *= 1 + ct
+    x0 /= np.sqrt(2) * (4 * alpha * TI + 2 * beta * (1 - ct))
+    return x0 + x1
+
+
+@njit
+def near_wake_velocity_deficit(x0, xR, x_locations, D, Ct, sigma_0):
+    """Determines where the far wake starts.
+
+    Args:
+        x0 (type) :
+        xr (type) :
+        x_locations (type) :
+        D (type) :
+        Ct (type) :
+        sigma_0 (type) : directional sigma
+
+    Returns:
+        sigma (type): velocity deficit of the near wake.
+    """
+    diff1 = x0 - xR
+    diff2 = x_locations - xR
+    sigma = (diff1 - diff2) / diff1
+    sigma *= 0.501 * D * np.sqrt(Ct / 2.0)
+    sigma += (diff2 / diff1) * sigma_0
+    return sigma
+
+
+@njit
+def compute_r_C(
+    veer, sigma_y, sigma_z, y_locations, z_locations, delta, x2, yaw, D, HH, Ct
+):
+    """Computes r and C.
+
+    Args
+        veer (type) :
+        sigma_y (type) :
+        sigma_z (type) :
+        y_locations (type) :
+        z_locations (type) :
+        x2 (type) : `turbine_coord.x2`
+        delta (type) :
+        yaw (type) :
+        D (type) :
+        HH (type) :
+        Ct (type) :
+    """
+    sind_veer = sind(veer) ** 2
+    cosd_veer = cosd(veer) ** 2
+    sigma_y2 = sigma_y ** 2
+    sigma_z2 = sigma_z ** 2
+    y_diff = y_locations - x2
+
+    a = cosd_veer / (2 * sigma_y2) + sind_veer / (2 * sigma_z2)
+    a *= (y_diff - delta) ** 2
+
+    b = -sind(2 * veer) / (4 * sigma_y2) + sind(2 * veer) / (4 * sigma_z2)
+    b *= (y_diff - delta) * ((z_locations - HH))
+
+    c = sind_veer / (2 * sigma_y2) + cosd_veer / (2 * sigma_z2)
+    c *= ((z_locations - HH)) ** 2
+
+    r = a - 2 * b + c
+    C = 1 - np.sqrt(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)))
+    return r, C
 
 
 class LegacyGauss(GaussianModel):
@@ -151,35 +238,27 @@ class LegacyGauss(GaussianModel):
         )
 
         # quantity that determines when the far wake starts
-        x0 = (
-            D
-            * (cosd(yaw) * (1 + np.sqrt(1 - Ct)))
-            / (
-                np.sqrt(2)
-                * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))
-            )
-            + turbine_coord.x1
-        )
+        x0 = far_wake_start(D, Ct, yaw, self.alpha, self.beta, TI, turbine_coord.x1)
 
         # velocity deficit in the near wake
-        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
-            Ct / 2.0
-        ) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
-        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
-            Ct / 2.0
-        ) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
+        sigma_y = near_wake_velocity_deficit(x0, xR, x_locations, D, Ct, sigma_y0)
+        sigma_z = near_wake_velocity_deficit(x0, xR, x_locations, D, Ct, sigma_z0)
         sigma_y[x_locations < xR] = 0.5 * D
         sigma_z[x_locations < xR] = 0.5 * D
 
-        a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
-        b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
-        c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
-        r = (
-            a * ((y_locations - turbine_coord.x2) - delta) ** 2
-            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH))
-            + c * ((z_locations - HH)) ** 2
+        r, C = compute_r_C(
+            veer,
+            sigma_y,
+            sigma_z,
+            y_locations,
+            z_locations,
+            delta,
+            turbine_coord.x2,
+            yaw,
+            D,
+            HH,
+            Ct,
         )
-        C = 1 - np.sqrt(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)))
 
         velDef = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
         velDef[x_locations < xR] = 0
@@ -194,15 +273,19 @@ class LegacyGauss(GaussianModel):
         sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         # velocity deficit outside the near wake
-        a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
-        b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
-        c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
-        r = (
-            a * (y_locations - turbine_coord.x2 - delta) ** 2
-            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH)
-            + c * (z_locations - HH) ** 2
+        r, C = compute_r_C(
+            veer,
+            sigma_y,
+            sigma_z,
+            y_locations,
+            z_locations,
+            delta,
+            turbine_coord.x2,
+            yaw,
+            D,
+            HH,
+            Ct,
         )
-        C = 1 - np.sqrt(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)))
 
         # compute velocities in the far wake
         velDef1 = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
