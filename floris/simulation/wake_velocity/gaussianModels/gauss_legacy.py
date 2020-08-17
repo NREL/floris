@@ -61,8 +61,8 @@ def near_wake_velocity_deficit(x0, xR, x_locations, D, Ct, sigma_0):
     diff2 = x_locations - xR
     sigma = (diff1 - diff2) / diff1
     sigma *= 0.501 * D * np.sqrt(Ct / 2.0)
-    sigma += diff2 / diff1
-    return sigma * sigma_0
+    sigma += (diff2 / diff1) * sigma_0
+    return sigma
 
 
 @njit
