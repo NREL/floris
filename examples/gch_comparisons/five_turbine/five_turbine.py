@@ -60,7 +60,6 @@ fi_gl.reinitialize_flow_field(layout_array=[x_layout, y_layout])
 # Match the inflow
 U0 = df_results.floris_U0.values[0]
 TI = df_results.floris_TI.values[0]
-print(TI)
 fi_gl.reinitialize_flow_field(wind_speed=U0, turbulence_intensity=TI)
 
 # Set up the yar model
