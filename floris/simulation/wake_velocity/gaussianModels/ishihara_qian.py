@@ -11,9 +11,10 @@
 # the License.
 
 import numpy as np
-from ....utilities import cosd, sind, tand, setup_logger
-from ..base_velocity_deficit import VelocityDeficit
+
+from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
+from ..base_velocity_deficit import VelocityDeficit
 
 
 class IshiharaQian(GaussianModel):
@@ -29,39 +30,23 @@ class IshiharaQian(GaussianModel):
     directions and includes the effects of ambient turbulence, added turbulence
     from upstream wakes, as well as wind shear and wind veer. For more info,
     see :cite:`iqv-qian2018new`.
-    
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: iqv-
     """
+
     default_parameters = {
-        "kstar": {
-            "const": 0.11,
-            "Ct": 1.07,
-            "TI": 0.2
-        },
-        "epsilon": {
-            "const": 0.23,
-            "Ct": -0.25,
-            "TI": 0.17
-        },
-        "a": {
-            "const": 0.93,
-            "Ct": -0.75,
-            "TI": 0.17
-        },
-        "b": {
-            "const": 0.42,
-            "Ct": 0.6,
-            "TI": 0.2
-        },
-        "c": {
-            "const": 0.15,
-            "Ct": -0.25,
-            "TI": -0.7
-        }
+        "kstar": {"const": 0.11, "Ct": 1.07, "TI": 0.2},
+        "epsilon": {"const": 0.23, "Ct": -0.25, "TI": 0.17},
+        "a": {"const": 0.93, "Ct": -0.75, "TI": 0.17},
+        "b": {"const": 0.42, "Ct": 0.6, "TI": 0.2},
+        "c": {"const": 0.15, "Ct": -0.25, "TI": -0.7},
+        "calculate_VW_velocities": False,
+        "use_yaw_added_recovery": False,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):
@@ -72,7 +57,7 @@ class IshiharaQian(GaussianModel):
         coefficient of the turbine, and the local turbulence intensity.
         Paremeter values are calculated with
         :py:meth:`~.IshiharaQian.parameter_value_from_dict` as:
-        
+
         Args:
             parameter_dictionary (dict): Model-specific parameters.
                 Default values are used when a parameter is not included
@@ -95,7 +80,6 @@ class IshiharaQian(GaussianModel):
 
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara_qian"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 
@@ -107,14 +91,20 @@ class IshiharaQian(GaussianModel):
         self.c = model_dictionary["c"]
 
         # GCH Parameters
-        self.calculate_VW_velocities = model_dictionary\
-            ["calculate_VW_velocities"]
+        self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
-        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
 
-    def function(self, x_locations, y_locations, z_locations, turbine,
-                 turbine_coord, deflection_field, flow_field):
+    def function(
+        self,
+        x_locations,
+        y_locations,
+        z_locations,
+        turbine,
+        turbine_coord,
+        deflection_field,
+        flow_field,
+    ):
         """
         Main function for calculating the IshiharaQian Gaussian wake model.
         This method calculates and returns the wake velocity deficits caused by
@@ -165,7 +155,7 @@ class IshiharaQian(GaussianModel):
         local_z = z_locations - turbine_coord.x3  # adjust for hub height
 
         # coordinate info
-        r = np.sqrt(local_y**2 + (local_z)**2)
+        r = np.sqrt(local_y ** 2 + (local_z) ** 2)
 
         kstar = self.parameter_value_from_dict(self.kstar, Ct, TI)
         epsilon = self.parameter_value_from_dict(self.epsilon, Ct, TI)
@@ -173,27 +163,21 @@ class IshiharaQian(GaussianModel):
         b = self.parameter_value_from_dict(self.b, Ct, TI)
         c = self.parameter_value_from_dict(self.c, Ct, TI)
 
-        k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
+        k1 = np.cos(np.pi / 2 * (r / D - 0.5)) ** 2
         k1[r / D > 0.5] = 1.0
 
-        k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
+        k2 = np.cos(np.pi / 2 * (r / D + 0.5)) ** 2
         k2[r / D > 0.5] = 1.0
 
         # Representative wake width = \sigma / D
         wake_width = kstar * (local_x / D) + epsilon
 
         # wake velocity deficit = \Delta U (x,y,z) / U_h
-        C = 1 / (a + b * (local_x / D) + c * (1 + (local_x / D))**(-2))**2
+        C = 1 / (a + b * (local_x / D) + c * (1 + (local_x / D)) ** (-2)) ** 2
         r_tilde = r
         n = 2
         sigma_tilde = wake_width * D
-        velDef = GaussianModel.gaussian_function(
-            U_local, 
-            C, 
-            r_tilde, 
-            n, 
-            sigma_tilde
-        )
+        velDef = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
 
         # trim wakes to 1 D upstream to avoid artifacts
         yR = y_locations - turbine_coord.x2
@@ -215,7 +199,7 @@ class IshiharaQian(GaussianModel):
         Returns:
             float: Current value of model parameter.
         """
-        return pdict['const'] * Ct**(pdict['Ct']) * TI**(pdict['TI'])
+        return pdict["const"] * Ct ** (pdict["Ct"]) * TI ** (pdict["TI"])
 
     @property
     def kstar(self):
@@ -238,20 +222,21 @@ class IshiharaQian(GaussianModel):
 
     @kstar.setter
     def kstar(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for kstar: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for kstar: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kstar = value
-        if value != __class__.default_parameters['kstar']:
+        if value != __class__.default_parameters["kstar"]:
             self.logger.info(
-                ('Current value of kstar, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['kstar'])
-                )
+                (
+                    "Current value of kstar, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["kstar"])
+            )
 
     @property
     def epsilon(self):
@@ -274,20 +259,21 @@ class IshiharaQian(GaussianModel):
 
     @epsilon.setter
     def epsilon(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for epsilon: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for epsilon: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._epsilon = value
-        if value != __class__.default_parameters['epsilon']:
+        if value != __class__.default_parameters["epsilon"]:
             self.logger.info(
-                ('Current value of epsilon, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['epsilon'])
-                )
+                (
+                    "Current value of epsilon, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["epsilon"])
+            )
 
     @property
     def a(self):
@@ -309,20 +295,20 @@ class IshiharaQian(GaussianModel):
 
     @a.setter
     def a(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for a: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for a: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a = value
-        if value != __class__.default_parameters['a']:
+        if value != __class__.default_parameters["a"]:
             self.logger.info(
-                ('Current value of a, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['a'])
-                )
+                (
+                    "Current value of a, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["a"])
+            )
 
     @property
     def b(self):
@@ -344,20 +330,20 @@ class IshiharaQian(GaussianModel):
 
     @b.setter
     def b(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for b: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for b: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b = value
-        if value != __class__.default_parameters['b']:
+        if value != __class__.default_parameters["b"]:
             self.logger.info(
-                ('Current value of b, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['b'])
-                )
+                (
+                    "Current value of b, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["b"])
+            )
 
     @property
     def c(self):
@@ -379,17 +365,17 @@ class IshiharaQian(GaussianModel):
 
     @c.setter
     def c(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for c: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for c: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c = value
-        if value != __class__.default_parameters['c']:
+        if value != __class__.default_parameters["c"]:
             self.logger.info(
-                ('Current value of c, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['c'])
-                )
+                (
+                    "Current value of c, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["c"])
+            )

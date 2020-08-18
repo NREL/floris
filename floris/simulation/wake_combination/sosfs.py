@@ -11,7 +11,7 @@
 # the License.
 
 import numpy as np
-from ...utilities import setup_logger
+
 from .base_wake_combination import WakeCombination
 
 
@@ -20,9 +20,9 @@ class SOSFS(WakeCombination):
     SOSFS uses sum of squares freestream superposition to combine the
     wake velocity deficits to the base flow field.
     """
+
     def __init__(self):
         super().__init__()
-        self.logger = setup_logger(name=__name__)
         self.model_string = "sosfs"
 
     def function(self, u_field, u_wake):

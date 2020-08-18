@@ -11,15 +11,18 @@
 # the License.
 
 import numpy as np
-from ...utilities import cosd, sind, tand, setup_logger
+
+from ...utilities import cosd, sind, tand
+from ...logging_manager import LoggerBase
 
 
-class VelocityDeficit():
+class VelocityDeficit(LoggerBase):
     """
     Base VelocityDeficit object class. This class contains a method for getting
     the relevant model parameters from the input dictionary, or for supplying
     default values if none are supplied.
     """
+
     def __init__(self, parameter_dictionary):
         """
         Stores the parameter dictionary for the wake velocity model.
@@ -29,8 +32,6 @@ class VelocityDeficit():
                 velocity model parameters. See individual wake velocity
                 models for details of specific key-value pairs.
         """
-        self.logger = setup_logger(name=__name__)
-
         self.requires_resolution = False
         self.model_string = None
         self.model_grid_resolution = None
@@ -84,11 +85,11 @@ class VelocityDeficit():
             # user that key: value pair was not used
             for key in user_dict:
                 if key not in default_dict:
-                    err_msg = ('User supplied value {}, not in standard ' + \
-                        'wake velocity model dictionary.').format(key)
+                    err_msg = (
+                        "User supplied value {}, not in standard "
+                        + "wake velocity model dictionary."
+                    ).format(key)
                     self.logger.warning(err_msg, stack_info=True)
                     raise KeyError(err_msg)
             return_dict = user_dict
         return return_dict
-
-    

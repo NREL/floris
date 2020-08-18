@@ -1,28 +1,30 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
-# See https://floris.readthedocs.io for documentation
- 
 
-# Defines a bunch of tools for plotting and manipulating 
+# See https://floris.readthedocs.io for documentation
+
+
+# Defines a bunch of tools for plotting and manipulating
 # layouts for quick visualizations
 
-import numpy as np
 import math
-import matplotlib.pyplot as plt
+
+import numpy as np
 import pandas as pd
-from scipy.spatial.distance import squareform, pdist
+import matplotlib.pyplot as plt
+from scipy.spatial.distance import pdist, squareform
+
 from floris.utilities import wrap_360
-from ..utilities import setup_logger
+
 
 # All functions assume a dataframe with index turbine, and columns x and y
 
@@ -39,17 +41,19 @@ def build_turbine_loc(turbine_x, turbine_y):
     Returns:
         turbineLoc (pd.DataFrame): turbine location data
     """
-    turbineLoc = pd.DataFrame({'x': turbine_x, 'y': turbine_y})
+    turbineLoc = pd.DataFrame({"x": turbine_x, "y": turbine_y})
     return turbineLoc
 
 
-def visualize_layout(turbineLoc,
-                     D,
-                     ax=None,
-                     show_wake_lines=False,
-                     limit_dist=None,
-                     turbine_face_north=False,
-                     one_index_turbine=False):
+def visualize_layout(
+    turbineLoc,
+    D,
+    ax=None,
+    show_wake_lines=False,
+    limit_dist=None,
+    turbine_face_north=False,
+    one_index_turbine=False,
+):
     """
     Make a plot which shows the turbine locations, and important wakes.
 
@@ -76,7 +80,7 @@ def visualize_layout(turbineLoc,
     # Plot turbine points
     # ax.scatter(turbineLoc.x,turbineLoc.y,alpha=0)
 
-    # Make ordered list of pairs sorted by distance if the distance 
+    # Make ordered list of pairs sorted by distance if the distance
     # and angle matrices are provided
     if show_wake_lines:
 
@@ -84,7 +88,7 @@ def visualize_layout(turbineLoc,
         dist = pd.DataFrame(
             squareform(pdist(turbineLoc)),
             index=turbineLoc.index,
-            columns=turbineLoc.index
+            columns=turbineLoc.index,
         )
 
         # Make a DF of turbine angles
@@ -92,35 +96,37 @@ def visualize_layout(turbineLoc,
         turbines = turbineLoc.index
         for t1 in turbines:
             for t2 in turbines:
-                #d[t1,t2] = wakeAngle(turbineLoc,[t1,t2])
+                # d[t1,t2] = wakeAngle(turbineLoc,[t1,t2])
                 angle.loc[t1, t2] = wakeAngle(turbineLoc, [t1, t2])
-        angle.index.name = 'Turbine'
+        angle.index.name = "Turbine"
 
         # Now limit the matrix to only show waking from (row) to (column)
         for t1 in turbines:
             for t2 in turbines:
-                if ((dist.loc[t1, t2] == 0.0)):
+                if dist.loc[t1, t2] == 0.0:
                     dist.loc[t1, t2] = np.nan
                     angle.loc[t1, t2] = np.nan
 
         ordList = pd.DataFrame()
         for t1 in turbines:
             for t2 in turbines:
-                temp = pd.DataFrame({
-                    'T1': [t1],
-                    'T2': [t2],
-                    'Dist': [dist.loc[t1, t2]],
-                    'angle': angle.loc[t1, t2]
-                })
+                temp = pd.DataFrame(
+                    {
+                        "T1": [t1],
+                        "T2": [t2],
+                        "Dist": [dist.loc[t1, t2]],
+                        "angle": angle.loc[t1, t2],
+                    }
+                )
                 ordList = pd.concat([ordList, temp])
 
-        ordList.dropna(how='any', inplace=True)
-        ordList.sort_values('Dist', inplace=True, ascending=False)
+        ordList.dropna(how="any", inplace=True)
+        ordList.sort_values("Dist", inplace=True, ascending=False)
 
         # Plot wake lines and details
         for t1, t2 in zip(ordList.T1, ordList.T2):
-            x = [turbineLoc.loc[t1, 'x'], turbineLoc.loc[t2, 'x']]
-            y = [turbineLoc.loc[t1, 'y'], turbineLoc.loc[t2, 'y']]
+            x = [turbineLoc.loc[t1, "x"], turbineLoc.loc[t2, "x"]]
+            y = [turbineLoc.loc[t1, "y"], turbineLoc.loc[t2, "y"]]
 
             if limit_dist:
                 if dist.loc[t1, t2] > limit_dist:
@@ -130,7 +136,7 @@ def visualize_layout(turbineLoc,
             if x[1] > x[0]:
                 continue
 
-            l, = ax.plot(x, y)
+            (l,) = ax.plot(x, y)
             # linetext = '%.2f m --- %.2f D --- %.2f Deg --- %.2f Deg' % (
             #     dist.loc[t1,t2],
             #     dist.loc[t1,t2]/D,
@@ -139,20 +145,14 @@ def visualize_layout(turbineLoc,
             # )
             # linetext = '%.2f D --- %.2f Deg' % (dist.loc[t1, t2] / D,
             #                                     angle.loc[t2, t1])
-            linetext = '%.2f D --- %.1f/%.1f' % (
+            linetext = "%.2f D --- %.1f/%.1f" % (
                 dist.loc[t1, t2] / D,
                 np.min([angle.loc[t2, t1], angle.loc[t1, t2]]),
-                np.max([angle.loc[t2, t1], angle.loc[t1, t2]])
+                np.max([angle.loc[t2, t1], angle.loc[t1, t2]]),
             )
             # wrap_360(angle.loc[t2, t1]-180.))
             label_line(
-                l,
-                linetext,
-                ax,
-                near_i=1,
-                near_x=None,
-                near_y=None,
-                rotation_offset=180
+                l, linetext, ax, near_i=1, near_x=None, near_y=None, rotation_offset=180
             )
 
     # Plot turbines
@@ -167,38 +167,38 @@ def visualize_layout(turbineLoc,
             ax.plot(
                 [turbineLoc.loc[t1].x, turbineLoc.loc[t1].x],
                 [
-                    turbineLoc.loc[t1].y - 0.5 * D / 2.,
-                    turbineLoc.loc[t1].y + 0.5 * D / 2.
+                    turbineLoc.loc[t1].y - 0.5 * D / 2.0,
+                    turbineLoc.loc[t1].y + 0.5 * D / 2.0,
                 ],
-                color='k'
+                color="k",
             )
         else:
             ax.plot(
                 [
-                    turbineLoc.loc[t1].x - 0.5 * D / 2.,
-                    turbineLoc.loc[t1].x + 0.5 * D / 2.
+                    turbineLoc.loc[t1].x - 0.5 * D / 2.0,
+                    turbineLoc.loc[t1].x + 0.5 * D / 2.0,
                 ],
                 [turbineLoc.loc[t1].y, turbineLoc.loc[t1].y],
-                color='k'
+                color="k",
             )
         if not one_index_turbine:
             ax.text(
                 turbineLoc.loc[t1].x + D / 2,
                 turbineLoc.loc[t1].y,
                 t1,
-                bbox=dict(boxstyle="round", ec='red', fc='white')
+                bbox=dict(boxstyle="round", ec="red", fc="white"),
             )
         else:
             ax.text(
                 turbineLoc.loc[t1].x + D / 2,
                 turbineLoc.loc[t1].y,
-                t1+1,
-                bbox=dict(boxstyle="round", ec='red', fc='white')
+                t1 + 1,
+                bbox=dict(boxstyle="round", ec="red", fc="white"),
             )
-    ax.set_aspect('equal')
+    ax.set_aspect("equal")
 
 
-#Set wind direction
+# Set wind direction
 def set_direction(turbineLoc, rotation_angle):
     """
     Rotate wind farm CCW by the given angle provided in degrees
@@ -213,18 +213,17 @@ def set_direction(turbineLoc, rotation_angle):
         df_return (pd.DataFrame): rotated farm layout.
     """
     theta = np.deg2rad(rotation_angle)
-    R = np.matrix([[np.cos(theta), -np.sin(theta)],
-                   [np.sin(theta), np.cos(theta)]])
+    R = np.matrix([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
 
     xy = np.array([turbineLoc.x, turbineLoc.y])
 
     xy_rot = R * xy
     # return xy_rot
-    #print(xy_rot)
-    #print(xy_rot[0][0][0])
+    # print(xy_rot)
+    # print(xy_rot[0][0][0])
     df_return = turbineLoc.copy(deep=True)
-    df_return['x'] = np.squeeze(np.asarray(xy_rot[0, :]))
-    df_return['y'] = np.squeeze(np.asarray(xy_rot[1, :]))
+    df_return["x"] = np.squeeze(np.asarray(xy_rot[0, :]))
+    df_return["y"] = np.squeeze(np.asarray(xy_rot[1, :]))
     return df_return
 
 
@@ -240,12 +239,12 @@ def turbineDist(df, turbList):
     Returns:
         float: distance between turbines.
     """
-    x1 = df.loc[turbList[0], 'x']
-    x2 = df.loc[turbList[1], 'x']
-    y1 = df.loc[turbList[0], 'y']
-    y2 = df.loc[turbList[1], 'y']
+    x1 = df.loc[turbList[0], "x"]
+    x2 = df.loc[turbList[1], "x"]
+    y1 = df.loc[turbList[0], "y"]
+    y2 = df.loc[turbList[1], "y"]
 
-    dist = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    dist = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
     return dist
 
@@ -262,13 +261,13 @@ def wakeAngle(df, turbList):
     Returns:
         wakeAngle (float): angle between turbines relative to compass
     """
-    x1 = df.loc[turbList[0], 'x']
-    x2 = df.loc[turbList[1], 'x']
-    y1 = df.loc[turbList[0], 'y']
-    y2 = df.loc[turbList[1], 'y']
-    wakeAngle = np.arctan2(
-        y2 - y1,
-        x2 - x1) * 180.0 / np.pi  # Angle in normal cartesian coordinates
+    x1 = df.loc[turbList[0], "x"]
+    x2 = df.loc[turbList[1], "x"]
+    y1 = df.loc[turbList[0], "y"]
+    y2 = df.loc[turbList[1], "y"]
+    wakeAngle = (
+        np.arctan2(y2 - y1, x2 - x1) * 180.0 / np.pi
+    )  # Angle in normal cartesian coordinates
 
     # Convert angle to compass angle
     wakeAngle = 270.0 - wakeAngle
@@ -280,14 +279,16 @@ def wakeAngle(df, turbList):
     return wakeAngle
 
 
-def label_line(line,
-               label_text,
-               ax,
-               near_i=None,
-               near_x=None,
-               near_y=None,
-               rotation_offset=0.0,
-               offset=(0, 0)):
+def label_line(
+    line,
+    label_text,
+    ax,
+    near_i=None,
+    near_x=None,
+    near_y=None,
+    rotation_offset=0.0,
+    offset=(0, 0),
+):
     """
     [summary]
 
@@ -322,28 +323,29 @@ def label_line(line,
         dx = sx[i + 1] - sx[i]
         dy = sy[i + 1] - sy[i]
         rotation = np.rad2deg(math.atan2(dy, dx)) + rotation_offset
-        pos = [(x[i] + x[i + 1]) / 2. + offset[0],
-               (y[i] + y[i + 1]) / 2 + offset[1]]
-        plt.text(pos[0],
-                 pos[1],
-                 label_text,
-                 size=9,
-                 rotation=rotation,
-                 color=line.get_color(),
-                 ha="center",
-                 va="center",
-                 bbox=dict(ec='1', fc='1', alpha=0.8))
+        pos = [(x[i] + x[i + 1]) / 2.0 + offset[0], (y[i] + y[i + 1]) / 2 + offset[1]]
+        plt.text(
+            pos[0],
+            pos[1],
+            label_text,
+            size=9,
+            rotation=rotation,
+            color=line.get_color(),
+            ha="center",
+            va="center",
+            bbox=dict(ec="1", fc="1", alpha=0.8),
+        )
 
     # extract line data
     x = line.get_xdata()
     y = line.get_ydata()
 
     # define screen spacing
-    if ax.get_xscale() == 'log':
+    if ax.get_xscale() == "log":
         sx = np.log10(x)
     else:
         sx = x
-    if ax.get_yscale() == 'log':
+    if ax.get_yscale() == "log":
         sy = np.log10(y)
     else:
         sy = y
@@ -356,22 +358,21 @@ def label_line(line,
         put_label(i)
     elif near_x is not None:
         for i in range(len(x) - 2):
-            if (x[i] < near_x and x[i + 1] >= near_x) or (x[i + 1] < near_x
-                                                          and x[i] >= near_x):
+            if (x[i] < near_x and x[i + 1] >= near_x) or (
+                x[i + 1] < near_x and x[i] >= near_x
+            ):
                 put_label(i)
     elif near_y is not None:
         for i in range(len(y) - 2):
-            if (y[i] < near_y and y[i + 1] >= near_y) or (y[i + 1] < near_y
-                                                          and y[i] >= near_y):
+            if (y[i] < near_y and y[i + 1] >= near_y) or (
+                y[i + 1] < near_y and y[i] >= near_y
+            ):
                 put_label(i)
     else:
         raise ValueError("Need one of near_i, near_x, near_y")
 
 
-def make_turbine_array(x,
-                       y,
-                       filename='turbineArrayProperties',
-                       turbine='NREL5MWRef'):
+def make_turbine_array(x, y, filename="turbineArrayProperties", turbine="NREL5MWRef"):
     """
     Function to output a turbine array file given x and y locations.
 
@@ -385,69 +386,68 @@ def make_turbine_array(x,
     """
 
     # Open the file for writing
-    with open(filename, 'w') as f:
+    with open(filename, "w") as f:
 
         # Write out the headerlines
         f.write(
-            '/*--------------------------------*- C++ -*----------------------------------*\\\n'
+            "/*--------------------------------*- C++ -*----------------------------------*\\\n"
         )
         f.write(
-            '| =========                 |                                                 |\n'
+            "| =========                 |                                                 |\n"
         )
         f.write(
-            '| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |\n'
+            "| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |\n"
         )
         f.write(
-            '|  \\    /   O peration     | Version:  1.6                                   |\n'
+            "|  \\    /   O peration     | Version:  1.6                                   |\n"
         )
         f.write(
-            '|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |\n'
+            "|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |\n"
         )
         f.write(
-            '|    \\/     M anipulation  |                                                 |\n'
+            "|    \\/     M anipulation  |                                                 |\n"
         )
         f.write(
-            '\\*---------------------------------------------------------------------------*/\n'
+            "\\*---------------------------------------------------------------------------*/\n"
         )
-        f.write('FoamFile\n')
-        f.write('{\n')
-        f.write('    version     2.0;\n')
-        f.write('    format      ascii;\n')
-        f.write('    class       dictionary;\n')
-        f.write('    object      turbineProperties;\n')
-        f.write('}\n')
+        f.write("FoamFile\n")
+        f.write("{\n")
+        f.write("    version     2.0;\n")
+        f.write("    format      ascii;\n")
+        f.write("    class       dictionary;\n")
+        f.write("    object      turbineProperties;\n")
+        f.write("}\n")
         f.write(
-            '// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //\n'
+            "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //\n"
         )
-        f.write('\n')
-        f.write('globalProperties\n')
-        f.write('{\n')
+        f.write("\n")
+        f.write("globalProperties\n")
+        f.write("{\n")
         f.write('    outputControl       "timeStep";\n')
-        f.write('    outputInterval       1;\n')
-        f.write('}\n')
+        f.write("    outputInterval       1;\n")
+        f.write("}\n")
 
         for idx, (x_val, y_val) in enumerate(zip(x, y)):
-            f.write('\n')
-            f.write('turbine%d\n' % idx)
-            f.write('{\n')
+            f.write("\n")
+            f.write("turbine%d\n" % idx)
+            f.write("{\n")
             f.write('    turbineType         "%s";\n' % turbine)
-            f.write('    baseLocation        (%.1f %.1f 0.0);\n' %
-                    (x_val, y_val))
-            f.write('    nRadial              64;\n')
-            f.write('    azimuthMaxDis        2.0;\n')
-            f.write('    nAvgSector           1;\n')
+            f.write("    baseLocation        (%.1f %.1f 0.0);\n" % (x_val, y_val))
+            f.write("    nRadial              64;\n")
+            f.write("    azimuthMaxDis        2.0;\n")
+            f.write("    nAvgSector           1;\n")
             f.write('    pointDistType       "uniform";\n')
             f.write('    pointInterpType     "linear";\n')
             f.write('    bladeUpdateType     "oldPosition";\n')
-            f.write('    epsilon              20.0;\n')
-            f.write('    forceScalar          1.0;\n')
-            f.write('    inflowVelocityScalar 0.94;\n')
+            f.write("    epsilon              20.0;\n")
+            f.write("    forceScalar          1.0;\n")
+            f.write("    inflowVelocityScalar 0.94;\n")
             f.write('    tipRootLossCorrType "Glauert";\n')
             f.write('    rotationDir         "cw";\n')
-            f.write('    Azimuth              0.0;\n')
-            f.write('    RotSpeed             13.0;\n')
-            f.write('    TorqueGen            20000.0;\n')
-            f.write('    Pitch                0.0;\n')
-            f.write('    NacYaw               270.0;\n')
-            f.write('    fluidDensity         1.225;\n')
-            f.write('}\n')
+            f.write("    Azimuth              0.0;\n")
+            f.write("    RotSpeed             13.0;\n")
+            f.write("    TorqueGen            20000.0;\n")
+            f.write("    Pitch                0.0;\n")
+            f.write("    NacYaw               270.0;\n")
+            f.write("    fluidDensity         1.225;\n")
+            f.write("}\n")

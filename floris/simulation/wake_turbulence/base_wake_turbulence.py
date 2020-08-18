@@ -10,12 +10,16 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-class WakeTurbulence():
+from ...logging_manager import LoggerBase
+
+
+class WakeTurbulence(LoggerBase):
     """
     This is the super-class for all wake turbulence models. It includes
     implementations of functions that subclasses should use to retrieve
     model-specific parameters from the input dictionary.
     """
+
     def __init__(self, parameter_dictionary):
         """
         Stores the parameter dictionary for the wake deflection model.
@@ -48,8 +52,10 @@ class WakeTurbulence():
             # user that key: value pair was not used
             for key in user_dict:
                 if key not in default_dict:
-                    err_msg = ('User supplied value {}, not in standard ' + \
-                        'wake velocity model dictionary.').format(key)
+                    err_msg = (
+                        "User supplied value {}, not in standard "
+                        + "wake velocity model dictionary."
+                    ).format(key)
                     self.logger.warning(err_msg, stack_info=True)
                     raise KeyError(err_msg)
             return_dict = user_dict

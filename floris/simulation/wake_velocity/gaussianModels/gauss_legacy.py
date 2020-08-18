@@ -11,9 +11,10 @@
 # the License.
 
 import numpy as np
-from ....utilities import cosd, sind, tand, setup_logger
-from ..base_velocity_deficit import VelocityDeficit
+
+from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
+from ..base_velocity_deficit import VelocityDeficit
 
 
 class LegacyGauss(GaussianModel):
@@ -23,22 +24,22 @@ class LegacyGauss(GaussianModel):
     wake models described in :cite:`glvm-bastankhah2014new`,
     :cite:`glvm-abkar2015influence`, :cite:`glvm-bastankhah2016experimental`,
     :cite:`glvm-niayifar2016analytical`, and :cite:`glvm-dilip2017wind`.
-    
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: glvm-
     """
+
     default_parameters = {
-        'ka': 0.38,
-        'kb': 0.004,
-        'alpha': 0.58,
-        'beta': 0.077,
-        'calculate_VW_velocities':False,
-        'use_yaw_added_recovery':False,
-        'yaw_recovery_alpha':0.03,
-        'eps_gain':0.3
+        "ka": 0.38,
+        "kb": 0.004,
+        "alpha": 0.58,
+        "beta": 0.077,
+        "calculate_VW_velocities": False,
+        "use_yaw_added_recovery": False,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):
@@ -66,7 +67,6 @@ class LegacyGauss(GaussianModel):
         """
 
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
 
         self.model_string = "gauss_legacy"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
@@ -82,15 +82,22 @@ class LegacyGauss(GaussianModel):
         # GCH Parameters
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
-        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
 
-
-    def function(self, x_locations, y_locations, z_locations, turbine, turbine_coord, deflection_field, flow_field):
+    def function(
+        self,
+        x_locations,
+        y_locations,
+        z_locations,
+        turbine,
+        turbine_coord,
+        deflection_field,
+        flow_field,
+    ):
         """
         Using the Gaussian wake model, this method calculates and
-        returns the wake velocity deficits, caused by the specified turbine, 
-        relative to the freestream velocities at the grid of points 
+        returns the wake velocity deficits, caused by the specified turbine,
+        relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
 
         Args:
@@ -107,7 +114,7 @@ class LegacyGauss(GaussianModel):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the 
+            deflection_field (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
@@ -125,6 +132,9 @@ class LegacyGauss(GaussianModel):
         veer = flow_field.wind_veer
 
         # added turbulence model
+        TI_mixing = self.yaw_added_turbulence_mixing(turbine_coord, turbine, flow_field, x_locations, y_locations,
+                                                     z_locations)
+        turbine._turbulence_intensity = turbine.current_turbulence_intensity + TI_mixing
         TI = turbine.current_turbulence_intensity
 
         # turbine parameters
@@ -139,54 +149,79 @@ class LegacyGauss(GaussianModel):
 
         xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
         uR, u0 = GaussianModel.initial_velocity_deficits(U_local, Ct)
-        sigma_y0, sigma_z0 = GaussianModel.initial_wake_expansion(turbine, U_local, veer, uR, u0)
+        sigma_y0, sigma_z0 = GaussianModel.initial_wake_expansion(
+            turbine, U_local, veer, uR, u0
+        )
 
         # quantity that determines when the far wake starts
-        x0 = D * ( cosd(yaw) * (1 + np.sqrt(1 - Ct)) ) / ( np.sqrt(2) * ( 4 * self.alpha * TI + 2 * self.beta * ( 1 - np.sqrt(1 - Ct) ) ) ) + turbine_coord.x1
+        x0 = (
+            D
+            * (cosd(yaw) * (1 + np.sqrt(1 - Ct)))
+            / (
+                np.sqrt(2)
+                * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))
+            )
+            + turbine_coord.x1
+        )
 
         # velocity deficit in the near wake
-        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(Ct / 2.0) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
-        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(Ct / 2.0) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
+        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
+            Ct / 2.0
+        ) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
+        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
+            Ct / 2.0
+        ) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
         sigma_y[x_locations < xR] = 0.5 * D
         sigma_z[x_locations < xR] = 0.5 * D
 
-        a = cosd(veer)**2 / (2 * sigma_y**2) + sind(veer)**2 / (2 * sigma_z**2)
-        b = -sind(2 * veer) / (4 * sigma_y**2) + sind(2 * veer) / (4 * sigma_z**2)
-        c = sind(veer)**2 / (2 * sigma_y**2) + cosd(veer)**2 / (2 * sigma_z**2)
-        r = a * ((y_locations - turbine_coord.x2) - delta)**2 - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH)) + c * ((z_locations - HH))**2
-        C = 1 - np.sqrt(1 - ( Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D**2) ) )
+        a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
+        b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
+        c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
+        r = (
+            a * ((y_locations - turbine_coord.x2) - delta) ** 2
+            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH))
+            + c * ((z_locations - HH)) ** 2
+        )
+        C = 1 - np.sqrt(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)))
 
-        velDef = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5) )
+        velDef = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
         velDef[x_locations < xR] = 0
         velDef[x_locations > x0] = 0
 
         # wake expansion in the lateral (y) and the vertical (z)
-        ky = self.ka * TI + self.kb  # wake expansion parameters
-        kz = self.ka * TI + self.kb  # wake expansion parameters
+
+        # turbulent mixing based on yaw, i.e. yaw added turbulent mixing
+        ky = self.ka * (TI + TI_mixing) + self.kb  # wake expansion parameters
+        kz = self.ka * (TI + TI_mixing) + self.kb  # wake expansion parameters
+
         sigma_y = ky * (x_locations - x0) + sigma_y0
         sigma_z = kz * (x_locations - x0) + sigma_z0
         sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
         sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         # velocity deficit outside the near wake
-        a = cosd(veer)**2 / (2 * sigma_y**2) + sind(veer)**2 / (2 * sigma_z**2)
-        b = -sind(2 * veer) / (4 * sigma_y**2) + sind(2 * veer) / (4 * sigma_z**2)
-        c = sind(veer)**2 / (2 * sigma_y**2) + cosd(veer)**2 / (2 * sigma_z**2)
-        r = a * (y_locations - turbine_coord.x2 - delta)**2 - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH) + c * (z_locations - HH)**2
-        C = 1 - np.sqrt(1 - ( Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D**2) ) )
+        a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
+        b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
+        c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
+        r = (
+            a * (y_locations - turbine_coord.x2 - delta) ** 2
+            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH)
+            + c * (z_locations - HH) ** 2
+        )
+        C = 1 - np.sqrt(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)))
 
         # compute velocities in the far wake
-        velDef1 = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5) )
+        velDef1 = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
         velDef1[x_locations < x0] = 0
 
-        U = np.sqrt(velDef**2 + velDef1**2)
+        U = np.sqrt(velDef ** 2 + velDef1 ** 2)
 
         return U, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
 
     @property
     def ka(self):
         """
-        Parameter used to determine the linear relationship between the 
+        Parameter used to determine the linear relationship between the
         turbulence intensity and the width of the Gaussian wake shape.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -205,17 +240,18 @@ class LegacyGauss(GaussianModel):
     @ka.setter
     def ka(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ka: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for ka: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
-        if value != __class__.default_parameters['ka']:
+        if value != __class__.default_parameters["ka"]:
             self.logger.info(
-                ('Current value of ka, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['ka'])
-                )
+                (
+                    "Current value of ka, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["ka"])
+            )
 
     @property
     def kb(self):
@@ -239,17 +275,18 @@ class LegacyGauss(GaussianModel):
     @kb.setter
     def kb(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for kb: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for kb: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
-        if value != __class__.default_parameters['kb']:
+        if value != __class__.default_parameters["kb"]:
             self.logger.info(
-                ('Current value of kb, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['kb'])
-                )
+                (
+                    "Current value of kb, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["kb"])
+            )
 
     @property
     def alpha(self):
@@ -274,17 +311,19 @@ class LegacyGauss(GaussianModel):
     @alpha.setter
     def alpha(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for alpha: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for alpha: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
-        if value != __class__.default_parameters['alpha']:
+        if value != __class__.default_parameters["alpha"]:
             self.logger.info(
-                ('Current value of alpha, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['alpha'])
-                )
+                (
+                    "Current value of alpha, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["alpha"])
+            )
 
     @property
     def beta(self):
@@ -309,14 +348,16 @@ class LegacyGauss(GaussianModel):
     @beta.setter
     def beta(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for beta: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for beta: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value
-        if value != __class__.default_parameters['beta']:
+        if value != __class__.default_parameters["beta"]:
             self.logger.info(
-                ('Current value of beta, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['beta'])
-                )
+                (
+                    "Current value of beta, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["beta"])
+            )

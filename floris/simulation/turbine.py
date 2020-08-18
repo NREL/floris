@@ -1,28 +1,30 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
- 
+
+
+import math
 
 import numpy as np
-from scipy.interpolate import interp1d
+from scipy.stats import norm
 from scipy.spatial import distance_matrix
-import math
+from scipy.interpolate import interp1d
+
 from ..utilities import cosd, sind, tand
-from ..utilities import setup_logger
-import scipy.stats as stats
+from ..logging_manager import LoggerBase
 
 
-class Turbine():
+class Turbine(LoggerBase):
     """
     Turbine is a class containing objects pertaining to the individual
     turbines.
@@ -72,8 +74,8 @@ class Turbine():
     Returns:
         Turbine: An instantiated Turbine object.
     """
+
     def __init__(self, instance_dictionary):
-        self.logger = setup_logger(name=__name__)
         self.description = instance_dictionary["description"]
 
         properties = instance_dictionary["properties"]
@@ -93,8 +95,8 @@ class Turbine():
         self.use_turbulence_correction = False
 
         # Initiate to False unless specifically set
-        if 'use_points_on_perimeter' in properties:
-            self.use_points_on_perimeter = bool(properties['use_points_on_perimeter'])
+        if "use_points_on_perimeter" in properties:
+            self.use_points_on_perimeter = bool(properties["use_points_on_perimeter"])
         else:
             self.use_points_on_perimeter = False
 
@@ -109,22 +111,20 @@ class Turbine():
         wind_speed = self.power_thrust_table["wind_speed"]
 
         cp = self.power_thrust_table["power"]
-        self.fCpInterp = interp1d(wind_speed, cp, fill_value='extrapolate')
+        self.fCpInterp = interp1d(wind_speed, cp, fill_value="extrapolate")
 
         ct = self.power_thrust_table["thrust"]
-        self.fCtInterp = interp1d(wind_speed, ct, fill_value='extrapolate')
+        self.fCtInterp = interp1d(wind_speed, ct, fill_value="extrapolate")
 
         # constants
         self.grid_point_count = 5 * 5
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
-            raise ValueError(
-                "Turbine.grid_point_count must be the square of a number")
+            raise ValueError("Turbine.grid_point_count must be the square of a number")
 
         self.reset_velocities()
 
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
-
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
@@ -141,24 +141,23 @@ class Turbine():
         # determine the dimensions of the square grid
         num_points = int(np.round(np.sqrt(self.grid_point_count)))
         # syntax: np.linspace(min, max, n points)
-        horizontal = np.linspace(-self.rotor_radius, self.rotor_radius,
-                                 num_points)
-        vertical = np.linspace(-self.rotor_radius, self.rotor_radius,
-                               num_points)
+        horizontal = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
+        vertical = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
 
         # build the grid with all of the points
-        grid = [(h, vertical[i]) for i in range(num_points)
-                for h in horizontal]
+        grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
 
         # keep only the points in the swept area
         if self.use_points_on_perimeter:
             grid = [
-                point for point in grid
+                point
+                for point in grid
                 if np.hypot(point[0], point[1]) <= self.rotor_radius
             ]
         else:
             grid = [
-                point for point in grid
+                point
+                for point in grid
                 if np.hypot(point[0], point[1]) < self.rotor_radius
             ]
 
@@ -197,9 +196,8 @@ class Turbine():
         """
         for param in turbine_change_dict:
             self.logger.info(
-                'Setting {} to {}'.format(param, turbine_change_dict[param])
+                "Setting {} to {}".format(param, turbine_change_dict[param])
             )
-            # print("Setting {} to {}".format(param, turbine_change_dict[param]))
             setattr(self, param, turbine_change_dict[param])
         self._initialize_turbine()
 
@@ -246,8 +244,7 @@ class Turbine():
 
         # # NEW METHOD========================
         # Sort by distance
-        flow_grid_points = np.column_stack(
-            [x.flatten(), y.flatten(), z.flatten()])
+        flow_grid_points = np.column_stack([x.flatten(), y.flatten(), z.flatten()])
 
         # Set up a grid array
         y_array = np.array(self.grid)[:, 0] + coord.x2
@@ -280,13 +277,12 @@ class Turbine():
 
         return x_array, y_array, z_array
 
-
-
-    def update_velocities(self, u_wake, coord, flow_field, rotated_x,
-                          rotated_y, rotated_z):
+    def update_velocities(
+        self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z
+    ):
         """
-        This method updates the velocities at the rotor swept area grid 
-        points based on the flow field freestream velocities and wake 
+        This method updates the velocities at the rotor swept area grid
+        points based on the flow field freestream velocities and wake
         velocities.
 
         Args:
@@ -304,7 +300,8 @@ class Turbine():
         # reset the waked velocities
         local_wind_speed = flow_field.u_initial - u_wake
         self.velocities = self.calculate_swept_area_velocities(
-            local_wind_speed, coord, rotated_x, rotated_y, rotated_z)
+            local_wind_speed, coord, rotated_x, rotated_y, rotated_z
+        )
 
     def reset_velocities(self):
         """
@@ -327,19 +324,53 @@ class Turbine():
         """
         self._yaw_angle = yaw_angle
 
+    def TKE_to_TI(self, turbulence_kinetic_energy, wind_speed):
+        """
+        Converts a list of turbulence kinetic energy values to
+        turbulence intensity.
+
+        Args:
+            turbulence_kinetic_energy (list): Values of turbulence kinetic
+                energy in units of meters squared per second squared.
+            wind_speed (list): Measurements of wind speed in meters per second.
+
+        Returns:
+            list: converted turbulence intensity values expressed as a decimal
+            (e.g. 10%TI -> 0.10).
+        """
+        turbulence_intensity = [
+            (np.sqrt((2 / 3) * turbulence_kinetic_energy)) / wind_speed
+            for i in range(len(turbulence_kinetic_energy))
+        ]
+
+        return turbulence_intensity
+
+    def u_prime(self, wind_speed):
+        """
+        Converts a TKE to horizontal deviation component.
+
+        Args:
+            wind_speed (list): Measurements of wind speed in meters per second.
+
+        Returns:
+            list: converted u_prime values in meters per second
+        """
+
+        return np.sqrt(3) * (wind_speed * self.current_turbulence_intensity)
+
     # Getters & Setters
 
     @property
     def turbulence_parameter(self):
         """
-        This property calculates and returns the turbulence correction 
-        parameter for the turbine, a value used to account for the 
+        This property calculates and returns the turbulence correction
+        parameter for the turbine, a value used to account for the
         change in power output due to the effects of turbulence.
 
         Returns:
             float: The value of the turbulence parameter.
         """
-        if self.use_turbulence_correction is False:
+        if not self.use_turbulence_correction:
             return 1.0
         else:
             # define wind speed, ti, and power curve components
@@ -351,8 +382,7 @@ class Turbine():
             speed = self.average_velocity
             ti = self.current_turbulence_intensity
 
-            if ciws >= speed or cows <= speed or ti == 0.0 or math.isnan(
-                    speed) == True:
+            if ciws >= speed or cows <= speed or ti == 0.0 or math.isnan(speed):
                 return 1.0
             else:
                 # define mean and standard deviation to create normalized pdf with sum = 1
@@ -362,18 +392,18 @@ class Turbine():
                     xp = np.linspace((mu - sigma), cows, 100)
                 else:
                     xp = np.linspace((mu - sigma), (mu + sigma), 100)
-                pdf = stats.norm.pdf(xp, mu, sigma)
+                pdf = norm.pdf(xp, mu, sigma)
                 npdf = np.array(pdf) * (1 / np.sum(pdf))
 
                 # calculate turbulence parameter (ratio of corrected power to original power)
-                return np.sum([
-                    npdf[k] * self._fCp(xp[k]) * xp[k]**3 for k in range(100)
-                ]) / (self._fCp(mu) * mu**3)
+                return np.sum(
+                    [npdf[k] * self._fCp(xp[k]) * xp[k] ** 3 for k in range(100)]
+                ) / (self._fCp(mu) * mu ** 3)
 
     @property
     def current_turbulence_intensity(self):
         """
-        This method returns the current turbulence intensity at 
+        This method returns the current turbulence intensity at
         the turbine expressed as a decimal fraction.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -485,10 +515,12 @@ class Turbine():
             >>> avg_vel = floris.farm.turbines[0].average_velocity()
         """
         # remove all invalid numbers from interpolation
-        data = self.velocities[np.where(np.isnan(self.velocities) == False)]
-        avg_vel = np.cbrt(np.mean(data**3))
-        if np.isnan(avg_vel) == True: avg_vel = 0
-        elif np.isinf(avg_vel) == True: avg_vel = 0
+        data = self.velocities[np.where(~np.isnan(self.velocities))]
+        avg_vel = np.cbrt(np.mean(data ** 3))
+        if np.isnan(avg_vel):
+            avg_vel = 0
+        elif np.isinf(avg_vel):
+            avg_vel = 0
 
         return avg_vel
 
@@ -516,8 +548,7 @@ class Turbine():
         """
         # Compute the yaw effective velocity
         pW = self.pP / 3.0  # Convert from pP to pW
-        yaw_effective_velocity = self.average_velocity * cosd(
-            self.yaw_angle)**pW
+        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
 
         return self._fCp(yaw_effective_velocity)
 
@@ -541,7 +572,7 @@ class Turbine():
 
             >>> Ct = floris.farm.turbines[0].Ct()
         """
-        return self._fCt(self.average_velocity) * cosd(self.yaw_angle) # **self.pP
+        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)  # **self.pP
 
     @property
     def power(self):
@@ -567,14 +598,19 @@ class Turbine():
 
         # Compute the yaw effective velocity
         pW = self.pP / 3.0  # Convert from pP to w
-        yaw_effective_velocity = self.average_velocity * cosd(
-            self.yaw_angle)**pW
+        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
 
         # Now compute the power
-        cptmp = self.Cp  #Note Cp is also now based on yaw effective velocity
-        return 0.5 * self.air_density * (np.pi * self.rotor_radius**2) \
-            * cptmp * self.generator_efficiency * self.turbulence_parameter \
-            * yaw_effective_velocity**3
+        cptmp = self.Cp  # Note Cp is also now based on yaw effective velocity
+        return (
+            0.5
+            * self.air_density
+            * (np.pi * self.rotor_radius ** 2)
+            * cptmp
+            * self.generator_efficiency
+            * self.turbulence_parameter
+            * yaw_effective_velocity ** 3
+        )
 
     @property
     def aI(self):
@@ -591,5 +627,8 @@ class Turbine():
 
             >>> aI = floris.farm.turbines[0].aI()
         """
-        return 0.5 / cosd(self.yaw_angle) \
+        return (
+            0.5
+            / cosd(self.yaw_angle)
             * (1 - np.sqrt(1 - self.Ct * cosd(self.yaw_angle)))
+        )

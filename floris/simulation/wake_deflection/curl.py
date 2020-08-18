@@ -10,17 +10,17 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import setup_logger
-from .base_velocity_deflection import VelocityDeflection
 import numpy as np
+
+from .base_velocity_deflection import VelocityDeflection
 
 
 class Curl(VelocityDeflection):
     """
     Stand-in class for the curled wake model. Wake deflection with the curl
     model is handled inherently in the wake velocity portion of the model.
-    Passes zeros for deflection values. See 
-    :cite:`cdm-martinez2019aerodynamics` for additional info on the curled wake 
+    Passes zeros for deflection values. See
+    :cite:`cdm-martinez2019aerodynamics` for additional info on the curled wake
     model.
 
     References:
@@ -35,19 +35,19 @@ class Curl(VelocityDeflection):
         See super-class for initialization details. See
         :py:class:`floris.simulation.wake_velocity.curl` for details on
         `parameter_dictionary`.
-        
+
         Args:
             parameter_dictionary (dict): Model-specific parameters.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "curl"
 
-    def function(self, x_locations, y_locations, z_locations, turbine, coord,
-                 flow_field):
+    def function(
+        self, x_locations, y_locations, z_locations, turbine, coord, flow_field
+    ):
         """
         Passes zeros for wake deflection as deflection is inherently handled in
-        the wake velocity portion of the curled wake model. 
+        the wake velocity portion of the curled wake model.
 
         Args:
             x_locations (np.array): An array of floats that contains the

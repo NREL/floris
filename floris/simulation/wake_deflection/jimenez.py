@@ -10,9 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind, setup_logger
-from .base_velocity_deflection import VelocityDeflection
 import numpy as np
+
+from ...utilities import cosd, sind
+from .base_velocity_deflection import VelocityDeflection
 
 
 class Jimenez(VelocityDeflection):
@@ -26,11 +27,8 @@ class Jimenez(VelocityDeflection):
             :filter: docname in docnames
             :keyprefix: jdm-
     """
-    default_parameters = {
-        "kd": 0.05,
-        "ad": 0.0,
-        "bd": 0.0
-    }
+
+    default_parameters = {"kd": 0.05, "ad": 0.0, "bd": 0.0}
 
     def __init__(self, parameter_dictionary):
         """
@@ -52,15 +50,15 @@ class Jimenez(VelocityDeflection):
 
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "jimenez"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.ad = float(model_dictionary["ad"])
         self.kd = float(model_dictionary["kd"])
         self.bd = float(model_dictionary["bd"])
 
-    def function(self, x_locations, y_locations, z_locations, turbine, coord,
-                 flow_field):
+    def function(
+        self, x_locations, y_locations, z_locations, turbine, coord, flow_field
+    ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of
         the turbine. This is coded as defined in [1].
@@ -84,14 +82,22 @@ class Jimenez(VelocityDeflection):
         """
 
         # angle of deflection
-        xi_init = cosd(turbine.yaw_angle) * sind(
-            turbine.yaw_angle) * turbine.Ct / 2.0
+        xi_init = cosd(turbine.yaw_angle) * sind(turbine.yaw_angle) * turbine.Ct / 2.0
 
         x_locations = x_locations - coord.x1
 
         # yaw displacement
-        yYaw_init = ( xi_init * ( 15 * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**4. + xi_init**2. ) / ((30 * self.kd / turbine.rotor_diameter) 
-            * (2 * self.kd * x_locations / turbine.rotor_diameter + 1)**5.)) - (xi_init * turbine.rotor_diameter * (15 + xi_init**2.) / (30 * self.kd))
+        yYaw_init = (
+            xi_init
+            * (
+                15 * (2 * self.kd * x_locations / turbine.rotor_diameter + 1) ** 4.0
+                + xi_init ** 2.0
+            )
+            / (
+                (30 * self.kd / turbine.rotor_diameter)
+                * (2 * self.kd * x_locations / turbine.rotor_diameter + 1) ** 5.0
+            )
+        ) - (xi_init * turbine.rotor_diameter * (15 + xi_init ** 2.0) / (30 * self.kd))
 
         # corrected yaw displacement with lateral offset
         deflection = yYaw_init + self.ad + self.bd * x_locations
@@ -124,17 +130,18 @@ class Jimenez(VelocityDeflection):
     @kd.setter
     def kd(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for kd: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for kd: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kd = value
-        if value != __class__.default_parameters['kd']:
+        if value != __class__.default_parameters["kd"]:
             self.logger.info(
-                ('Current value of kd, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['kd'])
-                )
+                (
+                    "Current value of kd, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["kd"])
+            )
 
     @property
     def ad(self):
@@ -158,17 +165,18 @@ class Jimenez(VelocityDeflection):
     @ad.setter
     def ad(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ad: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for ad: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ad = value
-        if value != __class__.default_parameters['ad']:
+        if value != __class__.default_parameters["ad"]:
             self.logger.info(
-                ('Current value of ad, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['ad'])
-                )
+                (
+                    "Current value of ad, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["ad"])
+            )
 
     @property
     def bd(self):
@@ -192,14 +200,15 @@ class Jimenez(VelocityDeflection):
     @bd.setter
     def bd(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for bd: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for bd: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._bd = value
-        if value != __class__.default_parameters['bd']:
+        if value != __class__.default_parameters["bd"]:
             self.logger.info(
-                ('Current value of bd, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['bd'])
-                )
+                (
+                    "Current value of bd, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["bd"])
+            )

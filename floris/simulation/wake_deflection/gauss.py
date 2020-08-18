@@ -10,13 +10,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import cosd, sind, tand, setup_logger
-from .base_velocity_deflection import VelocityDeflection
 import numpy as np
+
+from ...utilities import cosd, sind, tand
+from .base_velocity_deflection import VelocityDeflection
+
 
 class Gauss(VelocityDeflection):
     """
-    The Gauss deflection model is a blend of the models described in 
+    The Gauss deflection model is a blend of the models described in
     :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for
     calculating the deflection field in turbine wakes.
 
@@ -26,6 +28,7 @@ class Gauss(VelocityDeflection):
             :filter: docname in docnames
             :keyprefix: gdm-
     """
+
     default_parameters = {
         "ka": 0.38,
         "kb": 0.004,
@@ -34,8 +37,8 @@ class Gauss(VelocityDeflection):
         "ad": 0.0,
         "bd": 0.0,
         "dm": 1.0,
-        "use_secondary_steering":True,
-        "eps_gain":0.3
+        "use_secondary_steering": True,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):
@@ -78,7 +81,6 @@ class Gauss(VelocityDeflection):
                         See property on super-class for more details.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "gauss"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.ka = model_dictionary["ka"]
@@ -91,11 +93,12 @@ class Gauss(VelocityDeflection):
         self.use_secondary_steering = model_dictionary["use_secondary_steering"]
         self.eps_gain = model_dictionary["eps_gain"]
 
-    def function(self, x_locations, y_locations, z_locations, turbine, coord,
-                 flow_field):
+    def function(
+        self, x_locations, y_locations, z_locations, turbine, coord, flow_field
+    ):
         """
-        Calculates the deflection field of the wake. See 
-        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` 
+        Calculates the deflection field of the wake. See
+        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls`
         for details on the methods used.
 
         Args:
@@ -137,25 +140,34 @@ class Gauss(VelocityDeflection):
 
         # turbine parameters
         D = turbine.rotor_diameter
-        yaw = -1 * self.calculate_effective_yaw_angle(x_locations, y_locations,
-                            z_locations, turbine, coord, flow_field)
-                            # opposite sign convention in this model
+        yaw = -1 * self.calculate_effective_yaw_angle(
+            x_locations, y_locations, z_locations, turbine, coord, flow_field
+        )
+        # opposite sign convention in this model
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
 
-        # U_local = flow_field.wind_map.grid_wind_speed  
+        # U_local = flow_field.wind_map.grid_wind_speed
         # just a placeholder for now, should be initialized with the flow_field
         U_local = flow_field.u_initial
 
         # initial velocity deficits
-        uR = U_local * Ct * cosd(tilt) * cosd(yaw) / (
-            2. * (1 - np.sqrt(1 - (Ct * cosd(tilt) * cosd(yaw)))))
+        uR = (
+            U_local
+            * Ct
+            * cosd(tilt)
+            * cosd(yaw)
+            / (2.0 * (1 - np.sqrt(1 - (Ct * cosd(tilt) * cosd(yaw)))))
+        )
         u0 = U_local * np.sqrt(1 - Ct)
 
         # length of near wake
-        x0 = D * (cosd(yaw) * (1 + np.sqrt(1 - Ct * cosd(yaw)))) / (
-            np.sqrt(2) * (4 * alpha * TI + 2 * beta *
-                          (1 - np.sqrt(1 - Ct)))) + coord.x1
+        x0 = (
+            D
+            * (cosd(yaw) * (1 + np.sqrt(1 - Ct * cosd(yaw))))
+            / (np.sqrt(2) * (4 * alpha * TI + 2 * beta * (1 - np.sqrt(1 - Ct))))
+            + coord.x1
+        )
 
         # wake expansion parameters
         ky = ka * TI + kb
@@ -163,7 +175,7 @@ class Gauss(VelocityDeflection):
 
         C0 = 1 - u0 / wind_speed
         M0 = C0 * (2 - C0)
-        E0 = C0**2 - 3 * np.exp(1. / 12.) * C0 + 3 * np.exp(1. / 3.)
+        E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
 
         # initial Gaussian wake expansion
         sigma_z0 = D * 0.5 * np.sqrt(uR / (U_local + u0))
@@ -173,18 +185,18 @@ class Gauss(VelocityDeflection):
         xR = yR * tand(yaw) + coord.x1
 
         # yaw parameters (skew angle and distance from centerline)
-        theta_c0 = self.dm * (
-            0.3 * np.radians(yaw) / cosd(yaw)) * (
-                1 - np.sqrt(1 - Ct * cosd(yaw)))  # skew angle in radians
-        delta0 = np.tan(theta_c0) * (
-            x0 - coord.x1
-        )  # initial wake deflection;
+        theta_c0 = (
+            self.dm
+            * (0.3 * np.radians(yaw) / cosd(yaw))
+            * (1 - np.sqrt(1 - Ct * cosd(yaw)))
+        )  # skew angle in radians
+        delta0 = np.tan(theta_c0) * (x0 - coord.x1)  # initial wake deflection;
         # NOTE: use np.tan here since theta_c0 is radians
 
         # deflection in the near wake
-        delta_near_wake = ((x_locations - xR) /
-                           (x0 - xR)) * delta0 + (ad + bd *
-                                                  (x_locations - coord.x1))
+        delta_near_wake = ((x_locations - xR) / (x0 - xR)) * delta0 + (
+            ad + bd * (x_locations - coord.x1)
+        )
         delta_near_wake[x_locations < xR] = 0.0
         delta_near_wake[x_locations > x0] = 0.0
 
@@ -195,15 +207,18 @@ class Gauss(VelocityDeflection):
         sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         ln_deltaNum = (1.6 + np.sqrt(M0)) * (
-            1.6 * np.sqrt(sigma_y * sigma_z /
-                          (sigma_y0 * sigma_z0)) - np.sqrt(M0))
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
+        )
         ln_deltaDen = (1.6 - np.sqrt(M0)) * (
-            1.6 * np.sqrt(sigma_y * sigma_z /
-                          (sigma_y0 * sigma_z0)) + np.sqrt(M0))
-        delta_far_wake = delta0 + (theta_c0 * E0 / 5.2) * np.sqrt(
-            sigma_y0 * sigma_z0 /
-            (ky * kz * M0)) * np.log(ln_deltaNum / ln_deltaDen) + (
-                ad + bd * (x_locations - coord.x1))
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
+        )
+        delta_far_wake = (
+            delta0
+            + (theta_c0 * E0 / 5.2)
+            * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))
+            * np.log(ln_deltaNum / ln_deltaDen)
+            + (ad + bd * (x_locations - coord.x1))
+        )
         delta_far_wake[x_locations <= x0] = 0.0
 
         deflection = delta_near_wake + delta_far_wake
@@ -213,7 +228,7 @@ class Gauss(VelocityDeflection):
     @property
     def ka(self):
         """
-        Parameter used to determine the linear relationship between the 
+        Parameter used to determine the linear relationship between the
         turbulence intensity and the width of the Gaussian wake shape.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -232,22 +247,23 @@ class Gauss(VelocityDeflection):
     @ka.setter
     def ka(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ka: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for ka: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ka = value
-        if value != __class__.default_parameters['ka']:
+        if value != __class__.default_parameters["ka"]:
             self.logger.info(
-                ('Current value of ka, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['ka'])
-                )
+                (
+                    "Current value of ka, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["ka"])
+            )
 
     @property
     def kb(self):
         """
-        Parameter used to determine the linear relationship between the 
+        Parameter used to determine the linear relationship between the
         turbulence intensity and the width of the Gaussian wake shape.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -266,17 +282,18 @@ class Gauss(VelocityDeflection):
     @kb.setter
     def kb(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for kb: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for kb: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kb = value
-        if value != __class__.default_parameters['kb']:
+        if value != __class__.default_parameters["kb"]:
             self.logger.info(
-                ('Current value of kb, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['kb'])
-                )
+                (
+                    "Current value of kb, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["kb"])
+            )
 
     @property
     def alpha(self):
@@ -301,17 +318,19 @@ class Gauss(VelocityDeflection):
     @alpha.setter
     def alpha(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for alpha: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for alpha: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._alpha = value
-        if value != __class__.default_parameters['alpha']:
+        if value != __class__.default_parameters["alpha"]:
             self.logger.info(
-                ('Current value of alpha, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['alpha'])
-                )
+                (
+                    "Current value of alpha, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["alpha"])
+            )
 
     @property
     def beta(self):
@@ -336,24 +355,26 @@ class Gauss(VelocityDeflection):
     @beta.setter
     def beta(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for beta: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for beta: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._beta = value
-        if value != __class__.default_parameters['beta']:
+        if value != __class__.default_parameters["beta"]:
             self.logger.info(
-                ('Current value of beta, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['beta'])
-                )
+                (
+                    "Current value of beta, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["beta"])
+            )
 
     @property
     def ad(self):
         """
         Parameter available for additional tuning of the wake deflection with a
         lateral offset.
-        
+
         ****TODO: Should this be removed? Not sure if it has been used.****
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -372,24 +393,25 @@ class Gauss(VelocityDeflection):
     @ad.setter
     def ad(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ad: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for ad: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ad = value
-        if value != __class__.default_parameters['ad']:
+        if value != __class__.default_parameters["ad"]:
             self.logger.info(
-                ('Current value of ad, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['ad'])
-                )
+                (
+                    "Current value of ad, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["ad"])
+            )
 
     @property
     def bd(self):
         """
         Parameter available for additional tuning of the wake deflection with a
         lateral offset.
-        
+
         ****TODO: Should this be removed? Not sure if it has been used.****
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -408,14 +430,15 @@ class Gauss(VelocityDeflection):
     @bd.setter
     def bd(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for bd: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for bd: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._bd = value
-        if value != __class__.default_parameters['bd']:
+        if value != __class__.default_parameters["bd"]:
             self.logger.info(
-                ('Current value of bd, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['bd'])
-                )
+                (
+                    "Current value of bd, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["bd"])
+            )

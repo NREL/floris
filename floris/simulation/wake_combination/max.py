@@ -11,18 +11,18 @@
 # the License.
 
 import numpy as np
-from ...utilities import setup_logger
+
 from .base_wake_combination import WakeCombination
 
 
 class MAX(WakeCombination):
     """
-    MAX is a subclass of 
-    :py:class:`floris.simulation.wake_combination.WakeCombination` 
-    which uses the maximum wake velocity deficit to add to the 
+    MAX is a subclass of
+    :py:class:`floris.simulation.wake_combination.WakeCombination`
+    which uses the maximum wake velocity deficit to add to the
     base flow field. For more information, refer to
     :cite:`max-gunn2016limitations`.
-    
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
@@ -32,7 +32,6 @@ class MAX(WakeCombination):
 
     def __init__(self):
         super().__init__()
-        self.logger = setup_logger(name=__name__)
         self.model_string = "max"
 
     def function(self, u_field, u_wake):

@@ -10,23 +10,24 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ..utilities import Vec3
-from ..utilities import setup_logger
-from .flow_field import FlowField
-from .wind_map import WindMap
-from .turbine_map import TurbineMap
 import copy
+
 import numpy as np
 
+from .wind_map import WindMap
+from ..utilities import Vec3
+from .flow_field import FlowField
+from .turbine_map import TurbineMap
 
-class Farm():
+
+class Farm:
     """
     Farm is a class containing the objects that make up a FLORIS model.
 
-    Farm is the container class of the FLORIS package. It brings 
-    together all of the component objects after input (i.e., Turbine, 
-    Wake, FlowField) and packages everything into the appropriate data 
-    type. Farm should also be used as an entry point to probe objects 
+    Farm is the container class of the FLORIS package. It brings
+    together all of the component objects after input (i.e., Turbine,
+    Wake, FlowField) and packages everything into the appropriate data
+    type. Farm should also be used as an entry point to probe objects
     for generating output.
     """
 
@@ -51,7 +52,7 @@ class Farm():
                     -   **wind_direction** (*list*): The wind direction
                         measurements (deg).
                     -   **turbulence_intensity** (*list*): Turbulence intensity
-                        measurements at hub height (%).
+                        measurements at hub height (as a decimal fraction).
                     -   **wind_shear** (*float*): The power law wind shear
                         exponent.
                     -   **wind_veer** (*float*): The vertical change in wind
@@ -79,25 +80,29 @@ class Farm():
             layout_array=(layout_x, layout_y),
             wind_layout=(wind_x, wind_y),
             turbulence_intensity=properties["turbulence_intensity"],
-            wind_direction=properties["wind_direction"])
+            wind_direction=properties["wind_direction"],
+        )
 
         self.flow_field = FlowField(
             wind_shear=properties["wind_shear"],
             wind_veer=properties["wind_veer"],
             air_density=properties["air_density"],
             turbine_map=TurbineMap(
-                layout_x, layout_y,
-                [copy.deepcopy(turbine) for ii in range(len(layout_x))]),
+                layout_x,
+                layout_y,
+                [copy.deepcopy(turbine) for ii in range(len(layout_x))],
+            ),
             wake=wake,
             wind_map=self.wind_map,
-            specified_wind_height=properties["specified_wind_height"])
+            specified_wind_height=properties["specified_wind_height"],
+        )
 
     def __str__(self):
-        return \
-            "Name: {}\n".format(self.name) + \
-            "Wake Model: {}\n".format(self.flow_field.wake.velocity_model) + \
-            "Deflection Model: {}\n".format(
-                self.flow_field.wake.deflection_model)
+        return (
+            "Name: {}\n".format(self.name)
+            + "Wake Model: {}\n".format(self.flow_field.wake.velocity_model)
+            + "Deflection Model: {}\n".format(self.flow_field.wake.deflection_model)
+        )
 
     def set_wake_model(self, wake_model):
         """
@@ -111,27 +116,37 @@ class Farm():
             Exception: Invalid wake model.
         """
         valid_wake_models = [
-             'jensen', 'multizone', 'gauss', 'gauss_legacy',
-             'blondel', 'ishihara_qian', 'curl'
+            "jensen",
+            "multizone",
+            "gauss",
+            "gauss_legacy",
+            "blondel",
+            "ishihara_qian",
+            "curl",
         ]
         if wake_model not in valid_wake_models:
             # TODO: logging
             raise Exception(
                 "Invalid wake model. Valid options include: {}.".format(
-                    ", ".join(valid_wake_models)))
+                    ", ".join(valid_wake_models)
+                )
+            )
 
         self.flow_field.wake.velocity_model = wake_model
-        if wake_model == 'jensen' or wake_model == 'multizone':
-            self.flow_field.wake.deflection_model = 'jimenez'
-        elif wake_model == 'blondel' or wake_model == 'ishihara_qian' \
-            or 'gauss' in wake_model:
-                self.flow_field.wake.deflection_model = 'gauss'
+        if wake_model == "jensen" or wake_model == "multizone":
+            self.flow_field.wake.deflection_model = "jimenez"
+        elif (
+            wake_model == "blondel"
+            or wake_model == "ishihara_qian"
+            or "gauss" in wake_model
+        ):
+            self.flow_field.wake.deflection_model = "gauss"
         else:
             self.flow_field.wake.deflection_model = wake_model
 
         self.flow_field.reinitialize_flow_field(
-            with_resolution=self.flow_field.wake.velocity_model.
-            model_grid_resolution)
+            with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution
+        )
 
     def set_yaw_angles(self, yaw_angles):
         """
@@ -173,8 +188,7 @@ class Farm():
         Returns:
             list(float)
         """
-        return list(
-            (np.array(self.wind_map.turbine_wind_direction) - 90) % 360)
+        return list((np.array(self.wind_map.turbine_wind_direction) - 90) % 360)
 
     @property
     def wind_shear(self):
@@ -253,7 +267,7 @@ class Farm():
         All turbines included in the model.
 
         Returns:
-            list(:py:obj:`~.turbine.Turbine`) 
+            list(:py:obj:`~.turbine.Turbine`)
         """
         return self.turbine_map.turbines
 

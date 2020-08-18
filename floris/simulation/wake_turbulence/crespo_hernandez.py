@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import setup_logger
 from .base_wake_turbulence import WakeTurbulence
+
 
 class CrespoHernandez(WakeTurbulence):
     """
@@ -19,18 +19,19 @@ class CrespoHernandez(WakeTurbulence):
     additional variability introduced to the flow field by operation of a wind
     turbine. Implementation of the model follows the original formulation and
     limitations outlined in :cite:`cht-crespo1996turbulence`.
-    
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :keyprefix: cht-    
+            :keyprefix: cht-
     """
+
     default_parameters = {
-        "initial": 0.5,
-        "constant": 0.9,
-        "ai": 0.75,
-        "downstream": -0.325
+        "initial": 0.1,
+        "constant": 0.37,
+        "ai": 0.8,
+        "downstream": -0.275,
     }
 
     def __init__(self, parameter_dictionary):
@@ -54,7 +55,6 @@ class CrespoHernandez(WakeTurbulence):
                     turbulence.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "crespo_hernandez"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 
@@ -73,11 +73,11 @@ class CrespoHernandez(WakeTurbulence):
 
         Args:
             ambient_TI (float): TI of the background flow field.
-            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI 
+            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI
                 is to be calculated (e.g. downstream wind turbines).
-            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of 
+            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of
                 the wind turbine adding turbulence to the flow.
-            turbine (:py:class:`~.turbine.Turbine`): Wind turbine 
+            turbine (:py:class:`~.turbine.Turbine`): Wind turbine
                 adding turbulence to the flow.
 
         Returns:
@@ -88,10 +88,13 @@ class CrespoHernandez(WakeTurbulence):
         ti_initial = ambient_TI
 
         # turbulence intensity calculation based on Crespo et. al.
-        ti_calculation = self.ti_constant \
-            * turbine.aI**self.ti_ai \
-            * ti_initial**self.ti_initial \
-            * ((coord_ti.x1 - turbine_coord.x1) / turbine.rotor_diameter)**self.ti_downstream
+        ti_calculation = (
+            self.ti_constant
+            * turbine.aI ** self.ti_ai
+            * ti_initial ** self.ti_initial
+            * ((coord_ti.x1 - turbine_coord.x1) / turbine.rotor_diameter)
+            ** self.ti_downstream
+        )
 
         # Update turbulence intensity of downstream turbines
         return ti_calculation
@@ -112,23 +115,24 @@ class CrespoHernandez(WakeTurbulence):
 
         Raises:
             ValueError: Invalid value.
-        """ 
+        """
         return self._ti_initial
 
     @ti_initial.setter
     def ti_initial(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ' + \
-                       'initial: {}, expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for " + "initial: {}, expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ti_initial = value
-        if value != __class__.default_parameters['initial']:
+        if value != __class__.default_parameters["initial"]:
             self.logger.info(
-                ('Current value of initial, {0}, is not equal to tuned ' + \
-                'value of {1}.').format(
-                    value, __class__.default_parameters['initial']
-                )
+                (
+                    "Current value of initial, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["initial"])
             )
 
     @property
@@ -153,23 +157,24 @@ class CrespoHernandez(WakeTurbulence):
     @ti_constant.setter
     def ti_constant(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ' + \
-                       'constant: {}, expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for " + "constant: {}, expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ti_constant = value
-        if value != __class__.default_parameters['constant']:
+        if value != __class__.default_parameters["constant"]:
             self.logger.info(
-                ('Current value of constant, {0}, is not equal to tuned ' + \
-                'value of {1}.').format(
-                    value, __class__.default_parameters['constant']
-                )
+                (
+                    "Current value of constant, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["constant"])
             )
-    
+
     @property
     def ti_ai(self):
         """
-        Axial induction factor exponent used in in the calculation of 
+        Axial induction factor exponent used in in the calculation of
         wake-added turbulence.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -189,23 +194,23 @@ class CrespoHernandez(WakeTurbulence):
     @ti_ai.setter
     def ti_ai(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ' + \
-                       'ai: {}, expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for " + "ai: {}, expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ti_ai = value
-        if value != __class__.default_parameters['ai']:
+        if value != __class__.default_parameters["ai"]:
             self.logger.info(
-                ('Current value of ai, {0}, is not equal to tuned ' + \
-                'value of {1}.').format(
-                    value, __class__.default_parameters['ai']
-                )
+                (
+                    "Current value of ai, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["ai"])
             )
 
     @property
     def ti_downstream(self):
         """
-        Exponent applied to the distance from an upstream turbine normalized by 
+        Exponent applied to the distance from an upstream turbine normalized by
         the rotor diameter. Used in the calculation of wake-added turbulence.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
@@ -225,15 +230,16 @@ class CrespoHernandez(WakeTurbulence):
     @ti_downstream.setter
     def ti_downstream(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for ' + \
-                       'downstream: {}, expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for " + "downstream: {}, expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._ti_downstream = value
-        if value != __class__.default_parameters['downstream']:
+        if value != __class__.default_parameters["downstream"]:
             self.logger.info(
-                ('Current value of downstream, {0}, is not equal to ' + \
-                'tuned value of {1}.').format(
-                    value, __class__.default_parameters['downstream']
-                )
+                (
+                    "Current value of downstream, {0}, is not equal to "
+                    + "tuned value of {1}."
+                ).format(value, __class__.default_parameters["downstream"])
             )

@@ -10,7 +10,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import setup_logger
 from .base_wake_turbulence import WakeTurbulence
 
 
@@ -43,7 +42,6 @@ class Direct(WakeTurbulence):
                     turbulence.
         """
         super().__init__()
-        self.logger = setup_logger(name=__name__)
         self.model_string = "direct"
         model_dictionary = parameter_dictionary[self.model_string]
 
@@ -57,17 +55,17 @@ class Direct(WakeTurbulence):
         accessible through the :py:class:`~.wake.Wake` class as the
         :py:meth:`~.Wake.turbulence_function` method.
 
-        **NOTE:** Input arguments are not currently used, as no model is 
-        implemented. Arguments are retained currently for consistency of 
+        **NOTE:** Input arguments are not currently used, as no model is
+        implemented. Arguments are retained currently for consistency of
         :py:meth:`~.wake.Wake.turbulence_function` call.
 
         Args:
             ambient_TI (float): TI of the background flow field.
-            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI 
+            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI
                 is to be calculated (e.g. downstream wind turbines).
-            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of 
+            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of
                 the wind turbine adding turbulence to the flow.
-            turbine (:py:class:`~.turbine.Turbine`): Wind turbine 
+            turbine (:py:class:`~.turbine.Turbine`): Wind turbine
                 adding turbulence to the flow.
 
         Returns:
@@ -75,8 +73,9 @@ class Direct(WakeTurbulence):
                 wind turbine (**turbine**) at location specified
                 by (**coord_ti**).
         """
-        #TODO develop and test function.
-        turbine.current_turbulence_intensity = self.parameter_dictionary \
-            ['local_TI_dict'][turbine]
+        # TODO develop and test function.
+        turbine.current_turbulence_intensity = self.parameter_dictionary[
+            "local_TI_dict"
+        ][turbine]
 
-        return self.parameter_dictionary['local_TI_dict'][turbine]
+        return self.parameter_dictionary["local_TI_dict"][turbine]

@@ -21,17 +21,18 @@ commandline args:
 
 import sys
 
+
 # get command line arguments
 inputs = sys.argv
 
 # default values
-infile = 'dummy.py'
-outfile = 'dummy.rst'
+infile = "dummy.py"
+outfile = "dummy.rst"
 headerlines = 13
 # assign input values
 if len(inputs) > 1:
     infile = inputs[1]
-    outfile = infile.split('.')[0]+'.rst'
+    outfile = infile.split(".")[0] + ".rst"
 if len(inputs) > 2:
     outfile = inputs[2]
 if len(inputs) > 3:
@@ -42,51 +43,54 @@ f = open(infile, "r")
 fileContents = f.readlines()
 
 # remove copyright/headerlines
-for ii, x in enumerate(fileContents[:headerlines + 1]):
+for ii, x in enumerate(fileContents[: headerlines + 1]):
     fileContents.remove(x)
 
 # block of text to add to signify codeblocks for rst
-codeblock = '\n.. code-block:: python3 \n\n'
+codeblock = "\n.. code-block:: python3 \n\n"
 # flag to determine indentation
 codesec = False
 commentsec = False
 
 # make title and section header
-title = infile.split('/')[-1]
-fileContents.insert(0, title + ' \n')
-fileContents.insert(1, ''.join(['='] * len(title) + [' \n\n']))
+title = infile.split("/")[-1]
+fileContents.insert(0, title + " \n")
+fileContents.insert(1, "".join(["="] * len(title) + [" \n\n"]))
 
 # append 'EOF' to filecontents to signify end of list
-fileContents += ['EOF']
+fileContents += ["EOF"]
 
 flag = None
 ii = 2
-while flag is not 'EOF':
+while flag is not "EOF":
     # detect beginning/end of docstring
     if '"""' in fileContents[ii]:
-        fileContents[ii] = '\n'
+        fileContents[ii] = "\n"
 
         if commentsec == False:
             commentsec = True
         else:
-            commentsec = False    
+            commentsec = False
 
     # prepend lines in docstring with hash
     if commentsec:
-        fileContents[ii] = '# ' + fileContents[ii]
+        fileContents[ii] = "# " + fileContents[ii]
 
     # lines of code do NOT start with a hash or newline
-    if fileContents[ii][0] not in ['#', '\n', ]:
+    if fileContents[ii][0] not in [
+        "#",
+        "\n",
+    ]:
         commentsec = False
         if not codesec:
             fileContents.insert(ii, codeblock)
             codesec = True
         else:
-            fileContents[ii] = '\t' + fileContents[ii]
+            fileContents[ii] = "\t" + fileContents[ii]
             codesec = True
 
     # add new line to end of code section
-    elif codesec and fileContents[ii][0] in ['#', '\n']:
+    elif codesec and fileContents[ii][0] in ["#", "\n"]:
         # fileContents.insert(ii, '\n')
         codesec = False
 
@@ -95,14 +99,13 @@ while flag is not 'EOF':
         fileContents[ii] = fileContents[ii][2:]
         codesec = False
 
-
     ii += 1
     flag = fileContents[ii]
 
-# trim off 'EOF' 
+# trim off 'EOF'
 dump = fileContents.pop(-1)
 
 # write to rst file
-with open(outfile, 'w') as filehandle:
+with open(outfile, "w") as filehandle:
     for item in fileContents:
         filehandle.write(item)

@@ -28,7 +28,8 @@
         0.06
       ],
       "wind_shear": 0.12,
-      "specified_wind_height": 90.0,
+      "__comment__": "specified_wind_height of -1 uses the first turbine's hub height; After initialization, specified_wind_height is a free parameter.",
+      "specified_wind_height": -1,
       "wind_veer": 0.0,
       "air_density": 1.225,
       "layout_x": [
@@ -241,10 +242,10 @@
         },
         "wake_turbulence_parameters": {
           "crespo_hernandez": {
-            "initial": 0.5,
-            "constant": 0.9,
-            "ai": 0.75,
-            "downstream": -0.325
+            "initial": 0.1,
+            "constant": 0.37,
+            "ai": 0.8,
+            "downstream": -0.275
           }
         }
     }

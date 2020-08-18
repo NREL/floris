@@ -1,19 +1,20 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
- 
+
 
 import numpy as np
+
 from ..utilities import wrap_180, wrap_360
 
 
@@ -47,7 +48,7 @@ def determine_rews_weights(R, HH, heights_in):
         weights_return (list): list of weighting values for REWS.
     """
     # Determine rotor area
-    Area = np.pi * R**2
+    Area = np.pi * R ** 2
 
     # Remove any heights not in range of the rotor
     num_heights_in = len(heights_in)
@@ -59,16 +60,15 @@ def determine_rews_weights(R, HH, heights_in):
     zone_boundaries[0] = HH - R
     zone_boundaries[-1] = HH + R
     for i in range(1, num_heights):
-        zone_boundaries[i] = (heights[i] - heights[i - 1]) / 2.0 + heights[i -
-                                                                           1]
+        zone_boundaries[i] = (heights[i] - heights[i - 1]) / 2.0 + heights[i - 1]
     zone_interfaces = zone_boundaries[1:-1]
 
     # Next find the central angles for each interace
     h = zone_interfaces - HH
     alpha = np.arcsin(h / R)
     C = np.pi - 2 * alpha
-    A = ((R**2) / 2) * (C - np.sin(C))
-    A = [np.pi * R**2] + [a for a in A]
+    A = ((R ** 2) / 2) * (C - np.sin(C))
+    A = [np.pi * R ** 2] + [a for a in A]
     for i in range(num_heights - 1):
         A[i] = A[i] - A[i + 1]
     weights = A

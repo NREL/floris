@@ -1,28 +1,31 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import os
 import pickle
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
 from floris.utilities import wrap_180
-from ..utilities import setup_logger
+
 
 # TODO: organize by private and public methods
 
-class PowerRose():
+
+class PowerRose:
     """
     The PowerRose class is used to organize information about wind farm power
     production for different wind conditions (e.g., wind speed, wind direction)
@@ -34,10 +37,10 @@ class PowerRose():
     from wake steering. A PowerRose object can be populated with user-specified
     wind rose and power data (for example, using a :py:class:`~.tools
     WindRose` object) or data from a previously saved PowerRose object can be
-    loaded. 
+    loaded.
     """
 
-    def __init__(self, ):
+    def __init__(self,):
         """
         Instantiate a PowerRose object. No explicit arguments required, and an
         additional method will need to be called to populate the PowerRose
@@ -56,13 +59,18 @@ class PowerRose():
         # self.name, self.df_power, self.df_yaw, self.df_turbine_power_no_wake, self.df_turbine_power_baseline, self.df_turbine_power_opt, self.df_combine = pickle.load(
         #    open(filename, "rb"))
 
-        self.name, self.df_windrose, self.power_no_wake, self.power_baseline, \
-            self.power_opt, self.use_opt = pickle.load(open(filename, "rb"))
+        (
+            self.name,
+            self.df_windrose,
+            self.power_no_wake,
+            self.power_baseline,
+            self.power_opt,
+            self.use_opt,
+        ) = pickle.load(open(filename, "rb"))
 
         # Compute energies
         self.df_power = pd.DataFrame(
-            {'wd': self.df_windrose['wd'],
-            'ws': self.df_windrose['ws']}
+            {"wd": self.df_windrose["wd"], "ws": self.df_windrose["ws"]}
         )
         self._compute_energy()
 
@@ -77,10 +85,16 @@ class PowerRose():
         Args:
             filename (str): Path and filename of pickle file to save.
         """
-        pickle.dump([
-            self.name, self.df_windrose, self.power_no_wake, \
-            self.power_baseline, self.power_opt, \
-            self.use_opt], open(filename, "wb")
+        pickle.dump(
+            [
+                self.name,
+                self.df_windrose,
+                self.power_no_wake,
+                self.power_baseline,
+                self.power_opt,
+                self.use_opt,
+            ],
+            open(filename, "wb"),
         )
 
     # def _all_combine(self):
@@ -120,54 +134,56 @@ class PowerRose():
     #     return df_combine
 
     def _norm_frequency(self, df):
-        print('Norming frequency total of %.2f to 1.0' % df.freq_val.sum())
-        df['freq_val'] = df.freq_val / df.freq_val.sum()
+        print("Norming frequency total of %.2f to 1.0" % df.freq_val.sum())
+        df["freq_val"] = df.freq_val / df.freq_val.sum()
         return df
 
     def _compute_energy(self):
-        self.df_power[
-            'energy_no_wake'] = self.df_windrose.freq_val * self.power_no_wake
-        self.df_power[
-            'energy_baseline'] = self.df_windrose.freq_val * self.power_baseline
+        self.df_power["energy_no_wake"] = self.df_windrose.freq_val * self.power_no_wake
+        self.df_power["energy_baseline"] = (
+            self.df_windrose.freq_val * self.power_baseline
+        )
         if self.use_opt:
-            self.df_power[
-                'energy_opt'] = self.df_windrose.freq_val * self.power_opt
+            self.df_power["energy_opt"] = self.df_windrose.freq_val * self.power_opt
 
     def _compute_totals(self):
         df = self.df_power.copy(deep=True)
         df = df.sum()
 
         # Get total annual energy amounts
-        self.total_no_wake = (8760/1E9)*df.energy_no_wake
-        self.total_baseline = (8760/1E9)*df.energy_baseline
+        self.total_no_wake = (8760 / 1e9) * df.energy_no_wake
+        self.total_baseline = (8760 / 1e9) * df.energy_baseline
         if self.use_opt:
-            self.total_opt = (8760/1E9)*df.energy_opt
+            self.total_opt = (8760 / 1e9) * df.energy_opt
 
         # Get wake loss amounts
         self.baseline_percent = self.total_baseline / self.total_no_wake
         self.baseline_wake_loss = 1 - self.baseline_percent
-        
+
         if self.use_opt:
             self.opt_percent = self.total_opt / self.total_no_wake
             self.opt_wake_loss = 1 - self.opt_percent
 
         # Percent gain
         if self.use_opt:
-            self.percent_gain = (self.total_opt -
-                                self.total_baseline) / self.total_baseline
-            self.reduction_in_wake_loss = -1 * (
-                self.opt_wake_loss -
-                self.baseline_wake_loss) / self.baseline_wake_loss
+            self.percent_gain = (
+                self.total_opt - self.total_baseline
+            ) / self.total_baseline
+            self.reduction_in_wake_loss = (
+                -1
+                * (self.opt_wake_loss - self.baseline_wake_loss)
+                / self.baseline_wake_loss
+            )
 
-    def make_power_rose_from_user_data(self, 
-                                    name, df_windrose, power_no_wake, 
-                                    power_baseline, power_opt=None):
+    def make_power_rose_from_user_data(
+        self, name, df_windrose, power_no_wake, power_baseline, power_opt=None
+    ):
         """
         This method populates the PowerRose object with a user-specified wind
         rose containing wind direction, wind speed, and additional optional
         variables, as well as baseline wind farm power, ideal wind farm power
         without wake losses, and optionally optimal wind farm power with wake
-        steering corresponding to each wind condition. 
+        steering corresponding to each wind condition.
 
         TODO: Add inputs for turbine-level power and optimal yaw offsets.
 
@@ -180,7 +196,7 @@ class PowerRose():
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns. 
+                wind conditions in the other columns.
 
             power_no_wake (iterable): A list of wind farm power without wake
                 losses corresponding to the wind conditions in df_windrose (W).
@@ -208,9 +224,7 @@ class PowerRose():
         # self.df_combine = self._all_combine()
 
         # Compute energies
-        self.df_power = pd.DataFrame(
-            {'wd': df_windrose['wd'],'ws': df_windrose['ws']}
-        )
+        self.df_power = pd.DataFrame({"wd": df_windrose["wd"], "ws": df_windrose["ws"]})
         self._compute_energy()
 
         # Compute totals
@@ -226,58 +240,60 @@ class PowerRose():
         percentages are listed for baseline and optimal operation (if optimal
         power is stored), along with the AEP gain from wake steering (again, if
         optimal power is stored). The AEP gain from wake steering is also
-        listed as a percentage of wake losses recovered, if applicable. 
+        listed as a percentage of wake losses recovered, if applicable.
         """
         if self.use_opt:
-            print('=============================================')
-            print('Case %s has results:' % self.name)
-            print('=============================================')
-            print('-\tNo-Wake\t\tBaseline\tOpt ')
-            print('---------------------------------------------')
-            print('AEP (GWh)\t%.1E\t\t%.1E\t\t%.1E' %
-                (self.total_no_wake, self.total_baseline, self.total_opt))
-            print('%%\t--\t\t%.1f%%\t\t%.1f%%' %
-                (100. * self.baseline_percent, 100. * self.opt_percent))
-            print('Wk Loss\t--\t\t%.1f%%\t\t%.1f%%' %
-                (100. * self.baseline_wake_loss, 100. * self.opt_wake_loss))
-            print('AEP Gain --\t\t--\t\t%.1f%%' % (100. * self.percent_gain))
-            print('Loss Red --\t\t--\t\t%.1f%%' %
-                (100. * self.reduction_in_wake_loss))
+            print("=============================================")
+            print("Case %s has results:" % self.name)
+            print("=============================================")
+            print("-\tNo-Wake\t\tBaseline\tOpt ")
+            print("---------------------------------------------")
+            print(
+                "AEP (GWh)\t%.1E\t\t%.1E\t\t%.1E"
+                % (self.total_no_wake, self.total_baseline, self.total_opt)
+            )
+            print(
+                "%%\t--\t\t%.1f%%\t\t%.1f%%"
+                % (100.0 * self.baseline_percent, 100.0 * self.opt_percent)
+            )
+            print(
+                "Wk Loss\t--\t\t%.1f%%\t\t%.1f%%"
+                % (100.0 * self.baseline_wake_loss, 100.0 * self.opt_wake_loss)
+            )
+            print("AEP Gain --\t\t--\t\t%.1f%%" % (100.0 * self.percent_gain))
+            print("Loss Red --\t\t--\t\t%.1f%%" % (100.0 * self.reduction_in_wake_loss))
         else:
-            print('=============================================')
-            print('Case %s has results:' % self.name)
-            print('=============================================')
-            print('-\tNo-Wake\t\tBaseline ')
-            print('---------------------------------------------')
-            print('AEP (GWh)\t%.1E\t\t%.1E' %
-                (self.total_no_wake, self.total_baseline))
-            print('%%\t--\t\t%.1f%%' %
-                (100. * self.baseline_percent))
-            print('Wk Loss\t--\t\t%.1f%%' %
-                (100. * self.baseline_wake_loss))
+            print("=============================================")
+            print("Case %s has results:" % self.name)
+            print("=============================================")
+            print("-\tNo-Wake\t\tBaseline ")
+            print("---------------------------------------------")
+            print("AEP (GWh)\t%.1E\t\t%.1E" % (self.total_no_wake, self.total_baseline))
+            print("%%\t--\t\t%.1f%%" % (100.0 * self.baseline_percent))
+            print("Wk Loss\t--\t\t%.1f%%" % (100.0 * self.baseline_wake_loss))
 
-    def plot_by_direction(self,axarr=None):
+    def plot_by_direction(self, axarr=None):
         """
         This method plots energy production, wind farm efficiency, and energy
         gains from wake steering (if applicable) as a function of wind
         direction. If axes are not provided, new ones are created. The plots
-        include: 
+        include:
 
         1) The energy production as a function of wind direction for the
         baseline and, if applicable, optimal wake steering cases normalized by
-        the maximum energy production. 
+        the maximum energy production.
         2) The wind farm efficiency (energy production relative to energy
         production without wake losses) as a function of wind direction for the
-        baseline and, if applicable, optimal wake steering cases. 
+        baseline and, if applicable, optimal wake steering cases.
         3) Percent gain in energy production with optimal wake steering as a
         function of wind direction. This third plot is only created if optimal
         power data are stored in the PowerRose object.
 
         Args:
-            axarr (numpy.ndarray, optional): An array of 2 or 3 
+            axarr (numpy.ndarray, optional): An array of 2 or 3
                 :py:class:`matplotlib.axes._subplots.AxesSubplot` axes objects
                 on which data are plotted. Three axes are rquired if the
-                PowerRose object contains optimal power data. Default is None. 
+                PowerRose object contains optimal power data. Default is None.
 
         Returns:
             numpy.ndarray: An array of 2 or 3
@@ -286,8 +302,7 @@ class PowerRose():
         """
 
         df = self.df_power.copy(deep=True)
-        df = df.groupby('wd').sum().reset_index()
-
+        df = df.groupby("wd").sum().reset_index()
 
         if self.use_opt:
 
@@ -295,58 +310,65 @@ class PowerRose():
                 fig, axarr = plt.subplots(3, 1, sharex=True)
 
             ax = axarr[0]
-            ax.plot(df.wd,
-                    df.energy_baseline / np.max(df.energy_opt),
-                    label='Baseline',
-                    color='k')
-            ax.axhline(np.mean(df.energy_baseline / np.max(df.energy_opt)),
-                    color='r',
-                    ls='--')
-            ax.plot(df.wd,
-                    df.energy_opt / np.max(df.energy_opt),
-                    label='Optimized',
-                    color='r')
-            ax.axhline(np.mean(df.energy_opt / np.max(df.energy_opt)),
-                    color='r',
-                    ls='--')
-            ax.set_ylabel('Normalized Energy')
+            ax.plot(
+                df.wd,
+                df.energy_baseline / np.max(df.energy_opt),
+                label="Baseline",
+                color="k",
+            )
+            ax.axhline(
+                np.mean(df.energy_baseline / np.max(df.energy_opt)), color="r", ls="--"
+            )
+            ax.plot(
+                df.wd,
+                df.energy_opt / np.max(df.energy_opt),
+                label="Optimized",
+                color="r",
+            )
+            ax.axhline(
+                np.mean(df.energy_opt / np.max(df.energy_opt)), color="r", ls="--"
+            )
+            ax.set_ylabel("Normalized Energy")
             ax.grid(True)
             ax.legend()
             ax.set_title(self.name)
 
             ax = axarr[1]
-            ax.plot(df.wd,
-                    df.energy_baseline / df.energy_no_wake,
-                    label='Baseline',
-                    color='k')
-            ax.axhline(np.mean(df.energy_baseline) / np.mean(df.energy_no_wake),
-                    color='k',
-                    ls='--')
-            ax.plot(df.wd,
-                    df.energy_opt / df.energy_no_wake,
-                    label='Optimized',
-                    color='r')
-            ax.axhline(np.mean(df.energy_opt) / np.mean(df.energy_no_wake),
-                    color='r',
-                    ls='--')
-            ax.set_ylabel('Wind Farm Efficiency')
+            ax.plot(
+                df.wd,
+                df.energy_baseline / df.energy_no_wake,
+                label="Baseline",
+                color="k",
+            )
+            ax.axhline(
+                np.mean(df.energy_baseline) / np.mean(df.energy_no_wake),
+                color="k",
+                ls="--",
+            )
+            ax.plot(
+                df.wd, df.energy_opt / df.energy_no_wake, label="Optimized", color="r"
+            )
+            ax.axhline(
+                np.mean(df.energy_opt) / np.mean(df.energy_no_wake), color="r", ls="--"
+            )
+            ax.set_ylabel("Wind Farm Efficiency")
             ax.grid(True)
             ax.legend()
 
             ax = axarr[2]
             ax.plot(
                 df.wd,
-                100.*(df.energy_opt - df.energy_baseline) / df.energy_baseline,
-                'r'
+                100.0 * (df.energy_opt - df.energy_baseline) / df.energy_baseline,
+                "r",
             )
             ax.axhline(
-                100.*(df.energy_opt.mean() - df.energy_baseline.mean()),
+                100.0 * (df.energy_opt.mean() - df.energy_baseline.mean()),
                 df.energy_baseline.mean(),
-                color='r',
-                ls='--'
+                color="r",
+                ls="--",
             )
-            ax.set_ylabel('Percent Gain')
-            ax.set_xlabel('Wind Direction (deg)')
+            ax.set_ylabel("Percent Gain")
+            ax.set_xlabel("Wind Direction (deg)")
 
             return axarr
 
@@ -356,31 +378,39 @@ class PowerRose():
                 fig, axarr = plt.subplots(2, 1, sharex=True)
 
             ax = axarr[0]
-            ax.plot(df.wd,
-                    df.energy_baseline / np.max(df.energy_baseline),
-                    label='Baseline',
-                    color='k')
-            ax.axhline(np.mean(df.energy_baseline / np.max(df.energy_baseline)),
-                    color='r',
-                    ls='--')
-            ax.set_ylabel('Normalized Energy')
+            ax.plot(
+                df.wd,
+                df.energy_baseline / np.max(df.energy_baseline),
+                label="Baseline",
+                color="k",
+            )
+            ax.axhline(
+                np.mean(df.energy_baseline / np.max(df.energy_baseline)),
+                color="r",
+                ls="--",
+            )
+            ax.set_ylabel("Normalized Energy")
             ax.grid(True)
             ax.legend()
             ax.set_title(self.name)
 
             ax = axarr[1]
-            ax.plot(df.wd,
-                    df.energy_baseline / df.energy_no_wake,
-                    label='Baseline',
-                    color='k')
-            ax.axhline(np.mean(df.energy_baseline) / np.mean(df.energy_no_wake),
-                    color='k',
-                    ls='--')
-            ax.set_ylabel('Wind Farm Efficiency')
+            ax.plot(
+                df.wd,
+                df.energy_baseline / df.energy_no_wake,
+                label="Baseline",
+                color="k",
+            )
+            ax.axhline(
+                np.mean(df.energy_baseline) / np.mean(df.energy_no_wake),
+                color="k",
+                ls="--",
+            )
+            ax.set_ylabel("Wind Farm Efficiency")
             ax.grid(True)
             ax.legend()
 
-            ax.set_xlabel('Wind Direction (deg)')
+            ax.set_xlabel("Wind Direction (deg)")
 
             return axarr
 

@@ -10,24 +10,27 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ....utilities import cosd, sind, tand, setup_logger
-from ..base_velocity_deficit import VelocityDeficit
-from .gaussian_model_base import GaussianModel
 import numpy as np
 from scipy.special import gamma
+
+from ....utilities import cosd, sind, tand
+from .gaussian_model_base import GaussianModel
+from ..base_velocity_deficit import VelocityDeficit
+
 
 class Blondel(GaussianModel):
     """
     Blondel is a direct implementation of the super-Gaussian model
     described in :cite:`bcv-blondel2020alternative` with GCH disabled by
     default. See :cite:`bcv-King2019Controls` for info on GCH.
-    
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: bcv-
     """
+
     default_parameters = {
         "a_s": 0.3837,
         "b_s": 0.003678,
@@ -35,10 +38,9 @@ class Blondel(GaussianModel):
         "a_f": 3.11,
         "b_f": -0.68,
         "c_f": 2.41,
-        'calculate_VW_velocities':False,
-        'use_yaw_added_recovery':False,
-        'yaw_recovery_alpha':0.03,
-        'eps_gain':0.3
+        "calculate_VW_velocities": False,
+        "use_yaw_added_recovery": False,
+        "eps_gain": 0.2,
     }
 
     def __init__(self, parameter_dictionary):
@@ -71,15 +73,11 @@ class Blondel(GaussianModel):
                     -   **use_yaw_added_recovery**: Flag to use yaw added
                         recovery on the wake velocity using methods developed
                         in :cite:`bcv-King2019Controls`.
-                    -   **yaw_recovery_alpha**: Tuning value for yaw added
-                        recovery on the wake velocity using methods developed
-                        in :cite:`bcv-King2019Controls`.
                     -   **eps_gain**: Tuning value for calculating the V- and
                         W-component velocities using methods developed in
                         :cite:`bcv-King2019Controls`.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
 
         self.model_string = "blondel"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
@@ -101,15 +99,22 @@ class Blondel(GaussianModel):
         # GCH Parameters
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
-        self.yaw_recovery_alpha = model_dictionary["yaw_recovery_alpha"]
         self.eps_gain = model_dictionary["eps_gain"]
 
-    def function(self, x_locations, y_locations, z_locations, turbine,
-                 turbine_coord, deflection_field, flow_field):
+    def function(
+        self,
+        x_locations,
+        y_locations,
+        z_locations,
+        turbine,
+        turbine_coord,
+        deflection_field,
+        flow_field,
+    ):
         """
         Using the Blondel super-Gaussian wake model, this method calculates and
-        returns the wake velocity deficits, caused by the specified turbine, 
-        relative to the freestream velocities at the grid of points 
+        returns the wake velocity deficits, caused by the specified turbine,
+        relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
 
         Args:
@@ -126,7 +131,7 @@ class Blondel(GaussianModel):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the 
+            deflection_field (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
@@ -142,7 +147,7 @@ class Blondel(GaussianModel):
         """
         # TODO: implement veer
         # Veer (degrees)
-        veer = flow_field.wind_veer
+        # veer = flow_field.wind_veer
 
         # Turbulence intensity for wake width calculation
         TI = turbine.current_turbulence_intensity
@@ -163,33 +168,49 @@ class Blondel(GaussianModel):
 
         # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
         x_tilde = (x_locations - turbine_coord.x1) / D
-        r_tilde = np.sqrt( (y_locations - turbine_coord.x2 - delta)**2 \
-                           + (z_locations - HH)**2, dtype=np.float128) / D
+        r_tilde = (
+            np.sqrt(
+                (y_locations - turbine_coord.x2 - delta) ** 2 + (z_locations - HH) ** 2,
+                dtype=np.float128,
+            )
+            / D
+        )
 
         # Calculate Beta (Eq 10, pp 5 of ref. [1] in docstring)
         beta = 0.5 * ((1 + np.sqrt(1 - Ct)) / np.sqrt(1 - Ct))
 
         # Calculate sigma_tilde (Eq 9, pp 5 of ref. [1] in docstring)
-        sigma_tilde = (self.a_s * TI + self.b_s) * x_tilde + \
-                       self.c_s * np.sqrt(beta)
+        sigma_tilde = (self.a_s * TI + self.b_s) * x_tilde + self.c_s * np.sqrt(beta)
 
         # Calculate n (Eq 13, pp 6 of ref. [1] in docstring)
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
 
         # Calculate max vel def (Eq 5, pp 4 of ref. [1] in docstring)
-        a1 = 2**(2 / n - 1)
-        a2 = 2**(4 / n - 2)
-        C = a1 - np.sqrt(a2 - ((n*Ct) * cosd(yaw) \
-                / (16.0 * gamma(2/n) \
-                * np.sign(sigma_tilde)*(np.abs(sigma_tilde)**(4/n)) )))
+        a1 = 2 ** (2 / n - 1)
+        a2 = 2 ** (4 / n - 2)
+        C = a1 - np.sqrt(
+            a2
+            - (
+                (n * Ct)
+                * cosd(yaw)
+                / (
+                    16.0
+                    * gamma(2 / n)
+                    * np.sign(sigma_tilde)
+                    * (np.abs(sigma_tilde) ** (4 / n))
+                )
+            )
+        )
 
         # Compute wake velocity (Eq 1, pp 3 of ref. [1] in docstring)
-        velDef1 = U_local * C * \
-                    np.exp( (-1 * r_tilde**n) / (2 * sigma_tilde**2))
+        velDef1 = U_local * C * np.exp((-1 * r_tilde ** n) / (2 * sigma_tilde ** 2))
         velDef1[x_locations < xR] = 0
 
-        return np.sqrt(velDef1**2), np.zeros(np.shape(velDef1)), \
-                                    np.zeros(np.shape(velDef1))
+        return (
+            np.sqrt(velDef1 ** 2),
+            np.zeros(np.shape(velDef1)),
+            np.zeros(np.shape(velDef1)),
+        )
 
     @property
     def a_s(self):
@@ -213,17 +234,19 @@ class Blondel(GaussianModel):
     @a_s.setter
     def a_s(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for a_s: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for a_s: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_s = value
-        if value != __class__.default_parameters['a_s']:
+        if value != __class__.default_parameters["a_s"]:
             self.logger.info(
-                ('Current value of a_s, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['a_s'])
-                )
+                (
+                    "Current value of a_s, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["a_s"])
+            )
 
     @property
     def b_s(self):
@@ -247,17 +270,19 @@ class Blondel(GaussianModel):
     @b_s.setter
     def b_s(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for b_s: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for b_s: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_s = value
-        if value != __class__.default_parameters['b_s']:
+        if value != __class__.default_parameters["b_s"]:
             self.logger.info(
-                ('Current value of b_s, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['b_s'])
-                )
+                (
+                    "Current value of b_s, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["b_s"])
+            )
 
     @property
     def c_s(self):
@@ -281,17 +306,18 @@ class Blondel(GaussianModel):
     @c_s.setter
     def c_s(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for c_s: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for c_s: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_s = value
-        if value != __class__.default_parameters['c_s']:
+        if value != __class__.default_parameters["c_s"]:
             self.logger.info(
-                ('Current value of c_s, {0}, is not equal to tuned ' + \
-                'value of {1}.').format(
-                    value, __class__.default_parameters['c_s']
-                )
+                (
+                    "Current value of c_s, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["c_s"])
             )
 
     @property
@@ -316,17 +342,18 @@ class Blondel(GaussianModel):
     @a_f.setter
     def a_f(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for a_f: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for a_f: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._a_f = value
-        if value != __class__.default_parameters['a_f']:
+        if value != __class__.default_parameters["a_f"]:
             self.logger.info(
-                ('Current value of a_f, {0}, is not equal to tuned ' + \
-                'value of {1}.').format(
-                    value, __class__.default_parameters['a_f']
-                )
+                (
+                    "Current value of a_f, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["a_f"])
             )
 
     @property
@@ -351,17 +378,18 @@ class Blondel(GaussianModel):
     @b_f.setter
     def b_f(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for b_f: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for b_f: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._b_f = value
-        if value != __class__.default_parameters['b_f']:
+        if value != __class__.default_parameters["b_f"]:
             self.logger.info(
-                ('Current value of b_f, {0}, is not equal to tuned ' + \
-                'value of {1}.').format(
-                    value, __class__.default_parameters['b_f']
-                )
+                (
+                    "Current value of b_f, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["b_f"])
             )
 
     @property
@@ -386,15 +414,16 @@ class Blondel(GaussianModel):
     @c_f.setter
     def c_f(self, value):
         if type(value) is not float:
-            err_msg = ('Invalid value type given for c_f: {}, ' + \
-                       'expected float.').format(value)
+            err_msg = (
+                "Invalid value type given for c_f: {}, " + "expected float."
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._c_f = value
-        if value != __class__.default_parameters['c_f']:
+        if value != __class__.default_parameters["c_f"]:
             self.logger.info(
-                ('Current value of c_f, {0}, is not equal to tuned ' + \
-                'value of {1}.').format(
-                    value, __class__.default_parameters['c_f']
-                )
+                (
+                    "Current value of c_f, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["c_f"])
             )

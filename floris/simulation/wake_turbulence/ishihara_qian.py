@@ -10,52 +10,34 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...utilities import setup_logger
+import numpy as np
+
 from .base_wake_turbulence import WakeTurbulence
 
 
 class IshiharaQian(WakeTurbulence):
     """
-    IshiharaQian is a wake velocity subclass that is used to compute the wake 
-    velocity deficit based on the Gaussian wake model with self-similarity and 
-    a near wake correction. The IshiharaQian wake model includes a Gaussian 
-    wake velocity deficit profile in the spanwise and vertical directions and 
-    includes the effects of ambient turbulence, added turbulence from upstream 
-    wakes, as well as wind shear and wind veer. For more info, see 
+    IshiharaQian is a wake velocity subclass that is used to compute the wake
+    velocity deficit based on the Gaussian wake model with self-similarity and
+    a near wake correction. The IshiharaQian wake model includes a Gaussian
+    wake velocity deficit profile in the spanwise and vertical directions and
+    includes the effects of ambient turbulence, added turbulence from upstream
+    wakes, as well as wind shear and wind veer. For more info, see
     :cite:`iqt-qian2018new`.
-    
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: iqt-
     """
+
     default_parameters = {
-        "kstar": {
-            "const": 0.11,
-            "Ct": 1.07,
-            "TI": 0.2
-        },
-        "epsilon": {
-            "const": 0.23,
-            "Ct": -0.25,
-            "TI": 0.17
-        },
-        "d": {
-            "const": 2.3,
-            "Ct": 1.2,
-            "TI": 0.0
-        },
-        "e": {
-            "const": 1.0,
-            "Ct": 0.0,
-            "TI": 0.1
-        },
-        "f": {
-            "const": 0.7,
-            "Ct": -3.2,
-            "TI": -0.45
-        }
+        "kstar": {"const": 0.11, "Ct": 1.07, "TI": 0.2},
+        "epsilon": {"const": 0.23, "Ct": -0.25, "TI": 0.17},
+        "d": {"const": 2.3, "Ct": 1.2, "TI": 0.0},
+        "e": {"const": 1.0, "Ct": 0.0, "TI": 0.1},
+        "f": {"const": 0.7, "Ct": -3.2, "TI": -0.45},
     }
 
     def __init__(self, parameter_dictionary):
@@ -64,10 +46,10 @@ class IshiharaQian(WakeTurbulence):
 
         All model parameters combine a constant coefficient, the thrust
         coefficient of the turbine, and the local turbulence intensity.
-        Paremeter values are calculated with 
+        Paremeter values are calculated with
         :py:meth:`~.IshiharaQian.parameter_value_from_dict` as:
 
-        .. code-block:: python3 
+        .. code-block:: python3
 
             value = pdict["const"] * Ct ** pdict["Ct"] * TI ** pdict["TI"]
 
@@ -90,7 +72,6 @@ class IshiharaQian(WakeTurbulence):
                     of wake-added turbulence.
         """
         super().__init__(parameter_dictionary)
-        self.logger = setup_logger(name=__name__)
         self.model_string = "ishihara_qian"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
 
@@ -112,11 +93,11 @@ class IshiharaQian(WakeTurbulence):
 
         Args:
             ambient_TI (float): TI of the background flow field.
-            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI 
+            coord_ti (:py:class:`~.utilities.Vec3`): Coordinate where TI
                 is to be calculated (e.g. downstream wind turbines).
-            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of 
+            turbine_coord (:py:class:`~.utilities.Vec3`): Coordinate of
                 the wind turbine adding turbulence to the flow.
-            turbine (:py:class:`~.turbine.Turbine`): Wind turbine 
+            turbine (:py:class:`~.turbine.Turbine`): Wind turbine
                 adding turbulence to the flow.
 
         Returns:
@@ -135,7 +116,7 @@ class IshiharaQian(WakeTurbulence):
         local_y = coord_ti.x2 - turbine_coord.x2
         local_z = coord_ti.x3 - turbine_coord.x3
         # coordinate info
-        r = np.sqrt(local_y**2 + (local_z)**2)
+        r = np.sqrt(local_y ** 2 + (local_z) ** 2)
 
         kstar = self.parameter_value_from_dict(self.kstar, Ct, ti_initial)
         epsilon = self.parameter_value_from_dict(self.epsilon, Ct, ti_initial)
@@ -144,29 +125,38 @@ class IshiharaQian(WakeTurbulence):
         e = self.parameter_value_from_dict(self.e, Ct, ti_initial)
         f = self.parameter_value_from_dict(self.f, Ct, ti_initial)
 
-        k1 = np.cos(np.pi / 2 * (r / D - 0.5))**2
-        k1[r / D > 0.5] = 1.0
+        k1 = np.cos(np.pi / 2 * (r / D - 0.5)) ** 2
+        # TODO: make work for array of turbulences/grid points
+        # k1[r / D > 0.5] = 1.0
 
-        k2 = np.cos(np.pi / 2 * (r / D + 0.5))**2
-        k2[r / D > 0.5] = 0.0
+        k2 = np.cos(np.pi / 2 * (r / D + 0.5)) ** 2
+        # TODO: make work for array of turbulences/grid points
+        # k2[r / D > 0.5] = 0.0
+
+        if r / D > 0.5:
+            k1 = 1.0
+            k2 = 0.0
 
         # Representative wake width = \sigma / D
         wake_width = kstar * (local_x / D) + epsilon
 
         # Added turbulence intensity = \Delta I_1 (x,y,z)
-        delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH)**2
-        delta[local_z >= HH] = 0.0
-        ti_calculation = 1 / (d + e * (local_x / D) + f *
-                              (1 + (local_x / D))**(-2)) * (
-                                  (k1 * np.exp(-(r - D / 2)**2 /
-                                               (2 * (wake_width * D)**2))) +
-                                  (k2 * np.exp(-(r + D / 2)**2 /
-                                               (2 *
-                                                (wake_width * D)**2)))) - delta
+        delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH) ** 2
+        # TODO: make work for array of turbulences/grid points
+        # delta[local_z >= HH] = 0.0
+        ti_calculation = (
+            1
+            / (d + e * (local_x / D) + f * (1 + (local_x / D)) ** (-2))
+            * (
+                (k1 * np.exp(-((r - D / 2) ** 2) / (2 * (wake_width * D) ** 2)))
+                + (k2 * np.exp(-((r + D / 2) ** 2) / (2 * (wake_width * D) ** 2)))
+            )
+            - delta
+        )
 
         return ti_calculation
 
-    def parameter_value_from_dict(pdict, Ct, ti_initial):
+    def parameter_value_from_dict(self, pdict, Ct, ti_initial):
         """
         Calculates model parameters using current conditions and
         model dictionaries.
@@ -179,8 +169,7 @@ class IshiharaQian(WakeTurbulence):
         Returns:
             float: Current value of model parameter.
         """
-        return pdict['const'] * Ct**(pdict['Ct']) * ti_initial**(
-            pdict['TI'])
+        return pdict["const"] * Ct ** (pdict["Ct"]) * ti_initial ** (pdict["TI"])
 
     @property
     def kstar(self):
@@ -192,7 +181,7 @@ class IshiharaQian(WakeTurbulence):
 
         Args:
             kstar (dict): Factor for relationship between the turbulence
-                intensity and the width of the Gaussian wake shape with the 
+                intensity and the width of the Gaussian wake shape with the
                 following key-value pairs:
 
                 - **const** (*float*): The constant coefficient.
@@ -210,20 +199,21 @@ class IshiharaQian(WakeTurbulence):
 
     @kstar.setter
     def kstar(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for kstar: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for kstar: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._kstar = value
-        if value != __class__.default_parameters['kstar']:
+        if value != __class__.default_parameters["kstar"]:
             self.logger.info(
-                ('Current value of kstar, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['kstar'])
-                )
+                (
+                    "Current value of kstar, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["kstar"])
+            )
 
     @property
     def epsilon(self):
@@ -235,7 +225,7 @@ class IshiharaQian(WakeTurbulence):
 
         Args:
             epsilon (dict): Factor for relationship between the turbulence
-                intensity and the width of the Gaussian wake shape with the 
+                intensity and the width of the Gaussian wake shape with the
                 following key-value pairs:
 
                 - **const** (*float*): The constant coefficient.
@@ -253,26 +243,27 @@ class IshiharaQian(WakeTurbulence):
 
     @epsilon.setter
     def epsilon(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for epsilon: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for epsilon: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._epsilon = value
-        if value != __class__.default_parameters['epsilon']:
+        if value != __class__.default_parameters["epsilon"]:
             self.logger.info(
-                ('Current value of epsilon, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['epsilon'])
-                )
+                (
+                    "Current value of epsilon, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["epsilon"])
+            )
 
     @property
     def d(self):
         """
         Constant coefficient used in calculation of wake-added turbulence.
-        
+
         **Note:** This is a virtual property used to "get" or "set" a value.
 
         Args:
@@ -294,20 +285,20 @@ class IshiharaQian(WakeTurbulence):
 
     @d.setter
     def d(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for d: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for d: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._d = value
-        if value != __class__.default_parameters['d']:
+        if value != __class__.default_parameters["d"]:
             self.logger.info(
-                ('Current value of d, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['d'])
-                )
+                (
+                    "Current value of d, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["d"])
+            )
 
     @property
     def e(self):
@@ -335,20 +326,20 @@ class IshiharaQian(WakeTurbulence):
 
     @e.setter
     def e(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for e: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for e: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._e = value
-        if value != __class__.default_parameters['e']:
+        if value != __class__.default_parameters["e"]:
             self.logger.info(
-                ('Current value of e, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['e'])
-                )
+                (
+                    "Current value of e, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["e"])
+            )
 
     @property
     def f(self):
@@ -376,17 +367,17 @@ class IshiharaQian(WakeTurbulence):
 
     @f.setter
     def f(self, value):
-        if not (
-            type(value) is dict and set(value) == set(['const', 'Ct', 'TI'])
-        ):
-            err_msg = ('Invalid value type given for f: {}, expected ' + \
-                       'dict with keys ["const", "Ct", "TI"]').format(value)
+        if not (type(value) is dict and set(value) == set(["const", "Ct", "TI"])):
+            err_msg = (
+                "Invalid value type given for f: {}, expected "
+                + 'dict with keys ["const", "Ct", "TI"]'
+            ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
         self._f = value
-        if value != __class__.default_parameters['f']:
+        if value != __class__.default_parameters["f"]:
             self.logger.info(
-                ('Current value of f, {0}, is not equal to tuned ' +
-                'value of {1}.').format(
-                    value, __class__.default_parameters['f'])
-                )
+                (
+                    "Current value of f, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["f"])
+            )

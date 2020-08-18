@@ -1,28 +1,29 @@
 # Copyright 2020 NREL
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
- 
+
 # See https://floris.readthedocs.io for documentation
- 
+
 import json
+
 import numpy as np
-from ..utilities import setup_logger
 
 
-class InputReader():
+class InputReader:
     """
     InputReader parses JSON input files into inputs for the
     :py:class:`~.floris.Floris` class. It handles input validation regarding
     input type, but does not enforce value checking.
     """
+
     def __init__(self):
         """
         Initializes the parameter types expected in the input data.
@@ -40,7 +41,7 @@ class InputReader():
             "power_thrust_table": dict,
             "yaw_angle": float,
             "tilt_angle": float,
-            "TSR": float
+            "TSR": float,
         }
 
         self._wake_properties = {
@@ -48,7 +49,7 @@ class InputReader():
             "turbulence_model": str,
             "deflection_model": str,
             "combination_model": str,
-            "parameters": dict
+            "parameters": dict,
         }
 
         self._farm_properties = {
@@ -61,7 +62,7 @@ class InputReader():
             "layout_x": list,
             "layout_y": list,
             "wind_x": list,
-            "wind_y": list
+            "wind_y": list,
         }
 
     def _parseJSON(self, filename):
@@ -103,7 +104,9 @@ class InputReader():
         if "type" not in input_dict:
             raise KeyError("'type' key is required in input")
         if input_dict["type"] not in self._valid_objects:
-            raise ValueError("'type' must be one of {}".format(", ".join(self._valid_objects)))
+            raise ValueError(
+                "'type' must be one of {}".format(", ".join(self._valid_objects))
+            )
         validated["type"] = input_dict["type"]
 
         # validate the name
@@ -121,14 +124,22 @@ class InputReader():
         properties = input_dict["properties"]
         for element in type_map:
             if element not in properties:
-                raise KeyError("'{}' is required for object type '{}'".format(element, validated["type"]))
+                raise KeyError(
+                    "'{}' is required for object type '{}'".format(
+                        element, validated["type"]
+                    )
+                )
             prop_dict[element] = self._cast(type_map[element], properties[element])
         validated["properties"] = prop_dict
 
         for element in properties:
             if element not in type_map:
-                raise KeyError("'{}' is given but not required for object type '{}'".format(element, validated["type"]))
-        
+                raise KeyError(
+                    "'{}' is given but not required for object type '{}'".format(
+                        element, validated["type"]
+                    )
+                )
+
         return validated
 
     def _cast(self, typecast, value):
