@@ -214,8 +214,8 @@
       "yaw_angle": 0.0,
       "tilt_angle": 0.0,
       "TSR": 8.0,
-      "ngrid": 2,
-      "rloc": 0.41
+      "ngrid": 3,
+      "rloc": 0.5
     }
   },
   "wake": {
