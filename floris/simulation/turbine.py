@@ -96,6 +96,8 @@ class Turbine(LoggerBase):
         self.yaw_angle = properties["yaw_angle"]
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
+        self.ngrid = properties["ngrid"]
+        self.rloc = properties["rloc"]
 
         # initialize to an invalid value until calculated
         self.air_density = -1
@@ -127,7 +129,7 @@ class Turbine(LoggerBase):
 
         # constants
         # self.grid_point_count = 5 * 5
-        self.grid_point_count = 3 * 3
+        self.grid_point_count = self.ngrid * self.ngrid
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
             raise ValueError("Turbine.grid_point_count must be the square of a number")
 
@@ -151,12 +153,13 @@ class Turbine(LoggerBase):
         # determine the dimensions of the square grid
         num_points = int(np.round(np.sqrt(self.grid_point_count)))
         # syntax: np.linspace(min, max, n points)
+        pt = self.rloc*self.rotor_radius
         horizontal = np.linspace(
-            -self.rotor_radius / 2, self.rotor_radius / 2, num_points
+            -pt, pt, num_points
         )
 
         vertical = np.linspace(
-            -self.rotor_radius / 2, self.rotor_radius / 2, num_points
+            -pt, pt, num_points
         )
 
         # build the grid with all of the points
