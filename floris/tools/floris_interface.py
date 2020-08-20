@@ -1121,8 +1121,8 @@ class FlorisInterface(LoggerBase):
             ws_limit_tol (float, optional): Tolerance fraction for determining
                 wind speed where power stops changing. If limit_ws is *True*,
                 assume power remains constant up to cut out for wind speeds
-                higher than wind speed where power changes less than
-                ws_limit_tol of the previous power. Defaults to 0.001.
+                above the point where power changes less than ws_limit_tol of
+                the previous power. Defaults to 0.001.
             ws_cutout (float, optional): Cut out wind speed (m/s). If limit_ws
                 is *True*, assume power is zero for wind speeds greater than or
                 equal to ws_cutout.
@@ -1132,17 +1132,20 @@ class FlorisInterface(LoggerBase):
         """
         AEP_sum = 0
 
-        if limit_ws:
-            # sort wd and ws by wind speed
-            inds = np.argsort(ws)
-            ws = ws[inds]
-            wd = wd[inds]
+        # sort wd and ws by wind speed
+        inds = np.argsort(ws)
+        ws = ws[inds]
+        wd = wd[inds]
 
-            prev_pow = {wdir: 0.0 for wdir in np.unique(wd)}
-            use_prev_pow = {wdir: False for wdir in np.unique(wd)}
+        # keep track of wind speeds where power stops increasing for each wind
+        # direction
+        prev_pow = {wdir: 0.0 for wdir in np.unique(wd)}
+        use_prev_pow = {wdir: False for wdir in np.unique(wd)}
 
         for i in range(len(wd)):
-            if ~limit_ws | ~use_prev_pow[wd[i]]:
+            # If not using wind speed limit or still below maximum power, then
+            # calculate farm power
+            if not (limit_ws & use_prev_pow[wd[i]]):
                 self.reinitialize_flow_field(wind_direction=[wd[i]], wind_speed=[ws[i]])
                 if yaw is None:
                     self.calculate_wake()
@@ -1155,10 +1158,14 @@ class FlorisInterface(LoggerBase):
                 if (
                     limit_ws
                     & (farm_power > 0)
-                    & (farm_power - prev_pow[wd[i]] < ws_limit_tol * prev_pow[wd[i]])
+                    & (np.abs(farm_power / prev_pow[wd[i]] - 1) < ws_limit_tol)
                 ):
-                    prev_pow[wd[i]] = farm_power
                     use_prev_pow[wd[i]] = True
+
+                prev_pow[wd[i]] = farm_power
+
+            elif limit_ws & (ws[i] >= ws_cutout):
+                farm_power = 0.0
             else:
                 farm_power = prev_pow[wd[i]]
 
