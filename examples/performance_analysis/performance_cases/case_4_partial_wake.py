@@ -18,9 +18,9 @@ import time
 import pickle
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 import floris.tools as wfct
+import matplotlib.pyplot as plt
 
 
 # PARAMETERS
@@ -34,7 +34,8 @@ num_turbine = 5
 # Initialize the FLORIS interface fi
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
-fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
+# fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../../example_input_4_point.json")
 
 # Set to a 5 turbine case
 D = 126.0
