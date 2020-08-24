@@ -11,13 +11,11 @@
 # the License.
 
 import numpy as np
-from numba import njit
 
 from ...utilities import cosd, sind, tand
 from ...logging_manager import LoggerBase
 
 
-@njit
 def calculate_effective_yaw_angle(
     x_locations,
     y_locations,
