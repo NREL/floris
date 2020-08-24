@@ -36,7 +36,8 @@ N_row = 3
 # Initialize the FLORIS interface fi
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
-fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
+# fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
+fi = wfct.floris_interface.FlorisInterface("../../example_input_4_point.json")
 
 if turn_off_gch:
     fi.set_gch(False)
