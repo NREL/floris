@@ -36,8 +36,8 @@ N_row = 10
 # Initialize the FLORIS interface fi
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
-# fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
-fi = wfct.floris_interface.FlorisInterface("../../example_input_4_point.json")
+fi = wfct.floris_interface.FlorisInterface("../../example_input.json")
+# fi = wfct.floris_interface.FlorisInterface("../../example_input_4_point.json")
 
 if turn_off_gch:
     fi.set_gch(False)
@@ -65,6 +65,9 @@ combined = np.array(list(itertools.product(ws_list, wd_list)))
 ws_list = combined[:, 0]
 wd_list = combined[:, 1]
 num_cases = len(ws_list)
+
+# Use simple weibull
+freq = wfct.wind_rose.WindRose.weibull(ws_list)
 freq = np.ones_like(ws_list) / num_cases
 
 
