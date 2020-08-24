@@ -67,9 +67,10 @@ wd_list = combined[:, 1]
 num_cases = len(ws_list)
 
 # Use simple weibull
-freq = wfct.wind_rose.WindRose.weibull(ws_list)
-freq = np.ones_like(ws_list) / num_cases
-
+wind_rose = wfct.wind_rose.WindRose()
+freq = wind_rose.weibull(ws_list)
+freq = freq / np.sum(freq)
+# freq = np.ones_like(ws_list) / num_cases
 
 # Compute and time the AEP calculation
 
