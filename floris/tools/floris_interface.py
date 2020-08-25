@@ -1100,7 +1100,9 @@ class FlorisInterface(LoggerBase):
             include_unc=include_unc, unc_pmfs=unc_pmfs, unc_options=unc_options
         )
 
-    def get_farm_AEP(self, wd, ws, freq, yaw=None):
+    def get_farm_AEP(
+        self, wd, ws, freq, yaw=None, limit_ws=False, ws_limit_tol=0.001, ws_cutout=30.0
+    ):
         """
         Estimate annual energy production (AEP) for distributions of wind
         speed, wind direction and yaw offset.
@@ -1112,20 +1114,63 @@ class FlorisInterface(LoggerBase):
                 directions in wind rose.
             yaw (iterable, optional): List or array of yaw values if wake is
                 steering implemented. Defaults to None.
+            limit_ws (bool, optional): When *True*, detect wind speed when power
+                reaches it's maximum value for a given wind direction. For all
+                higher wind speeds, use last calculated value when below cut
+                out. Defaults to False.
+            ws_limit_tol (float, optional): Tolerance fraction for determining
+                wind speed where power stops changing. If limit_ws is *True*,
+                assume power remains constant up to cut out for wind speeds
+                above the point where power changes less than ws_limit_tol of
+                the previous power. Defaults to 0.001.
+            ws_cutout (float, optional): Cut out wind speed (m/s). If limit_ws
+                is *True*, assume power is zero for wind speeds greater than or
+                equal to ws_cutout.
 
         Returns:
             float: AEP for wind farm.
         """
         AEP_sum = 0
 
-        for i in range(len(wd)):
-            self.reinitialize_flow_field(wind_direction=[wd[i]], wind_speed=[ws[i]])
-            if yaw is None:
-                self.calculate_wake()
-            else:
-                self.calculate_wake(yaw[i])
+        # sort wd and ws by wind speed
+        inds = np.argsort(ws)
+        ws = ws[inds]
+        wd = wd[inds]
 
-            AEP_sum = AEP_sum + self.get_farm_power() * freq[i] * 8760
+        # keep track of wind speeds where power stops increasing for each wind
+        # direction
+        prev_pow = {wdir: 0.0 for wdir in np.unique(wd)}
+        use_prev_pow = {wdir: False for wdir in np.unique(wd)}
+
+        for i in range(len(wd)):
+            # If not using wind speed limit or still below maximum power, then
+            # calculate farm power
+            if not (limit_ws & use_prev_pow[wd[i]]):
+                self.reinitialize_flow_field(wind_direction=[wd[i]], wind_speed=[ws[i]])
+                if yaw is None:
+                    self.calculate_wake()
+                else:
+                    self.calculate_wake(yaw[i])
+
+                farm_power = self.get_farm_power()
+
+                # check if power has stopped increasing
+                if (
+                    limit_ws
+                    & (farm_power > 0)
+                    & (np.abs(farm_power / prev_pow[wd[i]] - 1) < ws_limit_tol)
+                ):
+                    use_prev_pow[wd[i]] = True
+
+                prev_pow[wd[i]] = farm_power
+
+            elif limit_ws & (ws[i] >= ws_cutout):
+                farm_power = 0.0
+            else:
+                farm_power = prev_pow[wd[i]]
+
+            AEP_sum = AEP_sum + farm_power * freq[i] * 8760
+
         return AEP_sum
 
     def change_turbine(
