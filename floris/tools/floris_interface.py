@@ -14,14 +14,14 @@
 
 
 import copy
+from itertools import repeat
+from multiprocessing import cpu_count
+from multiprocessing.pool import Pool
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-from multiprocessing import cpu_count
-from multiprocessing.pool import Pool
-from itertools import repeat
 
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
@@ -33,8 +33,10 @@ from ..logging_manager import LoggerBase
 from .layout_functions import visualize_layout, build_turbine_loc
 from .interface_utilities import get_params, set_params, show_params
 
+
 def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
     return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)
+
 
 class FlorisInterface(LoggerBase):
     """
@@ -1136,7 +1138,6 @@ class FlorisInterface(LoggerBase):
     def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
         self.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
         self.calculate_wake(yaw_angles=yaw)
-
         return self.get_farm_power() * freq * 8760
 
     def get_farm_AEP_parallel(self, wd, ws, freq, yaw=None, jobs=-1):
@@ -1153,11 +1154,11 @@ class FlorisInterface(LoggerBase):
             yaw (iterable, optional): List or array of yaw values if wake is
                 steering implemented. Defaults to None.
             jobs (int, optional): The number of jobs (cores) to use in the parallel
-                computations. 
+                computations.
 
         Returns:
             float: AEP for wind farm.
-        """        
+        """
         if jobs < -1:
             raise ValueError("Input 'jobs' cannot be negative!")
         if jobs == -1:
@@ -1167,7 +1168,6 @@ class FlorisInterface(LoggerBase):
         if jobs > len(wd):
             jobs = len(wd)
 
-        AEP_sum = 0
         opt_AEP = 0.0
 
         if yaw is not None:
@@ -1175,7 +1175,7 @@ class FlorisInterface(LoggerBase):
         else:
             global_arguments = list(zip(repeat(self), wd, ws, freq))
         num_cases = len(wd)
-        chunksize = int(np.ceil(num_cases/jobs))
+        chunksize = int(np.ceil(num_cases / jobs))
 
         with Pool(jobs) as pool:
             opt = pool.starmap(
@@ -1185,7 +1185,6 @@ class FlorisInterface(LoggerBase):
             opt_AEP = opt_AEP + np.sum(opt)
 
         return opt_AEP
-
 
     def change_turbine(
         self, turb_num_array, turbine_change_dict, update_specified_wind_height=False

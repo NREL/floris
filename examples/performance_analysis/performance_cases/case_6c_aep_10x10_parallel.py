@@ -15,13 +15,13 @@
 # In the second case, simply time calls to calculate_wake
 
 import time
-import dill as pickle
 import itertools
 
 import numpy as np
-
-import floris.tools as wfct
 import matplotlib.pyplot as plt
+
+import dill as pickle
+import floris.tools as wfct
 
 
 if __name__ == "__main__":
