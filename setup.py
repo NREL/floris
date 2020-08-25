@@ -40,7 +40,8 @@ VERSION = "2.1.1"
 REQUIRED = [
     # simulation
     "matplotlib>=3",
-    "numpy>=1.16",
+    "numpy==1.16.3",
+    "numba==0.50.1",
     "pytest>=4",
     "scipy>=1.1",
     "coloredlogs>=10.0",
