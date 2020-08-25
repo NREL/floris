@@ -19,6 +19,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from multiprocessing import cpu_count
+from multiprocessing.pool import Pool
+from itertools import repeat
 
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
@@ -30,6 +33,8 @@ from ..logging_manager import LoggerBase
 from .layout_functions import visualize_layout, build_turbine_loc
 from .interface_utilities import get_params, set_params, show_params
 
+def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
+    return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)
 
 class FlorisInterface(LoggerBase):
     """
@@ -1128,10 +1133,17 @@ class FlorisInterface(LoggerBase):
             AEP_sum = AEP_sum + self.get_farm_power() * freq[i] * 8760
         return AEP_sum
 
-    def get_farm_AEP_parallel(self, wd, ws, freq, yaw=None):
+    def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
+        self.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
+        self.calculate_wake(yaw_angles=yaw)
+
+        return self.get_farm_power() * freq * 8760
+
+    def get_farm_AEP_parallel(self, wd, ws, freq, yaw=None, jobs=-1):
         """
         Estimate annual energy production (AEP) for distributions of wind
-        speed, wind direction and yaw offset.
+        speed, wind direction and yaw offset with parallel computations on
+        a single comptuer.
 
         Args:
             wd (iterable): List or array of wind direction values.
@@ -1140,46 +1152,37 @@ class FlorisInterface(LoggerBase):
                 directions in wind rose.
             yaw (iterable, optional): List or array of yaw values if wake is
                 steering implemented. Defaults to None.
+            jobs (int, optional): The number of jobs (cores) to use in the parallel
+                computations. 
 
         Returns:
             float: AEP for wind farm.
-        """
+        """        
+        if jobs < -1:
+            raise ValueError("Input 'jobs' cannot be negative!")
+        if jobs == -1:
+            jobs = int(np.ceil(cpu_count() * 0.8))
+        if jobs > 0:
+            jobs = min(jobs, cpu_count())
+        if jobs > len(wd):
+            jobs = len(wd)
+
         AEP_sum = 0
-
-        def _calc_one_AEP_case(wd, ws, freq):
-            self.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
-            self.calculate_wake()
-
-            return self.get_farm_power() * freq * 8760
-
-        try:
-            from mpi4py.futures import MPIPoolExecutor
-            from itertools import repeat
-        except ImportError:
-            err_msg = (
-                "It appears you do not have mpi4py installed. "
-                + "Please refer to https://mpi4py.readthedocs.io/ for "
-                + "guidance on how to properly install the module."
-            )
-            self.logger.error(err_msg, stack_info=True)
-            raise ImportError(err_msg)
-
-        print("=====================================================")
-        print("Calculating baseline power in parallel...")
-        print("Number of wind conditions to calculate = ", len(wd))
-        print("=====================================================")
-
         opt_AEP = 0.0
 
-        # fi_copy = copy.deepcopy(self)
+        if yaw is not None:
+            global_arguments = list(zip(repeat(self), wd, ws, freq, yaw))
+        else:
+            global_arguments = list(zip(repeat(self), wd, ws, freq))
+        num_cases = len(wd)
+        chunksize = int(np.ceil(num_cases/jobs))
 
-        with MPIPoolExecutor() as executor:
-            for opt in executor.map(
-                _calc_one_AEP_case, wd, ws, freq, chunksize=392
-            ):
-
-                # add AEP to overall AEP
-                opt_AEP = opt_AEP + opt
+        with Pool(jobs) as pool:
+            opt = pool.starmap(
+                global_calc_one_AEP_case, global_arguments, chunksize=chunksize
+            )
+            # add AEP to overall AEP
+            opt_AEP = opt_AEP + np.sum(opt)
 
         return opt_AEP
 
@@ -1468,7 +1471,7 @@ class FlorisInterface(LoggerBase):
 
         return model_params
 
-    def set_model_parameters(self, params, verbose=True):
+    def set_model_parameters(self, params, verbose=False):
         """
         Helper function to set current wake model parameters.
         Shortcut to :py:meth:`~.tools.interface_utilities.set_params`.

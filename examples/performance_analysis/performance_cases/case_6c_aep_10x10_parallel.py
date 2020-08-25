@@ -22,9 +22,7 @@ import numpy as np
 
 import floris.tools as wfct
 import matplotlib.pyplot as plt
-import mpi4py.MPI as MPI
 
-MPI.pickle.__init__(pickle.dumps, pickle.loads)
 
 if __name__ == "__main__":
     # PARAMETERS
@@ -34,7 +32,6 @@ if __name__ == "__main__":
 
     # Fixed parameters
     N_row = 10
-
 
     # Initialize the FLORIS interface fi
     # For basic usage, the florice interface provides a simplified interface to
@@ -69,9 +66,7 @@ if __name__ == "__main__":
     num_cases = len(ws_list)
     freq = np.ones_like(ws_list) / num_cases
 
-
     # Compute and time the AEP calculation
-
 
     # # Now check the timing
     print("===START TEST===")
@@ -80,7 +75,6 @@ if __name__ == "__main__":
     # power_result = fi.get_farm_AEP(wd_list, ws_list, freq)
     end = time.perf_counter()
     elapsed_time = end - start
-
 
     # Report the timing
     print("====RESULT====")
@@ -105,7 +99,6 @@ if __name__ == "__main__":
                 "xxx Total power changed by %+.1f%% (%.1f -> %.1f)"
                 % (percent_change, saved_result, power_result)
             )
-
 
     if show_layout:
         # Plot and show
