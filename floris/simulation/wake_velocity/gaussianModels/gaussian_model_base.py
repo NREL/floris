@@ -266,6 +266,31 @@ def calc_VW(
     return V, W
 
 
+@njit
+def calculate_U2(
+    rotor_diameter, x_locations, x1, ka, current_turbulence_intensity, kb, W
+):
+    """Calculates U2 direction of U.
+
+    Args:
+        rotor_diameter (float): `turbine.rotor_diameter`.
+        x_locations (np.ndarray): X locations of the turbines.
+        x1 (float): `turbine_coord.x1`
+        ka ([type]): `GaussianModel.ka`
+        current_turbulence_intensity ([type]): `turbine.current_turbulence_intensity`
+        kb ([type]): `GaussianModel.kb`
+        W (np.ndarray): W-component velocity deficits across the flow field.
+
+    Returns:
+        [type]: [description]
+    """
+    xLocs = x_locations - x1
+    ky = ka * current_turbulence_intensity + kb
+    U2 = np.mean(W) * xLocs
+    U2 /= ky * xLocs + rotor_diameter / 2
+    return U2
+
+
 class GaussianModel(VelocityDeficit):
     """
     This is the super-class for all Gaussian-type wake models. It includes
@@ -423,9 +448,18 @@ class GaussianModel(VelocityDeficit):
 
         # set dimensions
         D = turbine.rotor_diameter
-        xLocs = x_locations - turbine_coord.x1
-        ky = self.ka * turbine.current_turbulence_intensity + self.kb
-        U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
+        # xLocs = x_locations - turbine_coord.x1
+        # ky = self.ka * turbine.current_turbulence_intensity + self.kb
+        # U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
+        U2 = calculate_U2(
+            D,
+            x_locations,
+            turbine_coord.x1,
+            self.ka,
+            turbine.current_turbulence_intensity,
+            self.kb,
+            W,
+        )
         U_total = U1 + np.nan_to_num(U2)
 
         # turn it back into a deficit
