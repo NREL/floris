@@ -18,10 +18,10 @@ import time
 import itertools
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 import dill as pickle
 import floris.tools as wfct
+import matplotlib.pyplot as plt
 
 
 if __name__ == "__main__":
@@ -64,7 +64,12 @@ if __name__ == "__main__":
     ws_list = combined[:, 0]
     wd_list = combined[:, 1]
     num_cases = len(ws_list)
-    freq = np.ones_like(ws_list) / num_cases
+
+    # Use simple weibull
+    wind_rose = wfct.wind_rose.WindRose()
+    freq = wind_rose.weibull(ws_list)
+    freq = freq / np.sum(freq)
+    # freq = np.ones_like(ws_list) / num_cases
 
     # Compute and time the AEP calculation
 
