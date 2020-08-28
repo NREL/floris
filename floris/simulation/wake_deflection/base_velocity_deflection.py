@@ -11,9 +11,55 @@
 # the License.
 
 import numpy as np
+from numba import njit
 
 from ...utilities import cosd, sind, tand
 from ...logging_manager import LoggerBase
+
+
+@njit
+def _calculate_gammas(
+    Uinf, HH, D, specified_wind_height, wind_shear, Ct, yaw, average_velocity, aI, TSR
+):
+    # what yaw angle would have produced that same average spanwise velocity
+    Gamma_top = (
+        (np.pi / 8)
+        * D
+        * (
+            (Uinf * ((HH + D / 2) / specified_wind_height) ** wind_shear)
+            / Uinf  # top velocity
+        )
+        * Uinf
+        * Ct
+        * sind(yaw)
+        * cosd(yaw)
+    )
+    Gamma_bottom = (
+        -(np.pi / 8)
+        * D
+        * (
+            (Uinf * ((HH - D / 2) / specified_wind_height) ** wind_shear)
+            / Uinf  # bottom velocity
+        )
+        * Uinf
+        * Ct
+        * sind(yaw)
+        * cosd(yaw)
+    )
+    Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * average_velocity / TSR
+    return Gamma_top, Gamma_bottom, Gamma_wake_rotation
+
+
+@njit
+def _calculate_effective_velocity(
+    first_term, rT, eps, third_term, rB, zC, Gamma_wake_rotation, rC
+):
+    Veff = (
+        first_term * (1 - np.exp(-rT / eps))
+        + third_term / (2 * np.pi * rB) * (1 - np.exp(-rB / eps))
+        + (zC * Gamma_wake_rotation) / (2 * np.pi * rC) * (1 - np.exp(-rC / eps))
+    )
+    return Veff
 
 
 def calculate_effective_yaw_angle(
@@ -92,20 +138,25 @@ def calculate_effective_yaw_angle(
     zC = z_locations[idx] + 0.01 - (HH)
     rC = yLocs ** 2 + zC ** 2
 
-    # find wake deflection from CRV
-    test_gamma = np.linspace(-45, 45, 91)
+    # # find wake deflection from CRV
+    yaw = np.linspace(-45, 45, 91)
     avg_V = np.mean(V[idx])
-    minYaw = 10000
-    target_yaw_ix = None
-    # for i in range(len(test_gamma)):
+    # target_yaw_ix = None
+    # # for i in range(len(test_gamma)):
 
     # what yaw angle would have produced that same average spanwise velocity
-    yaw = test_gamma  # [i]
-    vel_top = (Uinf * ((HH + D / 2) / specified_wind_height) ** wind_shear) / Uinf
-    vel_bottom = (Uinf * ((HH - D / 2) / specified_wind_height) ** wind_shear) / Uinf
-    Gamma_top = (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
-    Gamma_bottom = -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
-    Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * average_velocity / TSR
+    Gamma_top, Gamma_bottom, Gamma_wake_rotation = _calculate_gammas(
+        Uinf,
+        HH,
+        D,
+        specified_wind_height,
+        wind_shear,
+        Ct,
+        yaw,
+        average_velocity,
+        aI,
+        TSR,
+    )
     # Veff = (
     #     (zT * Gamma_top) / (2 * np.pi * rT) * (1 - np.exp(-rT / eps))
     #     + (zB * Gamma_bottom)
@@ -124,7 +175,6 @@ def calculate_effective_yaw_angle(
         * (1 - np.exp(-rB / eps))
         + (zC * Gamma_wake_rotation) / (2 * np.pi * rC) * (1 - np.exp(-rC / eps))
     )
-
     # tmp = avg_V - np.mean(Veff)
     # print(np.mean(Veff, axis=1))
     # lkj
@@ -135,7 +185,7 @@ def calculate_effective_yaw_angle(
     #     target_yaw_ix = i
 
     if target_yaw_ix is not None:
-        yaw_effective = test_gamma[target_yaw_ix]
+        yaw_effective = yaw[target_yaw_ix]
         err_msg = None
     else:
         err_msg = "No effective yaw angle is found. Set to 0."

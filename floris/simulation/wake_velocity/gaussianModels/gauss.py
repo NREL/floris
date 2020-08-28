@@ -11,11 +11,105 @@
 # the License.
 
 import numpy as np
+from numba import njit
 from scipy.special import gamma
 
 from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
 from ..base_velocity_deficit import VelocityDeficit
+
+
+@njit
+def _calculate_parameters(
+    y_locations,
+    turbine_x2,
+    delta,
+    z_locations,
+    HH,
+    D,
+    yaw,
+    Ct,
+    a_s,
+    b_s,
+    TI,
+    alpha,
+    beta,
+    x_tilde,
+    c_s=0.5,
+):
+    """[summary]
+
+    Args:
+        y_locations (np.array): An array of floats that contains the grid
+            coordinates of the flow field domain in the direction normal to
+            x and parallel to the ground (m).
+        turbine_x2 (float): `turbine_coord.x2`
+        delta ([type]): [description]
+        z_locations (np.array): An array of floats that contains the grid
+            coordinates of the flow field domain in the vertical
+            direction (m).
+        HH ([type]): `floris.simulation.turbine.hub_height`.
+        D ([type]): `floris.simulation.turbine.rotor_diameter`.
+        yaw ([type]): Opposite of `floris.simulation.turbine.yaw_angle`.
+        Ct ([type]): `floris.simulation.turbine.Ct`.
+        a_s ([type]): `Gauss.ka`.
+        b_s ([type]): `Gauss.kb`.
+        TI ([type]):  `floris.simulation.turbine.current_turbulence_intensity`.
+        alpha ([type]): `Gauss.alpha`
+        beta ([type]): `Gauss.beta`
+        x_tilde ([type]): [description]
+        c_s (float, optional): [description]. Defaults to 0.5.
+
+    Returns:
+        [type]: [description]
+    """
+    r_tilde = (
+        np.sqrt(
+            (y_locations - turbine_x2 - delta) ** 2 + (z_locations - HH) ** 2,
+            dtype=np.float128,
+        )
+        / D
+    )
+
+    _beta = (1 + np.sqrt(1 - Ct * cosd(yaw))) / (2 * (1 + np.sqrt(1 - Ct)))
+
+    x0 = (
+        D
+        * (cosd(yaw) * (1 + np.sqrt(1 - Ct)))
+        / (np.sqrt(2) * (4 * alpha * TI + 2 * beta * (1 - np.sqrt(1 - Ct))))
+    )
+
+    sigma_tilde = (a_s * TI + b_s) * (x_tilde - x0 / D) + c_s * np.sqrt(_beta)
+
+    # If not subtracting x0 as above, but I think equivalent
+    # sigma_tilde = (a_s * TI + b_s) * (x_tilde - 0) + c_s * np.sqrt(beta)
+    # sigma_tilde = sigma_tilde  - (a_s * TI + b_s) * x0/D
+
+    # a_f = 1.5 * 3.11
+    # b_f = 0.65 * -0.68
+    # c_f = 2.0
+    n = (1.5 * 3.11) * np.exp((0.65 * -0.68) * x_tilde) + (2.0)
+
+    # a1 = 2 ** (2 / n - 1)
+    # a2 = 2 ** (4 / n - 2)
+
+    # These two lines seem to be equivalent
+    C = (2 ** (2 / n - 1)) - np.sqrt(
+        (2 ** (4 / n - 2))
+        - (
+            n
+            * Ct
+            * cosd(yaw)
+            / (
+                16.0
+                * gamma(2 / n)
+                * np.sign(sigma_tilde)
+                * np.abs(sigma_tilde) ** (4 / n)
+            )
+        )
+    )
+
+    return C, r_tilde, n, sigma_tilde
 
 
 class Gauss(GaussianModel):
@@ -162,58 +256,25 @@ class Gauss(GaussianModel):
         # Over-ride the values less than xR, these go away anyway
         x_tilde[x_locations < xR] = 0  # np.mean(x_tilde[x_locations >= xR] )
 
-        r_tilde = (
-            np.sqrt(
-                (y_locations - turbine_coord.x2 - delta) ** 2 + (z_locations - HH) ** 2,
-                dtype=np.float128,
-            )
-            / D
-        )
-
-        beta = (1 + np.sqrt(1 - Ct * cosd(yaw))) / (2 * (1 + np.sqrt(1 - Ct)))
-
-        a_s = self.ka  # Force equality to previous parameters to reduce new parameters
-        b_s = self.kb  # Force equality to previous parameters to reduce new parameters
-        c_s = 0.5
-
-        x0 = (
-            D
-            * (cosd(yaw) * (1 + np.sqrt(1 - Ct)))
-            / (
-                np.sqrt(2)
-                * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))
-            )
-        )  # + turbine_coord.x1
-        sigma_tilde = (a_s * TI + b_s) * (x_tilde - x0 / D) + c_s * np.sqrt(beta)
-
-        # If not subtracting x0 as above, but I think equivalent
-        # sigma_tilde = (a_s * TI + b_s) * (x_tilde - 0) + c_s * np.sqrt(beta)
-        # sigma_tilde = sigma_tilde  - (a_s * TI + b_s) * x0/D
-
-        a_f = 1.5 * 3.11
-        b_f = 0.65 * -0.68
-        c_f = 2.0
-        n = a_f * np.exp(b_f * x_tilde) + c_f
-
-        a1 = 2 ** (2 / n - 1)
-        a2 = 2 ** (4 / n - 2)
-
-        # These two lines seem to be equivalent
-        C = a1 - np.sqrt(
-            a2
-            - (
-                n
-                * Ct
-                * cosd(yaw)
-                / (
-                    16.0
-                    * gamma(2 / n)
-                    * np.sign(sigma_tilde)
-                    * np.abs(sigma_tilde) ** (4 / n)
-                )
-            )
-        )
         # C = a1 - np.sqrt(a2 - (n * Ct * cosd(yaw) / (16.0 * gamma(2/n) * sigma_tilde**(4/n) ) ) )
+
+        C, r_tilde, n, sigma_tilde = _calculate_parameters(
+            y_locations,
+            turbine_coord.x2,
+            delta,
+            z_locations,
+            HH,
+            D,
+            yaw,
+            Ct,
+            self.ka,
+            self.kb,
+            TI,
+            self.alpha,
+            self.beta,
+            x_tilde,
+            c_s=0.5,
+        )
 
         # Compute wake velocity (Eq 1, pp 3 of ref. [1] in docstring)
         velDef = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
