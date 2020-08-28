@@ -1231,6 +1231,39 @@ class FlorisInterface(LoggerBase):
 
         return opt_AEP
 
+    def calculate_AEP_wind_limit(self, num_turbines, x_spacing, start_ws, threshold):
+        orig_layout_x = self.layout_x
+        orig_layout_y = self.layout_y
+        D = self.floris.farm.turbines[0].rotor_diameter
+
+        self.reinitialize_flow_field(
+            layout_array=(
+                [i * x_spacing * D for i in range(num_turbines)],
+                [0.0] * num_turbines,
+            ),
+            wind_speed=start_ws,
+        )
+        self.calculate_wake()
+
+        prev_power = 1.0
+        cur_power = self.get_farm_power()
+        ws = start_ws
+
+        while np.abs(prev_power - cur_power) / prev_power > threshold:
+            prev_power = cur_power
+            ws += 0.2
+            self.reinitialize_flow_field(wind_speed=ws)
+            self.calculate_wake()
+            cur_power = self.get_farm_power()
+        ws += 1.0
+
+        self.reinitialize_flow_field(
+            layout_array=(orig_layout_x, orig_layout_y), wind_speed=ws
+        )
+        self.calculate_wake()
+        self.max_power = self.get_farm_power()
+        self.ws_limit = ws
+
     def change_turbine(
         self, turb_num_array, turbine_change_dict, update_specified_wind_height=False
     ):
