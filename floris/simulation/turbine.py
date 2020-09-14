@@ -181,11 +181,9 @@ class Turbine(LoggerBase):
         )  # Note Cp is also now based on yaw effective velocity
         return (
             0.5
-            # * self.air_density
             * (np.pi * self.rotor_radius ** 2)
             * cptmp
             * self.generator_efficiency
-            # * self.turbulence_parameter
             * yaw_effective_velocity ** 3
         )
 
@@ -593,7 +591,6 @@ class Turbine(LoggerBase):
         yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
 
         # Now compute the power
-        # cptmp = self.Cp  # Note Cp is also now based on yaw effective velocity
         return (
             self.air_density
             * self.powInterp(yaw_effective_velocity)
