@@ -126,6 +126,10 @@ class Turbine(LoggerBase):
         # initialize derived attributes
         self.grid = self._create_swept_area_grid()
 
+        # Compute list of inner powers
+        inner_power = np.array([self._power_inner_function(ws) for ws in wind_speed])
+        self.powInterp = interp1d(wind_speed, inner_power, fill_value="extrapolate")
+
     def _create_swept_area_grid(self):
         # TODO: add validity check:
         # rotor points has a minimum in order to always include points inside
@@ -162,6 +166,26 @@ class Turbine(LoggerBase):
             ]
 
         return grid
+
+    def _power_inner_function(self, yaw_effective_velocity):
+        """
+        This method calculates the power for an array of yaw effective wind
+        speeds without the air density and turbulence correction parameters.
+        This is used to initialize the power interpolation method used to
+        compute turbine power.
+        """
+
+        # Now compute the power
+        cptmp = self._fCp(
+            yaw_effective_velocity
+        )  # Note Cp is also now based on yaw effective velocity
+        return (
+            0.5
+            * (np.pi * self.rotor_radius ** 2)
+            * cptmp
+            * self.generator_efficiency
+            * yaw_effective_velocity ** 3
+        )
 
     def _fCp(self, at_wind_speed):
         wind_speed = self.power_thrust_table["wind_speed"]
@@ -362,9 +386,9 @@ class Turbine(LoggerBase):
                 npdf = np.array(pdf) * (1 / np.sum(pdf))
 
                 # calculate turbulence parameter (ratio of corrected power to original power)
-                return np.sum(
-                    [npdf[k] * self._fCp(xp[k]) * xp[k] ** 3 for k in range(100)]
-                ) / (self._fCp(mu) * mu ** 3)
+                return np.sum([npdf[k] * self.powInterp(xp[k]) for k in range(100)]) / (
+                    self.powInterp(mu)
+                )
 
     @property
     def current_turbulence_intensity(self):
@@ -567,15 +591,10 @@ class Turbine(LoggerBase):
         yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
 
         # Now compute the power
-        cptmp = self.Cp  # Note Cp is also now based on yaw effective velocity
         return (
-            0.5
-            * self.air_density
-            * (np.pi * self.rotor_radius ** 2)
-            * cptmp
-            * self.generator_efficiency
+            self.air_density
+            * self.powInterp(yaw_effective_velocity)
             * self.turbulence_parameter
-            * yaw_effective_velocity ** 3
         )
 
     @property
