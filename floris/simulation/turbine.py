@@ -16,7 +16,6 @@
 import math
 
 import numpy as np
-
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
 from scipy.interpolate import interp1d
@@ -367,9 +366,9 @@ class Turbine(LoggerBase):
                 npdf = np.array(pdf) * (1 / np.sum(pdf))
 
                 # calculate turbulence parameter (ratio of corrected power to original power)
-                return np.sum(
-                    [npdf[k] * self._fCp(xp[k]) * xp[k] ** 3 for k in range(100)]
-                ) / (self._fCp(mu) * mu ** 3)
+                return np.sum([npdf[k] * self.powInterp(xp[k]) for k in range(100)]) / (
+                    self.powInterp(mu)
+                )
 
     @property
     def current_turbulence_intensity(self):
