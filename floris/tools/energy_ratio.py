@@ -183,8 +183,8 @@ def energy_ratio(
     total_counts = counts_base + counts_con
 
     # Make the weights per wind speed
-    weights_base = counts_con.astype(float) / total_counts.astype(float)
-    weights_con = counts_base.astype(float) / total_counts.astype(float)
+    weights_base = total_counts.astype(float) / counts_base.astype(float)
+    weights_con = total_counts.astype(float) / counts_con.astype(float)
 
     # Make a weighting array
     lut_base = np.zeros(np.max(ws_unique) + 1)
@@ -903,7 +903,7 @@ def plot_energy_ratio(
     return diff_array
 
 
-#######WIND SPEED VERSIONS##################
+# ######WIND SPEED VERSIONS##################
 
 
 def energy_ratio_ws(
@@ -977,8 +977,8 @@ def energy_ratio_ws(
     total_counts = counts_base + counts_con
 
     # Make the weights per wind speed
-    weights_base = counts_con.astype(float) / total_counts.astype(float)
-    weights_con = counts_base.astype(float) / total_counts.astype(float)
+    weights_base = total_counts.astype(float) / counts_base.astype(float)
+    weights_con = total_counts.astype(float) / counts_con.astype(float)
 
     # Make a weighting array
     lut_base = np.zeros(np.max(wd_unique) + 1)
