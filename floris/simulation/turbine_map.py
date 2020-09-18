@@ -17,9 +17,10 @@ import numpy as np
 
 from .turbine import Turbine
 from ..utilities import Vec3, wrap_180
+from ..logging_manager import LoggerBase
 
 
-class TurbineMap:
+class TurbineMap(LoggerBase):
     """
     Container object that maps a :py:class:`~.turbine.Turbine` instance to a
     :py:class:`~.utilities.Vec3` object. This class also provides some helper
@@ -53,6 +54,16 @@ class TurbineMap:
             turbines ( list(float) ): Turbine objects corresponding to
                 the locations given in layout_x and layout_y.
         """
+        # check if the length of x and y coordinates are equal
+        if len(layout_x) != len(layout_y):
+            err_msg = ('The number of turbine x locations ({0}) is ' + \
+                'not equal to the number of turbine y locations ' + \
+                '({1}). Please check your layout array.').format(
+                    len(layout_x), len(layout_y)
+                )
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+
         coordinates = [Vec3(x1, x2, 0) for x1, x2 in list(zip(layout_x, layout_y))]
         self._turbine_map_dict = self._build_internal_dict(coordinates, turbines)
 
