@@ -38,6 +38,7 @@ class YawOptimization(Optimization):
         include_unc=False,
         unc_pmfs=None,
         unc_options=None,
+        calc_init_power=True,
     ):
         """
         Instantiate YawOptimization object with a FlorisInterface object
@@ -108,6 +109,8 @@ class YawOptimization(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            calc_init_power (bool, optional): If True, calculates initial wind
+                farm power for each set of wind conditions. Defaults to True.
         """
         super().__init__(fi)
 
@@ -139,6 +142,7 @@ class YawOptimization(Optimization):
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
+            calc_init_power=calc_init_power
         )
 
     # Private methods
@@ -221,6 +225,7 @@ class YawOptimization(Optimization):
         include_unc=None,
         unc_pmfs=None,
         unc_options=None,
+        calc_init_power=True,
     ):
         """
         This method reinitializes any optimization parameters that are
@@ -287,6 +292,8 @@ class YawOptimization(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            calc_init_power (bool, optional): If True, calculates initial wind
+                farm power for each set of wind conditions. Defaults to True.
         """
         if minimum_yaw_angle is not None:
             self.minimum_yaw_angle = minimum_yaw_angle
@@ -391,12 +398,13 @@ class YawOptimization(Optimization):
                 "yaw_unc_pmf": yaw_unc_pmf,
             }
 
-        self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
-            [0.0] * self.nturbs,
-            include_unc=include_unc,
-            unc_pmfs=unc_pmfs,
-            unc_options=unc_options,
-        )
+        if calc_init_power:
+            self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
+                [0.0] * self.nturbs,
+                include_unc=include_unc,
+                unc_pmfs=unc_pmfs,
+                unc_options=unc_options,
+            )
 
     # Properties
 
