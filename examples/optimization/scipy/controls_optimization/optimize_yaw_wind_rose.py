@@ -26,11 +26,12 @@ import floris.tools.power_rose as pr
 import floris.tools.visualization as vis
 from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRose
 
+
 opt_options = {
     "maxiter": 100,
     "disp": True,
     "iprint": 2,
-    "ftol": 1e-7, #     "eps": 0.01,
+    "ftol": 1e-7,  # "eps": 0.01,
 }
 
 # Define wind farm coordinates and layout
@@ -80,7 +81,7 @@ hor_plane = fi.get_hor_plane(height=fi.floris.farm.turbines[0].hub_height)
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title("Baseline flow for U = 8 m/s, Wind Direction = 270$^\circ$")
+ax.set_title(r"Baseline flow for U = 8 m/s, Wind Direction = 270$^\circ$")
 
 # ==============================================================================
 print("Importing wind rose data...")
@@ -121,8 +122,6 @@ print("Finding baseline and optimal yaw angles in FLORIS...")
 # freq = np.abs(np.sort(np.random.randn(len(wd))))
 # freq = freq / freq.sum()
 
-# print(ws)
-
 # df = wind_rose.make_wind_rose_from_user_data(wd, ws)
 
 # plot wind rose
@@ -148,8 +147,8 @@ df_base = yaw_opt.calc_baseline_power()
 # Perform optimization
 df_opt = yaw_opt.optimize()
 
-print('base: ', df_base["power_baseline"])
-print('opt: ', df_opt["power_opt"])
+print("base: ", df_base["power_baseline"])
+print("opt: ", df_opt["power_opt"])
 
 # Initialize power rose
 case_name = "Example " + str(N_row) + " x " + str(N_row) + " Wind Farm"
