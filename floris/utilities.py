@@ -13,7 +13,9 @@
 # See https://floris.readthedocs.io for documentation
 
 import numpy as np
-from numba import jit
+
+
+# from numba import jit
 
 
 class Vec3:
@@ -133,7 +135,7 @@ class Vec3:
         return hash((self.x1, self.x2, self.x3))
 
 
-@jit(nopython=True)
+# @jit(nopython=True)
 def cosd(angle):
     """
     Cosine of an angle with the angle given in degrees.
@@ -147,7 +149,7 @@ def cosd(angle):
     return np.cos(np.radians(angle))
 
 
-@jit(nopython=True)
+# @jit(nopython=True)
 def sind(angle):
     """
     Sine of an angle with the angle given in degrees.
@@ -161,7 +163,7 @@ def sind(angle):
     return np.sin(np.radians(angle))
 
 
-@jit(nopython=True)
+# @jit(nopython=True)
 def tand(angle):
     """
     Tangent of an angle with the angle given in degrees.
@@ -175,7 +177,7 @@ def tand(angle):
     return np.tan(np.radians(angle))
 
 
-@jit(nopython=True)
+# @jit(nopython=True)
 def wrap_180_fast(x):
     """
     Shift the given values to within the range (-180, 180].
@@ -191,7 +193,7 @@ def wrap_180_fast(x):
     return x
 
 
-@jit(nopython=True)
+# @jit(nopython=True)
 def wrap_360_fast(x):
     """
     Shift the given values to within the range (0, 360].
