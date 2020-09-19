@@ -11,13 +11,13 @@
 # the License.
 
 import numpy as np
-from numba import njit
+# from numba import njit
 
 from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
 
 
-@njit
+# @njit
 def _gaussian_function(U, C, r, n, sigma):
     """
     A general form of the Gaussian function used in the Gaussian wake
@@ -38,7 +38,7 @@ def _gaussian_function(U, C, r, n, sigma):
     return U * C * np.exp(-1 * r ** n / (2 * sigma ** 2))
 
 
-@njit
+# @njit
 def initial_wake_expansion(yaw_angle, rotor_diameter, U_local, veer, uR, u0):
     """
     Calculates the initial wake widths associated with wake expansion.
@@ -67,7 +67,7 @@ def initial_wake_expansion(yaw_angle, rotor_diameter, U_local, veer, uR, u0):
     return sigma_y0, sigma_z0
 
 
-@njit
+# @njit
 def calc_VW(
     eps,
     coord_x1,
@@ -266,7 +266,7 @@ def calc_VW(
     return V, W
 
 
-@njit
+# @njit
 def calculate_U2(
     rotor_diameter, x_locations, x1, ka, current_turbulence_intensity, kb, W
 ):

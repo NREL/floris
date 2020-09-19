@@ -11,14 +11,14 @@
 # the License.
 
 import numpy as np
-from numba import njit
+#from numba import njit
 
 from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
 from ..base_velocity_deficit import VelocityDeficit
 
 
-@njit
+# @njit
 def far_wake_start(D, Ct, yaw, alpha, beta, TI, x1):
     """Determines where the far wake starts.
 
@@ -42,7 +42,7 @@ def far_wake_start(D, Ct, yaw, alpha, beta, TI, x1):
     return x0 + x1
 
 
-@njit
+# @njit
 def near_wake_velocity_deficit(x0, xR, x_locations, D, Ct, sigma_0):
     """Determines where the far wake starts.
 
@@ -65,7 +65,7 @@ def near_wake_velocity_deficit(x0, xR, x_locations, D, Ct, sigma_0):
     return sigma
 
 
-@njit
+# @njit
 def compute_r_C(
     veer, sigma_y, sigma_z, y_locations, z_locations, delta, x2, yaw, D, HH, Ct
 ):

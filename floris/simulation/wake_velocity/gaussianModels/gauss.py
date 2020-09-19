@@ -11,7 +11,7 @@
 # the License.
 
 import numpy as np
-from numba import njit
+# from numba import njit
 from scipy.special import gamma
 
 from ....utilities import cosd, sind, tand
@@ -19,7 +19,7 @@ from .gaussian_model_base import GaussianModel
 from ..base_velocity_deficit import VelocityDeficit
 
 
-@njit
+# @njit
 def _calculate_parameters(
     y_locations,
     turbine_x2,
