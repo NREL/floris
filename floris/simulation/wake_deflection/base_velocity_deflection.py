@@ -11,13 +11,13 @@
 # the License.
 
 import numpy as np
-from numba import njit
+# from numba import njit
 
 from ...utilities import cosd, sind, tand
 from ...logging_manager import LoggerBase
 
 
-@njit
+# @njit
 def _calculate_gammas(
     Uinf, HH, D, specified_wind_height, wind_shear, Ct, yaw, average_velocity, aI, TSR
 ):
@@ -50,7 +50,7 @@ def _calculate_gammas(
     return Gamma_top, Gamma_bottom, Gamma_wake_rotation
 
 
-@njit
+# @njit
 def _calculate_effective_velocity(
     first_term, rT, eps, third_term, rB, zC, Gamma_wake_rotation, rC
 ):
