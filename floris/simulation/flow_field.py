@@ -14,14 +14,16 @@
 
 
 import numpy as np
+
 import scipy as sp
-from numba import jit, njit
+
+# from numba import jit, njit
 from scipy.interpolate import griddata
 
 from ..utilities import Vec3, cosd, sind, tand
 
 
-@njit
+# @njit
 def rotate_grid(
     initial_rotated_x,
     initial_rotated_y,
@@ -76,7 +78,7 @@ def rotate_grid(
     return rotated_x, rotated_y
 
 
-@njit
+# @njit
 def _find_overlap(rx, ry, x1, x2):
     """Finds overlapping points in the wake field?
 
@@ -92,7 +94,7 @@ def _find_overlap(rx, ry, x1, x2):
     return np.where(np.logical_and((rx == x1), (ry == x2)))[0][0]
 
 
-@njit
+# @njit
 def _calculate_intensity(ti_calculation, intensity, current_intensity):
     """Computes the intermediate intensity value?
 
@@ -106,7 +108,7 @@ def _calculate_intensity(ti_calculation, intensity, current_intensity):
     return max(current_intensity, np.sqrt(ti_calculation ** 2 + intensity ** 2))
 
 
-@njit
+# @njit
 def _update_grid(x_grid_i, y_grid_i, wind_direction_i, x1, x2):
     xoffset = x_grid_i - x1
     yoffset = y_grid_i.T - x2
@@ -180,19 +182,11 @@ class FlowField:
 
             x1, x2, x3 = coord.coords
             # Save to the turbine its points
-            turbine.saved_points = i * ngrid * ngrid + np.arange(ngrid*ngrid)
+            turbine.saved_points = i * ngrid * ngrid + np.arange(ngrid * ngrid)
 
-            pt = turbine.rloc*turbine.rotor_radius
-            yt = np.linspace(
-                x2 - pt,
-                x2 + pt,
-                ngrid,
-            )
-            zt = np.linspace(
-                x3 - pt,
-                x3 + pt,
-                ngrid,
-            )
+            pt = turbine.rloc * turbine.rotor_radius
+            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
+            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
             x_grid[i] = xt[i]
             y_grid[i] = yt
             z_grid[i] = zt
