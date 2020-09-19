@@ -11,11 +11,13 @@
 # the License.
 
 import numpy as np
-#from numba import njit
 
 from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
 from ..base_velocity_deficit import VelocityDeficit
+
+
+# from numba import njit
 
 
 # @njit
