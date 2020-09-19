@@ -16,6 +16,7 @@
 import math
 
 import numpy as np
+
 # from numba import njit
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
@@ -96,8 +97,17 @@ class Turbine(LoggerBase):
         self.yaw_angle = properties["yaw_angle"]
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
-        self.ngrid = properties["ngrid"]
-        self.rloc = properties["rloc"]
+
+        # Use ngrid and rloc from JSON if specified
+        # Otherwise use default values
+        if "ngrid" in properties:
+            self.ngrid = int(properties["ngrid"])
+        else:
+            self.ngrid = 3
+        if "rloc" in properties:
+            self.rloc = properties["rloc"]
+        else:
+            self.rloc = 0.5
 
         # initialize to an invalid value until calculated
         self.air_density = -1
@@ -153,14 +163,10 @@ class Turbine(LoggerBase):
         # determine the dimensions of the square grid
         num_points = int(np.round(np.sqrt(self.grid_point_count)))
         # syntax: np.linspace(min, max, n points)
-        pt = self.rloc*self.rotor_radius
-        horizontal = np.linspace(
-            -pt, pt, num_points
-        )
+        pt = self.rloc * self.rotor_radius
+        horizontal = np.linspace(-pt, pt, num_points)
 
-        vertical = np.linspace(
-            -pt, pt, num_points
-        )
+        vertical = np.linspace(-pt, pt, num_points)
 
         # build the grid with all of the points
         grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
