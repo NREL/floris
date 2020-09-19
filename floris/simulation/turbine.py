@@ -16,7 +16,7 @@
 import math
 
 import numpy as np
-from numba import njit
+# from numba import njit
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
 from scipy.interpolate import interp1d
@@ -25,7 +25,7 @@ from ..utilities import cosd, sind, tand
 from ..logging_manager import LoggerBase
 
 
-@njit
+# @njit
 def _average_velocity_intermediate(velocities):
     # remove all invalid numbers from interpolation
     return np.mean(velocities[np.where(~np.isnan(velocities))] ** 3)
