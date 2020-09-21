@@ -40,8 +40,7 @@ Examples:
     >>> dir(floris.utilities)
     [Vec3', '__builtins__', '__cached__', '__doc__',
     '__file__', '__loader__', '__name__', '__package__', '__spec__',
-    'cosd', 'np', 'sind', 'tand', 'wrap_180', 'wrap_360',
-    'wrap_180_fast', 'wrap_360_fast']
+    'cosd', 'np', 'sind', 'tand', 'wrap_180', 'wrap_360']
 
     >>> dir(floris.simulation)
     ['Farm', 'Floris', 'FlowField', 'InputReader', 'Turbine',
