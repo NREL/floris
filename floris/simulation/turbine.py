@@ -117,7 +117,7 @@ class Turbine(LoggerBase):
         self.fCtInterp = interp1d(wind_speed, ct, fill_value="extrapolate")
 
         # constants
-        self.grid_point_count = 5 * 5
+        self.grid_point_count = 3 * 3
         if np.sqrt(self.grid_point_count) % 1 != 0.0:
             raise ValueError("Turbine.grid_point_count must be the square of a number")
 
@@ -145,8 +145,13 @@ class Turbine(LoggerBase):
         # determine the dimensions of the square grid
         num_points = int(np.round(np.sqrt(self.grid_point_count)))
         # syntax: np.linspace(min, max, n points)
-        horizontal = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
-        vertical = np.linspace(-self.rotor_radius, self.rotor_radius, num_points)
+        horizontal = np.linspace(
+            -self.rotor_radius / 2, self.rotor_radius / 2, num_points
+        )
+
+        vertical = np.linspace(
+            -self.rotor_radius / 2, self.rotor_radius / 2, num_points
+        )
 
         # build the grid with all of the points
         grid = [(h, vertical[i]) for i in range(num_points) for h in horizontal]
