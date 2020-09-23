@@ -89,10 +89,6 @@ class Vec3:
         )
         self.x3prime = self.x3
 
-    @property
-    def coords(self):
-        return self.x1, self.x2, self.x3
-
     def __str__(self):
         template_string = "{} {} {}".format(
             self.string_format, self.string_format, self.string_format

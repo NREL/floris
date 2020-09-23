@@ -80,7 +80,7 @@ class FlowField:
 
         for i, (coord, turbine) in enumerate(self.turbine_map.items):
 
-            x1, x2, x3 = coord.coords
+            x2, x3 = coord.x2, coord.x3
 
             # Save to the turbine its points
             turbine.saved_points = i * ngrid * ngrid + np.arange(ngrid * ngrid)
