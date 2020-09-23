@@ -46,6 +46,7 @@ class YawOptimizationWindRose(Optimization):
         include_unc=False,
         unc_pmfs=None,
         unc_options=None,
+        verbose=False,
         calc_init_power=True,
     ):
         """
@@ -131,6 +132,7 @@ class YawOptimizationWindRose(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            verbose (boolean, optional): If true, print iteration progress
             calc_init_power (bool, optional): If True, calculates initial wind
                 farm power for each set of wind conditions upon initialization.
                 Defaults to True.
@@ -175,6 +177,8 @@ class YawOptimizationWindRose(Optimization):
             unc_options=unc_options,
             calc_init_power=calc_init_power,
         )
+
+        self.verbose = verbose
 
     # Private methods
 
@@ -536,33 +540,34 @@ class YawOptimizationWindRose(Optimization):
         result_dict = dict()
 
         for i in range(len(self.wd)):
-            if self.ti is None:
-                print(
-                    "Computing wind speed, wind direction pair "
-                    + str(i)
-                    + " out of "
-                    + str(len(self.wd))
-                    + ": wind speed = "
-                    + str(self.ws[i])
-                    + " m/s, wind direction = "
-                    + str(self.wd[i])
-                    + " deg."
-                )
-            else:
-                print(
-                    "Computing wind speed, wind direction, turbulence "
-                    + "intensity set "
-                    + str(i)
-                    + " out of "
-                    + str(len(self.wd))
-                    + ": wind speed = "
-                    + str(self.ws[i])
-                    + " m/s, wind direction = "
-                    + str(self.wd[i])
-                    + " deg, turbulence intensity = "
-                    + str(self.ti[i])
-                    + "."
-                )
+            if self.verbose:
+                if self.ti is None:
+                    print(
+                        "Computing wind speed, wind direction pair "
+                        + str(i)
+                        + " out of "
+                        + str(len(self.wd))
+                        + ": wind speed = "
+                        + str(self.ws[i])
+                        + " m/s, wind direction = "
+                        + str(self.wd[i])
+                        + " deg."
+                    )
+                else:
+                    print(
+                        "Computing wind speed, wind direction, turbulence "
+                        + "intensity set "
+                        + str(i)
+                        + " out of "
+                        + str(len(self.wd))
+                        + ": wind speed = "
+                        + str(self.ws[i])
+                        + " m/s, wind direction = "
+                        + str(self.wd[i])
+                        + " deg, turbulence intensity = "
+                        + str(self.ti[i])
+                        + "."
+                    )
 
             # Find baseline power in FLORIS
 
@@ -671,33 +676,34 @@ class YawOptimizationWindRose(Optimization):
         df_opt = pd.DataFrame()
 
         for i in range(len(self.wd)):
-            if self.ti is None:
-                print(
-                    "Computing wind speed, wind direction pair "
-                    + str(i)
-                    + " out of "
-                    + str(len(self.wd))
-                    + ": wind speed = "
-                    + str(self.ws[i])
-                    + " m/s, wind direction = "
-                    + str(self.wd[i])
-                    + " deg."
-                )
-            else:
-                print(
-                    "Computing wind speed, wind direction, turbulence "
-                    + "intensity set "
-                    + str(i)
-                    + " out of "
-                    + str(len(self.wd))
-                    + ": wind speed = "
-                    + str(self.ws[i])
-                    + " m/s, wind direction = "
-                    + str(self.wd[i])
-                    + " deg, turbulence intensity = "
-                    + str(self.ti[i])
-                    + "."
-                )
+            if self.verbose:
+                if self.ti is None:
+                    print(
+                        "Computing wind speed, wind direction pair "
+                        + str(i)
+                        + " out of "
+                        + str(len(self.wd))
+                        + ": wind speed = "
+                        + str(self.ws[i])
+                        + " m/s, wind direction = "
+                        + str(self.wd[i])
+                        + " deg."
+                    )
+                else:
+                    print(
+                        "Computing wind speed, wind direction, turbulence "
+                        + "intensity set "
+                        + str(i)
+                        + " out of "
+                        + str(len(self.wd))
+                        + ": wind speed = "
+                        + str(self.ws[i])
+                        + " m/s, wind direction = "
+                        + str(self.wd[i])
+                        + " deg, turbulence intensity = "
+                        + str(self.ti[i])
+                        + "."
+                    )
 
             # Optimizing wake redirection control
 
