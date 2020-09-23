@@ -73,27 +73,23 @@ class FlowField:
         Create grid points at each turbine
         """
         xt = [coord.x1 for coord in self.turbine_map.coords]
-        rotor_points = int(np.sqrt(self.turbine_map.turbines[0].grid_point_count))
-        x_grid = np.zeros((len(xt), rotor_points, rotor_points))
-        y_grid = np.zeros((len(xt), rotor_points, rotor_points))
-        z_grid = np.zeros((len(xt), rotor_points, rotor_points))
+        ngrid = self.turbine_map.turbines[0].ngrid
+        x_grid = np.zeros((len(xt), ngrid, ngrid))
+        y_grid = np.zeros((len(xt), ngrid, ngrid))
+        z_grid = np.zeros((len(xt), ngrid, ngrid))
 
         for i, (coord, turbine) in enumerate(self.turbine_map.items):
 
+            x1, x2, x3 = coord.coords
+
             # Save to the turbine its points
-            turbine.saved_points = i * 9 + np.array([0, 3, 6, 1, 4, 7, 2, 5, 8])
+            turbine.saved_points = i * ngrid * ngrid + np.arange(ngrid * ngrid)
+
+            pt = turbine.rloc * turbine.rotor_radius
 
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(
-                coord.x2 - turbine.rotor_radius / 2,
-                coord.x2 + turbine.rotor_radius / 2,
-                rotor_points,
-            )
-            zt = np.linspace(
-                coord.x3 - turbine.rotor_radius / 2,
-                coord.x3 + turbine.rotor_radius / 2,
-                rotor_points,
-            )
+            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
+            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
 
             for j in range(len(yt)):
                 for k in range(len(zt)):
