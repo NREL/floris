@@ -1221,10 +1221,17 @@ class FlorisInterface(LoggerBase):
 
         return AEP_sum
 
-    def get_farm_AEP_parallel(self, wd, ws, freq, yaw=None):
+    def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
+        self.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
+        self.calculate_wake(yaw_angles=yaw)
+        return self.get_farm_power() * freq * 8760
+
+    def get_farm_AEP_parallel(self, wd, ws, freq, yaw=None, jobs=-1):
         """
         Estimate annual energy production (AEP) for distributions of wind
-        speed, wind direction and yaw offset.
+        speed, wind direction and yaw offset with parallel computations on
+        a single comptuer.
+
         Args:
             wd (iterable): List or array of wind direction values.
             ws (iterable): List or array of wind speed values.
@@ -1232,45 +1239,71 @@ class FlorisInterface(LoggerBase):
                 directions in wind rose.
             yaw (iterable, optional): List or array of yaw values if wake is
                 steering implemented. Defaults to None.
+            jobs (int, optional): The number of jobs (cores) to use in the parallel
+                computations.
+
         Returns:
             float: AEP for wind farm.
         """
-        AEP_sum = 0
-
-        def _calc_one_AEP_case(wd, ws, freq):
-            self.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
-            self.calculate_wake()
-
-            return self.get_farm_power() * freq * 8760
-
-        try:
-            from mpi4py.futures import MPIPoolExecutor
-            from itertools import repeat
-        except ImportError:
-            err_msg = (
-                "It appears you do not have mpi4py installed. "
-                + "Please refer to https://mpi4py.readthedocs.io/ for "
-                + "guidance on how to properly install the module."
-            )
-            self.logger.error(err_msg, stack_info=True)
-            raise ImportError(err_msg)
-
-        print("=====================================================")
-        print("Calculating baseline power in parallel...")
-        print("Number of wind conditions to calculate = ", len(wd))
-        print("=====================================================")
+        if jobs < -1:
+            raise ValueError("Input 'jobs' cannot be negative!")
+        if jobs == -1:
+            jobs = int(np.ceil(cpu_count() * 0.8))
+        if jobs > 0:
+            jobs = min(jobs, cpu_count())
+        if jobs > len(wd):
+            jobs = len(wd)
 
         opt_AEP = 0.0
 
-        # fi_copy = copy.deepcopy(self)
+        if yaw is not None:
+            global_arguments = list(zip(repeat(self), wd, ws, freq, yaw))
+        else:
+            global_arguments = list(zip(repeat(self), wd, ws, freq))
+        num_cases = len(wd)
+        chunksize = int(np.ceil(num_cases / jobs))
 
-        with MPIPoolExecutor() as executor:
-            for opt in executor.map(_calc_one_AEP_case, wd, ws, freq, chunksize=392):
-
-                # add AEP to overall AEP
-                opt_AEP = opt_AEP + opt
+        with Pool(jobs) as pool:
+            opt = pool.starmap(
+                global_calc_one_AEP_case, global_arguments, chunksize=chunksize
+            )
+            # add AEP to overall AEP
+            opt_AEP = opt_AEP + np.sum(opt)
 
         return opt_AEP
+
+    def calculate_AEP_wind_limit(self, num_turbines, x_spacing, start_ws, threshold):
+        orig_layout_x = self.layout_x
+        orig_layout_y = self.layout_y
+        D = self.floris.farm.turbines[0].rotor_diameter
+
+        self.reinitialize_flow_field(
+            layout_array=(
+                [i * x_spacing * D for i in range(num_turbines)],
+                [0.0] * num_turbines,
+            ),
+            wind_speed=start_ws,
+        )
+        self.calculate_wake()
+
+        prev_power = 1.0
+        cur_power = self.get_farm_power()
+        ws = start_ws
+
+        while np.abs(prev_power - cur_power) / prev_power > threshold:
+            prev_power = cur_power
+            ws += 0.2
+            self.reinitialize_flow_field(wind_speed=ws)
+            self.calculate_wake()
+            cur_power = self.get_farm_power()
+        ws += 1.0
+
+        self.reinitialize_flow_field(
+            layout_array=(orig_layout_x, orig_layout_y), wind_speed=ws
+        )
+        self.calculate_wake()
+        self.max_power = self.get_farm_power()
+        self.ws_limit = ws
 
     def change_turbine(
         self, turb_num_array, turbine_change_dict, update_specified_wind_height=False
