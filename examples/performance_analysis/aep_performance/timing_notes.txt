@@ -1,0 +1,7 @@
+First run:
+  a) 21.9
+  b) 113
+  c) 66
+  d) 343
+
+Second run:
