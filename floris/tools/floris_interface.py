@@ -1176,6 +1176,59 @@ class FlorisInterface(LoggerBase):
             AEP_sum = AEP_sum + self.get_farm_power() * freq[i] * 8760
         return AEP_sum
 
+    def get_farm_AEP_parallel(self, wd, ws, freq, yaw=None):
+        """
+        Estimate annual energy production (AEP) for distributions of wind
+        speed, wind direction and yaw offset.
+        Args:
+            wd (iterable): List or array of wind direction values.
+            ws (iterable): List or array of wind speed values.
+            freq (iterable): Frequencies corresponding to wind speeds and
+                directions in wind rose.
+            yaw (iterable, optional): List or array of yaw values if wake is
+                steering implemented. Defaults to None.
+        Returns:
+            float: AEP for wind farm.
+        """
+        AEP_sum = 0
+
+        def _calc_one_AEP_case(wd, ws, freq):
+            self.reinitialize_flow_field(wind_direction=[wd], wind_speed=[ws])
+            self.calculate_wake()
+
+            return self.get_farm_power() * freq * 8760
+
+        try:
+            from mpi4py.futures import MPIPoolExecutor
+            from itertools import repeat
+        except ImportError:
+            err_msg = (
+                "It appears you do not have mpi4py installed. "
+                + "Please refer to https://mpi4py.readthedocs.io/ for "
+                + "guidance on how to properly install the module."
+            )
+            self.logger.error(err_msg, stack_info=True)
+            raise ImportError(err_msg)
+
+        print("=====================================================")
+        print("Calculating baseline power in parallel...")
+        print("Number of wind conditions to calculate = ", len(wd))
+        print("=====================================================")
+
+        opt_AEP = 0.0
+
+        # fi_copy = copy.deepcopy(self)
+
+        with MPIPoolExecutor() as executor:
+            for opt in executor.map(
+                _calc_one_AEP_case, wd, ws, freq, chunksize=392
+            ):
+
+                # add AEP to overall AEP
+                opt_AEP = opt_AEP + opt
+
+        return opt_AEP
+
     def change_turbine(
         self, turb_num_array, turbine_change_dict, update_specified_wind_height=False
     ):
