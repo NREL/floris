@@ -14,6 +14,9 @@
 
 
 import copy
+from itertools import repeat
+from multiprocessing import cpu_count
+from multiprocessing.pool import Pool
 
 import numpy as np
 import pandas as pd
@@ -29,6 +32,10 @@ from .visualization import visualize_cut_plane
 from ..logging_manager import LoggerBase
 from .layout_functions import visualize_layout, build_turbine_loc
 from .interface_utilities import get_params, set_params, show_params
+
+
+def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
+    return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)
 
 
 class FlorisInterface(LoggerBase):
