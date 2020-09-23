@@ -5,3 +5,4 @@ First run:
   d) 343
 
 Second run:
+  a) 20.512241

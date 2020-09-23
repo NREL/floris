@@ -225,7 +225,9 @@ class Turbine(LoggerBase):
             setattr(self, param, turbine_change_dict[param])
         self._initialize_turbine()
 
-    def calculate_swept_area_velocities(self, local_wind_speed, coord, x, y, z):
+    def calculate_swept_area_velocities(
+        self, local_wind_speed, coord, x, y, z, additional_wind_speed=None
+    ):
         """
         This method calculates and returns the wind speeds at each
         rotor swept area grid point for the turbine, interpolated from
@@ -279,7 +281,13 @@ class Turbine(LoggerBase):
         ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
 
         # return np.array(data)
-        return np.array(u_at_turbine.flatten()[ii])
+        if additional_wind_speed is not None:
+            return (
+                np.array(u_at_turbine.flatten()[ii]),
+                np.array(additional_wind_speed.flatten()[ii]),
+            )
+        else:
+            return np.array(u_at_turbine.flatten()[ii])
 
     def return_grid_points(self, coord):
         """
