@@ -102,6 +102,8 @@ class Turbine(LoggerBase):
 
         self._initialize_turbine()
 
+        self.saved_points = None  # initialize to none
+
     # Private methods
 
     def _initialize_turbine(self):
@@ -273,17 +275,21 @@ class Turbine(LoggerBase):
         # data = [np.mean(u_at_turbine[idx[i]]) for i in range(len(yPts))]
         # # PREVIOUS METHOD========================
 
-        # # NEW METHOD========================
-        # Sort by distance
-        flow_grid_points = np.column_stack([x.flatten(), y.flatten(), z.flatten()])
+        # Use this if no saved points (curl)
+        if self.saved_points is None:
+            # # NEW METHOD========================
+            # Sort by distance
+            flow_grid_points = np.column_stack([x.flatten(), y.flatten(), z.flatten()])
 
-        # Set up a grid array
-        y_array = np.array(self.grid)[:, 0] + coord.x2
-        z_array = np.array(self.grid)[:, 1] + self.hub_height
-        x_array = np.ones_like(y_array) * coord.x1
-        grid_array = np.column_stack([x_array, y_array, z_array])
+            # Set up a grid array
+            y_array = np.array(self.grid)[:, 0] + coord.x2
+            z_array = np.array(self.grid)[:, 1] + self.hub_height
+            x_array = np.ones_like(y_array) * coord.x1
+            grid_array = np.column_stack([x_array, y_array, z_array])
 
-        ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
+            ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
+        else:
+            ii = self.saved_points
 
         # return np.array(data)
         if additional_wind_speed is not None:
