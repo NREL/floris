@@ -70,6 +70,9 @@ class Turbine(LoggerBase):
                     the rotor for an upstream turbine.
                 -   **TSR** (*float*): The tip-speed ratio of the turbine. This
                     parameter is used in the "curl" wake model.
+                -   **ngrid** (*int*, optional): The square root of the number
+                    of points to use on the turbine grid. This number will be
+                    squared so that the points can be evenly distributed.
 
     Returns:
         Turbine: An instantiated Turbine object.
@@ -90,26 +93,17 @@ class Turbine(LoggerBase):
         self.tilt_angle = properties["tilt_angle"]
         self.tsr = properties["TSR"]
 
-        # Use ngrid and rloc from JSON if specified
-        # Otherwise use default values
-        if "ngrid" in properties:
-            self.ngrid = int(properties["ngrid"])
-        else:
-            self.ngrid = 5
-        if "rloc" in properties:
-            self.rloc = properties["rloc"]
-        else:
-            self.rloc = 0.5
-
-        # initialize to an invalid value until calculated
-        self.air_density = -1
-        self.use_turbulence_correction = False
-
-        # Initiate to False unless specifically set
+        # For the following parameters, use default values if not user-specified
+        self.ngrid = int(properties["ngrid"]) if "ngrid" in properties else 5
+        self.rloc = float(properties["rloc"]) if "rloc" in properties else 0.5
         if "use_points_on_perimeter" in properties:
             self.use_points_on_perimeter = bool(properties["use_points_on_perimeter"])
         else:
             self.use_points_on_perimeter = False
+
+        # initialize to an invalid value until calculated
+        self.air_density = -1
+        self.use_turbulence_correction = False
 
         self._initialize_turbine()
 
