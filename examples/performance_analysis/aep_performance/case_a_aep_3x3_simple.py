@@ -79,7 +79,7 @@ freq = freq / np.sum(freq)
 # # Now check the timing
 print("===START TEST===")
 start = time.perf_counter()
-power_result = fi.get_farm_AEP(wd_list, ws_list, freq)  # , limit_ws=True)
+power_result = fi.get_farm_AEP(wd_list, ws_list, freq, limit_ws=True)
 end = time.perf_counter()
 elapsed_time = end - start
 
