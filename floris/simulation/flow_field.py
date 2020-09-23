@@ -79,6 +79,10 @@ class FlowField:
         z_grid = np.zeros((len(xt), rotor_points, rotor_points))
 
         for i, (coord, turbine) in enumerate(self.turbine_map.items):
+
+            # Save to the turbine its points
+            turbine.saved_points = i * 9 + np.array([0, 3, 6, 1, 4, 7, 2, 5, 8])
+
             xt = [coord.x1 for coord in self.turbine_map.coords]
             yt = np.linspace(
                 coord.x2 - turbine.rotor_radius / 2,
@@ -716,7 +720,6 @@ class FlowField:
                             rotated_z,
                             additional_wind_speed=self.u_initial - turb_u_wake,
                         )
-
 
                         area_overlap = self._calculate_area_overlap(
                             wake_velocities, freestream_velocities, turbine
