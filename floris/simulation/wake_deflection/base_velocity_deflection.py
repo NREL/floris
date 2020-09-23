@@ -156,48 +156,58 @@ class VelocityDeflection(LoggerBase):
             avg_V = np.mean(V[idx])
             minYaw = 10000
             target_yaw_ix = None
-            for i in range(len(test_gamma)):
+            # for i in range(len(test_gamma)):
 
-                # what yaw angle would have produced that same average spanwise velocity
-                yaw = test_gamma[i]
-                vel_top = (
-                    Uinf
-                    * ((HH + D / 2) / flow_field.specified_wind_height)
-                    ** flow_field.wind_shear
-                ) / Uinf
-                vel_bottom = (
-                    Uinf
-                    * ((HH - D / 2) / flow_field.specified_wind_height)
-                    ** flow_field.wind_shear
-                ) / Uinf
-                Gamma_top = (
-                    (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
-                )
-                Gamma_bottom = (
-                    -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
-                )
-                Gamma_wake_rotation = (
-                    0.25
-                    * 2
-                    * np.pi
-                    * D
-                    * (aI - aI ** 2)
-                    * turbine.average_velocity
-                    / TSR
-                )
-                Veff = (
-                    (zT * Gamma_top) / (2 * np.pi * rT) * (1 - np.exp(-rT / (eps ** 2)))
-                    + (zB * Gamma_bottom)
-                    / (2 * np.pi * rB)
-                    * (1 - np.exp(-rB / (eps ** 2)))
-                    + (zC * Gamma_wake_rotation)
-                    / (2 * np.pi * rC)
-                    * (1 - np.exp(-rC / (eps ** 2)))
-                )
-                tmp = avg_V - np.mean(Veff)
-                if np.abs(tmp) < minYaw:
-                    minYaw = np.abs(tmp)
-                    target_yaw_ix = i
+            # what yaw angle would have produced that same average spanwise velocity
+            yaw = test_gamma  # [i]
+            vel_top = (
+                Uinf
+                * ((HH + D / 2) / flow_field.specified_wind_height)
+                ** flow_field.wind_shear
+            ) / Uinf
+            vel_bottom = (
+                Uinf
+                * ((HH - D / 2) / flow_field.specified_wind_height)
+                ** flow_field.wind_shear
+            ) / Uinf
+            Gamma_top = (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+            Gamma_bottom = (
+                -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+            )
+            Gamma_wake_rotation = (
+                0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+            )
+            # Veff = (
+            #     (zT * Gamma_top) / (2 * np.pi * rT) * (1 - np.exp(-rT / (eps ** 2)))
+            #     + (zB * Gamma_bottom)
+            #     / (2 * np.pi * rB)
+            #     * (1 - np.exp(-rB / (eps ** 2)))
+            #     + (zC * Gamma_wake_rotation)
+            #     / (2 * np.pi * rC)
+            #     * (1 - np.exp(-rC / (eps ** 2)))
+            # )
+
+            # print(rT)
+            # print(type(rT))
+            Veff = (
+                np.divide(np.einsum("i,j", Gamma_top, zT), (2 * np.pi * rT))
+                * (1 - np.exp(-rT / (eps ** 2)))
+                + np.einsum("i,j", Gamma_bottom, zB)
+                / (2 * np.pi * rB)
+                * (1 - np.exp(-rB / (eps ** 2)))
+                + (zC * Gamma_wake_rotation)
+                / (2 * np.pi * rC)
+                * (1 - np.exp(-rC / (eps ** 2)))
+            )
+
+            # tmp = avg_V - np.mean(Veff)
+            # print(np.mean(Veff, axis=1))
+            # lkj
+            tmp = avg_V - np.mean(Veff, axis=1)
+            target_yaw_ix = np.argmin(np.abs(tmp))
+            # if np.abs(tmp) < minYaw:
+            #     minYaw = np.abs(tmp)
+            #     target_yaw_ix = i
 
             if target_yaw_ix is not None:
                 yaw_effective = test_gamma[target_yaw_ix]
