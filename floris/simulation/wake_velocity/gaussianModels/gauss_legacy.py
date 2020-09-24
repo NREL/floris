@@ -85,7 +85,7 @@ class LegacyGauss(GaussianModel):
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.eps_gain = model_dictionary["eps_gain"]
-        self.gch_gain = 2.0
+        self.gch_gain = 10.0
 
     def function(
         self,
