@@ -378,6 +378,46 @@ class Turbine(LoggerBase):
         """
         self._yaw_angle = yaw_angle
 
+    def TKE_to_TI(self, turbulence_kinetic_energy, wind_speed):
+        """
+        Converts a list of turbulence kinetic energy values to
+        turbulence intensity.
+        Args:
+            turbulence_kinetic_energy (list): Values of turbulence kinetic
+                energy in units of meters squared per second squared.
+            wind_speed (list): Measurements of wind speed in meters per second.
+        Returns:
+            list: converted turbulence intensity values expressed as a decimal
+            (e.g. 10%TI -> 0.10).
+        """
+        turbulence_intensity = (
+            np.sqrt((2 / 3) * turbulence_kinetic_energy)
+        ) / wind_speed
+
+        return turbulence_intensity
+
+    def TI_to_TKE(self, wind_speed):
+        """
+        Converts TI to TKE.
+        Args:
+            wind_speed (list): Measurements of wind speed in meters per second.
+        Returns:
+            list: converted TKE values
+        """
+        return ((wind_speed * self.current_turbulence_intensity) ** 2) / (2 / 3)
+
+    def u_prime(self, wind_speed):
+        """
+        Converts a TKE to horizontal deviation component.
+        Args:
+            wind_speed (list): Measurements of wind speed in meters per second.
+        Returns:
+            list: converted u_prime values in meters per second
+        """
+        # return np.sqrt(3) * (wind_speed * self.current_turbulence_intensity)
+        tke = self.TI_to_TKE(wind_speed)
+        return np.sqrt(2 * tke)
+
     # Getters & Setters
 
     @property
