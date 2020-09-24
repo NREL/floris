@@ -73,9 +73,11 @@ class Turbine(LoggerBase):
                 -   **ngrid** (*int*, optional): The square root of the number
                     of points to use on the turbine grid. This number will be
                     squared so that the points can be evenly distributed.
+                    Defaults to 5.
                 -   **rloc** (*float, optional): A value, from 0 to 1, that determines
                     the width/height of the grid of points on the rotor as a ratio of
                     the rotor radius.
+                    Defaults to 0.5.
 
     Returns:
         Turbine: An instantiated Turbine object.
