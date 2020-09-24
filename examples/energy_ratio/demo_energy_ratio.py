@@ -48,7 +48,7 @@ fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 # demonstrate how to change coordinates
 D = fi.floris.farm.flow_field.turbine_map.turbines[0].rotor_diameter
 layout_x = [0, 0, 7 * D]
-layout_y = [0, 5 * D, 0, 0]
+layout_y = [0, 5 * D, 0]
 fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
 # Calculate wake
