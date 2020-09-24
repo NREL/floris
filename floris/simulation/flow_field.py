@@ -82,8 +82,8 @@ class FlowField:
 
             x2, x3 = coord.x2, coord.x3
 
-            # Save to the turbine its points
-            turbine.saved_points = i * ngrid * ngrid + np.arange(ngrid * ngrid)
+            # Save the indeces of the flow field points for this turbine
+            turbine.flow_field_point_indeces = i * ngrid * ngrid + np.arange(ngrid * ngrid)
 
             pt = turbine.rloc * turbine.rotor_radius
 

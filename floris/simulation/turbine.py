@@ -110,8 +110,10 @@ class Turbine(LoggerBase):
 
         self._initialize_turbine()
 
-        # variable to store matching points in the flow field for turbine
-        self.saved_points = None  # initialize to none
+        # The indeces for this Turbine instance's points from the FlowField
+        # are set in `FlowField._discretize_turbine_domain` and stored
+        # in this variable.
+        self.flow_field_point_indeces = None
 
     # Private methods
 
@@ -283,7 +285,7 @@ class Turbine(LoggerBase):
         # # PREVIOUS METHOD========================
 
         # Use this if no saved points (curl)
-        if self.saved_points is None:
+        if self.flow_field_point_indeces is None:
             # # NEW METHOD========================
             # Sort by distance
             flow_grid_points = np.column_stack([x.flatten(), y.flatten(), z.flatten()])
@@ -296,7 +298,7 @@ class Turbine(LoggerBase):
 
             ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
         else:
-            ii = self.saved_points
+            ii = self.flow_field_point_indeces
 
         # return np.array(data)
         if additional_wind_speed is not None:
