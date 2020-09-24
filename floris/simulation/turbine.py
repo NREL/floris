@@ -73,6 +73,9 @@ class Turbine(LoggerBase):
                 -   **ngrid** (*int*, optional): The square root of the number
                     of points to use on the turbine grid. This number will be
                     squared so that the points can be evenly distributed.
+                -   **rloc** (*float, optional): A value, from 0 to 1, that determines
+                    the width/height of the grid of points on the rotor as a ratio of
+                    the rotor radius.
 
     Returns:
         Turbine: An instantiated Turbine object.
@@ -107,6 +110,7 @@ class Turbine(LoggerBase):
 
         self._initialize_turbine()
 
+        # variable to store matching points in the flow field for turbine
         self.saved_points = None  # initialize to none
 
     # Private methods
