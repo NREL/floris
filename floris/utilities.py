@@ -47,9 +47,8 @@ class Vec3:
 
         # If they arent, cast all components to the same type
         if not (
-            type(self.x1) == type(self.x2)
-            and type(self.x1) == type(self.x3)
-            and type(self.x2) == type(self.x3)
+            isinstance(self.x1, (type(self.x2), type(self.x3)))
+            and isinstance(self.x2, type(self.x3))
         ):
             target_type = type(self.x1)
             self.x2 = target_type(self.x2)
@@ -58,9 +57,9 @@ class Vec3:
         if string_format is not None:
             self.string_format = string_format
         else:
-            if type(self.x1) in [int]:
+            if isinstance(self.x1, (int)):
                 self.string_format = "{:8d}"
-            elif type(self.x1) in [float, np.float64]:
+            elif isinstance(self.x1, (float, np.float64)):
                 self.string_format = "{:8.3f}"
 
     def rotate_on_x3(self, theta, center_of_rotation=None):
