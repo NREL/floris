@@ -116,11 +116,12 @@ class YawOptimization(Optimization):
 
         if opt_options is None:
             self.opt_options = {
-                "maxiter": 100,
+                "maxiter": 50,
                 "disp": True,
                 "iprint": 2,
-                "ftol": 1e-5,
-            }  # , 'eps': 0.01}
+                "ftol": 1e-12,
+                "eps": 0.1,
+            }
 
         self.unc_pmfs = unc_pmfs
 
@@ -142,7 +143,7 @@ class YawOptimization(Optimization):
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
-            calc_init_power=calc_init_power
+            calc_init_power=calc_init_power,
         )
 
     # Private methods

@@ -1,7 +1,38 @@
 {
-  "type": "floris_input",
-  "name": "floris_input_file_Example",
   "description": "Example FLORIS Input file",
+  "farm": {
+    "description": "Example 2x2 Wind Farm",
+    "name": "farm_example_2x2",
+    "properties": {
+      "__comment__": "specified_wind_height of -1 uses the first turbine's hub height; After initialization, specified_wind_height is a free parameter.",
+      "air_density": 1.225,
+      "layout_x": [
+        0.0
+      ],
+      "layout_y": [
+        0.0
+      ],
+      "specified_wind_height": -1,
+      "turbulence_intensity": [
+        0.06
+      ],
+      "wind_direction": [
+        270.0
+      ],
+      "wind_shear": 0.12,
+      "wind_speed": [
+        9.0
+      ],
+      "wind_veer": 0.0,
+      "wind_x": [
+        0
+      ],
+      "wind_y": [
+        0
+      ]
+    },
+    "type": "farm"
+  },
   "floris_version": "v2.0.0",
   "logging": {
     "console": {
@@ -13,51 +44,19 @@
       "level": "INFO"
     }
   },
-  "farm": {
-    "type": "farm",
-    "name": "farm_example_2x2",
-    "description": "Example 2x2 Wind Farm",
-    "properties": {
-      "wind_speed": [
-        8.0
-      ],
-      "wind_direction": [
-        270.0
-      ],
-      "turbulence_intensity": [
-        0.06
-      ],
-      "wind_shear": 0.12,
-      "__comment__": "specified_wind_height of -1 uses the first turbine's hub height; After initialization, specified_wind_height is a free parameter.",
-      "specified_wind_height": -1,
-      "wind_veer": 0.0,
-      "air_density": 1.225,
-      "layout_x": [
-        0.0
-      ],
-      "layout_y": [
-        0.0
-      ],
-      "wind_x": [
-        0
-      ],
-      "wind_y": [
-        0
-      ]
-    }
-  },
+  "name": "floris_input_file_Example",
   "turbine": {
-    "type": "turbine",
-    "name": "nrel_5mw",
     "description": "NREL 5MW",
+    "name": "nrel_5mw",
     "properties": {
-      "use_points_on_perimeter": false,
-      "rotor_diameter": 126.0,
-      "hub_height": 90.0,
+      "TSR": 8.0,
       "blade_count": 3,
+      "blade_pitch": 0.0,
+      "generator_efficiency": 1.0,
+      "hub_height": 90.0,
+      "ngrid": 5,
       "pP": 1.88,
       "pT": 1.88,
-      "generator_efficiency": 1.0,
       "power_thrust_table": {
         "power": [
           0.0,
@@ -210,47 +209,50 @@
           25.5
         ]
       },
-      "blade_pitch": 0.0,
-      "yaw_angle": 0.0,
+      "rloc": 0.5,
+      "rotor_diameter": 126.0,
       "tilt_angle": 0.0,
-      "TSR": 8.0
-    }
+      "use_points_on_perimeter": false,
+      "yaw_angle": 0.0
+    },
+    "type": "turbine"
   },
+  "type": "floris_input",
   "wake": {
-    "type": "wake",
-    "name": "wake_default",
     "description": "wake",
+    "name": "wake_default",
     "properties": {
-      "velocity_model": "gauss_legacy",
-      "turbulence_model": "crespo_hernandez",
-      "deflection_model": "gauss",
       "combination_model": "sosfs",
+      "deflection_model": "gauss",
       "parameters": {
-        "wake_velocity_parameters": {
-          "gauss_legacy": {
-            "ka": 0.38,
-            "kb": 0.004,
-            "eps_gain": 0.2,
-            "calculate_VW_velocities": true,
-            "use_yaw_added_recovery": true
-          }
-        },
         "wake_deflection_parameters": {
           "gauss": {
             "dm": 1.0,
             "eps_gain": 0.2,
-            "use_secondary_steering":true
+            "use_secondary_steering": true
           }
         },
         "wake_turbulence_parameters": {
           "crespo_hernandez": {
-            "initial": 0.1,
-            "constant": 0.37,
             "ai": 0.8,
-            "downstream": -0.275
+            "constant": 0.5,
+            "downstream": -0.32,
+            "initial": 0.1
+          }
+        },
+        "wake_velocity_parameters": {
+          "gauss_legacy": {
+            "calculate_VW_velocities": true,
+            "eps_gain": 0.2,
+            "ka": 0.38,
+            "kb": 0.004,
+            "use_yaw_added_recovery": true
           }
         }
-    }
+      },
+      "turbulence_model": "crespo_hernandez",
+      "velocity_model": "gauss_legacy"
+    },
+    "type": "wake"
   }
-}
 }

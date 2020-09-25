@@ -68,6 +68,16 @@ class FlowField:
         # TODO consider remapping wake_list with reinitialize flow field
         self.wake_list = {turbine: None for _, turbine in self.turbine_map.items}
 
+    def _update_grid(self, x_grid_i, y_grid_i, wind_direction_i, x1, x2):
+        xoffset = x_grid_i - x1
+        yoffset = y_grid_i.T - x2
+        wind_cos = cosd(-wind_direction_i)
+        wind_sin = sind(-wind_direction_i)
+
+        x_grid_i = xoffset * wind_cos - yoffset * wind_sin + x1
+        y_grid_i = yoffset * wind_cos + xoffset * wind_sin + x2
+        return x_grid_i, y_grid_i
+
     def _discretize_turbine_domain(self):
         """
         Create grid points at each turbine
@@ -80,10 +90,12 @@ class FlowField:
 
         for i, (coord, turbine) in enumerate(self.turbine_map.items):
 
-            x2, x3 = coord.x2, coord.x3
+            x1, x2, x3 = coord.x1, coord.x2, coord.x3
 
             # Save the indices of the flow field points for this turbine
-            turbine.flow_field_point_indices = i * ngrid * ngrid + np.arange(ngrid * ngrid)
+            turbine.flow_field_point_indices = i * ngrid * ngrid + np.arange(
+                ngrid * ngrid
+            )
 
             pt = turbine.rloc * turbine.rotor_radius
 
@@ -91,25 +103,13 @@ class FlowField:
             yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
             zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
 
-            for j in range(len(yt)):
-                for k in range(len(zt)):
-                    x_grid[i, j, k] = xt[i]
-                    y_grid[i, j, k] = yt[j]
-                    z_grid[i, j, k] = zt[k]
+            x_grid[i] = xt[i]
+            y_grid[i] = yt
+            z_grid[i] = zt
 
-                    xoffset = x_grid[i, j, k] - coord.x1
-                    yoffset = y_grid[i, j, k] - coord.x2
-                    x_grid[i, j, k] = (
-                        xoffset * cosd(-1 * self.wind_map.turbine_wind_direction[i])
-                        - yoffset * sind(-1 * self.wind_map.turbine_wind_direction[i])
-                        + coord.x1
-                    )
-
-                    y_grid[i, j, k] = (
-                        yoffset * cosd(-1 * self.wind_map.turbine_wind_direction[i])
-                        + xoffset * sind(-1 * self.wind_map.turbine_wind_direction[i])
-                        + coord.x2
-                    )
+            x_grid[i], y_grid[i] = self._update_grid(
+                x_grid[i], y_grid[i], self.wind_map.turbine_wind_direction[i], x1, x2
+            )
 
         return x_grid, y_grid, z_grid
 
@@ -271,18 +271,6 @@ class FlowField:
                 v_deficit, w_deficit, coord, turbine, flow_field, x, y, z
             )
 
-        # correction step
-        if hasattr(self.wake.velocity_model, "correction_steps"):
-            u_deficit = self.wake.velocity_model.correction_steps(
-                flow_field.u_initial,
-                u_deficit,
-                v_deficit,
-                w_deficit,
-                x,
-                y,
-                turbine,
-                coord,
-            )
         return u_deficit, v_deficit, w_deficit
 
     def _compute_turbine_wake_turbulence(

@@ -86,7 +86,7 @@ class FlowData:
         vtk_file.write("FIELD attributes 1" + ln)
         vtk_file.write("UAvg 3 {} float".format(n_points) + ln)
         for u, v, w in zip(self.u, self.v, self.w):
-            vtk_file.write_line("{}".format(Vec3(u, v, w)) + ln)
+            vtk_file.write("{}".format(Vec3(u, v, w)) + ln)
 
     @staticmethod
     def crop(ff, x_bnds, y_bnds, z_bnds):

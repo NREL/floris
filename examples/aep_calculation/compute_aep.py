@@ -24,7 +24,7 @@ import floris.tools.cut_plane as cp
 import floris.tools.wind_rose as rose
 import floris.tools.power_rose as pr
 import floris.tools.visualization as vis
-from floris.tools.optimization.scipy.yaw_wind_rose import importYawOptimizationWindRose
+from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRose
 
 
 # Instantiate the FLORIS object
