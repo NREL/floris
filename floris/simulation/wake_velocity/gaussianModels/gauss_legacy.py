@@ -134,15 +134,11 @@ class LegacyGauss(GaussianModel):
         # veer (degrees)
         veer = flow_field.wind_veer
 
-        # added turbulence model
-        # TI = turbine.current_turbulence_intensity
-
         TI_mixing = self.yaw_added_turbulence_mixing(
             turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
         )
-        turbine._turbulence_intensity = (
-            turbine.current_turbulence_intensity + self.gch_gain * TI_mixing
-        )
+        turbine.current_turbulence_intensity = turbine.current_turbulence_intensity + \
+            self.gch_gain * TI_mixing
         TI = copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
 
         # turbine parameters

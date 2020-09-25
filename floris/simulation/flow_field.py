@@ -111,26 +111,6 @@ class FlowField:
                 x_grid[i], y_grid[i], self.wind_map.turbine_wind_direction[i], x1, x2
             )
 
-            # for j in range(len(yt)):
-            #     for k in range(len(zt)):
-            #         x_grid[i, j, k] = xt[i]
-            #         y_grid[i, j, k] = yt[j]
-            #         z_grid[i, j, k] = zt[k]
-
-            #         xoffset = x_grid[i, j, k] - coord.x1
-            #         yoffset = y_grid[i, j, k] - coord.x2
-            #         x_grid[i, j, k] = (
-            #             xoffset * cosd(-1 * self.wind_map.turbine_wind_direction[i])
-            #             - yoffset * sind(-1 * self.wind_map.turbine_wind_direction[i])
-            #             + coord.x1
-            #         )
-
-            #         y_grid[i, j, k] = (
-            #             yoffset * cosd(-1 * self.wind_map.turbine_wind_direction[i])
-            #             + xoffset * sind(-1 * self.wind_map.turbine_wind_direction[i])
-            #             + coord.x2
-            #         )
-
         return x_grid, y_grid, z_grid
 
     def _discretize_gridded_domain(

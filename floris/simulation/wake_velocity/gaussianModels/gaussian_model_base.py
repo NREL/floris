@@ -57,7 +57,6 @@ class GaussianModel(VelocityDeficit):
             np.array: turbulence mixing adjustment.
         """
         if self.use_yaw_added_recovery:
-            # print('Adding TI mixing...')
             # compute turbulence modification
             V, W = self.calc_VW(
                 coord, turbine, flow_field, x_locations, y_locations, z_locations
@@ -71,7 +70,6 @@ class GaussianModel(VelocityDeficit):
             u_prime = turbine.u_prime(turbine.average_velocity)
 
             # compute the new TKE
-            # TKE = (1 / 2) * (u_prime ** 2 + v_prime ** 2 + w_prime ** 2)
             idx = np.where(
                 (np.abs(x_locations - coord.x1) < turbine.rotor_diameter / 4)
             )
@@ -80,13 +78,10 @@ class GaussianModel(VelocityDeficit):
             )
 
             # convert TKE back to TI
-            # TI_total = turbine.TKE_to_TI(TKE, flow_field.u_initial)
-            TI_total = turbine.TKE_to_TI(TKE, turbine.average_velocity)
+            TI_total = turbine.TKE_to_TI(TKE)
 
             # convert to turbulence due to mixing
             TI_mixing = np.array(TI_total) - turbine.current_turbulence_intensity
-            # idx = np.where((np.abs(x_locations - coord.x1) < turbine.rotor_diameter / 4))
-            # TI_mixing = np.mean(np.abs(TI_mixing[idx]))
         else:
             TI_mixing = 0.0
 
