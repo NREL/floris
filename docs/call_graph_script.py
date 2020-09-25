@@ -16,7 +16,7 @@
 import sys
 
 from pycallgraph import Config, PyCallGraph, GlobbingFilter
-from floris.floris import Floris
+from floris.simulation import Floris
 from pycallgraph.output import GraphvizOutput
 
 
@@ -31,7 +31,7 @@ with PyCallGraph(config=config, output=graphviz):
     if len(sys.argv) > 1:
         floris = Floris(sys.argv[1])
     else:
-        floris = Floris("example_input.json")
+        floris = Floris("../examples/example_input.json")
 
 graphviz = GraphvizOutput()
 graphviz.output_file = "calculate_wake.png"

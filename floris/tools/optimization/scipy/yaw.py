@@ -21,7 +21,9 @@ from .optimization import Optimization
 
 class YawOptimization(Optimization):
     """
-    YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.Optimization` that is used to optimize the yaw angles of all turbines in a Floris Farm for a single set of inflow conditions using the SciPy optimize package.
+    YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.
+    Optimization` that is used to optimize the yaw angles of all turbines in a Floris
+    Farm for a single set of inflow conditions using the SciPy optimize package.
     """
 
     def __init__(
@@ -36,6 +38,7 @@ class YawOptimization(Optimization):
         include_unc=False,
         unc_pmfs=None,
         unc_options=None,
+        calc_init_power=True,
     ):
         """
         Instantiate YawOptimization object with a FlorisInterface object
@@ -106,16 +109,18 @@ class YawOptimization(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            calc_init_power (bool, optional): If True, calculates initial wind
+                farm power for each set of wind conditions. Defaults to True.
         """
         super().__init__(fi)
 
         if opt_options is None:
             self.opt_options = {
-                "maxiter": 100,
-                "disp": False,
-                "iprint": 1,
-                "ftol": 1e-7,
-                "eps": 0.01,
+                "maxiter": 50,
+                "disp": True,
+                "iprint": 2,
+                "ftol": 1e-12,
+                "eps": 0.1,
             }
 
         self.unc_pmfs = unc_pmfs
@@ -138,16 +143,24 @@ class YawOptimization(Optimization):
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
+            calc_init_power=calc_init_power,
         )
 
     # Private methods
 
     def _yaw_power_opt(self, yaw_angles):
-        return -1 * self.fi.get_farm_power_for_yaw_angle(
-            yaw_angles,
-            include_unc=self.include_unc,
-            unc_pmfs=self.unc_pmfs,
-            unc_options=self.unc_options,
+        yaw_angles = self._unnorm(
+            np.array(yaw_angles), self.minimum_yaw_angle, self.maximum_yaw_angle
+        )
+        return (
+            -1
+            * self.fi.get_farm_power_for_yaw_angle(
+                yaw_angles,
+                include_unc=self.include_unc,
+                unc_pmfs=self.unc_pmfs,
+                unc_options=self.unc_options,
+            )
+            / self.initial_farm_power
         )
 
     def _optimize(self):
@@ -161,13 +174,15 @@ class YawOptimization(Optimization):
 
         self.residual_plant = minimize(
             self._yaw_power_opt,
-            self.x0,
+            self.x0_norm,
             method=self.opt_method,
-            bounds=self.bnds,
+            bounds=self.bnds_norm,
             options=self.opt_options,
         )
 
-        opt_yaw_angles = self.residual_plant.x
+        opt_yaw_angles = self._unnorm(
+            self.residual_plant.x, self.minimum_yaw_angle, self.maximum_yaw_angle
+        )
 
         return opt_yaw_angles
 
@@ -211,6 +226,7 @@ class YawOptimization(Optimization):
         include_unc=None,
         unc_pmfs=None,
         unc_options=None,
+        calc_init_power=True,
     ):
         """
         This method reinitializes any optimization parameters that are
@@ -277,6 +293,8 @@ class YawOptimization(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            calc_init_power (bool, optional): If True, calculates initial wind
+                farm power for each set of wind conditions. Defaults to True.
         """
         if minimum_yaw_angle is not None:
             self.minimum_yaw_angle = minimum_yaw_angle
@@ -289,10 +307,26 @@ class YawOptimization(Optimization):
                 turbine.yaw_angle
                 for turbine in self.fi.floris.farm.turbine_map.turbines
             ]
+        self.x0_norm = self._norm(
+            np.array(self.x0), self.minimum_yaw_angle, self.maximum_yaw_angle
+        )
         if bnds is not None:
             self.bnds = bnds
+            self.minimum_yaw_angle = np.min([bnds[i][0] for i in range(self.nturbs)])
+            self.maximum_yaw_angle = np.max([bnds[i][1] for i in range(self.nturbs)])
         else:
             self._set_opt_bounds(self.minimum_yaw_angle, self.maximum_yaw_angle)
+        self.bnds_norm = [
+            (
+                self._norm(
+                    self.bnds[i][0], self.minimum_yaw_angle, self.maximum_yaw_angle
+                ),
+                self._norm(
+                    self.bnds[i][1], self.minimum_yaw_angle, self.maximum_yaw_angle
+                ),
+            )
+            for i in range(self.nturbs)
+        ]
         if opt_method is not None:
             self.opt_method = opt_method
         if opt_options is not None:
@@ -365,6 +399,14 @@ class YawOptimization(Optimization):
                 "yaw_unc_pmf": yaw_unc_pmf,
             }
 
+        if calc_init_power:
+            self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
+                [0.0] * self.nturbs,
+                include_unc=include_unc,
+                unc_pmfs=unc_pmfs,
+                unc_options=unc_options,
+            )
+
     # Properties
 
     @property
@@ -385,10 +427,6 @@ class YawOptimization(Optimization):
 
     @minimum_yaw_angle.setter
     def minimum_yaw_angle(self, value):
-        if not hasattr(self, "maximum_yaw_angle"):
-            self._set_opt_bounds(value, 25.0)
-        else:
-            self._set_opt_bounds(value, self.maximum_yaw_angle)
         self._minimum_yaw_angle = value
 
     @property
@@ -409,10 +447,6 @@ class YawOptimization(Optimization):
 
     @maximum_yaw_angle.setter
     def maximum_yaw_angle(self, value):
-        if not hasattr(self, "minimum_yaw_angle"):
-            self._set_opt_bounds(0.0, value)
-        else:
-            self._set_opt_bounds(self.minimum_yaw_angle, value)
         self._maximum_yaw_angle = value
 
     @property

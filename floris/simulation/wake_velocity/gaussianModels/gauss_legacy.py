@@ -10,6 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+import copy
+
 import numpy as np
 
 from ....utilities import cosd, sind, tand
@@ -83,6 +85,7 @@ class LegacyGauss(GaussianModel):
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.eps_gain = model_dictionary["eps_gain"]
+        self.gch_gain = 2.0
 
     def function(
         self,
@@ -131,8 +134,12 @@ class LegacyGauss(GaussianModel):
         # veer (degrees)
         veer = flow_field.wind_veer
 
-        # added turbulence model
-        TI = turbine.current_turbulence_intensity
+        TI_mixing = self.yaw_added_turbulence_mixing(
+            turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
+        )
+        turbine.current_turbulence_intensity = turbine.current_turbulence_intensity + \
+            self.gch_gain * TI_mixing
+        TI = copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
 
         # turbine parameters
         D = turbine.rotor_diameter
