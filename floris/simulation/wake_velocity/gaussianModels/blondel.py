@@ -62,13 +62,18 @@ class Blondel(GaussianModel):
                     -   **b_s**: Parameter used to determine the linear
                         relationship between the turbulence intensity and the
                         width of the Gaussian wake shape.
-                    -   **c_s**: Parameter used to determine the linear
+                    -   **c_s1**: Parameter used to determine the linear
                         relationship between the turbulence intensity and the
                         width of the Gaussian wake shape.
-                    -   **a_f**: Parameter used to determine super-Gaussian
+                    -   **c_s2**: Parameter used to determine the linear
+                        relationship between the turbulence intensity and the
+                        width of the Gaussian wake shape.                        
+                    -   **b_f1**: Parameter used to determine super-Gaussian
                         order.
-                    -   **b_f**: Parameter used to determine super-Gaussian
+                    -   **b_f2**: Parameter used to determine super-Gaussian
                         order.
+                    -   **b_f3**: Parameter used to determine super-Gaussian
+                        order.                        
                     -   **c_f**: Parameter used to determine super-Gaussian
                         order.
                     -   **calculate_VW_velocities**: Flag to enable the
@@ -157,14 +162,14 @@ class Blondel(GaussianModel):
 
         # Turbulence intensity for wake width calculation
         TI = turbine.current_turbulence_intensity
-#
-#        # Turbine parameters
+
+        # Turbine parameters
         D = turbine.rotor_diameter
         HH = turbine.hub_height
         yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
         Ct = turbine.Ct
         U_local = flow_field.u_initial
-#
+
         # Wake deflection
         delta = deflection_field
 
@@ -172,7 +177,7 @@ class Blondel(GaussianModel):
         yR = y_locations - turbine_coord.x2
         xR = yR * tand(yaw) + turbine_coord.x1
 
-#        # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
+        # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
         x_tilde = (x_locations - turbine_coord.x1) / D
         r_tilde = (
             np.sqrt(
