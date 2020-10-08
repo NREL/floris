@@ -16,18 +16,7 @@ from scipy.optimize import minimize_scalar
 
 from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
-from ..base_velocity_deficit import VelocityDeficit
-
-def match_AD_theory(n_af, _Ct, _Ti, _eps, _cs1, _cs2, _n_min):
-    
-    n_val = n_af + _n_min
-    Induction = .5*(1. - np.sqrt(1.-_Ct))
-
-    # Calculate velocity deficit
-    beta = 0.5 * (1. + np.sqrt(1.-_Ct)) / np.sqrt(1.-_Ct)
-    Velocity0 = np.power(2.,2./n_val-1.)-np.sqrt(np.power(2.,4./n_val-2.)-n_val*_Ct/(16.*np.power(_eps,4./n_val)*gamma(2./n_val)))
-	
-    return abs(Velocity0-Induction);    
+from ..base_velocity_deficit import VelocityDeficit 
         
 class Blondel(GaussianModel):
     """
@@ -202,7 +191,7 @@ class Blondel(GaussianModel):
         sigma_tilde = k*x_tilde+eps
         
         # Calculate super-Gaussian order using iterative method
-        root_n = minimize_scalar(match_AD_theory, bounds=(0., 12.), method='bounded', args=(Ct, TI, eps, self.c_s1, self.c_s2, self.c_f))
+        root_n = minimize_scalar(self.match_AD_theory, bounds=(0., 12.), method='bounded', args=(Ct, eps, yaw, self.c_s1, self.c_s2, self.c_f))
         a_f = root_n.x    # alternative fit: af = -6.114*Ct*Ct*Ct + 4.891*Ct*Ct -5.097*Ct + 8.003
         b_f = self.b_f1*np.exp(self.b_f2*TI)+self.b_f3
         n   = a_f*np.exp(b_f*x_tilde)+self.c_f        
@@ -233,6 +222,17 @@ class Blondel(GaussianModel):
             np.zeros(np.shape(velDef1)),
             np.zeros(np.shape(velDef1)),
         )
+        
+
+    def match_AD_theory(self, n_af, _Ct, _eps, _yaw, _cs1, _cs2, _n_min):
+        
+        n_val = n_af + _n_min
+        Induction = .5*(1. - np.sqrt(1.-_Ct))
+    
+        # Calculate velocity deficit at the disk (x_tilde = 0)
+        u_disk = np.power(2.,2./n_val-1.)-np.sqrt(np.power(2.,4./n_val-2.)-n_val*_Ct*cosd(_yaw)/(16.*np.power(_eps,4./n_val)*gamma(2./n_val)))
+    	
+        return (abs(u_disk-Induction))
 
     @property
     def a_s(self):
