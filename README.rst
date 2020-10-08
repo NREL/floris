@@ -6,15 +6,19 @@ FLORIS Wake Modeling Utility
 For technical questions regarding FLORIS usage please first search for or post
 your questions to
 `stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
-the **floris** tag. Alternatively, please contact
-`Jen King <mailto:jennifer.king@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_,
-`Chris Bay <mailto:chris.bay@nrel.gov>`_, and
-`Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_.
+the **floris** tag. Alternatively, email the NREL FLORIS team at
+`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`.
+
+.. image:: https://github.com/nrel/floris/workflows/Automated%20tests%20%26%20code%20coverage/badge.svg
+  :target: https://github.com/nrel/floris/actions
+.. image:: https://codecov.io/gh/nrel/floris/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/nrel/floris
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 Background and Objectives
 =========================
-This FLORIS framework is designed to provide a computationally inexpensive,
+This FLORIS framework is designed to provide a computationally efficient,
 controls-oriented modeling tool of the steady-state wake characteristics in
 a wind farm. The wake models implemented in this version of FLORIS are:
 
@@ -36,11 +40,6 @@ modeling and simulation tool for controls research are
    control-oriented wake modeling tools using lidar field results <https://www.wind-energ-sci.net/3/819/2018/>`__,
    in: Wind Energy Science, vol. 3, pp. 819-831, Copernicus Publications,
    2018.
-2. Bay, C.J., King, J., Fleming, P., Mudafort, R., and Martínez-Tossas, L.A.:
-   `Unlocking the Full Potential of Wake Steering: Implementation and
-   Assessment of a Controls-Oriented Model <https://www.wind-energ-sci-discuss.net/wes-2019-19/>`__,
-   submitted to Wind Energy Science Discussions, Copernicus Publications,
-   2019.
 
 Citation
 ========
@@ -51,16 +50,16 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 1.0.0 (2019). Available at https://github.com/nrel/floris.
+   FLORIS. Version 2.2.0 (2020). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
 .. code-block:: latex
 
-    @misc{FLORIS_2019,
+    @misc{FLORIS_2020,
     author = {NREL},
-    title = {{FLORIS. Version 1.0.0}},
-    year = {2019},
+    title = {{FLORIS. Version 2.2.0},
+    year = {2020},
     publisher = {GitHub},
     journal = {GitHub repository},
     url = {https://github.com/NREL/floris}
@@ -70,78 +69,63 @@ For LaTeX users:
 
 Installation
 ============
-Using ``pip``, FLORIS can be installed in two ways
+For full installation instructions, see
+https://floris.readthedocs.io/en/latest/source/installation.html.
 
-- local editable install
-
-- using a tagged release version from the ``pip`` repo
-
-For consistency between all developers, it is recommended to use Python
-virtual environments;
-`this link <https://realpython.com/blog/python/python-virtual-environments-a-primer/>`_
-provides a great introduction. Using virtual environments in a Jupyter Notebook
-is described `here <https://help.pythonanywhere.com/pages/IPythonNotebookVirtualenvs/>`_.
-
-Local Editable Installation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The local editable installation allows developers to maintain an importable
-instance of FLORIS while continuing to extend it. The alternative is to
-constantly update python paths within the package to match the local
-environment.
-
-Before doing the local install, the source code repository must be cloned
-directly from GitHub:
+Users who want to run FLORIS without downloading the full source code
+can install with `pip` or `conda`, as shown below.
 
 .. code-block:: bash
 
-    git clone https://github.com/nrel/floris
+    # Using pip...
+    pip install floris         # Latest version
+    pip install floris==1.1.0  # Specified version number
+    
+    # Using conda...
+    conda install floris        # Latest version
+    conda install floris=1.1.0  # Specified version number
 
-Then, using the local editable installation is as simple as running the
-following command from the parent directory of the
-cloned repository:
+
+To download the source code and use the local code, download the project
+and add it to your Python path:
 
 .. code-block:: bash
 
+    # Download the source code.
+    git clone https://github.com/NREL/floris.git
+
+    # Install into your Python environment
     pip install -e floris
 
-Finally, test the installation by starting a python terminal and importing
-FLORIS:
+
+Finally, users who will be contributing code to the project should align
+their environment with the linting and formatting tools used by the
+FLORIS development team. This is enabled in the `setup.py` script and
+can be activated with these commands:
 
 .. code-block:: bash
 
+    git clone https://github.com/NREL/floris.git -b develop
+    cd floris
+    pip install -e '.[develop]'
+    pre-commit install
+
+
+After any form of installation, the environment should be tested.
+Within a Python shell or a Python script, this code should
+display information:
+
+.. code-block:: python
+    
     import floris
-
-pip Repo Installation
-~~~~~~~~~~~~~~~~~~~~~
-The FLORIS version available through the pip repository is typically the latest
-tagged and released major version. This version represents the most recent
-stable, tested, and validated code.
-
-In this case, there is no need to download the source code directly. FLORIS
-and its dependencies can be installed with:
-
-.. code-block:: bash
-
-    pip install floris
-
-Dependencies
-============
-FLORIS has dependencies on various math, statistics, and plotting libraries in
-addition to other general purpose packages. For the simulation and tool
-modules, the dependencies are listed in ``floris/requirements.txt``. The
-documentation has additional requirements listed in
-``floris/docs/requirements.txt``.
-
-The requirements files can be used to install everything with:
-
-.. code-block:: bash
-
-    pip install -r requirements.txt
+    print( help( floris ) )
+    print( dir( floris ) )
+    print( help( floris.simulation ) )
 
 License
 =======
 
-Copyright 2019 NREL
+Copyright 2020 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

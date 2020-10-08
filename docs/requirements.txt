@@ -1,5 +1,6 @@
 # Requirements list for floris documentation
-readthedocs-sphinx-ext>=0.5
+readthedocs-sphinx-ext
 Sphinx>=2.0
-sphinxcontrib-napoleon==0.7
+sphinxcontrib-napoleon
+sphinxcontrib-bibtex
 -r ../requirements.txt

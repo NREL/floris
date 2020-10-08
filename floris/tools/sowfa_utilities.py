@@ -1,23 +1,30 @@
-# Copyright 2019 NREL
+# Copyright 2020 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# this file except in compliance with the License. You may obtain a copy of the
-# License at http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
 
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 
-import numpy as np
-from .flow_data import FlowData
-from ..utilities import Vec3
-import pandas as pd
+# See https://floris.readthedocs.io for documentation
+
 import os
 import re
 
+import numpy as np
+import pandas as pd
 
-class SowfaInterface():
+from .cut_plane import CutPlane, get_plane_from_flow_data
+from .flow_data import FlowData
+from ..utilities import Vec3
+from ..logging_manager import LoggerBase
+
+
+class SowfaInterface(LoggerBase):
     """
     Object to facilitate interaction with flow data output by SOWFA.
 
@@ -25,15 +32,17 @@ class SowfaInterface():
         :py:class:`floris.tools.sowfa_utilities.SowfaInterface`: object
     """
 
-    def __init__(self,
-                 case_folder,
-                 flow_data_sub_path='array_mean/array.mean0D_UAvg.vtk',
-                 setup_sub_path='setUp',
-                 turbine_array_sub_path='constant/turbineArrayProperties',
-                 turbine_sub_path='constant/turbineProperties',
-                 controlDict_sub_path='system/controlDict',
-                 turbine_output_sub_path='turbineOutput/20000',
-                 assumed_settling_time=None):
+    def __init__(
+        self,
+        case_folder,
+        flow_data_sub_path="array_mean/array.mean0D_UAvg.vtk",
+        setup_sub_path="setUp",
+        turbine_array_sub_path="constant/turbineArrayProperties",
+        turbine_sub_path="constant/turbineProperties",
+        controlDict_sub_path="system/controlDict",
+        turbine_output_sub_path="turbineOutput/20000",
+        assumed_settling_time=None,
+    ):
         """
         SowfaInterface object init method.
 
@@ -54,7 +63,7 @@ class SowfaInterface():
             assumed_settling_time (float, optional): Time to account
                 for startup transients in simulation. Defaults to None.
         """
-        print(case_folder)
+        self.logger.info(case_folder)
 
         # Save the case_folder and sub_paths
         self.case_folder = case_folder
@@ -67,72 +76,80 @@ class SowfaInterface():
         # Read in the input files
 
         # Get control settings from sc input file
-        #TODO Assuming not dynamic and only one setting applied for each turbine
-        #TODO If not using the super controller sowfa variant, need alternative
+        # TODO Assuming not dynamic and only one setting applied for each turbine
+        # TODO If not using the super controller sowfa variant, need alternative
 
         # Get the turbine name and locations
         turbine_array_dict = read_foam_file(
-            os.path.join(self.case_folder, self.turbine_array_sub_path))
-        self.turbine_name = turbine_array_dict['turbineType'].replace(
-            '"', '')  # TODO Assuming only one type
+            os.path.join(self.case_folder, self.turbine_array_sub_path)
+        )
+        self.turbine_name = turbine_array_dict["turbineType"].replace(
+            '"', ""
+        )  # TODO Assuming only one type
         self.layout_x, self.layout_y = get_turbine_locations(
-            os.path.join(self.case_folder, self.turbine_array_sub_path))
+            os.path.join(self.case_folder, self.turbine_array_sub_path)
+        )
 
         # Save the number of turbines
         self.num_turbines = len(self.layout_x)
 
         # if SC input exists, use it for yaw and pitch as it will over-ride
         # if it does not exist, assume the values in turbineArray Properties
-        if os.path.exists(os.path.join(self.case_folder, 'SC_INPUT.txt')):
+        if os.path.exists(os.path.join(self.case_folder, "SC_INPUT.txt")):
             df_SC = read_sc_input(self.case_folder)
             self.yaw_angles = df_SC.yaw.values
             self.pitch_angles = df_SC.pitch.values
         else:
-            print(
-                'No SC_INPUT.txt, getting pitch and yaw from turbine array props'
+            self.logger.info(
+                "No SC_INPUT.txt, getting pitch and yaw " + "from turbine array props"
             )
             self.yaw_angles = get_turbine_yaw_angles(
-                os.path.join(self.case_folder, self.turbine_array_sub_path))
+                os.path.join(self.case_folder, self.turbine_array_sub_path)
+            )
             self.pitch_angles = get_turbine_pitch_angles(
-                os.path.join(self.case_folder, self.turbine_array_sub_path))
-            print(self.yaw_angles)
-            print(self.pitch_angles)
+                os.path.join(self.case_folder, self.turbine_array_sub_path)
+            )
+            self.logger.info(self.yaw_angles)
+            self.logger.info(self.pitch_angles)
 
         # Get the turbine rotor diameter and hub height
         turbine_dict = read_foam_file(
-            os.path.join(self.case_folder, self.turbine_sub_path,
-                         self.turbine_name))
-        self.D = 2 * turbine_dict['TipRad']
+            os.path.join(self.case_folder, self.turbine_sub_path, self.turbine_name)
+        )
+        self.D = 2 * turbine_dict["TipRad"]
 
-        # Use the setup file and control file to determine the precursor wind speed
-        # And the time flow averaging begins (settling time)
-        setup_dict = read_foam_file(
-            os.path.join(self.case_folder, self.setup_sub_path))
+        # Use the setup file and control file to determine the precursor wind
+        # speed and the time flow averaging begins (settling time)
+        setup_dict = read_foam_file(os.path.join(self.case_folder, self.setup_sub_path))
         controlDict_dict = read_foam_file(
-            os.path.join(self.case_folder, self.controlDict_sub_path))
-        start_run_time = controlDict_dict['startTime']
-        averaging_start_time = setup_dict['meanStartTime']
+            os.path.join(self.case_folder, self.controlDict_sub_path)
+        )
+        start_run_time = controlDict_dict["startTime"]
+        averaging_start_time = setup_dict["meanStartTime"]
         if assumed_settling_time is not None:
-            print('Using assumed settling time of %.1f s' %
-                  assumed_settling_time)
+            self.logger.info(
+                "Using assumed settling time of %.1f s" % assumed_settling_time
+            )
             self.settling_time = assumed_settling_time
         else:
             self.settling_time = averaging_start_time - start_run_time
-        self.precursor_wind_speed = setup_dict['U0Mag']
+        self.precursor_wind_speed = setup_dict["U0Mag"]
 
         # Get the wind direction
-        self.precursor_wind_dir = setup_dict['dir']
+        self.precursor_wind_dir = setup_dict["dir"]
 
         # Get the surface roughness
-        self.z0 = setup_dict['z0']
+        self.z0 = setup_dict["z0"]
 
         # Read the outputs
         self.turbine_output = read_sowfa_df(
-            os.path.join(self.case_folder, self.turbine_output_sub_path))
+            os.path.join(self.case_folder, self.turbine_output_sub_path)
+        )
 
         # Remove the settling time
         self.turbine_output = self.turbine_output[
-            self.turbine_output.time > self.settling_time]
+            self.turbine_output.time > self.settling_time
+        ]
 
         # Get the sim_time
         self.sim_time_length = self.turbine_output.time.max()
@@ -140,35 +157,137 @@ class SowfaInterface():
         # Read the flow data
         try:
             self.flow_data = self.read_flow_frame_SOWFA(
-                os.path.join(case_folder, flow_data_sub_path))
+                os.path.join(case_folder, flow_data_sub_path)
+            )
 
             # Re-set turbine positions to flow_field origin
             self.layout_x = self.layout_x - self.flow_data.origin.x1
             self.layout_y = self.layout_y - self.flow_data.origin.x2
 
         except FileNotFoundError:
-            print('No flow field found, setting NULL, origin at 0')
-            self.flow_data = None  #TODO might need a null flow-field
+            self.logger.info("No flow field found, setting NULL, origin at 0")
+            self.flow_data = None  # TODO might need a null flow-field
+
+        # Try to work out the precursor directory
+        self.precursor_directory = "unknown"
+        try:
+            with open(os.path.join(case_folder, "runscript.preprocess"), "r") as fid:
+                raw = fid.readlines()
+
+            for i, line in enumerate(raw):
+                if "precursorDir=" in line:
+                    self.precursor_directory = os.path.basename(
+                        line.replace("precursorDir=", "")
+                    )
+
+        except FileNotFoundError:
+            self.logger.info("No preprocess file found")
 
     def __str__(self):
 
-        print('---------------------')
-        print('Case: %s' % self.case_folder)
-        print('==Turbine Info==')
-        print('Turbine: %s' % self.turbine_name)
-        print('Diameter: %dm' % self.D)
-        print('Num Turbines = %d' % self.num_turbines)
-        print('==Control Settings==')
-        print('Yaw Angles, ', self.yaw_angles)
-        print('Pitch Angles, ', self.pitch_angles)
-        print('==Inflow Info==')
-        print('U0Mag: %.2fm/s' % self.precursor_wind_speed)
-        print('dir: %.1f' % self.precursor_wind_dir)
-        print('==Timing Info==')
-        print('Settling time: %.1fs' % self.settling_time)
-        print('Simulation time: %.1fs' % self.sim_time_length)
-        print('---------------------')
-        return ' '
+        self.logger.info("---------------------")
+        self.logger.info("Case: %s" % self.case_folder)
+        self.logger.info("==Turbine Info==")
+        self.logger.info("Turbine: %s" % self.turbine_name)
+        self.logger.info("Diameter: %dm" % self.D)
+        self.logger.info("Num Turbines = %d" % self.num_turbines)
+        self.logger.info("==Control Settings==")
+        self.logger.info("Yaw Angles, [" + ", ".join(map(str, self.yaw_angles)) + "]")
+        self.logger.info(
+            "Pitch Angles, [" + ", ".join(map(str, self.pitch_angles)) + "]"
+        )
+        self.logger.info("==Inflow Info==")
+        self.logger.info("U0Mag: %.2fm/s" % self.precursor_wind_speed)
+        self.logger.info("dir: %.1f" % self.precursor_wind_dir)
+        self.logger.info("==Timing Info==")
+        self.logger.info("Settling time: %.1fs" % self.settling_time)
+        self.logger.info("Simulation time: %.1fs" % self.sim_time_length)
+        self.logger.info("---------------------")
+
+        return " "
+
+    def get_hor_plane(
+        self, height, x_resolution=200, y_resolution=200, x_bounds=None, y_bounds=None
+    ):
+        """
+        Get a horizontal cut through plane at a specific height
+
+        Args:
+            height (float): height of cut plane, defaults to hub-height
+                Defaults to Hub-height.
+            x1_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x2_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x1_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+            x2_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+
+        Returns:
+            horplane
+        """
+        # Get points from flow data
+        df = get_plane_from_flow_data(
+            self.flow_data, normal_vector="z", x3_value=height
+        )
+
+        # Compute and return the cutplane
+        return CutPlane(df)
+
+    def get_cross_plane(
+        self, x_loc, x_resolution=200, y_resolution=200, x_bounds=None, y_bounds=None
+    ):
+        """
+        Get a horizontal cut through plane at a specific height
+
+        Args:
+            height (float): height of cut plane, defaults to hub-height
+                Defaults to Hub-height.
+            x1_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x2_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x1_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+            x2_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+
+        Returns:
+            horplane
+        """
+        # Get the points of data in a dataframe
+        df = get_plane_from_flow_data(self.flow_data, normal_vector="x", x3_value=x_loc)
+
+        # Compute and return the cutplane
+        return CutPlane(df)
+
+    def get_y_plane(
+        self, y_loc, x_resolution=200, y_resolution=200, x_bounds=None, y_bounds=None
+    ):
+        """
+        Get a horizontal cut through plane at a specific height
+
+        Args:
+            height (float): height of cut plane, defaults to hub-height
+                Defaults to Hub-height.
+            x1_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x2_resolution (float, optional): output array resolution.
+                Defaults to 200.
+            x1_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+            x2_bounds (tuple, optional): limits of output array.
+                Defaults to None.
+
+        Returns:
+            horplane
+        """
+        # Get the points of data in a dataframe
+        df = get_plane_from_flow_data(self.flow_data, normal_vector="y", x3_value=y_loc)
+
+        # Compute and return the cutplane
+        return CutPlane(df)
 
     def get_average_powers(self):
         """
@@ -180,13 +299,23 @@ class SowfaInterface():
         Returns:
             pow_list (numpy array): an array of powers per turbine
         """
-
-
         pow_list = list()
         for t in range(self.num_turbines):
-            df_sub = self.turbine_output[self.turbine_output.turbine==t]
+            df_sub = self.turbine_output[self.turbine_output.turbine == t]
             pow_list.append(df_sub.powerGenerator.mean())
         return np.array(pow_list)
+
+    def get_time_power_t(self, t):
+        """
+        Return the power over time of a specific turbine t
+
+        Args:
+        t, turbine number
+
+        Returns:
+            power
+        """
+        return self.turbine_output[self.turbine_output.turbine == t].powerGenerator
 
     def get_average_thrust(self):
         """
@@ -198,11 +327,9 @@ class SowfaInterface():
         Returns:
             pow_list (numpy array): an array of thrust per turbine
         """
-
-
         thrust_list = list()
         for t in range(self.num_turbines):
-            df_sub = self.turbine_output[self.turbine_output.turbine==t]
+            df_sub = self.turbine_output[self.turbine_output.turbine == t]
             thrust_list.append(df_sub.thrust.mean())
         return np.array(thrust_list)
 
@@ -217,24 +344,29 @@ class SowfaInterface():
             FlowData (pd.DataFrame): a pandas table with the columns,
                 of all relavent flow info (e.g. x, y, z, u, v, w).
         """
-
         # Read the dimension info from the file
-        with open(filename, 'r') as f:
+        with open(filename, "r") as f:
             for _ in range(10):
                 read_data = f.readline()
-                if 'SPACING' in read_data:
-                    splitstring = read_data.rstrip().split(' ')
-                    spacing = Vec3(float(splitstring[1]),
-                                   float(splitstring[2]),
-                                   float(splitstring[3]))
-                if 'DIMENSIONS' in read_data:
-                    splitstring = read_data.rstrip().split(' ')
-                    dimensions = Vec3(int(splitstring[1]), int(splitstring[2]),
-                                      int(splitstring[3]))
-                if 'ORIGIN' in read_data:
-                    splitstring = read_data.rstrip().split(' ')
-                    origin = Vec3(float(splitstring[1]), float(splitstring[2]),
-                                  float(splitstring[3]))
+                if "SPACING" in read_data:
+                    splitstring = read_data.rstrip().split(" ")
+                    spacing = Vec3(
+                        float(splitstring[1]),
+                        float(splitstring[2]),
+                        float(splitstring[3]),
+                    )
+                if "DIMENSIONS" in read_data:
+                    splitstring = read_data.rstrip().split(" ")
+                    dimensions = Vec3(
+                        int(splitstring[1]), int(splitstring[2]), int(splitstring[3])
+                    )
+                if "ORIGIN" in read_data:
+                    splitstring = read_data.rstrip().split(" ")
+                    origin = Vec3(
+                        float(splitstring[1]),
+                        float(splitstring[2]),
+                        float(splitstring[3]),
+                    )
 
         # Set up x, y, z as lists
         if dimensions.x1 > 1.0:
@@ -252,23 +384,21 @@ class SowfaInterface():
         else:
             zRange = np.array([0.0])
 
-        pts = np.array([(x, y, z) for z in zRange for y in yRange
-                        for x in xRange])
+        pts = np.array([(x, y, z) for z in zRange for y in yRange for x in xRange])
 
-        df = pd.read_csv(filename,
-                         skiprows=10,
-                         sep='\t',
-                         header=None,
-                         names=['u', 'v', 'w'])
+        df = pd.read_csv(
+            filename, skiprows=10, sep="\t", header=None, names=["u", "v", "w"]
+        )
         x = pts[:, 0]
         y = pts[:, 1]
         z = pts[:, 2]
 
-        return FlowData(x, y, z, df.u.values, df.v.values, df.w.values,
-                        spacing, dimensions, origin)
+        return FlowData(
+            x, y, z, df.u.values, df.v.values, df.w.values, spacing, dimensions, origin
+        )
 
 
-def read_sc_input(case_folder, wind_direction=270.):
+def read_sc_input(case_folder, wind_direction=270.0):
     """
     Read the super controller (SC) input file to get the wind farm
     control settings.
@@ -281,16 +411,15 @@ def read_sc_input(case_folder, wind_direction=270.):
     Returns:
         df_SC (pd.DataFrame): dataframe containing SC info.
     """
-
-    sc_file = os.path.join(case_folder, 'SC_INPUT.txt')
+    sc_file = os.path.join(case_folder, "SC_INPUT.txt")
 
     df_SC = pd.read_csv(sc_file, delim_whitespace=True)
 
-    df_SC.columns = ['time', 'turbine', 'yaw', 'pitch']
+    df_SC.columns = ["time", "turbine", "yaw", "pitch"]
 
-    df_SC['yaw'] = wind_direction - df_SC.yaw
+    df_SC["yaw"] = wind_direction - df_SC.yaw
 
-    df_SC = df_SC.set_index('turbine')
+    df_SC = df_SC.set_index("turbine")
 
     return df_SC
 
@@ -306,21 +435,36 @@ def read_sowfa_df(folder_name, channels=[]):
         channels (list, optional): list of specific channels to read.
             Defaults to [].
     """
-
     # Get the availble outputs
     outputNames = [
-        f for f in os.listdir(folder_name)
+        f
+        for f in os.listdir(folder_name)
         if os.path.isfile(os.path.join(folder_name, f))
     ]
 
     # Remove the harder input files for now (undo someday)
     hardFiles = [
-        'Vtangential', 'Cl', 'Cd', 'Vradial', 'x', 'y', 'z', 'alpha',
-        'axialForce'
+        "Vtangential",
+        "Cl",
+        "Cd",
+        "Vradial",
+        "x",
+        "y",
+        "z",
+        "alpha",
+        "axialForce",
     ]
     simpleFiles = [
-        'nacYaw', 'rotSpeedFiltered', 'rotSpeed', 'thrust', 'torqueGen',
-        'powerRotor', 'powerGenerator', 'torqueRotor', 'azimuth', 'pitch'
+        "nacYaw",
+        "rotSpeedFiltered",
+        "rotSpeed",
+        "thrust",
+        "torqueGen",
+        "powerRotor",
+        "powerGenerator",
+        "torqueRotor",
+        "azimuth",
+        "pitch",
     ]
 
     # Limit to files
@@ -333,7 +477,7 @@ def read_sowfa_df(folder_name, channels=[]):
     num_channels = len(outputNames)
 
     if num_channels == 0:
-        raise ValueError('Is %s a data folder?' % folder_name)
+        raise ValueError("Is %s a data folder?" % folder_name)
 
     # Now loop through the files
     for c_idx, chan in enumerate(outputNames):
@@ -341,14 +485,13 @@ def read_sowfa_df(folder_name, channels=[]):
         filename = os.path.join(folder_name, chan)
 
         # Load the file
-        df_inner = pd.read_csv(filename, sep=' ', header=None, skiprows=1)
+        df_inner = pd.read_csv(filename, sep=" ", header=None, skiprows=1)
 
         # Rename the columns
-        df_inner.columns = ['turbine', 'time', 'dt', chan]
+        df_inner.columns = ["turbine", "time", "dt", chan]
 
         # Drop dt
-        df_inner = df_inner[['time', 'turbine',
-                             chan]].set_index(['time', 'turbine'])
+        df_inner = df_inner[["time", "turbine", chan]].set_index(["time", "turbine"])
 
         # On first run declare the new frame
         if c_idx == 0:
@@ -363,7 +506,7 @@ def read_sowfa_df(folder_name, channels=[]):
     df = df.reset_index()
 
     # Zero the time
-    df['time'] = df.time - df.time.min()
+    df["time"] = df.time - df.time.min()
 
     return df
 
@@ -379,40 +522,38 @@ def read_foam_file(filename):
     Returns:
         data (dict): dictionary with OpenFOAM inputs
     """
-
     data = {}
 
-    with open(filename, 'r') as fid:
+    with open(filename, "r") as fid:
         raw = fid.readlines()
 
     count = 0
     bloc_comment_test = False
     for i, line in enumerate(raw):
 
-        if raw[i][0:2] == '/*':
+        if raw[i][0:2] == "/*":
             bloc_comment_test = True
 
-        if bloc_comment_test is False:
+        if not bloc_comment_test:
 
             # Check if the string is a comment and skip line
-            if raw[i].strip()[0:2] == '//' or raw[i].strip()[0:1] == '#':
+            if raw[i].strip()[0:2] == "//" or raw[i].strip()[0:1] == "#":
                 pass
 
-            elif len(raw[i].strip()
-                     ) == 0:  # Check if the string is empty and skip line
+            elif len(raw[i].strip()) == 0:  # Check if the string is empty and skip line
                 pass
 
             else:
                 tmp = raw[i].strip().rstrip().split()
                 try:
-                    data[tmp[0].replace('"', '')] = np.float(tmp[1][:-1])
+                    data[tmp[0].replace('"', "")] = np.float(tmp[1][:-1])
                 except:
                     try:
-                        data[tmp[0].replace('"', '')] = tmp[1][:-1]
+                        data[tmp[0].replace('"', "")] = tmp[1][:-1]
                     except:
                         next
 
-        if raw[i][0:2] == '\*':
+        if raw[i][0:2] == "\*":
             bloc_comment_test = False
 
     return data
@@ -430,13 +571,12 @@ def get_turbine_locations(turbine_array_file):
         layout_x (np.array): wind plant layout coodinates (east-west).
         layout_y (np.array): wind plant layout coodinates (north-south).
     """
-
     x = list()
     y = list()
 
-    with open(turbine_array_file, 'r') as f:
+    with open(turbine_array_file, "r") as f:
         for line in f:
-            if 'baseLocation' in line:
+            if "baseLocation" in line:
                 # Extract the coordinates
                 data = re.findall(r"[-+]?\d*\.\d+|\d+", line)
 
@@ -458,13 +598,13 @@ def get_turbine_pitch_angles(turbine_array_file):
         turbine_array_file (str): path to file containing pitch info.
 
     Returns:
-        np.array: blade pitch info.
+        p (np.array): blade pitch info.
     """
     p = list()
 
-    with open(turbine_array_file, 'r') as f:
+    with open(turbine_array_file, "r") as f:
         for line in f:
-            if 'Pitch' in line:
+            if "Pitch" in line:
                 # Extract the coordinates
                 data = re.findall(r"[-+]?\d*\.\d+|\d+", line)
 
@@ -474,7 +614,7 @@ def get_turbine_pitch_angles(turbine_array_file):
     return np.array(p)
 
 
-def get_turbine_yaw_angles(turbine_array_file, wind_direction=270.):
+def get_turbine_yaw_angles(turbine_array_file, wind_direction=270.0):
     """
     Extract wind turbine yaw angle information from SOWFA data.
 
@@ -484,13 +624,13 @@ def get_turbine_yaw_angles(turbine_array_file, wind_direction=270.):
             Defaults to 270..
 
     Returns:
-        np.array: wind turbine yaw info.
+        y (np.array): wind turbine yaw info.
     """
     y = list()
 
-    with open(turbine_array_file, 'r') as f:
+    with open(turbine_array_file, "r") as f:
         for line in f:
-            if 'NacYaw' in line:
+            if "NacYaw" in line:
                 # Extract the coordinates
                 data = re.findall(r"[-+]?\d*\.\d+|\d+", line)
 
