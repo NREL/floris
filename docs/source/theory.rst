@@ -24,6 +24,7 @@ Literature on the Gaussian model can be found in
 :cite:`thy-bastankhah2016experimental`,
 :cite:`thy-dilip2017wind`,
 :cite:`thy-blondel2020alternative`
+:cite:`thy-Cathelain2020calibration`
 and :cite:`thy-qian2018new`.
 
 Gauss Curl Hybrid Model
