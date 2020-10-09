@@ -196,13 +196,11 @@ class Blondel(GaussianModel):
         # Calculate sigma_tilde (Eq 9, pp 5 of ref. [1] and table 4 of ref. [2] in docstring)   
         sigma_tilde = k*x_tilde+eps
         
-        # Calculate super-Gaussian order using iterative method - Clip Ct to avoid numerical errors
-        root_n = minimize_scalar(self.match_AD_theory, bounds=(0., 12.), method='bounded', args=(max(0.1, min(Ct, 0.9)), eps, yaw, self.c_s1, self.c_s2, self.c_f))
-        a_f = root_n.x    # alternative fit: af = -6.114*Ct*Ct*Ct + 4.891*Ct*Ct -5.097*Ct + 8.003
+        # Calculate super-Gaussian order using iterative method
+        root_n = minimize_scalar(self.match_AD_theory, bounds=(0., 10.), method='bounded', args=(Ct, eps, yaw, self.c_f))
+        a_f = root_n.x
         b_f = self.b_f1*np.exp(self.b_f2*TI)+self.b_f3
         n   = a_f*np.exp(b_f*x_tilde)+self.c_f        
-        if(n.any() > 10):
-            print(n)
 
         # Calculate max vel def (Eq 5, pp 4 of ref. [1] in docstring)
         a1 = 2 ** (2 / n - 1)
@@ -232,15 +230,31 @@ class Blondel(GaussianModel):
         )
         
 
-    def match_AD_theory(self, n_af, _Ct, _eps, _yaw, _cs1, _cs2, _n_min):
+    def match_AD_theory(self, n_af, Ct, eps, yaw, n_min):
+        """
+        Calculate the difference in velocities at the rotor plane using the 
+        Actuator Disk theory and the super-Gaussian model.
+
+        Args:
+            n_af (float): Current value of the a_f parameter (.).
+            Ct (float): Rotor thrust coefficient (.).
+            eps (float): Initial wake expansion parameter (.)
+            yaw (float): Rotor yaw angle (deg).
+            n_min (float): Minimum value of the super-Gaussian order (.).
+
+        Returns:
+            float: difference betweend computed velocity deficit at the rotor 
+            disk and induction (AD theory)
+        """
         
-        n_val = n_af + _n_min
-        Induction = .5*(1. - np.sqrt(1.-_Ct))
+        # Calculate n using af and minimum value c_f  (Eq 13, pp 6 of ref. [1] in docstring)      
+        n_val = n_af + n_min
+        induction = .5*(1. - np.sqrt(1.-Ct))
     
         # Calculate velocity deficit at the disk (x_tilde = 0)
-        u_disk = np.power(2.,2./n_val-1.)-np.sqrt(np.power(2.,4./n_val-2.)-n_val*_Ct*cosd(_yaw)/(16.*np.power(_eps,4./n_val)*gamma(2./n_val)))
+        u_disk = np.power(2.,2./n_val-1.)-np.sqrt(np.power(2.,4./n_val-2.)-n_val*Ct*cosd(yaw)/(16.*np.power(eps,4./n_val)*gamma(2./n_val)))
     	
-        return (abs(u_disk-Induction))
+        return (abs(u_disk-induction))
 
     @property
     def a_s(self):
