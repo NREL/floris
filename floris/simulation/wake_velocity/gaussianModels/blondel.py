@@ -178,7 +178,8 @@ class Blondel(GaussianModel):
         xR = yR * tand(yaw) + turbine_coord.x1
 
         # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
-        x_tilde = (x_locations - turbine_coord.x1) / D
+        # Use absolute value to avoid overflows
+        x_tilde = np.abs(x_locations - turbine_coord.x1) / D
         r_tilde = (
             np.sqrt(
                 (y_locations - turbine_coord.x2 - delta) ** 2 + (z_locations - HH) ** 2,
@@ -195,11 +196,13 @@ class Blondel(GaussianModel):
         # Calculate sigma_tilde (Eq 9, pp 5 of ref. [1] and table 4 of ref. [2] in docstring)   
         sigma_tilde = k*x_tilde+eps
         
-        # Calculate super-Gaussian order using iterative method
-        root_n = minimize_scalar(self.match_AD_theory, bounds=(0., 12.), method='bounded', args=(Ct, eps, yaw, self.c_s1, self.c_s2, self.c_f))
+        # Calculate super-Gaussian order using iterative method - Clip Ct to avoid numerical errors
+        root_n = minimize_scalar(self.match_AD_theory, bounds=(0., 12.), method='bounded', args=(max(0.1, min(Ct, 0.9)), eps, yaw, self.c_s1, self.c_s2, self.c_f))
         a_f = root_n.x    # alternative fit: af = -6.114*Ct*Ct*Ct + 4.891*Ct*Ct -5.097*Ct + 8.003
         b_f = self.b_f1*np.exp(self.b_f2*TI)+self.b_f3
         n   = a_f*np.exp(b_f*x_tilde)+self.c_f        
+        if(n.any() > 10):
+            print(n)
 
         # Calculate max vel def (Eq 5, pp 4 of ref. [1] in docstring)
         a1 = 2 ** (2 / n - 1)
