@@ -174,10 +174,13 @@ plt.grid()
 plt.legend()
 plt.title("Baseline Power (middle row)")
 
-# # Get horizontal plane at default height (hub-height)
-# hor_plane = fi.get_hor_plane()
-#
-# # Plot and show
-# fig, ax = plt.subplots()
-# wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+# Get horizontal plane at default height (hub-height)
+
+
+# Plot and show
+fig, ax = plt.subplots()
+# fi.reinitialize_flow_field(layout_array=(layout_x, layout_y), turbulence_intensity=0.09)
+# fi.calculate_wake(yaw_angles=np.zeros(6))
+hor_plane = fi.get_hor_plane()
+wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 plt.show()

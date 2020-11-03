@@ -507,8 +507,10 @@ class GaussianModel(VelocityDeficit):
                 -   u0 (np.array): Initial velocity deficit used in calculation
                     of wake expansion.
         """
+
         uR = U_local * Ct / (2.0 * (1 - np.sqrt(1 - Ct)))
         u0 = U_local * np.sqrt(1 - Ct)
+
         return uR, u0
 
     @staticmethod

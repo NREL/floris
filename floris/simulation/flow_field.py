@@ -15,6 +15,7 @@
 
 import numpy as np
 import scipy as sp
+import copy
 from scipy.interpolate import griddata
 
 from ..utilities import Vec3, cosd, sind, tand
@@ -67,6 +68,10 @@ class FlowField:
         )
         # TODO consider remapping wake_list with reinitialize flow field
         self.wake_list = {turbine: None for _, turbine in self.turbine_map.items}
+
+        # TODO: get solver into input file
+        # self.solver = 'basic'
+        self.solver = 'holistic'
 
     def _update_grid(self, x_grid_i, y_grid_i, wind_direction_i, x1, x2):
         xoffset = x_grid_i - x1
@@ -593,8 +598,9 @@ class FlowField:
 
         rx = np.array([coord.x1prime for coord in self.turbine_map.coords])
         ry = np.array([coord.x2prime for coord in self.turbine_map.coords])
-
-        for coord, turbine in sorted_map:
+        sum_Cf = np.zeros(np.shape(self.u_initial))
+        Ctmp = []
+        for n, (coord, turbine) in enumerate(sorted_map):
             xloc, yloc = np.array(rx == coord.x1), np.array(ry == coord.x2)
             idx = int(np.where(np.logical_and(yloc, xloc))[0])
 
@@ -632,14 +638,59 @@ class FlowField:
                 rotated_x, rotated_y, rotated_z, turbine, coord, self
             )
 
-            # get the velocity deficit accounting for the deflection
-            (
-                turb_u_wake,
-                turb_v_wake,
-                turb_w_wake,
-            ) = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
-            )
+            if self.solver == 'basic':
+                # get the velocity deficit accounting for the deflection
+                (
+                    turb_u_wake,
+                    turb_v_wake,
+                    turb_w_wake,
+                ) = self._compute_turbine_velocity_deficit(
+                    rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
+                )
+
+            elif self.solver == 'holistic':
+                sigma_n = self.wake.velocity_model.wake_expansion(self, turbine, coord, rotated_x, rotated_y, rotated_z)
+
+                sum_lbda = 0.0
+                # for m, (coord_i, turbine_i) in enumerate(sorted_map):
+                for m in range(0,n-1):
+                    turbine_i = sorted_map[m][1]
+                    coord_i = sorted_map[m][0]
+                    sigma_i = self.wake.velocity_model.wake_expansion(self, turbine_i, coord_i, rotated_x, rotated_y, rotated_z)
+                    S = sigma_n ** 2 + sigma_i ** 2
+                    Y = (coord.x2 - coord_i.x2 - deflection) ** 2 / (2 * S)
+                    Z = (coord.x3 - coord_i.x3) ** 2 / (2 * S)
+                    lbda = sigma_i ** 2 * np.exp(-Y) * np.exp(-Z) / S
+                    sum_lbda = sum_lbda + lbda * (Ctmp[m] / self.u_initial)
+
+                # Centerline velocity
+                if n == 0:
+                    Uavg = turbine.average_velocity
+                else:
+                    Uavg = turbine.average_velocity
+                # print(np.min(sigma_n),np.max(sigma_n))
+                num = turbine.Ct * (Uavg / self.u_initial) ** 2
+                den = (8 * (sigma_n / turbine.rotor_diameter) ** 2) * (1 - sum_lbda) ** 2
+                C = self.u_initial * (1 - sum_lbda) * (1 - np.sqrt(1 - num / den))
+                f = np.exp(-(rotated_y - coord.x2 - deflection) ** 2 / (2 * sigma_n ** 2)) * \
+                    np.exp(-(rotated_z - coord.x3) ** 2 / (2 * sigma_n ** 2))
+
+                C[rotated_x <= coord.x1] = 0.0
+                Ctmp.append(C)
+
+                # add turbines together
+                sum_Cf = sum_Cf + C * f
+
+                self.u = self.u_initial - sum_Cf
+
+                #TODO integrate back in the v and w components
+                turb_u_wake = copy.deepcopy(sum_Cf)
+                turb_v_wake, turb_w_wake = self.wake.velocity_model.calculate_VW(
+                    np.zeros(np.shape(self.u_initial)), np.zeros(np.shape(self.u_initial)), coord, turbine, self, rotated_x, rotated_y, rotated_z
+                )
+
+                prev_turbine = copy.deepcopy(turbine)
+
 
             ###########
             # include turbulence model for the gaussian wake model from
@@ -719,7 +770,10 @@ class FlowField:
 
             # combine this turbine's wake into the full wake field
             if not no_wake:
-                u_wake = self.wake.combination_function(u_wake, turb_u_wake)
+                if self.solver == 'basic':
+                    u_wake = self.wake.combination_function(u_wake, turb_u_wake)
+                elif self.solver == 'holistic':
+                    u_wake = self.u_initial - self.u
 
                 if self.wake.velocity_model.model_string == "curl":
                     self.v = turb_v_wake

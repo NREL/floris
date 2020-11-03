@@ -16,6 +16,7 @@
 import matplotlib.pyplot as plt
 
 import floris.tools as wfct
+import numpy as np
 
 
 # Initialize the FLORIS interface fi
@@ -32,4 +33,13 @@ hor_plane = fi.get_hor_plane()
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+
+plt.figure()
+turbines = fi.floris.farm.turbines
+wind_speed = np.zeros(len(turbines))
+for i in range(len(turbines)):
+    wind_speed[i] = turbines[i].average_velocity
+    print(i, wind_speed[i])
+turb = np.linspace(0,len(turbines)-1,len(turbines))
+plt.plot(turb,wind_speed,'ko-')
 plt.show()
