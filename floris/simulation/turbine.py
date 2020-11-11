@@ -225,6 +225,8 @@ class Turbine(LoggerBase):
                 _ct = _ct[0]
             if _ct > 1.0:
                 _ct = 0.9999
+            if _ct <= 0.0:
+                _ct = 0.0001
             return float(_ct)
 
     # Public methods
@@ -403,7 +405,9 @@ class Turbine(LoggerBase):
         Returns:
             list: converted TKE values
         """
-        return ((self.average_velocity * self.current_turbulence_intensity) ** 2) / (2 / 3)
+        return ((self.average_velocity * self.current_turbulence_intensity) ** 2) / (
+            2 / 3
+        )
 
     def u_prime(self):
         """
