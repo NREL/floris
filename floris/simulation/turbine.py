@@ -213,6 +213,10 @@ class Turbine(LoggerBase):
             _cp = self.fCpInterp(at_wind_speed)
             if _cp.size > 1:
                 _cp = _cp[0]
+            if _cp > 1.0:
+                _cp = 1.0
+            if _cp < 0.0:
+                _cp = 0.0
             return float(_cp)
 
     def _fCt(self, at_wind_speed):
