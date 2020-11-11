@@ -213,6 +213,10 @@ class Turbine(LoggerBase):
             _cp = self.fCpInterp(at_wind_speed)
             if _cp.size > 1:
                 _cp = _cp[0]
+            if _cp > 1.0:
+                _cp = 1.0
+            if _cp < 0.0:
+                _cp = 0.0
             return float(_cp)
 
     def _fCt(self, at_wind_speed):
@@ -225,6 +229,8 @@ class Turbine(LoggerBase):
                 _ct = _ct[0]
             if _ct > 1.0:
                 _ct = 0.9999
+            if _ct <= 0.0:
+                _ct = 0.0001
             return float(_ct)
 
     # Public methods
@@ -403,7 +409,9 @@ class Turbine(LoggerBase):
         Returns:
             list: converted TKE values
         """
-        return ((self.average_velocity * self.current_turbulence_intensity) ** 2) / (2 / 3)
+        return ((self.average_velocity * self.current_turbulence_intensity) ** 2) / (
+            2 / 3
+        )
 
     def u_prime(self):
         """

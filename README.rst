@@ -50,7 +50,7 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 2.2.0 (2020). Available at https://github.com/NREL/floris.
+   FLORIS. Version 2.2.1 (2020). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
@@ -58,7 +58,7 @@ For LaTeX users:
 
     @misc{FLORIS_2020,
     author = {NREL},
-    title = {{FLORIS. Version 2.2.0},
+    title = {{FLORIS. Version 2.2.1},
     year = {2020},
     publisher = {GitHub},
     journal = {GitHub repository},
@@ -80,7 +80,7 @@ can install with `pip` or `conda`, as shown below.
     # Using pip...
     pip install floris         # Latest version
     pip install floris==1.1.0  # Specified version number
-    
+
     # Using conda...
     conda install floris        # Latest version
     conda install floris=1.1.0  # Specified version number
@@ -116,7 +116,7 @@ Within a Python shell or a Python script, this code should
 display information:
 
 .. code-block:: python
-    
+
     import floris
     print( help( floris ) )
     print( dir( floris ) )
