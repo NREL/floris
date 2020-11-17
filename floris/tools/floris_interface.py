@@ -1191,6 +1191,7 @@ class FlorisInterface(LoggerBase):
         inds = np.argsort(ws)
         ws = ws[inds]
         wd = wd[inds]
+        freq = freq[inds]
 
         # keep track of wind speeds where power stops increasing for each wind
         # direction
