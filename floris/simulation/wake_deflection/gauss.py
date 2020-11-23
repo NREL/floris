@@ -217,9 +217,6 @@ class Gauss(VelocityDeflection):
         ln_deltaDen = (1.6 - np.sqrt(M0)) * (
             1.6 * np.sqrt(sigma_y * sigma_z / (sigma_yz0)) + np.sqrt(M0)
         )
-        print(ln_deltaNum)
-        print(ln_deltaDen)
-        print(delta0)
 
         ln_delta = ln_deltaNum / ln_deltaDen
         ln_delta[ln_delta < 0.0] = 1.0
