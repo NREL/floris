@@ -534,8 +534,10 @@ class GaussianModel(VelocityDeficit):
                 -   sigma_z0 (np.array): Initial wake width in the vertical
                     direction.
         """
+        u_wake = U_local + u0
+        u_wake[u_wake <= 0] = 0.0001
         yaw = -1 * turbine.yaw_angle
-        sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt(uR / (U_local + u0))
+        sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt(uR / (u_wake))
         sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
         return sigma_y0, sigma_z0
 
