@@ -173,7 +173,6 @@ class Gauss(VelocityDeflection):
         ky = ka * TI + kb
         kz = ka * TI + kb
 
-        wind_speed[wind_speed <= 0.0] = 0.0001
         C0 = 1 - u0 / wind_speed
         M0 = C0 * (2 - C0)
         E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)

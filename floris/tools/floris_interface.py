@@ -175,6 +175,8 @@ class FlorisInterface(LoggerBase):
                 wind_speed = (
                     wind_speed if isinstance(wind_speed, list) else [wind_speed]
                 )
+                wind_speed = [float(i) for i in wind_speed]
+                wind_speed = [i if i > 0.0 else 0.0001 for i in wind_speed]
             if wind_direction is None:
                 wind_direction = wind_map.input_direction
             else:
@@ -211,6 +213,8 @@ class FlorisInterface(LoggerBase):
                 wind_speed = (
                     wind_speed if isinstance(wind_speed, list) else [wind_speed]
                 )
+                wind_speed = [float(i) for i in wind_speed]
+                wind_speed = [i if i > 0.0 else 0.0001 for i in wind_speed]
 
                 wind_map.input_speed = wind_speed
                 wind_map.calculate_wind_speed()
