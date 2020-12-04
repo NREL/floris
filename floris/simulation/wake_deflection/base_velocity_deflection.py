@@ -160,16 +160,13 @@ class VelocityDeflection(LoggerBase):
 
             # what yaw angle would have produced that same average spanwise velocity
             yaw = test_gamma  # [i]
+
             vel_top = (
-                Uinf
-                * ((HH + D / 2) / flow_field.specified_wind_height)
-                ** flow_field.wind_shear
-            ) / Uinf
+                (HH + D / 2) / flow_field.specified_wind_height
+            ) ** flow_field.wind_shear
             vel_bottom = (
-                Uinf
-                * ((HH - D / 2) / flow_field.specified_wind_height)
-                ** flow_field.wind_shear
-            ) / Uinf
+                (HH - D / 2) / flow_field.specified_wind_height
+            ) ** flow_field.wind_shear
             Gamma_top = (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
             Gamma_bottom = (
                 -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)

@@ -513,6 +513,7 @@ class WindMap:
 
     @input_speed.setter
     def input_speed(self, value):
+        value = [i if i > 0.0 else 0.0001 for i in value]
         self._input_speed = value
 
     @property
