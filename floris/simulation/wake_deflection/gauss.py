@@ -178,9 +178,7 @@ class Gauss(VelocityDeflection):
         E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
 
         # initial Gaussian wake expansion
-        u_wake = U_local + u0
-        u_wake[u_wake <= 0] = 0.0001
-        sigma_z0 = D * 0.5 * np.sqrt(uR / (u_wake))
+        sigma_z0 = D * 0.5 * np.sqrt(uR / (U_local + u0))
         sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
 
         yR = y_locations - coord.x2
@@ -208,22 +206,18 @@ class Gauss(VelocityDeflection):
         sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
         sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
-        sigma_yz0 = sigma_y0 * sigma_z0
-        sigma_yz0[sigma_yz0 <= 0.0] = 0.0001
         ln_deltaNum = (1.6 + np.sqrt(M0)) * (
-            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_yz0)) - np.sqrt(M0)
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
         )
         ln_deltaDen = (1.6 - np.sqrt(M0)) * (
-            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_yz0)) + np.sqrt(M0)
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
         )
 
-        ln_delta = ln_deltaNum / ln_deltaDen
-        ln_delta[ln_delta < 0.0] = 1.0
         delta_far_wake = (
             delta0
             + (theta_c0 * E0 / 5.2)
-            * np.sqrt(sigma_yz0 / (ky * kz * M0))
-            * np.log(ln_delta)
+            * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))
+            * np.log(ln_deltaNum / ln_deltaDen)
             + (ad + bd * (x_locations - coord.x1))
         )
         delta_far_wake[x_locations <= x0] = 0.0

@@ -396,12 +396,9 @@ class Turbine(LoggerBase):
             list: converted turbulence intensity values expressed as a decimal
             (e.g. 10%TI -> 0.10).
         """
-        if self.average_velocity == 0.0:
-            total_turbulence_intensity = 0.0
-        else:
-            total_turbulence_intensity = (
-                np.sqrt((2 / 3) * turbulence_kinetic_energy)
-            ) / self.average_velocity
+        total_turbulence_intensity = (
+            np.sqrt((2 / 3) * turbulence_kinetic_energy)
+        ) / self.average_velocity
         return total_turbulence_intensity
 
     def TI_to_TKE(self):
