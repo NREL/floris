@@ -369,9 +369,12 @@ class GaussianModel(VelocityDeficit):
         V = V1 + V2 + V3 + V4  # + V5 + V6
         W = W1 + W2 + W3 + W4  # + W5 + W6
 
-        # no spanwise and vertical velocity upstream of the turbine
-        V[x_locations < coord.x1] = 0.0
-        W[x_locations < coord.x1] = 0.0
+        # no spanwise and vertical velocity upstream of the turbine   
+        V[x_locations < coord.x1-1] = 0.0 # Subtract by 1 to avoid numerical issues on rotation
+        W[x_locations < coord.x1-1] = 0.0 # Subtract by 1 to avoid numerical issues on rotation
+
+
+
         W[W < 0] = 0
 
         return V, W
