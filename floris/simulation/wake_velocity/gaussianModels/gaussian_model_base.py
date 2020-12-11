@@ -71,7 +71,8 @@ class GaussianModel(VelocityDeficit):
 
             # compute the new TKE
             idx = np.where(
-                (np.abs(x_locations - coord.x1) < turbine.rotor_diameter / 4)
+                (np.abs(x_locations - coord.x1) <= turbine.rotor_diameter / 4)
+                & (np.abs(y_locations - coord.x2) < turbine.rotor_diameter)
             )
             TKE = (1 / 2) * (
                 u_prime ** 2 + np.mean(v_prime[idx]) ** 2 + np.mean(w_prime[idx]) ** 2
@@ -366,14 +367,16 @@ class GaussianModel(VelocityDeficit):
         )
 
         # total spanwise velocity
-        V = V1 + V2 + V3 + V4   + V5 + V6
-        W = W1 + W2 + W3 + W4   + W5 + W6
+        V = V1 + V2 + V3 + V4 + V5 + V6
+        W = W1 + W2 + W3 + W4 + W5 + W6
 
-        # no spanwise and vertical velocity upstream of the turbine   
-        V[x_locations < coord.x1-1] = 0.0 # Subtract by 1 to avoid numerical issues on rotation
-        W[x_locations < coord.x1-1] = 0.0 # Subtract by 1 to avoid numerical issues on rotation
-
-
+        # no spanwise and vertical velocity upstream of the turbine
+        V[
+            x_locations < coord.x1 - 1
+        ] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+        W[
+            x_locations < coord.x1 - 1
+        ] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
 
         W[W < 0] = 0
 
