@@ -61,7 +61,12 @@ Examples:
 
 from . import tools, utilities, simulation, logging_manager
 from .tools import optimization
+from pathlib import Path
 
+ROOT = Path(__file__).parent
+with open(ROOT.parent / "VERSION") as version_file:
+    VERSION = version_file.read().strip()
+__version__ = VERSION
 
 # initialize the logger
 logging_manager._setup_logger()
