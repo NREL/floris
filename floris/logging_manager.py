@@ -91,8 +91,8 @@ def _setup_logger():
     Returns:
         logging.Logger: The root logger from the `logging` module.
     """
-    # Configure logging for the root logger
-    logger = logging.getLogger()
+    # Create a logger object for floris
+    logger = logging.getLogger(name="floris")
     logger.setLevel(logging.DEBUG)
     # level_styles = {'warning': {'color': 'red', 'bold': False}}
     fmt_console = "%(name)s %(levelname)s %(message)s"
