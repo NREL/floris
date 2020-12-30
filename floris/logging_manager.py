@@ -100,17 +100,9 @@ def _setup_logger():
 
     file_name = "floris_{:%Y-%m-%d-%H_%M_%S}.log".format(datetime.now())
 
-    # TODO: understand why this doesnt work and fix it!
-    # if logger.hasHandlers():
-    #     print(logger.handlers, len(logger.handlers))
-    #     for i, handler in enumerate(logger.handlers):
-    #         print(i, handler)
-    #         logger.removeHandler(handler)
-    #     print(logger.handlers, len(logger.handlers))
-
     # Remove all existing handlers before adding new ones
-    while logger.hasHandlers():
-        logger.removeHandler(logger.handlers[0])
+    for h in logger.handlers.copy():
+        logger.removeHandler(h)
 
     # Configure and add the console handler
     if LOG_TO_CONSOLE:
