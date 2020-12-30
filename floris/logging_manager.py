@@ -50,7 +50,8 @@ def configure_console_log(enabled=True, level="INFO"):
     global CONSOLE_LEVEL
     LOG_TO_CONSOLE = enabled
     CONSOLE_LEVEL = level
-    _setup_logger()
+    if enabled:
+        _setup_logger()
 
 
 def configure_file_log(enabled=True, level="INFO"):
@@ -78,7 +79,8 @@ def configure_file_log(enabled=True, level="INFO"):
     global FILE_LEVEL
     LOG_TO_FILE = enabled
     FILE_LEVEL = level
-    _setup_logger()
+    if enabled:
+        _setup_logger()
 
 
 def _setup_logger():
