@@ -322,6 +322,17 @@ class FlorisInterface(LoggerBase):
                     0
                 ].hub_height
                 x2_bounds = (10, hub_height * 2)
+        if normal_vector == "y":  # Rules of thumb for cut plane plane
+            if x1_bounds is None:
+                coords = self.floris.farm.flow_field.turbine_map.coords
+                max_diameter = self.floris.farm.flow_field.max_diameter
+                x = [coord.x1 for coord in coords]
+                x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
+            if x2_bounds is None:
+                hub_height = self.floris.farm.flow_field.turbine_map.turbines[
+                    0
+                ].hub_height
+                x2_bounds = (10, hub_height * 2)
 
         # Set up the points to test
         x1_array = np.linspace(x1_bounds[0], x1_bounds[1], num=x1_resolution)
@@ -338,6 +349,8 @@ class FlorisInterface(LoggerBase):
             points = np.row_stack((x1_array, x2_array, x3_array))
         if normal_vector == "x":
             points = np.row_stack((x3_array, x1_array, x2_array))
+        if normal_vector == "y":
+            points = np.row_stack((x1_array, x3_array, x2_array))
 
         # Recalculate wake with these points
         flow_field.calculate_wake(points=points)
