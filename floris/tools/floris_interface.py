@@ -1507,18 +1507,11 @@ class FlorisInterface(LoggerBase):
 
     def set_rotor_diameter(self, rotor_diameter):
         """
-        Assign rotor diameter to turbines.
-
-        Args:
-            rotor_diameter (float): The rotor diameter(s) to be
-            applied to the turbines in meters.
+        This function has been replaced and no longer works correctly, assigning an error
         """
-        if isinstance(rotor_diameter, float) or isinstance(rotor_diameter, int):
-            rotor_diameter = [rotor_diameter] * len(self.floris.farm.turbines)
-        else:
-            rotor_diameter = rotor_diameter
-        for i, turbine in enumerate(self.floris.farm.turbines):
-            turbine.rotor_diameter = rotor_diameter[i]
+        raise Exception(
+            "function set_rotor_diameter has been removed.  Please use the function change_turbine going forward.  See examples/change_turbine for syntax"
+        )
 
     def show_model_parameters(
         self,
