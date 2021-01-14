@@ -20,9 +20,9 @@ from multiprocessing.pool import Pool
 
 import numpy as np
 import pandas as pd
+
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
 from .cut_plane import CutPlane, get_plane_from_flow_data
@@ -1610,6 +1610,7 @@ class FlorisInterface(LoggerBase):
         limit_dist=None,
         turbine_face_north=False,
         one_index_turbine=False,
+        black_and_white=False,
     ):
         """
         Visualize the layout of the wind farm in the floris instance.
@@ -1643,6 +1644,7 @@ class FlorisInterface(LoggerBase):
             limit_dist=limit_dist,
             turbine_face_north=turbine_face_north,
             one_index_turbine=one_index_turbine,
+            black_and_white=black_and_white,
         )
 
     def show_flow_field(self, ax=None):
