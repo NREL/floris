@@ -201,6 +201,119 @@ class VelocityDeflection(LoggerBase):
         else:
             return turbine.yaw_angle
 
+    def calculate_effective_tilt_angle(
+        self, x_locations, y_locations, z_locations, turbine, coord, flow_field
+    ):
+        """
+        This method determines the effective yaw angle to be used when
+        secondary steering is enabled. For more details on how the effective
+        yaw angle is calculated, see :cite:`bvd-King2019Controls`.
+
+        Args:
+            x_locations (np.array): Streamwise locations in wake.
+            y_locations (np.array): Spanwise locations in wake.
+            z_locations (np.array): Vertical locations in wake.
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
+            coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
+            flow_field (:py:class:`floris.simulation.flow_field.FlowField`):
+                Flow field object.
+
+        Raises:
+            ValueError: It appears that 'use_secondary_steering' is set
+                to True and 'calculate_VW_velocities' is set to False.
+                This configuration is not valid. Please set
+                'use_secondary_steering' to True if you wish to use
+                yaw-added recovery.
+
+        Returns:
+            float: The turbine yaw angle, including any effective yaw if
+            secondary steering is enabled.
+        """
+        if self.use_secondary_steering:
+            if not flow_field.wake.velocity_model.calculate_VW_velocities:
+                err_msg = (
+                    "It appears that 'use_secondary_steering' is set "
+                    + "to True and 'calculate_VW_velocities' is set to False. "
+                    + "This configuration is not valid. Please set "
+                    + "'use_secondary_steering' to True if you wish to use "
+                    + "yaw-added recovery."
+                )
+                self.logger.error(err_msg, stack_info=True)
+                raise ValueError(err_msg)
+            # turbine parameters
+            Ct = turbine.Ct
+            D = turbine.rotor_diameter
+            HH = turbine.hub_height
+            aI = turbine.aI
+            TSR = turbine.tsr
+            V = flow_field.v
+            Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
+
+            eps = self.eps_gain * D  # Use set value
+            idx = np.where(
+                (np.abs(x_locations - coord.x1) < 10)
+                & (np.abs(y_locations - coord.x2) < D / 2)
+                & (np.abs(z_locations - coord.x3) < D / 2)
+            )
+
+            yLocs = y_locations[idx] + 0.01 - coord.x2
+
+            # location of left vortex
+            zL = z_locations[idx] + 0.01 - HH
+            yL = y_locations[idx] + 0.01 - (D/2)
+            rL = yL ** 2 + zL ** 2
+
+            # location of right vortex
+            zR = z_locations[idx] + 0.01 - HH
+            yR = y_locations[idx] + 0.01 + (D/2)
+            rR = yR ** 2 + zR ** 2
+
+            # wake rotation vortex
+            zC = z_locations[idx] + 0.01 - (HH)
+            rC = yLocs ** 2 + zC ** 2
+
+            # find wake deflection from CRV
+            test_gamma = np.linspace(-45, 45, 91)
+            avg_V = np.mean(V[idx])
+            target_tilt_ix = None
+
+            # what yaw angle would have produced that same average spanwise velocity
+            tilt = test_gamma
+            minTilt = 100000.0
+            for i in range(len(tilt)):
+                Gamma_left = (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
+                Gamma_right = (
+                        -(np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
+                )
+                Veff = ((zL * Gamma_left) / (2 * np.pi * rL) * (1 - np.exp(-rL / (eps ** 2))) * eps ** 2) + \
+                       ((zR * Gamma_right) / (2 * np.pi * rR) * (1 - np.exp(-rR / (eps ** 2))) * eps ** 2)
+
+                tmp = np.abs(avg_V - np.mean(Veff))
+
+                if tmp < minTilt:
+                    target_tilt_ix = i
+                    minTilt = tmp
+
+
+            # tmp = avg_V - np.mean(Veff, axis=1)
+            # target_tilt_ix = np.argmin(np.abs(tmp))
+
+            if target_tilt_ix is not None:
+                tilt_effective = test_gamma[target_tilt_ix]
+            else:
+                err_msg = "No effective yaw angle is found. Set to 0."
+                self.logger.warning(err_msg, stack_info=True)
+                tilt_effective = 0.0
+
+            # print('Effective Tilt angle = ', tilt_effective, np.shape(idx))
+
+            return tilt_effective + turbine.tilt_angle
+
+        else:
+            return turbine.tilt_angle
+
     @property
     def use_secondary_steering(self):
         """

@@ -143,8 +143,11 @@ class Gauss(VelocityDeflection):
         yaw = -1 * self.calculate_effective_yaw_angle(
             x_locations, y_locations, z_locations, turbine, coord, flow_field
         )
+
+        tilt = -1 * self.calculate_effective_tilt_angle(
+            x_locations, y_locations, z_locations, turbine, coord, flow_field
+        )
         # opposite sign convention in this model
-        tilt = turbine.tilt_angle
         Ct = turbine.Ct
 
         # U_local = flow_field.wind_map.grid_wind_speed
@@ -164,7 +167,7 @@ class Gauss(VelocityDeflection):
         # length of near wake
         x0 = (
             D
-            * (cosd(yaw) * (1 + np.sqrt(1 - Ct * cosd(yaw))))
+            * (cosd(yaw) * cosd(tilt) * (1 + np.sqrt(1 - Ct * cosd(yaw) * cosd(tilt))))
             / (np.sqrt(2) * (4 * alpha * TI + 2 * beta * (1 - np.sqrt(1 - Ct))))
             + coord.x1
         )
@@ -179,11 +182,14 @@ class Gauss(VelocityDeflection):
 
         # initial Gaussian wake expansion
         sigma_z0 = D * 0.5 * np.sqrt(uR / (U_local + u0))
-        sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
+        sigma_y0 = sigma_z0 * cosd(yaw) * cosd(tilt) * cosd(veer)
 
         yR = y_locations - coord.x2
         xR = yR * tand(yaw) + coord.x1
 
+        # ===============================
+        # Horizontal Deflection
+        # ===============================
         # yaw parameters (skew angle and distance from centerline)
         theta_c0 = (
             self.dm
@@ -224,7 +230,51 @@ class Gauss(VelocityDeflection):
 
         deflection = delta_near_wake + delta_far_wake
 
-        return deflection
+        # ===============================
+        # Vertical Deflection
+        # ===============================
+
+        # tilt parameters (skew angle and distance from centerline)
+        theta_c0 = (
+                self.dm
+                * (0.3 * np.radians(tilt) / cosd(tilt))
+                * (1 - np.sqrt(1 - Ct * cosd(tilt)))
+        )  # skew angle in radians
+        delta0 = np.tan(theta_c0) * (x0 - coord.x1)  # initial vertical wake deflection;
+
+        # NOTE: use np.tan here since theta_c0 is radians
+        # vertical deflection in the near wake
+        delta_near_wake_z = ((x_locations - xR) / (x0 - xR)) * delta0 + (
+                ad + bd * (x_locations - coord.x1)
+        )
+        delta_near_wake_z[x_locations < xR] = 0.0
+        delta_near_wake_z[x_locations > x0] = 0.0
+
+        # vertical deflection in the far wake
+        sigma_y = ky * (x_locations - x0) + sigma_y0
+        sigma_z = kz * (x_locations - x0) + sigma_z0
+        sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
+        sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
+
+        ln_deltaNum = (1.6 + np.sqrt(M0)) * (
+                1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
+        )
+        ln_deltaDen = (1.6 - np.sqrt(M0)) * (
+                1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
+        )
+
+        delta_far_wake_z = (
+                delta0
+                + (theta_c0 * E0 / 5.2)
+                * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))
+                * np.log(ln_deltaNum / ln_deltaDen)
+                + (ad + bd * (x_locations - coord.x1))
+        )
+        delta_far_wake_z[x_locations <= x0] = 0.0
+
+        deflection_z = delta_near_wake_z + delta_far_wake_z
+
+        return deflection, deflection_z
 
     @property
     def ka(self):

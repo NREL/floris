@@ -71,7 +71,7 @@ class FlorisInterface(LoggerBase):
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
 
     def calculate_wake(
-        self, yaw_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False
+        self, yaw_angles=None, tilt_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False
     ):
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -92,6 +92,9 @@ class FlorisInterface(LoggerBase):
         """
         if yaw_angles is not None:
             self.floris.farm.set_yaw_angles(yaw_angles)
+
+        if tilt_angles is not None:
+            self.floris.farm.set_tilt_angles(tilt_angles)
 
         self.floris.farm.flow_field.calculate_wake(
             no_wake=no_wake,

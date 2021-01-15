@@ -165,6 +165,23 @@ class Farm:
         for yaw_angle, turbine in zip(yaw_angles, self.turbines):
             turbine.yaw_angle = yaw_angle
 
+    def set_tilt_angles(self, tilt_angles):
+        """
+        Sets the tilt angles for all turbines on the
+        :py:obj:`~.turbine.Turbine` objects directly.
+
+        Args:
+            tilt_angles (float or list( float )): A single value to set
+                all turbine tilt angles or a list of tilt angles corresponding
+                to individual turbine tilt angles. Tilt angles are expected
+                in degrees.
+        """
+        if isinstance(tilt_angles, float) or isinstance(tilt_angles, int):
+            yaw_angles = [tilt_angles] * len(self.turbines)
+
+        for tilt_angle, turbine in zip(tilt_angles, self.turbines):
+            turbine.tilt_angle = tilt_angle
+
     # Getters & Setters
 
     @property

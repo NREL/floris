@@ -246,7 +246,7 @@
             "eps_gain": 0.2,
             "ka": 0.38,
             "kb": 0.004,
-            "use_yaw_added_recovery": true
+            "use_yaw_added_recovery": false
           }
         }
       },

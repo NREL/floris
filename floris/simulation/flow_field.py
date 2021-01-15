@@ -247,7 +247,7 @@ class FlowField:
         self.w = self.w_initial.copy()
 
     def _compute_turbine_velocity_deficit(
-        self, x, y, z, turbine, coord, deflection, flow_field
+        self, x, y, z, turbine, coord, deflection, deflection_z, flow_field
     ):
         """Implement current wake velocity model.
 
@@ -262,7 +262,7 @@ class FlowField:
         """
         # velocity deficit calculation
         u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
-            x, y, z, turbine, coord, deflection, flow_field
+            x, y, z, turbine, coord, deflection, deflection_z, flow_field
         )
 
         # calculate spanwise and streamwise velocities if needed
@@ -628,7 +628,7 @@ class FlowField:
             )
 
             # get the wake deflection field
-            deflection = self._compute_turbine_wake_deflection(
+            deflection, deflection_z = self._compute_turbine_wake_deflection(
                 rotated_x, rotated_y, rotated_z, turbine, coord, self
             )
 
@@ -638,7 +638,7 @@ class FlowField:
                 turb_v_wake,
                 turb_w_wake,
             ) = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
+                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, deflection_z, self
             )
 
             ###########

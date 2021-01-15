@@ -85,7 +85,7 @@ class LegacyGauss(GaussianModel):
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.eps_gain = model_dictionary["eps_gain"]
-        self.gch_gain = 2.0
+        self.gch_gain = 1.0
 
     def function(
         self,
@@ -95,6 +95,7 @@ class LegacyGauss(GaussianModel):
         turbine,
         turbine_coord,
         deflection_field,
+        deflection_z,
         flow_field,
     ):
         """
@@ -184,8 +185,8 @@ class LegacyGauss(GaussianModel):
         c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
         r = (
             a * ((y_locations - turbine_coord.x2) - delta) ** 2
-            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH))
-            + c * ((z_locations - HH)) ** 2
+            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH - deflection_z))
+            + c * ((z_locations - HH - deflection_z)) ** 2
         )
         C = 1 - np.sqrt(
             np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0)
@@ -209,8 +210,8 @@ class LegacyGauss(GaussianModel):
         c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
         r = (
             a * (y_locations - turbine_coord.x2 - delta) ** 2
-            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH)
-            + c * (z_locations - HH) ** 2
+            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH - deflection_z)
+            + c * (z_locations - HH - deflection_z) ** 2
         )
         C = 1 - np.sqrt(
             np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0)
