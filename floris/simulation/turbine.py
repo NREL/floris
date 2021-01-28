@@ -664,7 +664,8 @@ class Turbine(LoggerBase):
 
         # Compute the yaw effective velocity
         pW = self.pP / 3.0  # Convert from pP to w
-        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
+        pV = self.pT / 3.0  # convert from pT to w
+        yaw_effective_velocity = self.average_velocity * (cosd(self.yaw_angle) ** pW) * (cosd(self.tilt_angle) ** pV)
 
         # Now compute the power
         return (

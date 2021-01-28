@@ -255,7 +255,7 @@ class VelocityDeflection(LoggerBase):
             idx = np.where(
                 (np.abs(x_locations - coord.x1) < 10)
                 & (np.abs(y_locations - coord.x2) < D / 2)
-                & (np.abs(z_locations - coord.x3) < D / 2)
+                & (np.abs(z_locations - coord.x3) == 0)
             )
 
             yLocs = y_locations[idx] + 0.01 - coord.x2
@@ -301,13 +301,11 @@ class VelocityDeflection(LoggerBase):
             # target_tilt_ix = np.argmin(np.abs(tmp))
 
             if target_tilt_ix is not None:
-                tilt_effective = test_gamma[target_tilt_ix]
+                tilt_effective = -test_gamma[target_tilt_ix]
             else:
                 err_msg = "No effective yaw angle is found. Set to 0."
                 self.logger.warning(err_msg, stack_info=True)
                 tilt_effective = 0.0
-
-            # print('Effective Tilt angle = ', tilt_effective, np.shape(idx))
 
             return tilt_effective + turbine.tilt_angle
 

@@ -56,7 +56,7 @@
       "hub_height": 90.0,
       "ngrid": 5,
       "pP": 1.88,
-      "pT": 1.88,
+      "pT": 2.2,
       "power_thrust_table": {
         "power": [
           0.0,
@@ -246,7 +246,7 @@
             "eps_gain": 0.2,
             "ka": 0.38,
             "kb": 0.004,
-            "use_yaw_added_recovery": false
+            "use_yaw_added_recovery": true
           }
         }
       },

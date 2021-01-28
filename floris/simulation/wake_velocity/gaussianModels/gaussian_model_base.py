@@ -84,6 +84,7 @@ class GaussianModel(VelocityDeficit):
 
             # convert to turbulence due to mixing
             TI_mixing = np.array(TI_total) - turbine.current_turbulence_intensity
+
         else:
             TI_mixing = 0.0
 

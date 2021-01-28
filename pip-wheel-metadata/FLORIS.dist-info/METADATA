@@ -26,13 +26,13 @@ Requires-Dist: seaborn (>=0.9)
 Requires-Dist: sklearn (>=0.0)
 Provides-Extra: develop
 Requires-Dist: pre-commit ; extra == 'develop'
-Requires-Dist: isort ; extra == 'develop'
 Requires-Dist: flake8 ; extra == 'develop'
+Requires-Dist: isort ; extra == 'develop'
 Requires-Dist: black ; extra == 'develop'
 Provides-Extra: docs
-Requires-Dist: sphinxcontrib-napoleon ; extra == 'docs'
 Requires-Dist: readthedocs-sphinx-ext ; extra == 'docs'
 Requires-Dist: Sphinx ; extra == 'docs'
+Requires-Dist: sphinxcontrib-napoleon ; extra == 'docs'
 Provides-Extra: wind_tool_kit
 Requires-Dist: h5pyd (>=0.3) ; extra == 'wind_tool_kit'
 
