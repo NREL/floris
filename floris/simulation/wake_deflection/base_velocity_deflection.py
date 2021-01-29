@@ -189,12 +189,16 @@ class VelocityDeflection(LoggerBase):
             tmp = avg_V - np.mean(Veff, axis=1)
             target_yaw_ix = np.argmin(np.abs(tmp))
 
-            if target_yaw_ix is not None:
+            if flow_field.yaw_eff==False:
+                return turbine.yaw_angle
+            elif target_yaw_ix is not None:
                 yaw_effective = test_gamma[target_yaw_ix]
             else:
                 err_msg = "No effective yaw angle is found. Set to 0."
                 self.logger.warning(err_msg, stack_info=True)
                 yaw_effective = 0.0
+
+            turbine.effective_yaw = yaw_effective
 
             return yaw_effective + turbine.yaw_angle
 
@@ -255,20 +259,24 @@ class VelocityDeflection(LoggerBase):
             idx = np.where(
                 (np.abs(x_locations - coord.x1) < 10)
                 & (np.abs(y_locations - coord.x2) < D / 2)
-                & (np.abs(z_locations - coord.x3) == 0)
+                & (np.abs(z_locations - coord.x3) < D/2)
             )
 
             yLocs = y_locations[idx] + 0.01 - coord.x2
 
             # location of left vortex
+            yL = y_locations[idx] + 0.01 - (coord.x2) - (D / 2)
             zL = z_locations[idx] + 0.01 - HH
-            yL = y_locations[idx] + 0.01 - (D/2)
+            zLG = z_locations[idx] + 0.01 + HH
             rL = yL ** 2 + zL ** 2
+            rLG = yL ** 2 + zLG ** 2
 
             # location of right vortex
+            yR = y_locations[idx] + 0.01 - (coord.x2) + (D / 2)
             zR = z_locations[idx] + 0.01 - HH
-            yR = y_locations[idx] + 0.01 + (D/2)
+            zRG = z_locations[idx] + 0.01 + HH
             rR = yR ** 2 + zR ** 2
+            rRG = yR ** 2 + zRG ** 2
 
             # wake rotation vortex
             zC = z_locations[idx] + 0.01 - (HH)
@@ -279,33 +287,38 @@ class VelocityDeflection(LoggerBase):
             avg_V = np.mean(V[idx])
             target_tilt_ix = None
 
-            # what yaw angle would have produced that same average spanwise velocity
+            # what tilt angle would have produced that same average spanwise velocity
             tilt = test_gamma
             minTilt = 100000.0
             for i in range(len(tilt)):
+
                 Gamma_left = (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
                 Gamma_right = (
                         -(np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
                 )
-                Veff = ((zL * Gamma_left) / (2 * np.pi * rL) * (1 - np.exp(-rL / (eps ** 2))) * eps ** 2) + \
-                       ((zR * Gamma_right) / (2 * np.pi * rR) * (1 - np.exp(-rR / (eps ** 2))) * eps ** 2)
+
+                Veff = (zL * Gamma_left) / (2 * np.pi * rL) * (1 - np.exp(-rL / (eps ** 2)))  + \
+                       (zR * Gamma_right) / (2 * np.pi * rR) * (1 - np.exp(-rR / (eps ** 2))) + \
+                       (zLG * -Gamma_left) / (2 * np.pi * rLG) * (1 - np.exp(-rLG / (eps ** 2))) + \
+                       (zRG * -Gamma_right) / (2 * np.pi * rRG) * (1 - np.exp(-rRG / (eps ** 2)))
 
                 tmp = np.abs(avg_V - np.mean(Veff))
+
+                # print(tilt[i],tmp,avg_V, np.mean(Veff))
 
                 if tmp < minTilt:
                     target_tilt_ix = i
                     minTilt = tmp
 
-
-            # tmp = avg_V - np.mean(Veff, axis=1)
-            # target_tilt_ix = np.argmin(np.abs(tmp))
-
-            if target_tilt_ix is not None:
-                tilt_effective = -test_gamma[target_tilt_ix]
+            if flow_field.tilt_eff==False:
+                return turbine.tilt_angle
+            elif target_tilt_ix is not None:
+                tilt_effective = test_gamma[target_tilt_ix]
             else:
                 err_msg = "No effective yaw angle is found. Set to 0."
                 self.logger.warning(err_msg, stack_info=True)
                 tilt_effective = 0.0
+
 
             return tilt_effective + turbine.tilt_angle
 

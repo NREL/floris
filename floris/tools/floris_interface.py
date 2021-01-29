@@ -93,8 +93,21 @@ class FlorisInterface(LoggerBase):
         if yaw_angles is not None:
             self.floris.farm.set_yaw_angles(yaw_angles)
 
+        yaw = [turbine.yaw_angle for turbine in self.floris.farm.turbines]
+        if np.max(np.abs(yaw)) > 0.0:
+            self.floris.farm.flow_field.yaw_eff = True
+        else:
+            self.floris.farm.flow_field.yaw_eff = False
+
         if tilt_angles is not None:
             self.floris.farm.set_tilt_angles(tilt_angles)
+
+        tilt = [turbine.tilt_angle for turbine in self.floris.farm.turbines]
+        if np.max(np.abs(tilt)) > 0.0:
+            self.floris.farm.flow_field.tilt_eff = True
+        else:
+            self.floris.farm.flow_field.tilt_eff = False
+
 
         self.floris.farm.flow_field.calculate_wake(
             no_wake=no_wake,

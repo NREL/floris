@@ -39,7 +39,7 @@ wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 
 # change the tilt angle
 fi.reinitialize_flow_field()
-fi.calculate_wake(yaw_angles=0.0, tilt_angles=[-10.0, 0.0, 0.0])
+fi.calculate_wake(yaw_angles=[0.0, 0.0, 0.0], tilt_angles=[-25.0, 0.0, 0.0])
 power_tilt = fi.get_farm_power()
 
 print('Power difference = ', 100 * (power_tilt - power_init) / power_init)

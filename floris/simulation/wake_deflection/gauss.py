@@ -140,6 +140,7 @@ class Gauss(VelocityDeflection):
 
         # turbine parameters
         D = turbine.rotor_diameter
+
         yaw = -1 * self.calculate_effective_yaw_angle(
             x_locations, y_locations, z_locations, turbine, coord, flow_field
         )
@@ -147,6 +148,7 @@ class Gauss(VelocityDeflection):
         tilt = -1 * self.calculate_effective_tilt_angle(
             x_locations, y_locations, z_locations, turbine, coord, flow_field
         )
+
         # opposite sign convention in this model
         Ct = turbine.Ct
 
