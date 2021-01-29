@@ -259,7 +259,7 @@ class VelocityDeflection(LoggerBase):
             idx = np.where(
                 (np.abs(x_locations - coord.x1) < 10)
                 & (np.abs(y_locations - coord.x2) < D / 2)
-                & (np.abs(z_locations - coord.x3) < D/2)
+                & (np.abs(z_locations - coord.x3) == 0.0)
             )
 
             yLocs = y_locations[idx] + 0.01 - coord.x2
@@ -319,7 +319,7 @@ class VelocityDeflection(LoggerBase):
                 self.logger.warning(err_msg, stack_info=True)
                 tilt_effective = 0.0
 
-
+            print('Tilt = ', tilt_effective)
             return tilt_effective + turbine.tilt_angle
 
         else:

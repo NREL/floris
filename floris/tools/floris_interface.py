@@ -90,15 +90,7 @@ class FlorisInterface(LoggerBase):
                 track of the number of upstream wakes a turbine is
                 experiencing. Defaults to *False*.
         """
-        if yaw_angles is not None:
-            self.floris.farm.set_yaw_angles(yaw_angles)
-
-        yaw = [turbine.yaw_angle for turbine in self.floris.farm.turbines]
-        if np.max(np.abs(yaw)) > 0.0:
-            self.floris.farm.flow_field.yaw_eff = True
-        else:
-            self.floris.farm.flow_field.yaw_eff = False
-
+        # set tilt angles
         if tilt_angles is not None:
             self.floris.farm.set_tilt_angles(tilt_angles)
 
@@ -107,6 +99,18 @@ class FlorisInterface(LoggerBase):
             self.floris.farm.flow_field.tilt_eff = True
         else:
             self.floris.farm.flow_field.tilt_eff = False
+
+        # set yaw angles
+        if yaw_angles is not None:
+            self.floris.farm.set_yaw_angles(yaw_angles)
+
+        yaw = [turbine.yaw_angle for turbine in self.floris.farm.turbines]
+        if np.max(np.abs(yaw)) > 0.0:
+            self.floris.farm.flow_field.yaw_eff = True
+            # if yaw is true, tilt is False
+            self.floris.farm.flow_field.tilt_eff = False
+        else:
+            self.floris.farm.flow_field.yaw_eff = False
 
 
         self.floris.farm.flow_field.calculate_wake(
