@@ -23,6 +23,7 @@ from .wake_combination.sosfs import SOSFS
 from .wake_turbulence.direct import Direct as DirectTurbulence
 from .wake_deflection.jimenez import Jimenez
 from .wake_velocity.multizone import MultiZone
+from .wake_velocity.turbopark import TurbOPark
 from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
 from .wake_turbulence.crespo_hernandez import (
     CrespoHernandez as CrespoHernandezTurbulence,
@@ -74,6 +75,7 @@ class Wake:
 
         self._velocity_models = {
             "jensen": Jensen,
+            "turbopark": TurbOPark,
             "multizone": MultiZone,
             "gauss": GaussDeficit,
             "gauss_legacy": LegacyGaussDeficit,
