@@ -96,7 +96,7 @@ class TurbOPark(VelocityDeficit):
         # Quick define some rough parameters using the paper
 
         # Fixed parameters that should be read in
-        I0 = 0.09  # Just assume 9% for now
+        I0 = 0.06  # Just assume 6% for now
         U0 = 8.0  # Assuming free stream, to be lazy
 
         # These will later need to be parameters with get/set
