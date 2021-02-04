@@ -1,1 +1,1 @@
-from . import scipy, pyoptsparse
+from . import other, scipy, pyoptsparse
