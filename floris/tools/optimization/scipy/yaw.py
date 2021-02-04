@@ -191,7 +191,7 @@ class YawOptimization(Optimization):
 
     # Public methods
 
-    def optimize(self):
+    def optimize(self, verbose=True):
         """
         This method solves for the optimum turbine yaw angles for power
         production given a fixed set of atmospheric conditions
@@ -200,14 +200,15 @@ class YawOptimization(Optimization):
         Returns:
             np.array: Optimal yaw angles for each turbine (deg).
         """
-        print("=====================================================")
-        print("Optimizing wake redirection control...")
-        print("Number of parameters to optimize = ", len(self.x0))
-        print("=====================================================")
+        if verbose:
+            print("=====================================================")
+            print("Optimizing wake redirection control...")
+            print("Number of parameters to optimize = ", len(self.x0))
+            print("=====================================================")
 
         opt_yaw_angles = self._optimize()
 
-        if np.sum(opt_yaw_angles) == 0:
+        if verbose and np.sum(opt_yaw_angles) == 0:
             print(
                 "No change in controls suggested for this inflow \
                    condition..."
