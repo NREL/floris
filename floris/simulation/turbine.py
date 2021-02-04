@@ -580,8 +580,8 @@ class Turbine(LoggerBase):
 
             >>> avg_vel = floris.farm.turbines[0].average_velocity()
         """
-        # remove all invalid numbers from interpolation
-        data = self.velocities[np.where(~np.isnan(self.velocities))]
+        # Remove all invalid numbers from interpolation
+        data = np.array(self.velocities)[~np.isnan(self.velocities)]
         avg_vel = np.cbrt(np.mean(data ** 3))
         if np.isnan(avg_vel):
             avg_vel = 0
