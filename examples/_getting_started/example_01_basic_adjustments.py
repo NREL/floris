@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -36,6 +36,7 @@ for example when optimizing yaw angles
 
 # Initialize the FLORIS interface fi
 fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+
 
 # Declare a short-cut visualization function for brevity in this example
 def plot_slice_shortcut(fi, ax, title):

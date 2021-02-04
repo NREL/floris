@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -12,9 +12,9 @@
 
 # See https://floris.readthedocs.io for documentation
 
-## TODO
-## 1: reorganize into private and public methods
-## 2: Include smoothing?
+# TODO
+# 1: reorganize into private and public methods
+# 2: Include smoothing?
 
 import os
 import pickle
@@ -24,9 +24,9 @@ import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from pyproj import Proj
 
 import floris.utilities as geo
+from pyproj import Proj
 
 
 class WindRose:

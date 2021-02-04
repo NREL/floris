@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import floris.tools as wfct
 
 
-## Grab certain hi-TI five simulations from saved SOWFA data set
+# Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle("../sowfa_data_set/sowfa_data_set.p")
 
 # Limit to aligned
