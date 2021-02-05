@@ -22,6 +22,7 @@
 import io
 import os
 import sys
+from pathlib import Path
 from shutil import rmtree
 
 from setuptools import Command, setup, find_packages
@@ -34,7 +35,6 @@ URL = "https://github.com/NREL/FLORIS"
 EMAIL = "rafael.mudafort@nrel.gov"
 AUTHOR = "NREL National Wind Technology Center"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "2.2.2"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -73,18 +73,14 @@ try:
 except FileNotFoundError:
     long_description = DESCRIPTION
 
-# Load the package's __version__.py module as a dictionary.
-about = {}
-if not VERSION:
-    project_slug = NAME.lower().replace("-", "_").replace(" ", "_")
-    with open(os.path.join(here, project_slug, "__version__.py")) as f:
-        exec(f.read(), about)
-else:
-    about["__version__"] = VERSION
+# Load the package's VERSION module
+ROOT = Path(__file__).parent
+with open(ROOT / "VERSION") as version_file:
+    VERSION = version_file.read().strip()
 
 setup(
     name=NAME,
-    version=about["__version__"],
+    version=VERSION,
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",

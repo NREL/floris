@@ -212,6 +212,7 @@ class Gauss(VelocityDeflection):
         ln_deltaDen = (1.6 - np.sqrt(M0)) * (
             1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
         )
+
         delta_far_wake = (
             delta0
             + (theta_c0 * E0 / 5.2)

@@ -159,7 +159,9 @@ def visualize_cut_plane(
     Zm = np.ma.masked_where(np.isnan(u_mesh), u_mesh)
 
     # Plot the cut-through
-    im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed)
+    im = ax.pcolormesh(
+        x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed, shading="nearest"
+    )
 
     # Add line contour
     line_contour_cut_plane(
