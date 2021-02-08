@@ -39,8 +39,8 @@ class LegacyGauss(GaussianModel):
         "kb": 0.004,
         "alpha": 0.58,
         "beta": 0.077,
-        "calculate_VW_velocities": False,
-        "use_yaw_added_recovery": False,
+        "calculate_VW_velocities": True,
+        "use_yaw_added_recovery": True,
         "eps_gain": 0.2,
     }
 
@@ -185,7 +185,10 @@ class LegacyGauss(GaussianModel):
         c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
         r = (
             a * ((y_locations - turbine_coord.x2) - delta) ** 2
-            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH - deflection_z))
+            - 2
+            * b
+            * ((y_locations - turbine_coord.x2) - delta)
+            * ((z_locations - HH - deflection_z))
             + c * ((z_locations - HH - deflection_z)) ** 2
         )
         C = 1 - np.sqrt(
@@ -210,7 +213,10 @@ class LegacyGauss(GaussianModel):
         c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
         r = (
             a * (y_locations - turbine_coord.x2 - delta) ** 2
-            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH - deflection_z)
+            - 2
+            * b
+            * (y_locations - turbine_coord.x2 - delta)
+            * (z_locations - HH - deflection_z)
             + c * (z_locations - HH - deflection_z) ** 2
         )
         C = 1 - np.sqrt(
