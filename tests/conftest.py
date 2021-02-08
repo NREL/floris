@@ -217,4 +217,14 @@ class SampleInputs:
             "farm": self.farm,
             "turbine": self.turbine,
             "wake": self.wake,
+            "logging": {
+                "console": {
+                    "enable": False,
+                    "level": "WARNING"
+                },
+                "file": {
+                    "enable": False,
+                    "level": "WARNING"
+                }
+            }
         }
