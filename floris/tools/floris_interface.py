@@ -119,7 +119,10 @@ class FlorisInterface(LoggerBase):
 
         if (np.max(np.abs(yaw)) > 0.0) and (np.max(np.abs(tilt)) > 0.0):
             raise Exception(
-                "Non-zero yaw and tilt angles detected. Currently the model does not allow for the computation of combined yaw and tilt effects. Please limit your computation to one or the other while we work to implement this capability."
+                "Non-zero yaw and tilt angles detected. Currently the model does "
+                + "not allow for the computation of combined yaw and tilt effects. "
+                + "Please limit your computation to one or the other while we work "
+                + "to implement this capability."
             )
 
         self.floris.farm.flow_field.calculate_wake(
