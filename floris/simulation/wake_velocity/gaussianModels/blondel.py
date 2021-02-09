@@ -108,7 +108,8 @@ class Blondel(GaussianModel):
         z_locations,
         turbine,
         turbine_coord,
-        deflection_field,
+        deflection_y,
+        deflection_z,
         flow_field,
     ):
         """
@@ -131,8 +132,11 @@ class Blondel(GaussianModel):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the
+            deflection_y (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            deflection_z (np.array): An array of floats that contains the
+                amount of wake deflection in meters in the z direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
                 containing the flow field information for the wind farm.
@@ -159,9 +163,6 @@ class Blondel(GaussianModel):
         Ct = turbine.Ct
         U_local = flow_field.u_initial
 
-        # Wake deflection
-        delta = deflection_field
-
         # Calculate mask values to mask upstream wake
         yR = y_locations - turbine_coord.x2
         xR = yR * tand(yaw) + turbine_coord.x1
@@ -170,7 +171,8 @@ class Blondel(GaussianModel):
         x_tilde = (x_locations - turbine_coord.x1) / D
         r_tilde = (
             np.sqrt(
-                (y_locations - turbine_coord.x2 - delta) ** 2 + (z_locations - HH) ** 2,
+                (y_locations - turbine_coord.x2 - deflection_y) ** 2
+                + (z_locations - HH) ** 2,
                 dtype=np.float128,
             )
             / D

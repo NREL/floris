@@ -79,6 +79,7 @@ class Jimenez(VelocityDeflection):
 
         Returns:
             deflection (np.array): Deflected wake centerline.
+            np.array: Zeros the same size as the flow field grid points.
         """
 
         # angle of deflection
@@ -107,7 +108,7 @@ class Jimenez(VelocityDeflection):
             tmp = np.max(deflection[x_locations == x[i]])
             deflection[x_locations == x[i]] = tmp
 
-        return deflection
+        return deflection, np.zeros(np.shape(deflection))
 
     @property
     def kd(self):

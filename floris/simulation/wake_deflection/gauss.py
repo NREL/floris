@@ -119,7 +119,8 @@ class Gauss(VelocityDeflection):
                 containing the flow field information for the wind farm.
 
         Returns:
-            np.array: Deflection field for the wake.
+            np.array: Deflection field for the wake in the y-direction.
+            np.array: Deflection field for the wake in the z-direction.
         """
         # ==============================================================
         # free-stream velocity (m/s)
@@ -238,16 +239,16 @@ class Gauss(VelocityDeflection):
 
         # tilt parameters (skew angle and distance from centerline)
         theta_c0 = (
-                self.dm
-                * (0.3 * np.radians(tilt) / cosd(tilt))
-                * (1 - np.sqrt(1 - Ct * cosd(tilt)))
+            self.dm
+            * (0.3 * np.radians(tilt) / cosd(tilt))
+            * (1 - np.sqrt(1 - Ct * cosd(tilt)))
         )  # skew angle in radians
         delta0 = np.tan(theta_c0) * (x0 - coord.x1)  # initial vertical wake deflection;
 
         # NOTE: use np.tan here since theta_c0 is radians
         # vertical deflection in the near wake
         delta_near_wake_z = ((x_locations - xR) / (x0 - xR)) * delta0 + (
-                ad + bd * (x_locations - coord.x1)
+            ad + bd * (x_locations - coord.x1)
         )
         delta_near_wake_z[x_locations < xR] = 0.0
         delta_near_wake_z[x_locations > x0] = 0.0
@@ -259,18 +260,18 @@ class Gauss(VelocityDeflection):
         sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         ln_deltaNum = (1.6 + np.sqrt(M0)) * (
-                1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
         )
         ln_deltaDen = (1.6 - np.sqrt(M0)) * (
-                1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
         )
 
         delta_far_wake_z = (
-                delta0
-                + (theta_c0 * E0 / 5.2)
-                * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))
-                * np.log(ln_deltaNum / ln_deltaDen)
-                + (ad + bd * (x_locations - coord.x1))
+            delta0
+            + (theta_c0 * E0 / 5.2)
+            * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))
+            * np.log(ln_deltaNum / ln_deltaDen)
+            + (ad + bd * (x_locations - coord.x1))
         )
         delta_far_wake_z[x_locations <= x0] = 0.0
 

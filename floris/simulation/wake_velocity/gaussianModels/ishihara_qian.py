@@ -102,7 +102,8 @@ class IshiharaQian(GaussianModel):
         z_locations,
         turbine,
         turbine_coord,
-        deflection_field,
+        deflection_y,
+        deflection_z,
         flow_field,
     ):
         """
@@ -127,8 +128,11 @@ class IshiharaQian(GaussianModel):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the
+            deflection_y (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            deflection_z (np.array): An array of floats that contains the
+                amount of wake deflection in meters in the z direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
                 containing the flow field information for the wind farm.
