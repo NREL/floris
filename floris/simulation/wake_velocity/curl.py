@@ -131,7 +131,7 @@ class Curl(VelocityDeficit):
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
             deflection_y (np.array): An array of floats that contains the
-                amount of wake deflection in meters in the z direction at each
+                amount of wake deflection in meters in the y direction at each
                 grid point of the flow field.
             deflection_z (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the z direction at each

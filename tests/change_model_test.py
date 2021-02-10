@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -31,7 +31,15 @@ def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
     floris.farm.flow_field.calculate_wake()
     baseline = []
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        baseline.append([turbine.Cp, turbine.Ct, turbine.power, turbine.aI, turbine.average_velocity])
+        baseline.append(
+            [
+                turbine.Cp,
+                turbine.Ct,
+                turbine.power,
+                turbine.aI,
+                turbine.average_velocity,
+            ]
+        )
 
     # Change the model to Curl, rerun calculate_wake, and compare to Curl
     floris.farm.set_wake_model("curl")

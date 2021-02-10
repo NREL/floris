@@ -177,7 +177,7 @@ class Farm:
                 in degrees.
         """
         if isinstance(tilt_angles, float) or isinstance(tilt_angles, int):
-            yaw_angles = [tilt_angles] * len(self.turbines)
+            tilt_angles = [tilt_angles] * len(self.turbines)
 
         for tilt_angle, turbine in zip(tilt_angles, self.turbines):
             turbine.tilt_angle = tilt_angle

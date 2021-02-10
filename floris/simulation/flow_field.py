@@ -259,7 +259,7 @@ class FlowField:
         self.w = self.w_initial.copy()
 
     def _compute_turbine_velocity_deficit(
-        self, x, y, z, turbine, coord, deflection, deflection_z, flow_field
+        self, x, y, z, turbine, coord, deflection_y, deflection_z, flow_field
     ):
         """Implement current wake velocity model.
 
@@ -269,12 +269,13 @@ class FlowField:
             z ([type]): [description]
             turbine ([type]): [description]
             coord ([type]): [description]
-            deflection ([type]): [description]
+            deflection_y ([type]): [description]
+            deflection_z ([type]): [description]
             flow_field ([type]): [description]
         """
         # velocity deficit calculation
         u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
-            x, y, z, turbine, coord, deflection, deflection_z, flow_field
+            x, y, z, turbine, coord, deflection_y, deflection_z, flow_field
         )
 
         # calculate spanwise and streamwise velocities if needed
@@ -595,7 +596,7 @@ class FlowField:
         # sort the turbine map
         sorted_map = rotated_map.sorted_in_x_as_list()
 
-        # calculate the velocity deficit and wake deflection on the mesh
+        # initialize the stream-wise velocity deficit to zero
         u_wake = np.zeros(np.shape(self.u))
 
         # Empty the stored variables of v and w at start, these will be updated
@@ -639,8 +640,8 @@ class FlowField:
                 u_wake, coord, self, rotated_x, rotated_y, rotated_z
             )
 
-            # get the wake deflection field
-            deflection, deflection_z = self._compute_turbine_wake_deflection(
+            # get the wake deflection fields
+            deflection_y, deflection_z = self._compute_turbine_wake_deflection(
                 rotated_x, rotated_y, rotated_z, turbine, coord, self
             )
 
@@ -655,7 +656,7 @@ class FlowField:
                 rotated_z,
                 turbine,
                 coord,
-                deflection,
+                deflection_y,
                 deflection_z,
                 self,
             )
