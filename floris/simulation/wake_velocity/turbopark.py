@@ -81,7 +81,7 @@ class TurbOPark(VelocityDeficit):
             deflection_field (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
                 grid point of the flow field.
-            flow_field (:py:class:`floris.simulation.flow_field`): Object
+            flow_"Updatefield (:py:class:`floris.simulation.flow_field`): Object
                 containing the flow field information for the wind farm.
 
         Returns:
