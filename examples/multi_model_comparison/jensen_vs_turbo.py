@@ -18,20 +18,18 @@
 # TO USE THIS FROM COMMAND TYPE:
 #    streamlit run interactive_visual.py
 
-import matplotlib.pyplot as plt
-
-
-import floris.tools as wfct
 import numpy as np
 
+import floris.tools as wfct
+import matplotlib.pyplot as plt
 
 
 # Fixed parameters
 minSpeed = 4
 maxSpeed = 8.0
-D = 126.
+D = 126.0
 ws = 8.0
-yaw_1=0.0
+yaw_1 = 0.0
 
 
 # Initialize the FLORIS models
@@ -45,8 +43,8 @@ fi_turbopark = wfct.floris_interface.FlorisInterface("floris_models/turbopark.js
 # color_list = ['b','r','g']
 
 fi_list = [fi_jensen, fi_turbopark]
-label_list = ['Jensen','TurbOPark']
-color_list = ['b','r']
+label_list = ["Jensen", "TurbOPark"]
+color_list = ["b", "r"]
 
 # Other parameters
 num_models = len(fi_list)
@@ -59,9 +57,9 @@ x_loc_1 = 7
 sweep_loc = x_loc_1 * D
 
 # Calibrate models to single wake
-fig_cut, axarr_cut = plt.subplots(2,1)
-fig_rat, ax_rat = plt.subplots(1,1)
-fig_bound, ax_bound = plt.subplots(1,1)
+fig_cut, axarr_cut = plt.subplots(2, 1)
+fig_rat, ax_rat = plt.subplots(1, 1)
+fig_bound, ax_bound = plt.subplots(1, 1)
 
 for i in range(num_models):
 
@@ -73,7 +71,8 @@ for i in range(num_models):
     # Configure model
     fi.reinitialize_flow_field(
         # wind_speed=ws, layout_array=[[0], [0]]
-        wind_speed=ws, layout_array=[[0,D*60,D*60,D*60], [0,0,5*D,-5*D]]
+        wind_speed=ws,
+        layout_array=[[0, D * 60, D * 60, D * 60], [0, 0, 5 * D, -5 * D]],
     )
     fi.calculate_wake(yaw_angles=[yaw_1])
 
@@ -84,19 +83,19 @@ for i in range(num_models):
         hor_plane, ax=ax, minSpeed=minSpeed, maxSpeed=maxSpeed
     )
     ax.set_title(label)
-    ax.axvline(sweep_loc,color='w',ls='--')
+    ax.axvline(sweep_loc, color="w", ls="--")
 
     # Show the boundaries
     ax = ax_bound
     df = hor_plane.df.copy()
     df = df[df.u < df.u.max()]
-    df = df.groupby('x1').max().reset_index()
-    ax.plot(df.x1/D, df.x2/D, color=color, label=label)
-    
+    df = df.groupby("x1").max().reset_index()
+    ax.plot(df.x1 / D, df.x2 / D, color=color, label=label)
+
     df = hor_plane.df.copy()
     df = df[df.u < df.u.max()]
-    df = df.groupby('x1').min().reset_index()
-    ax.plot(df.x1/D, df.x2/D, color=color, label='_nolegend_')
+    df = df.groupby("x1").min().reset_index()
+    ax.plot(df.x1 / D, df.x2 / D, color=color, label="_nolegend_")
     ax.legend()
     ax.grid(True)
 
@@ -106,25 +105,16 @@ for i in range(num_models):
 
     for y_idx, y_loc in enumerate(sweep_locations):
 
-        fi.reinitialize_flow_field(
-            layout_array=(
-                [
-                    0,
-                    sweep_loc
-                ],
-                [0, y_loc * D],
-            )
-        )
-        fi.calculate_wake(yaw_angles=[yaw_1,0])
+        fi.reinitialize_flow_field(layout_array=([0, sweep_loc], [0, y_loc * D],))
+        fi.calculate_wake(yaw_angles=[yaw_1, 0])
         power_out[y_idx] = fi.get_turbine_power()[1] / fi.get_turbine_power()[0]
 
-
-    ax_rat.plot(sweep_locations, power_out, color=color,label=label)
+    ax_rat.plot(sweep_locations, power_out, color=color, label=label)
     ax_rat.legend()
     ax_rat.grid(True)
     ax_rat.set_title("Normalized Power at %.1f D downstream" % x_loc_1)
-    ax_rat.set_ylabel('Normalized Power (-)')
-    ax_rat.set_xlabel('Cross-Stream Location (D)')
+    ax_rat.set_ylabel("Normalized Power (-)")
+    ax_rat.set_xlabel("Cross-Stream Location (D)")
 
 
 ########### SINGLE WAKE CASE LONG
@@ -134,7 +124,7 @@ y_loc_1 = 0
 sweep_loc = y_loc_1 * D
 
 # Calibrate models to single wake
-fig_rat, ax_rat = plt.subplots(1,1)
+fig_rat, ax_rat = plt.subplots(1, 1)
 for i in range(num_models):
 
     # Grab the model info
@@ -143,9 +133,7 @@ for i in range(num_models):
     color = color_list[i]
 
     # Configure model
-    fi.reinitialize_flow_field(
-        wind_speed=ws, layout_array=[[0], [0]]
-    )
+    fi.reinitialize_flow_field(wind_speed=ws, layout_array=[[0], [0]])
     fi.calculate_wake(yaw_angles=[yaw_1])
 
     # Perform the sweep (cross wind)
@@ -154,22 +142,18 @@ for i in range(num_models):
 
     for x_idx, x_loc in enumerate(sweep_locations):
 
-        fi.reinitialize_flow_field(
-            layout_array=[[0,x_loc * D],
-                [0, 0]]
-        )
+        fi.reinitialize_flow_field(layout_array=[[0, x_loc * D], [0, 0]])
 
-        fi.calculate_wake(yaw_angles=[0,0])
+        fi.calculate_wake(yaw_angles=[0, 0])
 
         power_out[x_idx] = fi.get_turbine_power()[1] / fi.get_turbine_power()[0]
 
-
-    ax_rat.plot(sweep_locations, power_out, color=color,label=label)
+    ax_rat.plot(sweep_locations, power_out, color=color, label=label)
     ax_rat.legend()
     ax_rat.grid(True)
     # ax_rat.set_title("Normalized Power at %.1f D downstream" % x_loc_1)
-    ax_rat.set_ylabel('Normalized Power (-)')
-    ax_rat.set_xlabel('Downstream Location (D)')
+    ax_rat.set_ylabel("Normalized Power (-)")
+    ax_rat.set_xlabel("Downstream Location (D)")
 
 
 plt.show()
