@@ -68,5 +68,6 @@ class Curl(VelocityDeflection):
 
         Returns:
             np.array: Zeros the same size as the flow field grid points.
+            np.array: Zeros the same size as the flow field grid points.
         """
-        return np.zeros(np.shape(x_locations))
+        return np.zeros(np.shape(x_locations)), np.zeros(np.shape(x_locations))

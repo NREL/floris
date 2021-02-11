@@ -104,7 +104,8 @@ class Gauss(GaussianModel):
         z_locations,
         turbine,
         turbine_coord,
-        deflection_field,
+        deflection_y,
+        deflection_z,
         flow_field,
     ):
         """
@@ -127,8 +128,11 @@ class Gauss(GaussianModel):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the
+            deflection_y (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            deflection_z (np.array): An array of floats that contains the
+                amount of wake deflection in meters in the z direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
                 containing the flow field information for the wind farm.
@@ -151,9 +155,7 @@ class Gauss(GaussianModel):
         Ct = turbine.Ct
         U_local = flow_field.u_initial
 
-        # wake deflection
-        delta = deflection_field
-
+        # initial wake values
         xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
 
         # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
@@ -164,7 +166,8 @@ class Gauss(GaussianModel):
 
         r_tilde = (
             np.sqrt(
-                (y_locations - turbine_coord.x2 - delta) ** 2 + (z_locations - HH) ** 2,
+                (y_locations - turbine_coord.x2 - deflection_y) ** 2
+                + (z_locations - HH) ** 2,
                 dtype=np.float128,
             )
             / D

@@ -68,6 +68,10 @@ class FlowField:
         # TODO consider remapping wake_list with reinitialize flow field
         self.wake_list = {turbine: None for _, turbine in self.turbine_map.items}
 
+        # Initialize values for yaw and tilt effective angle flags
+        self.tilt_eff = False
+        self.yaw_eff = True
+
     def _update_grid(self, x_grid_i, y_grid_i, wind_direction_i, x1, x2):
         xoffset = x_grid_i - x1
         yoffset = y_grid_i.T - x2
@@ -100,8 +104,16 @@ class FlowField:
             pt = turbine.rloc * turbine.rotor_radius
 
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
-            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
+            yt = np.linspace(
+                x2 - pt,
+                x2 + pt,
+                ngrid,
+            )
+            zt = np.linspace(
+                x3 - pt,
+                x3 + pt,
+                ngrid,
+            )
 
             x_grid[i] = xt[i]
             y_grid[i] = yt
@@ -247,7 +259,7 @@ class FlowField:
         self.w = self.w_initial.copy()
 
     def _compute_turbine_velocity_deficit(
-        self, x, y, z, turbine, coord, deflection, deflection_z, flow_field
+        self, x, y, z, turbine, coord, deflection_y, deflection_z, flow_field
     ):
         """Implement current wake velocity model.
 
@@ -257,12 +269,13 @@ class FlowField:
             z ([type]): [description]
             turbine ([type]): [description]
             coord ([type]): [description]
-            deflection ([type]): [description]
+            deflection_y ([type]): [description]
+            deflection_z ([type]): [description]
             flow_field ([type]): [description]
         """
         # velocity deficit calculation
         u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
-            x, y, z, turbine, coord, deflection, deflection_z, flow_field
+            x, y, z, turbine, coord, deflection_y, deflection_z, flow_field
         )
 
         # calculate spanwise and streamwise velocities if needed
@@ -523,9 +536,9 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
     def calculate_wake(self, no_wake=False, points=None, track_n_upstream_wakes=False):
@@ -558,9 +571,9 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of
@@ -583,7 +596,7 @@ class FlowField:
         # sort the turbine map
         sorted_map = rotated_map.sorted_in_x_as_list()
 
-        # calculate the velocity deficit and wake deflection on the mesh
+        # initialize the stream-wise velocity deficit to zero
         u_wake = np.zeros(np.shape(self.u))
 
         # Empty the stored variables of v and w at start, these will be updated
@@ -627,8 +640,8 @@ class FlowField:
                 u_wake, coord, self, rotated_x, rotated_y, rotated_z
             )
 
-            # get the wake deflection field
-            deflection, deflection_z = self._compute_turbine_wake_deflection(
+            # get the wake deflection fields
+            deflection_y, deflection_z = self._compute_turbine_wake_deflection(
                 rotated_x, rotated_y, rotated_z, turbine, coord, self
             )
 
@@ -638,7 +651,14 @@ class FlowField:
                 turb_v_wake,
                 turb_w_wake,
             ) = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, deflection_z, self
+                rotated_x,
+                rotated_y,
+                rotated_z,
+                turbine,
+                coord,
+                deflection_y,
+                deflection_z,
+                self,
             )
 
             ###########

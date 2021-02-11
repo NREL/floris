@@ -71,7 +71,12 @@ class FlorisInterface(LoggerBase):
         self.floris = Floris(input_file=input_file, input_dict=input_dict)
 
     def calculate_wake(
-        self, yaw_angles=None, tilt_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False
+        self,
+        yaw_angles=None,
+        tilt_angles=None,
+        no_wake=False,
+        points=None,
+        track_n_upstream_wakes=False,
     ):
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -112,6 +117,13 @@ class FlorisInterface(LoggerBase):
         else:
             self.floris.farm.flow_field.yaw_eff = False
 
+        if (np.max(np.abs(yaw)) > 0.0) and (np.max(np.abs(tilt)) > 0.0):
+            raise Exception(
+                "Non-zero yaw and tilt angles detected. Currently the model does "
+                + "not allow for the computation of combined yaw and tilt effects. "
+                + "Please limit your computation to one or the other while we work "
+                + "to implement this capability."
+            )
 
         self.floris.farm.flow_field.calculate_wake(
             no_wake=no_wake,

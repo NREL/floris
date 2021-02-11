@@ -189,7 +189,7 @@ class VelocityDeflection(LoggerBase):
             tmp = avg_V - np.mean(Veff, axis=1)
             target_yaw_ix = np.argmin(np.abs(tmp))
 
-            if flow_field.yaw_eff==False:
+            if flow_field.yaw_eff is False:
                 return turbine.yaw_angle
             elif target_yaw_ix is not None:
                 yaw_effective = test_gamma[target_yaw_ix]
@@ -232,7 +232,7 @@ class VelocityDeflection(LoggerBase):
                 yaw-added recovery.
 
         Returns:
-            float: The turbine yaw angle, including any effective yaw if
+            float: The turbine tilt angle, including any effective yaw if
             secondary steering is enabled.
         """
         if self.use_secondary_steering:
@@ -250,8 +250,6 @@ class VelocityDeflection(LoggerBase):
             Ct = turbine.Ct
             D = turbine.rotor_diameter
             HH = turbine.hub_height
-            aI = turbine.aI
-            TSR = turbine.tsr
             V = flow_field.v
             W = flow_field.w
             Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
@@ -265,7 +263,7 @@ class VelocityDeflection(LoggerBase):
                 & (np.abs(z_locations - coord.x3) <= D / 2)
             )
 
-            yLocs = y_locations[idx] + 0.01 - coord.x2
+            # yLocs = y_locations[idx] + 0.01 - coord.x2
 
             # location of left vortex
             yL = y_locations[idx] + 0.01 - (coord.x2) - (D / 2)
@@ -282,8 +280,8 @@ class VelocityDeflection(LoggerBase):
             rRG = yR ** 2 + zRG ** 2
 
             # wake rotation vortex
-            zC = z_locations[idx] + 0.01 - (HH)
-            rC = yLocs ** 2 + zC ** 2
+            # zC = z_locations[idx] + 0.01 - (HH)
+            # rC = yLocs ** 2 + zC ** 2
 
             # find wake deflection from CRV
             test_gamma = np.linspace(-45, 45, 91)
@@ -298,15 +296,27 @@ class VelocityDeflection(LoggerBase):
 
             for i in range(len(tilt)):
 
-                Gamma_left = (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
+                Gamma_left = (
+                    (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
+                )
                 Gamma_right = (
-                        -(np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
+                    -(np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
                 )
 
-                Weff = (-yL * Gamma_left) / (2 * np.pi * rL) * (1 - np.exp(-rL / (eps ** 2)))  + \
-                       (-yR * Gamma_right) / (2 * np.pi * rR) * (1 - np.exp(-rR / (eps ** 2))) + \
-                       (zLG * -Gamma_left) / (2 * np.pi * rLG) * (1 - np.exp(-rLG / (eps ** 2))) + \
-                       (zRG * -Gamma_right) / (2 * np.pi * rRG) * (1 - np.exp(-rRG / (eps ** 2)))
+                Weff = (
+                    (-yL * Gamma_left)
+                    / (2 * np.pi * rL)
+                    * (1 - np.exp(-rL / (eps ** 2)))
+                    + (-yR * Gamma_right)
+                    / (2 * np.pi * rR)
+                    * (1 - np.exp(-rR / (eps ** 2)))
+                    + (zLG * -Gamma_left)
+                    / (2 * np.pi * rLG)
+                    * (1 - np.exp(-rLG / (eps ** 2)))
+                    + (zRG * -Gamma_right)
+                    / (2 * np.pi * rRG)
+                    * (1 - np.exp(-rRG / (eps ** 2)))
+                )
 
                 tmp = np.abs(avg_W - 2*np.mean(Weff))
 
@@ -314,7 +324,7 @@ class VelocityDeflection(LoggerBase):
                     target_tilt_ix = i
                     minTilt = tmp
 
-            if flow_field.tilt_eff==False:
+            if flow_field.tilt_eff is False:
                 return turbine.tilt_angle
             elif target_tilt_ix is not None:
                 tilt_effective = test_gamma[target_tilt_ix]

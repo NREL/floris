@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -44,7 +44,7 @@ fi.calculate_wake(yaw_angles=[0.0, 0.0, 0.0], tilt_angles=[25.0, 0.0, 0.0])
 power_tilt = fi.get_farm_power()
 print(fi.get_turbine_power())
 
-print('Power difference = ', 100 * (power_tilt - power_init) / power_init)
+print("Power difference = ", 100 * (power_tilt - power_init) / power_init)
 
 # Plot and show
 y_plane = fi.get_y_plane(0.0)

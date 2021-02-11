@@ -55,7 +55,8 @@ class Jensen(VelocityDeficit):
         z_locations,
         turbine,
         turbine_coord,
-        deflection_field,
+        deflection_y,
+        deflection_z,
         flow_field,
     ):
         """
@@ -78,8 +79,11 @@ class Jensen(VelocityDeficit):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the
+            deflection_y (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            deflection_z (np.array): An array of floats that contains the
+                amount of wake deflection in meters in the z direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
                 containing the flow field information for the wind farm.
@@ -100,8 +104,8 @@ class Jensen(VelocityDeficit):
 
         boundary_line = m * x + b
 
-        y_upper = boundary_line + turbine_coord.x2 + deflection_field
-        y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_field
+        y_upper = boundary_line + turbine_coord.x2 + deflection_y
+        y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_y
 
         z_upper = boundary_line + turbine.hub_height
         z_lower = -1 * boundary_line + turbine.hub_height

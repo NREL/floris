@@ -39,8 +39,8 @@ class LegacyGauss(GaussianModel):
         "kb": 0.004,
         "alpha": 0.58,
         "beta": 0.077,
-        "calculate_VW_velocities": False,
-        "use_yaw_added_recovery": False,
+        "calculate_VW_velocities": True,
+        "use_yaw_added_recovery": True,
         "eps_gain": 0.2,
     }
 
@@ -85,7 +85,7 @@ class LegacyGauss(GaussianModel):
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.eps_gain = model_dictionary["eps_gain"]
-        self.gch_gain = 1.0
+        self.gch_gain = 2.0
 
     def function(
         self,
@@ -94,7 +94,7 @@ class LegacyGauss(GaussianModel):
         z_locations,
         turbine,
         turbine_coord,
-        deflection_field,
+        deflection_y,
         deflection_z,
         flow_field,
     ):
@@ -118,8 +118,11 @@ class LegacyGauss(GaussianModel):
                 represents the turbine creating the wake.
             turbine_coord (:py:obj:`floris.utilities.Vec3`): Object containing
                 the coordinate of the turbine creating the wake (m).
-            deflection_field (np.array): An array of floats that contains the
+            deflection_y (np.array): An array of floats that contains the
                 amount of wake deflection in meters in the y direction at each
+                grid point of the flow field.
+            deflection_z (np.array): An array of floats that contains the
+                amount of wake deflection in meters in the z direction at each
                 grid point of the flow field.
             flow_field (:py:class:`floris.simulation.flow_field`): Object
                 containing the flow field information for the wind farm.
@@ -150,9 +153,7 @@ class LegacyGauss(GaussianModel):
         Ct = turbine.Ct
         U_local = flow_field.u_initial
 
-        # wake deflection
-        delta = deflection_field
-
+        # initial wake values
         xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
         uR, u0 = GaussianModel.initial_velocity_deficits(U_local, Ct)
         sigma_y0, sigma_z0 = GaussianModel.initial_wake_expansion(
@@ -184,8 +185,11 @@ class LegacyGauss(GaussianModel):
         b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
         c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
         r = (
-            a * ((y_locations - turbine_coord.x2) - delta) ** 2
-            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH - deflection_z))
+            a * ((y_locations - turbine_coord.x2) - deflection_y) ** 2
+            - 2
+            * b
+            * ((y_locations - turbine_coord.x2) - deflection_y)
+            * ((z_locations - HH - deflection_z))
             + c * ((z_locations - HH - deflection_z)) ** 2
         )
         C = 1 - np.sqrt(
@@ -209,8 +213,11 @@ class LegacyGauss(GaussianModel):
         b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
         c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
         r = (
-            a * (y_locations - turbine_coord.x2 - delta) ** 2
-            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH - deflection_z)
+            a * (y_locations - turbine_coord.x2 - deflection_y) ** 2
+            - 2
+            * b
+            * (y_locations - turbine_coord.x2 - deflection_y)
+            * (z_locations - HH - deflection_z)
             + c * (z_locations - HH - deflection_z) ** 2
         )
         C = 1 - np.sqrt(
