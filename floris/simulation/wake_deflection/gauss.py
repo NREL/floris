@@ -141,6 +141,7 @@ class Gauss(VelocityDeflection):
         # turbine parameters
         D = turbine.rotor_diameter
 
+        # opposite sign convention in this model for yaw
         yaw = -1 * self.calculate_effective_yaw_angle(
             x_locations, y_locations, z_locations, turbine, coord, flow_field
         )
@@ -149,7 +150,6 @@ class Gauss(VelocityDeflection):
             x_locations, y_locations, z_locations, turbine, coord, flow_field
         )
 
-        # opposite sign convention in this model
         Ct = turbine.Ct
 
         # U_local = flow_field.wind_map.grid_wind_speed

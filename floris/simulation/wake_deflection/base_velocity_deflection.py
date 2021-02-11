@@ -253,13 +253,16 @@ class VelocityDeflection(LoggerBase):
             aI = turbine.aI
             TSR = turbine.tsr
             V = flow_field.v
+            W = flow_field.w
             Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
+
+            # print('ET:', np.mean(V))
 
             eps = self.eps_gain * D  # Use set value
             idx = np.where(
-                (np.abs(x_locations - coord.x1) < 10)
-                & (np.abs(y_locations - coord.x2) < D / 2)
-                & (np.abs(z_locations - coord.x3) == 0.0)
+                (np.abs(x_locations - coord.x1) < 1)
+                & (np.abs(y_locations - coord.x2) <= D / 2)
+                & (np.abs(z_locations - coord.x3) <= D / 2)
             )
 
             yLocs = y_locations[idx] + 0.01 - coord.x2
@@ -284,12 +287,15 @@ class VelocityDeflection(LoggerBase):
 
             # find wake deflection from CRV
             test_gamma = np.linspace(-45, 45, 91)
+            # print(V[idx])
             avg_V = np.mean(V[idx])
+            avg_W = np.mean(W[idx])
             target_tilt_ix = None
 
             # what tilt angle would have produced that same average spanwise velocity
             tilt = test_gamma
             minTilt = 100000.0
+
             for i in range(len(tilt)):
 
                 Gamma_left = (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
@@ -297,14 +303,12 @@ class VelocityDeflection(LoggerBase):
                         -(np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt[i]) * cosd(tilt[i])
                 )
 
-                Veff = (zL * Gamma_left) / (2 * np.pi * rL) * (1 - np.exp(-rL / (eps ** 2)))  + \
-                       (zR * Gamma_right) / (2 * np.pi * rR) * (1 - np.exp(-rR / (eps ** 2))) + \
+                Weff = (-yL * Gamma_left) / (2 * np.pi * rL) * (1 - np.exp(-rL / (eps ** 2)))  + \
+                       (-yR * Gamma_right) / (2 * np.pi * rR) * (1 - np.exp(-rR / (eps ** 2))) + \
                        (zLG * -Gamma_left) / (2 * np.pi * rLG) * (1 - np.exp(-rLG / (eps ** 2))) + \
                        (zRG * -Gamma_right) / (2 * np.pi * rRG) * (1 - np.exp(-rRG / (eps ** 2)))
 
-                tmp = np.abs(avg_V - np.mean(Veff))
-
-                # print(tilt[i],tmp,avg_V, np.mean(Veff))
+                tmp = np.abs(avg_W - 2*np.mean(Weff))
 
                 if tmp < minTilt:
                     target_tilt_ix = i
@@ -319,7 +323,6 @@ class VelocityDeflection(LoggerBase):
                 self.logger.warning(err_msg, stack_info=True)
                 tilt_effective = 0.0
 
-            print('Tilt = ', tilt_effective)
             return tilt_effective + turbine.tilt_angle
 
         else:

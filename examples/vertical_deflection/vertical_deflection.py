@@ -25,7 +25,7 @@ fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 # Calculate wake
 layout_x = [0, 800, 1600]
-layout_y = [0, 0, 0]
+layout_y = [0, 60, 60]
 fi.reinitialize_flow_field(layout_array=(layout_x,layout_y))
 fi.calculate_wake()
 power_init = fi.get_farm_power()

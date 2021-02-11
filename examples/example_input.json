@@ -56,7 +56,7 @@
       "hub_height": 90.0,
       "ngrid": 5,
       "pP": 1.88,
-      "pT": 3.0,
+      "pT": 1.6,
       "power_thrust_table": {
         "power": [
           0.0,

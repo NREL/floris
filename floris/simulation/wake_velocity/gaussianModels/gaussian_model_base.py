@@ -11,6 +11,7 @@
 # the License.
 
 import numpy as np
+import copy
 
 from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
@@ -63,15 +64,15 @@ class GaussianModel(VelocityDeficit):
             )
 
             # calculate fluctuations
-            v_prime = flow_field.v + V
-            w_prime = flow_field.w + W
+            v_prime = 0.25 * copy.deepcopy(flow_field.v) #+ V
+            w_prime = 0.25 * copy.deepcopy(flow_field.w) #+ W
 
             # get u_prime from current turbulence intensity
             u_prime = turbine.u_prime()
 
             # compute the new TKE
             idx = np.where(
-                (np.abs(x_locations - coord.x1) <= turbine.rotor_diameter / 10)
+                (np.abs(x_locations - coord.x1) <= 1)
                 & (np.abs(y_locations - coord.x2) < turbine.rotor_diameter / 2)
                 & (np.abs(z_locations - coord.x3) < turbine.rotor_diameter / 2)
             )
@@ -238,6 +239,7 @@ class GaussianModel(VelocityDeficit):
         Gamma_right = (
                 -scale * (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt) * cosd(tilt)
         )
+
         Gamma_wake_rotation = (
             0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
         )
@@ -468,6 +470,12 @@ class GaussianModel(VelocityDeficit):
         ] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
 
         W[W < 0] = 0
+
+        idx = np.where(
+            (np.abs(x_locations - 800.0) < 1)
+            & (np.abs(y_locations - 0.0) <= D / 2)
+            & (np.abs(z_locations - 90.0) <= D / 2)
+        )
 
         return V, W
 
