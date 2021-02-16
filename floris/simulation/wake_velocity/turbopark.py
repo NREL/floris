@@ -105,7 +105,7 @@ class TurbOPark(VelocityDeficit):
         c2 = 0.8  # (Page 3)
 
         # Parameters from turbine
-        D = turbine.rotor_radius
+        D = turbine.rotor_diameter
         Ct = turbine.Ct
         # U_local = flow_field.u_initial
         V_in = turbine.average_velocity
@@ -134,7 +134,7 @@ class TurbOPark(VelocityDeficit):
         c = delta
 
         # Define these bounds as in jensen
-        boundary_line = Dwx # / 2.0
+        boundary_line = Dwx / 2.0
         y_upper = boundary_line + turbine_coord.x2 + deflection_field
         y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_field
 
