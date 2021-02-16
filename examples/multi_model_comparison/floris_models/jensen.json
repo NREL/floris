@@ -223,9 +223,11 @@
       "deflection_model": "jimenez",
       "turbulence_model": "crespo_hernandez",
       "velocity_model": "jensen",
-      "wake_velocity_parameters": {
-        "jensen": {
-          "we": 0.04
+      "parameters":{
+        "wake_velocity_parameters": {
+          "jensen": {
+            "we": 0.04
+          }
         }
       }
     },
