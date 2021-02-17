@@ -96,9 +96,9 @@ class Jensen(VelocityDeficit):
         # define the boundary of the wake model ... y = mx + b
         m = self.we
         x = x_locations - turbine_coord.x1
-        b = turbine.rotor_radius
+        b = turbine.rotor_diameter
 
-        boundary_line = m * x + b
+        boundary_line = (m * x + b) / 2.0
 
         y_upper = boundary_line + turbine_coord.x2 + deflection_field
         y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_field
