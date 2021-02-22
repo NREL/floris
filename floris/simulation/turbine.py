@@ -642,7 +642,11 @@ class Turbine(LoggerBase):
 
             >>> Ct = floris.farm.turbines[0].Ct()
         """
-        return self._fCt(self.average_velocity) * cosd(self.yaw_angle)  # **self.pP
+        return (
+            self._fCt(self.average_velocity)
+            * cosd(self.yaw_angle)
+            * cosd(self.tilt_angle)
+        )  # **self.pP
 
     @property
     def power(self):
