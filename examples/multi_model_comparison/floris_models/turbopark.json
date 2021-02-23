@@ -222,7 +222,16 @@
       "combination_model": "sosfs",
       "deflection_model": "jimenez",
       "turbulence_model": "crespo_hernandez",
-      "velocity_model": "turbopark"
+      "velocity_model": "turbopark",
+      "parameters":{
+        "wake_velocity_parameters": {
+          "jensen": {
+            "A": 0.6,
+            "c1":1.5,
+            "c2":0.8
+          }
+        }
+      }
     },
     "type": "wake"
   }
