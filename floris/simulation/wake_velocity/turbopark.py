@@ -19,6 +19,7 @@ class TurbOPark(VelocityDeficit):
     """
     An implementation of the TurbOPark model by Nicolai Nygaard
     :cite:`jvm-nygaard2020modelling`.
+    Default tuning calibrations taken from same paper
 
     References:
         .. bibliography:: /source/zrefs.bib
