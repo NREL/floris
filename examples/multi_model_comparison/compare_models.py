@@ -16,7 +16,7 @@
 # NOTE: This example requires an additional module, `streamlit`.
 #
 # TO USE THIS FROM COMMAND TYPE:
-#    streamlit run interactive_visual.py
+#    streamlit run compare_models.py
 
 import numpy as np
 
