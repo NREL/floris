@@ -28,7 +28,7 @@ class TurbOPark(VelocityDeficit):
             :keyprefix: jvm-
     """
 
-    default_parameters = {"we": 0.05}
+    default_parameters = {"A": 0.6, "c1": 1.5, "c2": 0.8}
 
     def __init__(self, parameter_dictionary):
         """
@@ -47,7 +47,9 @@ class TurbOPark(VelocityDeficit):
         super().__init__(parameter_dictionary)
         self.model_string = "jensen"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
-        self.we = float(model_dictionary["we"])
+        self.A = float(model_dictionary["A"])
+        self.c1 = float(model_dictionary["c1"])
+        self.c2 = float(model_dictionary["c2"])
 
     def function(
         self,
@@ -94,16 +96,17 @@ class TurbOPark(VelocityDeficit):
                 the velocity deficits at each grid point in the flow field.
         """
 
-        # Quick define some rough parameters using the paper
+        # Get model parameters
+        A = self.A
+        c1 = self.c1
+        c2 = self.c2
 
-        # Fixed parameters that should be read in
-        I0 = 0.06  # Just assume 6% for now
+        # TODO Not positive right way to grab this value:
+        # Is the right one flow_field.u_initial?
         U0 = 8.0  # Assuming free stream, to be lazy
 
-        # These will later need to be parameters with get/set
-        A = 0.6  # Directly from the paper (page 4)
-        c1 = 1.5  # (Page 3)
-        c2 = 0.8  # (Page 3)
+        # TODO Could someone also confirm this one:
+        I0 = turbine.current_turbulence_intensity
 
         # Parameters from turbine
         D = turbine.rotor_diameter
@@ -138,7 +141,6 @@ class TurbOPark(VelocityDeficit):
         boundary_line = Dwx / 2.0
         y_upper = boundary_line + turbine_coord.x2 + deflection_field
         y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_field
-
         z_upper = boundary_line + turbine.hub_height
         z_lower = -1 * boundary_line + turbine.hub_height
 
@@ -158,11 +160,9 @@ class TurbOPark(VelocityDeficit):
         )
 
     @property
-    def we(self):
+    def A(self):
         """
-        The linear wake decay constant that defines the cone boundary for the
-        wake as well as the velocity deficit. D/2 +/- we*x is the cone boundary
-        for the wake.
+        The A parameter of the model
 
         **Note:** This is a virtual property used to "get" or "set" a value.
 
@@ -175,20 +175,88 @@ class TurbOPark(VelocityDeficit):
         Raises:
             ValueError: Invalid value.
         """
-        return self._we
+        return self._A
 
-    @we.setter
-    def we(self, value):
+    @A.setter
+    def A(self, value):
         if type(value) is not float:
             err_msg = (
-                "Invalid value type given for we: {}, " + "expected float."
+                "Invalid value type given for A: {}, " + "expected float."
             ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
-        self._we = value
-        if value != __class__.default_parameters["we"]:
+        self._A = value
+        if value != __class__.default_parameters["A"]:
             self.logger.info(
                 (
-                    "Current value of we, {0}, is not equal to tuned " + "value of {1}."
-                ).format(value, __class__.default_parameters["we"])
+                    "Current value of A, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["A"])
+            )
+
+    @property
+    def c1(self):
+        """
+        The c1 parameter of the model
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (float): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._c1
+
+    @c1.setter
+    def c1(self, value):
+        if type(value) is not float:
+            err_msg = (
+                "Invalid value type given for c1: {}, " + "expected float."
+            ).format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._c1 = value
+        if value != __class__.default_parameters["c1"]:
+            self.logger.info(
+                (
+                    "Current value of c1, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["c1"])
+            )
+
+    @property
+    def c2(self):
+        """
+        The c2 parameter of the model
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (float): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._c2
+
+    @c2.setter
+    def c2(self, value):
+        if type(value) is not float:
+            err_msg = (
+                "Invalid value type given for c2: {}, " + "expected float."
+            ).format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._c2 = value
+        if value != __class__.default_parameters["c2"]:
+            self.logger.info(
+                (
+                    "Current value of c2, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["c2"])
             )
