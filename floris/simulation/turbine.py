@@ -16,7 +16,6 @@
 import math
 
 import numpy as np
-
 from scipy.stats import norm
 from scipy.spatial import distance_matrix
 from scipy.interpolate import interp1d
@@ -704,5 +703,5 @@ class Turbine(LoggerBase):
         return (
             0.5
             / cosd(self.yaw_angle)
-            * (1 - np.sqrt(1 - self.Ct * cosd(self.yaw_angle)))
+            * (1 - np.sqrt(1 - self.Ct * cosd(self.yaw_angle) * cosd(self.tilt_angle)))
         )
