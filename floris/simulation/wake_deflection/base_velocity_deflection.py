@@ -209,7 +209,7 @@ class VelocityDeflection(LoggerBase):
         self, x_locations, y_locations, z_locations, turbine, coord, flow_field
     ):
         """
-        This method determines the effective yaw angle to be used when
+        This method determines the effective tilt angle to be used when
         secondary steering is enabled. For more details on how the effective
         yaw angle is calculated, see :cite:`bvd-King2019Controls`.
 
@@ -232,7 +232,7 @@ class VelocityDeflection(LoggerBase):
                 yaw-added recovery.
 
         Returns:
-            float: The turbine tilt angle, including any effective yaw if
+            float: The turbine tilt angle, including any effective tilt if
             secondary steering is enabled.
         """
         if self.use_secondary_steering:
@@ -318,7 +318,7 @@ class VelocityDeflection(LoggerBase):
                     * (1 - np.exp(-rRG / (eps ** 2)))
                 )
 
-                tmp = np.abs(avg_W - 2*np.mean(Weff))
+                tmp = np.abs(avg_W - 2 * np.mean(Weff))
 
                 if tmp < minTilt:
                     target_tilt_ix = i
@@ -329,7 +329,7 @@ class VelocityDeflection(LoggerBase):
             elif target_tilt_ix is not None:
                 tilt_effective = test_gamma[target_tilt_ix]
             else:
-                err_msg = "No effective yaw angle is found. Set to 0."
+                err_msg = "No effective tilt angle is found. Set to 0."
                 self.logger.warning(err_msg, stack_info=True)
                 tilt_effective = 0.0
 
