@@ -19,7 +19,7 @@ class TurbOPark(VelocityDeficit):
     """
     An implementation of the TurbOPark model by Nicolai Nygaard
     :cite:`jvm-nygaard2020modelling`.
-    Default tuning calibrations taken from same paper
+    Default tuning calibrations taken from same paper.
 
     References:
         .. bibliography:: /source/zrefs.bib
@@ -101,17 +101,15 @@ class TurbOPark(VelocityDeficit):
         c1 = self.c1
         c2 = self.c2
 
-        # TODO Not positive right way to grab this value:
-        # Is the right one flow_field.u_initial?
-        U0 = 8.0  # Assuming free stream, to be lazy
+        # Initial flowfield used to calculate velocity deficit
+        U0 = flow_field.u_initial
 
-        # TODO Could someone also confirm this one:
+        # Get turbulence intensity for current turbine
         I0 = turbine.current_turbulence_intensity
 
         # Parameters from turbine
         D = turbine.rotor_diameter
         Ct = turbine.Ct
-        # U_local = flow_field.u_initial
         V_in = turbine.average_velocity
 
         # Computed values
@@ -130,8 +128,6 @@ class TurbOPark(VelocityDeficit):
         Dwx = D + ((A * I0 * D) / beta) * (term1 - term2 - np.log(term3 / term4))
 
         # Solve for the velocity deficit
-        # delta = (1 - (U_local / U0) * np.sqrt(1 - Ct)) * (D / Dwx) ** 2
-        # delta = (V_in * np.sqrt(1 - Ct)) * (D / Dwx) ** 2
         delta = (1 - (V_in / U0) * np.sqrt(1 - Ct)) * (D / Dwx) ** 2
 
         # Solve for velocity deficit c
@@ -153,7 +149,6 @@ class TurbOPark(VelocityDeficit):
         c[z_locations < z_lower] = 0
 
         return (
-            # 2 * turbine.aI * c * flow_field.u_initial,
             c * flow_field.u_initial,
             np.zeros(np.shape(flow_field.u_initial)),
             np.zeros(np.shape(flow_field.u_initial)),
@@ -162,7 +157,7 @@ class TurbOPark(VelocityDeficit):
     @property
     def A(self):
         """
-        The A parameter of the model
+        Model calibration constant A used in determining the wake expansion rate.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
 
@@ -196,7 +191,7 @@ class TurbOPark(VelocityDeficit):
     @property
     def c1(self):
         """
-        The c1 parameter of the model
+        Calibration constant for the wake added turbelence.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
 
@@ -230,7 +225,7 @@ class TurbOPark(VelocityDeficit):
     @property
     def c2(self):
         """
-        The c2 parameter of the model
+        Calibration constant for the wake added turbelence.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
 
