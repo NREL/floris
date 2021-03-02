@@ -22,8 +22,8 @@
 import io
 import os
 import sys
-from pathlib import Path
 from shutil import rmtree
+from pathlib import Path
 
 from setuptools import Command, setup, find_packages
 
@@ -49,6 +49,7 @@ REQUIRED = [
     "pyproj>=2.1",
     "seaborn>=0.9",
     "sklearn>=0.0",
+    "shapely>=1.7.1",
 ]
 
 # What packages are optional?
