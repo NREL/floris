@@ -45,7 +45,7 @@ class TurbOPark(VelocityDeficit):
                     wake.
         """
         super().__init__(parameter_dictionary)
-        self.model_string = "jensen"
+        self.model_string = "turbopark"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.A = float(model_dictionary["A"])
         self.c1 = float(model_dictionary["c1"])
@@ -62,7 +62,7 @@ class TurbOPark(VelocityDeficit):
         flow_field,
     ):
         """
-        Using the Jensen wake model, this method calculates and returns
+        Using the TubrOPark wake model, this method calculates and returns
         the wake velocity deficits, caused by the specified turbine,
         relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
