@@ -345,25 +345,6 @@ class Gauss(VelocityDeflection):
             return turbine.yaw_angle
 
     @property
-    def use_secondary_steering(self):
-        """
-        Flag to use secondary steering on the wake deflection using methods
-        developed in :cite:`bvd-King2019Controls`.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (bool): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._use_secondary_steering
-
-    @property
     def ka(self):
         """
         Parameter used to determine the linear relationship between the
@@ -580,6 +561,25 @@ class Gauss(VelocityDeflection):
                     "Current value of bd, {0}, is not equal to tuned " + "value of {1}."
                 ).format(value, __class__.default_parameters["bd"])
             )
+
+    @property
+    def use_secondary_steering(self):
+        """
+        Flag to use secondary steering on the wake deflection using methods
+        developed in :cite:`bvd-King2019Controls`.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._use_secondary_steering
 
     @use_secondary_steering.setter
     def use_secondary_steering(self, value):
