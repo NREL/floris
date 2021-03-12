@@ -22,21 +22,32 @@ import floris.tools as wfct
 # User inputs
 D = 126.0
 nturbs_x = 5
-nturbs_y = 1
-x_spacing = 6 * D
-y_spacing = 6 * D
+nturbs_y = 5
+x_spacing = 5 * D
+y_spacing = 4 * D
 ws = 8.0
 wd = 270.0
 
 # Generate layout
 layout_x = [i * x_spacing for j in range(nturbs_y) for i in range(nturbs_x)]
 layout_y = [j * y_spacing for j in range(nturbs_y) for i in range(nturbs_x)]
+# layout_x = [0.0, 6*126.0, 1*126.0, 7*126.0]
+# layout_y = [0.0, 0.0, 6*126.0, 6*126.0]
 layout_array = [layout_x, layout_y]
 
 fi_gauss_cumulative = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_gauss_legacy = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 fi_gauss_cumulative.floris.farm.set_wake_model("gauss_cumulative")
+fi_gc_params = {
+    "Wake Turbulence Parameters": {
+        "ti_ai": 0.83,
+        "ti_constant": 0.66,
+        "ti_downstream": -0.32,
+        "ti_initial": 0.03,
+    }
+}
+fi_gauss_cumulative.set_model_parameters(fi_gc_params)
 fi_gauss_cumulative.set_gch(enable=False)
 fi_gauss_cumulative.floris.farm.flow_field.solver = "gauss_cumulative"
 fi_gauss_cumulative.reinitialize_flow_field(
@@ -54,16 +65,15 @@ fi_gauss_legacy.reinitialize_flow_field(
 fi_gauss_legacy.calculate_wake()
 
 # Get horizontal plane at default height (hub-height)
-hor_plane = fi_gauss_cumulative.get_hor_plane()
-hor_plane_gauss = fi_gauss_legacy.get_hor_plane()
+hor_plane_gauss_cumulative = fi_gauss_cumulative.get_hor_plane()
+hor_plane_gauss_legacy = fi_gauss_legacy.get_hor_plane()
 
 # Plot and show
 fig, axarr = plt.subplots(2, 1)
-wfct.visualization.visualize_cut_plane(hor_plane, ax=axarr[0])
+wfct.visualization.visualize_cut_plane(hor_plane_gauss_cumulative, ax=axarr[0])
 axarr[0].set_title("Gauss Cumulative")
-wfct.visualization.visualize_cut_plane(hor_plane_gauss, ax=axarr[1])
+wfct.visualization.visualize_cut_plane(hor_plane_gauss_legacy, ax=axarr[1])
 axarr[1].set_title("Gauss Legacy")
-
 
 gauss_cumulative_turb_power = np.array(fi_gauss_cumulative.get_turbine_power()) / 1e6
 gauss_legacy_turb_power = np.array(fi_gauss_legacy.get_turbine_power()) / 1e6

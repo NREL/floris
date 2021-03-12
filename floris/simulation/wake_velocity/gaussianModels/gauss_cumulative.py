@@ -163,12 +163,21 @@ class GaussCumulative(GaussianModel):
         num = turbine.Ct * (Uavg / flow_field.u_initial) ** 2
         den = (8 * (sigma_n / turbine.rotor_diameter) ** 2) * (1 - sum_lbda) ** 2
         C = flow_field.u_initial * (1 - sum_lbda) * (1 - np.sqrt(1 - num / den))
+        C_max = 2 * turbine.aI * Uavg
+        # C_max = 2 * turbine.aI * np.reshape(turbine.velocities, (5,5)) * np.ones_like(flow_field.u_initial)
+        mask = C > C_max
+        C[mask] = C_max
+        nan_mask = np.isnan(C)
+        C[nan_mask] = C_max
+
         f = np.exp(
             -((y_locations - turbine_coord.x2 - deflection_field) ** 2)
             / (2 * sigma_n ** 2)
         ) * np.exp(-((z_locations - turbine_coord.x3) ** 2) / (2 * sigma_n ** 2))
 
         C[x_locations <= turbine_coord.x1] = 0.0
+        C[y_locations < turbine_coord.x2 - 1.5 * turbine.rotor_diameter] = 0.0
+        C[y_locations > turbine_coord.x2 + 1.5 * turbine.rotor_diameter] = 0.0
         Ctmp.append(C)
 
         # add turbines together
