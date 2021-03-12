@@ -24,9 +24,10 @@ D = 126.0
 nturbs_x = 5
 nturbs_y = 5
 x_spacing = 5 * D
-y_spacing = 4 * D
+y_spacing = 3 * D
 ws = 8.0
 wd = 270.0
+TI = 0.09
 
 # Generate layout
 layout_x = [i * x_spacing for j in range(nturbs_y) for i in range(nturbs_x)]
@@ -51,7 +52,7 @@ fi_gauss_cumulative.set_model_parameters(fi_gc_params)
 fi_gauss_cumulative.set_gch(enable=False)
 fi_gauss_cumulative.floris.farm.flow_field.solver = "gauss_cumulative"
 fi_gauss_cumulative.reinitialize_flow_field(
-    wind_speed=ws, wind_direction=wd, layout_array=layout_array
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
 # Calculate wake
 fi_gauss_cumulative.calculate_wake()
@@ -59,7 +60,7 @@ fi_gauss_cumulative.calculate_wake()
 fi_gauss_legacy.floris.farm.set_wake_model("gauss_legacy")
 fi_gauss_legacy.floris.farm.flow_field.solver = "floris"
 fi_gauss_legacy.reinitialize_flow_field(
-    wind_speed=ws, wind_direction=wd, layout_array=layout_array
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
 # Calculate wake
 fi_gauss_legacy.calculate_wake()
