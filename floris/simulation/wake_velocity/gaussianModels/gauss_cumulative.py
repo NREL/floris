@@ -19,7 +19,7 @@ from .gaussian_model_base import GaussianModel
 from ..base_velocity_deficit import VelocityDeficit
 
 
-class CumulativeGauss(GaussianModel):
+class GaussCumulative(GaussianModel):
     """
     The LegacyGauss model ports the previous Gauss model to the new FLORIS
     framework of inheritance of the GaussianModel. It is based on the gaussian
@@ -87,6 +87,8 @@ class CumulativeGauss(GaussianModel):
         self.eps_gain = model_dictionary["eps_gain"]
         self.gch_gain = 2.0
 
+        self.Ctmp = []
+
     def function(
         self,
         x_locations,
@@ -96,6 +98,7 @@ class CumulativeGauss(GaussianModel):
         turbine_coord,
         deflection_field,
         flow_field,
+        **kwargs,
     ):
         """
         Using the Gaussian wake model, this method calculates and
@@ -131,61 +134,60 @@ class CumulativeGauss(GaussianModel):
                 and z directions, respectively. The three arrays contain the
                 velocity deficits at each grid point in the flow field.
         """
-        sigma_n = wake_expansion(
-            flow_field, turbine, coord, rotated_x, rotated_y, rotated_z
+        n = kwargs["n"]
+        sorted_map = kwargs["sorted_map"]
+        u_wake = kwargs["u_wake"]
+        Ctmp = kwargs["Ctmp"]
+
+        sigma_n = self.wake_expansion(
+            flow_field, turbine, turbine_coord, x_locations, y_locations, z_locations
         )
 
-        sum_lmbda = 0.0
+        sum_lbda = 0.0
         # for m, (coord_i, turbine_i) in enumerate(sorted_map):
         for m in range(0, n - 1):
             turbine_i = sorted_map[m][1]
             coord_i = sorted_map[m][0]
-            sigma_i = self.wake.velocity_model.wake_expansion(
-                flow_field, turbine_i, coord_i, rotated_x, rotated_y, rotated_z
+            sigma_i = flow_field.wake.velocity_model.wake_expansion(
+                flow_field, turbine_i, coord_i, x_locations, y_locations, z_locations
             )
             S = sigma_n ** 2 + sigma_i ** 2
-            Y = (coord.x2 - coord_i.x2 - deflection) ** 2 / (2 * S)
-            Z = (coord.x3 - coord_i.x3) ** 2 / (2 * S)
+            Y = (turbine_coord.x2 - turbine_coord.x2 - deflection_field) ** 2 / (2 * S)
+            Z = (turbine_coord.x3 - turbine_coord.x3) ** 2 / (2 * S)
             lbda = sigma_i ** 2 * np.exp(-Y) * np.exp(-Z) / S
-            sum_lbda = sum_lbda + lbda * (Ctmp[m] / self.u_initial)
+            sum_lbda = sum_lbda + lbda * (Ctmp[m] / flow_field.u_initial)
 
         # Centerline velocity
-        if n == 0:
-            Uavg = turbine.average_velocity
-        else:
-            Uavg = turbine.average_velocity
+        Uavg = turbine.average_velocity
         # print(np.min(sigma_n),np.max(sigma_n))
-        num = turbine.Ct * (Uavg / self.u_initial) ** 2
+        num = turbine.Ct * (Uavg / flow_field.u_initial) ** 2
         den = (8 * (sigma_n / turbine.rotor_diameter) ** 2) * (1 - sum_lbda) ** 2
-        C = self.u_initial * (1 - sum_lbda) * (1 - np.sqrt(1 - num / den))
+        C = flow_field.u_initial * (1 - sum_lbda) * (1 - np.sqrt(1 - num / den))
         f = np.exp(
-            -((rotated_y - coord.x2 - deflection) ** 2) / (2 * sigma_n ** 2)
-        ) * np.exp(-((rotated_z - coord.x3) ** 2) / (2 * sigma_n ** 2))
+            -((y_locations - turbine_coord.x2 - deflection_field) ** 2)
+            / (2 * sigma_n ** 2)
+        ) * np.exp(-((z_locations - turbine_coord.x3) ** 2) / (2 * sigma_n ** 2))
 
-        C[rotated_x <= coord.x1] = 0.0
+        C[x_locations <= turbine_coord.x1] = 0.0
         Ctmp.append(C)
 
         # add turbines together
-        sum_Cf = sum_Cf + C * f
-
-        self.u = self.u_initial - sum_Cf
+        u_wake = u_wake + C * f
 
         # TODO integrate back in the v and w components
-        turb_u_wake = copy.deepcopy(sum_Cf)
-        turb_v_wake, turb_w_wake = self.wake.velocity_model.calculate_VW(
-            np.zeros(np.shape(self.u_initial)),
-            np.zeros(np.shape(self.u_initial)),
-            coord,
-            turbine,
-            self,
-            rotated_x,
-            rotated_y,
-            rotated_z,
-        )
+        # turb_u_wake = copy.deepcopy(sum_Cf)
+        # turb_v_wake, turb_w_wake = self.wake.velocity_model.calculate_VW(
+        #     np.zeros(np.shape(self.u_initial)),
+        #     np.zeros(np.shape(self.u_initial)),
+        #     coord,
+        #     turbine,
+        #     self,
+        #     rotated_x,
+        #     rotated_y,
+        #     rotated_z,
+        # )
 
-        prev_turbine = copy.deepcopy(turbine)
-
-        return U, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
+        return u_wake, np.zeros(np.shape(u_wake)), np.zeros(np.shape(u_wake))
 
     def wake_expansion(
         self, flow_field, turbine, turbine_coord, x_locations, y_locations, z_locations
@@ -250,11 +252,9 @@ class CumulativeGauss(GaussianModel):
         sigma_y1[x_locations < x0] = 0.0
         sigma_z1[x_locations < x0] = 0.0
 
-        U = np.sqrt(velDef ** 2 + velDef1 ** 2)
         sigma_y = sigma_y + sigma_y1
         sigma_z = sigma_z + sigma_z1
 
-        return U, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
         return sigma_y
 
     def calc_Un(self, U_0, Cn, sigma_n, y, y_n, z, z_n):

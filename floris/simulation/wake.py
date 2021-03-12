@@ -37,6 +37,9 @@ from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaus
 from .wake_velocity.gaussianModels.ishihara_qian import (
     IshiharaQian as IshiharaQianDeficit,
 )
+from .wake_velocity.gaussianModels.gauss_cumulative import (
+    GaussCumulative as GaussCumulative,
+)
 
 
 class Wake:
@@ -77,6 +80,7 @@ class Wake:
             "multizone": MultiZone,
             "gauss": GaussDeficit,
             "gauss_legacy": LegacyGaussDeficit,
+            "gauss_cumulative": GaussCumulative,
             "ishihara_qian": IshiharaQianDeficit,
             "curl": CurlDeficit,
             "blondel": BlondelDeficit,
