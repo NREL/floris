@@ -120,6 +120,7 @@ class Farm:
             "multizone",
             "gauss",
             "gauss_legacy",
+            "gauss_cumulative",
             "blondel",
             "ishihara_qian",
             "curl",
