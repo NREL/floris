@@ -248,7 +248,7 @@ class FlowField(LoggerBase):
         self.w = self.w_initial.copy()
 
     def _compute_turbine_velocity_deficit(
-        self, x, y, z, turbine, coord, deflection, flow_field
+        self, x, y, z, turbine, coord, deflection, flow_field, **kwargs
     ):
         """Implement current wake velocity model.
 
@@ -262,9 +262,28 @@ class FlowField(LoggerBase):
             flow_field ([type]): [description]
         """
         # velocity deficit calculation
-        u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
-            x, y, z, turbine, coord, deflection, flow_field
-        )
+        if kwargs == {}:
+            u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
+                x, y, z, turbine, coord, deflection, flow_field
+            )
+        else:
+            n = kwargs["n"]
+            sorted_map = kwargs["sorted_map"]
+            u_wake = kwargs["u_wake"]
+            Ctmp = kwargs["Ctmp"]
+            u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
+                x,
+                y,
+                z,
+                turbine,
+                coord,
+                deflection,
+                flow_field,
+                n=n,
+                sorted_map=sorted_map,
+                u_wake=u_wake,
+                Ctmp=Ctmp,
+            )
 
         # calculate spanwise and streamwise velocities if needed
         if hasattr(self.wake.velocity_model, "calculate_VW"):
@@ -850,7 +869,7 @@ class FlowField(LoggerBase):
 
         return u_wake
 
-    def solver_floris2(
+    def gauss_cumulative(
         self,
         sorted_map,
         rx,
@@ -863,7 +882,8 @@ class FlowField(LoggerBase):
         no_wake,
         track_n_upstream_wakes,
     ):
-        for coord, turbine in sorted_map:
+        Ctmp = []
+        for n, (coord, turbine) in enumerate(sorted_map):
             xloc, yloc = np.array(rx == coord.x1), np.array(ry == coord.x2)
             idx = int(np.where(np.logical_and(yloc, xloc))[0])
 
@@ -891,18 +911,6 @@ class FlowField(LoggerBase):
                 x_grid_offset = xoffset * cosd(wd) - yoffset * sind(wd) - xoffset
                 rotated_x = initial_rotated_x - x_grid_offset
 
-            self.WAT_upstream(
-                sorted_map,
-                rx,
-                ry,
-                turbine,
-                coord,
-                rotated_x,
-                rotated_y,
-                rotated_z,
-                track_n_upstream_wakes,
-            )
-
             # update the turbine based on the velocity at its hub
             turbine.update_velocities(
                 u_wake, coord, self, rotated_x, rotated_y, rotated_z
@@ -914,28 +922,39 @@ class FlowField(LoggerBase):
             )
 
             # get the velocity deficit accounting for the deflection
-            (
-                turb_u_wake,
-                turb_v_wake,
-                turb_w_wake,
-            ) = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
+            (u_wake, v_wake, w_wake,) = self._compute_turbine_velocity_deficit(
+                rotated_x,
+                rotated_y,
+                rotated_z,
+                turbine,
+                coord,
+                deflection,
+                self,
+                n=n,
+                sorted_map=sorted_map,
+                u_wake=u_wake,
+                Ctmp=Ctmp,
             )
 
-            turbine.turb_u_wake = turb_u_wake
-            turbine.turb_v_wake = turb_v_wake
-            turbine.turb_w_wake = turb_w_wake
+            self.WAT_downstream(
+                sorted_map,
+                rx,
+                ry,
+                turbine,
+                coord,
+                rotated_x,
+                rotated_y,
+                rotated_z,
+                u_wake,
+                track_n_upstream_wakes,
+            )
 
-            # combine this turbine's wake into the full wake field
-            if not no_wake:
-                u_wake = self.wake.combination_function(u_wake, turb_u_wake)
-
-                if self.wake.velocity_model.model_string == "curl":
-                    self.v = turb_v_wake
-                    self.w = turb_w_wake
-                else:
-                    self.v = self.v + turb_v_wake
-                    self.w = self.w + turb_w_wake
+        # combine this turbine's wake into the full wake field
+        if not no_wake:
+            # u_wake = self.wake.combination_function(u_wake, turb_u_wake)
+            self.u = self.u_initial - u_wake
+            self.v = self.v + v_wake
+            self.w = self.w + w_wake
 
         return u_wake
 
@@ -983,8 +1002,8 @@ class FlowField(LoggerBase):
                 no_wake,
                 track_n_upstream_wakes,
             )
-        elif self.solver == "floris2":
-            u_wake = self.solver_floris2(
+        elif self.solver == "gauss_cumulative":
+            u_wake = self.gauss_cumulative(
                 sorted_map,
                 rx,
                 ry,
