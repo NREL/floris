@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -13,14 +13,26 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import numpy as np
 import matplotlib.pyplot as plt
 
 import floris.tools as wfct
 
 
-# Initialize the FLORIS interface fi
-# For basic usage, the florice interface provides a simplified interface to
-# the underlying classes
+# User inputs
+D = 126.0
+nturbs_x = 5
+nturbs_y = 1
+x_spacing = 6 * D
+y_spacing = 6 * D
+ws = 8.0
+wd = 270.0
+
+# Generate layout
+layout_x = [i * x_spacing for j in range(nturbs_y) for i in range(nturbs_x)]
+layout_y = [j * y_spacing for j in range(nturbs_y) for i in range(nturbs_x)]
+layout_array = [layout_x, layout_y]
+
 fi_gauss_cumulative = wfct.floris_interface.FlorisInterface("../example_input.json")
 fi_gauss_legacy = wfct.floris_interface.FlorisInterface("../example_input.json")
 
@@ -28,7 +40,7 @@ fi_gauss_cumulative.floris.farm.set_wake_model("gauss_cumulative")
 fi_gauss_cumulative.set_gch(enable=False)
 fi_gauss_cumulative.floris.farm.flow_field.solver = "gauss_cumulative"
 fi_gauss_cumulative.reinitialize_flow_field(
-    layout_array=([0.0, 6 * 126.0, 12 * 126.0, 18 * 126.0], [0.0, 0.0, 0.0, 0.0])
+    wind_speed=ws, wind_direction=wd, layout_array=layout_array
 )
 # Calculate wake
 fi_gauss_cumulative.calculate_wake()
@@ -36,7 +48,7 @@ fi_gauss_cumulative.calculate_wake()
 fi_gauss_legacy.floris.farm.set_wake_model("gauss_legacy")
 fi_gauss_legacy.floris.farm.flow_field.solver = "floris"
 fi_gauss_legacy.reinitialize_flow_field(
-    layout_array=([0.0, 6 * 126.0, 12 * 126.0, 18 * 126.0], [0.0, 0.0, 0.0, 0.0])
+    wind_speed=ws, wind_direction=wd, layout_array=layout_array
 )
 # Calculate wake
 fi_gauss_legacy.calculate_wake()
@@ -51,4 +63,46 @@ wfct.visualization.visualize_cut_plane(hor_plane, ax=axarr[0])
 axarr[0].set_title("Gauss Cumulative")
 wfct.visualization.visualize_cut_plane(hor_plane_gauss, ax=axarr[1])
 axarr[1].set_title("Gauss Legacy")
+
+
+gauss_cumulative_turb_power = np.array(fi_gauss_cumulative.get_turbine_power()) / 1e6
+gauss_legacy_turb_power = np.array(fi_gauss_legacy.get_turbine_power()) / 1e6
+
+labels = ["T" + str(i) for i in range(len(fi_gauss_cumulative.layout_x))]
+
+x = np.arange(len(labels))  # the label locations
+width = 0.2  # the width of the bars
+
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width, gauss_cumulative_turb_power, width, label="Cumulative")
+rects2 = ax.bar(x, gauss_legacy_turb_power, width, label="Legacy")
+
+# Add some text for labels, title and custom x-axis tick labels, etc.
+ax.set_ylabel("Turbine Powers [MW]")
+ax.set_xlabel("Turbine")
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.legend()
+
+
+def autolabel(rects):
+    """Attach a text label above each bar in *rects*, displaying its height."""
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate(
+            "{:.2f}".format(height),
+            xy=(rect.get_x() + rect.get_width() / 2, height),
+            xytext=(0, 1),  # 1 points vertical offset
+            textcoords="offset points",
+            ha="center",
+            va="bottom",
+        )
+
+
+# autolabel(rects1)
+# autolabel(rects2)
+# autolabel(rects3)
+
+fig.tight_layout()
+
 plt.show()
