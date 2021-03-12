@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -156,10 +156,10 @@ class FlowData:
             np.array: Array of u-velocity at specified points.
         """
         # print(x_points,y_points,z_points)
-        X = np.column_stack([self.x, self.y, self.z])
+        # X = np.column_stack([self.x, self.y, self.z])
         n_neighbors = 1
         knn = neighbors.KNeighborsRegressor(n_neighbors)
-        y_ = knn.fit(X, self.u)  # .predict(T)
+        # y_ = knn.fit(X, self.u)  # .predict(T)
 
         # Predict new points
         T = np.column_stack([x_points, y_points, z_points])

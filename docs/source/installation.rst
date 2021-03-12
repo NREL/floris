@@ -45,7 +45,7 @@ The FLORIS repository consists of two primary branches:
 
 - `master <https://github.com/NREL/FLORIS/tree/master>`_ - Stable
   release corresponding to a specific version number.
-- `develop <https://github.com/NREL/FLORIS/tree/dev>`_ - Latest
+- `develop <https://github.com/NREL/FLORIS/tree/develop>`_ - Latest
   updates including bug fixes and improvements but possibly unstable.
 
 To download the source code, use `git clone`. Then, add it to

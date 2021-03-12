@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -12,9 +12,9 @@
 
 # See https://floris.readthedocs.io for documentation
 
-## TODO
-## 1: reorganize into private and public methods
-## 2: Include smoothing?
+# TODO
+# 1: reorganize into private and public methods
+# 2: Include smoothing?
 
 import os
 import pickle
@@ -24,9 +24,9 @@ import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from pyproj import Proj
 
 import floris.utilities as geo
+from pyproj import Proj
 
 
 class WindRose:
@@ -852,6 +852,7 @@ class WindRose:
         ws=np.arange(0, 26, 1.0),
         include_ti=False,
         limit_month=None,
+        limit_hour=None,
         st_date=None,
         en_date=None,
     ):
@@ -901,6 +902,10 @@ class WindRose:
             limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
                 3...) to consider when calculating the wind condition
                 frequencies. If none are specified, all months will be used.
+                Defaults to None.
+            limit_hour (list, optional): List of ints of hour(s) (e.g., 0, 1,
+                ... 23) to consider when calculating the wind condition
+                frequencies. If none are specified, all hours will be used.
                 Defaults to None.
             st_date (str, optional): The start date to consider when creating
                 the wind rose, formatted as 'MM-DD-YYYY'. If not specified data
@@ -969,6 +974,7 @@ class WindRose:
                 ht,
                 include_ti=include_ti,
                 limit_month=limit_month,
+                limit_hour=limit_hour,
                 st_date=st_date,
                 en_date=en_date,
             )
@@ -992,6 +998,7 @@ class WindRose:
                 h_low,
                 include_ti=include_ti,
                 limit_month=limit_month,
+                limit_hour=limit_hour,
                 st_date=st_date,
                 en_date=en_date,
             )
@@ -1002,6 +1009,7 @@ class WindRose:
                 h_up,
                 include_ti=include_ti,
                 limit_month=limit_month,
+                limit_hour=limit_hour,
                 st_date=st_date,
                 en_date=en_date,
             )
@@ -1070,6 +1078,7 @@ class WindRose:
         ht=100,
         include_ti=False,
         limit_month=None,
+        limit_hour=None,
         st_date=None,
         en_date=None,
     ):
@@ -1098,6 +1107,10 @@ class WindRose:
             limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
                 3...) to consider when calculating the wind condition
                 frequencies. If none are specified, all months will be used.
+                Defaults to None.
+            limit_hour (list, optional): List of ints of hour(s) (e.g., 0, 1,
+                ... 23) to consider when calculating the wind condition
+                frequencies. If none are specified, all hours will be used.
                 Defaults to None.
             st_date (str, optional): The start date to consider, formatted as
                 'MM-DD-YYYY'. If not specified data beginning in 2007 will be
@@ -1166,6 +1179,9 @@ class WindRose:
         if limit_month is not None:
             df["month"] = df["datetime"].map(lambda x: x.month)
             df = df[df.month.isin(limit_month)]
+        if limit_hour is not None:
+            df["hour"] = df["datetime"].map(lambda x: x.hour)
+            df = df[df.hour.isin(limit_hour)]
         if include_ti:
             df = df[["wd", "ws", "ti"]]
         else:

@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -212,6 +212,7 @@ class Gauss(VelocityDeflection):
         ln_deltaDen = (1.6 - np.sqrt(M0)) * (
             1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
         )
+
         delta_far_wake = (
             delta0
             + (theta_c0 * E0 / 5.2)

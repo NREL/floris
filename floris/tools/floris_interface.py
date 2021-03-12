@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -322,6 +322,17 @@ class FlorisInterface(LoggerBase):
                     0
                 ].hub_height
                 x2_bounds = (10, hub_height * 2)
+        if normal_vector == "y":  # Rules of thumb for cut plane plane
+            if x1_bounds is None:
+                coords = self.floris.farm.flow_field.turbine_map.coords
+                max_diameter = self.floris.farm.flow_field.max_diameter
+                x = [coord.x1 for coord in coords]
+                x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
+            if x2_bounds is None:
+                hub_height = self.floris.farm.flow_field.turbine_map.turbines[
+                    0
+                ].hub_height
+                x2_bounds = (10, hub_height * 2)
 
         # Set up the points to test
         x1_array = np.linspace(x1_bounds[0], x1_bounds[1], num=x1_resolution)
@@ -338,6 +349,8 @@ class FlorisInterface(LoggerBase):
             points = np.row_stack((x1_array, x2_array, x3_array))
         if normal_vector == "x":
             points = np.row_stack((x3_array, x1_array, x2_array))
+        if normal_vector == "y":
+            points = np.row_stack((x1_array, x3_array, x2_array))
 
         # Recalculate wake with these points
         flow_field.calculate_wake(points=points)
@@ -1191,6 +1204,7 @@ class FlorisInterface(LoggerBase):
         inds = np.argsort(ws)
         ws = ws[inds]
         wd = wd[inds]
+        freq = freq[inds]
 
         # keep track of wind speeds where power stops increasing for each wind
         # direction
@@ -1506,18 +1520,11 @@ class FlorisInterface(LoggerBase):
 
     def set_rotor_diameter(self, rotor_diameter):
         """
-        Assign rotor diameter to turbines.
-
-        Args:
-            rotor_diameter (float): The rotor diameter(s) to be
-            applied to the turbines in meters.
+        This function has been replaced and no longer works correctly, assigning an error
         """
-        if isinstance(rotor_diameter, float) or isinstance(rotor_diameter, int):
-            rotor_diameter = [rotor_diameter] * len(self.floris.farm.turbines)
-        else:
-            rotor_diameter = rotor_diameter
-        for i, turbine in enumerate(self.floris.farm.turbines):
-            turbine.rotor_diameter = rotor_diameter[i]
+        raise Exception(
+            "function set_rotor_diameter has been removed.  Please use the function change_turbine going forward.  See examples/change_turbine for syntax"
+        )
 
     def show_model_parameters(
         self,

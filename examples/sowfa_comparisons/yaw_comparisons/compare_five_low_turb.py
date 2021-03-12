@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -44,7 +44,7 @@ df_sowfa = pd.DataFrame(
     sowfa_results, columns=["p0", "p1", "p2", "p3", "p4", "y0", "y1", "y2", "y3", "y4"]
 )
 
-## SET UP FLORIS AND MATCH TO BASE CASE
+# SET UP FLORIS AND MATCH TO BASE CASE
 wind_speed = 8.39
 TI = 0.065
 

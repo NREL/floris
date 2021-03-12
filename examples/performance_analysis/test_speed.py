@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -22,7 +22,7 @@ import timeit
 
 results = {}
 
-## Parameters
+# Parameters
 d_space = 7
 d = 126
 dist = d * d_space
@@ -43,7 +43,7 @@ import numpy as np
 # Initialize the FLORIS interface fi
 fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
-## Parameters
+# Parameters
 n_row = %d
 d_space = 7
 d = 126

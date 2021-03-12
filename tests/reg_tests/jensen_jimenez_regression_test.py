@@ -90,7 +90,7 @@ def test_regression_rotation():
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
     wind_map = floris.farm.wind_map
 
-    ### unrotated
+    # unrotated
     floris.farm.flow_field.calculate_wake()
     turbine = floris.farm.turbine_map.turbines[0]
     unwaked_baseline = (
@@ -117,7 +117,7 @@ def test_regression_rotation():
         turbine.average_velocity,
     )
 
-    ### rotated
+    # rotated
     wind_map.input_direction = [360]
     wind_map.calculate_wind_direction()
     new_map = TurbineMap(

@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -213,6 +213,10 @@ class Turbine(LoggerBase):
             _cp = self.fCpInterp(at_wind_speed)
             if _cp.size > 1:
                 _cp = _cp[0]
+            if _cp > 1.0:
+                _cp = 1.0
+            if _cp < 0.0:
+                _cp = 0.0
             return float(_cp)
 
     def _fCt(self, at_wind_speed):
@@ -225,6 +229,8 @@ class Turbine(LoggerBase):
                 _ct = _ct[0]
             if _ct > 1.0:
                 _ct = 0.9999
+            if _ct <= 0.0:
+                _ct = 0.0001
             return float(_ct)
 
     # Public methods
@@ -403,7 +409,9 @@ class Turbine(LoggerBase):
         Returns:
             list: converted TKE values
         """
-        return ((self.average_velocity * self.current_turbulence_intensity) ** 2) / (2 / 3)
+        return ((self.average_velocity * self.current_turbulence_intensity) ** 2) / (
+            2 / 3
+        )
 
     def u_prime(self):
         """
@@ -572,8 +580,8 @@ class Turbine(LoggerBase):
 
             >>> avg_vel = floris.farm.turbines[0].average_velocity()
         """
-        # remove all invalid numbers from interpolation
-        data = self.velocities[np.where(~np.isnan(self.velocities))]
+        # Remove all invalid numbers from interpolation
+        data = np.array(self.velocities)[~np.isnan(self.velocities)]
         avg_vel = np.cbrt(np.mean(data ** 3))
         if np.isnan(avg_vel):
             avg_vel = 0

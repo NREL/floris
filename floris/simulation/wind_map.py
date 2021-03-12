@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -513,6 +513,7 @@ class WindMap:
 
     @input_speed.setter
     def input_speed(self, value):
+        value = [i if i > 0.0 else 0.0001 for i in value]
         self._input_speed = value
 
     @property

@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -159,7 +159,9 @@ def visualize_cut_plane(
     Zm = np.ma.masked_where(np.isnan(u_mesh), u_mesh)
 
     # Plot the cut-through
-    im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed)
+    im = ax.pcolormesh(
+        x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed, shading="nearest"
+    )
 
     # Add line contour
     line_contour_cut_plane(
@@ -213,7 +215,7 @@ def visualize_quiver(
     )
 
     # plot the stream plot
-    QV1 = ax.streamplot(
+    ax.streamplot(
         (x1_mesh[::downSamp, ::downSamp]),
         (x2_mesh[::downSamp, ::downSamp]),
         v_mesh[::downSamp, ::downSamp],
