@@ -104,7 +104,7 @@ class WindRose:
                     - **wd** (*float*) - Wind direction bin center values (deg).
                     - **ws** (*float*) - Wind speed bin center values (m/s).
                     - **freq_val** (*float*) - The frequency of occurance of
-                    the wind conditions in the other columns.
+                      the wind conditions in the other columns.
         """
         (
             self.num_wd,
@@ -130,7 +130,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
             ws (np.array, optional): List of new wind speed center bins (m/s).
                 Defaults to np.arange(0, 26, 1.).
@@ -142,7 +142,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - New wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -206,7 +206,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
             wd (np.array, optional): List of new wind direction center bins
                 (deg). Defaults to np.arange(0, 360, 5.).
@@ -219,7 +219,7 @@ class WindRose:
                 - **wd** (*float*) - New wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -306,7 +306,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
             col (str): The name of the column to resample.
             bins (np.array): List of new bin center values for the specified
@@ -320,7 +320,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -373,7 +373,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
         Returns:
             pandas.DataFrame: Wind rose DataFrame with the resampled wind speed
@@ -381,9 +381,9 @@ class WindRose:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - The average wind speed for each wind
-                direction bin (m/s).
+                  direction bin (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -431,9 +431,9 @@ class WindRose:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - The average wind speed for each wind
-                direction bin (m/s).
+                  direction bin (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Update ws and wd binning
         self.wd = wd
@@ -482,7 +482,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         # Use an assumed wind-direction for dir frequency
         wind_dir = [
@@ -593,7 +593,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         df = pd.DataFrame()
 
@@ -680,7 +680,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         df = pd.DataFrame()
 
@@ -747,7 +747,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         # Load the wind toolkit data into a dataframe
         df = self.load_wind_toolkit_folder(folder_name, limit_month=limit_month)
@@ -921,7 +921,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         # Check inputs
 
