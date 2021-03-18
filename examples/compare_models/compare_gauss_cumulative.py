@@ -22,7 +22,7 @@ import floris.tools as wfct
 # User inputs
 D = 126.0
 nturbs_x = 5
-nturbs_y = 5
+nturbs_y = 2
 x_spacing = 5 * D
 y_spacing = 3 * D
 ws = 8.0
@@ -50,7 +50,8 @@ fi_gc_params = {
 }
 fi_gauss_cumulative.set_model_parameters(fi_gc_params)
 fi_gauss_cumulative.set_gch(enable=False)
-fi_gauss_cumulative.floris.farm.flow_field.solver = "gauss_cumulative"
+# fi_gauss_cumulative.floris.farm.flow_field.solver = "gauss_cumulative"
+fi_gauss_cumulative.floris.farm.wake.solver = "cumulative"
 fi_gauss_cumulative.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
@@ -58,7 +59,8 @@ fi_gauss_cumulative.reinitialize_flow_field(
 fi_gauss_cumulative.calculate_wake()
 
 fi_gauss_legacy.floris.farm.set_wake_model("gauss_legacy")
-fi_gauss_legacy.floris.farm.flow_field.solver = "floris"
+# fi_gauss_legacy.floris.farm.flow_field.solver = "floris"
+fi_gauss_legacy.floris.farm.wake.solver = "sequential"
 fi_gauss_legacy.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
