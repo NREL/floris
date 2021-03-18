@@ -101,8 +101,16 @@ class FlowField(LoggerBase):
             pt = turbine.rloc * turbine.rotor_radius
 
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
-            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
+            yt = np.linspace(
+                x2 - pt,
+                x2 + pt,
+                ngrid,
+            )
+            zt = np.linspace(
+                x3 - pt,
+                x3 + pt,
+                ngrid,
+            )
 
             x_grid[i] = xt[i]
             y_grid[i] = yt
@@ -543,9 +551,9 @@ class FlowField(LoggerBase):
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
     def calc_wake_init(self, points, track_n_upstream_wakes):
@@ -566,9 +574,9 @@ class FlowField(LoggerBase):
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of
@@ -783,181 +791,6 @@ class FlowField(LoggerBase):
                             # increment by one for each upstream wake
                             self.wake_list[turbine] += 1
 
-    def solver_floris(
-        self,
-        sorted_map,
-        rx,
-        ry,
-        initial_rotated_x,
-        initial_rotated_y,
-        rotated_z,
-        u_wake,
-        center_of_rotation,
-        no_wake,
-        track_n_upstream_wakes,
-    ):
-        for coord, turbine in sorted_map:
-            xloc, yloc = np.array(rx == coord.x1), np.array(ry == coord.x2)
-            idx = int(np.where(np.logical_and(yloc, xloc))[0])
-
-            if np.unique(self.wind_map.grid_wind_direction).size == 1:
-                # only rotate grid once for homogeneous wind direction
-                rotated_x, rotated_y = initial_rotated_x, initial_rotated_y
-
-            else:
-                # adjust grid rotation with respect to current turbine for
-                # heterogeneous wind direction
-                wd = (
-                    self.wind_map.turbine_wind_direction[idx]
-                    - self.wind_map.grid_wind_direction
-                )
-
-                # for straight wakes, change rx[idx] to initial_rotated_x
-                xoffset = center_of_rotation.x1 - rx[idx]
-                # for straight wakes, change ry[idx] to initial_rotated_y
-                yoffset = center_of_rotation.x2 - ry[idx]
-                y_grid_offset = xoffset * sind(wd) + yoffset * cosd(wd) - yoffset
-                rotated_y = initial_rotated_y - y_grid_offset
-
-                xoffset = center_of_rotation.x1 - initial_rotated_x
-                yoffset = center_of_rotation.x2 - initial_rotated_y
-                x_grid_offset = xoffset * cosd(wd) - yoffset * sind(wd) - xoffset
-                rotated_x = initial_rotated_x - x_grid_offset
-
-            # update the turbine based on the velocity at its hub
-            turbine.update_velocities(
-                u_wake, coord, self, rotated_x, rotated_y, rotated_z
-            )
-
-            # get the wake deflection field
-            deflection = self._compute_turbine_wake_deflection(
-                rotated_x, rotated_y, rotated_z, turbine, coord, self
-            )
-
-            # get the velocity deficit accounting for the deflection
-            (
-                turb_u_wake,
-                turb_v_wake,
-                turb_w_wake,
-            ) = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
-            )
-
-            self.WAT_downstream(
-                sorted_map,
-                rx,
-                ry,
-                turbine,
-                coord,
-                rotated_x,
-                rotated_y,
-                rotated_z,
-                turb_u_wake,
-                track_n_upstream_wakes,
-            )
-
-            # combine this turbine's wake into the full wake field
-            if not no_wake:
-                u_wake = self.wake.combination_function(u_wake, turb_u_wake)
-
-                if self.wake.velocity_model.model_string == "curl":
-                    self.v = turb_v_wake
-                    self.w = turb_w_wake
-                else:
-                    self.v = self.v + turb_v_wake
-                    self.w = self.w + turb_w_wake
-
-        return u_wake
-
-    def gauss_cumulative(
-        self,
-        sorted_map,
-        rx,
-        ry,
-        initial_rotated_x,
-        initial_rotated_y,
-        rotated_z,
-        u_wake,
-        center_of_rotation,
-        no_wake,
-        track_n_upstream_wakes,
-    ):
-        Ctmp = []
-        for n, (coord, turbine) in enumerate(sorted_map):
-            xloc, yloc = np.array(rx == coord.x1), np.array(ry == coord.x2)
-            idx = int(np.where(np.logical_and(yloc, xloc))[0])
-
-            if np.unique(self.wind_map.grid_wind_direction).size == 1:
-                # only rotate grid once for homogeneous wind direction
-                rotated_x, rotated_y = initial_rotated_x, initial_rotated_y
-
-            else:
-                # adjust grid rotation with respect to current turbine for
-                # heterogeneous wind direction
-                wd = (
-                    self.wind_map.turbine_wind_direction[idx]
-                    - self.wind_map.grid_wind_direction
-                )
-
-                # for straight wakes, change rx[idx] to initial_rotated_x
-                xoffset = center_of_rotation.x1 - rx[idx]
-                # for straight wakes, change ry[idx] to initial_rotated_y
-                yoffset = center_of_rotation.x2 - ry[idx]
-                y_grid_offset = xoffset * sind(wd) + yoffset * cosd(wd) - yoffset
-                rotated_y = initial_rotated_y - y_grid_offset
-
-                xoffset = center_of_rotation.x1 - initial_rotated_x
-                yoffset = center_of_rotation.x2 - initial_rotated_y
-                x_grid_offset = xoffset * cosd(wd) - yoffset * sind(wd) - xoffset
-                rotated_x = initial_rotated_x - x_grid_offset
-
-            # update the turbine based on the velocity at its hub
-            turbine.update_velocities(
-                u_wake, coord, self, rotated_x, rotated_y, rotated_z
-            )
-
-            # get the wake deflection field
-            deflection = self._compute_turbine_wake_deflection(
-                rotated_x, rotated_y, rotated_z, turbine, coord, self
-            )
-
-            # get the velocity deficit accounting for the deflection
-            (u_wake, v_wake, w_wake,) = self._compute_turbine_velocity_deficit(
-                rotated_x,
-                rotated_y,
-                rotated_z,
-                turbine,
-                coord,
-                deflection,
-                self,
-                n=n,
-                sorted_map=sorted_map,
-                u_wake=u_wake,
-                Ctmp=Ctmp,
-            )
-
-            self.WAT_downstream(
-                sorted_map,
-                rx,
-                ry,
-                turbine,
-                coord,
-                rotated_x,
-                rotated_y,
-                rotated_z,
-                u_wake,
-                track_n_upstream_wakes,
-            )
-
-        # combine this turbine's wake into the full wake field
-        if not no_wake:
-            # u_wake = self.wake.combination_function(u_wake, turb_u_wake)
-            self.u = self.u_initial - u_wake
-            self.v = self.v + v_wake
-            self.w = self.w + w_wake
-
-        return u_wake
-
     def calculate_wake(self, no_wake=False, points=None, track_n_upstream_wakes=False):
         """
         Updates the flow field based on turbine activity.
@@ -989,36 +822,19 @@ class FlowField(LoggerBase):
             center_of_rotation,
         ) = self.calc_wake_init(points, track_n_upstream_wakes)
 
-        if self.solver == "floris":
-            u_wake = self.solver_floris(
-                sorted_map,
-                rx,
-                ry,
-                initial_rotated_x,
-                initial_rotated_y,
-                rotated_z,
-                u_wake,
-                center_of_rotation,
-                no_wake,
-                track_n_upstream_wakes,
-            )
-        elif self.solver == "gauss_cumulative":
-            u_wake = self.gauss_cumulative(
-                sorted_map,
-                rx,
-                ry,
-                initial_rotated_x,
-                initial_rotated_y,
-                rotated_z,
-                u_wake,
-                center_of_rotation,
-                no_wake,
-                track_n_upstream_wakes,
-            )
-        else:
-            err_msg = "The specified solver ({0}) is not defined.".format(self.solver)
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
+        u_wake = self.wake.solver_function(
+            self,
+            sorted_map,
+            rx,
+            ry,
+            initial_rotated_x,
+            initial_rotated_y,
+            rotated_z,
+            u_wake,
+            center_of_rotation,
+            no_wake,
+            track_n_upstream_wakes,
+        )
 
         # apply the velocity deficit field to the freestream
         if not no_wake:
