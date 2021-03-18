@@ -36,7 +36,13 @@ Examples:
     'wake_turbulence', 'wake_velocity', 'wind_map']
 """
 
-from . import wake_velocity, wake_deflection, wake_turbulence, wake_combination
+from . import (
+    wake_solver,
+    wake_velocity,
+    wake_deflection,
+    wake_turbulence,
+    wake_combination,
+)
 from .farm import Farm
 from .wake import Wake
 from .floris import Floris
