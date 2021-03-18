@@ -20,9 +20,12 @@ from .wake_deflection.curl import Curl as CurlDeflection
 from .wake_velocity.jensen import Jensen
 from .wake_deflection.gauss import Gauss as GaussDeflection
 from .wake_combination.sosfs import SOSFS
+from .wake_solver.cumulative import Cumulative
+from .wake_solver.sequential import Sequential
 from .wake_turbulence.direct import Direct as DirectTurbulence
 from .wake_deflection.jimenez import Jimenez
 from .wake_velocity.multizone import MultiZone
+from .wake_solver.base_wake_solver import WakeSolver
 from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
 from .wake_turbulence.crespo_hernandez import (
     CrespoHernandez as CrespoHernandezTurbulence,
@@ -104,6 +107,9 @@ class Wake:
 
         self._combination_models = {"fls": FLS, "sosfs": SOSFS, "max": MAX}
         self.combination_model = properties["combination_model"]
+
+        self._solvers = {"sequential": Sequential, "cumulative": Cumulative}
+        self.solver = properties["wake_solver"]
 
     # Getters & Setters
     @property
@@ -244,6 +250,35 @@ class Wake:
             )
 
     @property
+    def solver(self):
+        """
+        Wake solver.
+
+        **Note**: This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (str, :py:class:`~.base_wake_solver.WakeSolver`):
+                A string for the solver to set or the solver instance itself.
+
+        Returns:
+            :py:class:`~.base_wake_solver.WakeSolver`:
+                Solver currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._solver
+
+    @solver.setter
+    def solver(self, value):
+        if type(value) is str:
+            self._solver = self._solvers[value]()
+        elif isinstance(value, WakeSolver):
+            self._solver = value
+        else:
+            raise ValueError("Invalid value given for WakeSolver: {}".format(value))
+
+    @property
     def deflection_function(self):
         """
         Function to calculate the wake deflection. This is dynamically
@@ -286,3 +321,14 @@ class Wake:
             :py:class:`~.wake_combination.base_wake_combination.WakeCombination`
         """
         return self.combination_model.function
+
+    @property
+    def solver_function(self):
+        """
+        Function to calculate the wake, dependent upon the other selected models.
+        This is dynamically gotten from the currently set solver.
+
+        Returns:
+            :py:class:`~.wake_solver.base_wake_solver.WakeSolver`
+        """
+        return self.solver.function
