@@ -145,16 +145,20 @@ class GaussCumulative(GaussianModel):
 
         sum_lbda = 0.0
         # for m, (coord_i, turbine_i) in enumerate(sorted_map):
+        # TODO: make sure n-1 and not n-2
         for m in range(0, n - 1):
-            turbine_i = sorted_map[m][1]
             coord_i = sorted_map[m][0]
+            turbine_i = sorted_map[m][1]
             sigma_i = flow_field.wake.velocity_model.wake_expansion(
                 flow_field, turbine_i, coord_i, x_locations, y_locations, z_locations
             )
             S = sigma_n ** 2 + sigma_i ** 2
-            Y = (turbine_coord.x2 - turbine_coord.x2 - deflection_field) ** 2 / (2 * S)
-            Z = (turbine_coord.x3 - turbine_coord.x3) ** 2 / (2 * S)
-            lbda = sigma_i ** 2 * np.exp(-Y) * np.exp(-Z) / S
+            # TODO: check deflection_field being a field instead of a scalar
+            # Y = (turbine_coord.x2 - coord_i.x2 - deflection_field) ** 2 / (2 * S)
+            Y = (turbine_coord.x2 - coord_i.x2) ** 2 / (2 * S)
+            Z = (turbine_coord.x3 - coord_i.x3) ** 2 / (2 * S)
+            # TODO: add alpha to show difference between derived and modified version
+            lbda = sigma_i ** 2 / S * np.exp(-Y) * np.exp(-Z)
             sum_lbda = sum_lbda + lbda * (Ctmp[m] / flow_field.u_initial)
 
         # Centerline velocity
@@ -163,7 +167,9 @@ class GaussCumulative(GaussianModel):
         num = turbine.Ct * (Uavg / flow_field.u_initial) ** 2
         den = (8 * (sigma_n / turbine.rotor_diameter) ** 2) * (1 - sum_lbda) ** 2
         C = flow_field.u_initial * (1 - sum_lbda) * (1 - np.sqrt(1 - num / den))
+        # Max theoretical velocity deficit based on Betz theory
         C_max = 2 * turbine.aI * Uavg
+        # TODO: determine whether C_max should vary in z (height)
         # C_max = 2 * turbine.aI * np.reshape(turbine.velocities, (5,5)) * np.ones_like(flow_field.u_initial)
         mask = C > C_max
         C[mask] = C_max
@@ -196,7 +202,7 @@ class GaussCumulative(GaussianModel):
         #     rotated_z,
         # )
 
-        return u_wake, np.zeros(np.shape(u_wake)), np.zeros(np.shape(u_wake))
+        return u_wake, np.zeros(np.shape(u_wake)), np.zeros(np.shape(u_wake)), Ctmp
 
     def wake_expansion(
         self, flow_field, turbine, turbine_coord, x_locations, y_locations, z_locations

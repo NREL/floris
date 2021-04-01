@@ -274,12 +274,21 @@ class FlowField(LoggerBase):
             u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
                 x, y, z, turbine, coord, deflection, flow_field
             )
+
+            # calculate spanwise and streamwise velocities if needed
+            if hasattr(self.wake.velocity_model, "calculate_VW"):
+                v_deficit, w_deficit = self.wake.velocity_model.calculate_VW(
+                    v_deficit, w_deficit, coord, turbine, flow_field, x, y, z
+                )
+
+            return u_deficit, v_deficit, w_deficit
         else:
             n = kwargs["n"]
             sorted_map = kwargs["sorted_map"]
             u_wake = kwargs["u_wake"]
             Ctmp = kwargs["Ctmp"]
-            u_deficit, v_deficit, w_deficit = self.wake.velocity_function(
+
+            u_deficit, v_deficit, w_deficit, Ctmp = self.wake.velocity_function(
                 x,
                 y,
                 z,
@@ -293,13 +302,21 @@ class FlowField(LoggerBase):
                 Ctmp=Ctmp,
             )
 
-        # calculate spanwise and streamwise velocities if needed
-        if hasattr(self.wake.velocity_model, "calculate_VW"):
-            v_deficit, w_deficit = self.wake.velocity_model.calculate_VW(
-                v_deficit, w_deficit, coord, turbine, flow_field, x, y, z
-            )
+            # calculate spanwise and streamwise velocities if needed
+            if hasattr(self.wake.velocity_model, "calculate_VW"):
+                v_deficit, w_deficit = self.wake.velocity_model.calculate_VW(
+                    v_deficit, w_deficit, coord, turbine, flow_field, x, y, z
+                )
 
-        return u_deficit, v_deficit, w_deficit
+            return u_deficit, v_deficit, w_deficit, Ctmp
+
+        # calculate spanwise and streamwise velocities if needed
+        # if hasattr(self.wake.velocity_model, "calculate_VW"):
+        #     v_deficit, w_deficit = self.wake.velocity_model.calculate_VW(
+        #         v_deficit, w_deficit, coord, turbine, flow_field, x, y, z
+        #     )
+
+        # return u_deficit, v_deficit, w_deficit, Ctmp
 
     def _compute_turbine_wake_turbulence(
         self, ambient_TI, coord_ti, turbine_coord, turbine
@@ -811,6 +828,7 @@ class FlowField(LoggerBase):
                 track of the number of upstream wakes a turbine is
                 experiencing. Defaults to *False*.
         """
+        # Initialization steps
         (
             sorted_map,
             rx,
@@ -822,6 +840,7 @@ class FlowField(LoggerBase):
             center_of_rotation,
         ) = self.calc_wake_init(points, track_n_upstream_wakes)
 
+        # Wake solve step
         u_wake = self.wake.solver_function(
             self,
             sorted_map,
