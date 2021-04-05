@@ -114,6 +114,7 @@ class VelocityDeflection(LoggerBase):
             secondary steering is enabled.
         """
         if self.use_secondary_steering:
+            print("########### USING SECONDARY STEERING ##############")
             if not flow_field.wake.velocity_model.calculate_VW_velocities:
                 err_msg = (
                     "It appears that 'use_secondary_steering' is set "
