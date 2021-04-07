@@ -236,6 +236,11 @@ class FlorisInterface(LoggerBase):
                 )
                 wind_map.input_direction = wind_direction
                 wind_map.calculate_wind_direction()
+                if (
+                    self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
+                    is not None
+                ):
+                    self.floris.farm.turbine_map.reinitialize_turbines()
 
             # redefine wind_map in Farm object
             self.floris.farm.wind_map = wind_map
@@ -250,6 +255,9 @@ class FlorisInterface(LoggerBase):
             with_resolution=with_resolution,
             wind_map=self.floris.farm.wind_map,
         )
+
+    def reinitialize_turbines(self):
+        self.floris.farm.turbine_map.reinitialize_turbines()
 
     def get_plane_of_points(
         self,
@@ -289,7 +297,7 @@ class FlorisInterface(LoggerBase):
 
             # If this is a gridded model, must extract from full flow field
             self.logger.info(
-                "Model identified as %s requires use of underlying grid print"
+                "Model identified as %s requires use of underlying grid points"
                 % self.floris.farm.flow_field.wake.velocity_model.model_string
             )
 
@@ -1385,7 +1393,7 @@ class FlorisInterface(LoggerBase):
         """
         for turbine in self.floris.farm.turbines:
             turbine.use_points_on_perimeter = use_points_on_perimeter
-            turbine._initialize_turbine()
+            turbine.initialize_turbine()
 
     def set_gch(self, enable=True):
         """

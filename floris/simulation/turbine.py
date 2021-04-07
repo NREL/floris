@@ -110,16 +110,11 @@ class Turbine(LoggerBase):
         self.air_density = -1
         self.use_turbulence_correction = False
 
-        self._initialize_turbine()
-
-        # The indices for this Turbine instance's points from the FlowField
-        # are set in `FlowField._discretize_turbine_domain` and stored
-        # in this variable.
-        self.flow_field_point_indices = None
+        self.initialize_turbine()
 
     # Private methods
 
-    def _initialize_turbine(self):
+    def initialize_turbine(self):
         # Initialize the turbine given saved parameter settings
 
         # Precompute interps
@@ -144,6 +139,11 @@ class Turbine(LoggerBase):
         # Compute list of inner powers
         inner_power = np.array([self._power_inner_function(ws) for ws in wind_speed])
         self.powInterp = interp1d(wind_speed, inner_power, fill_value="extrapolate")
+
+        # The indices for this Turbine instance's points from the FlowField
+        # are set in `FlowField._discretize_turbine_domain` and stored
+        # in this variable.
+        self.flow_field_point_indices = None
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
@@ -247,7 +247,7 @@ class Turbine(LoggerBase):
                 "Setting {} to {}".format(param, turbine_change_dict[param])
             )
             setattr(self, param, turbine_change_dict[param])
-        self._initialize_turbine()
+        self.initialize_turbine()
 
     def calculate_swept_area_velocities(
         self, local_wind_speed, coord, x, y, z, additional_wind_speed=None
@@ -304,7 +304,20 @@ class Turbine(LoggerBase):
             x_array = np.ones_like(y_array) * coord.x1
             grid_array = np.column_stack([x_array, y_array, z_array])
 
-            ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
+            # ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
+            # ii = np.zeros(25).astype(int)
+            # for i in range(len(ii)):
+            #     ii[i] = np.argmin(np.sum((flow_grid_points - grid_array[i,:]) ** 2, axis=1))
+            ii = np.array(
+                [
+                    np.argmin(
+                        np.sum((flow_grid_points - grid_array[i, :]) ** 2, axis=1)
+                    )
+                    for i in range(len(grid_array))
+                ]
+            )
+            # ii = ii.astype(int)
+            self.flow_field_point_indices = ii
         else:
             ii = self.flow_field_point_indices
 
