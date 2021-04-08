@@ -15,7 +15,7 @@
 
 import pytest
 
-from floris.simulation import InputReader
+from src import InputReader
 
 
 @pytest.fixture

@@ -17,7 +17,7 @@ import copy
 from pytest import approx
 
 from tests.conftest import print_test_values, turbines_to_array
-from floris.simulation import Floris, TurbineMap
+from src import Floris, TurbineMap
 
 
 DEBUG = False

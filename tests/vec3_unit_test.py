@@ -18,7 +18,7 @@ import pytest
 
 @pytest.fixture
 def vec3_fixture():
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     return Vec3(4, 4, 0)
 
@@ -27,7 +27,7 @@ def test_instantiation_with_args():
     """
     The class should initialize with three positional arguments.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     vec3 = Vec3(1, 2, 3)
     assert vec3 is not None
@@ -40,7 +40,7 @@ def test_instantiation_with_list():
     """
     The class should initialize with a list of length 3.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     vec3 = Vec3([1, 2, 3])
     assert vec3 is not None
@@ -70,7 +70,7 @@ def test_rotation_off_origin(vec3_fixture):
     of rotation located and 1.5x the vector should result in a vector
     located at 2x the original value.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     center_of_rotation = Vec3(vec3_fixture.x1 / 2.0, vec3_fixture.x2 / 2.0, 0.0)
     vec3_fixture.rotate_on_x3(180, center_of_rotation)
@@ -91,7 +91,7 @@ def test_add(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     scalar = vec3_fixture + 1
     assert scalar.x1 == vec3_fixture.x1 + 1
@@ -110,7 +110,7 @@ def test_subtract(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     scalar = vec3_fixture - 1
     assert scalar.x1 == vec3_fixture.x1 - 1
@@ -129,7 +129,7 @@ def test_multiply(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     scalar = vec3_fixture * 10
     assert scalar.x1 == vec3_fixture.x1 * 10
@@ -148,7 +148,7 @@ def test_divide(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     scalar = vec3_fixture / 10.0
     assert scalar.x1 == vec3_fixture.x1 / 10.0
@@ -166,7 +166,7 @@ def test_equality(vec3_fixture):
     The overloaded equality operator should compare each component to the
     same components of the right-hand-side value.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     rhs = Vec3(vec3_fixture.x1, vec3_fixture.x2, vec3_fixture.x3)
     assert vec3_fixture == rhs
@@ -186,7 +186,7 @@ def test_string_formatting():
     The class has a default string representation and allows for custom
     string formatting.
     """
-    from floris.utilities import Vec3
+    from src.utilities import Vec3
 
     vec3 = Vec3([1, 2, 3], string_format="{:6.2f}")
     assert str(vec3) == "  1.00   2.00   3.00"

@@ -15,7 +15,7 @@
 
 import pytest
 
-from floris.simulation import Wake
+from src import Wake
 
 
 @pytest.fixture

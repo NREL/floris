@@ -12,14 +12,12 @@
 
 # See https://floris.readthedocs.io for documentation
 
-
 from pytest import approx
 
 from tests.conftest import print_test_values, turbines_to_array
-from floris.simulation import Floris
-from tests.reg_tests.curl_regression_test import baseline as curl_baseline
 from tests.reg_tests.gauss_regression_test import baseline as gauss_baseline
-
+from tests.reg_tests.curl_regression_test import baseline as curl_baseline
+from src import Floris
 
 DEBUG = False
 

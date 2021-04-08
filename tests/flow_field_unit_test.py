@@ -17,7 +17,7 @@ import copy
 import numpy as np
 import pytest
 
-from floris.simulation import Wake, Turbine, WindMap, FlowField, TurbineMap
+from src import Wake, Turbine, WindMap, FlowField, TurbineMap
 
 
 @pytest.fixture
