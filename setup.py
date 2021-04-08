@@ -44,17 +44,10 @@ REQUIRED = [
     "pytest>=4",
     "scipy>=1.1",
     "coloredlogs>=10.0",
-    # tools
-    "pandas>=0.24",
-    "pyproj>=2.1",
-    "seaborn>=0.9",
-    "sklearn>=0.0",
-    "shapely>=1.7.1",
 ]
 
 # What packages are optional?
 EXTRAS = {
-    "wind_tool_kit": {"h5pyd>=0.3"},
     "docs": {"readthedocs-sphinx-ext", "Sphinx", "sphinxcontrib-napoleon"},
     "develop": {"pre-commit", "black", "isort", "flake8"},
 }

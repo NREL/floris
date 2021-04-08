@@ -61,8 +61,7 @@ Examples:
 
 from pathlib import Path
 
-from . import tools, utilities, simulation, logging_manager
-from .tools import optimization
+from . import utilities, simulation, logging_manager
 
 
 ROOT = Path(__file__).parent
