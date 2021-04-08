@@ -16,8 +16,8 @@
 import numpy as np
 
 from .turbine import Turbine
-from ..utilities import Vec3, wrap_180
-from ..logging_manager import LoggerBase
+from .utilities import Vec3, wrap_180
+from .logging_manager import LoggerBase
 
 
 class TurbineMap(LoggerBase):

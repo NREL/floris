@@ -12,7 +12,7 @@
 
 import numpy as np
 
-from ...utilities import cosd
+from ..utilities import cosd
 from .base_velocity_deficit import VelocityDeficit
 
 

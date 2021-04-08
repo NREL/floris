@@ -15,7 +15,7 @@ import copy
 import numpy as np
 
 from .wind_map import WindMap
-from ..utilities import Vec3
+from .utilities import Vec3
 from .flow_field import FlowField
 from .turbine_map import TurbineMap
 

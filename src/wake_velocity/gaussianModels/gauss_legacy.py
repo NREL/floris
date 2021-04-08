@@ -10,32 +10,28 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import numpy as np
-from scipy.special import gamma
+import copy
 
-from ....utilities import cosd, sind, tand
+import numpy as np
+
+from ...utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
 from ..base_velocity_deficit import VelocityDeficit
 
 
-class Gauss(GaussianModel):
+class LegacyGauss(GaussianModel):
     """
-    The new Gauss model blends the previously implemented Gussian model based
-    on [1-5] with the super-Gaussian model of [6].  The blending is meant to
-    provide consistency with previous results in the far wake while improving
-    prediction of the near wake.
-
-    See :cite:`gvm-bastankhah2014new`, :cite:`gvm-abkar2015influence`,
-    :cite:`gvm-bastankhah2016experimental`, :cite:`gvm-niayifar2016analytical`,
-    :cite:`gvm-dilip2017wind`, :cite:`gvm-blondel2020alternative`, and
-    :cite:`gvm-King2019Controls` for more information on Gaussian wake velocity
-    deficit models.
+    The LegacyGauss model ports the previous Gauss model to the new FLORIS
+    framework of inheritance of the GaussianModel. It is based on the gaussian
+    wake models described in :cite:`glvm-bastankhah2014new`,
+    :cite:`glvm-abkar2015influence`, :cite:`glvm-bastankhah2016experimental`,
+    :cite:`glvm-niayifar2016analytical`, and :cite:`glvm-dilip2017wind`.
 
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
             :filter: docname in docnames
-            :keyprefix: gvm-
+            :keyprefix: glvm-
     """
 
     default_parameters = {
@@ -43,8 +39,8 @@ class Gauss(GaussianModel):
         "kb": 0.004,
         "alpha": 0.58,
         "beta": 0.077,
-        "calculate_VW_velocities": True,
-        "use_yaw_added_recovery": True,
+        "calculate_VW_velocities": False,
+        "use_yaw_added_recovery": False,
         "eps_gain": 0.2,
     }
 
@@ -69,33 +65,27 @@ class Gauss(GaussianModel):
                     -   **beta**: Parameter that determines the dependence of
                         the downstream boundary between the near wake and far
                         wake region on the turbine's induction factor.
-                    -   **calculate_VW_velocities**: Flag to enable the
-                        calculation of V- and W-component velocities using
-                        methods developed in [7].
-                    -   **use_yaw_added_recovery**: Flag to use yaw added
-                        recovery on the wake velocity using methods developed
-                        in [7].
-                    -   **eps_gain**: Tuning value for calculating the V- and
-                        W-component velocities using methods developed in [7].
 
         """
+
         super().__init__(parameter_dictionary)
 
-        self.model_string = "gauss"
+        self.model_string = "gauss_legacy"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
-
-        # wake expansion parameters
-        self.ka = model_dictionary["ka"]
-        self.kb = model_dictionary["kb"]
 
         # near wake / far wake boundary parameters
         self.alpha = model_dictionary["alpha"]
         self.beta = model_dictionary["beta"]
 
+        # wake expansion parameters
+        self.ka = model_dictionary["ka"]
+        self.kb = model_dictionary["kb"]
+
         # GCH Parameters
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.eps_gain = model_dictionary["eps_gain"]
+        self.gch_gain = 2.0
 
     def function(
         self,
@@ -108,7 +98,7 @@ class Gauss(GaussianModel):
         flow_field,
     ):
         """
-        Using the blended Gaussian wake model, this method calculates and
+        Using the Gaussian wake model, this method calculates and
         returns the wake velocity deficits, caused by the specified turbine,
         relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
@@ -141,8 +131,16 @@ class Gauss(GaussianModel):
                 and z directions, respectively. The three arrays contain the
                 velocity deficits at each grid point in the flow field.
         """
-        # added turbulence model
-        TI = turbine.current_turbulence_intensity
+        # veer (degrees)
+        veer = flow_field.wind_veer
+
+        TI_mixing = self.yaw_added_turbulence_mixing(
+            turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
+        )
+        turbine.current_turbulence_intensity = (
+            turbine.current_turbulence_intensity + self.gch_gain * TI_mixing
+        )
+        TI = copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
 
         # turbine parameters
         D = turbine.rotor_diameter
@@ -155,27 +153,12 @@ class Gauss(GaussianModel):
         delta = deflection_field
 
         xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
-
-        # Compute scaled variables (Eq 1, pp 3 of ref. [1] in docstring)
-        x_tilde = (x_locations - turbine_coord.x1) / D
-
-        # Over-ride the values less than xR, these go away anyway
-        x_tilde[x_locations < xR] = 0  # np.mean(x_tilde[x_locations >= xR] )
-
-        r_tilde = (
-            np.sqrt(
-                (y_locations - turbine_coord.x2 - delta) ** 2 + (z_locations - HH) ** 2,
-                dtype=np.float128,
-            )
-            / D
+        uR, u0 = GaussianModel.initial_velocity_deficits(U_local, Ct)
+        sigma_y0, sigma_z0 = GaussianModel.initial_wake_expansion(
+            turbine, U_local, veer, uR, u0
         )
 
-        beta = (1 + np.sqrt(1 - Ct * cosd(yaw))) / (2 * (1 + np.sqrt(1 - Ct)))
-
-        a_s = self.ka  # Force equality to previous parameters to reduce new parameters
-        b_s = self.kb  # Force equality to previous parameters to reduce new parameters
-        c_s = 0.5
-
+        # quantity that determines when the far wake starts
         x0 = (
             D
             * (cosd(yaw) * (1 + np.sqrt(1 - Ct)))
@@ -183,43 +166,63 @@ class Gauss(GaussianModel):
                 np.sqrt(2)
                 * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))
             )
-        )  # + turbine_coord.x1
-        sigma_tilde = (a_s * TI + b_s) * (x_tilde - x0 / D) + c_s * np.sqrt(beta)
-
-        # If not subtracting x0 as above, but I think equivalent
-        # sigma_tilde = (a_s * TI + b_s) * (x_tilde - 0) + c_s * np.sqrt(beta)
-        # sigma_tilde = sigma_tilde  - (a_s * TI + b_s) * x0/D
-
-        a_f = 1.5 * 3.11
-        b_f = 0.65 * -0.68
-        c_f = 2.0
-        n = a_f * np.exp(b_f * x_tilde) + c_f
-
-        a1 = 2 ** (2 / n - 1)
-        a2 = 2 ** (4 / n - 2)
-
-        # These two lines seem to be equivalent
-        C = a1 - np.sqrt(
-            a2
-            - (
-                n
-                * Ct
-                * cosd(yaw)
-                / (
-                    16.0
-                    * gamma(2 / n)
-                    * np.sign(sigma_tilde)
-                    * np.abs(sigma_tilde) ** (4 / n)
-                )
-            )
+            + turbine_coord.x1
         )
-        # C = a1 - np.sqrt(a2 - (n * Ct * cosd(yaw) / (16.0 * gamma(2/n) * sigma_tilde**(4/n) ) ) )
 
-        # Compute wake velocity (Eq 1, pp 3 of ref. [1] in docstring)
-        velDef = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
+        # velocity deficit in the near wake
+        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
+            Ct / 2.0
+        ) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
+        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
+            Ct / 2.0
+        ) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
+        sigma_y[x_locations < xR] = 0.5 * D
+        sigma_z[x_locations < xR] = 0.5 * D
+
+        a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
+        b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
+        c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
+        r = (
+            a * ((y_locations - turbine_coord.x2) - delta) ** 2
+            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH))
+            + c * ((z_locations - HH)) ** 2
+        )
+        C = 1 - np.sqrt(
+            np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0)
+        )
+
+        velDef = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
         velDef[x_locations < xR] = 0
+        velDef[x_locations > x0] = 0
 
-        return velDef, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
+        # wake expansion in the lateral (y) and the vertical (z)
+        ky = self.ka * TI + self.kb  # wake expansion parameters
+        kz = self.ka * TI + self.kb  # wake expansion parameters
+        sigma_y = ky * (x_locations - x0) + sigma_y0
+        sigma_z = kz * (x_locations - x0) + sigma_z0
+        sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
+        sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
+
+        # velocity deficit outside the near wake
+        a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
+        b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
+        c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
+        r = (
+            a * (y_locations - turbine_coord.x2 - delta) ** 2
+            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH)
+            + c * (z_locations - HH) ** 2
+        )
+        C = 1 - np.sqrt(
+            np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0)
+        )
+
+        # compute velocities in the far wake
+        velDef1 = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
+        velDef1[x_locations < x0] = 0
+
+        U = np.sqrt(velDef ** 2 + velDef1 ** 2)
+
+        return U, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
 
     @property
     def ka(self):

@@ -12,7 +12,7 @@
 
 import numpy as np
 
-from ...utilities import cosd, sind
+from ..utilities import cosd, sind
 from .base_velocity_deflection import VelocityDeflection
 
 

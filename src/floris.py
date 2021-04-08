@@ -15,7 +15,7 @@
 
 import pickle
 
-import floris.logging_manager as logging_manager
+import src.logging_manager as logging_manager
 
 from .farm import Farm
 from .wake import Wake

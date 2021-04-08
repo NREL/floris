@@ -12,30 +12,25 @@
 
 # See https://floris.readthedocs.io for documentation
 
+
 """
-The :py:obj:`floris.simulation` package contains the modules used to
-complete a wake simulation for a given wind farm and turbine
-configuration.
+The :py:obj:`floris` package contains :py:obj:`src.utilities` module
+and the modules that make up the FLORIS software. The floris simulation
+modules are used to complete a wake simulation for a given wind farm
+and turbine configuration.
 
-All classes can be be imported with
+All modules and package can be imported with
 
-    >>> import floris.simulation
+    >>> import floris
 
 The ``__init__.py`` file enables the import of all modules in this
 package so any additional modules should be included there.
-
-Examples:
-    >>> import floris.simulation
-
-    >>> dir(floris.simulation)
-    ['Farm', 'Floris', 'FlowField', 'InputReader', 'Turbine',
-    'TurbineMap', 'Wake', 'WindMap', '__builtins__', '__cached__',
-    '__doc__', '__file__', '__loader__', '__name__', '__package__',
-    '__path__', '__spec__', 'farm', 'floris', 'flow_field', 'input_reader',
-    'turbine', 'turbine_map', 'wake', 'wake_combination', 'wake_deflection',
-    'wake_turbulence', 'wake_velocity', 'wind_map']
 """
 
+from pathlib import Path
+
+from . import utilities
+from . import logging_manager
 from . import wake_velocity, wake_deflection, wake_turbulence, wake_combination
 from .farm import Farm
 from .wake import Wake
@@ -45,3 +40,11 @@ from .wind_map import WindMap
 from .flow_field import FlowField
 from .turbine_map import TurbineMap
 from .input_reader import InputReader
+
+ROOT = Path(__file__).parent
+with open(ROOT.parent / "VERSION") as version_file:
+    VERSION = version_file.read().strip()
+__version__ = VERSION
+
+# initialize the logger
+logging_manager._setup_logger()

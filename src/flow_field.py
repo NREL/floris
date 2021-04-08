@@ -17,7 +17,7 @@ import numpy as np
 import scipy as sp
 from scipy.interpolate import griddata
 
-from ..utilities import Vec3, cosd, sind, tand
+from .utilities import Vec3, cosd, sind, tand
 
 
 class FlowField:

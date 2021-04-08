@@ -15,7 +15,7 @@
 import numpy as np
 import scipy as sp
 
-from ..utilities import Vec3
+from .utilities import Vec3
 
 
 class WindMap:

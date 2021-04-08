@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from ...logging_manager import LoggerBase
+from ..logging_manager import LoggerBase
 
 
 class WakeCombination(LoggerBase):

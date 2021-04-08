@@ -12,7 +12,7 @@
 
 import numpy as np
 
-from ....utilities import cosd, sind, tand, setup_logger
+from ...utilities import cosd, sind, tand, setup_logger
 from ..base_velocity_deficit import VelocityDeficit
 
 

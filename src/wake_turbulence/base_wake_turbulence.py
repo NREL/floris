@@ -10,24 +10,14 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import numpy as np
-
-from ...utilities import cosd, sind, tand
-from ...logging_manager import LoggerBase
+from ..logging_manager import LoggerBase
 
 
-class VelocityDeflection(LoggerBase):
+class WakeTurbulence(LoggerBase):
     """
-    This is the super-class for all wake deflection models. It includes
-    implementations of functions that subclasses should use to perform
-    secondary steering. See :cite:`bvd-King2019Controls`. for more details on
-    how secondary steering is calculated.
-
-    References:
-        .. bibliography:: /source/zrefs.bib
-            :style: unsrt
-            :filter: docname in docnames
-            :keyprefix: bvd-
+    This is the super-class for all wake turbulence models. It includes
+    implementations of functions that subclasses should use to retrieve
+    model-specific parameters from the input dictionary.
     """
 
     def __init__(self, parameter_dictionary):
@@ -35,30 +25,18 @@ class VelocityDeflection(LoggerBase):
         Stores the parameter dictionary for the wake deflection model.
 
         Args:
-            parameter_dictionary (dict): Dictionary containing the wake
-                deflection model parameters. See individual wake deflection
+            parameter_dictionary (dict): Contains the wake turbulence
+                model parameters. See individual wake turbulence
                 models for details of specific key-value pairs.
         """
-
-        self.model_string = None
-
         self.parameter_dictionary = parameter_dictionary
 
-        # if 'use_secondary_steering' in self.parameter_dictionary:
-        #     self.use_secondary_steering = \
-        #         bool(self.parameter_dictionary["use_secondary_steering"])
-        # else:
-        #     self.logger.info('Using default option of applying gch-based ' + \
-        #                 'secondary steering (use_secondary_steering=True)')
-        #     self.use_secondary_steering = True
+        self.requires_resolution = False
+        self.model_string = None
+        self.model_grid_resolution = None
 
-        # if 'eps_gain' in self.parameter_dictionary:
-        #     self.eps_gain = bool(self.parameter_dictionary["eps_gain"])
-        # else:
-        #     # SOWFA SETTING (note this will be multiplied by D in function)
-        #     self.eps_gain = 0.3
-        #     self.logger.info(
-        #         ('Using default option eps_gain: %.1f' % self.eps_gain))
+    def __str__(self):
+        return self.model_string
 
     def _get_model_dict(self, default_dict):
         if self.model_string not in self.parameter_dictionary.keys():

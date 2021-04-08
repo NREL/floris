@@ -12,8 +12,8 @@
 
 import numpy as np
 
-from ...utilities import cosd, sind, tand
-from ...logging_manager import LoggerBase
+from ..utilities import cosd, sind, tand
+from ..logging_manager import LoggerBase
 
 
 class VelocityDeficit(LoggerBase):
