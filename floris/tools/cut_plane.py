@@ -17,6 +17,7 @@ import copy
 
 import numpy as np
 import pandas as pd
+
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
@@ -370,11 +371,13 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
         (float): effective wind speed
     """
     # Make a distance column
-    distance = np.sqrt((cross_plane.x1_flat - x1_loc)**2 +
-                       (cross_plane.x2_flat - x2_loc)**2)
+    distance = np.sqrt(
+        (cross_plane.x1_flat - x1_loc) ** 2 + (cross_plane.x2_flat - x2_loc) ** 2
+    )
 
     # Return the mean wind speed
     return np.cbrt(np.mean(cross_plane.u_cubed[distance < R]))
+
 
 # def wind_speed_profile(cross_plane,
 #                         R,
