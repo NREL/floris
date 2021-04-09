@@ -370,14 +370,20 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
     Returns:
         (float): effective wind speed
     """
+
+    # Temp local copy
+    df = cross_plane.df.copy()
+    
+    
+
     # Make a distance column
-    distance = np.sqrt(
-        (cross_plane.x1_flat - x1_loc) ** 2 + (cross_plane.x2_flat - x2_loc) ** 2
+    df['distance'] = distance = np.sqrt(
+        (df.x1 - x1_loc) ** 2 + (df.x2 - x2_loc) ** 2
     )
 
-    # Return the mean wind speed
-    return np.cbrt(np.mean(cross_plane.u_cubed[distance < R]))
-
+    # Return the cube-mean wind speed
+    return np.cbrt(np.mean(df[df.distance < R].u**3))
+    
 
 # def wind_speed_profile(cross_plane,
 #                         R,
@@ -391,49 +397,49 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
 #     v_array = np.array([calculate_wind_speed(cross_plane,x1_loc, x2_loc, R) for x1_loc in x1_locs])
 #     return x1_locs, v_array
 
-# def calculate_power(cross_plane,
-#                     x1_loc,
-#                     x2_loc,
-#                     R,
-#                     ws_array,
-#                     cp_array,
-#                     air_density=1.225):
-#     """
-#     Calculate maximum power available in a given cross plane.
+def calculate_power(cross_plane,
+                    x1_loc,
+                    x2_loc,
+                    R,
+                    ws_array,
+                    cp_array,
+                    air_density=1.225):
+    """
+    Calculate maximum power available in a given cross plane.
 
-#     Args:
-#         cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
-#             plane of data.
-#         x1_loc (float): x1-coordinate of point of interst.
-#         x2_loc (float): x2-coordinate of point of interst.
-#         R (float): Radius of wind turbine rotor.
-#         ws_array (np.array): reference wind speed for cp curve.
-#         cp_array (np.array): cp curve at reference wind speeds.
-#         air_density (float, optional): air density. Defaults to 1.225.
+    Args:
+        cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
+            plane of data.
+        x1_loc (float): x1-coordinate of point of interst.
+        x2_loc (float): x2-coordinate of point of interst.
+        R (float): Radius of wind turbine rotor.
+        ws_array (np.array): reference wind speed for cp curve.
+        cp_array (np.array): cp curve at reference wind speeds.
+        air_density (float, optional): air density. Defaults to 1.225.
 
-#     Returns:
-#         float: Power!
-#     """
-#     # Compute the ws
-#     ws = calculate_wind_speed(cross_plane, x1_loc, x2_loc, R)
+    Returns:
+        float: Power!
+    """
+    # Compute the ws
+    ws = calculate_wind_speed(cross_plane, x1_loc, x2_loc, R)
 
-#     # Compute the cp
-#     cp_value = np.interp(ws, ws_array, cp_array)
+    # Compute the cp
+    cp_value = np.interp(ws, ws_array, cp_array)
 
-#     #Return the power
-#     return 0.5 * air_density * (np.pi * R**2) * cp_value * ws**3
+    #Return the power
+    return 0.5 * air_density * (np.pi * R**2) * cp_value * ws**3
 
 
-#     # def get_power_profile(self, ws_array, cp_array, rotor_radius, air_density=1.225, resolution=100, x1_locs=None):
+    # def get_power_profile(self, ws_array, cp_array, rotor_radius, air_density=1.225, resolution=100, x1_locs=None):
 
-#     #     # Get the wind speed profile
-#     #     x1_locs, v_array = self.get_profile(resolution=resolution, x1_locs=x1_locs)
+    #     # Get the wind speed profile
+    #     x1_locs, v_array = self.get_profile(resolution=resolution, x1_locs=x1_locs)
 
-#     #     # Get Cp
-#     #     cp_array = np.interp(v_array,ws_array,cp_array)
+    #     # Get Cp
+    #     cp_array = np.interp(v_array,ws_array,cp_array)
 
-#     #     # Return power array
-#     #     return x1_locs, 0.5 * air_density * (np.pi * rotor_radius**2) * cp_array * v_array**3
+    #     # Return power array
+    #     return x1_locs, 0.5 * air_density * (np.pi * rotor_radius**2) * cp_array * v_array**3
 
 
 # # Define horizontal subclass
