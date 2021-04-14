@@ -17,6 +17,7 @@ Submodules
    floris.simulation.wake_velocity.curl
    floris.simulation.wake_velocity.jensen
    floris.simulation.wake_velocity.multizone
+   floris.simulation.wake_velocity.turbopark
 
 Module contents
 ---------------

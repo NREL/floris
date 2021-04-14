@@ -33,6 +33,7 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 - Gaussian models for wake deflection and velocity deficit
 - Gauss-Curl-Hybrid (GCH) model for second-order wake steering effects
 - Curl  model for wake deflection and velocity deficit
+- TurbOPark model for wake velocity deficit
 
 Further, all wake models can now be overlayed onto spatially heterogenous
 inflows. More information on all models can be found in :ref:`theory`.

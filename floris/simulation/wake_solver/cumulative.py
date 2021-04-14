@@ -85,7 +85,12 @@ class Cumulative(WakeSolver):
             )
 
             # get the velocity deficit accounting for the deflection
-            (u_wake, v_wake, w_wake,) = flow_field._compute_turbine_velocity_deficit(
+            (
+                u_wake,
+                v_wake,
+                w_wake,
+                Ctmp,
+            ) = flow_field._compute_turbine_velocity_deficit(
                 rotated_x,
                 rotated_y,
                 rotated_z,

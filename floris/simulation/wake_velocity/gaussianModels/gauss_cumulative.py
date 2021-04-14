@@ -35,13 +35,15 @@ class GaussCumulative(GaussianModel):
     """
 
     default_parameters = {
-        "ka": 0.38,
-        "kb": 0.004,
+        "ka": 0.31,
+        "kb": 0.000,
         "alpha": 0.58,
         "beta": 0.077,
         "calculate_VW_velocities": False,
         "use_yaw_added_recovery": False,
         "eps_gain": 0.2,
+        "alpha_mod": 1.0,
+        "sigma_gch": False,
     }
 
     def __init__(self, parameter_dictionary):
@@ -88,6 +90,9 @@ class GaussCumulative(GaussianModel):
         self.gch_gain = 2.0
 
         self.Ctmp = []
+
+        self.alpha_mod = model_dictionary["alpha_mod"]
+        self.sigma_gch = model_dictionary["sigma_gch"]
 
     def function(
         self,
@@ -138,23 +143,57 @@ class GaussCumulative(GaussianModel):
         sorted_map = kwargs["sorted_map"]
         u_wake = kwargs["u_wake"]
         Ctmp = kwargs["Ctmp"]
+        TI = copy.deepcopy(turbine.current_turbulence_intensity)
 
-        sigma_n = self.wake_expansion(
-            flow_field, turbine, turbine_coord, x_locations, y_locations, z_locations
-        )
+        if self.sigma_gch is True:
+            sigma_n = self.wake_expansion(
+                flow_field,
+                turbine,
+                turbine_coord,
+                x_locations,
+                y_locations,
+                z_locations,
+            )
+        else:
+            # yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
+            # xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
+            Beta = (1 + np.sqrt(1 - turbine.Ct)) / (2 * np.sqrt(1 - turbine.Ct))
+            epsilon = 0.2 * np.sqrt(Beta)
+            sigma_n = (self.ka * TI) * (
+                x_locations - turbine_coord.x1
+            ) + epsilon * turbine.rotor_diameter
 
         sum_lbda = 0.0
         # for m, (coord_i, turbine_i) in enumerate(sorted_map):
+        # TODO: make sure n-1 and not n-2
         for m in range(0, n - 1):
-            turbine_i = sorted_map[m][1]
             coord_i = sorted_map[m][0]
-            sigma_i = flow_field.wake.velocity_model.wake_expansion(
-                flow_field, turbine_i, coord_i, x_locations, y_locations, z_locations
-            )
+            turbine_i = sorted_map[m][1]
+            if self.sigma_gch is True:
+                sigma_i = flow_field.wake.velocity_model.wake_expansion(
+                    flow_field,
+                    turbine_i,
+                    coord_i,
+                    x_locations,
+                    y_locations,
+                    z_locations,
+                )
+            else:
+                # yaw = -1 * turbine_i.yaw_angle  # opposite sign convention in this model
+                # xR, _ = GaussianModel.mask_upstream_wake(y_locations, coord_i, yaw)
+                Beta = (1 + np.sqrt(1 - turbine_i.Ct)) / (2 * np.sqrt(1 - turbine_i.Ct))
+                epsilon = 0.2 * np.sqrt(Beta)
+                TI = copy.deepcopy(turbine_i.current_turbulence_intensity)
+                sigma_i = (self.ka * TI) * (
+                    x_locations - coord_i.x1
+                ) + epsilon * turbine_i.rotor_diameter
             S = sigma_n ** 2 + sigma_i ** 2
-            Y = (turbine_coord.x2 - turbine_coord.x2 - deflection_field) ** 2 / (2 * S)
-            Z = (turbine_coord.x3 - turbine_coord.x3) ** 2 / (2 * S)
-            lbda = sigma_i ** 2 * np.exp(-Y) * np.exp(-Z) / S
+            # TODO: check deflection_field being a field instead of a scalar
+            Y = (turbine_coord.x2 - coord_i.x2 - deflection_field) ** 2 / (2 * S)
+            # Y = (turbine_coord.x2 - coord_i.x2) ** 2 / (2 * S)
+            Z = (turbine_coord.x3 - coord_i.x3) ** 2 / (2 * S)
+            # TODO: add alpha to show difference between derived and modified version
+            lbda = self.alpha_mod * sigma_i ** 2 / S * np.exp(-Y) * np.exp(-Z)
             sum_lbda = sum_lbda + lbda * (Ctmp[m] / flow_field.u_initial)
 
         # Centerline velocity
@@ -163,7 +202,9 @@ class GaussCumulative(GaussianModel):
         num = turbine.Ct * (Uavg / flow_field.u_initial) ** 2
         den = (8 * (sigma_n / turbine.rotor_diameter) ** 2) * (1 - sum_lbda) ** 2
         C = flow_field.u_initial * (1 - sum_lbda) * (1 - np.sqrt(1 - num / den))
+        # Max theoretical velocity deficit based on Betz theory
         C_max = 2 * turbine.aI * Uavg
+        # TODO: determine whether C_max should vary in z (height)
         # C_max = 2 * turbine.aI * np.reshape(turbine.velocities, (5,5)) * np.ones_like(flow_field.u_initial)
         mask = C > C_max
         C[mask] = C_max
@@ -176,8 +217,8 @@ class GaussCumulative(GaussianModel):
         ) * np.exp(-((z_locations - turbine_coord.x3) ** 2) / (2 * sigma_n ** 2))
 
         C[x_locations <= turbine_coord.x1] = 0.0
-        C[y_locations < turbine_coord.x2 - 1.5 * turbine.rotor_diameter] = 0.0
-        C[y_locations > turbine_coord.x2 + 1.5 * turbine.rotor_diameter] = 0.0
+        # C[y_locations < turbine_coord.x2 - 1.5 * turbine.rotor_diameter] = 0.0
+        # C[y_locations > turbine_coord.x2 + 1.5 * turbine.rotor_diameter] = 0.0
         Ctmp.append(C)
 
         # add turbines together
@@ -196,7 +237,7 @@ class GaussCumulative(GaussianModel):
         #     rotated_z,
         # )
 
-        return u_wake, np.zeros(np.shape(u_wake)), np.zeros(np.shape(u_wake))
+        return u_wake, np.zeros(np.shape(u_wake)), np.zeros(np.shape(u_wake)), Ctmp
 
     def wake_expansion(
         self, flow_field, turbine, turbine_coord, x_locations, y_locations, z_locations
@@ -470,4 +511,76 @@ class GaussCumulative(GaussianModel):
                     "Current value of beta, {0}, is not equal to tuned "
                     + "value of {1}."
                 ).format(value, __class__.default_parameters["beta"])
+            )
+
+    @property
+    def alpha_mod(self):
+        """
+        Parameter used to determine the linear relationship between the
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (float): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._alpha_mod
+
+    @alpha_mod.setter
+    def alpha_mod(self, value):
+        if type(value) is not float:
+            err_msg = (
+                "Invalid value type given for alpha_mod: {}, " + "expected float."
+            ).format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._alpha_mod = value
+        if value != __class__.default_parameters["alpha_mod"]:
+            self.logger.info(
+                (
+                    "Current value of alpha_mod, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["alpha_mod"])
+            )
+
+    @property
+    def sigma_gch(self):
+        """
+        Parameter used to determine the linear relationship between the
+        turbulence intensity and the width of the Gaussian wake shape.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (float): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._sigma_gch
+
+    @sigma_gch.setter
+    def sigma_gch(self, value):
+        if type(value) is not bool:
+            err_msg = (
+                "Invalid value type given for sigma_gch: {}, " + "expected boolean."
+            ).format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._sigma_gch = value
+        if value != __class__.default_parameters["sigma_gch"]:
+            self.logger.info(
+                (
+                    "Current value of sigma_gch, {0}, is not equal to tuned "
+                    + "value of {1}."
+                ).format(value, __class__.default_parameters["sigma_gch"])
             )

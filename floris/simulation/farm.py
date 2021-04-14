@@ -117,6 +117,7 @@ class Farm:
         """
         valid_wake_models = [
             "jensen",
+            "turbopark",
             "multizone",
             "gauss",
             "gauss_legacy",
@@ -134,7 +135,11 @@ class Farm:
             )
 
         self.flow_field.wake.velocity_model = wake_model
-        if wake_model == "jensen" or wake_model == "multizone":
+        if (
+            wake_model == "jensen"
+            or wake_model == "multizone"
+            or wake_model == "turbopark"
+        ):
             self.flow_field.wake.deflection_model = "jimenez"
         elif (
             wake_model == "blondel"

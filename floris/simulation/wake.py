@@ -25,6 +25,7 @@ from .wake_solver.sequential import Sequential
 from .wake_turbulence.direct import Direct as DirectTurbulence
 from .wake_deflection.jimenez import Jimenez
 from .wake_velocity.multizone import MultiZone
+from .wake_velocity.turbopark import TurbOPark
 from .wake_solver.base_wake_solver import WakeSolver
 from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
 from .wake_turbulence.crespo_hernandez import (
@@ -80,6 +81,7 @@ class Wake:
 
         self._velocity_models = {
             "jensen": Jensen,
+            "turbopark": TurbOPark,
             "multizone": MultiZone,
             "gauss": GaussDeficit,
             "gauss_legacy": LegacyGaussDeficit,
