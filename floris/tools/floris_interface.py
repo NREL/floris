@@ -25,7 +25,7 @@ from scipy.stats import norm
 
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
-from .cut_plane import CutPlane, get_plane_from_flow_data
+from .cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
 from .flow_data import FlowData
 from ..utilities import Vec3
 from .visualization import visualize_cut_plane
@@ -530,7 +530,16 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute and return the cutplane
-        return CutPlane(df)
+        hor_plane = CutPlane(df)
+        if self.floris.farm.wake.velocity_model.model_grid_resolution is not None:
+            hor_plane = change_resolution(
+                hor_plane,
+                resolution=(
+                    self.floris.farm.wake.velocity_model.model_grid_resolution.x1,
+                    self.floris.farm.wake.velocity_model.model_grid_resolution.x2,
+                ),
+            )
+        return hor_plane
 
     def get_cross_plane(
         self, x_loc, y_resolution=200, z_resolution=200, y_bounds=None, z_bounds=None
