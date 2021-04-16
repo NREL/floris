@@ -39,7 +39,6 @@ from .turbine import Turbine
 from .wind_map import WindMap
 from .flow_field import FlowField
 from .turbine_map import TurbineMap
-from .input_reader import InputReader
 
 ROOT = Path(__file__).parent
 with open(ROOT.parent / "VERSION") as version_file:

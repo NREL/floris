@@ -14,13 +14,13 @@
 
 
 import pickle
+import json
 
 import src.logging_manager as logging_manager
 
 from .farm import Farm
 from .wake import Wake
 from .turbine import Turbine
-from .input_reader import InputReader
 
 
 class Floris(logging_manager.LoggerBase):
@@ -42,20 +42,28 @@ class Floris(logging_manager.LoggerBase):
             input_dict (dict, optional): Python dict given directly.
         """
         # Parse the input into dictionaries
-        input_reader = InputReader()
-        self.meta_dict, turbine_dict, wake_dict, farm_dict = input_reader.read(
-            input_file, input_dict
-        )
+        if input_file is not None:
+            with open(input_file) as jsonfile:
+                input_dict = json.load(jsonfile)
+            input_dict = self._parseJSON(input_file)
+        elif input_dict is not None:
+            input_dict = input_dict.copy()
+        else:
+            raise ValueError("InputReader: No input file or dictionary given.")
+
+        turbine_dict = input_dict.pop("turbine")
+        wake_dict = input_dict.pop("wake")
+        farm_dict = input_dict.pop("farm")
+        meta_dict = input_dict
 
         # Configure logging
-        self.meta_dict["logging"]
         logging_manager.configure_console_log(
-            self.meta_dict["logging"]["console"]["enable"],
-            self.meta_dict["logging"]["console"]["level"],
+            meta_dict["logging"]["console"]["enable"],
+            meta_dict["logging"]["console"]["level"],
         )
         logging_manager.configure_file_log(
-            self.meta_dict["logging"]["file"]["enable"],
-            self.meta_dict["logging"]["file"]["level"],
+            meta_dict["logging"]["file"]["enable"],
+            meta_dict["logging"]["file"]["level"],
         )
 
         # Initialize the simulation objects
