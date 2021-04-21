@@ -178,7 +178,7 @@ class Curl(VelocityDeficit):
 
         # add initial velocity deficit at the rotor to the flow field
         uw_initial = -1 * (
-            flow_field.wind_map.grid_wind_speed * initial_deficit * turbine.aI
+            flow_field.wind_map.grid_wind_speed * initial_deficit * turbine.axial_induction
         )
         uw[idx, :, :] = gaussian_filter(
             uw_initial[idx, :, :] * (r1 <= turbine.rotor_diameter / 2), sigma=1
@@ -204,7 +204,7 @@ class Curl(VelocityDeficit):
         # the tip-speed ratio of the turbine
         TSR = turbine.tsr
         # the axial induction factor of the turbine
-        aI = turbine.aI
+        aI = turbine.axial_induction
         # initial velocities in the stream-wise, span-wise, and
         # vertical direction
         U, V, W = flow_field.u, flow_field.v, flow_field.w
@@ -441,7 +441,7 @@ class Curl(VelocityDeficit):
             ti_local = (
                 10
                 * ti_constant
-                * turbine.aI ** ti_ai
+                * turbine.axial_induction ** ti_ai
                 * ti_initial ** ti_i
                 * ((x[i] - turbine_coord.x1) / turbine.rotor_diameter) ** ti_downstream
             )

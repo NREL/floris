@@ -598,22 +598,9 @@ class Turbine(LoggerBase):
         )
 
     @property
-    def aI(self):
+    def axial_induction(self) -> float:
         """
-        This property returns the axial induction factor of the yawed
-        turbine calculated from the coefficient of thrust and the yaw
-        angle.
-
-        Returns:
-            float: Axial induction factor of a turbine.
-
-        Examples:
-            To get the axial induction factor for a turbine:
-
-            >>> aI = floris.farm.turbines[0].aI()
+        Axial induction factor of the turbine incorporating
+        the thrust coefficient and yaw angle.
         """
-        return (
-            0.5
-            / cosd(self.yaw_angle)
-            * (1 - np.sqrt(1 - self.Ct * cosd(self.yaw_angle)))
-        )
+        return ( 0.5 / cosd(self.yaw_angle) * (1 - np.sqrt(1 - self.Ct * cosd(self.yaw_angle) ) ) )

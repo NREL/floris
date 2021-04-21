@@ -209,7 +209,7 @@ class GaussianModel(VelocityDeficit):
         yaw = turbine.yaw_angle
         Ct = turbine.Ct
         TSR = turbine.tsr
-        aI = turbine.aI
+        aI = turbine.axial_induction
 
         # flow parameters
         Uinf = np.mean(flow_field.wind_map.grid_wind_speed)

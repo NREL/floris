@@ -90,7 +90,7 @@ class CrespoHernandez(WakeTurbulence):
         # turbulence intensity calculation based on Crespo et. al.
         ti_calculation = (
             self.ti_constant
-            * turbine.aI ** self.ti_ai
+            * turbine.axial_induction ** self.ti_ai
             * ti_initial ** self.ti_initial
             * ((coord_ti.x1 - turbine_coord.x1) / turbine.rotor_diameter)
             ** self.ti_downstream

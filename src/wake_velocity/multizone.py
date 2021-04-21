@@ -189,7 +189,7 @@ class MultiZone(VelocityDeficit):
         c[x_locations - turbine_coord.x1 < 0] = 0
 
         return (
-            2 * turbine.aI * c * flow_field.wind_map.grid_wind_speed,
+            2 * turbine.axial_induction * c * flow_field.wind_map.grid_wind_speed,
             np.zeros(np.shape(c)),
             np.zeros(np.shape(c)),
         )

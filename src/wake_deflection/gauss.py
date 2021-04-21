@@ -271,7 +271,7 @@ class Gauss(VelocityDeflection):
             Ct = turbine.Ct
             D = turbine.rotor_diameter
             HH = turbine.hub_height
-            aI = turbine.aI
+            aI = turbine.axial_induction
             TSR = turbine.tsr
             V = flow_field.v
             Uinf = np.mean(flow_field.wind_map.grid_wind_speed)

@@ -121,7 +121,7 @@ class Jensen(VelocityDeficit):
         c[z_locations < z_lower] = 0
 
         return (
-            2 * turbine.aI * c * flow_field.u_initial,
+            2 * turbine.axial_induction * c * flow_field.u_initial,
             np.zeros(np.shape(flow_field.u_initial)),
             np.zeros(np.shape(flow_field.u_initial)),
         )

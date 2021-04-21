@@ -88,7 +88,7 @@ def test_2x_calculate_wake(flow_field_fixture):
         calculate_wake_results[1][i] = {
             "Ct": turbine.Ct,
             "power": turbine.power,
-            "aI": turbine.aI,
+            "aI": turbine.axial_induction,
             "average_velocity": turbine.average_velocity,
         }
 
@@ -98,7 +98,7 @@ def test_2x_calculate_wake(flow_field_fixture):
         calculate_wake_results[2][i] = {
             "Ct": turbine.Ct,
             "power": turbine.power,
-            "aI": turbine.aI,
+            "aI": turbine.axial_induction,
             "average_velocity": turbine.average_velocity,
         }
 

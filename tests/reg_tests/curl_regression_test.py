@@ -89,21 +89,21 @@ def test_regression_rotation(sample_inputs_fixture):
     unwaked_baseline = (
         turbine.Ct,
         turbine.power,
-        turbine.aI,
+        turbine.axial_induction,
         turbine.average_velocity,
     )
     turbine = floris.farm.turbine_map.turbines[1]
     first_waked_baseline = (
         turbine.Ct,
         turbine.power,
-        turbine.aI,
+        turbine.axial_induction,
         turbine.average_velocity,
     )
     turbine = floris.farm.turbine_map.turbines[2]
     second_waked_baseline = (
         turbine.Ct,
         turbine.power,
-        turbine.aI,
+        turbine.axial_induction,
         turbine.average_velocity,
     )
 
