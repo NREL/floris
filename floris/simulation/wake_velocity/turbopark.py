@@ -1,4 +1,4 @@
-# Copyright 2021 NREL
+# Copyright 2020 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -15,10 +15,11 @@ import numpy as np
 from .base_velocity_deficit import VelocityDeficit
 
 
-class Jensen(VelocityDeficit):
+class TurbOPark(VelocityDeficit):
     """
-    The Jensen model computes the wake velocity deficit based on the classic
-    Jensen/Park model :cite:`jvm-jensen1983note`.
+    An implementation of the TurbOPark model by Nicolai Nygaard
+    :cite:`jvm-nygaard2020modelling`.
+    Default tuning calibrations taken from same paper.
 
     References:
         .. bibliography:: /source/zrefs.bib
@@ -27,7 +28,7 @@ class Jensen(VelocityDeficit):
             :keyprefix: jvm-
     """
 
-    default_parameters = {"we": 0.05}
+    default_parameters = {"A": 0.6, "c1": 1.5, "c2": 0.8}
 
     def __init__(self, parameter_dictionary):
         """
@@ -44,9 +45,11 @@ class Jensen(VelocityDeficit):
                     wake.
         """
         super().__init__(parameter_dictionary)
-        self.model_string = "jensen"
+        self.model_string = "turbopark"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
-        self.we = float(model_dictionary["we"])
+        self.A = float(model_dictionary["A"])
+        self.c1 = float(model_dictionary["c1"])
+        self.c2 = float(model_dictionary["c2"])
 
     def function(
         self,
@@ -59,7 +62,7 @@ class Jensen(VelocityDeficit):
         flow_field,
     ):
         """
-        Using the Jensen wake model, this method calculates and returns
+        Using the TubrOPark wake model, this method calculates and returns
         the wake velocity deficits, caused by the specified turbine,
         relative to the freestream velocities at the grid of points
         comprising the wind farm flow field.
@@ -93,24 +96,49 @@ class Jensen(VelocityDeficit):
                 the velocity deficits at each grid point in the flow field.
         """
 
-        # define the boundary of the wake model ... y = mx + b
-        m = self.we
+        # Get model parameters
+        A = self.A
+        c1 = self.c1
+        c2 = self.c2
+
+        # Initial flowfield used to calculate velocity deficit
+        U0 = flow_field.u_initial
+
+        # Get turbulence intensity for current turbine
+        I0 = turbine.current_turbulence_intensity
+
+        # Parameters from turbine
+        D = turbine.rotor_diameter
+        Ct = turbine.Ct
+        V_in = turbine.average_velocity
+
+        # Computed values
+        alpha = c1 * I0  # (Page 4)
+        beta = c2 * I0 / np.sqrt(Ct)
+
+        # get the x term
         x = x_locations - turbine_coord.x1
-        b = turbine.rotor_radius
 
-        boundary_line = m * x + b
+        # Solve for the wake diameter
+        # (Equation 6 (in steps))
+        term1 = np.sqrt((alpha + (beta * x / D)) ** 2 + 1)
+        term2 = np.sqrt(1 + alpha ** 2)
+        term3 = (term1 + 1) * alpha
+        term4 = (term2 + 1) * (alpha + (beta * x / D))
+        Dwx = D + ((A * I0 * D) / beta) * (term1 - term2 - np.log(term3 / term4))
 
+        # Solve for the velocity deficit
+        delta = (1 - (V_in / U0) * np.sqrt(1 - Ct)) * (D / Dwx) ** 2
+
+        # Solve for velocity deficit c
+        c = delta
+
+        # Define these bounds as in jensen
+        boundary_line = Dwx / 2.0
         y_upper = boundary_line + turbine_coord.x2 + deflection_field
         y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_field
-
         z_upper = boundary_line + turbine.hub_height
         z_lower = -1 * boundary_line + turbine.hub_height
-
-        # calculate the wake velocity
-        c = (
-            turbine.rotor_diameter
-            / (2 * self.we * (x_locations - turbine_coord.x1) + turbine.rotor_diameter)
-        ) ** 2
 
         # filter points upstream and beyond the upper and
         # lower bounds of the wake
@@ -121,17 +149,15 @@ class Jensen(VelocityDeficit):
         c[z_locations < z_lower] = 0
 
         return (
-            2 * turbine.aI * c * flow_field.u_initial,
+            c * flow_field.u_initial,
             np.zeros(np.shape(flow_field.u_initial)),
             np.zeros(np.shape(flow_field.u_initial)),
         )
 
     @property
-    def we(self):
+    def A(self):
         """
-        The linear wake decay constant that defines the cone boundary for the
-        wake as well as the velocity deficit. D/2 +/- we*x is the cone boundary
-        for the wake.
+        Model calibration constant A used in determining the wake expansion rate.
 
         **Note:** This is a virtual property used to "get" or "set" a value.
 
@@ -144,20 +170,88 @@ class Jensen(VelocityDeficit):
         Raises:
             ValueError: Invalid value.
         """
-        return self._we
+        return self._A
 
-    @we.setter
-    def we(self, value):
+    @A.setter
+    def A(self, value):
         if type(value) is not float:
             err_msg = (
-                "Invalid value type given for we: {}, " + "expected float."
+                "Invalid value type given for A: {}, " + "expected float."
             ).format(value)
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
-        self._we = value
-        if value != __class__.default_parameters["we"]:
+        self._A = value
+        if value != __class__.default_parameters["A"]:
             self.logger.info(
                 (
-                    "Current value of we, {0}, is not equal to tuned " + "value of {1}."
-                ).format(value, __class__.default_parameters["we"])
+                    "Current value of A, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["A"])
+            )
+
+    @property
+    def c1(self):
+        """
+        Calibration constant for the wake added turbelence.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (float): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._c1
+
+    @c1.setter
+    def c1(self, value):
+        if type(value) is not float:
+            err_msg = (
+                "Invalid value type given for c1: {}, " + "expected float."
+            ).format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._c1 = value
+        if value != __class__.default_parameters["c1"]:
+            self.logger.info(
+                (
+                    "Current value of c1, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["c1"])
+            )
+
+    @property
+    def c2(self):
+        """
+        Calibration constant for the wake added turbelence.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (float): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._c2
+
+    @c2.setter
+    def c2(self, value):
+        if type(value) is not float:
+            err_msg = (
+                "Invalid value type given for c2: {}, " + "expected float."
+            ).format(value)
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._c2 = value
+        if value != __class__.default_parameters["c2"]:
+            self.logger.info(
+                (
+                    "Current value of c2, {0}, is not equal to tuned " + "value of {1}."
+                ).format(value, __class__.default_parameters["c2"])
             )

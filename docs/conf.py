@@ -14,6 +14,7 @@ import sys
 import subprocess
 from pathlib import Path
 
+
 ROOT = Path(__file__).parent
 with open(ROOT.parent / "VERSION") as version_file:
     VERSION = version_file.read().strip()
@@ -60,7 +61,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "FLORIS"
-copyright = "2020, NREL"
+copyright = "2021, NREL"
 author = "NREL"
 
 # The version info for the project you're documenting, acts as replacement for

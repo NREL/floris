@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -113,7 +113,7 @@ class PowerDensityOptimization1D(Optimization):
             turbine.yaw_angle = turb_controls_unnorm[0][i]
 
         layout_dist = self._avg_dist(locs)
-        AEP_sum = self._AEP_single_wd(self.wd[0], self.ws[0])
+        # AEP_sum = self._AEP_single_wd(self.wd[0], self.ws[0])
         # print('AEP ratio: ', AEP_sum/self.AEP_initial)
 
         return layout_dist / self.layout_dist_initial

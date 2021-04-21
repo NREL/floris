@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -227,7 +227,7 @@ def get_props_subset(params, props):
     prop_names = [prop[0] for prop in props]
     try:
         props_subset_inds = [prop_names.index(param) for param in params]
-    except:
+    except Exception:
         props_subset_inds = []
         print("Parameter(s)", ", ".join(params), "does(do) not exist.")
     props_subset = [props[i] for i in props_subset_inds]

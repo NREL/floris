@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -12,9 +12,9 @@
 
 # See https://floris.readthedocs.io for documentation
 
-## TODO
-## 1: reorganize into private and public methods
-## 2: Include smoothing?
+# TODO
+# 1: reorganize into private and public methods
+# 2: Include smoothing?
 
 import os
 import pickle
@@ -24,9 +24,9 @@ import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from pyproj import Proj
 
 import floris.utilities as geo
+from pyproj import Proj
 
 
 class WindRose:
@@ -104,7 +104,7 @@ class WindRose:
                     - **wd** (*float*) - Wind direction bin center values (deg).
                     - **ws** (*float*) - Wind speed bin center values (m/s).
                     - **freq_val** (*float*) - The frequency of occurance of
-                    the wind conditions in the other columns.
+                      the wind conditions in the other columns.
         """
         (
             self.num_wd,
@@ -130,7 +130,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
             ws (np.array, optional): List of new wind speed center bins (m/s).
                 Defaults to np.arange(0, 26, 1.).
@@ -142,7 +142,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - New wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -206,7 +206,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
             wd (np.array, optional): List of new wind direction center bins
                 (deg). Defaults to np.arange(0, 360, 5.).
@@ -219,7 +219,7 @@ class WindRose:
                 - **wd** (*float*) - New wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -306,7 +306,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
             col (str): The name of the column to resample.
             bins (np.array): List of new bin center values for the specified
@@ -320,7 +320,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -373,7 +373,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
 
         Returns:
             pandas.DataFrame: Wind rose DataFrame with the resampled wind speed
@@ -381,9 +381,9 @@ class WindRose:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - The average wind speed for each wind
-                direction bin (m/s).
+                  direction bin (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Make a copy of incoming dataframe
         df = df.copy(deep=True)
@@ -431,9 +431,9 @@ class WindRose:
 
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - The average wind speed for each wind
-                direction bin (m/s).
+                  direction bin (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                new wind conditions in the other columns.
+                  new wind conditions in the other columns.
         """
         # Update ws and wd binning
         self.wd = wd
@@ -482,7 +482,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         # Use an assumed wind-direction for dir frequency
         wind_dir = [
@@ -593,7 +593,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         df = pd.DataFrame()
 
@@ -680,7 +680,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         df = pd.DataFrame()
 
@@ -747,7 +747,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         # Load the wind toolkit data into a dataframe
         df = self.load_wind_toolkit_folder(folder_name, limit_month=limit_month)
@@ -852,6 +852,7 @@ class WindRose:
         ws=np.arange(0, 26, 1.0),
         include_ti=False,
         limit_month=None,
+        limit_hour=None,
         st_date=None,
         en_date=None,
     ):
@@ -902,6 +903,10 @@ class WindRose:
                 3...) to consider when calculating the wind condition
                 frequencies. If none are specified, all months will be used.
                 Defaults to None.
+            limit_hour (list, optional): List of ints of hour(s) (e.g., 0, 1,
+                ... 23) to consider when calculating the wind condition
+                frequencies. If none are specified, all hours will be used.
+                Defaults to None.
             st_date (str, optional): The start date to consider when creating
                 the wind rose, formatted as 'MM-DD-YYYY'. If not specified data
                 beginning in 2007 will be used. Defaults to None.
@@ -916,7 +921,7 @@ class WindRose:
                 - **wd** (*float*) - Wind direction bin center values (deg).
                 - **ws** (*float*) - Wind speed bin center values (m/s).
                 - **freq_val** (*float*) - The frequency of occurance of the
-                wind conditions in the other columns.
+                  wind conditions in the other columns.
         """
         # Check inputs
 
@@ -969,6 +974,7 @@ class WindRose:
                 ht,
                 include_ti=include_ti,
                 limit_month=limit_month,
+                limit_hour=limit_hour,
                 st_date=st_date,
                 en_date=en_date,
             )
@@ -992,6 +998,7 @@ class WindRose:
                 h_low,
                 include_ti=include_ti,
                 limit_month=limit_month,
+                limit_hour=limit_hour,
                 st_date=st_date,
                 en_date=en_date,
             )
@@ -1002,6 +1009,7 @@ class WindRose:
                 h_up,
                 include_ti=include_ti,
                 limit_month=limit_month,
+                limit_hour=limit_hour,
                 st_date=st_date,
                 en_date=en_date,
             )
@@ -1070,6 +1078,7 @@ class WindRose:
         ht=100,
         include_ti=False,
         limit_month=None,
+        limit_hour=None,
         st_date=None,
         en_date=None,
     ):
@@ -1098,6 +1107,10 @@ class WindRose:
             limit_month (list, optional): List of ints of month(s) (e.g., 1, 2,
                 3...) to consider when calculating the wind condition
                 frequencies. If none are specified, all months will be used.
+                Defaults to None.
+            limit_hour (list, optional): List of ints of hour(s) (e.g., 0, 1,
+                ... 23) to consider when calculating the wind condition
+                frequencies. If none are specified, all hours will be used.
                 Defaults to None.
             st_date (str, optional): The start date to consider, formatted as
                 'MM-DD-YYYY'. If not specified data beginning in 2007 will be
@@ -1166,6 +1179,9 @@ class WindRose:
         if limit_month is not None:
             df["month"] = df["datetime"].map(lambda x: x.month)
             df = df[df.month.isin(limit_month)]
+        if limit_hour is not None:
+            df["hour"] = df["datetime"].map(lambda x: x.hour)
+            df = df[df.hour.isin(limit_hour)]
         if include_ti:
             df = df[["wd", "ws", "ti"]]
         else:

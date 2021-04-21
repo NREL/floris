@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -117,6 +117,7 @@ class Farm:
         """
         valid_wake_models = [
             "jensen",
+            "turbopark",
             "multizone",
             "gauss",
             "gauss_legacy",
@@ -133,7 +134,11 @@ class Farm:
             )
 
         self.flow_field.wake.velocity_model = wake_model
-        if wake_model == "jensen" or wake_model == "multizone":
+        if (
+            wake_model == "jensen"
+            or wake_model == "multizone"
+            or wake_model == "turbopark"
+        ):
             self.flow_field.wake.deflection_model = "jimenez"
         elif (
             wake_model == "blondel"
