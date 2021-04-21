@@ -324,26 +324,6 @@ class Turbine(LoggerBase):
         else:
             return np.array(u_at_turbine.flatten()[ii])
 
-    def return_grid_points(self, coord):
-        """
-        Retrieve the x, y, and z grid points on the rotor.
-
-        Args:
-            coord (:py:obj:`~.utilities.Vec3`): The coordinate of the turbine.
-
-        Returns:
-            np.array, np.array, np.array:
-
-                - x grid points on the rotor.
-                - y grid points on the rotor.
-                - xzgrid points on the rotor.
-        """
-        y_array = np.array(self.grid)[:, 0] + coord.x2
-        z_array = np.array(self.grid)[:, 1] + self.hub_height
-        x_array = np.ones_like(y_array) * coord.x1
-
-        return x_array, y_array, z_array
-
     def update_velocities(
         self, u_wake, coord, flow_field, rotated_x, rotated_y, rotated_z
     ):
@@ -474,31 +454,6 @@ class Turbine(LoggerBase):
                 )
 
     @property
-    def current_turbulence_intensity(self):
-        """
-        This method returns the current turbulence intensity at
-        the turbine expressed as a decimal fraction.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (float): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Examples:
-            To get the turbulence intensity for a turbine:
-
-            >>> current_turbulence_intensity = floris.farm.turbines[0].turbulence_intensity()
-        """
-        return self._turbulence_intensity
-
-    @current_turbulence_intensity.setter
-    def current_turbulence_intensity(self, value):
-        self._turbulence_intensity = value
-
-    @property
     def rotor_radius(self):
         """
         This method returns the rotor radius of the turbine (m).
@@ -516,62 +471,6 @@ class Turbine(LoggerBase):
         return self.rotor_diameter / 2.0
 
     @property
-    def yaw_angle(self):
-        """
-        This method gets or sets the turbine's yaw angle.
-
-        **Note:** This is a virtual property used to "get"  or "set" a value.
-
-        Args:
-            value (float): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Examples:
-            To set the yaw angle for each turbine in the wind farm:
-
-            >>> yaw_angles = [20.0, 10.0, 0.0]
-            >>> for yaw_angle, turbine in
-            ... zip(yaw_angles, floris.farm.turbines):
-            ...     turbine.yaw_angle = yaw_angle
-
-            To get the current yaw angle for each turbine in the wind
-            farm:
-
-            >>> yaw_angles = []
-            >>> for i, turbine in enumerate(floris.farm.turbines):
-            ...     yaw_angles.append(turbine.yaw_angle())
-        """
-        return self._yaw_angle
-
-    @yaw_angle.setter
-    def yaw_angle(self, value):
-        self._yaw_angle = value
-
-    @property
-    def tilt_angle(self):
-        """
-        This method gets the turbine's tilt angle.
-
-        **Note:** This is a virtual property used to "get"  or "set" a value.
-
-        Args:
-            value (float): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Examples:
-            To get the current tilt angle for a turbine:
-
-            >>> tilt_angle = floris.farm.turbines[0].tilt_angle()
-        """
-        return self._tilt_angle
-
-    @tilt_angle.setter
-    def tilt_angle(self, value):
-        self._tilt_angle = value
 
     @property
     def average_velocity(self):
