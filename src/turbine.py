@@ -396,7 +396,7 @@ class Turbine(LoggerBase):
         Returns:
             list: converted TKE values
         """
-        return ((self.average_velocity * self.current_turbulence_intensity) ** 2) / (
+        return ((self.average_velocity * self.turbulence_intensity) ** 2) / (
             2 / 3
         )
 
@@ -433,7 +433,7 @@ class Turbine(LoggerBase):
             ciws = ws[0]  # cut in wind speed
             cows = ws[len(ws) - 1]  # cut out wind speed
             speed = self.average_velocity
-            ti = self.current_turbulence_intensity
+            ti = self.turbulence_intensity
 
             if ciws >= speed or cows <= speed or ti == 0.0 or math.isnan(speed):
                 return 1.0

@@ -128,7 +128,7 @@ class Gauss(VelocityDeflection):
         veer = flow_field.wind_veer
 
         # added turbulence model
-        TI = turbine.current_turbulence_intensity
+        TI = turbine.turbulence_intensity
         # TI = flow_field.wind_map.grid_turbulence_intensity
         # hard-coded model input data (goes in input file)
         ka = self.ka  # wake expansion parameter

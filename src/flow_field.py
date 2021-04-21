@@ -528,7 +528,7 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
+            turbine.turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
                 i
             ]
             turbine.reset_velocities()
@@ -566,7 +566,7 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
+            turbine.turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
                 i
             ]
             turbine.reset_velocities()
@@ -708,7 +708,7 @@ class FlowField:
                             ti_added = area_overlap * ti_calculation
 
                             # TODO: need to revisit when we are returning fields of TI
-                            turbine_ti.current_turbulence_intensity = np.max(
+                            turbine_ti.turbulence_intensity = np.max(
                                 (
                                     np.sqrt(
                                         ti_added ** 2
@@ -717,7 +717,7 @@ class FlowField:
                                         ]
                                         ** 2
                                     ),
-                                    turbine_ti.current_turbulence_intensity,
+                                    turbine_ti.turbulence_intensity,
                                 )
                             )
 

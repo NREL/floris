@@ -162,7 +162,7 @@ class Gauss(VelocityDeficit):
         veer = flow_field.wind_veer
 
         # added turbulence model
-        TI = turbine.current_turbulence_intensity
+        TI = turbine.turbulence_intensity
 
         # turbine parameters
         D = turbine.rotor_diameter

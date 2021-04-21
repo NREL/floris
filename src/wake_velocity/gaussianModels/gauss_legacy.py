@@ -137,10 +137,10 @@ class LegacyGauss(GaussianModel):
         TI_mixing = self.yaw_added_turbulence_mixing(
             turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
         )
-        turbine.current_turbulence_intensity = (
-            turbine.current_turbulence_intensity + self.gch_gain * TI_mixing
+        turbine.turbulence_intensity = (
+            turbine.turbulence_intensity + self.gch_gain * TI_mixing
         )
-        TI = copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
+        TI = copy.deepcopy(turbine.turbulence_intensity)  # + TI_mixing
 
         # turbine parameters
         D = turbine.rotor_diameter

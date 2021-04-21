@@ -142,7 +142,7 @@ class Gauss(GaussianModel):
                 velocity deficits at each grid point in the flow field.
         """
         # added turbulence model
-        TI = turbine.current_turbulence_intensity
+        TI = turbine.turbulence_intensity
 
         # turbine parameters
         D = turbine.rotor_diameter

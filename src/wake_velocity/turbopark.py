@@ -105,7 +105,7 @@ class TurbOPark(VelocityDeficit):
         U0 = flow_field.u_initial
 
         # Get turbulence intensity for current turbine
-        I0 = turbine.current_turbulence_intensity
+        I0 = turbine.turbulence_intensity
 
         # Parameters from turbine
         D = turbine.rotor_diameter

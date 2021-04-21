@@ -150,7 +150,7 @@ class Blondel(GaussianModel):
         # veer = flow_field.wind_veer
 
         # Turbulence intensity for wake width calculation
-        TI = turbine.current_turbulence_intensity
+        TI = turbine.turbulence_intensity
 
         # Turbine parameters
         D = turbine.rotor_diameter

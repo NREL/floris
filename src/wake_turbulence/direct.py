@@ -74,7 +74,7 @@ class Direct(WakeTurbulence):
                 by (**coord_ti**).
         """
         # TODO develop and test function.
-        turbine.current_turbulence_intensity = self.parameter_dictionary[
+        turbine.turbulence_intensity = self.parameter_dictionary[
             "local_TI_dict"
         ][turbine]
 

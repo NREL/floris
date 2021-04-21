@@ -82,7 +82,7 @@ class GaussianModel(VelocityDeficit):
             TI_total = turbine.TKE_to_TI(TKE)
 
             # convert to turbulence due to mixing
-            TI_mixing = np.array(TI_total) - turbine.current_turbulence_intensity
+            TI_mixing = np.array(TI_total) - turbine.turbulence_intensity
         else:
             TI_mixing = 0.0
 
@@ -167,7 +167,7 @@ class GaussianModel(VelocityDeficit):
         # set dimensions
         D = turbine.rotor_diameter
         xLocs = x_locations - turbine_coord.x1
-        ky = self.ka * turbine.current_turbulence_intensity + self.kb
+        ky = self.ka * turbine.turbulence_intensity + self.kb
         U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
         U_total = U1 + np.nan_to_num(U2)
 
