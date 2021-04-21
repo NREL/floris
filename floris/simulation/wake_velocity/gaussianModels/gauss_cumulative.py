@@ -257,10 +257,7 @@ class GaussCumulative(GaussianModel):
 
         # turbine parameters
         D = turbine.rotor_diameter
-        # yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
-        yaw = -1 * self.calculate_effective_yaw_angle(
-            x_locations, y_locations, z_locations, turbine, turbine_coord, flow_field
-        )
+        yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
         Ct = turbine.Ct
         U_local = flow_field.u_initial
 
