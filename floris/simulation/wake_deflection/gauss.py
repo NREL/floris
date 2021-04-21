@@ -299,7 +299,7 @@ class Gauss(VelocityDeflection):
             # find wake deflection from CRV
             test_gamma = np.linspace(-45, 45, 91)
             avg_V = np.mean(V[idx])
-            target_yaw_ix = None
+            # target_yaw_ix = None
 
             # what yaw angle would have produced that same average spanwise velocity
             yaw = test_gamma  # [i]
@@ -330,14 +330,43 @@ class Gauss(VelocityDeflection):
             )
 
             tmp = avg_V - np.mean(Veff, axis=1)
-            target_yaw_ix = np.argmin(np.abs(tmp))
 
-            if target_yaw_ix is not None:
-                yaw_effective = test_gamma[target_yaw_ix]
+            order = np.argsort(np.abs(tmp))
+            idx_1 = order[0]
+            idx_2 = order[1]
+
+            if idx_1 == 90 or idx_2 == 90:
+                yaw_effective = idx_1 - 45.0
+            elif idx_1 == 0 or idx_2 == 0:
+                yaw_effective = idx_1 - 45.0
             else:
-                err_msg = "No effective yaw angle is found. Set to 0."
-                self.logger.warning(err_msg, stack_info=True)
-                yaw_effective = 0.0
+                if idx_1 > idx_2:
+                    idx_right = idx_1 + 1
+                    idx_left = idx_2 - 1
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_1])
+                    mL = abs(tmp[idx_2]) - abs(tmp[idx_left])
+                    bR = abs(tmp[idx_1]) - mR * float(idx_1)
+                    bL = abs(tmp[idx_2]) - mL * float(idx_2)
+
+                else:
+                    idx_right = idx_2 + 1
+                    idx_left = idx_1 - 1
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_2])
+                    mL = abs(tmp[idx_1]) - abs(tmp[idx_left])
+                    bR = abs(tmp[idx_2]) - mR * float(idx_2)
+                    bL = abs(tmp[idx_1]) - mL * float(idx_1)
+
+                ival = (bR - bL) / (mL - mR)
+                yaw_effective = ival - 45.0
+
+            # target_yaw_ix = np.argmin(np.abs(tmp))
+
+            # if target_yaw_ix is not None:
+            #     yaw_effective = test_gamma[target_yaw_ix]
+            # else:
+            #     err_msg = "No effective yaw angle is found. Set to 0."
+            #     self.logger.warning(err_msg, stack_info=True)
+            #     yaw_effective = 0.0
 
             return yaw_effective + turbine.yaw_angle
 
