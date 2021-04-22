@@ -34,9 +34,10 @@ yawed_baseline = [
     (0.4479135, 0.8538732, 598723.1123378, 0.3088673, 5.5865154),
 ]
 
-# Note: compare the yawed vs non-yawed results. The upstream turbine
-# power should be lower in the yawed case. The following turbine
-# powers should higher in the yawed case.
+class CurlRegressionTest:
+    """
+    Class to contain test values to compare against.
+    """
 
     def __init__(self):
         sample_inputs = SampleInputs()
@@ -46,6 +47,10 @@ yawed_baseline = [
         self.debug = True
 
     def baseline(self, turbine_index):
+        """
+        Three turbines spaced 5D apart in the streamwise direction,
+        all aligned with the wind direction 270 degrees.
+        """
         baseline = [
             (0.4365911, 0.7636967, 1689187.1164557, 0.2569448, 7.9700630),
             (0.4294209, 0.8326933, 731401.6677331, 0.2954843, 6.0592226),
@@ -54,10 +59,26 @@ yawed_baseline = [
         return baseline[turbine_index]
 
     def yawed_baseline(self, turbine_index):
+        """
+        Three turbines spaced 5D apart in the streamwise direction,
+        the first turbine yawed 5 degrees while the others are aligned to the wind.
+        """
         baseline = [
             (0.4366014, 0.7607906, 1677789.6107559, 0.2549496, 7.9700630),
             (0.4298470, 0.8307488, 748494.6942714, 0.2942993, 6.1014089),
             (0.4216931, 0.8566472, 563529.9139905, 0.3106902, 5.5852387),
+        ]
+        return baseline[turbine_index]
+
+    def wd315_baseline(self, turbine_index):
+        """
+        Three turbines spaced 5D apart in the streamwise direction,
+        all aligned with the wind direction of 315 degrees.
+        """
+        baseline = [
+            (0.4365911, 0.7636967, 1689187.1164557, 0.2569448, 7.9700630),
+            (0.4365911, 0.7636967, 1689187.1164557, 0.2569448, 7.9700630),
+            (0.4365911, 0.7636967, 1689187.1164557, 0.2569448, 7.9700630),
         ]
         return baseline[turbine_index]
 
@@ -91,10 +112,29 @@ def test_regression_tandem():
 
 def test_regression_multiple_calc_wake():
     """
-    Tandem turbines
+    Verify turbine values stay the same with repeated (3x) calculate_wake calls.
     """
     test_class = CurlRegressionTest()
     floris = Floris(input_dict=test_class.input_dict)
+    floris.farm.flow_field.calculate_wake()
+    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
+        if test_class.debug:
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
+        baseline = test_class.baseline(i)
+        assert pytest.approx(turbine.Cp) == baseline[0]
+        assert pytest.approx(turbine.Ct) == baseline[1]
+        assert pytest.approx(turbine.power) == baseline[2]
+        assert pytest.approx(turbine.aI) == baseline[3]
+        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
     floris.farm.flow_field.calculate_wake()
     for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         if test_class.debug:
@@ -216,7 +256,7 @@ def test_regression_rotation():
 
 def test_regression_yaw(sample_inputs_fixture):
     """
-    Tandem turbines with the upstream turbine yawed
+    Tandem turbines with the upstream turbine yawed 5 degrees.
     """
     sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
@@ -239,3 +279,54 @@ def test_regression_yaw(sample_inputs_fixture):
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
         assert test_results[i][4] == approx(baseline[i][4])
+
+
+def test_change_wind_direction():
+    """
+    Tandem turbines aligned to the wind direction, first calculated at 270 degrees wind
+    direction, and then calculated at 315 degrees wind direction.
+    """
+    test_class = CurlRegressionTest()
+    floris = Floris(input_dict=test_class.input_dict)
+    floris.farm.flow_field.calculate_wake()
+    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
+        if test_class.debug:
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
+        baseline = test_class.baseline(i)
+        assert pytest.approx(turbine.Cp) == baseline[0]
+        assert pytest.approx(turbine.Ct) == baseline[1]
+        assert pytest.approx(turbine.power) == baseline[2]
+        assert pytest.approx(turbine.aI) == baseline[3]
+        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    floris.farm.wind_map.input_direction = [315.0]
+    floris.farm.wind_map.calculate_wind_direction()
+    floris.farm.turbine_map.reinitialize_turbines()
+    floris.farm.flow_field.reinitialize_flow_field()
+
+    floris.farm.flow_field.calculate_wake()
+    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
+        if test_class.debug:
+            print(
+                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
+                    turbine.Cp,
+                    turbine.Ct,
+                    turbine.power,
+                    turbine.aI,
+                    turbine.average_velocity,
+                )
+            )
+        baseline = test_class.wd315_baseline(i)
+        assert pytest.approx(turbine.Cp) == baseline[0]
+        assert pytest.approx(turbine.Ct) == baseline[1]
+        assert pytest.approx(turbine.power) == baseline[2]
+        assert pytest.approx(turbine.aI) == baseline[3]
+        assert pytest.approx(turbine.average_velocity) == baseline[4]
