@@ -256,9 +256,6 @@ class FlorisInterface(LoggerBase):
             wind_map=self.floris.farm.wind_map,
         )
 
-    def reinitialize_turbines(self):
-        self.floris.farm.turbine_map.reinitialize_turbines()
-
     def get_plane_of_points(
         self,
         x1_resolution=200,
