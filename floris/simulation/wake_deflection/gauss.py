@@ -402,8 +402,8 @@ class Gauss(VelocityDeflection):
     ):
         """
         This method determines the effective tilt angle to be used when
-        secondary steering is enabled. For more details on how the effective
-        yaw angle is calculated, see :cite:`bvd-King2019Controls`.
+        secondary steering is enabled. NOTE: This is currently unvalidated
+        in any research and should be used with caution towards results.
 
         Args:
             x_locations (np.array): Streamwise locations in wake.
@@ -444,8 +444,6 @@ class Gauss(VelocityDeflection):
             HH = turbine.hub_height
             W = flow_field.w
             Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
-
-            # print('ET:', np.mean(V))
 
             eps = self.eps_gain * D  # Use set value
             idx = np.where(
