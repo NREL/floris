@@ -213,8 +213,8 @@ class GaussianModel(VelocityDeficit):
         yaw = turbine.yaw_angle
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
-        # TSR = turbine.tsr
-        # aI = turbine.aI
+        TSR = turbine.tsr
+        aI = turbine.aI
 
         # flow parameters
         Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
@@ -241,9 +241,9 @@ class GaussianModel(VelocityDeficit):
             -scale * (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt) * cosd(tilt)
         )
 
-        # Gamma_wake_rotation = (
-        #     0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
-        # )
+        Gamma_wake_rotation = (
+            0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+        )
 
         # compute the spanwise and vertical velocities induced by yaw
         eps = self.eps_gain * D  # Use set value
@@ -337,46 +337,46 @@ class GaussianModel(VelocityDeficit):
         )
 
         # wake rotation vortex
-        # zC = z_locations + 0.01 - (HH)
-        # rC = yLocs ** 2 + zC ** 2
-        # V5 = (
-        #     (zC * Gamma_wake_rotation)
-        #     / (2 * np.pi * rC)
-        #     * (1 - np.exp(-rC / (eps ** 2)))
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
+        zC = z_locations + 0.01 - (HH)
+        rC = yLocs ** 2 + zC ** 2
+        V5 = (
+            (zC * Gamma_wake_rotation)
+            / (2 * np.pi * rC)
+            * (1 - np.exp(-rC / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        # W5 = (
-        #     (-yLocs * Gamma_wake_rotation)
-        #     / (2 * np.pi * rC)
-        #     * (1 - np.exp(-rC / (eps ** 2)))
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
+        W5 = (
+            (-yLocs * Gamma_wake_rotation)
+            / (2 * np.pi * rC)
+            * (1 - np.exp(-rC / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
         # wake rotation vortex - ground effect
-        # yLocs = y_locations + 0.01 - coord.x2
-        # zLocs = z_locations + 0.01 + HH
-        # V6 = (
-        #     (
-        #         (
-        #             (zLocs * -Gamma_wake_rotation)
-        #             / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))
-        #         )
-        #         * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-        #         + 0.0
-        #     )
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
+        yLocs = y_locations + 0.01 - coord.x2
+        zLocs = z_locations + 0.01 + HH
+        V6 = (
+            (
+                (
+                    (zLocs * -Gamma_wake_rotation)
+                    / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))
+                )
+                * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+                + 0.0
+            )
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
-        # W6 = (
-        #     ((-yLocs * -Gamma_wake_rotation) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-        #     * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
+        W6 = (
+            ((-yLocs * -Gamma_wake_rotation) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
 
         # left vortex
         yL = y_locations + 0.01 - (coord.x2) - (D / 2)
@@ -457,10 +457,8 @@ class GaussianModel(VelocityDeficit):
         )
 
         # total spanwise velocity
-        # V = V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10
-        # W = W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10
-        V = V1 + V2 + V3 + V4 + V7 + V8 + V9 + V10
-        W = W1 + W2 + W3 + W4 + W7 + W8 + W9 + W10
+        V = V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10
+        W = W1 + W2 + W3 + W4 + W5 + W6 + W7 + W8 + W9 + W10
 
         # no spanwise and vertical velocity upstream of the turbine
         V[
