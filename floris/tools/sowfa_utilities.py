@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -443,17 +443,17 @@ def read_sowfa_df(folder_name, channels=[]):
     ]
 
     # Remove the harder input files for now (undo someday)
-    hardFiles = [
-        "Vtangential",
-        "Cl",
-        "Cd",
-        "Vradial",
-        "x",
-        "y",
-        "z",
-        "alpha",
-        "axialForce",
-    ]
+    # hardFiles = [
+    #     "Vtangential",
+    #     "Cl",
+    #     "Cd",
+    #     "Vradial",
+    #     "x",
+    #     "y",
+    #     "z",
+    #     "alpha",
+    #     "axialForce",
+    # ]
     simpleFiles = [
         "nacYaw",
         "rotSpeedFiltered",
@@ -527,7 +527,6 @@ def read_foam_file(filename):
     with open(filename, "r") as fid:
         raw = fid.readlines()
 
-    count = 0
     bloc_comment_test = False
     for i, line in enumerate(raw):
 
@@ -547,13 +546,13 @@ def read_foam_file(filename):
                 tmp = raw[i].strip().rstrip().split()
                 try:
                     data[tmp[0].replace('"', "")] = np.float(tmp[1][:-1])
-                except:
+                except Exception:
                     try:
                         data[tmp[0].replace('"', "")] = tmp[1][:-1]
-                    except:
+                    except Exception:
                         next
 
-        if raw[i][0:2] == "\*":
+        if raw[i][0:2] == r"\*":
             bloc_comment_test = False
 
     return data

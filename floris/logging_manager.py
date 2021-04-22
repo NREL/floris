@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -91,8 +91,8 @@ def _setup_logger():
     Returns:
         logging.Logger: The root logger from the `logging` module.
     """
-    # Configure logging for the root logger
-    logger = logging.getLogger()
+    # Create a logger object for floris
+    logger = logging.getLogger(name="floris")
     logger.setLevel(logging.DEBUG)
     # level_styles = {'warning': {'color': 'red', 'bold': False}}
     fmt_console = "%(name)s %(levelname)s %(message)s"
@@ -100,17 +100,9 @@ def _setup_logger():
 
     file_name = "floris_{:%Y-%m-%d-%H_%M_%S}.log".format(datetime.now())
 
-    # TODO: understand why this doesnt work and fix it!
-    # if logger.hasHandlers():
-    #     print(logger.handlers, len(logger.handlers))
-    #     for i, handler in enumerate(logger.handlers):
-    #         print(i, handler)
-    #         logger.removeHandler(handler)
-    #     print(logger.handlers, len(logger.handlers))
-
     # Remove all existing handlers before adding new ones
-    while logger.hasHandlers():
-        logger.removeHandler(logger.handlers[0])
+    for h in logger.handlers.copy():
+        logger.removeHandler(h)
 
     # Configure and add the console handler
     if LOG_TO_CONSOLE:

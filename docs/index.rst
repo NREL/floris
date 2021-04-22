@@ -33,6 +33,7 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 - Gaussian models for wake deflection and velocity deficit
 - Gauss-Curl-Hybrid (GCH) model for second-order wake steering effects
 - Curl  model for wake deflection and velocity deficit
+- TurbOPark model for wake velocity deficit
 
 Further, all wake models can now be overlayed onto spatially heterogenous
 inflows. More information on all models can be found in :ref:`theory`.
@@ -69,16 +70,16 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 2.2.4 (2020). Available at https://github.com/NREL/floris.
+   FLORIS. Version 2.3.0 (2021). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
 .. code-block:: latex
 
-    @misc{FLORIS_2020,
+    @misc{FLORIS_2021,
     author = {NREL},
-    title = {{FLORIS. Version 2.2.4}},
-    year = {2020},
+    title = {{FLORIS. Version 2.3.0},
+    year = {2021},
     publisher = {GitHub},
     journal = {GitHub repository},
     url = {https://github.com/NREL/floris}
@@ -88,7 +89,7 @@ For LaTeX users:
 License
 =======
 
-Copyright 2020 NREL
+Copyright 2021 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

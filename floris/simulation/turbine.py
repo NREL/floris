@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -580,8 +580,8 @@ class Turbine(LoggerBase):
 
             >>> avg_vel = floris.farm.turbines[0].average_velocity()
         """
-        # remove all invalid numbers from interpolation
-        data = self.velocities[np.where(~np.isnan(self.velocities))]
+        # Remove all invalid numbers from interpolation
+        data = np.array(self.velocities)[~np.isnan(self.velocities)]
         avg_vel = np.cbrt(np.mean(data ** 3))
         if np.isnan(avg_vel):
             avg_vel = 0

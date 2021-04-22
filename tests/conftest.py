@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -14,6 +14,19 @@
 
 
 import pytest
+
+
+def turbines_to_array(turbine_list: list):
+    return [[t.Cp, t.Ct, t.power, t.aI, t.average_velocity] for t in turbine_list]
+
+
+def print_test_values(turbine_list: list):
+    for t in turbine_list:
+        print(
+            "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f}),".format(
+                t.Cp, t.Ct, t.power, t.aI, t.average_velocity
+            )
+        )
 
 
 @pytest.fixture
@@ -168,63 +181,32 @@ class SampleInputs:
                 "combination_model": "sosfs",
                 "turbulence_model": "crespo_hernandez",
                 "parameters": {
-                    "turbulence_intensity": {
-                        "initial": 0.1,
-                        "constant": 0.73,
-                        "ai": 0.8,
-                        "downstream": -0.275,
+                    "wake_deflection_parameters": {
+                        "gauss": {
+                            "dm": 1.0,
+                            "eps_gain": 0.2,
+                            "use_secondary_steering": False,
+                        }
                     },
-                    "jensen": {"we": 0.05},
-                    "multizone": {
-                        "me": [-0.05, 0.3, 1.0],
-                        "we": 0.05,
-                        "aU": 12.0,
-                        "bU": 1.3,
-                        "mU": [0.5, 1.0, 5.5],
-                    },
-                    "jimenez": {"kd": 0.17, "ad": 0.0, "bd": 0.0},
-                    "gauss": {
-                        "ka": 0.3,
-                        "kb": 0.004,
-                        "alpha": 0.58,
-                        "beta": 0.077,
-                        "ad": 0.0,
-                        "bd": 0.0,
-                    },
-                    "curl": {
-                        "model_grid_resolution": [250, 100, 75],
-                        "vortex_strength": 0.3,
-                        "initial_deficit": 2.0,
-                        "dissipation": 0.05,
-                        "veer_linear": 0.0,
-                    },
-                    "gauss_curl_hybrid": {
-                        "ka": 0.3,
-                        "kb": 0.004,
-                        "alpha": 0.58,
-                        "beta": 0.077,
-                        "ad": 0.0,
-                        "bd": 0.0,
+                    "wake_velocity_parameters": {
+                        "gauss_legacy": {
+                            "calculate_VW_velocities": False,
+                            "eps_gain": 0.2,
+                            "ka": 0.38,
+                            "kb": 0.004,
+                            "use_yaw_added_recovery": False,
+                        }
                     },
                 },
             },
         }
 
         self.floris = {
-            "type": "floris_input",
-            "name": "floris_regression_test",
-            "description": "Regression tests for FLORIS",
             "farm": self.farm,
             "turbine": self.turbine,
             "wake": self.wake,
             "logging": {
-                "console": {
-                    "enable": False,
-                    "level": "WARNING"
-                },
-                "file": {
-                    "enable": False,
-                    "level": "WARNING"
-                }
-            }
+                "console": {"enable": True, "level": 1},
+                "file": {"enable": False, "level": 1},
+            },
         }

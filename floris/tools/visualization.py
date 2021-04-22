@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -215,7 +215,7 @@ def visualize_quiver(
     )
 
     # plot the stream plot
-    QV1 = ax.streamplot(
+    ax.streamplot(
         (x1_mesh[::downSamp, ::downSamp]),
         (x2_mesh[::downSamp, ::downSamp]),
         v_mesh[::downSamp, ::downSamp],

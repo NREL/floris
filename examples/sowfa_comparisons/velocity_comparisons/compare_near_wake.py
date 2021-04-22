@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -35,7 +35,7 @@ sowfa_U0 = 8.0
 num_turbines = 4
 
 
-## Grab certain hi-TI five simulations from saved SOWFA data set
+# Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle("../sowfa_data_set/sowfa_data_set.p")
 
 # Limit number of turbines
@@ -80,7 +80,10 @@ for floris_label in fi_dict:
             np.array(fi.get_turbine_power()) / 1000.0, 2
         )
 
-downstream_power = lambda x: np.mean(x[2:])
+
+def downstream_power(x):
+    return np.mean(x[2:])
+
 
 # Compare the downstream power production
 fig, ax = plt.subplots()

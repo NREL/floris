@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -104,16 +104,8 @@ class FlowField:
             pt = turbine.rloc * turbine.rotor_radius
 
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(
-                x2 - pt,
-                x2 + pt,
-                ngrid,
-            )
-            zt = np.linspace(
-                x3 - pt,
-                x3 + pt,
-                ngrid,
-            )
+            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
+            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
 
             x_grid[i] = xt[i]
             y_grid[i] = yt
@@ -536,9 +528,9 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = (
-                self.wind_map.turbine_turbulence_intensity[i]
-            )
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
+                i
+            ]
             turbine.reset_velocities()
 
     def calculate_wake(self, no_wake=False, points=None, track_n_upstream_wakes=False):
@@ -571,9 +563,9 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = (
-                self.wind_map.turbine_turbulence_intensity[i]
-            )
+            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
+                i
+            ]
             turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of

@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -10,8 +10,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import numpy as np
 import copy
+
+import numpy as np
 
 from ....utilities import cosd, sind, tand
 from ..base_velocity_deficit import VelocityDeficit
@@ -64,8 +65,8 @@ class GaussianModel(VelocityDeficit):
             )
 
             # calculate fluctuations
-            v_prime = 0.25 * copy.deepcopy(flow_field.v) #+ V
-            w_prime = 0.25 * copy.deepcopy(flow_field.w) #+ W
+            v_prime = 0.25 * copy.deepcopy(flow_field.v)  # + V
+            w_prime = 0.25 * copy.deepcopy(flow_field.w)  # + W
 
             # get u_prime from current turbulence intensity
             u_prime = turbine.u_prime()
@@ -212,8 +213,8 @@ class GaussianModel(VelocityDeficit):
         yaw = turbine.yaw_angle
         tilt = turbine.tilt_angle
         Ct = turbine.Ct
-        TSR = turbine.tsr
-        aI = turbine.aI
+        # TSR = turbine.tsr
+        # aI = turbine.aI
 
         # flow parameters
         Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
@@ -234,15 +235,15 @@ class GaussianModel(VelocityDeficit):
             -scale * (np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
         )
         Gamma_left = (
-                scale * (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt) * cosd(tilt)
+            scale * (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt) * cosd(tilt)
         )
         Gamma_right = (
-                -scale * (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt) * cosd(tilt)
+            -scale * (np.pi / 8) * D * Uinf * Uinf * Ct * sind(tilt) * cosd(tilt)
         )
 
-        Gamma_wake_rotation = (
-            0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
-        )
+        # Gamma_wake_rotation = (
+        #     0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+        # )
 
         # compute the spanwise and vertical velocities induced by yaw
         eps = self.eps_gain * D  # Use set value
@@ -336,33 +337,91 @@ class GaussianModel(VelocityDeficit):
         )
 
         # wake rotation vortex
-        zC = z_locations + 0.01 - (HH)
-        rC = yLocs ** 2 + zC ** 2
-        V5 = (
-            (zC * Gamma_wake_rotation)
-            / (2 * np.pi * rC)
-            * (1 - np.exp(-rC / (eps ** 2)))
-            * eps ** 2
-            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
+        # zC = z_locations + 0.01 - (HH)
+        # rC = yLocs ** 2 + zC ** 2
+        # V5 = (
+        #     (zC * Gamma_wake_rotation)
+        #     / (2 * np.pi * rC)
+        #     * (1 - np.exp(-rC / (eps ** 2)))
+        #     * eps ** 2
+        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        # )
 
-        W5 = (
-            (-yLocs * Gamma_wake_rotation)
-            / (2 * np.pi * rC)
-            * (1 - np.exp(-rC / (eps ** 2)))
-            * eps ** 2
-            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
+        # W5 = (
+        #     (-yLocs * Gamma_wake_rotation)
+        #     / (2 * np.pi * rC)
+        #     * (1 - np.exp(-rC / (eps ** 2)))
+        #     * eps ** 2
+        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        # )
 
         # wake rotation vortex - ground effect
-        yLocs = y_locations + 0.01 - coord.x2
+        # yLocs = y_locations + 0.01 - coord.x2
+        # zLocs = z_locations + 0.01 + HH
+        # V6 = (
+        #     (
+        #         (
+        #             (zLocs * -Gamma_wake_rotation)
+        #             / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))
+        #         )
+        #         * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+        #         + 0.0
+        #     )
+        #     * eps ** 2
+        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        # )
+
+        # W6 = (
+        #     ((-yLocs * -Gamma_wake_rotation) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+        #     * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+        #     * eps ** 2
+        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        # )
+
+        # left vortex
+        yL = y_locations + 0.01 - (coord.x2) - (D / 2)
+        zLocs = z_locations + 0.01 - HH
+        rL = yL ** 2 + zLocs ** 2
+        V7 = (
+            (zLocs * Gamma_left)
+            / (2 * np.pi * rL)
+            * (1 - np.exp(-rL / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
+
+        W7 = (
+            (-yL * Gamma_left)
+            / (2 * np.pi * rL)
+            * (1 - np.exp(-rL / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
+
+        # right vortex
+        yR = y_locations + 0.01 - (coord.x2) + (D / 2)
+        rR = yR ** 2 + zLocs ** 2
+        V8 = (
+            (zLocs * Gamma_right)
+            / (2 * np.pi * rR)
+            * (1 - np.exp(-rR / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
+
+        W8 = (
+            ((-yR * Gamma_right) / (2 * np.pi * rR))
+            * (1 - np.exp(-rR / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+        )
+
+        # left vortex - ground
+        yLocs = y_locations + 0.01 - (coord.x2) - D / 2
         zLocs = z_locations + 0.01 + HH
-        V6 = (
+        V9 = (
             (
-                (
-                    (zLocs * -Gamma_wake_rotation)
-                    / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))
-                )
+                ((zLocs * -Gamma_left) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
                 * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
                 + 0.0
             )
@@ -370,89 +429,31 @@ class GaussianModel(VelocityDeficit):
             / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
-        W6 = (
-            ((-yLocs * -Gamma_wake_rotation) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+        W9 = (
+            ((-yLocs * -Gamma_left) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
             * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
             * eps ** 2
             / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
-        # left vortex
-        yL = y_locations + 0.01 - (coord.x2) - (D / 2)
-        zLocs = z_locations + 0.01 - HH
-        rL = yL ** 2 + zLocs ** 2
-        V7 = (
-                (zLocs * Gamma_left)
-                / (2 * np.pi * rL)
-                * (1 - np.exp(-rL / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
-
-        W7 = (
-                (-yL * Gamma_left)
-                / (2 * np.pi * rL)
-                * (1 - np.exp(-rL / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
-
-        # right vortex
-        yR = y_locations + 0.01 - (coord.x2) + (D / 2)
-        rR = yR ** 2 + zLocs ** 2
-        V8 = (
-                (zLocs * Gamma_right)
-                / (2 * np.pi * rR)
-                * (1 - np.exp(-rR / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
-
-        W8 = (
-                ((-yR * Gamma_right) / (2 * np.pi * rR))
-                * (1 - np.exp(-rR / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
-
-        # left vortex - ground
-        yLocs = y_locations + 0.01 - (coord.x2) - D/2
-        zLocs = z_locations + 0.01 + HH
-        V9 = (
-                (
-                        ((zLocs * -Gamma_left) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-                        * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-                        + 0.0
-                )
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
-
-        W9 = (
-                ((-yLocs * -Gamma_left) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-                * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        )
-
         # right vortex - ground
-        yLocs = y_locations + 0.01 - (coord.x2) + ( D / 2)
+        yLocs = y_locations + 0.01 - (coord.x2) + (D / 2)
         zLocs = z_locations + 0.01 + HH
         V10 = (
-                (
-                        ((zLocs * -Gamma_right) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-                        * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-                        + 0.0
-                )
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+            (
+                ((zLocs * -Gamma_right) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+                * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+                + 0.0
+            )
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
         W10 = (
-                ((-yLocs * -Gamma_right) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-                * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+            ((-yLocs * -Gamma_right) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
+            * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
         # total spanwise velocity
@@ -470,12 +471,6 @@ class GaussianModel(VelocityDeficit):
         ] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
 
         W[W < 0] = 0
-
-        idx = np.where(
-            (np.abs(x_locations - 800.0) < 1)
-            & (np.abs(y_locations - 0.0) <= D / 2)
-            & (np.abs(z_locations - 90.0) <= D / 2)
-        )
 
         return V, W
 

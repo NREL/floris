@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -50,7 +50,7 @@ hor_plane = fi.get_hor_plane(x_resolution=400, y_resolution=100)
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title("Baseline Case for U = 8 m/s, Wind Direction = 270$^\circ$")
+ax.set_title("Baseline Case for U = 8 m/s, Wind Direction = 270$^\\circ$")
 
 # =============================================================================
 print("Finding optimal yaw angles in FLORIS...")
@@ -89,5 +89,5 @@ hor_plane = fi.get_hor_plane(x_resolution=400, y_resolution=100)
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title("Optimal Wake Steering for U = 8 m/s, Wind Direction = 270$^\circ$")
+ax.set_title("Optimal Wake Steering for U = 8 m/s, Wind Direction = 270$^\\circ$")
 plt.show()
