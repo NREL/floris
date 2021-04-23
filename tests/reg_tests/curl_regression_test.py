@@ -69,51 +69,6 @@ def test_regression_tandem(sample_inputs_fixture):
         assert test_results[i][4] == approx(baseline[i][4])
 
 
-def test_regression_multiple_calc_wake(sample_inputs_fixture):
-    """
-    Verify turbine values stay the same with repeated (3x) calculate_wake calls.
-    """
-    sample_inputs_fixture.floris["wake"]["properties"][
-        "velocity_model"
-    ] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"][
-        "deflection_model"
-    ] = DEFLECTION_MODEL
-    floris = Floris(input_dict=sample_inputs_fixture.floris)
-    floris.farm.flow_field.calculate_wake()
-    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
-    if DEBUG:
-        print_test_values(floris.farm.turbine_map.turbines)
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        assert test_results[i][0] == approx(baseline[i][0])
-        assert test_results[i][1] == approx(baseline[i][1])
-        assert test_results[i][2] == approx(baseline[i][2])
-        assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
-
-    floris.farm.flow_field.calculate_wake()
-    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
-    if DEBUG:
-        print_test_values(floris.farm.turbine_map.turbines)
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        assert test_results[i][0] == approx(baseline[i][0])
-        assert test_results[i][1] == approx(baseline[i][1])
-        assert test_results[i][2] == approx(baseline[i][2])
-        assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
-
-    floris.farm.flow_field.calculate_wake()
-    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
-    if DEBUG:
-        print_test_values(floris.farm.turbine_map.turbines)
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        assert test_results[i][0] == approx(baseline[i][0])
-        assert test_results[i][1] == approx(baseline[i][1])
-        assert test_results[i][2] == approx(baseline[i][2])
-        assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
-
-
 def test_regression_rotation(sample_inputs_fixture):
     """
     Turbines in tandem and rotated.
@@ -193,11 +148,11 @@ def test_regression_rotation(sample_inputs_fixture):
     assert approx(turbine.average_velocity) == first_waked_baseline[4]
 
     turbine = floris.farm.turbine_map.turbines[2]
-    assert approx(turbine.Cp) == second_waked_baseline[0]
-    assert approx(turbine.Ct) == second_waked_baseline[1]
-    assert approx(turbine.power) == second_waked_baseline[2]
-    assert approx(turbine.aI) == second_waked_baseline[3]
-    assert approx(turbine.average_velocity) == second_waked_baseline[4]
+    assert approx(turbine.Cp, rel=1e-5) == second_waked_baseline[0]
+    assert approx(turbine.Ct, rel=1e-5) == second_waked_baseline[1]
+    assert approx(turbine.power, rel=1e-5) == second_waked_baseline[2]
+    assert approx(turbine.aI, rel=1e-5) == second_waked_baseline[3]
+    assert approx(turbine.average_velocity, rel=1e-5) == second_waked_baseline[4]
 
 
 def test_regression_yaw(sample_inputs_fixture):
@@ -223,6 +178,51 @@ def test_regression_yaw(sample_inputs_fixture):
 
     for i in range(len(floris.farm.turbine_map.turbines)):
         baseline = yawed_baseline
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])
+        assert test_results[i][4] == approx(baseline[i][4])
+
+
+def test_regression_multiple_calc_wake(sample_inputs_fixture):
+    """
+    Verify turbine values stay the same with repeated (3x) calculate_wake calls.
+    """
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris.farm.flow_field.calculate_wake()
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])
+        assert test_results[i][4] == approx(baseline[i][4])
+
+    floris.farm.flow_field.calculate_wake()
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])
+        assert test_results[i][4] == approx(baseline[i][4])
+
+    floris.farm.flow_field.calculate_wake()
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
         assert test_results[i][0] == approx(baseline[i][0])
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
