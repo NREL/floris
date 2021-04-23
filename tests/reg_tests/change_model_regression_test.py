@@ -16,11 +16,13 @@
 from pytest import approx
 
 from tests.conftest import print_test_values, turbines_to_array
-from tests.reg_tests.gauss_regression_test import baseline as gauss_baseline
-from tests.reg_tests.curl_regression_test import baseline as curl_baseline
 from floris.simulation import Floris
+from tests.reg_tests.curl_regression_test import baseline as curl_baseline
+from tests.reg_tests.gauss_regression_test import baseline as gauss_baseline
+
 
 DEBUG = False
+
 
 def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
     """
@@ -29,7 +31,9 @@ def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
     Then, switch back to Gauss
     """
     # Establish that the Gauss test passes
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = "gauss"
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = "gauss_legacy"
     sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = "gauss"
     floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.flow_field.calculate_wake()
@@ -65,7 +69,7 @@ def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
         assert test_results[i][4] == approx(baseline[i][4])
 
     # Change back to Gauss, rerun calculate_wake, and compare to gauss
-    floris.farm.set_wake_model("gauss")
+    floris.farm.set_wake_model("gauss_legacy")
     floris.farm.flow_field.calculate_wake()
 
     test_results = turbines_to_array(floris.farm.turbine_map.turbines)

@@ -153,6 +153,8 @@ class Farm:
             with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution
         )
 
+        self.turbine_map.reinitialize_turbines()
+
     def set_yaw_angles(self, yaw_angles):
         """
         Sets the yaw angles for all turbines on the

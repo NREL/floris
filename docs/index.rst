@@ -78,7 +78,7 @@ For LaTeX users:
 
     @misc{FLORIS_2021,
     author = {NREL},
-    title = {{FLORIS. Version 2.3.0},
+    title = {FLORIS. Version 2.3.0},
     year = {2021},
     publisher = {GitHub},
     journal = {GitHub repository},

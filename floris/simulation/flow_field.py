@@ -246,6 +246,11 @@ class FlowField:
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
 
+    def reset_uvw(self):
+        self.u = self.u_initial.copy()
+        self.v = self.v_initial.copy()
+        self.w = self.w_initial.copy()
+
     def _compute_turbine_velocity_deficit(
         self, x, y, z, turbine, coord, deflection, flow_field
     ):
@@ -548,6 +553,9 @@ class FlowField:
                 track of the number of upstream wakes a turbine is
                 experiencing. Defaults to *False*.
         """
+        if self.wake.velocity_model.model_grid_resolution is not None:
+            self.reset_uvw()
+
         if points is not None:
             # add points to flow field grid points
             self._compute_initialized_domain(points=points)
