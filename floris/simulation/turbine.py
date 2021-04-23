@@ -274,7 +274,7 @@ class Turbine(LoggerBase):
 
         # TODO:
         # # PREVIOUS METHOD========================
-        # # UNCOMMENT IF ANY ISSUE UNCOVERED WITH NEW MOETHOD
+        # # UNCOMMENT IF ANY ISSUE UNCOVERED WITH NEW METHOD
         # x_grid = x
         # y_grid = y
         # z_grid = z
@@ -304,10 +304,6 @@ class Turbine(LoggerBase):
             x_array = np.ones_like(y_array) * coord.x1
             grid_array = np.column_stack([x_array, y_array, z_array])
 
-            # ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
-            # ii = np.zeros(25).astype(int)
-            # for i in range(len(ii)):
-            #     ii[i] = np.argmin(np.sum((flow_grid_points - grid_array[i,:]) ** 2, axis=1))
             ii = np.array(
                 [
                     np.argmin(
@@ -316,12 +312,10 @@ class Turbine(LoggerBase):
                     for i in range(len(grid_array))
                 ]
             )
-            # ii = ii.astype(int)
             self.flow_field_point_indices = ii
         else:
             ii = self.flow_field_point_indices
 
-        # return np.array(data)
         if additional_wind_speed is not None:
             return (
                 np.array(u_at_turbine.flatten()[ii]),
