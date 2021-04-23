@@ -175,16 +175,6 @@ class Farm:
     # Getters & Setters
 
     @property
-    def wind_speed(self):
-        """
-        Wind speed at each wind turbine.
-
-        Returns:
-            list(float)
-        """
-        return self.wind_map.turbine_wind_speed
-
-    @property
     def wind_direction(self):
         """
         Wind direction at each wind turbine.
@@ -196,65 +186,6 @@ class Farm:
             list(float)
         """
         return list((np.array(self.wind_map.turbine_wind_direction) - 90) % 360)
-
-    @property
-    def wind_shear(self):
-        """
-        Wind shear power law exponent for the flow field.
-
-        Returns:
-            float
-        """
-        return self.flow_field.wind_shear
-
-    @property
-    def wind_veer(self):
-        """
-        Wind veer (vertical change in wind direction) for the flow field.
-
-        Returns:
-            float
-        """
-        return self.flow_field.wind_veer
-
-    @property
-    def turbulence_intensity(self):
-        """
-        Initial turbulence intensity at each turbine expressed as a
-        decimal fraction.
-
-        Returns:
-            list(float)
-        """
-        return self.wind_map.turbine_turbulence_intensity
-
-    @property
-    def air_density(self):
-        """
-        Air density for the wind farm in kg/m^3.
-
-        Returns:
-            float
-        """
-        return self.flow_field.air_density
-
-    @property
-    def wind_map(self):
-        """
-        WindMap object attached to the Farm.
-
-        Args:
-            value (:py:obj:`~.wind_map.WindMap`): WindMap object to be set.
-
-        Returns:
-            :py:obj:`~.wind_map.WindMap`
-        """
-        # TODO: Does this need to be a virtual propert?
-        return self._wind_map
-
-    @wind_map.setter
-    def wind_map(self, value):
-        self._wind_map = value
 
     @property
     def turbine_map(self):
