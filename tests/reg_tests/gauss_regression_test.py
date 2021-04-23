@@ -14,10 +14,12 @@
 
 
 import copy
+
 from pytest import approx
 
 from tests.conftest import print_test_values, turbines_to_array
 from floris.simulation import Floris, TurbineMap
+
 
 DEBUG = False
 VELOCITY_MODEL = "gauss_legacy"
@@ -37,8 +39,8 @@ yawed_baseline = [
 
 gch_baseline = [
     (0.4632723, 0.7626396, 1802595.0749161, 0.2558908, 7.9803783),
-    (0.4522285, 0.8392735, 720743.5433910, 0.2995465, 5.8888643),
-    (0.4532194, 0.8354484, 754998.0758316, 0.2971752, 5.9712138),
+    (0.4522286, 0.8392733, 720745.6467388, 0.2995463, 5.8888694),
+    (0.4532284, 0.8354140, 755306.6488337, 0.2971540, 5.9719556),
 ]
 
 yaw_added_recovery_baseline = [
@@ -49,20 +51,25 @@ yaw_added_recovery_baseline = [
 
 secondary_steering_baseline = [
     (0.4632723, 0.7626396, 1802595.0749161, 0.2558908, 7.9803783),
-    (0.4519965, 0.8401693, 712721.8017101, 0.3001058, 5.8695797),
-    (0.4529762, 0.8363872, 746591.3862856, 0.2977546, 5.9510037),
+    (0.4519965, 0.8401691, 712723.9446334, 0.3001057, 5.8695848),
+    (0.4529852, 0.8363526, 746901.3150465, 0.2977332, 5.9517488),
 ]
 
 # Note: compare the yawed vs non-yawed results. The upstream turbine
 # power should be lower in the yawed case. The following turbine
 # powers should higher in the yawed case.
 
+
 def test_regression_tandem(sample_inputs_fixture):
     """
     Tandem turbines
     """
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
     floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.flow_field.calculate_wake()
 
@@ -79,13 +86,18 @@ def test_regression_tandem(sample_inputs_fixture):
         assert test_results[i][3] == approx(check[i][3])
         assert test_results[i][4] == approx(check[i][4])
 
+
 def test_regression_rotation(sample_inputs_fixture):
     """
     Turbines in tandem and rotated.
     The result from 270 degrees should match the results from 360 degrees.
     """
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
     floris = Floris(input_dict=sample_inputs_fixture.floris)
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
     wind_map = floris.farm.wind_map
@@ -123,7 +135,8 @@ def test_regression_rotation(sample_inputs_fixture):
     new_map = TurbineMap(
         [0.0, 0.0, 0.0],
         [
-            10 * sample_inputs_fixture.floris["turbine"]["properties"]["rotor_diameter"],
+            10
+            * sample_inputs_fixture.floris["turbine"]["properties"]["rotor_diameter"],
             5 * sample_inputs_fixture.floris["turbine"]["properties"]["rotor_diameter"],
             0.0,
         ],
@@ -159,12 +172,17 @@ def test_regression_rotation(sample_inputs_fixture):
     assert approx(turbine.aI) == second_waked_baseline[3]
     assert approx(turbine.average_velocity) == second_waked_baseline[4]
 
+
 def test_regression_yaw(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed
     """
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
     floris = Floris(input_dict=sample_inputs_fixture.floris)
 
     # yaw the upstream turbine 5 degrees
@@ -184,13 +202,18 @@ def test_regression_yaw(sample_inputs_fixture):
         assert test_results[i][3] == approx(check[i][3])
         assert test_results[i][4] == approx(check[i][4])
 
+
 def test_regression_gch(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed and yaw added recovery
     correction enabled
     """
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
     floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.turbines[0].yaw_angle = 5.0
 
@@ -230,13 +253,18 @@ def test_regression_gch(sample_inputs_fixture):
         assert test_results[i][3] == approx(check[i][3])
         assert test_results[i][4] == approx(check[i][4])
 
+
 def test_regression_yaw_added_recovery(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed and yaw added recovery
     correction enabled
     """
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
     floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.turbines[0].yaw_angle = 5.0
 
@@ -259,13 +287,18 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         assert test_results[i][3] == approx(check[i][3])
         assert test_results[i][4] == approx(check[i][4])
 
+
 def test_regression_secondary_steering(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed and yaw added recovery
     correction enabled
     """
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
     floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.turbines[0].yaw_angle = 5.0
 
