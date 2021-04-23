@@ -593,33 +593,46 @@ class Turbine(LoggerBase):
     # Temporarily comment out because not used anywhere
     # When placing back, need to infer Cp from power since that
     # is where interpolation happens
-    # @property
-    # def Cp(self):
-    #     """
-    #     This property returns the power coeffcient of a turbine.
+    @property
+    def Cp(self):
+        """
+        This property returns the power coeffcient of a turbine.
 
-    #     This property returns the coefficient of power of the turbine
-    #     using the rotor swept area average velocity, interpolated from
-    #     the coefficient of power table. The average velocity is
-    #     calculated as the cube root of the mean cubed velocity in the
-    #     rotor area.
+        This property returns the coefficient of power of the turbine
+        using the rotor swept area average velocity, interpolated from
+        the coefficient of power table. The average velocity is
+        calculated as the cube root of the mean cubed velocity in the
+        rotor area.
 
-    #     **Note:** The velocity is scalled to an effective velocity by the yaw.
+        **Note:** The velocity is scalled to an effective velocity by the yaw.
 
-    #     Returns:
-    #         float: The power coefficient of a turbine at the current
-    #         operating conditions.
+        Returns:
+            float: The power coefficient of a turbine at the current
+            operating conditions.
 
-    #     Examples:
-    #         To get the power coefficient value for a turbine:
+        Examples:
+            To get the power coefficient value for a turbine:
 
-    #         >>> Cp = floris.farm.turbines[0].Cp()
-    #     """
-    #     # Compute the yaw effective velocity
-    #     pW = self.pP / 3.0  # Convert from pP to pW
-    #     yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
+            >>> Cp = floris.farm.turbines[0].Cp()
+        """
+        # Compute the yaw effective velocity
+        pW = self.pP / 3.0  # Convert from pP to w
+        pV = self.pT / 3.0  # convert from pT to w
+        yaw_effective_velocity = (
+            self.average_velocity
+            * (cosd(self.yaw_angle) ** pW)
+            * (cosd(self.tilt_angle) ** pV)
+        )
 
-    #     return self._fCp(yaw_effective_velocity)
+        P_avail = (
+            0.5
+            * self.air_density
+            * np.pi
+            * (self.rotor_diameter / 2) ** 2
+            * yaw_effective_velocity ** 3
+        )
+
+        return self.power / P_avail
 
     @property
     def Ct(self):
