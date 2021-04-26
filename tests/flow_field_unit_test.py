@@ -86,7 +86,6 @@ def test_2x_calculate_wake(flow_field_fixture):
     flow_field_fixture.calculate_wake()
     for i, turbine in enumerate(flow_field_fixture.turbine_map.turbines):
         calculate_wake_results[1][i] = {
-            "Cp": turbine.Cp,
             "Ct": turbine.Ct,
             "power": turbine.power,
             "aI": turbine.aI,
@@ -97,7 +96,6 @@ def test_2x_calculate_wake(flow_field_fixture):
     flow_field_fixture.calculate_wake()
     for i, turbine in enumerate(flow_field_fixture.turbine_map.turbines):
         calculate_wake_results[2][i] = {
-            "Cp": turbine.Cp,
             "Ct": turbine.Ct,
             "power": turbine.power,
             "aI": turbine.aI,

@@ -25,21 +25,21 @@ VELOCITY_MODEL = "curl"
 DEFLECTION_MODEL = "curl"
 
 baseline = [
-    (0.4632711, 0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
-    (0.4542347, 0.8315292, 790095.3264943, 0.2947740, 6.0555893),
-    (0.4463487, 0.8568269, 585359.6178647, 0.3108089, 5.5408759),
+    (0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
+    (0.8315292, 790095.3264943, 0.2947740, 6.0555893),
+    (0.8568269, 585359.6178647, 0.3108089, 5.5408759),
 ]
 
 yawed_baseline = [
-    (0.4632738, 0.7626853, 1795186.5605035, 0.2559142, 7.9700630),
-    (0.4547445, 0.8295616, 807715.7153082, 0.2935790, 6.0979495),
-    (0.4479135, 0.8538732, 598723.1123378, 0.3088673, 5.5865154),
+    (0.7626853, 1795186.5605035, 0.2559142, 7.9700630),
+    (0.8295616, 807715.7153082, 0.2935790, 6.0979495),
+    (0.8538732, 598723.1123378, 0.3088673, 5.5865154),
 ]
 
 wd315_baseline = [
-    (0.4632711, 0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
-    (0.4632711, 0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
-    (0.4632711, 0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
+    (0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
+    (0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
+    (0.7655987, 1808879.0573334, 0.2579249, 7.9700630),
 ]
 
 
@@ -66,7 +66,6 @@ def test_regression_tandem(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
 
 def test_regression_rotation(sample_inputs_fixture):
@@ -88,7 +87,6 @@ def test_regression_rotation(sample_inputs_fixture):
     floris.farm.flow_field.calculate_wake()
     turbine = floris.farm.turbine_map.turbines[0]
     unwaked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -96,7 +94,6 @@ def test_regression_rotation(sample_inputs_fixture):
     )
     turbine = floris.farm.turbine_map.turbines[1]
     first_waked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -104,7 +101,6 @@ def test_regression_rotation(sample_inputs_fixture):
     )
     turbine = floris.farm.turbine_map.turbines[2]
     second_waked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -134,25 +130,22 @@ def test_regression_rotation(sample_inputs_fixture):
     floris.farm.flow_field.calculate_wake()
 
     turbine = floris.farm.turbine_map.turbines[0]
-    assert approx(turbine.Cp) == unwaked_baseline[0]
-    assert approx(turbine.Ct) == unwaked_baseline[1]
-    assert approx(turbine.power) == unwaked_baseline[2]
-    assert approx(turbine.aI) == unwaked_baseline[3]
-    assert approx(turbine.average_velocity) == unwaked_baseline[4]
+    assert approx(turbine.Ct) == unwaked_baseline[0]
+    assert approx(turbine.power) == unwaked_baseline[1]
+    assert approx(turbine.aI) == unwaked_baseline[2]
+    assert approx(turbine.average_velocity) == unwaked_baseline[3]
 
     turbine = floris.farm.turbine_map.turbines[1]
-    assert approx(turbine.Cp) == first_waked_baseline[0]
-    assert approx(turbine.Ct) == first_waked_baseline[1]
-    assert approx(turbine.power) == first_waked_baseline[2]
-    assert approx(turbine.aI) == first_waked_baseline[3]
-    assert approx(turbine.average_velocity) == first_waked_baseline[4]
+    assert approx(turbine.Ct) == first_waked_baseline[0]
+    assert approx(turbine.power) == first_waked_baseline[1]
+    assert approx(turbine.aI) == first_waked_baseline[2]
+    assert approx(turbine.average_velocity) == first_waked_baseline[3]
 
     turbine = floris.farm.turbine_map.turbines[2]
-    assert approx(turbine.Cp, rel=1e-5) == second_waked_baseline[0]
-    assert approx(turbine.Ct, rel=1e-5) == second_waked_baseline[1]
-    assert approx(turbine.power, rel=1e-5) == second_waked_baseline[2]
-    assert approx(turbine.aI, rel=1e-5) == second_waked_baseline[3]
-    assert approx(turbine.average_velocity, rel=1e-5) == second_waked_baseline[4]
+    assert approx(turbine.Ct, rel=1e-5) == second_waked_baseline[0]
+    assert approx(turbine.power, rel=1e-5) == second_waked_baseline[1]
+    assert approx(turbine.aI, rel=1e-5) == second_waked_baseline[2]
+    assert approx(turbine.average_velocity, rel=1e-5) == second_waked_baseline[3]
 
 
 def test_regression_yaw(sample_inputs_fixture):
@@ -182,7 +175,6 @@ def test_regression_yaw(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
 
 def test_regression_multiple_calc_wake(sample_inputs_fixture):
@@ -205,7 +197,6 @@ def test_regression_multiple_calc_wake(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
     floris.farm.flow_field.calculate_wake()
     test_results = turbines_to_array(floris.farm.turbine_map.turbines)
@@ -216,7 +207,6 @@ def test_regression_multiple_calc_wake(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
     floris.farm.flow_field.calculate_wake()
     test_results = turbines_to_array(floris.farm.turbine_map.turbines)
@@ -227,7 +217,6 @@ def test_regression_multiple_calc_wake(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
 
 def test_change_wind_direction(sample_inputs_fixture):
@@ -254,7 +243,6 @@ def test_change_wind_direction(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
     floris.farm.wind_map.input_direction = [315.0]
     floris.farm.wind_map.calculate_wind_direction()
@@ -273,4 +261,3 @@ def test_change_wind_direction(sample_inputs_fixture):
         assert test_results[i][1] == approx(wd315_baseline[i][1])
         assert test_results[i][2] == approx(wd315_baseline[i][2])
         assert test_results[i][3] == approx(wd315_baseline[i][3])
-        assert test_results[i][4] == approx(wd315_baseline[i][4])
