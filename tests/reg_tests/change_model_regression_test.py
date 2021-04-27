@@ -49,7 +49,6 @@ def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
     # Change the model to Curl, rerun calculate_wake, and compare to Curl
     floris.farm.set_wake_model("curl")
@@ -66,7 +65,6 @@ def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])
 
     # Change back to Gauss, rerun calculate_wake, and compare to gauss
     floris.farm.set_wake_model("gauss_legacy")
@@ -83,4 +81,3 @@ def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
         assert test_results[i][1] == approx(baseline[i][1])
         assert test_results[i][2] == approx(baseline[i][2])
         assert test_results[i][3] == approx(baseline[i][3])
-        assert test_results[i][4] == approx(baseline[i][4])

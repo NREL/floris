@@ -15,14 +15,19 @@
 
 import pytest
 
+
 def turbines_to_array(turbine_list: list):
-    return [ [t.Cp, t.Ct, t.power, t.aI, t.average_velocity] for t in turbine_list ]
+    return [[t.Ct, t.power, t.aI, t.average_velocity] for t in turbine_list]
+
 
 def print_test_values(turbine_list: list):
     for t in turbine_list:
         print(
-            "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f}),".format(t.Cp, t.Ct, t.power, t.aI, t.average_velocity)
+            "({:.7f}, {:.7f}, {:.7f}, {:.7f}),".format(
+                t.Ct, t.power, t.aI, t.average_velocity
+            )
         )
+
 
 @pytest.fixture
 def sample_inputs_fixture():
@@ -180,7 +185,7 @@ class SampleInputs:
                         "gauss": {
                             "dm": 1.0,
                             "eps_gain": 0.2,
-                            "use_secondary_steering": False
+                            "use_secondary_steering": False,
                         }
                     },
                     "wake_velocity_parameters": {
@@ -189,9 +194,9 @@ class SampleInputs:
                             "eps_gain": 0.2,
                             "ka": 0.38,
                             "kb": 0.004,
-                            "use_yaw_added_recovery": False
+                            "use_yaw_added_recovery": False,
                         }
-                    }
+                    },
                 },
             },
         }
@@ -201,13 +206,7 @@ class SampleInputs:
             "turbine": self.turbine,
             "wake": self.wake,
             "logging": {
-                "console": {
-                    "enable": True,
-                    "level": 1
-                },
-                "file": {
-                    "enable": False,
-                    "level": 1
-                }
-            }
+                "console": {"enable": True, "level": 1},
+                "file": {"enable": False, "level": 1},
+            },
         }
