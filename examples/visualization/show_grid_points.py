@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -13,14 +13,15 @@
 # See https://floris.readthedocs.io for documentation
 
 
-## THIS IS A WORK IN PROGRESS
+# THIS IS A WORK IN PROGRESS
 
 import matplotlib.pyplot as plt
-
-# This import registers the 3D projection, but is otherwise unused.
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
 import floris.tools as wfct
+
+
+# The Axes3D import registers the 3D projection, but is otherwise unused.
 
 
 # Initialize the FLORIS interface fi
@@ -45,7 +46,6 @@ ax.scatter(xs, ys, zs, marker=".")
 # print('wd')
 # fi.reinitialize_flow_field(wind_direction=280)
 # fi.calculate_wake()
-
 
 # n = 100
 

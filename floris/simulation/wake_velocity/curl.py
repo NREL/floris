@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -150,8 +150,6 @@ class Curl(VelocityDeficit):
         # scaling parameter that adjusts the amount of dissipation
         # of the vortexes
         dissipation = self.dissipation
-        # parameter that defines the wind velocity of veer at 0 meters height
-        veer_linear = self.veer_linear
 
         # setup x and y grid information
         x = np.linspace(
@@ -388,7 +386,7 @@ class Curl(VelocityDeficit):
             np.min(z_locations), np.max(z_locations), int(self.model_grid_resolution.x3)
         )
         # z_min = HH
-        # b_veer = veer_linear
+        # b_veer = self.veer_linear
         # m_veer = -b_veer / z_min
         # m_veer = -0.5/63
         # b_veer = 90/63

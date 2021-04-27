@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -35,7 +35,7 @@ sowfa_TI = 0.1  # High = 0.1, low = 0.06
 layout_x = (1000.0, 1882.0, 2764.0)
 layout_y = (1000.0, 1000.0, 1000.0)
 
-## Grab certain hi-TI five simulations from saved SOWFA data set
+# Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle("../sowfa_data_set/sowfa_data_set.p")
 
 # Limit number of turbines
@@ -173,7 +173,7 @@ df_sowfa = pd.DataFrame(
     sowfa_results, columns=["p0", "p1", "p2", "p3", "p4", "y0", "y1", "y2", "y3", "y4"]
 )
 
-# ## SET UP FLORIS AND MATCH TO BASE CASE
+# # SET UP FLORIS AND MATCH TO BASE CASE
 # wind_speed = 8.38
 # TI = 0.09
 

@@ -27,6 +27,7 @@ a wind farm. The wake models implemented in this version of FLORIS are:
 - Gauss model for wake deflection and velocity deficit
 - Multi zone model for wake deflection and velocity deficit
 - Curl  model for wake deflection and velocity deficit
+- TurbOPark model for wake velocity deficit
 
 More information on all of these models can be found in the
 `theory <https://floris.readthedocs.io/en/develop/source/theory.html>`_
@@ -50,15 +51,15 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 2.2.5 (2021). Available at https://github.com/NREL/floris.
+   FLORIS. Version 2.3.0 (2021). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
 .. code-block:: latex
 
-    @misc{FLORIS_2020,
+    @misc{FLORIS_2021,
     author = {NREL},
-    title = {{FLORIS. Version 2.2.5},
+    title = {{FLORIS. Version 2.3.0},
     year = {2021},
     publisher = {GitHub},
     journal = {GitHub repository},

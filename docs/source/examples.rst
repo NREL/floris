@@ -8,13 +8,13 @@ to provide instruction on the use of most of the underlying codes.
 
 .. toctree::
     :glob:
-    
+
     examples/example_00_open_and_vis_floris.rst
     examples/example_01_basic_adjustments.rst
     examples/example_02_turbine_adjustments.rst
     examples/example_03_get_and_set_model_parameters.rst
 
-For questions not covered in the examples, or to request additional examples, please first search for or 
+For questions not covered in the examples, or to request additional examples, please first search for or
 submit your questions to stackoverflow.com using the tag FLORIS.  Additionally you can contact
 the NREL FLORIS team at `NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_ or
 `Jen King <mailto:jennifer.king@nrel.gov>`_ and
@@ -32,7 +32,7 @@ may result in an unphysical solution.  Many of the example files will make use o
 License
 =======
 
-Copyright 2020 NREL
+Copyright 2021 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

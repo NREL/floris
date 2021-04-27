@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -297,22 +297,29 @@ class Gauss(VelocityDeflection):
             rC = yLocs ** 2 + zC ** 2
 
             # find wake deflection from CRV
-            test_gamma = np.linspace(-45, 45, 91)
+            min_yaw = -45.0
+            max_yaw = 45.0
+            test_yaw = np.linspace(min_yaw, max_yaw, 91)
             avg_V = np.mean(V[idx])
-            target_yaw_ix = None
 
             # what yaw angle would have produced that same average spanwise velocity
-            yaw = test_gamma  # [i]
-
             vel_top = (
                 (HH + D / 2) / flow_field.specified_wind_height
             ) ** flow_field.wind_shear
             vel_bottom = (
                 (HH - D / 2) / flow_field.specified_wind_height
             ) ** flow_field.wind_shear
-            Gamma_top = (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+            Gamma_top = (
+                (np.pi / 8) * D * vel_top * Uinf * Ct * sind(test_yaw) * cosd(test_yaw)
+            )
             Gamma_bottom = (
-                -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+                -(np.pi / 8)
+                * D
+                * vel_bottom
+                * Uinf
+                * Ct
+                * sind(test_yaw)
+                * cosd(test_yaw)
             )
             Gamma_wake_rotation = (
                 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
@@ -330,17 +337,44 @@ class Gauss(VelocityDeflection):
             )
 
             tmp = avg_V - np.mean(Veff, axis=1)
-            target_yaw_ix = np.argmin(np.abs(tmp))
 
-            if target_yaw_ix is not None:
-                yaw_effective = test_gamma[target_yaw_ix]
+            # return indices of sorted residuals to find effective yaw angle
+            order = np.argsort(np.abs(tmp))
+            idx_1 = order[0]
+            idx_2 = order[1]
+
+            # check edge case, if true, assign max yaw value
+            if idx_1 == 90 or idx_2 == 90:
+                yaw_effective = max_yaw
+            # check edge case, if true, assign min yaw value
+            elif idx_1 == 0 or idx_2 == 0:
+                yaw_effective = -min_yaw
+            # for each identified minimum residual, use adjacent points to determine
+            # two equations of line and find the intersection of the two lines to
+            # determine the effective yaw angle to add; the if/else structure is based
+            # on which residual index is larger
             else:
-                err_msg = "No effective yaw angle is found. Set to 0."
-                self.logger.warning(err_msg, stack_info=True)
-                yaw_effective = 0.0
+                if idx_1 > idx_2:
+                    idx_right = idx_1 + 1  # adjacent point
+                    idx_left = idx_2 - 1  # adjacent point
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_1])  # slope
+                    mL = abs(tmp[idx_2]) - abs(tmp[idx_left])  # slope
+                    bR = abs(tmp[idx_1]) - mR * float(idx_1)  # intercept
+                    bL = abs(tmp[idx_2]) - mL * float(idx_2)  # intercept
+                else:
+                    idx_right = idx_2 + 1  # adjacent point
+                    idx_left = idx_1 - 1  # adjacent point
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_2])  # slope
+                    mL = abs(tmp[idx_1]) - abs(tmp[idx_left])  # slope
+                    bR = abs(tmp[idx_2]) - mR * float(idx_2)  # intercept
+                    bL = abs(tmp[idx_1]) - mL * float(idx_1)  # intercept
+
+                # find the value at the intersection of the two lines
+                ival = (bR - bL) / (mL - mR)
+                # convert the indice into degrees
+                yaw_effective = ival - max_yaw
 
             return yaw_effective + turbine.yaw_angle
-
         else:
             return turbine.yaw_angle
 

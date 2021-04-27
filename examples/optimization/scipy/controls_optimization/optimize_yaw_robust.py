@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -62,7 +62,7 @@ hor_plane = fi.get_hor_plane(height=fi.floris.farm.turbines[0].hub_height)
 # Plot and show
 fig, ax = plt.subplots(figsize=(7.0, 5.0))
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title("Baseline Case for U = 8 m/s, Wind Direction = 273$^\circ$")
+ax.set_title("Baseline Case for U = 8 m/s, Wind Direction = 273$^\\circ$")
 
 # =============================================================================
 print("Finding optimal yaw angles in FLORIS...")
@@ -135,7 +135,7 @@ fig, ax = plt.subplots(figsize=(7.0, 5.0))
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title(
     "Optimal Wake Steering without Uncertainty for U = 8 m/s, "
-    + "Wind Direction = 273$^\circ$"
+    + "Wind Direction = 273$^\\circ$"
 )
 
 # Initialize the horizontal cut for robust wake steering with uncertainty
@@ -149,6 +149,6 @@ fig, ax = plt.subplots(figsize=(7.0, 5.0))
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 ax.set_title(
     "Optimal Wake Steering with Uncertainty for U = 8 m/s, "
-    + "Wind Direction = 273$^\circ$"
+    + "Wind Direction = 273$^\\circ$"
 )
 plt.show()
