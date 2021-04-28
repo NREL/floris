@@ -117,11 +117,15 @@ class Cumulative(WakeSolver):
                 track_n_upstream_wakes,
             )
 
+            if not no_wake:
+                flow_field.v = flow_field.v + v_wake
+                flow_field.w = flow_field.w + w_wake
+
         # combine this turbine's wake into the full wake field
         if not no_wake:
             # u_wake = self.wake.combination_function(u_wake, turb_u_wake)
             flow_field.u = flow_field.u_initial - u_wake
-            flow_field.v = flow_field.v + v_wake
-            flow_field.w = flow_field.w + w_wake
+            # flow_field.v = flow_field.v + v_wake
+            # flow_field.w = flow_field.w + w_wake
 
         return u_wake

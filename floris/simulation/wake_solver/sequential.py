@@ -116,4 +116,8 @@ class Sequential(WakeSolver):
                     flow_field.v = flow_field.v + turb_v_wake
                     flow_field.w = flow_field.w + turb_w_wake
 
+        # apply the velocity deficit field to the freestream
+        if not no_wake:
+            flow_field.u = flow_field.u_initial - u_wake
+
         return u_wake

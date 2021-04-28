@@ -848,10 +848,10 @@ class FlowField(LoggerBase):
         )
 
         # apply the velocity deficit field to the freestream
-        if not no_wake:
-            self.u = self.u_initial - u_wake
-            # self.v = self.v_initial + v_wake
-            # self.w = self.w_initial + w_wake
+        # if not no_wake:
+        #     self.u = self.u_initial - u_wake
+        # self.v = self.v_initial + v_wake
+        # self.w = self.w_initial + w_wake
 
         # rotate the grid if it is curl
         if self.wake.velocity_model.model_string == "curl":

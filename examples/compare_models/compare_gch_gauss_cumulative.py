@@ -67,6 +67,36 @@ fi_gch.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
 
+fi_gauss = wfct.floris_interface.FlorisInterface("floris_models/gauss_legacy.json")
+# fi_gauss.set_gch(enable=False)
+fi_gauss.reinitialize_flow_field(
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
+)
+
+fi_gauss_linear = wfct.floris_interface.FlorisInterface("floris_models/gch_linear.json")
+fi_gauss_linear.set_gch(enable=False)
+fi_gauss_linear.reinitialize_flow_field(
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
+)
+
+fi_gauss_SS = wfct.floris_interface.FlorisInterface("floris_models/gch.json")
+fi_gauss_SS.set_gch(enable=False)
+fi_gauss_SS.set_gch_secondary_steering(enable=True)
+fi_gauss_SS.reinitialize_flow_field(
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
+)
+
+fi_gauss_YAR = wfct.floris_interface.FlorisInterface("floris_models/gch.json")
+fi_gauss_YAR.set_gch(enable=False)
+fi_gauss_YAR.set_gch_yaw_added_recovery(enable=True)
+fi_gauss_YAR.reinitialize_flow_field(
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
+)
+
+fi_gch.reinitialize_flow_field(
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
+)
+
 # fi_jensen_linear = wfct.floris_interface.FlorisInterface("floris_models/jensen_linear.json")
 fi_gch_linear = wfct.floris_interface.FlorisInterface("floris_models/gch_linear.json")
 fi_gch_linear.reinitialize_flow_field(
@@ -84,15 +114,17 @@ fi_gc_params = {
         "ti_constant": 0.66,
         "ti_downstream": -0.32,
         "ti_initial": 0.03,
-    }
+    },
+    "Wake Velocity Parameters": {"sigma_gch": True},
 }
 fi_gauss_cumulative_alpha1.set_model_parameters(fi_gc_params)
-fi_gauss_cumulative_alpha1.set_gch(enable=True)
+fi_gauss_cumulative_alpha1.set_gch(enable=False)
 # fi_gauss_cumulative_alpha1.floris.farm.flow_field.solver = "gauss_cumulative"
 fi_gauss_cumulative_alpha1.floris.farm.wake.solver = "cumulative"
 fi_gauss_cumulative_alpha1.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
+
 
 fi_gauss_cumulative_alpha2 = wfct.floris_interface.FlorisInterface(
     "floris_models/gch.json"
@@ -108,7 +140,7 @@ fi_gc_params = {
     "Wake Velocity Parameters": {"alpha_mod": 2.0},
 }
 fi_gauss_cumulative_alpha2.set_model_parameters(fi_gc_params)
-fi_gauss_cumulative_alpha2.set_gch(enable=True)
+fi_gauss_cumulative_alpha2.set_gch(enable=False)
 # fi_gauss_cumulative_alpha2.floris.farm.flow_field.solver = "gauss_cumulative"
 fi_gauss_cumulative_alpha2.floris.farm.wake.solver = "cumulative"
 fi_gauss_cumulative_alpha2.reinitialize_flow_field(
@@ -116,10 +148,10 @@ fi_gauss_cumulative_alpha2.reinitialize_flow_field(
 )
 
 
-fi_gauss_cumulative_alpha1_FS = wfct.floris_interface.FlorisInterface(
+fi_gauss_cumulative_alpha1_SS = wfct.floris_interface.FlorisInterface(
     "floris_models/gch.json"
 )
-fi_gauss_cumulative_alpha1_FS.floris.farm.set_wake_model("gauss_cumulative")
+fi_gauss_cumulative_alpha1_SS.floris.farm.set_wake_model("gauss_cumulative")
 fi_gc_params = {
     "Wake Turbulence Parameters": {
         "ti_ai": 0.83,
@@ -129,20 +161,20 @@ fi_gc_params = {
     },
     "Wake Velocity Parameters": {"sigma_gch": True},
 }
-fi_gauss_cumulative_alpha1_FS.set_model_parameters(fi_gc_params)
-fi_gauss_cumulative_alpha1_FS.set_gch(enable=False)
-fi_gauss_cumulative_alpha1_FS.set_gch_yaw_added_recovery(enable=False)
-fi_gauss_cumulative_alpha1_FS.set_gch_secondary_steering(enable=True)
+fi_gauss_cumulative_alpha1_SS.set_model_parameters(fi_gc_params)
+# fi_gauss_cumulative_alpha1_SS.set_gch(enable=False)
+fi_gauss_cumulative_alpha1_SS.set_gch_yaw_added_recovery(enable=False)
+fi_gauss_cumulative_alpha1_SS.set_gch_secondary_steering(enable=True)
 # fi_gauss_cumulative_alpha1_FS.floris.farm.flow_field.solver = "gauss_cumulative"
-fi_gauss_cumulative_alpha1_FS.floris.farm.wake.solver = "cumulative"
-fi_gauss_cumulative_alpha1_FS.reinitialize_flow_field(
+fi_gauss_cumulative_alpha1_SS.floris.farm.wake.solver = "cumulative"
+fi_gauss_cumulative_alpha1_SS.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
 
-fi_gauss_cumulative_alpha2_FS = wfct.floris_interface.FlorisInterface(
+fi_gauss_cumulative_alpha1_YAR = wfct.floris_interface.FlorisInterface(
     "floris_models/gch.json"
 )
-fi_gauss_cumulative_alpha2_FS.floris.farm.set_wake_model("gauss_cumulative")
+fi_gauss_cumulative_alpha1_YAR.floris.farm.set_wake_model("gauss_cumulative")
 fi_gc_params = {
     "Wake Turbulence Parameters": {
         "ti_ai": 0.83,
@@ -150,17 +182,66 @@ fi_gc_params = {
         "ti_downstream": -0.32,
         "ti_initial": 0.03,
     },
-    "Wake Velocity Parameters": {"alpha_mod": 2.0, "sigma_gch": True},
+    "Wake Velocity Parameters": {"sigma_gch": True},
 }
-fi_gauss_cumulative_alpha2_FS.set_model_parameters(fi_gc_params)
-fi_gauss_cumulative_alpha2_FS.set_gch(enable=False)
-fi_gauss_cumulative_alpha2_FS.set_gch_yaw_added_recovery(enable=False)
-fi_gauss_cumulative_alpha2_FS.set_gch_secondary_steering(enable=True)
-# fi_gauss_cumulative_alpha2_FS.floris.farm.flow_field.solver = "gauss_cumulative"
-fi_gauss_cumulative_alpha2_FS.floris.farm.wake.solver = "cumulative"
-fi_gauss_cumulative_alpha2_FS.reinitialize_flow_field(
+fi_gauss_cumulative_alpha1_YAR.set_model_parameters(fi_gc_params)
+# fi_gauss_cumulative_alpha1_YAR.set_gch(enable=False)
+fi_gauss_cumulative_alpha1_YAR.set_gch_yaw_added_recovery(enable=True)
+fi_gauss_cumulative_alpha1_YAR.set_gch_secondary_steering(enable=False)
+# fi_gauss_cumulative_alpha1_FS.floris.farm.flow_field.solver = "gauss_cumulative"
+fi_gauss_cumulative_alpha1_YAR.floris.farm.wake.solver = "cumulative"
+fi_gauss_cumulative_alpha1_YAR.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
+
+fi_gauss_cumulative_alpha1_GCH = wfct.floris_interface.FlorisInterface(
+    "floris_models/gch.json"
+)
+fi_gauss_cumulative_alpha1_GCH.floris.farm.set_wake_model("gauss_cumulative")
+fi_gc_params = {
+    "Wake Turbulence Parameters": {
+        "ti_ai": 0.83,
+        "ti_constant": 0.66,
+        "ti_downstream": -0.32,
+        "ti_initial": 0.03,
+    },
+    "Wake Velocity Parameters": {"sigma_gch": True},
+}
+fi_gauss_cumulative_alpha1_GCH.set_model_parameters(fi_gc_params)
+fi_gauss_cumulative_alpha1_GCH.set_gch(enable=True)
+# fi_gauss_cumulative_alpha1_GCH.set_gch_yaw_added_recovery(enable=True)
+# fi_gauss_cumulative_alpha1_GCH.set_gch_secondary_steering(enable=True)
+# fi_gauss_cumulative_alpha1_FS.floris.farm.flow_field.solver = "gauss_cumulative"
+fi_gauss_cumulative_alpha1_GCH.floris.farm.wake.solver = "cumulative"
+fi_gauss_cumulative_alpha1_GCH.reinitialize_flow_field(
+    wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
+)
+
+# fi_gauss_cumulative_alpha2_FS = wfct.floris_interface.FlorisInterface(
+#     "floris_models/gch.json"
+# )
+# fi_gauss_cumulative_alpha2_FS.floris.farm.set_wake_model("gauss_cumulative")
+# fi_gc_params = {
+#     "Wake Turbulence Parameters": {
+#         "ti_ai": 0.83,
+#         "ti_constant": 0.66,
+#         "ti_downstream": -0.32,
+#         "ti_initial": 0.03,
+#     },
+#     "Wake Velocity Parameters": {
+#         "alpha_mod": 2.0,
+#         "sigma_gch": True,
+#     },
+# }
+# fi_gauss_cumulative_alpha2_FS.set_model_parameters(fi_gc_params)
+# fi_gauss_cumulative_alpha2_FS.set_gch(enable=False)
+# fi_gauss_cumulative_alpha2_FS.set_gch_yaw_added_recovery(enable=False)
+# fi_gauss_cumulative_alpha2_FS.set_gch_secondary_steering(enable=True)
+# # fi_gauss_cumulative_alpha2_FS.floris.farm.flow_field.solver = "gauss_cumulative"
+# fi_gauss_cumulative_alpha2_FS.floris.farm.wake.solver = "cumulative"
+# fi_gauss_cumulative_alpha2_FS.reinitialize_flow_field(
+#     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
+# )
 
 
 fi_turbopark = wfct.floris_interface.FlorisInterface("floris_models/turbopark.json")
@@ -180,26 +261,85 @@ fi_turbopark = wfct.floris_interface.FlorisInterface("floris_models/turbopark.js
 # color_list = ["b", "r", "g", "g","m"]
 # ls_list = ["-","-","-","--","-"]
 
+# fi_list = [
+#     fi_gch,
+#     fi_gch_linear,
+#     fi_gauss_cumulative_alpha1,
+#     fi_gauss_cumulative_alpha1_SS,
+#     fi_gauss_cumulative_alpha1_YAR,
+#     fi_gauss_cumulative_alpha1_GCH,
+#     fi_turbopark,
+# ]
+# label_list = [
+#     "GCH",
+#     "GCH (Linear)",
+#     "Cumulative: Alpha 1",
+#     "Cumulative: Alpha 1, SS",
+#     "Cumulative: Alpha 1, YAR",
+#     "Cumulative: Alpha 1, GCH",
+#     "TurbOPark",
+# ]
+# color_list = ["g", "g", "m", "y", "k", "c", "b"]
+# ls_list = ["-", "--", "--", "-.", "--", "-.", "--"]
+
+# fi_list = [
+#     fi_gauss,
+#     fi_gauss_SS,
+#     fi_gauss_YAR,
+#     fi_gch,
+#     fi_gch_linear,
+#     fi_gauss_cumulative_alpha1,
+#     fi_gauss_cumulative_alpha1_SS,
+#     fi_gauss_cumulative_alpha1_YAR,
+#     fi_gauss_cumulative_alpha1_GCH,
+#     fi_turbopark,
+# ]
+# label_list = [
+#     "Gauss",
+#     "Gauss_SS",
+#     "Gauss_YAR",
+#     "GCH",
+#     "GCH (Linear)",
+#     "Cumulative: Alpha 1",
+#     "Cumulative: Alpha 1, SS",
+#     "Cumulative: Alpha 1, YAR",
+#     "Cumulative: Alpha 1, GCH",
+#     "TurbOPark",
+# ]
+# color_list = ["r", "b", "orange", "g", "g", "m", "y", "k", "c", "b"]
+# ls_list = ["-", "--", "-.", "-", "--", "--", "-.", "--", "-.", "--"]
+
+# fi_list = [
+#     fi_gch,
+#     fi_gch_linear,
+#     fi_gauss_cumulative_alpha1,
+#     fi_gauss_cumulative_alpha1_GCH,
+#     fi_turbopark,
+# ]
+# label_list = [
+#     "GCH (Sum of Squares)",
+#     "GCH (Linear)",
+#     "Cumulative (Alpha = 1)",
+#     "Cumulative (Alpha = 1, GCH)",
+#     "TurbOPark",
+# ]
+# color_list = ["g", "g", "m", "m", "b"]
+# ls_list = ["-", "--", "-", "--", "-"]
+
 fi_list = [
+    fi_gauss,
     fi_gch,
-    fi_gch_linear,
     fi_gauss_cumulative_alpha1,
-    fi_gauss_cumulative_alpha2,
-    fi_gauss_cumulative_alpha1_FS,
-    fi_gauss_cumulative_alpha2_FS,
-    fi_turbopark,
+    fi_gauss_cumulative_alpha1_SS,
 ]
 label_list = [
+    "Gauss",
     "GCH",
-    "GCH (Linear)",
     "Cumulative: Alpha 1",
-    "Cumulative: Alpha 2",
-    "Cumulative: Alpha 1, FS",
-    "Cumulative: Alpha 2, FS",
-    "TurbOPark",
+    "Cumulative: Alpha 1, SS",
 ]
-color_list = ["g", "g", "m", "m", "y", "y", "b"]
-ls_list = ["-", "--", "-", "--", "-", "--", "-"]
+color_list = ["g", "m", "k", "k"]
+ls_list = ["-", "-", "-", "--"]
 
 # Other parameters
 num_models = len(fi_list)
@@ -377,10 +517,11 @@ deep_x = np.array(deep_x)
 deep_y = np.array(deep_y)
 deep_x = np.array(layout_x)
 deep_y = np.array(layout_y)
-yaw_array = np.zeros_like(deep_x)
-yaw_array[deep_x == np.min(deep_x)] = yaw
+# yaw_array = np.zeros_like(deep_x)
+# yaw_array[deep_x == np.min(deep_x)] = yaw
 
-yaw_array = np.array([20.0, 0.0, 0.0, 0.0, 0.0])
+yaw_array = np.array([20.0, 20.0, 17.0, 12.0, 0.0])
+# yaw_array = np.array([20.0])
 
 # Determine locations
 sweep_loc = np.max(deep_x) + x_loc * D
@@ -448,5 +589,10 @@ st.write(fig_rat)
 
 print(label_list)
 print(time_array)
+
+print("gauss turbs: ", fi_gauss.get_turbine_power())
+print("gauss_SS turbs: ", fi_gauss_SS.get_turbine_power())
+print("gauss_YAR turbs: ", fi_gauss_YAR.get_turbine_power())
+print("GCH turbs: ", fi_gch.get_turbine_power())
 
 plt.show()

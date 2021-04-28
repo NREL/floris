@@ -28,6 +28,23 @@ y_spacing = 3 * D
 ws = 8.0
 wd = 270.0
 TI = 0.09
+yaw_angles = [
+    20.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    20.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    20.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+]
 
 # Generate layout
 layout_x = [i * x_spacing for j in range(nturbs_y) for i in range(nturbs_x)]
@@ -60,7 +77,7 @@ fi_gauss_cumulative.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
 # Calculate wake
-fi_gauss_cumulative.calculate_wake()
+fi_gauss_cumulative.calculate_wake(yaw_angles=yaw_angles)
 
 fi_gauss_cumulative2.floris.farm.set_wake_model("gauss_cumulative")
 fi_gc_params = {
@@ -73,14 +90,14 @@ fi_gc_params = {
     "Wake Velocity Parameters": {"alpha_mod": 2.0, "sigma_gch": True},
 }
 fi_gauss_cumulative2.set_model_parameters(fi_gc_params)
-fi_gauss_cumulative2.set_gch(enable=False)
+fi_gauss_cumulative2.set_gch(enable=True)
 # fi_gauss_cumulative.floris.farm.flow_field.solver = "gauss_cumulative"
 fi_gauss_cumulative2.floris.farm.wake.solver = "cumulative"
 fi_gauss_cumulative2.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
 # Calculate wake
-fi_gauss_cumulative2.calculate_wake()
+fi_gauss_cumulative2.calculate_wake(yaw_angles=yaw_angles)
 
 fi_gauss_legacy.floris.farm.set_wake_model("gauss_legacy")
 # fi_gauss_legacy.floris.farm.flow_field.solver = "floris"
@@ -89,7 +106,7 @@ fi_gauss_legacy.reinitialize_flow_field(
     wind_speed=ws, wind_direction=wd, turbulence_intensity=TI, layout_array=layout_array
 )
 # Calculate wake
-fi_gauss_legacy.calculate_wake()
+fi_gauss_legacy.calculate_wake(yaw_angles=yaw_angles)
 
 # Get horizontal plane at default height (hub-height)
 hor_plane_gauss_cumulative = fi_gauss_cumulative.get_hor_plane()
