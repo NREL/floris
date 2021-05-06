@@ -23,26 +23,21 @@ from src import Wake, Turbine, WindMap, FlowField
 @pytest.fixture
 def flow_field_fixture(sample_inputs_fixture):
     wake = Wake(sample_inputs_fixture.wake)
-    turbine = Turbine(sample_inputs_fixture.turbine)
-    turbine_map = TurbineMap(
-        [0.0, 100.0], [0.0, 0.0], [copy.deepcopy(turbine), copy.deepcopy(turbine)]
-    )
-    farm_prop = sample_inputs_fixture.farm["properties"]
+    farm_dict = sample_inputs_fixture.farm
     wind_map = WindMap(
-        wind_speed=farm_prop["wind_speed"],
-        layout_array=(farm_prop["layout_x"], farm_prop["layout_y"]),
-        wind_layout=(farm_prop["wind_x"], farm_prop["wind_y"]),
-        turbulence_intensity=farm_prop["turbulence_intensity"],
-        wind_direction=farm_prop["wind_direction"],
+        wind_speed=farm_dict["wind_speed"],
+        layout_array=(farm_dict["layout_x"], farm_dict["layout_y"]),
+        wind_layout=(farm_dict["wind_x"], farm_dict["wind_y"]),
+        turbulence_intensity=farm_dict["turbulence_intensity"],
+        wind_direction=farm_dict["wind_direction"],
     )
     return FlowField(
-        farm_prop["wind_shear"],
-        farm_prop["wind_veer"],
-        farm_prop["air_density"],
+        farm_dict["wind_shear"],
+        farm_dict["wind_veer"],
         wake,
-        turbine_map,
         wind_map,
-        farm_prop["specified_wind_height"],
+        farm_dict["reference_wind_height"],
+        farm_dict["reference_turbine_diameter"],
     )
 
 
