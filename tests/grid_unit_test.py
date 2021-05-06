@@ -17,11 +17,11 @@
 import pytest
 import numpy as np
 from typing import List
-from src import Grid, FlowFieldGrid, TurbineGrid, Wake, Turbine, WindMap, FlowField
+from src import FlowFieldGrid, TurbineGrid, Wake, Turbine, WindMap, FlowField
 from src.utilities import Vec3
 
 @pytest.fixture
-def turbine_grid_fixture(sample_inputs_fixture):
+def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
     n_turbines = len(sample_inputs_fixture.farm["layout_x"])
     turbine_coordinates = []
     for i in range(n_turbines):

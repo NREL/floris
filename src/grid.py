@@ -2,10 +2,11 @@
 import numpy as np
 from .utilities import Vec3, cosd, sind, tand
 from typing import List
+from abc import ABC, abstractmethod
 
 
-class Grid():
-    def __init__(self) -> None:
+class Grid(ABC):
+    def __init__(self, turbine_coordinates: List[Vec3], reference_turbine_diameter: float, reference_wind_height: float, grid_resolution: float) -> None:
         """
         Grid should establish domain bounds based on given criteria,
         and develop three arrays to contain components of the
@@ -14,6 +15,10 @@ class Grid():
         This could be generalized to any number of dimensions to be
         used by perhaps a turbulence field.
         """
+        self.turbine_coordinates: List[Vec3] = turbine_coordinates
+        self.reference_turbine_diameter: float = reference_turbine_diameter
+        self.reference_wind_height: float = reference_wind_height
+        self.grid_resolution: Vec3 = grid_resolution
         # x are the locations in space in the primary direction (typically the direction of the wind)
         # y are the locations in space in the lateral direction
         # z are the locations in space in the vertical direction
@@ -48,6 +53,16 @@ class Grid():
         self.zmin = 0 + eps
         self.zmax = 6 * self.reference_wind_height
 
+    def get_bounds(self) -> List[float]:
+        """
+        The minimum and maximum values of the bounds of the computational domain.
+        """
+        return [self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax]
+
+    @abstractmethod
+    def set_grid(self) -> None:
+        raise NotImplementedError("Grid.set_grid")
+
     def rotated(self, angle, center_of_rotation):
         """
         Rotate the discrete flow field grid.
@@ -72,24 +87,12 @@ class Grid():
         y_grid_i = yoffset * wind_cos + xoffset * wind_sin + x2
         return x_grid_i, y_grid_i
 
-    def get_bounds(self) -> List[float]:
-        """
-        The minimum and maximum values of the bounds of the computational domain.
-        """
-        return [self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax]
-
 
 class TurbineGrid(Grid):
     def __init__(self, turbine_coordinates: List[Vec3], reference_turbine_diameter: float, reference_wind_height: float, grid_resolution: float) -> None:
         # establishes a data structure with grid on each turbine
         # the x,y points here are the turbine locations
-
-        self.turbine_coordinates: List[Vec3] = turbine_coordinates
-        self.reference_turbine_diameter: float = reference_turbine_diameter
-        self.reference_wind_height: float = reference_wind_height
-        self.grid_resolution: Vec3 = grid_resolution
-
-        super().__init__()
+        super().__init__(turbine_coordinates, reference_turbine_diameter, reference_wind_height, grid_resolution)
 
         self.set_bounds()
         self.set_grid()
@@ -170,12 +173,7 @@ class FlowFieldGrid(Grid):
 
         # the x,y points are a regular grid based on given domain bounds
 
-        self.turbine_coordinates: List[Vec3] = turbine_coordinates
-        self.reference_turbine_diameter: float = reference_turbine_diameter
-        self.reference_wind_height: float = reference_wind_height
-        self.grid_resolution: Vec3 = grid_resolution
-
-        super().__init__()
+        super().__init__(turbine_coordinates, reference_turbine_diameter, reference_wind_height, grid_resolution)
 
         self.set_bounds()
         self.set_grid()
