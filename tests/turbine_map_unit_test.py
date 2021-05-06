@@ -16,23 +16,23 @@
 import pytest
 
 from src.utilities import Vec3
-from src import Turbine, TurbineMap
+from src import Turbine, Farm, Wake
 
 
 @pytest.fixture
-def turbine_map_fixture(sample_inputs_fixture):
-    return TurbineMap(
-        sample_inputs_fixture.farm["properties"]["layout_x"],
-        sample_inputs_fixture.farm["properties"]["layout_y"],
-        3 * [Turbine(sample_inputs_fixture.turbine)],
+def farm_fixture(sample_inputs_fixture):
+    return Farm(
+        sample_inputs_fixture.farm,
+        Turbine(sample_inputs_fixture.turbine),
+        Wake(sample_inputs_fixture.wake)
     )
 
 
-def test_instantiation(turbine_map_fixture):
+def test_instantiation(farm_fixture):
     """
     The class should initialize with the standard inputs
     """
-    assert type(turbine_map_fixture) is TurbineMap
+    assert type(farm_fixture) is Farm
 
 
 def test_rotated(turbine_map_fixture):
