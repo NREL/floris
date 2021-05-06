@@ -103,12 +103,14 @@ class Turbine(LoggerBase):
         self.air_density = -1
         self.use_turbulence_correction = False
 
-        self.initialize_turbine()
+        self.reinitialize()
 
     # Private methods
 
-    def initialize_turbine(self):
+    def reinitialize(self, air_density=None):
         # Initialize the turbine given saved parameter settings
+        if air_density is not None:
+            self.air_density = air_density
 
         # Precompute interps
         wind_speed = self.power_thrust_table["wind_speed"]
