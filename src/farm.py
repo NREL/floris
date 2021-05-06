@@ -17,7 +17,6 @@ import numpy as np
 from .wind_map import WindMap
 from .utilities import Vec3
 from .flow_field import FlowField
-from .turbine_map import TurbineMap
 
 
 class Farm:
@@ -37,7 +36,6 @@ class Farm:
         dictionary in order to create a couple of unerlying data structures:
 
             - :py:obj:`~.wind_map.WindMap`
-            - :py:obj:`~.turbine_map.TurbineMap`
 
         Args:
             instance_dictionary (dict): The required keys in this dictionary
@@ -87,10 +85,6 @@ class Farm:
             wind_shear=properties["wind_shear"],
             wind_veer=properties["wind_veer"],
             air_density=properties["air_density"],
-            turbine_map=TurbineMap(
-                layout_x,
-                layout_y,
-                [copy.deepcopy(turbine) for ii in range(len(layout_x))],
             ),
             wake=wake,
             wind_map=self.wind_map,
@@ -153,7 +147,7 @@ class Farm:
             with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution
         )
 
-        self.turbine_map.reinitialize_turbines()
+        self.reinitialize_turbines()
 
     def set_yaw_angles(self, yaw_angles):
         """
@@ -172,8 +166,6 @@ class Farm:
         for yaw_angle, turbine in zip(yaw_angles, self.turbines):
             turbine.yaw_angle = yaw_angle
 
-    # Getters & Setters
-
     @property
     def wind_direction(self):
         """
@@ -187,27 +179,124 @@ class Farm:
         """
         return list((np.array(self.wind_map.turbine_wind_direction) - 90) % 360)
 
-    @property
-    def turbine_map(self):
+    def update_hub_heights(self):
         """
-        TurbineMap attached to the Farm's :py:obj:`~.flow_field.FlowField`
-        object. This is used to reduce the depth of the object-hierachy
-        required to modify the wake models from a script.
+        Triggers a rebuild of the internal Python dictionary. This may be
+        used to update the z-component of the turbine coordinates if
+        the hub height has changed.
+        """
+        self.turbine_map_dict = self._build_internal_dict(self.coords, self.turbines)
+
+    def rotated(self, angles, center_of_rotation):
+        """
+        Rotates each turbine coordinate by a given angle about a center
+        of rotation.
+
+        Args:
+            angles ( list(float) ): Angles in degrees to rotate each turbine.
+            center_of_rotation ( :py:class:`~.utilities.Vec3` ):
+                The center of rotation.
 
         Returns:
-            :py:obj:`~.turbine_map.TurbineMap`
+            :py:class:`~.turbine_map.TurbineMap`: A new TurbineMap object whose
+            turbines are rotated from the original.
         """
-        return self.flow_field.turbine_map
+        layout_x = np.zeros(len(self.coords))
+        layout_y = np.zeros(len(self.coords))
+        for i, coord in enumerate(self.coords):
+            coord.rotate_on_x3(angles[i], center_of_rotation)
+            layout_x[i] = coord.x1prime
+            layout_y[i] = coord.x2prime
+        return TurbineMap(layout_x, layout_y, self.turbines)
+
+    def sorted_in_x_as_list(self):
+        """
+        Sorts the turbines based on their x-coordinates in ascending order.
+
+        Returns:
+            list((:py:class:`~.utilities.Vec3`, :py:class:`~.turbine.Turbine`)):
+            The sorted coordinates and corresponding turbines. This is a
+            list of tuples where each tuple contains the coordinate
+            and turbine in the first and last element, respectively.
+        """
+        coords = sorted(self.turbine_map_dict, key=lambda coord: coord.x1)
+        return [(c, self.turbine_map_dict[c]) for c in coords]
+
+    def number_of_wakes_iec(self, wd, return_turbines=True):
+        """
+        Finds the number of turbines waking each turbine for the given
+        wind direction. Waked directions are determined using the formula
+        in Figure A.1 in Annex A of the IEC 61400-12-1:2017 standard.
+        # TODO: Add the IEC standard as a reference.
+
+        Args:
+            wd (float): Wind direction for determining waked turbines.
+            return_turbines (bool, optional): Switch to return turbines.
+                Defaults to True.
+
+        Returns:
+            list(int) or list( (:py:class:`~.turbine.Turbine`, int ) ):
+            Number of turbines waking each turbine and, optionally,
+            the list of Turbine objects in the map.
+
+        TODO:
+        - This could be reworked so that the return type is more consistent.
+        - Describe the method used to find upstream turbines.
+        """
+        wake_list = []
+        for coord0, turbine0 in self.items:
+
+            other_turbines = [
+                (coord, turbine) for coord, turbine in self.items if turbine != turbine0
+            ]
+
+            dists = np.array(
+                [
+                    np.hypot(coord.x1 - coord0.x1, coord.x2 - coord0.x2)
+                    / turbine.rotor_diameter
+                    for coord, turbine in other_turbines
+                ]
+            )
+
+            angles = np.array(
+                [
+                    np.degrees(np.arctan2(coord.x1 - coord0.x1, coord.x2 - coord0.x2))
+                    for coord, turbine in self.items
+                    if turbine != turbine0
+                ]
+            )
+
+            # angles = (-angles - 90) % 360
+
+            waked = dists <= 2.0
+            waked = waked | (
+                (dists <= 20.0)
+                & (
+                    np.abs(wrap_180(wd - angles))
+                    <= 0.5 * (1.3 * np.degrees(np.arctan(2.5 / dists + 0.15)) + 10)
+                )
+            )
+
+            if return_turbines:
+                wake_list.append((turbine0, waked.sum()))
+            else:
+                wake_list.append(waked.sum())
+
+        return wake_list
+
+    def reinitialize_turbines(self, air_density=None):
+        for turbine in self.turbines:
+            turbine.reinitialize(air_density)
 
     @property
     def turbines(self):
         """
-        All turbines included in the model.
+        Turbines contained in the :py:class:`~.turbine_map.TurbineMap`.
 
         Returns:
-            list(:py:obj:`~.turbine.Turbine`)
+            list(:py:class:`floris.simulation.turbine.Turbine`)
         """
-        return self.turbine_map.turbines
+        return [turbine for _, turbine in self.items]
 
     @property
     def wake(self):
@@ -219,3 +308,29 @@ class Farm:
             :py:obj:`~.wake.Wake`.
         """
         return self.flow_field.wake
+
+    @property
+    def coords(self):
+        """
+        Coordinates of the turbines contained in the
+        :py:class:`~.turbine_map.TurbineMap`.
+
+        Returns:
+            list(:py:class:`~.utilities.Vec3`)
+        """
+        return [coord for coord, _ in self.items]
+
+    @property
+    def items(self):
+        """
+        Contents of the internal Python dictionary mapping of the turbine
+        and coordinates.
+
+        Returns:
+            dict_items: Iterable object containing tuples of key-value pairs
+            where the first index is the coordinate
+            (:py:class:`~.utilities.Vec3`) and the second index is the
+            :py:class:`~.turbine.Turbine`.
+        """
+        return self.turbine_map_dict.items()
+
