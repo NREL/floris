@@ -38,6 +38,7 @@ from .floris import Floris
 from .turbine import Turbine
 from .wind_map import WindMap
 from .flow_field import FlowField
+from .grid import Grid, TurbineGrid, FlowFieldGrid
 
 ROOT = Path(__file__).parent
 with open(ROOT.parent / "VERSION") as version_file:
