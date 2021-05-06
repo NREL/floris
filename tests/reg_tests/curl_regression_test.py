@@ -175,7 +175,7 @@ def test_change_wind_direction(sample_inputs_fixture):
 
     floris.farm.wind_map.input_direction = [315.0]
     floris.farm.wind_map.calculate_wind_direction()
-    floris.farm.turbine_map.reinitialize_turbines()
+    floris.farm.reinitialize_turbines()
     floris.farm.flow_field.reinitialize_flow_field()
 
     floris.farm.flow_field.calculate_wake()

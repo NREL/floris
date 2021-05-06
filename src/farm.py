@@ -18,6 +18,9 @@ from .wind_map import WindMap
 from .utilities import Vec3
 from .flow_field import FlowField
 
+from .turbine import Turbine
+from .utilities import Vec3, wrap_180
+from .logging_manager import LoggerBase
 
 class Farm:
     """
@@ -30,7 +33,7 @@ class Farm:
     for generating output.
     """
 
-    def __init__(self, instance_dictionary, turbine, wake):
+    def __init__(self, input_dictionary, turbine, wake):
         """
         The initialization method unpacks some of the data from the input
         dictionary in order to create a couple of unerlying data structures:
@@ -66,37 +69,61 @@ class Farm:
             wake (:py:obj:`~.wake.Wake`): The wake model used to simulate the
                 freestream flow and wakes.
         """
-        self.name = instance_dictionary["name"]
-        properties = instance_dictionary["properties"]
-        layout_x = properties["layout_x"]
-        layout_y = properties["layout_y"]
-        wind_x = properties["wind_x"]
-        wind_y = properties["wind_y"]
+        """
+        Converts input coordinates into :py:class:`~.utilities.Vec3` and
+        constructs the underlying mapping to :py:class:`~.turbine.Turbine`.
+        It is assumed that all arguments are of the same length and that the
+        Turbine at a particular index corresponds to the coordinate at the same
+        index in the layout arguments.
+
+        Args:
+            layout_x ( list(float) ): X-coordinate of the turbine locations.
+            layout_y ( list(float) ): Y-coordinate of the turbine locations.
+            turbines ( list(float) ): Turbine objects corresponding to
+                the locations given in layout_x and layout_y.
+        """
+        layout_x = input_dictionary["layout_x"]
+        layout_y = input_dictionary["layout_y"]
+        wind_x = input_dictionary["wind_x"]
+        wind_y = input_dictionary["wind_y"]
+
+        # check if the length of x and y coordinates are equal
+        if len(layout_x) != len(layout_y):
+            err_msg = (
+                "The number of turbine x locations ({0}) is "
+                + "not equal to the number of turbine y locations "
+                + "({1}). Please check your layout array."
+            ).format(len(layout_x), len(layout_y))
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+
+        coordinates = [Vec3(x1, x2, 0) for x1, x2 in list(zip(layout_x, layout_y))]
+        self.turbine_map_dict = self._build_internal_dict(coordinates, [copy.deepcopy(turbine) for ii in range(len(layout_x))])
+        self.reinitialize_turbines(air_density=input_dictionary["air_density"])
 
         self.wind_map = WindMap(
-            wind_speed=properties["wind_speed"],
+            wind_speed=input_dictionary["wind_speed"],
             layout_array=(layout_x, layout_y),
             wind_layout=(wind_x, wind_y),
-            turbulence_intensity=properties["turbulence_intensity"],
-            wind_direction=properties["wind_direction"],
+            turbulence_intensity=input_dictionary["turbulence_intensity"],
+            wind_direction=input_dictionary["wind_direction"],
         )
 
         self.flow_field = FlowField(
-            wind_shear=properties["wind_shear"],
-            wind_veer=properties["wind_veer"],
-            air_density=properties["air_density"],
-            ),
+            wind_shear=input_dictionary["wind_shear"],
+            wind_veer=input_dictionary["wind_veer"],
             wake=wake,
             wind_map=self.wind_map,
-            specified_wind_height=properties["specified_wind_height"],
+            specified_wind_height=input_dictionary["specified_wind_height"],
+            reference_turbine_diameter=max([t.rotor_diameter for t in self.turbines])
         )
 
-    def __str__(self):
-        return (
-            "Name: {}\n".format(self.name)
-            + "Wake Model: {}\n".format(self.flow_field.wake.velocity_model)
-            + "Deflection Model: {}\n".format(self.flow_field.wake.deflection_model)
-        )
+    def _build_internal_dict(self, coordinates, turbines):
+        turbine_dict = {}
+        for i, c in enumerate(coordinates):
+            this_coordinate = Vec3(c.x1, c.x2, turbines[i].hub_height)
+            turbine_dict[this_coordinate] = turbines[i]
+        return turbine_dict
 
     def set_wake_model(self, wake_model):
         """
