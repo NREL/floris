@@ -13,10 +13,11 @@
 # See https://floris.readthedocs.io for documentation
 
 import numpy as np
+from typing import List
 
 
 class Vec3:
-    def __init__(self, x1, x2=None, x3=None, string_format=None):
+    def __init__(self, components: List[float]):
         """
         Contains 3-component vector information. All arithmetic operators are
         set so that Vec3 objects can operate on and with each other directly.
@@ -38,29 +39,10 @@ class Vec3:
         # operations. It may add some performance gain, too, but that is
         # likely negligible.
 
-        if isinstance(x1, list):
-            self.x1, self.x2, self.x3 = x1
-        else:
-            self.x1 = x1
-            self.x2 = x2
-            self.x3 = x3
+        if len(components) != 3:
+            raise TypeError("Vec3 requires 3 components, {} given.".format(len(components)))
 
-        # If they arent, cast all components to the same type
-        if not (
-            isinstance(self.x1, (type(self.x2), type(self.x3)))
-            and isinstance(self.x2, type(self.x3))
-        ):
-            target_type = type(self.x1)
-            self.x2 = target_type(self.x2)
-            self.x3 = target_type(self.x3)
-
-        if string_format is not None:
-            self.string_format = string_format
-        else:
-            if isinstance(self.x1, (int)):
-                self.string_format = "{:8d}"
-            elif isinstance(self.x1, (float, np.float64)):
-                self.string_format = "{:8.3f}"
+        self.components = [float(c) for c in components]
 
     def rotate_on_x3(self, theta, center_of_rotation=None):
         """
@@ -90,10 +72,7 @@ class Vec3:
         self.x3prime = self.x3
 
     def __str__(self):
-        template_string = "{} {} {}".format(
-            self.string_format, self.string_format, self.string_format
-        )
-        return template_string.format(self.x1, self.x2, self.x3)
+        return "{:8.3f} {:8.3f} {:8.3f}".format(self.x1, self.x2, self.x3)
 
     def __add__(self, arg):
         if type(arg) is Vec3:
@@ -127,6 +106,29 @@ class Vec3:
     def __hash__(self):
         return hash((self.x1, self.x2, self.x3))
 
+    @property
+    def x1(self):
+        return self.components[0]
+
+    @x1.setter
+    def x1(self, value):
+        self.components[0] = float(value)
+
+    @property
+    def x2(self):
+        return self.components[1]
+
+    @x2.setter
+    def x2(self, value):
+        self.components[1] = float(value)
+
+    @property
+    def x3(self):
+        return self.components[2]
+
+    @x2.setter
+    def x2(self, value):
+        self.components[2] = float(value)
 
 def cosd(angle):
     """
@@ -195,3 +197,4 @@ def wrap_360(x):
     x = np.where(x < 0.0, x + 360.0, x)
     x = np.where(x >= 360.0, x - 360.0, x)
     return x
+
