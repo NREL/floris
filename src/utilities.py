@@ -60,7 +60,7 @@ class Vec3:
                 Defaults to Vec3(0.0, 0.0, 0.0).
         """
         if center_of_rotation is None:
-            center_of_rotation = Vec3(0.0, 0.0, 0.0)
+            center_of_rotation = Vec3([0.0, 0.0, 0.0])
         x1offset = self.x1 - center_of_rotation.x1
         x2offset = self.x2 - center_of_rotation.x2
         self.x1prime = (
@@ -76,27 +76,27 @@ class Vec3:
 
     def __add__(self, arg):
         if type(arg) is Vec3:
-            return Vec3(self.x1 + arg.x1, self.x2 + arg.x2, self.x3 + arg.x3)
+            return Vec3([self.x1 + arg.x1, self.x2 + arg.x2, self.x3 + arg.x3])
         else:
-            return Vec3(self.x1 + arg, self.x2 + arg, self.x3 + arg)
+            return Vec3([self.x1 + arg, self.x2 + arg, self.x3 + arg])
 
     def __sub__(self, arg):
         if type(arg) is Vec3:
-            return Vec3(self.x1 - arg.x1, self.x2 - arg.x2, self.x3 - arg.x3)
+            return Vec3([self.x1 - arg.x1, self.x2 - arg.x2, self.x3 - arg.x3])
         else:
-            return Vec3(self.x1 - arg, self.x2 - arg, self.x3 - arg)
+            return Vec3([self.x1 - arg, self.x2 - arg, self.x3 - arg])
 
     def __mul__(self, arg):
         if type(arg) is Vec3:
-            return Vec3(self.x1 * arg.x1, self.x2 * arg.x2, self.x3 * arg.x3)
+            return Vec3([self.x1 * arg.x1, self.x2 * arg.x2, self.x3 * arg.x3])
         else:
-            return Vec3(self.x1 * arg, self.x2 * arg, self.x3 * arg)
+            return Vec3([self.x1 * arg, self.x2 * arg, self.x3 * arg])
 
     def __truediv__(self, arg):
         if type(arg) is Vec3:
-            return Vec3(self.x1 / arg.x1, self.x2 / arg.x2, self.x3 / arg.x3)
+            return Vec3([self.x1 / arg.x1, self.x2 / arg.x2, self.x3 / arg.x3])
         else:
-            return Vec3(self.x1 / arg, self.x2 / arg, self.x3 / arg)
+            return Vec3([self.x1 / arg, self.x2 / arg, self.x3 / arg])
 
     def __eq__(self, arg):
         return False not in np.isclose(

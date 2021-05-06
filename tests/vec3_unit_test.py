@@ -19,35 +19,27 @@ import pytest
 @pytest.fixture
 def vec3_fixture():
     from src.utilities import Vec3
-
-    return Vec3(4, 4, 0)
-
-
-def test_instantiation_with_args():
-    """
-    The class should initialize with three positional arguments.
-    """
-    from src.utilities import Vec3
-
-    vec3 = Vec3(1, 2, 3)
-    assert vec3 is not None
-    assert vec3.x1 == 1
-    assert vec3.x2 == 2
-    assert vec3.x3 == 3
+    return Vec3([4, 4, 0])
 
 
 def test_instantiation_with_list():
     """
     The class should initialize with a list of length 3.
+    The class should raise an exception if the length of
+    points is not 3.
     """
     from src.utilities import Vec3
 
     vec3 = Vec3([1, 2, 3])
-    assert vec3 is not None
-    assert vec3.x1 == 1
-    assert vec3.x2 == 2
-    assert vec3.x3 == 3
+    assert vec3.x1 == 1.0
+    assert vec3.x2 == 2.0
+    assert vec3.x3 == 3.0
 
+    with pytest.raises(Exception):
+        vec3 = Vec3([1, 2, 3, 4])
+
+    with pytest.raises(Exception):
+        vec3 = Vec3([1, 2])
 
 def test_rotation_on_origin(vec3_fixture):
     """
@@ -72,13 +64,13 @@ def test_rotation_off_origin(vec3_fixture):
     """
     from src.utilities import Vec3
 
-    center_of_rotation = Vec3(vec3_fixture.x1 / 2.0, vec3_fixture.x2 / 2.0, 0.0)
+    center_of_rotation = Vec3([vec3_fixture.x1 / 2.0, vec3_fixture.x2 / 2.0, 0.0])
     vec3_fixture.rotate_on_x3(180, center_of_rotation)
     assert pytest.approx(vec3_fixture.x1prime) == 0.0
     assert pytest.approx(vec3_fixture.x2prime) == 0.0
     assert pytest.approx(vec3_fixture.x3prime) == 0.0
 
-    center_of_rotation = Vec3(1.5 * vec3_fixture.x1, 1.5 * vec3_fixture.x2, 0.0)
+    center_of_rotation = Vec3([1.5 * vec3_fixture.x1, 1.5 * vec3_fixture.x2, 0.0])
     vec3_fixture.rotate_on_x3(180, center_of_rotation)
     assert pytest.approx(vec3_fixture.x1prime) == 2 * vec3_fixture.x1
     assert pytest.approx(vec3_fixture.x2prime) == 2 * vec3_fixture.x2
@@ -98,7 +90,7 @@ def test_add(vec3_fixture):
     assert scalar.x2 == vec3_fixture.x2 + 1
     assert scalar.x3 == vec3_fixture.x3 + 1
 
-    vector = vec3_fixture + Vec3(2, 3, 4)
+    vector = vec3_fixture + Vec3([2, 3, 4])
     assert vector.x1 == vec3_fixture.x1 + 2
     assert vector.x2 == vec3_fixture.x2 + 3
     assert vector.x3 == vec3_fixture.x3 + 4
@@ -117,7 +109,7 @@ def test_subtract(vec3_fixture):
     assert scalar.x2 == vec3_fixture.x2 - 1
     assert scalar.x3 == vec3_fixture.x3 - 1
 
-    vector = vec3_fixture - Vec3(2, 3, 4)
+    vector = vec3_fixture - Vec3([2, 3, 4])
     assert vector.x1 == vec3_fixture.x1 - 2
     assert vector.x2 == vec3_fixture.x2 - 3
     assert vector.x3 == vec3_fixture.x3 - 4
@@ -136,7 +128,7 @@ def test_multiply(vec3_fixture):
     assert scalar.x2 == vec3_fixture.x2 * 10
     assert scalar.x3 == vec3_fixture.x3 * 10
 
-    vector = vec3_fixture * Vec3(2, 3, 4)
+    vector = vec3_fixture * Vec3([2, 3, 4])
     assert vector.x1 == vec3_fixture.x1 * 2
     assert vector.x2 == vec3_fixture.x2 * 3
     assert vector.x3 == vec3_fixture.x3 * 4
@@ -155,7 +147,7 @@ def test_divide(vec3_fixture):
     assert scalar.x2 == vec3_fixture.x2 / 10.0
     assert scalar.x3 == vec3_fixture.x3 / 10.0
 
-    vector = vec3_fixture / Vec3(10, 100, 1000)
+    vector = vec3_fixture / Vec3([10, 100, 1000])
     assert vector.x1 == vec3_fixture.x1 / 10.0
     assert vector.x2 == vec3_fixture.x2 / 100.0
     assert vector.x3 == vec3_fixture.x3 / 1000.0
@@ -168,16 +160,16 @@ def test_equality(vec3_fixture):
     """
     from src.utilities import Vec3
 
-    rhs = Vec3(vec3_fixture.x1, vec3_fixture.x2, vec3_fixture.x3)
+    rhs = Vec3([vec3_fixture.x1, vec3_fixture.x2, vec3_fixture.x3])
     assert vec3_fixture == rhs
 
-    rhs = Vec3(vec3_fixture.x1 + 1, vec3_fixture.x2, vec3_fixture.x3)
+    rhs = Vec3([vec3_fixture.x1 + 1, vec3_fixture.x2, vec3_fixture.x3])
     assert vec3_fixture != rhs
 
-    rhs = Vec3(vec3_fixture.x1, vec3_fixture.x2 + 1, vec3_fixture.x3)
+    rhs = Vec3([vec3_fixture.x1, vec3_fixture.x2 + 1, vec3_fixture.x3])
     assert vec3_fixture != rhs
 
-    rhs = Vec3(vec3_fixture.x1, vec3_fixture.x2, vec3_fixture.x3 + 1)
+    rhs = Vec3([vec3_fixture.x1, vec3_fixture.x2, vec3_fixture.x3 + 1])
     assert vec3_fixture != rhs
 
 
@@ -188,5 +180,5 @@ def test_string_formatting():
     """
     from src.utilities import Vec3
 
-    vec3 = Vec3([1, 2, 3], string_format="{:6.2f}")
-    assert str(vec3) == "  1.00   2.00   3.00"
+    vec3 = Vec3([1, 2, 3])
+    assert str(vec3) == "   1.000    2.000    3.000"
