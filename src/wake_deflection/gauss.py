@@ -304,10 +304,10 @@ class Gauss(VelocityDeflection):
 
             # what yaw angle would have produced that same average spanwise velocity
             vel_top = (
-                (HH + D / 2) / flow_field.specified_wind_height
+                (HH + D / 2) / flow_field.reference_wind_height
             ) ** flow_field.wind_shear
             vel_bottom = (
-                (HH - D / 2) / flow_field.specified_wind_height
+                (HH - D / 2) / flow_field.reference_wind_height
             ) ** flow_field.wind_shear
             Gamma_top = (
                 (np.pi / 8) * D * vel_top * Uinf * Ct * sind(test_yaw) * cosd(test_yaw)

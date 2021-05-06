@@ -41,7 +41,7 @@ class Farm:
             - :py:obj:`~.wind_map.WindMap`
 
         Args:
-            instance_dictionary (dict): The required keys in this dictionary
+            input_dictionary (dict): The required keys in this dictionary
                 are:
 
                     -   **wind_speed** (*list*): The wind speed measurements at
@@ -114,7 +114,7 @@ class Farm:
             wind_veer=input_dictionary["wind_veer"],
             wake=wake,
             wind_map=self.wind_map,
-            specified_wind_height=input_dictionary["specified_wind_height"],
+            reference_wind_height=input_dictionary["reference_wind_height"],
             reference_turbine_diameter=max([t.rotor_diameter for t in self.turbines])
         )
 

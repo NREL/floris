@@ -217,11 +217,11 @@ class GaussianModel(VelocityDeficit):
         scale = 1.0
         vel_top = (
             Uinf
-            * ((HH + D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear
+            * ((HH + D / 2) / flow_field.reference_wind_height) ** flow_field.wind_shear
         ) / Uinf
         vel_bottom = (
             Uinf
-            * ((HH - D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear
+            * ((HH - D / 2) / flow_field.reference_wind_height) ** flow_field.wind_shear
         ) / Uinf
         Gamma_top = (
             scale * (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
