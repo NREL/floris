@@ -25,13 +25,66 @@ import matplotlib.pyplot as plt
 
 import streamlit as st
 import floris.tools as wfct
+import sowfa_utilities as su
 
+
+sl = su.SowfaList()
+sl.load("saved_sowfa_6turb_yaw.p")
+
+
+turb6_y = []
+for i in range(len(sl.df.layout_y)):
+    turb6_y.append(sl.df.layout_y[:][i][-1])
+sl.df["turb6_y"] = turb6_y
+df_sorted = sl.df.sort_values(by=["turb6_y"], ignore_index=True)
+
+turb1_power_base = []
+turb6_power_base = []
+for i in range(len(df_sorted[df_sorted.yaw == (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)])):
+    turb1_power_base.append(
+        df_sorted[df_sorted.yaw == (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)].turbine_power.iloc[
+            i
+        ][0]
+    )
+    turb6_power_base.append(
+        df_sorted[df_sorted.yaw == (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)].turbine_power.iloc[
+            i
+        ][-1]
+    )
+
+turb1_power_yaw25 = []
+turb6_power_yaw25 = []
+for i in range(len(df_sorted[df_sorted.yaw == (25.0, 0.0, 0.0, 0.0, 0.0, 0.0)])):
+    turb1_power_yaw25.append(
+        df_sorted[df_sorted.yaw == (25.0, 0.0, 0.0, 0.0, 0.0, 0.0)].turbine_power.iloc[
+            i
+        ][0]
+    )
+    turb6_power_yaw25.append(
+        df_sorted[df_sorted.yaw == (25.0, 0.0, 0.0, 0.0, 0.0, 0.0)].turbine_power.iloc[
+            i
+        ][-1]
+    )
+
+turb1_power_yawAll = []
+turb6_power_yawAll = []
+for i in range(len(df_sorted[df_sorted.yaw == (25.0, 25.0, 17.0, 12.0, 0.0, 0.0)])):
+    turb1_power_yawAll.append(
+        df_sorted[
+            df_sorted.yaw == (25.0, 25.0, 17.0, 12.0, 0.0, 0.0)
+        ].turbine_power.iloc[i][0]
+    )
+    turb6_power_yawAll.append(
+        df_sorted[
+            df_sorted.yaw == (25.0, 25.0, 17.0, 12.0, 0.0, 0.0)
+        ].turbine_power.iloc[i][-1]
+    )
 
 # Fixed parameters
 minSpeed = 4
 maxSpeed = 8.0
 D = 126.0
-TI = 0.06
+TI = 0.065
 
 # User inputs
 D = 126.0
@@ -48,7 +101,7 @@ layout_y = [
 layout_array = [layout_x, layout_y]
 
 # Overall options
-ws = st.sidebar.slider("Wind Speed", 5.0, 15.0, 8.0, step=0.5)
+ws = st.sidebar.slider("Wind Speed", 5.0, 15.0, 8.39, step=0.5)
 wd = st.sidebar.slider("Wind Direction", 260.0, 280.0, 270.0, step=0.5)
 
 # Options For 1 turbine case
@@ -331,15 +384,19 @@ fi_list = [
     fi_gch,
     fi_gauss_cumulative_alpha1,
     fi_gauss_cumulative_alpha1_SS,
+    fi_gauss_cumulative_alpha1_YAR,
+    fi_gauss_cumulative_alpha1_GCH,
 ]
 label_list = [
     "Gauss",
     "GCH",
     "Cumulative: Alpha 1",
     "Cumulative: Alpha 1, SS",
+    "Cumulative: Alpha 1, YAR",
+    "Cumulative: Alpha 1, GCH",
 ]
-color_list = ["g", "m", "k", "k"]
-ls_list = ["-", "-", "-", "--"]
+color_list = ["g", "m", "k", "k", "k", "k"]
+ls_list = ["-", "-", "-", "--", "-.", ":"]
 
 # Other parameters
 num_models = len(fi_list)
@@ -520,8 +577,9 @@ deep_y = np.array(layout_y)
 # yaw_array = np.zeros_like(deep_x)
 # yaw_array[deep_x == np.min(deep_x)] = yaw
 
-yaw_array = np.array([20.0, 20.0, 17.0, 12.0, 0.0])
-# yaw_array = np.array([20.0])
+yaw_array = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+# yaw_array = np.array([25.0, 0.0, 0.0, 0.0, 0.0])
+# yaw_array = np.array([25.0, 25.0, 17.0, 12.0, 0.0])
 
 # Determine locations
 sweep_loc = np.max(deep_x) + x_loc * D
@@ -531,6 +589,9 @@ sweep_center = np.mean(np.array(deep_y))
 fig_cut, axarr_cut = plt.subplots(1, num_models, figsize=(15, 3))
 fig_rat, ax_rat = plt.subplots(1, 1)
 time_array = []
+x_locs = [xx for xx in deep_x] + [sweep_loc]
+y_locs = [xx for xx in deep_y] + [0.0]
+yaw_array = [xx for xx in yaw_array] + [0.0]
 for i in range(num_models):
 
     # Grab the model info
@@ -566,9 +627,9 @@ for i in range(num_models):
     )
     power_out = np.zeros_like(sweep_locations)
 
-    x_locs = [xx for xx in deep_x] + [sweep_loc]
-    y_locs = [xx for xx in deep_y] + [0]
-    yaw_array = [xx for xx in yaw_array] + [0]
+    # x_locs = [xx for xx in deep_x] + [sweep_loc]
+    # y_locs = [xx for xx in deep_y] + [0]
+    # yaw_array = [xx for xx in yaw_array] + [0]
 
     for y_idx, y_loc in enumerate(sweep_locations):
 
@@ -578,11 +639,47 @@ for i in range(num_models):
         power_out[y_idx] = fi.get_turbine_power()[-1] / fi.get_turbine_power()[0]
 
     ax_rat.plot(sweep_locations, power_out, color=color, label=label, ls=ls)
-    ax_rat.legend()
-    ax_rat.grid(True)
-    ax_rat.set_title("Normalized Power at %.1f D downstream" % x_loc)
-    ax_rat.set_ylabel("Normalized Power (-)")
-    ax_rat.set_xlabel("Cross-Stream Location (D)")
+    # ax_rat.legend()
+    # ax_rat.grid(True)
+    # ax_rat.set_title("Normalized Power at %.1f D downstream" % x_loc)
+    # ax_rat.set_ylabel("Normalized Power (-)")
+    # ax_rat.set_xlabel("Cross-Stream Location (D)")
+
+sowfa_sweep_locations = np.linspace(-2.0, 2.0, 17)
+
+# print(yaw_array)
+# print(np.array([25.0, 0.0, 0.0, 0.0, 0.0, 0.0]))
+# print('value: ', np.array_equal(np.array([25.0, 0.0, 0.0, 0.0, 0.0, 0.0]), yaw_array))
+if np.array_equal(yaw_array, np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])):
+    print("SOWFA base")
+    ax_rat.plot(
+        sowfa_sweep_locations,
+        np.array(turb6_power_base) / np.array(turb1_power_base),
+        color="r",
+        label="SOWFA",
+    )
+if np.array_equal(yaw_array, np.array([25.0, 0.0, 0.0, 0.0, 0.0, 0.0])):
+    print("SOWFA yaw 25")
+    ax_rat.plot(
+        sowfa_sweep_locations,
+        np.array(turb6_power_yaw25) / np.array(turb1_power_yaw25),
+        color="r",
+        label="SOWFA",
+    )
+if np.array_equal(yaw_array, np.array([25.0, 25.0, 17.0, 12.0, 0.0, 0.0])):
+    print("SOWFA yaw all")
+    ax_rat.plot(
+        sowfa_sweep_locations,
+        np.array(turb6_power_yawAll) / np.array(turb1_power_yawAll),
+        color="r",
+        label="SOWFA",
+    )
+
+ax_rat.legend()
+ax_rat.grid(True)
+ax_rat.set_title("Normalized Power at %.1f D downstream" % x_loc)
+ax_rat.set_ylabel("Normalized Power (-)")
+ax_rat.set_xlabel("Cross-Stream Location (D)")
 
 st.write(fig_cut)
 st.write(fig_rat)
