@@ -12,8 +12,10 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from typing import Any, Dict, List, Tuple
+
+import attr
 import numpy as np
-from typing import List
 
 
 class Vec3:
@@ -40,7 +42,9 @@ class Vec3:
         # likely negligible.
 
         if len(components) != 3:
-            raise TypeError("Vec3 requires 3 components, {} given.".format(len(components)))
+            raise TypeError(
+                "Vec3 requires 3 components, {} given.".format(len(components))
+            )
 
         self.components = [float(c) for c in components]
 
@@ -130,6 +134,15 @@ class Vec3:
     def x2(self, value):
         self.components[2] = float(value)
 
+    @property
+    def elements(self) -> Tuple[float, float, float]:
+        return self.x1, self.x2, self.x3
+
+    @property
+    def prime_elements(self) -> Tuple[float, float, float]:
+        return self.x1prime, self.x2prime, self.x3prime
+
+
 def cosd(angle):
     """
     Cosine of an angle with the angle given in degrees.
@@ -198,3 +211,36 @@ def wrap_360(x):
     x = np.where(x >= 360.0, x - 360.0, x)
     return x
 
+
+@attr.s
+class FromDictMixin:
+    """A Mixin class to allow for kwargs overloading when a data class doesn't
+    have a specific parameter definied. This allows passing of larger dictionaries
+    to a data class without throwing an error.
+    """
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Maps a data dictionary to an `attr`-defined class.
+
+        Args:
+            data : dict
+                The data dictionary to be mapped.
+        Returns:
+            cls
+                The `attr`-defined class.
+        """
+        return cls(
+            **{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data}
+        )
+
+    @classmethod
+    def get_model_defaults(cls) -> Dict[str, Any]:
+        """Produces a dictionary of the keyword arguments and their defaults.
+
+        Returns
+        -------
+        Dict[str, Any]
+            Dictionary of keyword argument: default.
+        """
+        return {el.name: el.default for el in attr.fields(cls)}
