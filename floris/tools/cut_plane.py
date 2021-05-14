@@ -17,7 +17,6 @@ import copy
 
 import numpy as np
 import pandas as pd
-
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
@@ -373,37 +372,29 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
 
     # Temp local copy
     df = cross_plane.df.copy()
-    
-    
 
     # Make a distance column
-    df['distance'] = distance = np.sqrt(
-        (df.x1 - x1_loc) ** 2 + (df.x2 - x2_loc) ** 2
-    )
+    df["distance"] = np.sqrt((df.x1 - x1_loc) ** 2 + (df.x2 - x2_loc) ** 2)
 
     # Return the cube-mean wind speed
-    return np.cbrt(np.mean(df[df.distance < R].u**3))
-    
+    return np.cbrt(np.mean(df[df.distance < R].u ** 3))
 
-# def wind_speed_profile(cross_plane,
-#                         R,
-#                         x2_loc,
-#                         resolution=100,
-#                         x1_locs=None):
 
-#     if x1_locs is None:
-#         x1_locs = np.linspace(
-#             min(cross_plane.x1_flat), max(cross_plane.x1_flat), resolution)
-#     v_array = np.array([calculate_wind_speed(cross_plane,x1_loc, x2_loc, R) for x1_loc in x1_locs])
-#     return x1_locs, v_array
+def wind_speed_profile(cross_plane, R, x2_loc, resolution=100, x1_locs=None):
 
-def calculate_power(cross_plane,
-                    x1_loc,
-                    x2_loc,
-                    R,
-                    ws_array,
-                    cp_array,
-                    air_density=1.225):
+    if x1_locs is None:
+        x1_locs = np.linspace(
+            min(cross_plane.df.x1), max(cross_plane.df.x1), resolution
+        )
+    v_array = np.array(
+        [calculate_wind_speed(cross_plane, x1_loc, x2_loc, R) for x1_loc in x1_locs]
+    )
+    return x1_locs, v_array
+
+
+def calculate_power(
+    cross_plane, x1_loc, x2_loc, R, ws_array, cp_array, air_density=1.225
+):
     """
     Calculate maximum power available in a given cross plane.
 
@@ -426,20 +417,40 @@ def calculate_power(cross_plane,
     # Compute the cp
     cp_value = np.interp(ws, ws_array, cp_array)
 
-    #Return the power
-    return 0.5 * air_density * (np.pi * R**2) * cp_value * ws**3
+    # Return the power
+    return 0.5 * air_density * (np.pi * R ** 2) * cp_value * ws ** 3
 
 
-    # def get_power_profile(self, ws_array, cp_array, rotor_radius, air_density=1.225, resolution=100, x1_locs=None):
+def get_power_profile(
+    cross_plane,
+    x2_loc,
+    ws_array,
+    cp_array,
+    R,
+    air_density=1.225,
+    resolution=100,
+    x1_locs=None,
+):
 
-    #     # Get the wind speed profile
-    #     x1_locs, v_array = self.get_profile(resolution=resolution, x1_locs=x1_locs)
-
-    #     # Get Cp
-    #     cp_array = np.interp(v_array,ws_array,cp_array)
-
-    #     # Return power array
-    #     return x1_locs, 0.5 * air_density * (np.pi * rotor_radius**2) * cp_array * v_array**3
+    if x1_locs is None:
+        x1_locs = np.linspace(
+            min(cross_plane.df.x1), max(cross_plane.df.x1), resolution
+        )
+    p_array = np.array(
+        [
+            calculate_power(
+                cross_plane,
+                x1_loc,
+                x2_loc,
+                R,
+                ws_array,
+                cp_array,
+                air_density=air_density,
+            )
+            for x1_loc in x1_locs
+        ]
+    )
+    return x1_locs, p_array
 
 
 # # Define horizontal subclass
