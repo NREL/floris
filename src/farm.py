@@ -16,11 +16,10 @@ import numpy as np
 
 from .wind_map import WindMap
 from .utilities import Vec3
-from .flow_field import FlowField
-
 from .turbine import Turbine
 from .utilities import Vec3, wrap_180
 from .logging_manager import LoggerBase
+from typing import Dict
 
 class Farm:
     """
@@ -33,7 +32,7 @@ class Farm:
     for generating output.
     """
 
-    def __init__(self, input_dictionary, turbine, wake):
+    def __init__(self, input_dictionary: Dict, turbine: Turbine):
         """
         The initialization method unpacks some of the data from the input
         dictionary in order to create a couple of unerlying data structures:
@@ -97,7 +96,7 @@ class Farm:
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
 
-        coordinates = [Vec3(x1, x2, 0) for x1, x2 in list(zip(layout_x, layout_y))]
+        coordinates = [Vec3([x1, x2, 0]) for x1, x2 in list(zip(layout_x, layout_y))]
         self.turbine_map_dict = self._build_internal_dict(coordinates, [copy.deepcopy(turbine) for ii in range(len(layout_x))])
         self.reinitialize_turbines(air_density=input_dictionary["air_density"])
 
@@ -109,19 +108,10 @@ class Farm:
             wind_direction=input_dictionary["wind_direction"],
         )
 
-        self.flow_field = FlowField(
-            wind_shear=input_dictionary["wind_shear"],
-            wind_veer=input_dictionary["wind_veer"],
-            wake=wake,
-            wind_map=self.wind_map,
-            reference_wind_height=input_dictionary["reference_wind_height"],
-            reference_turbine_diameter=max([t.rotor_diameter for t in self.turbines])
-        )
-
     def _build_internal_dict(self, coordinates, turbines):
         turbine_dict = {}
         for i, c in enumerate(coordinates):
-            this_coordinate = Vec3(c.x1, c.x2, turbines[i].hub_height)
+            this_coordinate = Vec3([c.x1, c.x2, turbines[i].hub_height])
             turbine_dict[this_coordinate] = turbines[i]
         return turbine_dict
 
@@ -173,17 +163,6 @@ class Farm:
             list(:py:class:`floris.simulation.turbine.Turbine`)
         """
         return [turbine for _, turbine in self.items]
-
-    @property
-    def wake(self):
-        """
-        The Farm's Wake object. This is used to reduce the depth of the
-        object-hierachy required to modify the wake models from a script.
-
-        Returns:
-            :py:obj:`~.wake.Wake`.
-        """
-        return self.flow_field.wake
 
     @property
     def coords(self):

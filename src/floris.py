@@ -21,6 +21,7 @@ import src.logging_manager as logging_manager
 from .farm import Farm
 from .wake import Wake
 from .turbine import Turbine
+from .flow_field import FlowField
 
 
 class Floris(logging_manager.LoggerBase):
@@ -30,7 +31,7 @@ class Floris(logging_manager.LoggerBase):
     access other objects within the model.
     """
 
-    def __init__(self, input_file=None, input_dict=None):
+    def __init__(self, input_file_path=None, input_dict=None):
         """
         Import this class with one of the two optional input arguments
         to create a Floris model. The `input_dict` and `input_file`
@@ -42,14 +43,13 @@ class Floris(logging_manager.LoggerBase):
             input_dict (dict, optional): Python dict given directly.
         """
         # Parse the input into dictionaries
-        if input_file is not None:
-            with open(input_file) as jsonfile:
-                input_dict = json.load(jsonfile)
-            input_dict = self._parseJSON(input_file)
+        if input_file_path is not None:
+            input_file = open(input_file_path)
+            input_dict = json.load(input_file)
         elif input_dict is not None:
             input_dict = input_dict.copy()
         else:
-            raise ValueError("InputReader: No input file or dictionary given.")
+            raise ValueError("Floris: No input file or dictionary given.")
 
         turbine_dict = input_dict.pop("turbine")
         wake_dict = input_dict.pop("wake")
@@ -69,7 +69,8 @@ class Floris(logging_manager.LoggerBase):
         # Initialize the simulation objects
         self.turbine = Turbine(turbine_dict)
         self.wake = Wake(wake_dict)
-        self.farm = Farm(farm_dict)
+        self.farm = Farm(farm_dict, self.turbine)
+        self.flow_field = FlowField(farm_dict)
 
     def set_wake_model(self, wake_model):
         """
