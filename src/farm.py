@@ -98,8 +98,6 @@ class Farm:
 
         coordinates = [Vec3([x1, x2, 0]) for x1, x2 in list(zip(layout_x, layout_y))]
         self.turbine_map_dict = self._build_internal_dict(coordinates, [copy.deepcopy(turbine) for ii in range(len(layout_x))])
-        self.reinitialize_turbines(air_density=input_dictionary["air_density"])
-
         self.wind_map = WindMap(
             wind_speed=input_dictionary["wind_speed"],
             layout_array=(layout_x, layout_y),
@@ -149,10 +147,6 @@ class Farm:
         """
         coords = sorted(self.turbine_map_dict, key=lambda coord: coord.x1)
         return [(c, self.turbine_map_dict[c]) for c in coords]
-
-    def reinitialize_turbines(self, air_density=None):
-        for turbine in self.turbines:
-            turbine.reinitialize(air_density)
 
     @property
     def turbines(self):
