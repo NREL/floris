@@ -17,25 +17,18 @@ import copy
 import numpy as np
 import pytest
 
-from src import Wake, Turbine, WindMap, FlowField
+from src import Wake, Turbine, FlowField
 
 
 @pytest.fixture
 def flow_field_fixture(sample_inputs_fixture):
     wake = Wake(sample_inputs_fixture.wake)
     farm_dict = sample_inputs_fixture.farm
-    wind_map = WindMap(
-        wind_speed=farm_dict["wind_speed"],
-        layout_array=(farm_dict["layout_x"], farm_dict["layout_y"]),
-        wind_layout=(farm_dict["wind_x"], farm_dict["wind_y"]),
-        turbulence_intensity=farm_dict["turbulence_intensity"],
-        wind_direction=farm_dict["wind_direction"],
-    )
     return FlowField(
         farm_dict["wind_shear"],
         farm_dict["wind_veer"],
+        farm_dict["wind_speed"],
         wake,
-        wind_map,
         farm_dict["reference_wind_height"],
         farm_dict["reference_turbine_diameter"],
     )
@@ -43,7 +36,7 @@ def flow_field_fixture(sample_inputs_fixture):
 
 def test_instantiation(flow_field_fixture):
     """
-    The class should initialize with the standard inputs
+    The class should initialize with the standard inputs.
     """
     assert type(flow_field_fixture) is FlowField
 

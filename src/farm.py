@@ -14,7 +14,6 @@ import copy
 
 import numpy as np
 
-from .wind_map import WindMap
 from .utilities import Vec3
 from .turbine import Turbine
 from .utilities import Vec3, wrap_180
@@ -34,11 +33,6 @@ class Farm:
 
     def __init__(self, input_dictionary: Dict, turbine: Turbine):
         """
-        The initialization method unpacks some of the data from the input
-        dictionary in order to create a couple of unerlying data structures:
-
-            - :py:obj:`~.wind_map.WindMap`
-
         Args:
             input_dictionary (dict): The required keys in this dictionary
                 are:
@@ -98,13 +92,6 @@ class Farm:
 
         coordinates = [Vec3([x1, x2, 0]) for x1, x2 in list(zip(layout_x, layout_y))]
         self.turbine_map_dict = self._build_internal_dict(coordinates, [copy.deepcopy(turbine) for ii in range(len(layout_x))])
-        self.wind_map = WindMap(
-            wind_speed=input_dictionary["wind_speed"],
-            layout_array=(layout_x, layout_y),
-            wind_layout=(wind_x, wind_y),
-            turbulence_intensity=input_dictionary["turbulence_intensity"],
-            wind_direction=input_dictionary["wind_direction"],
-        )
 
     def _build_internal_dict(self, coordinates, turbines):
         turbine_dict = {}

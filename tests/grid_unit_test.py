@@ -17,7 +17,7 @@
 import pytest
 import numpy as np
 from typing import List
-from src import FlowFieldGrid, TurbineGrid, Wake, Turbine, WindMap, FlowField
+from src import FlowFieldGrid, TurbineGrid, Wake, Turbine, FlowField
 from src.utilities import Vec3
 
 @pytest.fixture

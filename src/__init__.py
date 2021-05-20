@@ -36,7 +36,6 @@ from .farm import Farm
 from .wake import Wake
 from .floris import Floris
 from .turbine import Turbine
-from .wind_map import WindMap
 from .flow_field import FlowField
 from .grid import Grid, TurbineGrid, FlowFieldGrid
 
