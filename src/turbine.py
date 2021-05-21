@@ -12,13 +12,22 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from typing import List
+
 import numpy as np
 from scipy.interpolate import interp1d
+
 from .utilities import cosd, sind, tand
 from .logging_manager import LoggerBase
 
 
-def power(air_density: float, average_velocity: float, yaw_angle: float, pP: float, power_interp: callable) -> float:
+def power(
+    air_density: float,
+    average_velocity: float,
+    yaw_angle: float,
+    pP: float,
+    power_interp: callable,
+) -> float:
     """
     Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
@@ -51,10 +60,10 @@ def axial_induction(Ct: float, yaw_angle: float) -> float:
     Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
     """
-    return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - Ct * cosd(yaw_angle) ) )
+    return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - Ct * cosd(yaw_angle)))
 
 
-def average_velocity(velocities: list[list[float]]) -> float:
+def average_velocity(velocities: List[List[float]]) -> float:
     """
     This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
@@ -83,6 +92,7 @@ class Turbine(LoggerBase):
     is largely a container of data and parameters, but also contains
     methods to probe properties for output.
     """
+
     def __init__(self, input_dictionary):
         """
         Args:
@@ -151,8 +161,12 @@ class Turbine(LoggerBase):
 
         # Precompute interpolation functions
         wind_speeds = self.power_thrust_table["wind_speed"]
-        self.fCpInterp = interp1d(wind_speeds, self.power_thrust_table["power"], fill_value="extrapolate")
-        self.fCtInterp = interp1d(wind_speeds, self.power_thrust_table["thrust"], fill_value="extrapolate")
+        self.fCpInterp = interp1d(
+            wind_speeds, self.power_thrust_table["power"], fill_value="extrapolate"
+        )
+        self.fCtInterp = interp1d(
+            wind_speeds, self.power_thrust_table["thrust"], fill_value="extrapolate"
+        )
         inner_power = np.array([self._power_inner_function(ws) for ws in wind_speeds])
         self.power_interp = interp1d(wind_speeds, inner_power, fill_value="extrapolate")
 
@@ -213,7 +227,7 @@ class Turbine(LoggerBase):
             float: The rotor radius of the turbine.
         """
         return self.rotor_diameter / 2.0
-    
+
     @rotor_radius.setter
     def rotor_radius(self, value: float) -> None:
         self.rotor_diameter = value * 2.0
