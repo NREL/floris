@@ -12,7 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import attr
 import numpy as np
@@ -76,7 +76,7 @@ class Vec3:
         self.x3prime = self.x3
 
     def __str__(self):
-        return "{:8.3f} {:8.3f} {:8.3f}".format(self.x1, self.x2, self.x3)
+        return f"{self.x1:8.3f} {self.xs:8.3f} {self.x3:8.3f}"
 
     def __add__(self, arg):
         if type(arg) is Vec3:
@@ -212,6 +212,17 @@ def wrap_360(x):
     return x
 
 
+def convert_to_Vec3(x: Union[List[float], Vec3]) -> Vec3:
+    if isinstance(x, Vec3):
+        return x
+    return Vec3(x)
+
+
+def is_default(instance, attribute, value):
+    if attribute.default != value:
+        raise ValueError(f"{attribute.name} should never be set manually!")
+
+
 @attr.s
 class FromDictMixin:
     """A Mixin class to allow for kwargs overloading when a data class doesn't
@@ -222,6 +233,8 @@ class FromDictMixin:
     @classmethod
     def from_dict(cls, data: dict):
         """Maps a data dictionary to an `attr`-defined class.
+
+        TODO: Add an error to ensure that either none or all the parameters are passed in
 
         Args:
             data : dict

@@ -4,35 +4,12 @@ from itertools import product
 import attr
 import numpy as np
 
-from src.utilities import Vec3, FromDictMixin
-from src.logging_manager import LoggerBase
-
-
-def convert_to_Vec3(x: Union[List[float], Vec3]) -> Vec3:
-    if isinstance(x, Vec3):
-        return x
-    return Vec3(x)
+from src.utilities import Vec3, is_default, convert_to_Vec3
+from src.base_model import BaseModel
 
 
 @attr.s(auto_attribs=True)
-class VelocityDeficit(LoggerBase, FromDictMixin):
-    """
-    Base VelocityDeficit object class. This class contains a method for getting
-    the relevant model parameters from the input dictionary, or for supplying
-    default values if none are supplied.
-    """
-
-    requires_resolution: bool = attr.ib(default=False, kw_only=True)
-    model_string: str = attr.ib(default=None, kw_only=True)
-    model_grid_resolution: str = attr.ib(default=None, kw_only=True)
-
-    @classmethod
-    def get_model_defaults(cls) -> Dict[str, Any]:
-        return {el.name: el.default for el in attr.fields(cls)}
-
-
-@attr.s(auto_attribs=True)
-class Curl(VelocityDeficit):
+class Curl(BaseModel):
     """The Curl model class computes the wake velocity deficit based on the curled
     wake model developed in
     :cite:`cvm-martinez2019aerodynamics`. The curled wake
@@ -82,21 +59,17 @@ class Curl(VelocityDeficit):
         on_setattr=attr.setters.validate,
         kw_only=True,
     )
-    initial_deficit: float = attr.ib(
-        default=2.0, converter=float, kw_only=True
-    )  # Should this be an unchangeable constant in the model???
-    dissipation: float = attr.ib(
-        default=0.06, converter=float, kw_only=True
-    )  # Should this be an unchangeable constant in the model???
-    veer_linear: float = attr.ib(
-        default=0.0, converter=float, kw_only=True
-    )  # Should this be an unchangeable constant in the model???
+    initial_deficit: float = attr.ib(default=2.0, converter=float, kw_only=True)
+    dissipation: float = attr.ib(default=0.06, converter=float, kw_only=True)
+    veer_linear: float = attr.ib(default=0.0, converter=float, kw_only=True)
     ti_initial: float = attr.ib(default=0.1, converter=float, kw_only=True)
     ti_constant: float = attr.ib(default=0.73, converter=float, kw_only=True)
     ti_ai: float = attr.ib(default=0.8, converter=float, kw_only=True)
     ti_downstream: float = attr.ib(default=-0.275, converter=float, kw_only=True)
     requires_resolution: bool = True
-    model_string: str = "curl"
+    model_string: str = attr.ib(
+        default="curl", on_setattr=attr.setters.frozen, validator=is_default
+    )
 
     def function(
         self,
@@ -122,28 +95,34 @@ class Curl(VelocityDeficit):
         pass
 
 
-# Demonstrate the model works and show the __repr__
-c = Curl()
-print(c)
+if __name__ == "__main__":
+    # Run some demonstrations of the Curl model setup
 
-# Demonstrate that a Vec3 object can also be passed in
-v = Vec3([25, 10, 7.5])
-c = Curl(model_grid_resolution=v)
-print(c)
+    # Demonstrate the model works and show the __repr__
+    c = Curl()
+    print(c)
 
-# Demonstrate that you the from_dict classmethod works (from FromDictMixin)
-input = {
-    "model_grid_resolution": [250, 100, 75],
-    "initial_deficit": 2.0,
-    "dissipation": 0.06,
-    "veer_linear": 0.0,
-    "initial": 0.1,
-    "constant": 0.73,
-    "ai": 0.8,
-    "downstream": -0.275,
-}
-c = Curl.from_dict(input)
-print(c)
+    # Demonstrate that a Vec3 object can also be passed in
+    v = Vec3([25, 10, 7.5])
+    c = Curl(model_grid_resolution=v)
+    print(c)
 
-# Demonstrate the default extraction helper classmethod works (from FromDictMixin)
-print(Curl.get_model_defaults())
+    # Demonstrate the default extraction helper classmethod works (from FromDictMixin)
+    print(Curl.get_model_defaults())
+
+    # Demonstrate that you the from_dict classmethod works (from FromDictMixin)
+    # This raises an error message because we've attempted to set the model_string
+    # parameter as anything but the default
+    input = {
+        "model_grid_resolution": [250, 100, 75],
+        "initial_deficit": 2.0,
+        "dissipation": 0.06,
+        "veer_linear": 0.0,
+        "initial": 0.1,
+        "constant": 0.73,
+        "ai": 0.8,
+        "downstream": -0.275,
+        "model_string": "anything",
+    }
+    c = Curl.from_dict(input)
+    print(c)
