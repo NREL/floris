@@ -58,14 +58,6 @@ def flow_field_grid_fixture(sample_inputs_fixture):
         Vec3([2,2,2])
     )
 
-def test_turbine_set_bounds(turbine_grid_fixture):
-    assert turbine_grid_fixture.xmin == -252.0
-    assert turbine_grid_fixture.xmax == 2520.0
-    assert turbine_grid_fixture.ymin == -252.0
-    assert turbine_grid_fixture.ymax == 252.0
-    assert turbine_grid_fixture.zmin == 0.1
-    assert turbine_grid_fixture.zmax == 540
-
 def test_turbine_set_grid(turbine_grid_fixture):
     expected_x_grid = [[[0.0, 0.0], [0.0, 0.0]], [[630.0, 630.0], [630.0, 630.0]], [[1260.0, 1260.0], [1260.0, 1260.0]]]
     expected_y_grid = [[[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]]]
