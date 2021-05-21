@@ -100,28 +100,6 @@ class Farm:
             turbine_dict[this_coordinate] = turbines[i]
         return turbine_dict
 
-    def rotated(self, angles, center_of_rotation):
-        """
-        Rotates each turbine coordinate by a given angle about a center
-        of rotation.
-
-        Args:
-            angles ( list(float) ): Angles in degrees to rotate each turbine.
-            center_of_rotation ( :py:class:`~.utilities.Vec3` ):
-                The center of rotation.
-
-        Returns:
-            :py:class:`~.turbine_map.TurbineMap`: A new TurbineMap object whose
-            turbines are rotated from the original.
-        """
-        layout_x = np.zeros(len(self.coords))
-        layout_y = np.zeros(len(self.coords))
-        for i, coord in enumerate(self.coords):
-            coord.rotate_on_x3(angles[i], center_of_rotation)
-            layout_x[i] = coord.x1prime
-            layout_y[i] = coord.x2prime
-        return TurbineMap(layout_x, layout_y, self.turbines)
-
     def sorted_in_x_as_list(self):
         """
         Sorts the turbines based on their x-coordinates in ascending order.

@@ -71,7 +71,6 @@ def average_velocity(velocities: list[list[float]]) -> float:
     """
     # Remove all invalid numbers from interpolation
     # data = np.array(self.velocities)[~np.isnan(self.velocities)]
-    print("**", velocities)
     return np.cbrt(np.mean(velocities ** 3))
 
 
