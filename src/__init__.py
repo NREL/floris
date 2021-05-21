@@ -33,7 +33,7 @@ from . import utilities
 from . import logging_manager
 from . import wake_velocity, wake_deflection, wake_turbulence, wake_combination
 from .farm import Farm
-from .wake import Wake
+# from .wake import Wake
 from .floris import Floris
 from .turbine import Turbine
 from .flow_field import FlowField

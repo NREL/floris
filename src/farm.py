@@ -11,14 +11,10 @@
 # the License.
 
 import copy
-
 import numpy as np
-
 from .utilities import Vec3
 from .turbine import Turbine
-from .utilities import Vec3, wrap_180
-from .logging_manager import LoggerBase
-from typing import Dict
+
 
 class Farm:
     """
@@ -31,7 +27,7 @@ class Farm:
     for generating output.
     """
 
-    def __init__(self, input_dictionary: Dict, turbine: Turbine):
+    def __init__(self, input_dictionary: dict, turbine: Turbine):
         """
         Args:
             input_dictionary (dict): The required keys in this dictionary
@@ -77,8 +73,6 @@ class Farm:
         """
         layout_x = input_dictionary["layout_x"]
         layout_y = input_dictionary["layout_y"]
-        wind_x = input_dictionary["wind_x"]
-        wind_y = input_dictionary["wind_y"]
 
         # check if the length of x and y coordinates are equal
         if len(layout_x) != len(layout_y):
@@ -90,15 +84,11 @@ class Farm:
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
 
-        coordinates = [Vec3([x1, x2, 0]) for x1, x2 in list(zip(layout_x, layout_y))]
-        self.turbine_map_dict = self._build_internal_dict(coordinates, [copy.deepcopy(turbine) for ii in range(len(layout_x))])
+        coordinates = [Vec3([x1, x2, turbine.hub_height]) for x1, x2 in list(zip(layout_x, layout_y))]        
+        self.turbine_map_dict = {c: copy.deepcopy(turbine) for c in coordinates}
 
-    def _build_internal_dict(self, coordinates, turbines):
-        turbine_dict = {}
-        for i, c in enumerate(coordinates):
-            this_coordinate = Vec3([c.x1, c.x2, turbines[i].hub_height])
-            turbine_dict[this_coordinate] = turbines[i]
-        return turbine_dict
+        # Turbine control settings indexed by the turbine ID
+        self.set_yaw_angles([0] * len(self.turbine_map_dict), len(input_dictionary["wind_speeds"]), 1)
 
     def sorted_in_x_as_list(self):
         """
@@ -148,3 +138,12 @@ class Farm:
         """
         return self.turbine_map_dict.items()
 
+    def set_yaw_angles(self, yaw_angles: list, n_wind_speeds: int, n_wind_directions: int) -> None:
+        if len(yaw_angles) != len(self.items):
+            raise ValueError("Farm.set_yaw_angles: a yaw angle must be given for each turbine.")
+        # TODO: support a user-given yaw angle setting for each wind speed and wind direction
+
+        self.yaw_angles = np.reshape(
+            np.array([yaw_angles] * n_wind_speeds),  # broadcast
+            (len(self.items), n_wind_speeds)  # reshape
+        )

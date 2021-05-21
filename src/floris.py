@@ -19,9 +19,12 @@ import json
 import src.logging_manager as logging_manager
 
 from .farm import Farm
-from .wake import Wake
+# from .wake import Wake
 from .turbine import Turbine
 from .flow_field import FlowField
+from .wake_velocity.jensen import JensenVelocityDeficit
+from .grid import TurbineGrid
+from .solver import sequential_solver
 
 
 class Floris(logging_manager.LoggerBase):
@@ -68,9 +71,16 @@ class Floris(logging_manager.LoggerBase):
 
         # Initialize the simulation objects
         self.turbine = Turbine(turbine_dict)
-        self.wake = Wake(wake_dict)
+        # self.wake = Wake(wake_dict)
         self.farm = Farm(farm_dict, self.turbine)
         self.flow_field = FlowField(farm_dict)
+
+    def go(self):
+        # JensenVelocityDeficit.solver(self.farm, self.flow_field)
+        sequential_solver(self.farm, self.flow_field)
+
+
+    # Utility functions
 
     def set_wake_model(self, wake_model):
         """
@@ -123,7 +133,7 @@ class Floris(logging_manager.LoggerBase):
 
         self.reinitialize_turbines()
 
-    def set_yaw_angles(self, yaw_angles):
+    def set_yaw_angles(self, yaw_angles: list):
         """
         Sets the yaw angles for all turbines on the
         :py:obj:`~.turbine.Turbine` objects directly.
@@ -134,11 +144,7 @@ class Floris(logging_manager.LoggerBase):
                 to individual turbine yaw angles. Yaw angles are expected
                 in degrees.
         """
-        if isinstance(yaw_angles, float) or isinstance(yaw_angles, int):
-            yaw_angles = [yaw_angles] * len(self.turbines)
-
-        for yaw_angle, turbine in zip(yaw_angles, self.turbines):
-            turbine.yaw_angle = yaw_angle
+        self.farm.set_yaw_angles(yaw_angles, self.flow_field.n_wind_speeds, 1)
 
     def update_hub_heights(self):
         """

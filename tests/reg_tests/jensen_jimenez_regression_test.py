@@ -13,12 +13,14 @@
 # See https://floris.readthedocs.io for documentation
 
 import copy
-
+import numpy as np
 from pytest import approx
 
 from tests.conftest import assert_results, print_test_values, turbines_to_array
 from src import Floris
+from src.turbine import power, Ct, axial_induction, average_velocity
 
+import time
 
 DEBUG = False
 VELOCITY_MODEL = "jensen"
@@ -45,19 +47,39 @@ def test_regression_tandem(sample_inputs_fixture):
     """
     Tandem turbines
     """
-    sample_inputs_fixture.floris["wake"]["properties"][
-        "velocity_model"
-    ] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"][
-        "deflection_model"
-    ] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+
+    tic = time.perf_counter()
     floris = Floris(input_dict=sample_inputs_fixture.floris)
-    floris.farm.flow_field.calculate_wake()
+    toc = time.perf_counter()
+    print(f"Initialization in {toc - tic:0.4f} seconds")
 
-    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+    tic = time.perf_counter()
+    floris.go()
+    toc = time.perf_counter()
+    print(f"Calculation in {toc - tic:0.4f} seconds")
+    
+    n_turbines = 3
+    turbine1 = floris.farm.turbines[0]
+    test_results = []
+    for i in range(n_turbines):
+        # print(floris.flow_field.u)
+        ave_vel = average_velocity(floris.flow_field.u[i, 0, :, :])
+        thrust = Ct(ave_vel, 0.0, turbine1.fCt)
+        pwr = power(floris.flow_field.air_density, ave_vel, 0.0, turbine1.pP, turbine1.power_interp)
+        ai = axial_induction(thrust, 0.0)
+        this_turbine = [
+                thrust,
+                pwr,
+                ai,
+                ave_vel
+        ]
+        test_results.append(this_turbine)
 
-    if DEBUG:
-        print_test_values(floris.farm.turbine_map.turbines)
+    # print(floris.flow_field.u_initial)
+    # if DEBUG:
+    #     print_test_values(floris.farm.turbine_map.turbines)
 
     assert_results(test_results, baseline)
 
