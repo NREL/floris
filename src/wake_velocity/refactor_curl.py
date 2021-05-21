@@ -1,5 +1,4 @@
-from typing import Any, Dict, List, Union
-from itertools import product
+from typing import List, Union
 
 import attr
 import numpy as np
