@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 import attr
 import numpy as np
+from attr import validators
 
 
 class Vec3:
@@ -218,11 +219,6 @@ def convert_to_Vec3(x: Union[List[float], Vec3]) -> Vec3:
     return Vec3(x)
 
 
-def is_default(instance, attribute, value):
-    if attribute.default != value:
-        raise ValueError(f"{attribute.name} should never be set manually!")
-
-
 @attr.s
 class FromDictMixin:
     """A Mixin class to allow for kwargs overloading when a data class doesn't
@@ -247,13 +243,32 @@ class FromDictMixin:
             **{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data}
         )
 
-    @classmethod
-    def get_model_defaults(cls) -> Dict[str, Any]:
-        """Produces a dictionary of the keyword arguments and their defaults.
 
-        Returns
-        -------
-        Dict[str, Any]
-            Dictionary of keyword argument: default.
-        """
-        return {el.name: el.default for el in attr.fields(cls)}
+def is_default(instance, attribute, value):
+    if attribute.default != value:
+        raise ValueError(f"{attribute.name} should never be set manually!")
+
+
+def iter_validator(
+    iter_type, item_types: Union[Any, Tuple[Any]]
+) -> attr.validators.deep_iterable:
+    """Helper function to generate iterable validators that will reduce the amount of
+    boilerplate code.
+
+    Parameters
+    ----------
+    iter_type : any iterable
+        The type of iterable object that should be validated.
+    item_types : Union[Any, Tuple[Any]]
+        The type or types of acceptable item types.
+
+    Returns
+    -------
+    attr.validators.deep_iterable
+        The iterable and instance validator.
+    """
+    validator = attr.validators.deep_iterable(
+        member_validator=attr.validators.instance_of(item_types),
+        iterable_validator=attr.validators.instance_of(iter_type),
+    )
+    return validator
