@@ -1,6 +1,3 @@
-from typing import Any, Dict, List, Union
-from itertools import product
-
 import attr
 import numpy as np
 
@@ -9,9 +6,10 @@ from src.base_model import BaseModel
 
 
 @attr.s(auto_attribs=True)
-class Jensen(BaseModel):
-    """The Jensen model computes the wake velocity deficit based on the classic
-    Jensen/Park model :cite:`jvm-jensen1983note`.
+class TurbOPark(BaseModel):
+    """An implementation of the TurbOPark model by Nicolai Nygaard
+    :cite:`jvm-nygaard2020modelling`.
+    Default tuning calibrations taken from same paper.
 
     References:
         .. bibliography:: /source/zrefs.bib
@@ -20,14 +18,16 @@ class Jensen(BaseModel):
             :keyprefix: jvm-
 
     Args:
-        we (:py:obj:`float`): The linear wake decay constant that defines the cone
-            boundary for the wake as well as the velocity deficit. D/2 +/- we*x is the
-            cone boundary for the wake.
+        A (:py:obj:`float`): ???
+        c1 (:py:obj:`float`): ???
+        c2 (:py:obj:`float`): ???
     """
 
-    we: float = attr.ib(default=-0.05, converter=float, kw_only=True)
+    A: float = attr.ib(default=0.06, converter=float, kw_only=True)
+    c1: float = attr.ib(default=1.5, converter=float, kw_only=True)
+    c2: float = attr.ib(default=0.08, converter=float, kw_only=True)
     model_string: str = attr.ib(
-        default="jensen", on_setattr=attr.setters.frozen, validator=is_default
+        default="turbopark", on_setattr=attr.setters.frozen, validator=is_default
     )
 
     def function(
@@ -40,5 +40,6 @@ class Jensen(BaseModel):
         deflection_field: np.ndarray,
         # flow_filed shall be deprecated for the following
         u_initial: np.ndarray,  # flow_field.u_initial
+        turbulence_intensity: np.ndarray,  # flow_field.turbulence_intensity
     ) -> None:
         pass

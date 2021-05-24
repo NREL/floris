@@ -15,8 +15,6 @@ class BaseModel(LoggerBase, FromDictMixin):
     """
 
     model_string: str = attr.ib(default=None, kw_only=True)
-    # requires_resolution: bool = attr.ib(default=False, kw_only=True, init=False)
-    # model_grid_resolution: str = attr.ib(default=None, kw_only=True, init=False)
 
     def __attrs_post_init__(self) -> None:
         if self.model_string is None:
