@@ -28,41 +28,22 @@ import floris.tools as wfct
 # Declare dictionary
 fi_dict = dict()
 
-# Gauss version
-# Same as legacy but with deflection multiplier = 1.0
-fi_4 = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
-fi_4.floris.farm.wake._deflection_model.dm = 1.0
-fi_4.reinitialize_flow_field(
-    wind_speed=[8.0], wind_direction=[270.0], turbulence_intensity=[0.06]
-)
-fi_dict["gauss"] = (fi_4, "k", ".")
-
-# Legacy version
-# The legacy model uses the settings which were default in the previous version
-# of FLORIS, including the legacy gaussian model, TI settings, and GCH disabled,
-# With a deflection multiplier of 1.2
-fi_3 = wfct.floris_interface.FlorisInterface("../other_jsons/input_legacy.json")
+# Jensen
+fi_3 = wfct.floris_interface.FlorisInterface("../other_jsons/jensen.json")
 fi_3.reinitialize_flow_field(
     wind_speed=[8.0], wind_direction=[270.0], turbulence_intensity=[0.06]
 )
-fi_dict["legacy"] = (fi_3, "m", "^")
+fi_dict["jensen"] = (fi_3, "k", "*")  # Define a fixed color and marker
 
-# Merged Class
-# The merged case, still in development, blends the super-gaussian model of
-#       Blondel, F. and Cathelain, M. "An alternative form of the
-#       super-Gaussian wind turbine wake model."
-#       *Wind Energy Science Disucssions*,   2020.
-# Into the gaussian model to improve near wake matching while attempting to hold
-# far wake values consistent with previous resaults
-# The TI model is as in the default case, and GCH is enabled
-fi_2 = wfct.floris_interface.FlorisInterface("../other_jsons/input_merge.json")
+# Turbo Park
+fi_2 = wfct.floris_interface.FlorisInterface("../other_jsons/turbopark.json")
 fi_2.reinitialize_flow_field(
     wind_speed=[8.0], wind_direction=[270.0], turbulence_intensity=[0.06]
 )
-fi_dict["merge"] = (fi_2, "r", "o")
+fi_dict["turbo"] = (fi_2, "r", "s")  # Define a fixed color and marker
 
 # Default Class
-# The default class uses the legacy gauss velocity deficit model, however the
+# Gaussian model with near wake however the
 # Crespo-Hernandez Turbulence Model has been retuned to match available data
 # GCH is used for deflection in place of the deflection model
 fi_1 = wfct.floris_interface.FlorisInterface("../example_input.json")
