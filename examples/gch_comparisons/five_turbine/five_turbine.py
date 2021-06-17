@@ -34,13 +34,12 @@ use_nominal_values = True
 df_results = pd.read_csv("paper_results_5_turbine.csv")
 
 # # Initialize the FLORIS interface fi
-fi_gl = wfct.floris_interface.FlorisInterface("../../example_input.json")
+fi_g = wfct.floris_interface.FlorisInterface("../../example_input.json")
 
 
-# Select gauss legacy with GCH off
-# fi_gl.floris.farm.set_wake_model('gauss_legacy')
-fi_gl.set_gch(False)  # Disable GCH
-# fi_gl.floris.farm.set_wake_model('gauss_merge')
+# Select gauss with GCH off
+fi_g.set_gch(False)  # Disable GCH
+
 
 # # Match the layout
 x_layout = tuple(
@@ -55,23 +54,23 @@ y_layout = tuple(
         df_results.layout_y.values[0].replace("(", "").replace(")", "").split(","),
     )
 )
-fi_gl.reinitialize_flow_field(layout_array=[x_layout, y_layout])
+fi_g.reinitialize_flow_field(layout_array=[x_layout, y_layout])
 
 # Match the inflow
 U0 = df_results.floris_U0.values[0]
 TI = df_results.floris_TI.values[0]
-fi_gl.reinitialize_flow_field(wind_speed=U0, turbulence_intensity=TI)
+fi_g.reinitialize_flow_field(wind_speed=U0, turbulence_intensity=TI)
 
 # Set up the yar model
-fi_yar = copy.deepcopy(fi_gl)
+fi_yar = copy.deepcopy(fi_g)
 fi_yar.set_gch_yaw_added_recovery(True)
 
 # Set up the ss model
-fi_ss = copy.deepcopy(fi_gl)
+fi_ss = copy.deepcopy(fi_g)
 fi_ss.set_gch_secondary_steering(True)
 
 # Set up the gch model
-fi_gch = copy.deepcopy(fi_gl)
+fi_gch = copy.deepcopy(fi_g)
 fi_gch.set_gch(True)
 
 # Produce restuls for each floris model
@@ -84,9 +83,9 @@ power_matrix_gch = np.zeros((number_cases, 5))
 for r_idx, row in df_results.iterrows():
     yaw_angles = row.loc[["yaw_0", "yaw_1", "yaw_2", "yaw_3", "yaw_4"]].values
 
-    # Gauss Legacy
-    fi_gl.calculate_wake(yaw_angles=yaw_angles)
-    power_matrix_gl[r_idx, :] = np.array(fi_gl.get_turbine_power()) / 1e3
+    # Gauss
+    fi_g.calculate_wake(yaw_angles=yaw_angles)
+    power_matrix_gl[r_idx, :] = np.array(fi_g.get_turbine_power()) / 1e3
 
     # YAR
     fi_yar.calculate_wake(yaw_angles=yaw_angles)
