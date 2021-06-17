@@ -120,7 +120,6 @@ class Farm:
             "turbopark",
             "multizone",
             "gauss",
-            "gauss_legacy",
             "blondel",
             "ishihara_qian",
             "curl",
