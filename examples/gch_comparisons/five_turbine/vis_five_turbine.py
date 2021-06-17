@@ -33,13 +33,12 @@ use_nominal_values = True
 df_results = pd.read_csv("paper_results_5_turbine.csv")
 
 # # Initialize the FLORIS interface fi
-fi_gl = wfct.floris_interface.FlorisInterface("../../example_input.json")
+fi_g = wfct.floris_interface.FlorisInterface("../../example_input.json")
 
 
-# Select gauss legacy with GCH off
-# fi_gl.floris.farm.set_wake_model('gauss_legacy')
-fi_gl.set_gch(False)  # Disable GCH
-# fi_gl.floris.farm.set_wake_model('gauss_merge')
+# Select gauss  with GCH off
+fi_g.set_gch(False)  # Disable GCH
+
 
 # # Match the layout
 x_layout = tuple(
@@ -54,37 +53,37 @@ y_layout = tuple(
         df_results.layout_y.values[0].replace("(", "").replace(")", "").split(","),
     )
 )
-fi_gl.reinitialize_flow_field(layout_array=[x_layout, y_layout])
+fi_g.reinitialize_flow_field(layout_array=[x_layout, y_layout])
 
 # Match the inflow
 U0 = df_results.floris_U0.values[0]
 TI = df_results.floris_TI.values[0]
-fi_gl.reinitialize_flow_field(wind_speed=U0, turbulence_intensity=TI)
+fi_g.reinitialize_flow_field(wind_speed=U0, turbulence_intensity=TI)
 
 # Set up the gch model
-fi_gch = copy.deepcopy(fi_gl)
+fi_gch = copy.deepcopy(fi_g)
 fi_gch.set_gch(True)
 
 fig, axarr = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(14, 3))
 
-# Legacy baseline
+# Gauss baseline
 ax = axarr[0, 0]
-fi = fi_gl
+fi = fi_g
 fi.calculate_wake([0, 0, 0, 0, 0])
 hor_plane = fi.get_hor_plane()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 wfct.visualization.plot_turbines_with_fi(ax, fi)
-ax.set_title("Legacy Aligned")
+ax.set_title("Gauss Aligned")
 print(fi.get_farm_power())
 
 
-# Legacy yawed
+# Gauss yawed
 ax = axarr[0, 1]
-fi = fi_gl
+fi = fi_g
 fi.calculate_wake([25, 15, 0, 0, 0])
 hor_plane = fi.get_hor_plane()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title("Legacy Yawed")
+ax.set_title("Gauss Yawed")
 wfct.visualization.plot_turbines_with_fi(ax, fi)
 print(fi.get_farm_power())
 
