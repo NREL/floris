@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -16,14 +16,15 @@ from scipy.optimize import minimize_scalar
 
 from ....utilities import cosd, sind, tand
 from .gaussian_model_base import GaussianModel
-from ..base_velocity_deficit import VelocityDeficit 
-        
+from ..base_velocity_deficit import VelocityDeficit
+
+
 class Blondel(GaussianModel):
     """
     Blondel is a direct implementation of the super-Gaussian model
     described in :cite:`bcv-blondel2020alternative` with GCH disabled by
-    default. See :cite:`bcv-King2019Controls` for info on GCH. The current 
-    implementation is based on the calibration proposed in 
+    default. See :cite:`bcv-King2019Controls` for info on GCH. The current
+    implementation is based on the calibration proposed in
     :cite:`bcv-Cathelain2020calibration`
 
     References:
@@ -34,14 +35,14 @@ class Blondel(GaussianModel):
     """
 
     default_parameters = {
-        "a_s" : 0.179367259,
-        "b_s" : 0.0118889215,
-        "c_s1" : 0.0563691592,
-        "c_s2" : 0.13290157,
-        "b_f1" : 1.59,
-        "b_f2" : -23.3114654,
-        "b_f3" : -2.15199155,
-        "c_f"  : 2.98262872,
+        "a_s": 0.179367259,
+        "b_s": 0.0118889215,
+        "c_s1": 0.0563691592,
+        "c_s2": 0.13290157,
+        "b_f1": 1.59,
+        "b_f2": -23.3114654,
+        "b_f3": -2.15199155,
+        "c_f": 2.98262872,
         "calculate_VW_velocities": False,
         "use_yaw_added_recovery": False,
         "eps_gain": 0.2,
@@ -67,13 +68,13 @@ class Blondel(GaussianModel):
                         width of the Gaussian wake shape.
                     -   **c_s2**: Parameter used to determine the linear
                         relationship between the turbulence intensity and the
-                        width of the Gaussian wake shape.                        
+                        width of the Gaussian wake shape.
                     -   **b_f1**: Parameter used to determine super-Gaussian
                         order.
                     -   **b_f2**: Parameter used to determine super-Gaussian
                         order.
                     -   **b_f3**: Parameter used to determine super-Gaussian
-                        order.                        
+                        order.
                     -   **c_f**: Parameter used to determine super-Gaussian
                         order.
                     -   **calculate_VW_velocities**: Flag to enable the
@@ -95,8 +96,8 @@ class Blondel(GaussianModel):
         # Table 4 of reference [3] in docstring
         self.a_s = model_dictionary["a_s"]
         self.b_s = model_dictionary["b_s"]
-        self.c_s1 = model_dictionary["c_s1"]        
-        self.c_s2 = model_dictionary["c_s2"]        
+        self.c_s1 = model_dictionary["c_s1"]
+        self.c_s2 = model_dictionary["c_s2"]
 
         # fitted parameters for super-Gaussian order n
         # Table 4 of reference [3] in docstring
@@ -187,20 +188,25 @@ class Blondel(GaussianModel):
             )
             / D
         )
-        
+
         # Calculate Beta (Eq 10, pp 5 of ref. [1] and table 4 of ref. [2] in docstring)
-        beta = 0.5 * (1. + np.sqrt(1.-Ct)) / np.sqrt(1.-Ct);
-        k       = self.a_s*TI+self.b_s
-        eps     = (self.c_s1*Ct+self.c_s2)*np.sqrt(beta)
-        
-        # Calculate sigma_tilde (Eq 9, pp 5 of ref. [1] and table 4 of ref. [2] in docstring)   
-        sigma_tilde = k*x_tilde+eps
-        
+        beta = 0.5 * (1.0 + np.sqrt(1.0 - Ct)) / np.sqrt(1.0 - Ct)
+        k = self.a_s * TI + self.b_s
+        eps = (self.c_s1 * Ct + self.c_s2) * np.sqrt(beta)
+
+        # Calculate sigma_tilde (Eq 9, pp 5 of ref. [1] and table 4 of ref. [2] in docstring)
+        sigma_tilde = k * x_tilde + eps
+
         # Calculate super-Gaussian order using iterative method
-        root_n = minimize_scalar(self.match_AD_theory, bounds=(0., 10.), method='bounded', args=(Ct, eps, yaw, self.c_f))
+        root_n = minimize_scalar(
+            self.match_AD_theory,
+            bounds=(0.0, 10.0),
+            method="bounded",
+            args=(Ct, eps, yaw, self.c_f),
+        )
         a_f = root_n.x
-        b_f = self.b_f1*np.exp(self.b_f2*TI)+self.b_f3
-        n   = a_f*np.exp(b_f*x_tilde)+self.c_f        
+        b_f = self.b_f1 * np.exp(self.b_f2 * TI) + self.b_f3
+        n = a_f * np.exp(b_f * x_tilde) + self.c_f
 
         # Calculate max vel def (Eq 5, pp 4 of ref. [1] in docstring)
         a1 = 2 ** (2 / n - 1)
@@ -228,11 +234,10 @@ class Blondel(GaussianModel):
             np.zeros(np.shape(velDef1)),
             np.zeros(np.shape(velDef1)),
         )
-        
 
     def match_AD_theory(self, n_af, Ct, eps, yaw, n_min):
         """
-        Calculate the difference in velocities at the rotor plane using the 
+        Calculate the difference in velocities at the rotor plane using the
         Actuator Disk theory and the super-Gaussian model.
 
         Args:
@@ -243,18 +248,24 @@ class Blondel(GaussianModel):
             n_min (float): Minimum value of the super-Gaussian order (.).
 
         Returns:
-            float: difference betweend computed velocity deficit at the rotor 
+            float: difference betweend computed velocity deficit at the rotor
             disk and induction (AD theory)
         """
-        
-        # Calculate n using af and minimum value c_f  (Eq 13, pp 6 of ref. [1] in docstring)      
+
+        # Calculate n using af and minimum value c_f  (Eq 13, pp 6 of ref. [1] in docstring)
         n_val = n_af + n_min
-        induction = .5*(1. - np.sqrt(1.-Ct))
-    
+        induction = 0.5 * (1.0 - np.sqrt(1.0 - Ct))
+
         # Calculate velocity deficit at the disk (x_tilde = 0)
-        u_disk = np.power(2.,2./n_val-1.)-np.sqrt(np.power(2.,4./n_val-2.)-n_val*Ct*cosd(yaw)/(16.*np.power(eps,4./n_val)*gamma(2./n_val)))
-    	
-        return (abs(u_disk-induction))
+        u_disk = np.power(2.0, 2.0 / n_val - 1.0) - np.sqrt(
+            np.power(2.0, 4.0 / n_val - 2.0)
+            - n_val
+            * Ct
+            * cosd(yaw)
+            / (16.0 * np.power(eps, 4.0 / n_val) * gamma(2.0 / n_val))
+        )
+
+        return abs(u_disk - induction)
 
     @property
     def a_s(self):
@@ -382,7 +393,7 @@ class Blondel(GaussianModel):
             ValueError: Invalid value.
         """
         return self._c_s2
-    
+
     @c_s2.setter
     def c_s2(self, value):
         if type(value) is not float:
@@ -399,7 +410,7 @@ class Blondel(GaussianModel):
                     + "value of {1}."
                 ).format(value, __class__.default_parameters["c_s2"])
             )
-                
+
     @property
     def b_f1(self):
         """
@@ -471,7 +482,7 @@ class Blondel(GaussianModel):
                     + "value of {1}."
                 ).format(value, __class__.default_parameters["b_f2"])
             )
-                
+
     @property
     def b_f3(self):
         """
@@ -507,7 +518,7 @@ class Blondel(GaussianModel):
                     + "value of {1}."
                 ).format(value, __class__.default_parameters["b_f3"])
             )
-                
+
     @property
     def c_f(self):
         """

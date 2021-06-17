@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -86,7 +86,6 @@ def test_2x_calculate_wake(flow_field_fixture):
     flow_field_fixture.calculate_wake()
     for i, turbine in enumerate(flow_field_fixture.turbine_map.turbines):
         calculate_wake_results[1][i] = {
-            "Cp": turbine.Cp,
             "Ct": turbine.Ct,
             "power": turbine.power,
             "aI": turbine.aI,
@@ -97,7 +96,6 @@ def test_2x_calculate_wake(flow_field_fixture):
     flow_field_fixture.calculate_wake()
     for i, turbine in enumerate(flow_field_fixture.turbine_map.turbines):
         calculate_wake_results[2][i] = {
-            "Cp": turbine.Cp,
             "Ct": turbine.Ct,
             "power": turbine.power,
             "aI": turbine.aI,

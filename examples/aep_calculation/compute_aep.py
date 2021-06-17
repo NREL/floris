@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -67,7 +67,7 @@ hor_plane = fi.get_hor_plane(height=fi.floris.farm.turbines[0].hub_height)
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title("Baseline flow for U = 8 m/s, Wind Direction = 270$^\circ$")
+ax.set_title("Baseline flow for U = 8 m/s, Wind Direction = 270$^\\circ$")
 
 # ================================================================================
 print("Importing wind rose data...")

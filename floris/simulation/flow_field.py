@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -242,6 +242,11 @@ class FlowField:
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
+        self.u = self.u_initial.copy()
+        self.v = self.v_initial.copy()
+        self.w = self.w_initial.copy()
+
+    def reset_uvw(self):
         self.u = self.u_initial.copy()
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
@@ -548,6 +553,9 @@ class FlowField:
                 track of the number of upstream wakes a turbine is
                 experiencing. Defaults to *False*.
         """
+        if self.wake.velocity_model.model_grid_resolution is not None:
+            self.reset_uvw()
+
         if points is not None:
             # add points to flow field grid points
             self._compute_initialized_domain(points=points)

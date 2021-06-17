@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -198,9 +198,9 @@ class YawOptimizationWindRose(Optimization):
                         turbulence_intensity=self.ti[i],
                     )
 
-                # optimized power
+                # initial power
                 self.fi.calculate_wake()
-                power_opt = self.fi.get_turbine_power(
+                power_init = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
                     unc_options=self.unc_options,
@@ -217,15 +217,15 @@ class YawOptimizationWindRose(Optimization):
                         turbulence_intensity=self.ti[i],
                     )
                 self.fi.calculate_wake()
-                power_opt = self.fi.get_turbine_power(
+                power_init = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
                     unc_options=self.unc_options,
                 )
             else:
-                power_opt = self.nturbs * [0.0]
+                power_init = self.nturbs * [0.0]
 
-            self.initial_farm_powers.append(np.sum(power_opt))
+            self.initial_farm_powers.append(np.sum(power_init))
 
     def _get_power_for_yaw_angle_opt(self, yaw_angles):
         """

@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -212,6 +212,7 @@ class Gauss(VelocityDeflection):
         ln_deltaDen = (1.6 - np.sqrt(M0)) * (
             1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
         )
+
         delta_far_wake = (
             delta0
             + (theta_c0 * E0 / 5.2)
@@ -224,6 +225,158 @@ class Gauss(VelocityDeflection):
         deflection = delta_near_wake + delta_far_wake
 
         return deflection
+
+    def calculate_effective_yaw_angle(
+        self, x_locations, y_locations, z_locations, turbine, coord, flow_field
+    ):
+        """
+        This method determines the effective yaw angle to be used when
+        secondary steering is enabled. For more details on how the effective
+        yaw angle is calculated, see :cite:`bvd-King2019Controls`.
+
+        Args:
+            x_locations (np.array): Streamwise locations in wake.
+            y_locations (np.array): Spanwise locations in wake.
+            z_locations (np.array): Vertical locations in wake.
+            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+                Turbine object.
+            coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
+            flow_field (:py:class:`floris.simulation.flow_field.FlowField`):
+                Flow field object.
+
+        Raises:
+            ValueError: It appears that 'use_secondary_steering' is set
+                to True and 'calculate_VW_velocities' is set to False.
+                This configuration is not valid. Please set
+                'use_secondary_steering' to True if you wish to use
+                yaw-added recovery.
+
+        Returns:
+            float: The turbine yaw angle, including any effective yaw if
+            secondary steering is enabled.
+        """
+        if self.use_secondary_steering:
+            if not flow_field.wake.velocity_model.calculate_VW_velocities:
+                err_msg = (
+                    "It appears that 'use_secondary_steering' is set "
+                    + "to True and 'calculate_VW_velocities' is set to False. "
+                    + "This configuration is not valid. Please set "
+                    + "'use_secondary_steering' to True if you wish to use "
+                    + "yaw-added recovery."
+                )
+                self.logger.error(err_msg, stack_info=True)
+                raise ValueError(err_msg)
+            # turbine parameters
+            Ct = turbine.Ct
+            D = turbine.rotor_diameter
+            HH = turbine.hub_height
+            aI = turbine.aI
+            TSR = turbine.tsr
+            V = flow_field.v
+            Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
+
+            eps = self.eps_gain * D  # Use set value
+            idx = np.where(
+                (np.abs(x_locations - coord.x1) < D / 4)
+                & (np.abs(y_locations - coord.x2) < D / 2)
+            )
+
+            yLocs = y_locations[idx] + 0.01 - coord.x2
+
+            # location of top vortex
+            zT = z_locations[idx] + 0.01 - (HH + D / 2)
+            rT = yLocs ** 2 + zT ** 2
+
+            # location of bottom vortex
+            zB = z_locations[idx] + 0.01 - (HH - D / 2)
+            rB = yLocs ** 2 + zB ** 2
+
+            # wake rotation vortex
+            zC = z_locations[idx] + 0.01 - (HH)
+            rC = yLocs ** 2 + zC ** 2
+
+            # find wake deflection from CRV
+            min_yaw = -45.0
+            max_yaw = 45.0
+            test_yaw = np.linspace(min_yaw, max_yaw, 91)
+            avg_V = np.mean(V[idx])
+
+            # what yaw angle would have produced that same average spanwise velocity
+            vel_top = (
+                (HH + D / 2) / flow_field.specified_wind_height
+            ) ** flow_field.wind_shear
+            vel_bottom = (
+                (HH - D / 2) / flow_field.specified_wind_height
+            ) ** flow_field.wind_shear
+            Gamma_top = (
+                (np.pi / 8) * D * vel_top * Uinf * Ct * sind(test_yaw) * cosd(test_yaw)
+            )
+            Gamma_bottom = (
+                -(np.pi / 8)
+                * D
+                * vel_bottom
+                * Uinf
+                * Ct
+                * sind(test_yaw)
+                * cosd(test_yaw)
+            )
+            Gamma_wake_rotation = (
+                0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
+            )
+
+            Veff = (
+                np.divide(np.einsum("i,j", Gamma_top, zT), (2 * np.pi * rT))
+                * (1 - np.exp(-rT / (eps ** 2)))
+                + np.einsum("i,j", Gamma_bottom, zB)
+                / (2 * np.pi * rB)
+                * (1 - np.exp(-rB / (eps ** 2)))
+                + (zC * Gamma_wake_rotation)
+                / (2 * np.pi * rC)
+                * (1 - np.exp(-rC / (eps ** 2)))
+            )
+
+            tmp = avg_V - np.mean(Veff, axis=1)
+
+            # return indices of sorted residuals to find effective yaw angle
+            order = np.argsort(np.abs(tmp))
+            idx_1 = order[0]
+            idx_2 = order[1]
+
+            # check edge case, if true, assign max yaw value
+            if idx_1 == 90 or idx_2 == 90:
+                yaw_effective = max_yaw
+            # check edge case, if true, assign min yaw value
+            elif idx_1 == 0 or idx_2 == 0:
+                yaw_effective = -min_yaw
+            # for each identified minimum residual, use adjacent points to determine
+            # two equations of line and find the intersection of the two lines to
+            # determine the effective yaw angle to add; the if/else structure is based
+            # on which residual index is larger
+            else:
+                if idx_1 > idx_2:
+                    idx_right = idx_1 + 1  # adjacent point
+                    idx_left = idx_2 - 1  # adjacent point
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_1])  # slope
+                    mL = abs(tmp[idx_2]) - abs(tmp[idx_left])  # slope
+                    bR = abs(tmp[idx_1]) - mR * float(idx_1)  # intercept
+                    bL = abs(tmp[idx_2]) - mL * float(idx_2)  # intercept
+                else:
+                    idx_right = idx_2 + 1  # adjacent point
+                    idx_left = idx_1 - 1  # adjacent point
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_2])  # slope
+                    mL = abs(tmp[idx_1]) - abs(tmp[idx_left])  # slope
+                    bR = abs(tmp[idx_2]) - mR * float(idx_2)  # intercept
+                    bL = abs(tmp[idx_1]) - mL * float(idx_1)  # intercept
+
+                # find the value at the intersection of the two lines
+                ival = (bR - bL) / (mL - mR)
+                # convert the indice into degrees
+                yaw_effective = ival - max_yaw
+
+            return yaw_effective + turbine.yaw_angle
+        else:
+            return turbine.yaw_angle
 
     @property
     def ka(self):
@@ -442,3 +595,65 @@ class Gauss(VelocityDeflection):
                     "Current value of bd, {0}, is not equal to tuned " + "value of {1}."
                 ).format(value, __class__.default_parameters["bd"])
             )
+
+    @property
+    def use_secondary_steering(self):
+        """
+        Flag to use secondary steering on the wake deflection using methods
+        developed in :cite:`bvd-King2019Controls`.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._use_secondary_steering
+
+    @use_secondary_steering.setter
+    def use_secondary_steering(self, value):
+        if type(value) is not bool:
+            err_msg = (
+                "Value of use_secondary_steering must be type "
+                + "bool; {} given.".format(type(value))
+            )
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._use_secondary_steering = value
+
+    @property
+    def eps_gain(self):
+        """
+        Tuning value for yaw added recovery on the wake velocity using methods
+        developed in :cite:`bvd-King2019Controls`.
+
+        TODO: Don't believe this needs to be defined here. Already defined in
+        gaussian_model_model.py. Verify that it can be removed.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._eps_gain
+
+    @eps_gain.setter
+    def eps_gain(self, value):
+        if type(value) is not float:
+            err_msg = "Value of eps_gain must be type " + "float; {} given.".format(
+                type(value)
+            )
+            self.logger.error(err_msg, stack_info=True)
+            raise ValueError(err_msg)
+        self._eps_gain = value
