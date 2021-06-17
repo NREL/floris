@@ -251,7 +251,7 @@
         }
       },
       "turbulence_model": "crespo_hernandez",
-      "velocity_model": "gauss_legacy"
+      "velocity_model": "gauss"
     },
     "type": "wake"
   }
