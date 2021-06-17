@@ -35,7 +35,7 @@ HH = 90.
 ws = st.sidebar.slider("Wind Speed", 5., 10., 8., step=0.1)
 wd = st.sidebar.slider("Wind Direction", 250, 290, 270, step=2)
 yaw_1 = st.sidebar.slider("Yaw angle T1", -30, 30, 0, step=1)
-x_loc = st.sidebar.slider("x normal plane intercept", 0., 20., 7., step=.25)
+x_loc = st.sidebar.slider("x normal plane intercept", 0., 35., 7., step=.25)
 y_loc = st.sidebar.slider("y normal plane intercept", -2., 2., 0., step=0.1)
 second_turbine  = st.sidebar.checkbox('Second Turbine?')
 GCH = st.sidebar.checkbox('GCH')
@@ -47,8 +47,10 @@ fi.set_gch(GCH)
 if second_turbine:
     fi.reinitialize_flow_field(
         wind_speed = ws, wind_direction=wd, layout_array=((0, 126 * 7), (0, 0))
+        # wind_speed = ws, wind_direction=wd, layout_array=((0, 126 * 7, 126 * 14, 126 * 21, 126 * 28), (0, 0, 0, 0, 0))
     )
-    fi.calculate_wake(yaw_angles=[yaw_1, 0])
+    fi.calculate_wake(yaw_angles=[yaw_1, 0]) 
+    # fi.calculate_wake(yaw_angles=[yaw_1, 0, 0, 0, 0])
 else:
     fi.reinitialize_flow_field(
         wind_speed = ws,wind_direction=wd, layout_array=([0], [0])
@@ -62,8 +64,10 @@ fi_gauss.set_gch(GCH)
 if second_turbine:
     fi_gauss.reinitialize_flow_field(
         wind_speed = ws, wind_direction=wd, layout_array=((0, 126 * 7), (0, 0))
+        # wind_speed = ws, wind_direction=wd, layout_array=((0, 126 * 7, 126 * 14, 126 * 21, 126 * 28), (0, 0, 0, 0, 0))
     )
     fi_gauss.calculate_wake(yaw_angles=[yaw_1, 0])
+    # fi_gauss.calculate_wake(yaw_angles=[yaw_1, 0, 0, 0, 0])
 else:
     fi_gauss.reinitialize_flow_field(
         wind_speed = ws,wind_direction=wd, layout_array=([0], [0])
@@ -108,9 +112,6 @@ z_points = np.ones_like(x_points) * HH
 flow_points = fi.get_set_of_points(x_points, y_points, z_points).sort_values('x')
 flow_points_gauss = fi_gauss.get_set_of_points(x_points, y_points, z_points).sort_values('x')
 
-
-print(flow_points)
-
 # Compare wind speeds at centerline
 fig, ax = plt.subplots()
 ax.plot(flow_points.x/D, flow_points.u,color='b',label='Legacy')
@@ -143,3 +144,33 @@ ax.legend()
 st.write(fig)
 
 # # Legacy
+
+# Powers downstream
+x_array = np.arange(D,D*12,D/2)
+leg_res = []
+gauss_res = []
+
+for x in x_array:
+
+    fi.reinitialize_flow_field(
+        wind_speed = ws, wind_direction=wd, layout_array=([0, x], [0, y_loc * D])
+    )
+    fi.calculate_wake(yaw_angles=[yaw_1, 0])
+    leg_res.append(fi.get_turbine_power()[1])
+
+    fi_gauss.reinitialize_flow_field(
+        wind_speed = ws, wind_direction=wd, layout_array=([0, x], [0, y_loc * D])
+    )
+    fi_gauss.calculate_wake(yaw_angles=[yaw_1, 0])
+    gauss_res.append(fi_gauss.get_turbine_power()[1])
+    
+
+fig, ax = plt.subplots()
+ax.plot(x_array/D, leg_res, color="b",label="Legacy")
+ax.plot(x_array/D, gauss_res, color="r",label="Gauss")
+ax.grid(True)
+ax.set_title("Power behind turbine")
+ax.set_ylabel("Power")
+ax.set_xlabel("Distance downstream")
+ax.legend()
+st.write(fig)
