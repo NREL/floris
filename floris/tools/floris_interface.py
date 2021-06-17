@@ -20,9 +20,9 @@ from multiprocessing.pool import Pool
 
 import numpy as np
 import pandas as pd
-
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
 from .cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
@@ -862,7 +862,7 @@ class FlorisInterface(LoggerBase):
                 }
 
             mean_farm_power = 0.0
-            wd_orig = np.array(self.floris.farm.wind_map.input_direction)
+            wd_orig = self.floris.farm.wind_map.input_direction[0]
 
             yaw_angles = self.get_yaw_angles()
 
@@ -1040,7 +1040,7 @@ class FlorisInterface(LoggerBase):
                 }
 
             mean_farm_power = np.zeros(len(self.floris.farm.turbines))
-            wd_orig = np.array(self.floris.farm.wind_map.input_direction)
+            wd_orig = self.floris.farm.wind_map.input_direction[0]
 
             yaw_angles = self.get_yaw_angles()
 
