@@ -34,7 +34,6 @@ from .wake_turbulence.base_wake_turbulence import WakeTurbulence
 from .wake_velocity.gaussianModels.blondel import Blondel as BlondelDeficit
 from .wake_combination.base_wake_combination import WakeCombination
 from .wake_deflection.base_velocity_deflection import VelocityDeflection
-from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaussDeficit
 from .wake_velocity.gaussianModels.ishihara_qian import (
     IshiharaQian as IshiharaQianDeficit,
 )
@@ -78,7 +77,6 @@ class Wake:
             "turbopark": TurbOPark,
             "multizone": MultiZone,
             "gauss": GaussDeficit,
-            "gauss_legacy": LegacyGaussDeficit,
             "ishihara_qian": IshiharaQianDeficit,
             "curl": CurlDeficit,
             "blondel": BlondelDeficit,
