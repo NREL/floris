@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 import matplotlib.pyplot as plt
 
 import floris.tools as wfct
-import numpy as np
 
 
 # Initialize the FLORIS interface fi
@@ -26,6 +25,7 @@ fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 # Calculate wake
 fi.calculate_wake()
+print(fi.get_turbine_power())
 
 # Get horizontal plane at default height (hub-height)
 hor_plane = fi.get_hor_plane()
@@ -34,12 +34,10 @@ hor_plane = fi.get_hor_plane()
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
 
-plt.figure()
-turbines = fi.floris.farm.turbines
-wind_speed = np.zeros(len(turbines))
-for i in range(len(turbines)):
-    wind_speed[i] = turbines[i].average_velocity
-    print(i, wind_speed[i])
-turb = np.linspace(0,len(turbines)-1,len(turbines))
-plt.plot(turb,wind_speed,'ko-')
+# Get vertical plane at default height (hub-height)
+vert_plane = fi.get_y_plane(y_loc=0)
+
+# Plot and show
+fig, ax = plt.subplots()
+wfct.visualization.visualize_cut_plane(vert_plane, ax=ax)
 plt.show()

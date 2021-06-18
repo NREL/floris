@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -59,9 +59,16 @@ Examples:
     'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
 """
 
+from pathlib import Path
+
 from . import tools, utilities, simulation, logging_manager
 from .tools import optimization
 
+
+ROOT = Path(__file__).parent
+with open(ROOT.parent / "VERSION") as version_file:
+    VERSION = version_file.read().strip()
+__version__ = VERSION
 
 # initialize the logger
 logging_manager._setup_logger()

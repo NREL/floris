@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -37,7 +37,7 @@ yaw_cases_to_select = [
     np.array([25.0, 25.0, 0.0, 0.0, 0.0]),
 ]
 
-## Grab certain hi-TI five simulations from saved SOWFA data set
+# Grab certain hi-TI five simulations from saved SOWFA data set
 df_sowfa = pd.read_pickle("../sowfa_data_set/sowfa_data_set.p")
 
 # Limit number of turbines
@@ -52,6 +52,7 @@ df_sowfa = df_sowfa[df_sowfa.sowfa_TI == sowfa_TI]
 # Limit to particular layout
 df_sowfa = df_sowfa[df_sowfa.layout_x == layout_x]
 df_sowfa = df_sowfa[df_sowfa.layout_y == layout_y]
+
 
 # Limit to certain yaw cases
 def match_yaw(x):
@@ -182,7 +183,7 @@ df_sowfa = pd.DataFrame(
     sowfa_results, columns=["p0", "p1", "p2", "p3", "p4", "y0", "y1", "y2", "y3", "y4"]
 )
 
-# ## SET UP FLORIS AND MATCH TO BASE CASE
+# # SET UP FLORIS AND MATCH TO BASE CASE
 # wind_speed = 8.38
 # TI = 0.09
 

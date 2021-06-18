@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -85,7 +85,7 @@ class LegacyGauss(GaussianModel):
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.eps_gain = model_dictionary["eps_gain"]
-        self.gch_gain = 6.0
+        self.gch_gain = 1.0
 
     def function(
         self,
@@ -137,9 +137,22 @@ class LegacyGauss(GaussianModel):
         TI_mixing = self.yaw_added_turbulence_mixing(
             turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
         )
-        turbine.current_turbulence_intensity = turbine.current_turbulence_intensity + \
-            self.gch_gain * TI_mixing
-        TI = copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
+
+        # RD and HH implications
+        rd = 0.0  # make larger rotor diameter stronger in wake steering, bigger rotor diameter means YAR
+        hh = 0.000001 # make hub height impact the wake recovery (increased HH means increased wake recovery
+        TI_mixing_2 = TI_mixing + (hh * turbine.rotor_diameter * turbine.hub_height - 0.02)
+
+        turbine.current_turbulence_intensity = (
+            turbine.current_turbulence_intensity + self.gch_gain * TI_mixing
+        )
+        # turbulence_scaling = (126.0/turbine.rotor_diameter) * (turbine.hub_height/90.0) * np.mean([turbine.velocities]) / np.mean(flow_field.wind_map.grid_wind_speed)
+        # turbulence_scaling = (126.0/turbine.rotor_diameter) * (turbine.hub_height/90.0) #* np.mean([turbine.velocities]) / np.mean(flow_field.wind_map.grid_wind_speed)
+        # print(turbine.hub_height,turbine.rotor_diameter,turbulence_scaling)
+
+        turbulence_scaling = 1.0
+        TI = turbulence_scaling * copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
+        # TI = copy.deepcopy(turbine.current_turbulence_intensity)
 
         # turbine parameters
         D = turbine.rotor_diameter
@@ -154,7 +167,7 @@ class LegacyGauss(GaussianModel):
         xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
         uR, u0 = GaussianModel.initial_velocity_deficits(U_local, Ct)
         sigma_y0, sigma_z0 = GaussianModel.initial_wake_expansion(
-            turbine, U_local, veer, uR, u0
+            turbine, U_local, U_local, veer, uR, u0
         )
 
         # quantity that determines when the far wake starts
@@ -178,35 +191,39 @@ class LegacyGauss(GaussianModel):
         sigma_y[x_locations < xR] = 0.5 * D
         sigma_z[x_locations < xR] = 0.5 * D
 
-        sigma_y[x_locations > x0] = 0.0 * D
-        sigma_z[x_locations > x0] = 0.0 * D
+        a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
+        b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
+        c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
+        r = (
+            a * ((y_locations - turbine_coord.x2) - delta) ** 2
+            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH))
+            + c * ((z_locations - HH)) ** 2
+        )
+        C = 1 - np.sqrt(
+            np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0)
+        )
 
-        # a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
-        # b = -sind(2 * veer) / (4 * sigma_y ** 2) + sind(2 * veer) / (4 * sigma_z ** 2)
-        # c = sind(veer) ** 2 / (2 * sigma_y ** 2) + cosd(veer) ** 2 / (2 * sigma_z ** 2)
-        # r = (
-        #     a * ((y_locations - turbine_coord.x2) - delta) ** 2
-        #     - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations - HH))
-        #     + c * ((z_locations - HH)) ** 2
-        # )
-        # C = 1 - np.sqrt(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)))
-        #
-        # velDef = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
-        # velDef[x_locations < xR] = 0
-        # velDef[x_locations > x0] = 0
+        velDef = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
+        velDef[x_locations < xR] = 0
+        velDef[x_locations > x0] = 0
+
+        rG = (
+                a * ((y_locations - turbine_coord.x2) - delta) ** 2
+                - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations + HH))
+                + c * ((z_locations + HH)) ** 2
+        )
+        velDef2 = GaussianModel.gaussian_function(U_local, C, rG, 1, np.sqrt(0.5))
+        velDef2[x_locations < xR] = 0
+        velDef2[x_locations > x0] = 0
 
         # wake expansion in the lateral (y) and the vertical (z)
         ky = self.ka * TI + self.kb  # wake expansion parameters
-        kz = self.ka * TI + self.kb  # wake expansion parameters
-        sigma_y1 = ky * (x_locations - x0) + sigma_y0
-        sigma_z1 = kz * (x_locations - x0) + sigma_z0
-        # sigma_y1[x_locations < x0] = sigma_y0[x_locations < x0]
-        # sigma_z1[x_locations < x0] = sigma_z0[x_locations < x0]
-        sigma_y1[x_locations < x0] = 0.0
-        sigma_z1[x_locations < x0] = 0.0
-
-        sigma_y = sigma_y + sigma_y1
-        sigma_z = sigma_z + sigma_z1
+        # print('Scaled TI: ', TI, TI*flow_field.turbulence_scaling)
+        kz = self.ka * (TI) + self.kb  # wake expansion parameters
+        sigma_y = ky * (x_locations - x0) + sigma_y0
+        sigma_z = kz * (x_locations - x0) + sigma_z0
+        sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
+        sigma_z[x_locations < x0] = sigma_z0[x_locations < x0]
 
         # velocity deficit outside the near wake
         a = cosd(veer) ** 2 / (2 * sigma_y ** 2) + sind(veer) ** 2 / (2 * sigma_z ** 2)
@@ -217,80 +234,28 @@ class LegacyGauss(GaussianModel):
             - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations - HH)
             + c * (z_locations - HH) ** 2
         )
-        C = 1 - np.sqrt(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)))
+        rG = (
+                a * (y_locations - turbine_coord.x2 - delta) ** 2
+                - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations + HH)
+                + c * (z_locations + HH) ** 2
+        )
+        C = 1 - np.sqrt(
+            np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0)
+        )
 
         # compute velocities in the far wake
-        U = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
-        U[x_locations < x0] = 0
+        velDef1 = GaussianModel.gaussian_function(U_local, C, r, 1, np.sqrt(0.5))
+        velDef1[x_locations < x0] = 0
 
-        # U = np.sqrt(velDef ** 2 + velDef1 ** 2)
+        velDef3 = GaussianModel.gaussian_function(U_local, C, rG, 1, np.sqrt(0.5))
+        velDef3[x_locations < x0] = 0
 
-        return U, np.zeros(np.shape(U)), np.zeros(np.shape(U))
+        U = np.sqrt(velDef ** 2 + velDef1 ** 2)
 
-    def wake_expansion(self, flow_field, turbine, turbine_coord, x_locations, y_locations, z_locations):
+        # Mirrored wake
+        Ug = -np.sqrt(velDef2 ** 2 + velDef3 ** 2)
 
-        # veer (degrees)
-        veer = flow_field.wind_veer
-
-        # turbulent mixing
-        TI_mixing = self.yaw_added_turbulence_mixing(
-            turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
-        )
-        turbine.current_turbulence_intensity = turbine.current_turbulence_intensity + \
-                                               self.gch_gain * TI_mixing
-        TI = copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
-
-        # turbine parameters
-        D = turbine.rotor_diameter
-        yaw = -1 * turbine.yaw_angle  # opposite sign convention in this model
-        Ct = turbine.Ct
-        U_local = flow_field.u_initial
-
-        xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
-        uR, u0 = GaussianModel.initial_velocity_deficits(U_local, Ct)
-
-        sigma_y0, sigma_z0 = GaussianModel.initial_wake_expansion(
-            turbine, U_local, veer, uR, u0
-        )
-
-        # quantity that determines when the far wake starts
-        x0 = (
-                D
-                * (cosd(yaw) * (1 + np.sqrt(1 - Ct)))
-                / (
-                        np.sqrt(2)
-                        * (4 * self.alpha * TI + 2 * self.beta * (1 - np.sqrt(1 - Ct)))
-                )
-                + turbine_coord.x1
-        )
-
-        # velocity deficit in the near wake
-        sigma_y = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
-            Ct / 2.0
-        ) + ((x_locations - xR) / (x0 - xR)) * sigma_y0
-        sigma_z = (((x0 - xR) - (x_locations - xR)) / (x0 - xR)) * 0.501 * D * np.sqrt(
-            Ct / 2.0
-        ) + ((x_locations - xR) / (x0 - xR)) * sigma_z0
-        sigma_y[x_locations < xR] = 0.5 * D
-        sigma_z[x_locations < xR] = 0.5 * D
-
-        sigma_y[x_locations > x0] = 0.0 * D
-        sigma_z[x_locations > x0] = 0.0 * D
-
-        # wake expansion in the lateral (y) and the vertical (z)
-        ky = self.ka * TI + self.kb  # wake expansion parameters
-        kz = self.ka * TI + self.kb  # wake expansion parameters
-        sigma_y1 = ky * (x_locations - x0) + sigma_y0
-        sigma_z1 = kz * (x_locations - x0) + sigma_z0
-        # sigma_y1[x_locations < x0] = sigma_y0[x_locations < x0]
-        # sigma_z1[x_locations < x0] = sigma_z0[x_locations < x0]
-        sigma_y1[x_locations < x0] = 0.0
-        sigma_z1[x_locations < x0] = 0.0
-
-        sigma_y = sigma_y + sigma_y1
-        sigma_z = sigma_z + sigma_z1
-
-        return sigma_y
+        return U - Ug, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
 
     @property
     def ka(self):

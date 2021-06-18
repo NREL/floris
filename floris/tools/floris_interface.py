@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ from scipy.stats import norm
 
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
-from .cut_plane import CutPlane, get_plane_from_flow_data
+from .cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
 from .flow_data import FlowData
 from ..utilities import Vec3
 from .visualization import visualize_cut_plane
@@ -236,6 +236,11 @@ class FlorisInterface(LoggerBase):
                 )
                 wind_map.input_direction = wind_direction
                 wind_map.calculate_wind_direction()
+                if (
+                    self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
+                    is not None
+                ):
+                    self.floris.farm.turbine_map.reinitialize_turbines()
 
             # redefine wind_map in Farm object
             self.floris.farm.wind_map = wind_map
@@ -289,7 +294,7 @@ class FlorisInterface(LoggerBase):
 
             # If this is a gridded model, must extract from full flow field
             self.logger.info(
-                "Model identified as %s requires use of underlying grid print"
+                "Model identified as %s requires use of underlying grid points"
                 % self.floris.farm.flow_field.wake.velocity_model.model_string
             )
 
@@ -322,6 +327,17 @@ class FlorisInterface(LoggerBase):
                     0
                 ].hub_height
                 x2_bounds = (10, hub_height * 2)
+        if normal_vector == "y":  # Rules of thumb for cut plane plane
+            if x1_bounds is None:
+                coords = self.floris.farm.flow_field.turbine_map.coords
+                max_diameter = self.floris.farm.flow_field.max_diameter
+                x = [coord.x1 for coord in coords]
+                x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
+            if x2_bounds is None:
+                hub_height = self.floris.farm.flow_field.turbine_map.turbines[
+                    0
+                ].hub_height
+                x2_bounds = (10, hub_height * 2)
 
         # Set up the points to test
         x1_array = np.linspace(x1_bounds[0], x1_bounds[1], num=x1_resolution)
@@ -338,6 +354,8 @@ class FlorisInterface(LoggerBase):
             points = np.row_stack((x1_array, x2_array, x3_array))
         if normal_vector == "x":
             points = np.row_stack((x3_array, x1_array, x2_array))
+        if normal_vector == "y":
+            points = np.row_stack((x1_array, x3_array, x2_array))
 
         # Recalculate wake with these points
         flow_field.calculate_wake(points=points)
@@ -509,7 +527,16 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute and return the cutplane
-        return CutPlane(df)
+        hor_plane = CutPlane(df)
+        if self.floris.farm.wake.velocity_model.model_grid_resolution is not None:
+            hor_plane = change_resolution(
+                hor_plane,
+                resolution=(
+                    self.floris.farm.wake.velocity_model.model_grid_resolution.x1,
+                    self.floris.farm.wake.velocity_model.model_grid_resolution.x2,
+                ),
+            )
+        return hor_plane
 
     def get_cross_plane(
         self, x_loc, y_resolution=200, z_resolution=200, y_bounds=None, z_bounds=None
@@ -1191,6 +1218,7 @@ class FlorisInterface(LoggerBase):
         inds = np.argsort(ws)
         ws = ws[inds]
         wd = wd[inds]
+        freq = freq[inds]
 
         # keep track of wind speeds where power stops increasing for each wind
         # direction
@@ -1371,7 +1399,7 @@ class FlorisInterface(LoggerBase):
         """
         for turbine in self.floris.farm.turbines:
             turbine.use_points_on_perimeter = use_points_on_perimeter
-            turbine._initialize_turbine()
+            turbine.initialize_turbine()
 
     def set_gch(self, enable=True):
         """
@@ -1506,18 +1534,11 @@ class FlorisInterface(LoggerBase):
 
     def set_rotor_diameter(self, rotor_diameter):
         """
-        Assign rotor diameter to turbines.
-
-        Args:
-            rotor_diameter (float): The rotor diameter(s) to be
-            applied to the turbines in meters.
+        This function has been replaced and no longer works correctly, assigning an error
         """
-        if isinstance(rotor_diameter, float) or isinstance(rotor_diameter, int):
-            rotor_diameter = [rotor_diameter] * len(self.floris.farm.turbines)
-        else:
-            rotor_diameter = rotor_diameter
-        for i, turbine in enumerate(self.floris.farm.turbines):
-            turbine.rotor_diameter = rotor_diameter[i]
+        raise Exception(
+            "function set_rotor_diameter has been removed.  Please use the function change_turbine going forward.  See examples/change_turbine for syntax"
+        )
 
     def show_model_parameters(
         self,

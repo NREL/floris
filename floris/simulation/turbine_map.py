@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -56,11 +56,11 @@ class TurbineMap(LoggerBase):
         """
         # check if the length of x and y coordinates are equal
         if len(layout_x) != len(layout_y):
-            err_msg = ('The number of turbine x locations ({0}) is ' + \
-                'not equal to the number of turbine y locations ' + \
-                '({1}). Please check your layout array.').format(
-                    len(layout_x), len(layout_y)
-                )
+            err_msg = (
+                "The number of turbine x locations ({0}) is "
+                + "not equal to the number of turbine y locations "
+                + "({1}). Please check your layout array."
+            ).format(len(layout_x), len(layout_y))
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
 
@@ -178,6 +178,10 @@ class TurbineMap(LoggerBase):
                 wake_list.append(waked.sum())
 
         return wake_list
+
+    def reinitialize_turbines(self):
+        for turbine in self.turbines:
+            turbine.initialize_turbine()
 
     @property
     def turbines(self):
