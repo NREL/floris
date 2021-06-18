@@ -22,7 +22,7 @@ from floris.simulation import Floris, TurbineMap
 
 
 DEBUG = False
-VELOCITY_MODEL = "gauss_legacy"
+VELOCITY_MODEL = "gauss"
 DEFLECTION_MODEL = "gauss"
 
 baseline = [

@@ -176,7 +176,7 @@ class SampleInputs:
             "type": "wake",
             "name": "wake_default",
             "properties": {
-                "velocity_model": "gauss_legacy",
+                "velocity_model": "gauss",
                 "deflection_model": "gauss",
                 "combination_model": "sosfs",
                 "turbulence_model": "crespo_hernandez",
@@ -189,7 +189,7 @@ class SampleInputs:
                         }
                     },
                     "wake_velocity_parameters": {
-                        "gauss_legacy": {
+                        "gauss": {
                             "calculate_VW_velocities": False,
                             "eps_gain": 0.2,
                             "ka": 0.38,
