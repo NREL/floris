@@ -37,9 +37,9 @@ class GaussianModel(VelocityDeficit):
             parameter_dictionary (dict): Model-specific parameters.
         """
         super().__init__(parameter_dictionary)
+        self.flag_orig_TI_mixing = True
 
     def energy_spectra(self, k, C, eps):
-
         return C * eps ** (2 / 3) * k ** (-5 / 3)
 
     def yaw_added_turbulence_mixing(
@@ -74,11 +74,6 @@ class GaussianModel(VelocityDeficit):
             u_prime = turbine.u_prime()
 
             # compute the new TKE
-            # idx = np.where(
-            #     (np.abs(x_locations - coord.x1) <= turbine.rotor_diameter / 4)
-            #     & (np.abs(y_locations - coord.x2) < turbine.rotor_diameter)
-            # )
-
             idx = np.where(
                 (np.abs(x_locations - coord.x1) == 0.0)
                 & (np.abs(y_locations - coord.x2) <= turbine.rotor_diameter)
@@ -89,42 +84,30 @@ class GaussianModel(VelocityDeficit):
                 u_prime ** 2 + np.mean(v_prime[idx]) ** 2 + np.mean(w_prime[idx]) ** 2
             )
 
-            # convert TKE back to TI
-            TI_total = turbine.TKE_to_TI(TKE)
+            if self.flag_orig_TI_mixing:
+                # linear combination of TI for TI_mixing
+                # convert TKE back to TI
+                TI_total = turbine.TKE_to_TI(TKE)
 
-            # convert to turbulence due to mixing
-            TI_mixing = np.array(TI_total) - turbine.current_turbulence_intensity
-            # print('Prev: ', np.mean(TI_mixing/turbine.current_turbulence_intensity),TI_mixing)
+                # convert to turbulence due to mixing
+                TI_mixing = np.array(TI_total) - turbine.current_turbulence_intensity
 
-            # new model
-            # TKE_base = 0.5 * u_prime ** 2                               # assume other components are zero
-            # # print(turbine.current_turbulence_intensity,TKE_base)
-            # TKE_base_rotor = 1.0 * (TKE_base)
-            # TKE_rotor_diameter = 0.5 * (v_prime ** 2 + w_prime ** 2)    # assume u_prime is zero
-            # ratio = TKE_rotor_diameter / TKE_base_rotor
-            # TI_mixing = np.mean(ratio) * turbine.current_turbulence_intensity
-            # print('Current:', np.mean(ratio),np.mean(TI_mixing))
-            # print(turbine.current_turbulence_intensity,TI_mixing)
-
-            eps = (
-                turbine.current_turbulence_intensity * 1.0 * 10 ** (-5)
-            )  # 10% TI = 28.0, 6.5% TI = 8.0
-            # print('eps: ', eps)
-            L = np.logspace(-3, 3, 100)
-            k = 2 * np.pi / L
-            tke = (1 / 2) * (u_prime ** 2)
-            C = 1.5
-            eps = (
-                (2 * tke / (3 * C))
-                * (1 / (-(1 / (np.max(k) ** (2 / 3))) + (1 / np.min(k) ** (2 / 3))))
-            ) ** (3 / 2)
-            # print('eps2: ', eps)
-            tke_rotor = self.energy_spectra(
-                2 * np.pi / (turbine.rotor_diameter / 2), C, eps
-            )
-            tke_added = (1 / 2) * (v_prime[idx] ** 2 + w_prime[idx] ** 2)
-            ratio = (tke_added) / tke_rotor
-            TI_mixing = np.max(ratio) * turbine.current_turbulence_intensity
+            else:
+                # non-linear combination of TI for TI_mixing
+                L = np.logspace(-3, 3, 100)
+                k = 2 * np.pi / L
+                tke = (1 / 2) * (u_prime ** 2)
+                C = 1.5
+                eps = (
+                    (2 * tke / (3 * C))
+                    * (1 / (-(1 / (np.max(k) ** (2 / 3))) + (1 / np.min(k) ** (2 / 3))))
+                ) ** (3 / 2)
+                tke_rotor = self.energy_spectra(
+                    2 * np.pi / (turbine.rotor_diameter / 2), C, eps
+                )
+                tke_added = (1 / 2) * (v_prime[idx] ** 2 + w_prime[idx] ** 2)
+                ratio = (tke_added) / tke_rotor
+                TI_mixing = np.mean(ratio) * turbine.current_turbulence_intensity
         else:
             TI_mixing = 0.0
 
@@ -256,8 +239,6 @@ class GaussianModel(VelocityDeficit):
         # flow parameters
         Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
 
-        # scale = (D / 126.0) ** 1.0
-        scale = 1.0
         vel_top = (
             Uinf
             * ((HH + D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear
@@ -266,12 +247,8 @@ class GaussianModel(VelocityDeficit):
             Uinf
             * ((HH - D / 2) / flow_field.specified_wind_height) ** flow_field.wind_shear
         ) / Uinf
-        Gamma_top = (
-            scale * (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
-        )
-        Gamma_bottom = (
-            -scale * (np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
-        )
+        Gamma_top = (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+        Gamma_bottom = -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
         Gamma_wake_rotation = (
             0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
         )
@@ -328,24 +305,6 @@ class GaussianModel(VelocityDeficit):
         )
 
         # top vortex - ground
-        # yLocs = y_locations + 0.01 - (coord.x2)
-        # zLocs = z_locations + 0.01 + (HH + D / 2)
-        # V3 = (
-        #     (
-        #         ((zLocs * -Gamma_top) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-        #         * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-        #         + 0.0
-        #     )
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
-        #
-        # W3 = (
-        #     ((-yLocs * -Gamma_top) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-        #     * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
         yLocs = y_locations + 0.01 - (coord.x2)
         zT = z_locations + 0.01 + (HH + D / 2)
         rT = yLocs ** 2 + zT ** 2
@@ -366,24 +325,6 @@ class GaussianModel(VelocityDeficit):
         )
 
         # bottom vortex - ground
-        # yLocs = y_locations + 0.01 - (coord.x2)
-        # zLocs = z_locations + 0.01 + (HH - D / 2)
-        # V4 = (
-        #     (
-        #         ((zLocs * -Gamma_bottom) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-        #         * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-        #         + 0.0
-        #     )
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
-        #
-        # W4 = (
-        #     ((-yLocs * -Gamma_bottom) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
-        #     * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
-        #     * eps ** 2
-        #     / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
-        # )
         zB = z_locations + 0.01 + (HH - D / 2)
         rB = yLocs ** 2 + zB ** 2
         V4 = (
@@ -595,7 +536,7 @@ class GaussianModel(VelocityDeficit):
         return uR, u0
 
     @staticmethod
-    def initial_wake_expansion(turbine, U_avg, U_local, veer, uR, u0):
+    def initial_wake_expansion(turbine, U_local, veer, uR, u0):
         """
         Calculates the initial wake widths associated with wake expansion.
 
@@ -618,9 +559,6 @@ class GaussianModel(VelocityDeficit):
                     direction.
         """
         yaw = -1 * turbine.yaw_angle
-        # sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt(uR / (U_local + u0))
-        # sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
-
         sigma_z0 = turbine.rotor_diameter * 0.5 * np.sqrt(uR / (U_local + u0))
         sigma_y0 = sigma_z0 * cosd(yaw) * cosd(veer)
 
@@ -645,23 +583,3 @@ class GaussianModel(VelocityDeficit):
             flow field.
         """
         return U * C * np.exp(-1 * r ** n / (2 * sigma ** 2))
-
-    @staticmethod
-    def gaussian_function2(U, C, r1, r2):
-        """
-        A general form of the Gaussian function used in the Gaussian wake
-        models.
-
-        Args:
-            U (np.array): U-component velocities across the flow field.
-            C (np.array): Velocity deficit at the wake center normalized by the
-                incoming wake velocity.
-            r (float): Radial distance from the wake center.
-            n (float): Exponent of radial distance from the wake center.
-            sigma (np.array): Standard deviation of the wake.
-
-        Returns:
-            np.array: U (np.array): U-component velocity deficits across the
-            flow field.
-        """
-        return U * C * np.exp(r1) * np.exp(r2)

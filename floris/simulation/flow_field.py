@@ -100,8 +100,16 @@ class FlowField:
             pt = turbine.rloc * turbine.rotor_radius
 
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
-            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
+            yt = np.linspace(
+                x2 - pt,
+                x2 + pt,
+                ngrid,
+            )
+            zt = np.linspace(
+                x3 - pt,
+                x3 + pt,
+                ngrid,
+            )
 
             x_grid[i] = xt[i]
             y_grid[i] = yt
@@ -528,9 +536,9 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
     def calculate_wake(self, no_wake=False, points=None, track_n_upstream_wakes=False):
@@ -566,30 +574,10 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
-            if i == 0:
-                # turbulence scaling based on hub height
-                HH = turbine.hub_height
-                D = turbine.rotor_diameter
-                vel_top = (
-                        self.wind_map.grid_wind_speed
-                        * ((HH + D / 2) / self.specified_wind_height) ** self.wind_shear
-                )
-                vel_HH = (
-                        self.wind_map.grid_wind_speed
-                        * ((HH) / self.specified_wind_height) ** self.wind_shear
-                )
-                vel_bottom = (
-                        self.wind_map.grid_wind_speed
-                        * ((HH - D / 2) / self.specified_wind_height) ** self.wind_shear
-                )
-                self.turbulence_scaling = np.mean([vel_top, vel_bottom]) / np.mean(self.wind_map.grid_wind_speed)
-                # self.turbulence_scaling = np.mean(vel_bottom) / np.mean(vel_HH)
-                # if turbine.yaw_angle == 0:
-                #     print('Turb scaling = ', HH, D, self.turbulence_scaling)
 
         # define the center of rotation with reference to 270 deg as center of
         # flow field

@@ -40,7 +40,7 @@ l_x = [0, 6 * D, 12 * D, 18 * D, 24 * D]
 l_y = [0, 0, 0, 0, 0]
 
 # fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=wind_direction)
-fi.reinitialize_flow_field(layout_array=(l_x, l_y), wind_direction=270,turbulence_intensity=0.09)
+fi.reinitialize_flow_field(layout_array=(l_x, l_y), wind_direction=270)
 fi.calculate_wake()
 
 # Initial power output
@@ -76,7 +76,7 @@ yaw_angles = [25, 25, 25, 0, 0]
 # yaw_angles = [20,20,0]
 # yaw_angles = [0,0,0,0,0]
 
-fi.reinitialize_flow_field(turbulence_intensity=0.09)
+fi.reinitialize_flow_field()
 print("==========================================")
 fi.calculate_wake(yaw_angles=yaw_angles)
 

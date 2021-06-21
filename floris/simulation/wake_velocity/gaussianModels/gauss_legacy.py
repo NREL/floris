@@ -69,6 +69,7 @@ class LegacyGauss(GaussianModel):
         """
 
         super().__init__(parameter_dictionary)
+        self.flag_orig_vel_def = True
 
         self.model_string = "gauss_legacy"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
@@ -155,7 +156,7 @@ class LegacyGauss(GaussianModel):
         xR, _ = GaussianModel.mask_upstream_wake(y_locations, turbine_coord, yaw)
         uR, u0 = GaussianModel.initial_velocity_deficits(U_local, Ct)
         sigma_y0, sigma_z0 = GaussianModel.initial_wake_expansion(
-            turbine, U_local, U_local, veer, uR, u0
+            turbine, U_local, veer, uR, u0
         )
 
         # quantity that determines when the far wake starts
@@ -206,8 +207,7 @@ class LegacyGauss(GaussianModel):
 
         # wake expansion in the lateral (y) and the vertical (z)
         ky = self.ka * TI + self.kb  # wake expansion parameters
-        # print('Scaled TI: ', TI, TI*flow_field.turbulence_scaling)
-        kz = self.ka * (TI) + self.kb  # wake expansion parameters
+        kz = self.ka * TI + self.kb  # wake expansion parameters
         sigma_y = ky * (x_locations - x0) + sigma_y0
         sigma_z = kz * (x_locations - x0) + sigma_z0
         sigma_y[x_locations < x0] = sigma_y0[x_locations < x0]
@@ -240,10 +240,13 @@ class LegacyGauss(GaussianModel):
 
         U = np.sqrt(velDef ** 2 + velDef1 ** 2)
 
-        # Mirrored wake
-        Ug = -np.sqrt(velDef2 ** 2 + velDef3 ** 2)
+        if self.flag_orig_vel_def:
+            Ug = np.zeros(np.shape(U))
+        else:
+            # Mirrored wake
+            Ug = np.sqrt(velDef2 ** 2 + velDef3 ** 2)
 
-        return U - Ug, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
+        return U + Ug, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
 
     @property
     def ka(self):

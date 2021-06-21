@@ -7,10 +7,10 @@
       "__comment__": "specified_wind_height of -1 uses the first turbine's hub height; After initialization, specified_wind_height is a free parameter.",
       "air_density": 1.225,
       "layout_x": [
-        0.0, 800
+        0.0
       ],
       "layout_y": [
-        0.0, 0.0
+        0.0
       ],
       "specified_wind_height": -1,
       "turbulence_intensity": [

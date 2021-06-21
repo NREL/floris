@@ -25,7 +25,6 @@ fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 
 # Calculate wake
 fi.calculate_wake()
-print(fi.get_turbine_power())
 
 # Get horizontal plane at default height (hub-height)
 hor_plane = fi.get_hor_plane()
@@ -33,11 +32,4 @@ hor_plane = fi.get_hor_plane()
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-
-# Get vertical plane at default height (hub-height)
-vert_plane = fi.get_y_plane(y_loc=0)
-
-# Plot and show
-fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(vert_plane, ax=ax)
 plt.show()
