@@ -106,21 +106,25 @@ class GaussianModel(VelocityDeficit):
             # print('Current:', np.mean(ratio),np.mean(TI_mixing))
             # print(turbine.current_turbulence_intensity,TI_mixing)
 
-            eps = turbine.current_turbulence_intensity * 1.0 * 10 ** (-5)  # 10% TI = 28.0, 6.5% TI = 8.0
+            eps = (
+                turbine.current_turbulence_intensity * 1.0 * 10 ** (-5)
+            )  # 10% TI = 28.0, 6.5% TI = 8.0
             # print('eps: ', eps)
             L = np.logspace(-3, 3, 100)
             k = 2 * np.pi / L
-            tke = (1/2) * (u_prime ** 2)
+            tke = (1 / 2) * (u_prime ** 2)
             C = 1.5
-            eps = ((2 * tke / (3 * C)) * (1 / (-(1 / (np.max(k) ** (2 / 3))) + (1 / np.min(k) ** (2 / 3))))) ** (3 / 2)
+            eps = (
+                (2 * tke / (3 * C))
+                * (1 / (-(1 / (np.max(k) ** (2 / 3))) + (1 / np.min(k) ** (2 / 3))))
+            ) ** (3 / 2)
             # print('eps2: ', eps)
-            tke_rotor = self.energy_spectra(2*np.pi/(turbine.rotor_diameter / 2),C,eps)
-            tke_added = (1/2) * (v_prime[idx] ** 2 + w_prime[idx] ** 2)
+            tke_rotor = self.energy_spectra(
+                2 * np.pi / (turbine.rotor_diameter / 2), C, eps
+            )
+            tke_added = (1 / 2) * (v_prime[idx] ** 2 + w_prime[idx] ** 2)
             ratio = (tke_added) / tke_rotor
             TI_mixing = np.max(ratio) * turbine.current_turbulence_intensity
-            if turbine.yaw_angle == 25.0:
-                print(turbine.rotor_diameter, turbine.yaw_angle, np.mean(v_prime[idx]),np.mean(w_prime[idx]),np.mean(tke_added),np.mean(tke_rotor),np.mean(ratio))
-            # print((turbine.rotor_diameter/126)**5, np.mean(tke_rotor), np.max(tke_added), np.mean(tke), turbine.current_turbulence_intensity, TI_mixing)
         else:
             TI_mixing = 0.0
 
@@ -346,19 +350,19 @@ class GaussianModel(VelocityDeficit):
         zT = z_locations + 0.01 + (HH + D / 2)
         rT = yLocs ** 2 + zT ** 2
         V3 = (
-                (zT * Gamma_top)
-                / (2 * np.pi * rT)
-                * (1 - np.exp(-rT / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+            (zT * Gamma_top)
+            / (2 * np.pi * rT)
+            * (1 - np.exp(-rT / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
         W3 = (
-                (-yLocs * Gamma_top)
-                / (2 * np.pi * rT)
-                * (1 - np.exp(-rT / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+            (-yLocs * Gamma_top)
+            / (2 * np.pi * rT)
+            * (1 - np.exp(-rT / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
         # bottom vortex - ground
@@ -383,18 +387,18 @@ class GaussianModel(VelocityDeficit):
         zB = z_locations + 0.01 + (HH - D / 2)
         rB = yLocs ** 2 + zB ** 2
         V4 = (
-                (zB * Gamma_bottom)
-                / (2 * np.pi * rB)
-                * (1 - np.exp(-rB / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+            (zB * Gamma_bottom)
+            / (2 * np.pi * rB)
+            * (1 - np.exp(-rB / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
         W4 = (
-                ((-yLocs * Gamma_bottom) / (2 * np.pi * rB))
-                * (1 - np.exp(-rB / (eps ** 2)))
-                * eps ** 2
-                / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
+            ((-yLocs * Gamma_bottom) / (2 * np.pi * rB))
+            * (1 - np.exp(-rB / (eps ** 2)))
+            * eps ** 2
+            / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
 
         # wake rotation vortex

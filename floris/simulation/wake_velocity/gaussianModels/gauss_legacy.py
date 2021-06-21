@@ -137,22 +137,10 @@ class LegacyGauss(GaussianModel):
         TI_mixing = self.yaw_added_turbulence_mixing(
             turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
         )
-
-        # RD and HH implications
-        rd = 0.0  # make larger rotor diameter stronger in wake steering, bigger rotor diameter means YAR
-        hh = 0.000001 # make hub height impact the wake recovery (increased HH means increased wake recovery
-        TI_mixing_2 = TI_mixing + (hh * turbine.rotor_diameter * turbine.hub_height - 0.02)
-
         turbine.current_turbulence_intensity = (
             turbine.current_turbulence_intensity + self.gch_gain * TI_mixing
         )
-        # turbulence_scaling = (126.0/turbine.rotor_diameter) * (turbine.hub_height/90.0) * np.mean([turbine.velocities]) / np.mean(flow_field.wind_map.grid_wind_speed)
-        # turbulence_scaling = (126.0/turbine.rotor_diameter) * (turbine.hub_height/90.0) #* np.mean([turbine.velocities]) / np.mean(flow_field.wind_map.grid_wind_speed)
-        # print(turbine.hub_height,turbine.rotor_diameter,turbulence_scaling)
-
-        turbulence_scaling = 1.0
-        TI = turbulence_scaling * copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
-        # TI = copy.deepcopy(turbine.current_turbulence_intensity)
+        TI = copy.deepcopy(turbine.current_turbulence_intensity)  # + TI_mixing
 
         # turbine parameters
         D = turbine.rotor_diameter
@@ -208,9 +196,9 @@ class LegacyGauss(GaussianModel):
         velDef[x_locations > x0] = 0
 
         rG = (
-                a * ((y_locations - turbine_coord.x2) - delta) ** 2
-                - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations + HH))
-                + c * ((z_locations + HH)) ** 2
+            a * ((y_locations - turbine_coord.x2) - delta) ** 2
+            - 2 * b * ((y_locations - turbine_coord.x2) - delta) * ((z_locations + HH))
+            + c * ((z_locations + HH)) ** 2
         )
         velDef2 = GaussianModel.gaussian_function(U_local, C, rG, 1, np.sqrt(0.5))
         velDef2[x_locations < xR] = 0
@@ -235,9 +223,9 @@ class LegacyGauss(GaussianModel):
             + c * (z_locations - HH) ** 2
         )
         rG = (
-                a * (y_locations - turbine_coord.x2 - delta) ** 2
-                - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations + HH)
-                + c * (z_locations + HH) ** 2
+            a * (y_locations - turbine_coord.x2 - delta) ** 2
+            - 2 * b * (y_locations - turbine_coord.x2 - delta) * (z_locations + HH)
+            + c * (z_locations + HH) ** 2
         )
         C = 1 - np.sqrt(
             np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0)

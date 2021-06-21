@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2021 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -23,6 +23,7 @@ import io
 import os
 import sys
 from shutil import rmtree
+from pathlib import Path
 
 from setuptools import Command, setup, find_packages
 
@@ -34,7 +35,6 @@ URL = "https://github.com/NREL/FLORIS"
 EMAIL = "rafael.mudafort@nrel.gov"
 AUTHOR = "NREL National Wind Technology Center"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "2.2.0"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -49,6 +49,7 @@ REQUIRED = [
     "pyproj>=2.1",
     "seaborn>=0.9",
     "sklearn>=0.0",
+    "shapely>=1.7.1",
 ]
 
 # What packages are optional?
@@ -73,18 +74,14 @@ try:
 except FileNotFoundError:
     long_description = DESCRIPTION
 
-# Load the package's __version__.py module as a dictionary.
-about = {}
-if not VERSION:
-    project_slug = NAME.lower().replace("-", "_").replace(" ", "_")
-    with open(os.path.join(here, project_slug, "__version__.py")) as f:
-        exec(f.read(), about)
-else:
-    about["__version__"] = VERSION
+# Load the package's VERSION module
+ROOT = Path(__file__).parent
+with open(ROOT / "floris" / "VERSION") as version_file:
+    VERSION = version_file.read().strip()
 
 setup(
     name=NAME,
-    version=about["__version__"],
+    version=VERSION,
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",

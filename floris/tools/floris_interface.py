@@ -862,7 +862,7 @@ class FlorisInterface(LoggerBase):
                 }
 
             mean_farm_power = 0.0
-            wd_orig = np.array(self.floris.farm.wind_map.input_direction)
+            wd_orig = self.floris.farm.wind_map.input_direction[0]
 
             yaw_angles = self.get_yaw_angles()
 
@@ -1040,7 +1040,7 @@ class FlorisInterface(LoggerBase):
                 }
 
             mean_farm_power = np.zeros(len(self.floris.farm.turbines))
-            wd_orig = np.array(self.floris.farm.wind_map.input_direction)
+            wd_orig = self.floris.farm.wind_map.input_direction[0]
 
             yaw_angles = self.get_yaw_angles()
 
@@ -1637,6 +1637,7 @@ class FlorisInterface(LoggerBase):
         limit_dist=None,
         turbine_face_north=False,
         one_index_turbine=False,
+        black_and_white=False,
     ):
         """
         Visualize the layout of the wind farm in the floris instance.
@@ -1670,6 +1671,7 @@ class FlorisInterface(LoggerBase):
             limit_dist=limit_dist,
             turbine_face_north=turbine_face_north,
             one_index_turbine=one_index_turbine,
+            black_and_white=black_and_white,
         )
 
     def show_flow_field(self, ax=None):
