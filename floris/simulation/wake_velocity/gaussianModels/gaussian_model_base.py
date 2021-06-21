@@ -309,7 +309,7 @@ class GaussianModel(VelocityDeficit):
         zT = z_locations + 0.01 + (HH + D / 2)
         rT = yLocs ** 2 + zT ** 2
         V3 = (
-            (zT * Gamma_top)
+            (zT * -Gamma_top)
             / (2 * np.pi * rT)
             * (1 - np.exp(-rT / (eps ** 2)))
             * eps ** 2
@@ -317,7 +317,7 @@ class GaussianModel(VelocityDeficit):
         )
 
         W3 = (
-            (-yLocs * Gamma_top)
+            (-yLocs * -Gamma_top)
             / (2 * np.pi * rT)
             * (1 - np.exp(-rT / (eps ** 2)))
             * eps ** 2
@@ -328,7 +328,7 @@ class GaussianModel(VelocityDeficit):
         zB = z_locations + 0.01 + (HH - D / 2)
         rB = yLocs ** 2 + zB ** 2
         V4 = (
-            (zB * Gamma_bottom)
+            (zB * -Gamma_bottom)
             / (2 * np.pi * rB)
             * (1 - np.exp(-rB / (eps ** 2)))
             * eps ** 2
@@ -336,7 +336,7 @@ class GaussianModel(VelocityDeficit):
         )
 
         W4 = (
-            ((-yLocs * Gamma_bottom) / (2 * np.pi * rB))
+            ((-yLocs * -Gamma_bottom) / (2 * np.pi * rB))
             * (1 - np.exp(-rB / (eps ** 2)))
             * eps ** 2
             / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
