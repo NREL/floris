@@ -69,7 +69,7 @@ class LegacyGauss(GaussianModel):
         """
 
         super().__init__(parameter_dictionary)
-        self.flag_orig_vel_def = True
+        self.flag_orig_vel_def = False
 
         self.model_string = "gauss_legacy"
         model_dictionary = self._get_model_dict(__class__.default_parameters)

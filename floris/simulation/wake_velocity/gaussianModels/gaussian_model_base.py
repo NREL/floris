@@ -65,6 +65,7 @@ class GaussianModel(VelocityDeficit):
             V, W = self.calc_VW(
                 coord, turbine, flow_field, x_locations, y_locations, z_locations
             )
+            Uinf = flow_field.wind_map.grid_wind_speed
 
             # calculate fluctuations
             v_prime = flow_field.v + V
@@ -75,7 +76,7 @@ class GaussianModel(VelocityDeficit):
 
             # compute the new TKE
             idx = np.where(
-                (np.abs(x_locations - coord.x1) == 0.0)
+                (np.abs(x_locations - coord.x1) <= 0.1)
                 & (np.abs(y_locations - coord.x2) <= turbine.rotor_diameter)
                 & (np.abs(z_locations - turbine.hub_height) <= turbine.rotor_diameter)
             )
@@ -84,6 +85,7 @@ class GaussianModel(VelocityDeficit):
                 u_prime ** 2 + np.mean(v_prime[idx]) ** 2 + np.mean(w_prime[idx]) ** 2
             )
 
+            self.flag_orig_TI_mixing = True
             if self.flag_orig_TI_mixing:
                 # linear combination of TI for TI_mixing
                 # convert TKE back to TI
@@ -103,11 +105,12 @@ class GaussianModel(VelocityDeficit):
                     * (1 / (-(1 / (np.max(k) ** (2 / 3))) + (1 / np.min(k) ** (2 / 3))))
                 ) ** (3 / 2)
                 tke_rotor = self.energy_spectra(
-                    2 * np.pi / (turbine.rotor_diameter / 2), C, eps
+                    2 * np.pi / (50), C, eps
                 )
                 tke_added = (1 / 2) * (v_prime[idx] ** 2 + w_prime[idx] ** 2)
                 ratio = (tke_added) / tke_rotor
                 TI_mixing = np.mean(ratio) * turbine.current_turbulence_intensity
+                print('TI mixing: ', TI_mixing)
         else:
             TI_mixing = 0.0
 
@@ -266,6 +269,13 @@ class GaussianModel(VelocityDeficit):
         dudz_initial = np.gradient(flow_field.u_initial, z, axis=2)
         nu = lm ** 2 * np.abs(dudz_initial[0, :, :])
 
+        ### DEBUGGING ###
+        idx = np.where(
+            (np.abs(x_locations - coord.x1) == 0.0)
+            & (np.abs(y_locations - coord.x2) <= turbine.rotor_diameter)
+            & (np.abs(z_locations - turbine.hub_height) <= turbine.rotor_diameter)
+        )
+
         # top vortex
         yLocs = y_locations + 0.01 - (coord.x2)
         zT = z_locations + 0.01 - (HH + D / 2)
@@ -285,6 +295,8 @@ class GaussianModel(VelocityDeficit):
             * eps ** 2
             / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
+
+        # print('Check flow: ', np.mean(V1[idx]), np.mean(W1[idx]), y_locations[idx])
 
         # bottom vortex
         zB = z_locations + 0.01 - (HH - D / 2)
