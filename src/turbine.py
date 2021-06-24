@@ -37,13 +37,13 @@ def power(air_density: float, average_velocity: float, yaw_angle: float, pP: flo
     return air_density * power_interp(yaw_effective_velocity)
 
 
-def Ct(average_velocity: float, yaw_angle: float, fCt: callable) -> float:
+def Ct(velocities: list[float], yaw_angle: float, fCt: callable) -> list[float]:
     """
     Thrust coefficient of a turbine incorporating the yaw angle.
     The value is interpolated from the coefficient of thrust vs
     wind speed table using the rotor swept area average velocity.
     """
-    return fCt(average_velocity) * cosd(yaw_angle)  # **self.pP
+    return fCt(average_velocity(velocities)) * cosd(yaw_angle)  # **self.pP
 
 
 def axial_induction(Ct: float, yaw_angle: float) -> float:
@@ -59,7 +59,7 @@ def average_velocity(velocities: list[list[float]]) -> float:
     This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
 
-    **Note:** The velocity is scalled to an effective velocity by the yaw.
+    **Note:** The velocity is scaled to an effective velocity by the yaw.
 
     Returns:
         float: The average velocity across a rotor.
@@ -176,12 +176,12 @@ class Turbine(LoggerBase):
             * yaw_effective_velocity ** 3
         )
 
-    def fCp(self, at_wind_speed):
+    def fCp(self, sample_wind_speeds):
         wind_speed = self.power_thrust_table["wind_speed"]
-        if at_wind_speed < min(wind_speed):
+        if sample_wind_speeds < min(wind_speed):
             return 0.0
         else:
-            _cp = self.fCpInterp(at_wind_speed)
+            _cp = self.fCpInterp(sample_wind_speeds)
             if _cp.size > 1:
                 _cp = _cp[0]
             if _cp > 1.0:
