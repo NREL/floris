@@ -145,9 +145,6 @@ class Gauss(VelocityDeflection):
         )
 
         yaw = yaw - self.calculate_diameter_effective_yaw(coord, turbine, flow_field, x_locations, y_locations, z_locations)
-        # if np.abs(yaw + 25) < 1.0:
-        #     yaw = yaw - 20 * ((turbine.rotor_diameter / 126) - 1)
-        #     print(yaw)
 
         # opposite sign convention in this model
         tilt = turbine.tilt_angle
@@ -241,7 +238,7 @@ class Gauss(VelocityDeflection):
         Uinf = flow_field.wind_map.grid_wind_speed
 
         # get u_prime from current turbulence intensity
-        u_prime = np.mean(Uinf) * 0.09
+        u_prime = np.mean(Uinf) * 0.09  # background turbulence from json file
 
         # compute the new TKE
         idx = np.where(
@@ -252,11 +249,8 @@ class Gauss(VelocityDeflection):
 
         v_local = np.mean(np.abs(V[idx]))
         w_local = np.mean(np.abs(W[idx]))
-        print(v_local, u_prime, np.degrees(np.arctan(v_local / u_prime)), np.degrees(np.arctan(v_local / u_prime)),
-              np.abs(v_local / u_prime) * turbine.yaw_angle, turbine.yaw_angle, turbine.rotor_diameter)
 
-        effective_yaw = (np.abs((v_local**2 + w_local**2) / u_prime**2) * turbine.yaw_angle)
-        # effective_yaw = np.degrees(np.arctan(v_local / u_prime))
+        effective_yaw = ((v_local**2 + w_local**2) / u_prime**2) * turbine.yaw_angle
 
         return effective_yaw
 

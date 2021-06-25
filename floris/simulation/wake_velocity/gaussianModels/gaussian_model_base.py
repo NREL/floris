@@ -85,32 +85,13 @@ class GaussianModel(VelocityDeficit):
                 u_prime ** 2 + np.mean(v_prime[idx]) ** 2 + np.mean(w_prime[idx]) ** 2
             )
 
-            self.flag_orig_TI_mixing = True
-            if self.flag_orig_TI_mixing:
-                # linear combination of TI for TI_mixing
-                # convert TKE back to TI
-                TI_total = turbine.TKE_to_TI(TKE)
+            # linear combination of TI for TI_mixing
+            # convert TKE back to TI
+            TI_total = turbine.TKE_to_TI(TKE)
 
-                # convert to turbulence due to mixing
-                TI_mixing = np.array(TI_total) - turbine.current_turbulence_intensity
+            # convert to turbulence due to mixing
+            TI_mixing = np.array(TI_total) - turbine.current_turbulence_intensity
 
-            else:
-                # non-linear combination of TI for TI_mixing
-                L = np.logspace(-3, 3, 100)
-                k = 2 * np.pi / L
-                tke = (1 / 2) * (u_prime ** 2)
-                C = 1.5
-                eps = (
-                    (2 * tke / (3 * C))
-                    * (1 / (-(1 / (np.max(k) ** (2 / 3))) + (1 / np.min(k) ** (2 / 3))))
-                ) ** (3 / 2)
-                tke_rotor = self.energy_spectra(
-                    2 * np.pi / (50), C, eps
-                )
-                tke_added = (1 / 2) * (v_prime[idx] ** 2 + w_prime[idx] ** 2)
-                ratio = (tke_added) / tke_rotor
-                TI_mixing = np.mean(ratio) * turbine.current_turbulence_intensity
-                print('TI mixing: ', TI_mixing)
         else:
             TI_mixing = 0.0
 
