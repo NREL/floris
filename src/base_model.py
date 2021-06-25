@@ -1,4 +1,5 @@
 """Defines the BaseModel parent class for all models to be based upon."""
+from abc import abstractmethod, abstractstaticmethod
 from typing import Any, Dict
 
 import attr
@@ -41,3 +42,17 @@ class BaseModel(LoggerBase, FromDictMixin):
             The provided or default, if no input provided, model settings as a dictionary.
         """
         return attr.asdict(self)
+
+    @abstractstaticmethod
+    def prepare_function() -> None:
+        """This method must be implemented in every created model. It should take a
+        `TurbineGrid`, `Farm`, and `FlowField` object and return a dictionary of the
+        the required parameters for `function()`.
+        """
+        pass
+
+    @abstractmethod
+    def function() -> None:
+        """The actual model for the wake deflection, wake velocity, wake combination,
+        or wake turbulence model being created.
+        """
