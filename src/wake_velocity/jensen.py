@@ -64,10 +64,10 @@ class JensenVelocityDeficit(BaseModel):
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
-        x: np.array,
-        y: np.array,
-        z: np.array,
-        u: np.array,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        u: np.ndarray,
         reference_wind_height: float,
         reference_turbine_diameter: float,
     ) -> None:

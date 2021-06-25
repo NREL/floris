@@ -12,21 +12,25 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import List
+from typing import List, Union
 
 import numpy as np
 from scipy.interpolate import interp1d
+from numpy.lib.index_tricks import ix_
 
 from .utilities import cosd, sind, tand
 from .logging_manager import LoggerBase
 
 
 def power(
-    air_density: float,
-    average_velocity: float,
-    yaw_angle: float,
-    pP: float,
+    air_density: Union[float, np.ndarray],
+    average_velocity: Union[float, np.ndarray],
+    yaw_angle: Union[float, np.ndarray],
+    pP: Union[float, np.ndarray],
     power_interp: callable,
+    # NOTE: ensure we can do these functions for slices of turbine arrays
+    # NOTE: could this also be a truth array?
+    ix_filter: Union[List[int], np.ndarray] = None,
 ) -> float:
     """
     Power produced by a turbine adjusted for yaw and tilt. Value
@@ -40,13 +44,29 @@ def power(
     # based on the paper "Optimising yaw control at wind farm level" by
     # Ervin Bossanyi
 
+    # NOTE: The below has a trivial performance hit for floats being passed (3.4% longer
+    # on a meaningless test), but is actually faster when an array is passed through
+    # That said, it adds overhead to convert the floats to 1-D arrays, so I don't
+    # recommend just converting all values to arrays
+    if isinstance(ix_filter, list):
+        ix_filter = np.array(ix_filter)
+
+    if ix_filter is None and isinstance(ix_filter, (list, np.ndarray)):
+        ix_filter = np.ones(len(air_density), dtype=bool)
+
+    if ix_filter is not None:
+        air_density = air_density[ix_filter]
+        average_velocity = average_velocity[ix_filter]
+        yaw_angle = yaw_angle[ix_filter]
+        pP = pP[ix_filter]
+
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = average_velocity * cosd(yaw_angle) ** pW
     return air_density * power_interp(yaw_effective_velocity)
 
 
-def Ct(velocities: list[float], yaw_angle: float, fCt: callable) -> list[float]:
+def Ct(velocities: List[float], yaw_angle: float, fCt: callable) -> List[float]:
     """
     Thrust coefficient of a turbine incorporating the yaw angle.
     The value is interpolated from the coefficient of thrust vs

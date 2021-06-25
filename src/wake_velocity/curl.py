@@ -119,21 +119,21 @@ class Curl(BaseModel):
     def function(
         self,
         *,
-        x_locations: np.array,
-        y_locations: np.array,
-        z_locations: np.array,
+        x_locations: np.ndarray,
+        y_locations: np.ndarray,
+        z_locations: np.ndarray,
         turbine,  # TODO: what are we doing here?
         turbine_coord,  # TODO: what are we doing here? pass `i` like in jensen and pull the coordinate?
         deflection_field,
-        u: np.array,
-        v: np.array,
-        w: np.array,
-        ffx: np.array,
-        ffy: np.array,
-        ffz: np.array,
+        u: np.ndarray,
+        v: np.ndarray,
+        w: np.ndarray,
+        ffx: np.ndarray,
+        ffy: np.ndarray,
+        ffz: np.ndarray,
         air_density: float,
-        grid_wind_speed: np.array,
-        grid_turbulence_intensity: np.array,
+        grid_wind_speed: np.ndarray,
+        grid_turbulence_intensity: np.ndarray,
     ):
         """
         Using the Curl wake model, this method calculates and returns
