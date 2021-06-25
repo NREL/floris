@@ -3,11 +3,10 @@ FLORIS Wake Modeling Utility
 
 **Further documentation is available at http://floris.readthedocs.io/.**
 
-For technical questions regarding FLORIS usage please first search for or post
+For technical questions regarding FLORIS usage please post
 your questions to
-`stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
-the **floris** tag. Alternatively, email the NREL FLORIS team at
-`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`.
+`GitHub Discussions <https://github.com/NREL/floris/discussions>`_ on the FLORIS repository. We no longer plan to actively answer questions on stackoverflow and will use GitHub Discussions as the main forum for FLORIS. Alternatively, email the NREL FLORIS team at
+`christopher.bay@nrel.gov <mailto:christopher.bay@nrel.gov>`_, `bart.doekemeijer@nrel.gov <mailto:bart.doekemeijer@nrel.gov>`_, `rafael.mudafort@nrel.gov <mailto:rafael.mudafort@nrel.gov>`_, or `paul.fleming@nrel.gov <mailto:paul.fleming@nrel.gov>`_.
 
 .. image:: https://github.com/nrel/floris/workflows/Automated%20tests%20%26%20code%20coverage/badge.svg
   :target: https://github.com/nrel/floris/actions
