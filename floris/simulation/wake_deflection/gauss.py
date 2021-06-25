@@ -81,6 +81,7 @@ class Gauss(VelocityDeflection):
                         See property on super-class for more details.
         """
         super().__init__(parameter_dictionary)
+        self.flag_orig_eff_yaw = False
         self.model_string = "gauss"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
         self.ka = model_dictionary["ka"]
@@ -144,7 +145,10 @@ class Gauss(VelocityDeflection):
             x_locations, y_locations, z_locations, turbine, coord, flow_field
         )
 
-        yaw = yaw - self.calculate_diameter_effective_yaw(coord, turbine, flow_field, x_locations, y_locations, z_locations)
+        if not self.flag_orig_eff_yaw:
+            yaw = yaw - self.calculate_diameter_effective_yaw(
+                coord, turbine, flow_field, x_locations, y_locations, z_locations
+            )
 
         # opposite sign convention in this model
         tilt = turbine.tilt_angle
@@ -229,7 +233,9 @@ class Gauss(VelocityDeflection):
 
         return deflection
 
-    def calculate_diameter_effective_yaw(self, coord, turbine, flow_field, x_locations, y_locations, z_locations):
+    def calculate_diameter_effective_yaw(
+        self, coord, turbine, flow_field, x_locations, y_locations, z_locations
+    ):
 
         # compute turbulence modification
         V, W = self.calc_VW(
@@ -238,7 +244,7 @@ class Gauss(VelocityDeflection):
         Uinf = flow_field.wind_map.grid_wind_speed
 
         # get u_prime from current turbulence intensity
-        u_prime = np.mean(Uinf) * 0.09  # background turbulence from json file
+        u_prime = np.mean(Uinf) * np.mean(flow_field.wind_map.input_ti)
 
         # compute the new TKE
         idx = np.where(
@@ -250,7 +256,9 @@ class Gauss(VelocityDeflection):
         v_local = np.mean(np.abs(V[idx]))
         w_local = np.mean(np.abs(W[idx]))
 
-        effective_yaw = ((v_local**2 + w_local**2) / u_prime**2) * turbine.yaw_angle
+        effective_yaw = (
+            (v_local ** 2 + w_local ** 2) / u_prime ** 2
+        ) * turbine.yaw_angle
 
         return effective_yaw
 

@@ -37,7 +37,6 @@ class GaussianModel(VelocityDeficit):
             parameter_dictionary (dict): Model-specific parameters.
         """
         super().__init__(parameter_dictionary)
-        self.flag_orig_TI_mixing = True
 
     def energy_spectra(self, k, C, eps):
         return C * eps ** (2 / 3) * k ** (-5 / 3)
@@ -65,7 +64,6 @@ class GaussianModel(VelocityDeficit):
             V, W = self.calc_VW(
                 coord, turbine, flow_field, x_locations, y_locations, z_locations
             )
-            Uinf = flow_field.wind_map.grid_wind_speed
 
             # calculate fluctuations
             v_prime = flow_field.v + V
@@ -250,13 +248,6 @@ class GaussianModel(VelocityDeficit):
         dudz_initial = np.gradient(flow_field.u_initial, z, axis=2)
         nu = lm ** 2 * np.abs(dudz_initial[0, :, :])
 
-        ### DEBUGGING ###
-        idx = np.where(
-            (np.abs(x_locations - coord.x1) == 0.0)
-            & (np.abs(y_locations - coord.x2) <= turbine.rotor_diameter)
-            & (np.abs(z_locations - turbine.hub_height) <= turbine.rotor_diameter)
-        )
-
         # top vortex
         yLocs = y_locations + 0.01 - (coord.x2)
         zT = z_locations + 0.01 - (HH + D / 2)
@@ -276,8 +267,6 @@ class GaussianModel(VelocityDeficit):
             * eps ** 2
             / (4 * nu * (x_locations - coord.x1) / Uinf + eps ** 2)
         )
-
-        # print('Check flow: ', np.mean(V1[idx]), np.mean(W1[idx]), y_locations[idx])
 
         # bottom vortex
         zB = z_locations + 0.01 - (HH - D / 2)

@@ -246,8 +246,6 @@ class LegacyGauss(GaussianModel):
             # Mirrored wake
             Ug = np.sqrt(velDef2 ** 2 + velDef3 ** 2)
 
-        print('U:', np.mean(U),np.mean(Ug))
-
         return U + Ug, np.zeros(np.shape(velDef1)), np.zeros(np.shape(velDef1))
 
     @property

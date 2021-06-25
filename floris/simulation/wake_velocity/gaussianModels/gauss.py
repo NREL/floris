@@ -82,6 +82,7 @@ class Gauss(GaussianModel):
 
         """
         super().__init__(parameter_dictionary)
+        self.flag_orig_vel_def = False
 
         self.model_string = "gauss"
         model_dictionary = self._get_model_dict(__class__.default_parameters)
@@ -182,6 +183,14 @@ class Gauss(GaussianModel):
             / D
         )
 
+        r_tilde_g = (
+            np.sqrt(
+                (y_locations - turbine_coord.x2 - delta) ** 2 + (z_locations + HH) ** 2,
+                dtype=np.float128,
+            )
+            / D
+        )
+
         beta = (1 + np.sqrt(1 - Ct * cosd(yaw))) / (2 * (1 + np.sqrt(1 - Ct)))
 
         a_s = self.ka  # Force equality to previous parameters to reduce new parameters
@@ -228,10 +237,17 @@ class Gauss(GaussianModel):
         # C = a1 - np.sqrt(a2 - (n * Ct * cosd(yaw) / (16.0 * gamma(2/n) * sigma_tilde**(4/n) ) ) )
 
         # Compute wake velocity (Eq 1, pp 3 of ref. [1] in docstring)
-        velDef = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
-        velDef[x_locations < xR] = 0
+        U = GaussianModel.gaussian_function(U_local, C, r_tilde, n, sigma_tilde)
+        U[x_locations < xR] = 0
 
-        return velDef, np.zeros(np.shape(velDef)), np.zeros(np.shape(velDef))
+        if self.flag_orig_vel_def:
+            Ug = np.zeros(np.shape(U))
+        else:
+            # Mirrored wake
+            Ug = GaussianModel.gaussian_function(U_local, C, r_tilde_g, n, sigma_tilde)
+            Ug[x_locations < xR] = 0
+
+        return U + Ug, np.zeros(np.shape(U)), np.zeros(np.shape(U))
 
     @property
     def ka(self):
