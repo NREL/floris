@@ -10,14 +10,22 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from typing import Any, Dict, List, Union
+from functools import partial
+
+import attr
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-from ..utilities import Vec3, sind
-from .base_velocity_deficit import VelocityDeficit
+from src.farm import Farm
+from src.grid import TurbineGrid
+from src.utilities import Vec3, sind, is_default, float_attrib, convert_to_Vec3
+from src.base_model import BaseModel
+from src.flow_field import FlowField
 
 
-class Curl(VelocityDeficit):
+@attr.s(auto_attribs=True)
+class Curl(BaseModel):
     """
     The Curl model class computes the wake velocity deficit based on the curled
     wake model developed in
@@ -29,6 +37,32 @@ class Curl(VelocityDeficit):
     information about the impact of the curled wake behavior on wake steering,
     see :cite:`cvm-fleming2018simulation`.
 
+    Args:
+        model_grid_resolution(:py:obj:`Union[List[float], Vec3]`): A list of three
+            floats, or `Vec3` object that define the flow field grid resolution in the
+            x, y, and z directions used for the curl wake model calculations. The grid
+            resolution is specified as the number of grid points in the flow field
+            domain in the x, y, and z directions, by default [250, 100, 75].
+        initial_deficit (:py:obj:`float`): Parameter that, along with the freestream
+            velocity and the turbine's induction factor, is used to determine the
+            initial wake velocity deficit immediately downstream of the rotor, by
+            default 2.0.
+        dissipation (:py:obj:`float`): A scaling parameter that determines the amount of
+            dissipation of the vortices with downstream distance, by default 0.06.
+        veer_linear (:py:obj:`float`): Describes the amount of linear wind veer. This
+            parameter defines the linear change in the V velocity between the ground and
+            hub height; therefore, determines the slope of the change in the V velocity
+            with height, by default 0.0.
+        ti_initial (:py:obj:`float`): Initial ambient turbulence intensity, expressed as
+            a decimal fraction, by default 0.1.
+        ti_constant (:py:obj:`float`): The constant used to scale the wake-added
+            turbulence intensity, by default 0.73.
+        ti_ai (:py:obj:`float`): The axial induction factor exponent used in in the
+            calculation of wake-added turbulence, by default 0.8.
+        ti_downstream (:py:obj:`float`): The exponent applied to the distance downstream
+            of an upstream turbine normalized by the rotor diameter used in the
+            calculation of wake-added turbulence, by default 0.275.
+
     References:
         .. bibliography:: /source/zrefs.bib
             :style: unsrt
@@ -36,78 +70,70 @@ class Curl(VelocityDeficit):
             :keyprefix: cvm-
     """
 
-    default_parameters = {
-        "model_grid_resolution": [250, 100, 75],
-        "initial_deficit": 2.0,
-        "dissipation": 0.06,
-        "veer_linear": 0.0,
-        "initial": 0.1,
-        "constant": 0.73,
-        "ai": 0.8,
-        "downstream": -0.275,
-    }
+    model_grid_resolution: Union[List[float], Vec3] = attr.ib(
+        default=[250, 100, 75],
+        converter=convert_to_Vec3,
+        on_setattr=attr.setters.convert,
+        kw_only=True,
+    )
+    # NOTE: I'm not sold on the partial for attr.ib() here because it messes with the
+    # help() and documentation functionality but would like another way to define all
+    # the same inputs without rewriting a bunch of the same few parameters that runs
+    # onto a few lines with code formatting
+    initial_deficit: float = float_attrib(default=2.0)
+    dissipation: float = float_attrib(default=0.06)
+    veer_linear: float = float_attrib(default=0.0)
+    ti_initial: float = float_attrib(default=0.1)
+    ti_constant: float = float_attrib(default=0.73)
+    ti_ai: float = float_attrib(default=0.8)
+    ti_downstream: float = float_attrib(default=-0.275)
+    requires_resolution: bool = attr.ib(default=True, converter=bool)
+    model_string: str = attr.ib(
+        default="curl", on_setattr=attr.setters.frozen, validator=is_default
+    )
 
-    def __init__(self, parameter_dictionary):
-        """
-        Stores model parameters for use by methods.
-
-        Args:
-            parameter_dictionary (dict): Model-specific parameters.
-                Default values are used when a parameter is not included
-                in `parameter_dictionary`. Possible key-value pairs include:
-
-                -   **model_grid_resolution** (*list*): A list of three floats
-                    that define the flow field grid resolution in the x, y, and
-                    z directions used for the curl wake model calculations. The
-                    grid resolution is specified as the number of grid points
-                    in the flow field domain in the x, y, and z directions.
-                -   **initial_deficit** (*float*): Parameter that, along with
-                    the freestream velocity and the turbine's induction factor,
-                    is used to determine the initial wake velocity deficit
-                    immediately downstream of the rotor.
-                -   **dissipation** (*float*): Parameter that is a scaling
-                    parameter that determines the amount of dissipation
-                    of the vortices with downstream distance.
-                -   **veer_linear** (*float*): Parameter that describes the
-                    amount of linear wind veer. This parameter defines the
-                    linear change in the V velocity between the ground and hub
-                    height, and therefore determines the slope of the change in
-                    the V velocity with height.
-                -   **initial** (*float*): Parameter that is the initial
-                    ambient turbulence intensity, expressed as a decimal
-                    fraction.
-                -   **constant** (*float*): Parameter that is the constant
-                    used to scale the wake-added turbulence intensity.
-                -   **ai** (*float*): Parameter that is the axial induction
-                    factor exponent used in in the calculation of wake-added
-                    turbulence.
-                -   **downstream** (*float*): Parameter that is the exponent
-                    applied to the distance downstream of an upstream turbine
-                    normalized by the rotor diameter used in the calculation of
-                    wake-added turbulence.
-        """
-        super().__init__(parameter_dictionary)
-        self.model_string = "curl"
-        model_dictionary = self._get_model_dict(__class__.default_parameters)
-        self.model_grid_resolution = Vec3(model_dictionary["model_grid_resolution"])
-        self.initial_deficit = float(model_dictionary["initial_deficit"])
-        self.dissipation = float(model_dictionary["dissipation"])
-        self.veer_linear = float(model_dictionary["veer_linear"])
-        self.ti_initial = float(model_dictionary["initial"])
-        self.ti_constant = float(model_dictionary["constant"])
-        self.ti_ai = float(model_dictionary["ai"])
-        self.ti_downstream = float(model_dictionary["downstream"])
-        self.requires_resolution = True
+    # TODO: Turbine and coordinates still need to be sorted out
+    # TODO: we need to differentiate between x_locations and flow_field.x somehow
+    def prepare_function(
+        deflection_field: np.array, grid: TurbineGrid, farm: Farm, flow_field: FlowField
+    ) -> Dict[str, Any]:
+        kwargs = dict(
+            deflection_field=deflection_field,
+            x_locations=grid.x,
+            y_locations=grid.y,
+            z_locations=grid.z,
+            u=flow_field.u,
+            v=flow_field.v,
+            w=flow_field.w,
+            ffx=flow_field.x,
+            ffy=flow_field.y,
+            ffz=flow_field.z,
+            air_density=flow_field.air_density,
+            grid_wind_speed=flow_field.wind_map.grid_wind_speed,
+            grid_turbulence_intensity=flow_field.wind_map.grid_turbulence_intensity,
+        )
+        # NOTE: could do the following if it's not too much overhead or wanting to avoid weird memory stuff
+        # kwargs = {k: deepcopy(v) for k, v in kwargs.items()}
+        return kwargs
 
     def function(
         self,
-        x_locations,
-        y_locations,
-        z_locations,
-        turbine,
-        turbine_coord,
+        *,
+        x_locations: np.array,
+        y_locations: np.array,
+        z_locations: np.array,
+        turbine,  # TODO: what are we doing here?
+        turbine_coord,  # TODO: what are we doing here? pass `i` like in jensen and pull the coordinate?
         deflection_field,
-        flow_field,
+        u: np.array,
+        v: np.array,
+        w: np.array,
+        ffx: np.array,
+        ffy: np.array,
+        ffz: np.array,
+        air_density: float,
+        grid_wind_speed: np.array,
+        grid_turbulence_intensity: np.array,
     ):
         """
         Using the Curl wake model, this method calculates and returns
@@ -177,9 +203,7 @@ class Curl(VelocityDeficit):
         r1 = np.sqrt(y1 ** 2 + z1 ** 2)
 
         # add initial velocity deficit at the rotor to the flow field
-        uw_initial = -1 * (
-            flow_field.wind_map.grid_wind_speed * initial_deficit * turbine.axial_induction
-        )
+        uw_initial = -1 * (grid_wind_speed * initial_deficit * turbine.axial_induction)
         uw[idx, :, :] = gaussian_filter(
             uw_initial[idx, :, :] * (r1 <= turbine.rotor_diameter / 2), sigma=1
         )
@@ -200,40 +224,28 @@ class Curl(VelocityDeficit):
         yaw = turbine.yaw_angle  # yaw angle of the turbine
         HH = turbine.hub_height  # hub height of the turbine
         # the free-stream velocity of the flow field
-        Uinf = flow_field.wind_map.grid_wind_speed[idx, :, :]
+        Uinf = grid_wind_speed[idx, :, :]
         # the tip-speed ratio of the turbine
         TSR = turbine.tsr
         # the axial induction factor of the turbine
         aI = turbine.axial_induction
         # initial velocities in the stream-wise, span-wise, and
         # vertical direction
-        U, V, W = flow_field.u, flow_field.v, flow_field.w
+        U, V, W = u, v, w
         # the tilt angle of the rotor of the turbine
         tilt = turbine.tilt_angle
 
         # calculate the curled wake effects due to the yaw and tilt
         # of the turbine
         Gamma_Yaw = (
-            flow_field.air_density
-            * np.pi
-            * D
-            / 8
-            * Ct
-            * turbine.average_velocity
-            * sind(yaw)
+            air_density * np.pi * D / 8 * Ct * turbine.average_velocity * sind(yaw)
         )
         if turbine.yaw_angle != 0.0:
             YawFlag = 1
         else:
             YawFlag = 0
         Gamma_Tilt = (
-            flow_field.air_density
-            * np.pi
-            * D
-            / 8
-            * Ct
-            * turbine.average_velocity
-            * sind(tilt)
+            air_density * np.pi * D / 8 * Ct * turbine.average_velocity * sind(tilt)
         )
         if turbine.tilt_angle != 0.0:
             TiltFlag = 1
@@ -282,18 +294,18 @@ class Curl(VelocityDeficit):
             # vortex velocities
             # top
             v1, w1 = self._vortex(
-                flow_field.y[idx, :, :] - y_vortex_1,
-                flow_field.z[idx, :, :] - z_vortex_1,
-                flow_field.x[idx, :, :] - turbine_coord.x1,
+                ffy[idx, :, :] - y_vortex_1,
+                ffz[idx, :, :] - z_vortex_1,
+                ffx[idx, :, :] - turbine_coord.x1,
                 -Gamma,
                 eps,
                 Uinf,
             )
             # bottom
             v2, w2 = self._vortex(
-                flow_field.y[idx, :, :] - y_vortex_2,
-                flow_field.z[idx, :, :] - z_vortex_2,
-                flow_field.x[idx, :, :] - turbine_coord.x1,
+                ffy[idx, :, :] - y_vortex_2,
+                ffz[idx, :, :] - z_vortex_2,
+                ffx[idx, :, :] - turbine_coord.x1,
                 Gamma,
                 eps,
                 Uinf,
@@ -301,17 +313,17 @@ class Curl(VelocityDeficit):
 
             # add ground effects
             v3, w3 = self._vortex(
-                flow_field.y[idx, :, :] - y_vortex_1,
-                flow_field.z[idx, :, :] + z_vortex_1,
-                flow_field.x[idx, :, :] - turbine_coord.x1,
+                ffy[idx, :, :] - y_vortex_1,
+                ffz[idx, :, :] + z_vortex_1,
+                ffx[idx, :, :] - turbine_coord.x1,
                 Gamma,
                 eps,
                 Uinf,
             )
             v4, w4 = self._vortex(
-                flow_field.y[idx, :, :] - y_vortex_2,
-                flow_field.z[idx, :, :] + z_vortex_2,
-                flow_field.x[idx, :, :] - turbine_coord.x1,
+                ffy[idx, :, :] - y_vortex_2,
+                ffz[idx, :, :] + z_vortex_2,
+                ffx[idx, :, :] - turbine_coord.x1,
                 -Gamma,
                 eps,
                 Uinf,
@@ -322,30 +334,30 @@ class Curl(VelocityDeficit):
 
         # add wake rotation
         v5, w5 = self._vortex(
-            flow_field.y[idx, :, :] - turbine_coord.x2,
-            flow_field.z[idx, :, :] - turbine.hub_height,
-            flow_field.x[idx, :, :] - turbine_coord.x1,
+            ffy[idx, :, :] - turbine_coord.x2,
+            ffz[idx, :, :] - turbine.hub_height,
+            ffx[idx, :, :] - turbine_coord.x1,
             Gamma_wake_rotation,
             0.2 * D,
             Uinf,
         ) * (
             np.sqrt(
-                (flow_field.y[idx, :, :] - turbine_coord.x2) ** 2
-                + (flow_field.z[idx, :, :] - turbine.hub_height) ** 2
+                (ffy[idx, :, :] - turbine_coord.x2) ** 2
+                + (ffz[idx, :, :] - turbine.hub_height) ** 2
             )
             <= D / 2
         )
         v6, w6 = self._vortex(
-            flow_field.y[idx, :, :] - turbine_coord.x2,
-            flow_field.z[idx, :, :] + turbine.hub_height,
-            flow_field.x[idx, :, :] - turbine_coord.x1,
+            ffy[idx, :, :] - turbine_coord.x2,
+            ffz[idx, :, :] + turbine.hub_height,
+            ffx[idx, :, :] - turbine_coord.x1,
             -Gamma_wake_rotation,
             0.2 * D,
             Uinf,
         ) * (
             np.sqrt(
-                (flow_field.y[idx, :, :] - turbine_coord.x2) ** 2
-                + (flow_field.z[idx, :, :] - turbine.hub_height) ** 2
+                (ffy[idx, :, :] - turbine_coord.x2) ** 2
+                + (ffz[idx, :, :] - turbine.hub_height) ** 2
             )
             <= D / 2
         )
@@ -366,18 +378,12 @@ class Curl(VelocityDeficit):
             V[i + 1, :, :] = (
                 V[idx, :, :]
                 * eps ** 2
-                / (
-                    4 * nu * (flow_field.x[i, :, :] - turbine_coord.x1) / Uinf
-                    + eps ** 2
-                )
+                / (4 * nu * (ffx[i, :, :] - turbine_coord.x1) / Uinf + eps ** 2)
             )
             W[i + 1, :, :] = (
                 W[idx, :, :]
                 * eps ** 2
-                / (
-                    4 * nu * (flow_field.x[i, :, :] - turbine_coord.x1) / Uinf
-                    + eps ** 2
-                )
+                / (4 * nu * (ffx[i, :, :] - turbine_coord.x1) / Uinf + eps ** 2)
             )
 
         # simple implementation of linear veer, added to the V component
@@ -407,7 +413,7 @@ class Curl(VelocityDeficit):
         # ======================================================================
         dudz_initial = np.gradient(U, axis=2) / np.gradient(z_locations, axis=2)
 
-        ti_initial = flow_field.wind_map.grid_turbulence_intensity[idx, :, :]
+        ti_initial = grid_turbulence_intensity[idx, :, :]
 
         # turbulence intensity parameters stored in floris.json
         ti_i = self.ti_initial
@@ -474,162 +480,3 @@ class Curl(VelocityDeficit):
         )
 
         return v, w
-
-    @property
-    def model_grid_resolution(self):
-        """
-        The flow field grid resolution in the x, y, and z directions. The
-        grid resolution is specified as the number of grid points in the
-        flow field domain in the x, y, and z directions.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (list): Value to set.
-
-        Returns:
-            list(float): Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._model_grid_resolution
-
-    @model_grid_resolution.setter
-    def model_grid_resolution(self, value):
-        # TODO: add checker to make sure resolution is high enough
-        # if type(value) is Vec3:
-        #     self._model_grid_resolution = value
-        # elif value is None:
-        #     self._model_grid_resolution = None
-        # else:
-        #     raise ValueError('Invalid value given for model_grid_resolution: {}'.format(value))
-
-        if type(value) is not Vec3 and value is not None:
-            err_msg = (
-                "Invalid value type given for "
-                + "model_grid_resolution: {}, expected type Vec3."
-            ).format(value)
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
-        self._model_grid_resolution = value
-        if value is not None:
-            if value != Vec3(__class__.default_parameters["model_grid_resolution"]):
-                self.logger.info(
-                    (
-                        "Current value of model_grid_resolution, {0}, is "
-                        + "not equal to tuned value of {1}."
-                    ).format(
-                        value, __class__.default_parameters["model_grid_resolution"]
-                    )
-                )
-
-    @property
-    def initial_deficit(self):
-        """
-        Parameter that, along with the freestream velocity and the turbine's
-        induction factor, is used to determine the initial wake velocity
-        deficit immediately downstream of the rotor.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (float): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._initial_deficit
-
-    @initial_deficit.setter
-    def initial_deficit(self, value):
-        if type(value) is not float:
-            err_msg = (
-                "Invalid value type given for " + "initial_deficit: {}, expected float."
-            ).format(value)
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
-        self._initial_deficit = value
-        if value != __class__.default_parameters["initial_deficit"]:
-            self.logger.info(
-                (
-                    "Current value of initial_deficit, {0}, is not equal to "
-                    + "tuned value of {1}."
-                ).format(value, __class__.default_parameters["initial_deficit"])
-            )
-
-    @property
-    def dissipation(self):
-        """
-        A scaling parameter that determines the amount of dissipation of
-        the vortices with downstream distance.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (float): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._dissipation
-
-    @dissipation.setter
-    def dissipation(self, value):
-        if type(value) is not float:
-            err_msg = (
-                "Invalid value type given for " + "dissipation: {}, expected float."
-            ).format(value)
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
-        self._dissipation = value
-        if value != __class__.default_parameters["dissipation"]:
-            self.logger.info(
-                (
-                    "Current value of dissipation, {0}, is not equal to "
-                    + "tuned value of {1}."
-                ).format(value, __class__.default_parameters["dissipation"])
-            )
-
-    @property
-    def veer_linear(self):
-        """
-        This parameter defines the linear change in the V velocity between the
-        ground and hub height, and therefore determines the slope of the
-        change in the V velocity with height.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (float): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._veer_linear
-
-    @veer_linear.setter
-    def veer_linear(self, value):
-        if type(value) is not float:
-            err_msg = (
-                "Invalid value type given for " + "veer_linear: {}, expected float."
-            ).format(value)
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
-        self._veer_linear = value
-        if value != __class__.default_parameters["veer_linear"]:
-            self.logger.info(
-                (
-                    "Current value of veer_linear, {0}, is not equal to "
-                    + "tuned value of {1}."
-                ).format(value, __class__.default_parameters["veer_linear"])
-            )

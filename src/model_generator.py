@@ -1,14 +1,14 @@
 """Defines the BaseModel parent class for all models to be based upon."""
 
+from src.wake_velocity.jensen import JensenVelocityDeficit
 from src.wake_velocity.refactor_curl import Curl
-from src.wake_velocity.refactor_jensen import Jensen
 
 
 MODEL_MAP = {
     # "wake_combination": {"""The Combination Models"""},
     # "wake_deflection": {"""The Deflection Models"""},
     # "wake_turbulence": {"""The Turbulence Models"""},
-    "wake_velocity": {"curl": Curl, "jensen": Jensen},
+    "wake_velocity": {"curl": Curl, "jensen": JensenVelocityDeficit},
 }
 
 

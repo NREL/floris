@@ -32,6 +32,7 @@ class GaussMixin:
     """
 
     def __attrs_post_init__(self) -> None:
+        # TODO: Make this a check on setting, not initialization
         if self.use_yaw_added_recovery and not self.calculate_VW_velocities:
             err_msg = (
                 "It appears that 'use_yaw_added_recovery' is set "

@@ -16,7 +16,7 @@ import attr
 import numpy as np
 from src.farm import Farm
 from src.grid import TurbineGrid
-from src.utilities import is_default
+from src.utilities import is_default, float_attrib
 from src.base_model import BaseModel
 from src.flow_field import FlowField
 
@@ -39,15 +39,16 @@ class JensenVelocityDeficit(BaseModel):
             :keyprefix: jvm-
     """
 
-    we: float = attr.ib(default=-0.05, converter=float, kw_only=True)
+    we: float = float_attrib(default=-0.05)
     model_string: str = attr.ib(
         default="jensen", on_setattr=attr.setters.frozen, validator=is_default
     )
 
     def prepare_function(
-        grid: TurbineGrid, farm: Farm, flow_field: FlowField
+        deflection_field: np.array, grid: TurbineGrid, farm: Farm, flow_field: FlowField
     ) -> Dict[str, Any]:
         kwargs = dict(
+            deflection_field=deflection_field,
             x=grid.x,
             y=grid.y,
             z=grid.z,
@@ -57,11 +58,12 @@ class JensenVelocityDeficit(BaseModel):
         )
         return kwargs
 
-    # def function(self, i: int, farm: Farm, flow_field: FlowField, deflection) -> None:
     def function(
         self,
-        i: int,
-        deflection_field: np.array,
+        i: int,  # need to flesh this and deflection field out more
+        # enforces the use of the below as keyword arguments and adherence to the
+        # unpacking of the results from prepare_function()
+        *,
         x: np.array,
         y: np.array,
         z: np.array,

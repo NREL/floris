@@ -13,6 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 from typing import Any, Dict, List, Tuple, Union
+from functools import partial
 
 import attr
 import numpy as np
@@ -272,3 +273,9 @@ def iter_validator(
         iterable_validator=attr.validators.instance_of(iter_type),
     )
     return validator
+
+
+# Avoids constant redefinition of the same attr.ib properties for float model attributes
+float_attrib = partial(
+    attr.ib, converter=float, on_setattr=attr.setters.convert, kw_only=True
+)
