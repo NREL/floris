@@ -76,10 +76,6 @@ class Curl(BaseModel):
         on_setattr=attr.setters.convert,
         kw_only=True,
     )
-    # NOTE: I'm not sold on the partial for attr.ib() here because it messes with the
-    # help() and documentation functionality but would like another way to define all
-    # the same inputs without rewriting a bunch of the same few parameters that runs
-    # onto a few lines with code formatting
     initial_deficit: float = float_attrib(default=2.0)
     dissipation: float = float_attrib(default=0.06)
     veer_linear: float = float_attrib(default=0.0)

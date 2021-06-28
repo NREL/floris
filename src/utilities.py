@@ -13,7 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 from typing import Any, Dict, List, Tuple, Union
-from functools import partial
+from functools import partial, update_wrapper
 
 import attr
 import numpy as np
@@ -279,3 +279,4 @@ def iter_validator(
 float_attrib = partial(
     attr.ib, converter=float, on_setattr=attr.setters.convert, kw_only=True
 )
+update_wrapper(float_attrib, attr.ib)
