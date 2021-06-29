@@ -16,9 +16,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).parent
-with open(ROOT.parent / "VERSION") as version_file:
-    VERSION = version_file.read().strip()
-__version__ = VERSION
+with open(ROOT.parent / "floris" / "VERSION") as version_file:
+    __version__ = version_file.read().strip()
 
 cwd = os.getcwd()
 florispath = os.path.dirname(cwd)
@@ -89,6 +88,10 @@ pygments_style = "sphinx"
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+
+# -- Options for HTML output ----------------------------------------------
+
+bibtex_bibfiles = ['source/zrefs.bib']
 
 # -- Options for HTML output ----------------------------------------------
 
