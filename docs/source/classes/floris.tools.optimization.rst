@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+   floris.tools.optimization.other
    floris.tools.optimization.pyoptsparse
    floris.tools.optimization.scipy
 
