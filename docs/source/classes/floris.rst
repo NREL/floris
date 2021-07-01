@@ -14,6 +14,7 @@ Submodules
 
 .. toctree::
 
+   floris.logging_manager
    floris.utilities
 
 Module contents

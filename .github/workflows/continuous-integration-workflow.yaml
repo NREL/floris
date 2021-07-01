@@ -1,6 +1,20 @@
 name: Automated tests & code coverage
 
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+      - '.isort.cfg'
+      - '.pre-commit-config.yaml'
+      - 'LICENSE.txt'
+      - 'README.rst'
+      - 'docs/**'
+      - 'examples/**'
+      - 'pyproject.toml'
+      - 'share/**'
+
+  pull_request:
+    types: [opened, synchronize, edited, reopened] #labeled, assigned]
+    # Pull request event triggers are unrelated to paths
 
 jobs:
   build:
@@ -9,7 +23,7 @@ jobs:
     strategy:
       matrix:
         # 3.5 fails with a bad comparison in TurbineMap unit tests
-        python-version: [3.6, 3.7, 3.8] # 3.5
+        python-version: [3.6, 3.7, 3.8, 3.9] # 3.5
         # windows-latest fails in codecov
         os: [ubuntu-latest, macos-latest]
       fail-fast: False

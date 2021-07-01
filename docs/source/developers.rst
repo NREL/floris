@@ -2,13 +2,20 @@
 
 For Developers
 --------------
-FLORIS is currently maintained at NREL's National Wind Technology Center by
-`Jen King <mailto:jennifer.king@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_,
-`Chris Bay <mailto:chris.bay@nrel.gov>`_, and
-`Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_. However, we are excited
-about community contribution, and this page outlines processes and procedures
-we'd like to follow when contributing to the source code.
+FLORIS is maintained at NREL's National Wind Technology Center.
+We are excited about community contribution, and this page outlines
+processes and procedures we'd like to follow when contributing to the
+source code.
+
+For technical questions regarding FLORIS usage please post your questions to
+`GitHub Discussions <https://github.com/NREL/floris/discussions>`_ on the
+FLORIS repository. We no longer plan to actively answer questions on
+StackOverflow and will use GitHub Discussions as the main forum for FLORIS.
+Alternatively, email the NREL FLORIS team at
+`christopher.bay@nrel.gov <mailto:christopher.bay@nrel.gov>`_,
+`bart.doekemeijer@nrel.gov <mailto:bart.doekemeijer@nrel.gov>`_,
+`rafael.mudafort@nrel.gov <mailto:rafael.mudafort@nrel.gov>`_, or
+`paul.fleming@nrel.gov <mailto:paul.fleming@nrel.gov>`_.
 
 Git and GitHub
 ==============
@@ -49,14 +56,14 @@ may want to sync with NREL/FLORIS. To do this, use the following git commands:
     git fetch --all
 
     # Decide which branch to sync with
-    # NREL/FLORIS. Generally, this will be "master".
-    git checkout master
-    git pull origin master
+    # NREL/FLORIS. Generally, this will be "main".
+    git checkout main
+    git pull origin main
 
     # Update any local working branches with the
     # latest from NREL/FLORIS.
     git checkout feature/working_branch
-    git merge master
+    git merge main
 
 Note that the example above is a general case and may need to be modified
 to fit a specific use case or purpose. If significant development has
@@ -66,24 +73,26 @@ are likely and should be resolved as soon as possible.
 Building Documentation Locally
 ==============================
 This documentation is generated with Sphinx and hosted on readthedocs. However,
-it can be built locally by running this command in the ``floris/docs/``
-directory:
-
-.. important::
-
-    A few additional dependencies required to build the documentation
-    locally are listed at ``floris/docs/requirements.txt``.
+it can be built locally on any computer with Python installed which is especially
+helpful when modifying the documentation. Some additional dependencies
+are required for the documentation. See the commands below to install
+dependencies and build the documentation.
 
 .. code-block:: bash
 
+    # Move into the docs directory
     cd floris/docs
+
+    # Install documentation-specific dependencies
     pip install -r requirements.txt
+
+    # List all available commands
+    make help
+
+    # Build the HTML-based documentation
     make html
 
-This will create a file at ``floris/docs/_build/html/index.html`` which
-can be opened in any web browser.
-
-This will create a file at ``floris/docs/_build/html/index.html`` which
+This will create a file at ``floris/docs/_build/html/index.html`` that
 can be opened in any web browser.
 
 Testing
@@ -96,7 +105,7 @@ tests for a small subset of the `simulation` package are included.
 The full testing suite can by executed by running the command ``pytest`` from
 the highest directory in the repository. A testing-only class is included
 to provide consistent and convenient inputs to modules at
-``floris/tests/sample_inputs.py``.
+``floris/tests/conftest.py``.
 
 Unit Tests
 ~~~~~~~~~~
@@ -109,13 +118,6 @@ directory in the repository.
 Regression Tests
 ~~~~~~~~~~~~~~~~
 
-.. note::
-
-    The regression tests have been disabled. Before reenabling, the baseline
-    tests should be reworked to test against deliberate and meaningful data.
-    The result of the tests should also be tightly integrated into the dev
-    team's workflow.
-
 Regression tests are included in FLORIS through the same
 `pytest <https://docs.pytest.org/en/latest/>`_ framework as the unit tests.
 Functionally, the only difference is that the regression tests take more
@@ -125,13 +127,9 @@ highest directory in the repository.
 
 Continuous Integration
 ~~~~~~~~~~~~~~~~~~~~~~
-Continuous integration is configured with `TravisCI <https://travis-ci.org/NREL/floris>`_
-and executes all of the existing tests for every commit. The configuration file
-is located in the top directory at ``floris/.travis.yml``.
-
-If forked, continuous integration can be included with TravisCI by simply
-creating an account, linking to a GitHub account, and turning on the switch to
-test the FLORIS fork.
+Continuous integration is configured with `GitHub Actions <https://github.com/nrel/floris/actions>`_
+and executes all of the existing tests for every push event. The configuration file
+is located at ``floris/.github/workflows/continuous-integration-workflow.yaml``.
 
 Deploying to pip
 ================
