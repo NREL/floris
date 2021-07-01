@@ -2,13 +2,20 @@
 
 For Developers
 --------------
-FLORIS is currently maintained at NREL's National Wind Technology Center by
-`Jen King <mailto:jennifer.king@nrel.gov>`_,
-`Paul Fleming <mailto:paul.fleming@nrel.gov>`_,
-`Chris Bay <mailto:chris.bay@nrel.gov>`_, and
-`Rafael Mudafort <mailto:rafael.mudafort@nrel.gov>`_. We are excited
-about community contribution, and this page outlines processes and procedures
-we'd like to follow when contributing to the source code.
+FLORIS is maintained at NREL's National Wind Technology Center.
+We are excited about community contribution, and this page outlines
+processes and procedures we'd like to follow when contributing to the
+source code.
+
+For technical questions regarding FLORIS usage please post your questions to
+`GitHub Discussions <https://github.com/NREL/floris/discussions>`_ on the
+FLORIS repository. We no longer plan to actively answer questions on
+StackOverflow and will use GitHub Discussions as the main forum for FLORIS.
+Alternatively, email the NREL FLORIS team at
+`christopher.bay@nrel.gov <mailto:christopher.bay@nrel.gov>`_,
+`bart.doekemeijer@nrel.gov <mailto:bart.doekemeijer@nrel.gov>`_,
+`rafael.mudafort@nrel.gov <mailto:rafael.mudafort@nrel.gov>`_, or
+`paul.fleming@nrel.gov <mailto:paul.fleming@nrel.gov>`_.
 
 Git and GitHub
 ==============
