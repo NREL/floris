@@ -15,11 +15,15 @@
 
 FLORIS Wake Modeling Utility
 ----------------------------
-For technical questions regarding FLORIS usage please first search for or post
-your questions to
-`stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
-the **floris** tag. Alternatively, email the NREL FLORIS team at
-`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`_.
+For technical questions regarding FLORIS usage please post your questions to
+`GitHub Discussions <https://github.com/NREL/floris/discussions>`_ on the
+FLORIS repository. We no longer plan to actively answer questions on
+StackOverflow and will use GitHub Discussions as the main forum for FLORIS.
+Alternatively, email the NREL FLORIS team at
+`christopher.bay@nrel.gov <mailto:christopher.bay@nrel.gov>`_,
+`bart.doekemeijer@nrel.gov <mailto:bart.doekemeijer@nrel.gov>`_,
+`rafael.mudafort@nrel.gov <mailto:rafael.mudafort@nrel.gov>`_, or
+`paul.fleming@nrel.gov <mailto:paul.fleming@nrel.gov>`_.
 
 Background and Objectives
 =========================
@@ -70,7 +74,7 @@ Citation
 If FLORIS played a role in your research, please cite it. This software can be
 cited as:
 
-   FLORIS. Version 2.3.0 (2021). Available at https://github.com/NREL/floris.
+   FLORIS. Version 2.4 (2021). Available at https://github.com/NREL/floris.
 
 For LaTeX users:
 
@@ -78,7 +82,7 @@ For LaTeX users:
 
     @misc{FLORIS_2021,
     author = {NREL},
-    title = {FLORIS. Version 2.3.0},
+    title = {FLORIS. Version 2.4},
     year = {2021},
     publisher = {GitHub},
     journal = {GitHub repository},

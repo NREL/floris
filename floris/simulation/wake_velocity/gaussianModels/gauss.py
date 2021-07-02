@@ -10,6 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+import copy
+
 import numpy as np
 from scipy.special import gamma
 
@@ -96,6 +98,7 @@ class Gauss(GaussianModel):
         self.calculate_VW_velocities = model_dictionary["calculate_VW_velocities"]
         self.use_yaw_added_recovery = model_dictionary["use_yaw_added_recovery"]
         self.eps_gain = model_dictionary["eps_gain"]
+        self.gch_gain = 1.0
 
     def function(
         self,
@@ -143,6 +146,15 @@ class Gauss(GaussianModel):
         """
         # added turbulence model
         TI = turbine.current_turbulence_intensity
+
+        TI_mixing = self.yaw_added_turbulence_mixing(
+            turbine_coord, turbine, flow_field, x_locations, y_locations, z_locations
+        )
+        turbine.current_turbulence_intensity = (
+            turbine.current_turbulence_intensity + self.gch_gain * TI_mixing
+        )
+
+        TI = copy.deepcopy(turbine.current_turbulence_intensity)
 
         # turbine parameters
         D = turbine.rotor_diameter

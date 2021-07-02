@@ -124,7 +124,9 @@ class MultiZone(VelocityDeficit):
 
         # distance from wake centerline
         rY = abs(y_locations - (turbine_coord.x2 + deflection_field))
-        # rZ = abs(z_locations - (turbine.hub_height))
+        rZ = abs(z_locations - (turbine.hub_height))
+        rTotal = np.sqrt(rY ** 2 + rZ ** 2)
+
         dx = x_locations - turbine_coord.x1
 
         # wake zone diameters
@@ -136,7 +138,7 @@ class MultiZone(VelocityDeficit):
         c = np.zeros(x_locations.shape)
 
         # near wake zone
-        mask = rY <= nearwake
+        mask = rTotal <= nearwake
         c += (
             mask
             * (
@@ -155,7 +157,7 @@ class MultiZone(VelocityDeficit):
         #   if that bit in y is 1.
         # The resulting mask is all the points in far wake zone that are not
         # in the near wake zone
-        mask = (rY <= farwake) ^ (rY <= nearwake)
+        mask = (rTotal <= farwake) ^ (rTotal <= nearwake)
         c += (
             mask
             * (
@@ -173,7 +175,7 @@ class MultiZone(VelocityDeficit):
         #   of y is 0, otherwise it's 1.
         # The resulting mask is all the points in mixing zone that are not
         # in the far wake zone and not in  near wake zone
-        mask = (rY <= mixing) ^ ((rY <= farwake) | (rY <= nearwake))
+        mask = (rTotal <= mixing) ^ ((rTotal <= farwake) | (rTotal <= nearwake))
         c += (
             mask
             * (

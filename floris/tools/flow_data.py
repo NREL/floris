@@ -41,11 +41,11 @@ class FlowData:
             u (np.array): x-component of velocity.
             v (np.array): y-component of velocity.
             w (np.array): z-component of velocity.
-            spacing (float, optional): Spatial resolution.
+            spacing (Vec3, optional): Spatial resolution.
                 Defaults to None.
-            dimensions (iterable, optional): Named dimensions
+            dimensions (Vec3, optional): Named dimensions
                 (e.g. x1, x2, x3). Defaults to None.
-            origin (iterable, optional): Coordinates of origin.
+            origin (Vec3, optional): Coordinates of origin.
                 Defaults to None.
         """
 
@@ -56,7 +56,6 @@ class FlowData:
         self.v = v
         self.w = w
 
-        # TODO Make these VEC3?
         self.spacing = spacing
         self.dimensions = dimensions
         self.origin = origin
@@ -80,7 +79,7 @@ class FlowData:
         vtk_file.write("ASCII" + ln)
         vtk_file.write("DATASET STRUCTURED_POINTS" + ln)
         vtk_file.write("DIMENSIONS {}".format(self.dimensions) + ln)
-        vtk_file.write("ORIGIN {}".format(self.origin) + ln)
+        vtk_file.write("ORIGIN {} {} {}".format(self.origin.x1, self.origin.x2, self.origin.x3) + ln)
         vtk_file.write("SPACING {}".format(self.spacing) + ln)
         vtk_file.write("POINT_DATA {}".format(n_points) + ln)
         vtk_file.write("FIELD attributes 1" + ln)
@@ -122,7 +121,7 @@ class FlowData:
         dimensions = Vec3(len(np.unique(x)), len(np.unique(y)), len(np.unique(z)))
 
         # Work out origin
-        origin = (
+        origin = Vec3(
             ff.origin.x1 + np.min(x),
             ff.origin.x2 + np.min(y),
             ff.origin.x3 + np.min(z),
