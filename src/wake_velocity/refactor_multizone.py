@@ -3,7 +3,7 @@ from typing import List
 import attr
 import numpy as np
 
-from src.utilities import Vec3, is_default, iter_validator
+from src.utilities import Vec3, model_attrib, iter_validator
 from src.base_model import BaseModel
 
 
@@ -51,9 +51,7 @@ class MultiZone(BaseModel):
         validator=iter_validator(list, float),
         kw_only=True,
     )
-    model_string: str = attr.ib(
-        default="multizone", on_setattr=attr.setters.frozen, validator=is_default
-    )
+    model_string: str = model_attrib(default="multizone")
 
     def function(
         self,

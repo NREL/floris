@@ -3,7 +3,7 @@ from typing import List, Union
 import attr
 import numpy as np
 
-from src.utilities import Vec3, is_default, convert_to_Vec3
+from src.utilities import Vec3, model_attrib, convert_to_Vec3
 from src.base_model import BaseModel
 
 
@@ -66,9 +66,7 @@ class Curl(BaseModel):
     ti_ai: float = attr.ib(default=0.8, converter=float, kw_only=True)
     ti_downstream: float = attr.ib(default=-0.275, converter=float, kw_only=True)
     requires_resolution: bool = True
-    model_string: str = attr.ib(
-        default="curl", on_setattr=attr.setters.frozen, validator=is_default
-    )
+    model_string: str = model_attrib(default="curl")
 
     def function(
         self,

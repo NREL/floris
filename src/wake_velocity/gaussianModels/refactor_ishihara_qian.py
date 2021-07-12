@@ -3,16 +3,16 @@ from typing import List
 import attr
 import numpy as np
 
-from src.utilities import Vec3, FromDictMixin, tand, is_default
+from src.utilities import Vec3, FromDictMixin, tand, float_attrib, model_attrib
 from src.base_model import BaseModel
 from src.wake_velocity.gaussianModels.refactor_gauss_mixin import GaussMixin
 
 
 @attr.s(auto_attribs=True)
 class NestedParameter(FromDictMixin):  # NEEDS A BETTER NAME
-    const: float = attr.ib(converter=float, kw_only=True)
-    Ct: float = attr.ib(converter=float, kw_only=True)
-    TI: float = attr.ib(converter=float, kw_only=True)
+    const: float = float_attrib()
+    Ct: float = float_attrib()
+    TI: float = float_attrib()
 
 
 @attr.s(auto_attribs=True)
@@ -76,10 +76,8 @@ class IshiharaQian(BaseModel, GaussMixin):
     )
     calculate_VW_velocities: bool = attr.ib(default=False, converter=bool, kw_only=True)
     use_yaw_aded_recovery: bool = attr.ib(default=False, converter=bool, kw_only=True)
-    eps_gain: float = attr.ib(default=0.2, converter=float, kw_only=True)
-    model_string: str = attr.ib(
-        default="ishiharaquian", on_setattr=attr.setters.frozen, validator=is_default
-    )
+    eps_gain: float = float_attrib(default=0.2)
+    model_string: model_attrib(default="ishiharaquian")
 
     def _calculate_model_parameters(
         self, param: NestedParameter, Ct: float, TI: float

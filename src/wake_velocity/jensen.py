@@ -16,7 +16,7 @@ import attr
 import numpy as np
 from src.farm import Farm
 from src.grid import TurbineGrid
-from src.utilities import is_default, float_attrib
+from src.utilities import float_attrib, model_attrib
 from src.base_model import BaseModel
 from src.flow_field import FlowField
 
@@ -40,9 +40,7 @@ class JensenVelocityDeficit(BaseModel):
     """
 
     we: float = float_attrib(default=-0.05)
-    model_string: str = attr.ib(
-        default="jensen", on_setattr=attr.setters.frozen, validator=is_default
-    )
+    model_string: str = model_attrib(default="jensen")
 
     def prepare_function(
         deflection_field: np.array, grid: TurbineGrid, farm: Farm, flow_field: FlowField

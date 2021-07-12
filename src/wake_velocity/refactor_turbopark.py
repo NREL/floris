@@ -1,7 +1,7 @@
 import attr
 import numpy as np
 
-from src.utilities import Vec3, is_default
+from src.utilities import Vec3, float_attrib, model_attrib
 from src.base_model import BaseModel
 
 
@@ -23,12 +23,10 @@ class TurbOPark(BaseModel):
         c2 (:py:obj:`float`): ???
     """
 
-    A: float = attr.ib(default=0.06, converter=float, kw_only=True)
-    c1: float = attr.ib(default=1.5, converter=float, kw_only=True)
-    c2: float = attr.ib(default=0.08, converter=float, kw_only=True)
-    model_string: str = attr.ib(
-        default="turbopark", on_setattr=attr.setters.frozen, validator=is_default
-    )
+    A: float = float_attrib(default=0.06)
+    c1: float = float_attrib(default=1.5)
+    c2: float = float_attrib(default=0.08)
+    model_string: str = model_attrib(default="turbopark")
 
     def function(
         self,

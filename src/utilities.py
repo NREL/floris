@@ -280,3 +280,7 @@ float_attrib = partial(
     attr.ib, converter=float, on_setattr=attr.setters.convert, kw_only=True
 )
 update_wrapper(float_attrib, attr.ib)
+
+
+model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)
+update_wrapper(model_attrib, attr.ib)

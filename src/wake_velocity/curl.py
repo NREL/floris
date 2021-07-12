@@ -19,7 +19,7 @@ from scipy.ndimage.filters import gaussian_filter
 
 from src.farm import Farm
 from src.grid import TurbineGrid
-from src.utilities import Vec3, sind, is_default, float_attrib, convert_to_Vec3
+from src.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
 from src.base_model import BaseModel
 from src.flow_field import FlowField
 
@@ -84,9 +84,7 @@ class Curl(BaseModel):
     ti_ai: float = float_attrib(default=0.8)
     ti_downstream: float = float_attrib(default=-0.275)
     requires_resolution: bool = attr.ib(default=True, converter=bool)
-    model_string: str = attr.ib(
-        default="curl", on_setattr=attr.setters.frozen, validator=is_default
-    )
+    model_string: str = model_attrib(default="curl")
 
     # TODO: Turbine and coordinates still need to be sorted out
     # TODO: we need to differentiate between x_locations and flow_field.x somehow
