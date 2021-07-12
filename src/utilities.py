@@ -275,6 +275,10 @@ def iter_validator(
     return validator
 
 
+def attrs_array_converter(data: list) -> np.ndarray:
+    return np.array(data)
+
+
 # Avoids constant redefinition of the same attr.ib properties for float model attributes
 float_attrib = partial(
     attr.ib, converter=float, on_setattr=attr.setters.convert, kw_only=True
