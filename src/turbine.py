@@ -12,7 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 import attr
 import numpy as np
@@ -201,6 +201,12 @@ class Turbine(BaseModel):
         converter=PowerThrustTable.from_dict, kw_only=True,
     )
 
+    # Initialized in the post_init function
+    fCp_interp: Any = attr.ib(init=False)
+    fCt_interp: Any = attr.ib(init=False)
+    power_interp: Any = attr.ib(init=False)
+    rotor_radius: float = attr.ib(init=False)
+
     # For the following parameters, use default values if not user-specified
     # self.ngrid = int(input_dictionary["ngrid"]) if "ngrid" in input_dictionary else 5
     # self.rloc = float(input_dictionary["rloc"]) if "rloc" in input_dictionary else 0.5
@@ -214,6 +220,8 @@ class Turbine(BaseModel):
     # self.use_turbulence_correction = False
 
     def __attrs_post_init__(self) -> None:
+        self.rotor_radius = self.rotor_diameter / 2.0
+
         # Post-init initialization for the power curve interpolation functions
         wind_speeds = self.power_thrust_table.wind_speed
         self.fCp_interp = interp1d(
@@ -273,17 +281,3 @@ class Turbine(BaseModel):
             if _ct <= 0.0:
                 return 0.0001
             return float(_ct)
-
-    @property
-    def rotor_radius(self) -> float:
-        """
-        Rotor radius of the turbine in meters.
-
-        Returns:
-            float: The rotor radius of the turbine.
-        """
-        return self.rotor_diameter / 2.0
-
-    @rotor_radius.setter
-    def rotor_radius(self, value: float) -> None:
-        self.rotor_diameter = value * 2.0
