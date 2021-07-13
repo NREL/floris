@@ -198,7 +198,7 @@ class Turbine(BaseModel):
     pT: float = float_attrib()
     generator_efficiency: float = float_attrib()
     power_thrust_table: Dict[str, List[float]] = attr.ib(
-        converter=PowerThrustTable.from_dict, kw_only=True
+        converter=PowerThrustTable.from_dict, kw_only=True,
     )
 
     # For the following parameters, use default values if not user-specified
@@ -247,31 +247,31 @@ class Turbine(BaseModel):
         )
 
     def fCp(self, sample_wind_speeds):
-        wind_speed = self.power_thrust_table["wind_speed"]
-        if sample_wind_speeds < min(wind_speed):
+        # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?
+        if sample_wind_speeds < self.power_thrust_table.wind_speed.min():
             return 0.0
         else:
             _cp = self.fCpInterp(sample_wind_speeds)
             if _cp.size > 1:
                 _cp = _cp[0]
             if _cp > 1.0:
-                _cp = 1.0
+                return 1.0
             if _cp < 0.0:
-                _cp = 0.0
+                return 0.0
             return float(_cp)
 
     def fCt(self, at_wind_speed):
-        wind_speed = self.power_thrust_table["wind_speed"]
-        if at_wind_speed < min(wind_speed):
+        # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?
+        if at_wind_speed < self.power_thrust_table.wind_speed.min():
             return 0.99
         else:
             _ct = self.fCtInterp(at_wind_speed)
             if _ct.size > 1:
                 _ct = _ct[0]
             if _ct > 1.0:
-                _ct = 0.9999
+                return 0.9999
             if _ct <= 0.0:
-                _ct = 0.0001
+                return 0.0001
             return float(_ct)
 
     @property
