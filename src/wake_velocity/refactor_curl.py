@@ -3,7 +3,7 @@ from typing import List, Union
 import attr
 import numpy as np
 
-from src.utilities import Vec3, model_attrib, convert_to_Vec3
+from src.utilities import Vec3, float_attrib, model_attrib, convert_to_Vec3
 from src.base_model import BaseModel
 
 
@@ -58,13 +58,13 @@ class Curl(BaseModel):
         on_setattr=attr.setters.validate,
         kw_only=True,
     )
-    initial_deficit: float = attr.ib(default=2.0, converter=float, kw_only=True)
-    dissipation: float = attr.ib(default=0.06, converter=float, kw_only=True)
-    veer_linear: float = attr.ib(default=0.0, converter=float, kw_only=True)
-    ti_initial: float = attr.ib(default=0.1, converter=float, kw_only=True)
-    ti_constant: float = attr.ib(default=0.73, converter=float, kw_only=True)
-    ti_ai: float = attr.ib(default=0.8, converter=float, kw_only=True)
-    ti_downstream: float = attr.ib(default=-0.275, converter=float, kw_only=True)
+    initial_deficit: float = float_attrib(default=2.0)
+    dissipation: float = float_attrib(default=0.06)
+    veer_linear: float = float_attrib(default=0.0)
+    ti_initial: float = float_attrib(default=0.1)
+    ti_constant: float = float_attrib(default=0.73)
+    ti_ai: float = float_attrib(default=0.8)
+    ti_downstream: float = float_attrib(default=-0.275)
     requires_resolution: bool = True
     model_string: str = model_attrib(default="curl")
 

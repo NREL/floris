@@ -205,7 +205,7 @@ class Turbine(BaseModel):
     fCp_interp: Any = attr.ib(init=False)
     fCt_interp: Any = attr.ib(init=False)
     power_interp: Any = attr.ib(init=False)
-    rotor_radius: float = attr.ib(init=False)
+    rotor_radius: float = float_attrib(init=False)
 
     # For the following parameters, use default values if not user-specified
     # self.ngrid = int(input_dictionary["ngrid"]) if "ngrid" in input_dictionary else 5

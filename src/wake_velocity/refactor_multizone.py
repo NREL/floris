@@ -3,7 +3,7 @@ from typing import List
 import attr
 import numpy as np
 
-from src.utilities import Vec3, model_attrib, iter_validator
+from src.utilities import Vec3, float_attrib, model_attrib, iter_validator
 from src.base_model import BaseModel
 
 
@@ -42,9 +42,9 @@ class MultiZone(BaseModel):
         validator=iter_validator(list, float),
         kw_only=True,
     )
-    we: float = attr.ib(default=0.05, converter=float, kw_only=True)
-    aU: float = attr.ib(default=12.0, converter=float, kw_only=True)
-    bU: float = attr.ib(default=1.3, converter=float, kw_only=True)
+    we: float = float_attrib(default=0.05)
+    aU: float = float_attrib(default=12.0)
+    bU: float = float_attrib(default=1.3)
     mU: float = attr.ib(
         default=[0.5, 1.0, 5.5],
         converter=float,
