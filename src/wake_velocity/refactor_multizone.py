@@ -4,11 +4,11 @@ import attr
 import numpy as np
 
 from src.utilities import Vec3, float_attrib, model_attrib, iter_validator
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 
 
 @attr.s(auto_attribs=True)
-class MultiZone(BaseModel):
+class MultiZone(BaseClass):
     """The MultiZone model computes the wake velocity deficit based
     on the original multi-zone FLORIS model. See
     :cite:`mvm-gebraad2014data,mvm-gebraad2016wind` for more details.

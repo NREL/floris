@@ -4,7 +4,7 @@ import attr
 import numpy as np
 
 from src.utilities import Vec3, cosd, sind, tand
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 
 
 try:

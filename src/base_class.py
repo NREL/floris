@@ -1,4 +1,4 @@
-"""Defines the BaseModel parent class for all models to be based upon."""
+"""Defines the BaseClass parent class for all models to be based upon."""
 from abc import abstractmethod, abstractstaticmethod
 from typing import Any, Dict
 
@@ -9,9 +9,9 @@ from src.logging_manager import LoggerBase
 
 
 @attr.s(auto_attribs=True)
-class BaseModel(LoggerBase, FromDictMixin):
+class BaseClass(LoggerBase, FromDictMixin):
     """
-    BaseModel object class. This class does the logging and MixIn class inheritance so
+    BaseClass object class. This class does the logging and MixIn class inheritance so
     that it can't be overlooked in creating new models.
     """
 

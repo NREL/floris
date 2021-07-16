@@ -4,11 +4,11 @@ import attr
 import numpy as np
 
 from src.utilities import Vec3, float_attrib, model_attrib, convert_to_Vec3
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 
 
 @attr.s(auto_attribs=True)
-class Curl(BaseModel):
+class Curl(BaseClass):
     """The Curl model class computes the wake velocity deficit based on the curled
     wake model developed in
     :cite:`cvm-martinez2019aerodynamics`. The curled wake

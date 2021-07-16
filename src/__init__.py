@@ -42,7 +42,7 @@ from .grid import Grid, TurbineGrid, FlowFieldGrid
 from .wake import Wake
 from .floris import Floris
 from .turbine import Turbine
-from .base_model import BaseModel
+from .base_class import BaseClass
 from .flow_field import FlowField
 from .model_generator import model_creator
 

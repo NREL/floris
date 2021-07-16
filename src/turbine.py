@@ -20,7 +20,7 @@ from scipy.interpolate import interp1d
 from numpy.lib.index_tricks import ix_
 
 from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 
 
 def power(
@@ -144,7 +144,7 @@ class PowerThrustTable(FromDictMixin):
 
 
 @attr.s(auto_attribs=True)
-class Turbine(BaseModel):
+class Turbine(BaseClass):
     """
     Turbine is a class containing objects pertaining to the individual
     turbines.

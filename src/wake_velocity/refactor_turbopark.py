@@ -2,11 +2,11 @@ import attr
 import numpy as np
 
 from src.utilities import Vec3, float_attrib, model_attrib
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 
 
 @attr.s(auto_attribs=True)
-class TurbOPark(BaseModel):
+class TurbOPark(BaseClass):
     """An implementation of the TurbOPark model by Nicolai Nygaard
     :cite:`jvm-nygaard2020modelling`.
     Default tuning calibrations taken from same paper.

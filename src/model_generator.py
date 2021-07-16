@@ -1,4 +1,4 @@
-"""Defines the BaseModel parent class for all models to be based upon."""
+"""Defines the BaseClass parent class for all models to be based upon."""
 
 from src.wake_velocity.jensen import JensenVelocityDeficit
 from src.wake_velocity.refactor_curl import Curl

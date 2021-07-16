@@ -20,12 +20,12 @@ from scipy.ndimage.filters import gaussian_filter
 from src.farm import Farm
 from src.grid import TurbineGrid
 from src.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 from src.flow_field import FlowField
 
 
 @attr.s(auto_attribs=True)
-class Curl(BaseModel):
+class Curl(BaseClass):
     """
     The Curl model class computes the wake velocity deficit based on the curled
     wake model developed in

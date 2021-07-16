@@ -17,12 +17,12 @@ import numpy as np
 from src.farm import Farm
 from src.grid import TurbineGrid
 from src.utilities import float_attrib, model_attrib
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 from src.flow_field import FlowField
 
 
 @attr.s(auto_attribs=True)
-class JensenVelocityDeficit(BaseModel):
+class JensenVelocityDeficit(BaseClass):
     """
     The Jensen model computes the wake velocity deficit based on the classic
     Jensen/Park model :cite:`jvm-jensen1983note`.

@@ -4,7 +4,7 @@ import attr
 import numpy as np
 
 from src.utilities import Vec3, FromDictMixin, tand, float_attrib, model_attrib
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 from src.wake_velocity.gaussianModels.refactor_gauss_mixin import GaussMixin
 
 
@@ -16,7 +16,7 @@ class NestedParameter(FromDictMixin):  # NEEDS A BETTER NAME
 
 
 @attr.s(auto_attribs=True)
-class IshiharaQian(BaseModel, GaussMixin):
+class IshiharaQian(BaseClass, GaussMixin):
     """Ishihara is a Gaussian wake velocity model that implements a near-wake correction.
 
     Ishihara is used to compute the wake velocity deficit based on the Gaussian
