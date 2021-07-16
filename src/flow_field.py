@@ -13,9 +13,11 @@
 # See https://floris.readthedocs.io for documentation
 
 
+from typing import List
+
 import numpy as np
 from numpy import newaxis
-from typing import List
+
 from .grid import Grid
 
 
@@ -51,14 +53,23 @@ class FlowField:
         wind_profile_plane = (grid.z / self.reference_wind_height) ** self.wind_shear
         # Add a dimension for each wind speed
         wind_profile_plane = np.reshape(
-            np.array([wind_profile_plane] * self.n_wind_speeds), # broadcast
-            (grid.n_turbines, len(self.wind_speeds), grid.grid_resolution, grid.grid_resolution) # reshape
+            np.array([wind_profile_plane] * self.n_wind_speeds),  # broadcast
+            (
+                grid.n_turbines,
+                len(self.wind_speeds),
+                grid.grid_resolution,
+                grid.grid_resolution,
+            ),  # reshape
         )
 
         # Initialize the grid with the wind profile
         _wind_speeds = np.reshape(
-            np.array([self.wind_speeds] * 25).T, # broadcast
-            (len(self.wind_speeds), grid.grid_resolution, grid.grid_resolution) # reshape
+            np.array([self.wind_speeds] * 25).T,  # broadcast
+            (
+                len(self.wind_speeds),
+                grid.grid_resolution,
+                grid.grid_resolution,
+            ),  # reshape
         )
         self.u_initial = _wind_speeds * wind_profile_plane
 

@@ -10,16 +10,19 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from src.wake_velocity.base_velocity_deficit import VelocityDeficit
+from typing import Any, Dict
+
+import attr
 import numpy as np
 from src.farm import Farm
-from src.flow_field import FlowField
 from src.grid import TurbineGrid
+from src.utilities import float_attrib, model_attrib
+from src.base_model import BaseModel
+from src.flow_field import FlowField
 
-# from .base_velocity_deficit import VelocityDeficit
 
-
-class JensenVelocityDeficit():
+@attr.s(auto_attribs=True)
+class JensenVelocityDeficit(BaseModel):
     """
     The Jensen model computes the wake velocity deficit based on the classic
     Jensen/Park model :cite:`jvm-jensen1983note`.
@@ -36,16 +39,36 @@ class JensenVelocityDeficit():
             :keyprefix: jvm-
     """
 
-    default_parameters = {"we": 0.05}
-    model_string = "jensen"
+    we: float = float_attrib(default=-0.05)
+    model_string: str = model_attrib(default="jensen")
 
-    def __init__(self, parameters: dict, grid: TurbineGrid, farm: Farm, flow_field: FlowField):
-        self.grid = grid
-        self.we = JensenVelocityDeficit.default_parameters["we"]
-        self.b = flow_field.reference_turbine_diameter / 2.0
+    def prepare_function(
+        deflection_field: np.array, grid: TurbineGrid, farm: Farm, flow_field: FlowField
+    ) -> Dict[str, Any]:
+        kwargs = dict(
+            deflection_field=deflection_field,
+            x=grid.x,
+            y=grid.y,
+            z=grid.z,
+            u=flow_field.u,
+            reference_wind_height=flow_field.reference_wind_height,
+            reference_turbine_diameter=flow_field.reference_turbine_diameter,
+        )
+        return kwargs
 
-    # @staticmethod
-    def function(self, i: int, farm: Farm, flow_field: FlowField, deflection) -> None:
+    def function(
+        self,
+        i: int,  # need to flesh this and deflection field out more
+        # enforces the use of the below as keyword arguments and adherence to the
+        # unpacking of the results from prepare_function()
+        *,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        u: np.ndarray,
+        reference_wind_height: float,
+        reference_turbine_diameter: float,
+    ) -> None:
 
         # grid = TurbineGrid(farm.coords, flow_field.reference_turbine_diameter, flow_field.reference_wind_height, 5)
         # flow_field.initialize_velocity_field(grid)
@@ -67,18 +90,26 @@ class JensenVelocityDeficit():
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))
 
         # y = m * x + b
-        boundary_line = self.we * self.grid.x[i] + self.b
-    
-        y_upper = boundary_line + self.grid.y[i] # + deflection_field
-        y_lower = -1 * boundary_line + self.grid.y[i] # + deflection_field
-        z_upper = boundary_line + flow_field.reference_wind_height
-        z_lower = -1 * boundary_line + flow_field.reference_wind_height
+        boundary_line = self.we * x[i] + self.b
 
-        c = (flow_field.reference_turbine_diameter / (2 * self.we * (self.grid.x[i] - self.grid.x[i-1]) + flow_field.reference_turbine_diameter)) ** 2
+        y_upper = boundary_line + y[i]  # + deflection_field
+        y_lower = -1 * boundary_line + y[i]  # + deflection_field
+        z_upper = boundary_line + reference_wind_height
+        z_lower = -1 * boundary_line + reference_wind_height
+
+        c = (
+            reference_turbine_diameter
+            / (2 * self.we * (x[i] - x[i - 1]) + reference_turbine_diameter)
+        ) ** 2
         # c[mesh_x_rotated - x_coord_rotated < 0] = 0
-        c[self.grid.y[i] > y_upper] = 0
-        c[self.grid.y[i] < y_lower] = 0
-        c[self.grid.z[i] > z_upper] = 0
-        c[self.grid.z[i] < z_lower] = 0
+        c[y[i] > y_upper] = 0
+        c[y[i] < y_lower] = 0
+        c[z[i] > z_upper] = 0
+        c[z[i] < z_lower] = 0
 
-        flow_field.u[i] = flow_field.u[i-1] * (1 - 2 * turbine_ai * c)
+        u[i] = u[i - 1] * (1 - 2 * turbine_ai * c)
+
+
+# J = JensenVelocityDeficit()
+# function_kwargs = J.prepare_function(grid, farm, field)
+# J.function(i, df, **function_kwargs)

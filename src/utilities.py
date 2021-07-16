@@ -12,8 +12,12 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from typing import Any, Dict, List, Tuple, Union
+from functools import partial, update_wrapper
+
+import attr
 import numpy as np
-from typing import List
+from attr import validators
 
 
 class Vec3:
@@ -40,7 +44,9 @@ class Vec3:
         # likely negligible.
 
         if len(components) != 3:
-            raise TypeError("Vec3 requires 3 components, {} given.".format(len(components)))
+            raise TypeError(
+                "Vec3 requires 3 components, {} given.".format(len(components))
+            )
 
         self.components = [float(c) for c in components]
 
@@ -72,7 +78,7 @@ class Vec3:
         self.x3prime = self.x3
 
     def __str__(self):
-        return "{:8.3f} {:8.3f} {:8.3f}".format(self.x1, self.x2, self.x3)
+        return f"{self.x1:8.3f} {self.x2:8.3f} {self.x3:8.3f}"
 
     def __add__(self, arg):
         if type(arg) is Vec3:
@@ -129,6 +135,15 @@ class Vec3:
     @x2.setter
     def x2(self, value):
         self.components[2] = float(value)
+
+    @property
+    def elements(self) -> Tuple[float, float, float]:
+        return self.x1, self.x2, self.x3
+
+    @property
+    def prime_elements(self) -> Tuple[float, float, float]:
+        return self.x1prime, self.x2prime, self.x3prime
+
 
 def cosd(angle):
     """
@@ -198,3 +213,78 @@ def wrap_360(x):
     x = np.where(x >= 360.0, x - 360.0, x)
     return x
 
+
+def convert_to_Vec3(x: Union[List[float], Vec3]) -> Vec3:
+    if isinstance(x, Vec3):
+        return x
+    return Vec3(x)
+
+
+@attr.s
+class FromDictMixin:
+    """A Mixin class to allow for kwargs overloading when a data class doesn't
+    have a specific parameter definied. This allows passing of larger dictionaries
+    to a data class without throwing an error.
+    """
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Maps a data dictionary to an `attr`-defined class.
+
+        TODO: Add an error to ensure that either none or all the parameters are passed in
+
+        Args:
+            data : dict
+                The data dictionary to be mapped.
+        Returns:
+            cls
+                The `attr`-defined class.
+        """
+        return cls(
+            **{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data}
+        )
+
+
+def is_default(instance, attribute, value):
+    if attribute.default != value:
+        raise ValueError(f"{attribute.name} should never be set manually!")
+
+
+def iter_validator(
+    iter_type, item_types: Union[Any, Tuple[Any]]
+) -> attr.validators.deep_iterable:
+    """Helper function to generate iterable validators that will reduce the amount of
+    boilerplate code.
+
+    Parameters
+    ----------
+    iter_type : any iterable
+        The type of iterable object that should be validated.
+    item_types : Union[Any, Tuple[Any]]
+        The type or types of acceptable item types.
+
+    Returns
+    -------
+    attr.validators.deep_iterable
+        The iterable and instance validator.
+    """
+    validator = attr.validators.deep_iterable(
+        member_validator=attr.validators.instance_of(item_types),
+        iterable_validator=attr.validators.instance_of(iter_type),
+    )
+    return validator
+
+
+def attrs_array_converter(data: list) -> np.ndarray:
+    return np.array(data)
+
+
+# Avoids constant redefinition of the same attr.ib properties for float model attributes
+float_attrib = partial(
+    attr.ib, converter=float, on_setattr=attr.setters.convert, kw_only=True
+)
+update_wrapper(float_attrib, attr.ib)
+
+
+model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)
+update_wrapper(model_attrib, attr.ib)

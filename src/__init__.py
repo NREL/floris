@@ -29,15 +29,23 @@ package so any additional modules should be included there.
 
 from pathlib import Path
 
-from . import utilities
-from . import logging_manager
-from . import wake_velocity, wake_deflection, wake_turbulence, wake_combination
+from . import (
+    utilities,
+    wake_velocity,
+    logging_manager,
+    wake_deflection,
+    wake_turbulence,
+    wake_combination,
+)
 from .farm import Farm
-# from .wake import Wake
+from .grid import Grid, TurbineGrid, FlowFieldGrid
+from .wake import Wake
 from .floris import Floris
 from .turbine import Turbine
+from .base_model import BaseModel
 from .flow_field import FlowField
-from .grid import Grid, TurbineGrid, FlowFieldGrid
+from .model_generator import model_creator
+
 
 ROOT = Path(__file__).parent
 with open(ROOT.parent / "VERSION") as version_file:
