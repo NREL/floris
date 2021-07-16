@@ -15,10 +15,13 @@
 
 import pytest
 
+from src.utilities import convert_to_Vec3
+
 
 @pytest.fixture
 def vec3_fixture():
     from src.utilities import Vec3
+
     return Vec3([4, 4, 0])
 
 
@@ -40,6 +43,7 @@ def test_instantiation_with_list():
 
     with pytest.raises(Exception):
         vec3 = Vec3([1, 2])
+
 
 def test_rotation_on_origin(vec3_fixture):
     """
@@ -182,3 +186,29 @@ def test_string_formatting():
 
     vec3 = Vec3([1, 2, 3])
     assert str(vec3) == "   1.000    2.000    3.000"
+
+
+def test_elements_property(vec3_fixture):
+    """Ensure that the x1, x2, and x3 elements match the expected values.
+    """
+    x1, x2, x3 = vec3_fixture.elements
+    assert 4.0 == x1
+    assert 4.0 == x2
+    assert 0.0 == x3
+
+
+def test_prime_elements(vec3_fixture):
+    """
+    The class should rotate by pi on the 3rd (z) axis at the origin like so:
+        < 1, 2, 3 > becomes < -1, -2, 3 >
+    """
+    vec3_fixture.rotate_on_x3(180)
+    x1p, x2p, x3p = vec3_fixture.prime_elements
+    assert pytest.approx(-4.0) == x1p
+    assert pytest.approx(-4.0) == x2p
+    assert pytest.approx(0.0) == x3p
+
+
+def test_Vec3_conversion(vec3_fixture):
+    assert vec3_fixture == convert_to_Vec3(vec3_fixture)
+    assert vec3_fixture == convert_to_Vec3([4, 4, 0])

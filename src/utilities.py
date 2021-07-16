@@ -78,7 +78,7 @@ class Vec3:
         self.x3prime = self.x3
 
     def __str__(self):
-        return f"{self.x1:8.3f} {self.xs:8.3f} {self.x3:8.3f}"
+        return f"{self.x1:8.3f} {self.x2:8.3f} {self.x3:8.3f}"
 
     def __add__(self, arg):
         if type(arg) is Vec3:
