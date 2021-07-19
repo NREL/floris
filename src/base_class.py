@@ -3,7 +3,6 @@ from abc import abstractmethod, abstractstaticmethod
 from typing import Any, Dict
 
 import attr
-
 from src.utilities import FromDictMixin
 from src.logging_manager import LoggerBase
 
@@ -56,3 +55,4 @@ class BaseClass(LoggerBase, FromDictMixin):
         """The actual model for the wake deflection, wake velocity, wake combination,
         or wake turbulence model being created.
         """
+        pass
