@@ -150,8 +150,8 @@ class YawOptimization(Optimization):
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
+            turbine_weights=turbine_weights,
             calc_init_power=calc_init_power,
-            turbine_weights=turbine_weights
         )
 
     # Private methods

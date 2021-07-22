@@ -46,6 +46,7 @@ class YawOptimizationWindRose(Optimization):
         include_unc=False,
         unc_pmfs=None,
         unc_options=None,
+        turbine_weights=None,
         verbose=False,
         calc_init_power=True,
     ):
@@ -132,6 +133,12 @@ class YawOptimizationWindRose(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            turbine_weights (iterable, optional): weighing terms that allows the
+                user to emphasize power gains at particular turbines or
+                completely ignore power gains from other turbines. The array
+                of turbine powers from floris is multiplied with this array in
+                the calculation of the objective function. Defaults to an array
+                with all values 1.0 and length equal to the number of turbines.
             verbose (boolean, optional): If true, print iteration progress
             calc_init_power (bool, optional): If True, calculates initial wind
                 farm power for each set of wind conditions upon initialization.
@@ -175,6 +182,7 @@ class YawOptimizationWindRose(Optimization):
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
+            turbine_weights=turbine_weights,
             calc_init_power=calc_init_power,
         )
 
@@ -199,7 +207,7 @@ class YawOptimizationWindRose(Optimization):
                     )
 
                 # initial power
-                self.fi.calculate_wake()
+                self.fi.calculate_wake(yaw_angles=self.x0)
                 power_init = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
@@ -216,7 +224,7 @@ class YawOptimizationWindRose(Optimization):
                         wind_speed=[self.ws[i]],
                         turbulence_intensity=self.ti[i],
                     )
-                self.fi.calculate_wake()
+                self.fi.calculate_wake(yaw_angles=self.x0)
                 power_init = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
@@ -227,28 +235,38 @@ class YawOptimizationWindRose(Optimization):
 
             self.initial_farm_powers.append(np.sum(power_init))
 
-    def _get_power_for_yaw_angle_opt(self, yaw_angles):
+    def _get_power_for_yaw_angle_opt(self, yaw_angles_subset_norm):
         """
         Assign yaw angles to turbines, calculate wake, report power
 
         Args:
-            yaw_angles (np.array): Yaw to apply to each turbine.
+            yaw_angles_subset_norm (np.array): Yaw to apply to subset
+            of controlled turbines, normalized.
 
         Returns:
             power (float): Wind plant power. #TODO negative? in kW?
         """
-        yaw_angles = self._unnorm(
-            np.array(yaw_angles), self.minimum_yaw_angle, self.maximum_yaw_angle
+        yaw_angles_subset = self._unnorm(
+            np.array(yaw_angles_subset_norm),
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle
         )
 
-        power = -1 * self.fi.get_farm_power_for_yaw_angle(
-            yaw_angles,
+        # Create a full yaw angle array
+        yaw_angles = np.array(self.x0_full, dtype=float)
+        yaw_angles[self.turbs_to_opt] = yaw_angles_subset
+
+        self.fi.calculate_wake(yaw_angles=yaw_angles)
+        turbine_powers = self.fi.get_turbine_power(
             include_unc=self.include_unc,
             unc_pmfs=self.unc_pmfs,
             unc_options=self.unc_options,
         )
 
-        return power / self.initial_farm_power
+        return (
+            -1. * np.dot(self.turbine_weights, turbine_powers)
+            / self.initial_farm_power
+        )
 
     def _set_opt_bounds(self, minimum_yaw_angle, maximum_yaw_angle):
         """
@@ -274,16 +292,21 @@ class YawOptimizationWindRose(Optimization):
             options=self.opt_options,
         )
 
-        opt_yaw_angles = self.residual_plant.x
         self.fi.reinitialize_flow_field(
             wind_speed=wind_map.input_speed,
             wind_direction=wind_map.input_direction,
             turbulence_intensity=wind_map.input_ti,
         )
 
-        return self._unnorm(
-            opt_yaw_angles, self.minimum_yaw_angle, self.maximum_yaw_angle
+        opt_yaw_angles_subset = self._unnorm(
+            self.residual_plant.x,
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle
         )
+        opt_yaw_angles = np.array(self.x0_full, dtype=float)
+        opt_yaw_angles[self.turbs_to_opt] = opt_yaw_angles_subset
+
+        return opt_yaw_angles
 
     # Public methods
 
@@ -303,6 +326,7 @@ class YawOptimizationWindRose(Optimization):
         include_unc=None,
         unc_pmfs=None,
         unc_options=None,
+        turbine_weights=None,
         calc_init_power=True,
     ):
         """
@@ -382,6 +406,12 @@ class YawOptimizationWindRose(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            turbine_weights (iterable, optional): weighing terms that allows the
+                user to emphasize power gains at particular turbines or
+                completely ignore power gains from other turbines. The array
+                of turbine powers from floris is multiplied with this array in
+                the calculation of the objective function. Defaults to an array
+                with all values 1.0 and length equal to the number of turbines.
             calc_init_power (bool, optional): If True, calculates initial wind
                 farm power for each set of wind conditions. Defaults to True.
         """
@@ -411,15 +441,22 @@ class YawOptimizationWindRose(Optimization):
                 turbine.yaw_angle
                 for turbine in self.fi.floris.farm.turbine_map.turbines
             ]
+        if bnds is not None:
+            self.bnds = bnds
+            self.turbs_to_opt, _ = np.where(np.diff(bnds) > 0.001)
+            self.minimum_yaw_angle = np.min([bnds[i][0] for i in range(self.nturbs)])
+            self.maximum_yaw_angle = np.max([bnds[i][1] for i in range(self.nturbs)])
+
+            # Bound initial condition/baseline yaw angles within bounds
+            self.x0 = [np.max([x, bnds[i][0]]) for i, x in enumerate(self.x0)]
+            self.x0 = [np.min([x, bnds[i][1]]) for i, x in enumerate(self.x0)]
+        else:
+            self.turbs_to_opt = np.array(range(self.nturbs), dtype=int)
+            self._set_opt_bounds(self.minimum_yaw_angle, self.maximum_yaw_angle)
+
         self.x0_norm = self._norm(
             np.array(self.x0), self.minimum_yaw_angle, self.maximum_yaw_angle
         )
-        if bnds is not None:
-            self.bnds = bnds
-            self.minimum_yaw_angle = np.min([bnds[i][0] for i in range(self.nturbs)])
-            self.maximum_yaw_angle = np.max([bnds[i][1] for i in range(self.nturbs)])
-        else:
-            self._set_opt_bounds(self.minimum_yaw_angle, self.maximum_yaw_angle)
         self.bnds_norm = [
             (
                 self._norm(
@@ -499,8 +536,21 @@ class YawOptimizationWindRose(Optimization):
                 "yaw_unc_pmf": yaw_unc_pmf,
             }
 
+        if turbine_weights is None:
+            self.turbine_weights = np.ones(self.nturbs)
+        else:
+            self.turbine_weights = np.array(turbine_weights, dtype=float)
+
         if calc_init_power:
             self._get_initial_farm_power()
+
+        self.x0_full = self.x0
+        if bnds is not None:
+            # Reduce variables to subset
+            self.x0 = [self.x0[ti] for ti in self.turbs_to_opt]
+            self.bnds = [self.bnds[ti] for ti in self.turbs_to_opt]
+            self.x0_norm = [self.x0_norm[ti] for ti in self.turbs_to_opt]
+            self.bnds_norm = [self.bnds_norm[ti] for ti in self.turbs_to_opt]
 
     def calc_baseline_power(self):
         """
@@ -584,7 +634,7 @@ class YawOptimizationWindRose(Optimization):
                     )
 
                 # calculate baseline power
-                self.fi.calculate_wake(yaw_angles=0.0)
+                self.fi.calculate_wake(yaw_angles=self.x0_full, no_wake=False)
                 power_base = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
@@ -592,7 +642,7 @@ class YawOptimizationWindRose(Optimization):
                 )
 
                 # calculate power for no wake case
-                self.fi.calculate_wake(no_wake=True)
+                self.fi.calculate_wake(yaw_angles=self.x0_full, no_wake=True)
                 power_no_wake = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
@@ -750,7 +800,7 @@ class YawOptimizationWindRose(Optimization):
                         wind_speed=[self.ws[i]],
                         turbulence_intensity=self.ti[i],
                     )
-                self.fi.calculate_wake(yaw_angles=0.0)
+                self.fi.calculate_wake(yaw_angles=self.x0_full)
                 opt_yaw_angles = self.nturbs * [0.0]
                 power_opt = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
@@ -762,7 +812,7 @@ class YawOptimizationWindRose(Optimization):
                     "No change in controls suggested for this inflow \
                         condition..."
                 )
-                opt_yaw_angles = self.nturbs * [0.0]
+                opt_yaw_angles = self.x0_full
                 power_opt = self.nturbs * [0.0]
 
             # add variables to dataframe
