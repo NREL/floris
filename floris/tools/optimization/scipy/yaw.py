@@ -15,6 +15,7 @@
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
+
 from floris.tools.optimization.scipy.derive_downstream_turbines import derive_downstream_turbines
 from .optimization import Optimization
 
