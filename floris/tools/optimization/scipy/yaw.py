@@ -461,13 +461,12 @@ class YawOptimization(Optimization):
                 unc_options=unc_options,
             )
 
+        # Reduce variables to subset
         self.x0_full = self.x0
-        if bnds is not None:
-            # Reduce variables to subset
-            self.x0 = [self.x0[ti] for ti in self.turbs_to_opt]
-            self.bnds = [self.bnds[ti] for ti in self.turbs_to_opt]
-            self.x0_norm = [self.x0_norm[ti] for ti in self.turbs_to_opt]
-            self.bnds_norm = [self.bnds_norm[ti] for ti in self.turbs_to_opt]
+        self.x0 = [self.x0[ti] for ti in self.turbs_to_opt]
+        self.bnds = [self.bnds[ti] for ti in self.turbs_to_opt]
+        self.x0_norm = [self.x0_norm[ti] for ti in self.turbs_to_opt]
+        self.bnds_norm = [self.bnds_norm[ti] for ti in self.turbs_to_opt]
 
     # Properties
 

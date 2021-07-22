@@ -560,13 +560,12 @@ class YawOptimizationWindRose(Optimization):
         if calc_init_power:
             self._get_initial_farm_power()
 
+        # Reduce variables to subset
         self.x0_full = self.x0
-        if bnds is not None:
-            # Reduce variables to subset
-            self.x0 = [self.x0[ti] for ti in self.turbs_to_opt]
-            self.bnds = [self.bnds[ti] for ti in self.turbs_to_opt]
-            self.x0_norm = [self.x0_norm[ti] for ti in self.turbs_to_opt]
-            self.bnds_norm = [self.bnds_norm[ti] for ti in self.turbs_to_opt]
+        self.x0 = [self.x0[ti] for ti in self.turbs_to_opt]
+        self.bnds = [self.bnds[ti] for ti in self.turbs_to_opt]
+        self.x0_norm = [self.x0_norm[ti] for ti in self.turbs_to_opt]
+        self.bnds_norm = [self.bnds_norm[ti] for ti in self.turbs_to_opt]
 
     def calc_baseline_power(self):
         """
