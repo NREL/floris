@@ -167,7 +167,7 @@ class YawOptimization(Optimization):
             self.maximum_yaw_angle
         )
         # Create a full yaw angle array
-        yaw_angles = np.array(self.x0_full, dtype=float)
+        yaw_angles = np.array(self.x0, dtype=float)
         yaw_angles[self.turbs_to_opt] = yaw_angles_subset
 
         self.fi.calculate_wake(yaw_angles=yaw_angles)
@@ -190,20 +190,22 @@ class YawOptimization(Optimization):
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
         """
+        opt_yaw_angles = np.array(self.x0, dtype=float)
+        self._reduce_control_variables()
 
-        self.residual_plant = minimize(
-            self._yaw_power_opt,
-            self.x0_norm,
-            method=self.opt_method,
-            bounds=self.bnds_norm,
-            options=self.opt_options,
-        )
+        if len(self.turbs_to_opt) > 0:
+            self.residual_plant = minimize(
+                self._yaw_power_opt,
+                self.x0_norm,
+                method=self.opt_method,
+                bounds=self.bnds_norm,
+                options=self.opt_options,
+            )
 
-        opt_yaw_angles_subset = self._unnorm(
-            self.residual_plant.x, self.minimum_yaw_angle, self.maximum_yaw_angle
-        )
-        opt_yaw_angles = np.array(self.x0_full, dtype=float)
-        opt_yaw_angles[self.turbs_to_opt] = opt_yaw_angles_subset
+            opt_yaw_angles_subset = self._unnorm(
+                self.residual_plant.x, self.minimum_yaw_angle, self.maximum_yaw_angle
+            )
+            opt_yaw_angles[self.turbs_to_opt] = opt_yaw_angles_subset
 
         return opt_yaw_angles
 
@@ -224,7 +226,7 @@ class YawOptimization(Optimization):
         if verbose:
             print("=====================================================")
             print("Optimizing wake redirection control...")
-            print("Number of parameters to optimize = ", len(self.x0))
+            print("Number of parameters to optimize = ", len(self.turbs_to_opt))
             print("=====================================================")
 
         opt_yaw_angles = self._optimize()
@@ -236,6 +238,56 @@ class YawOptimization(Optimization):
             )
 
         return opt_yaw_angles
+
+    def _reduce_control_variables(self):
+        """This function reduces the control problem by eliminating turbines
+        of which the yaw angles need not be optimized, either because of a
+        user-specified set of bounds (where bounds[i][0] == bounds[i][1]),
+        or alternatively turbines that are far downstream in the wind farm
+        and of which the wake does not impinge other turbines, if the
+        boolean exclude_downstream_turbines == True.
+        Secondly, the normalized initial conditions and bounds are calculated
+        for the subset of turbines, to be then used in the optimization
+        algorithm.
+        """
+        bnds = self.bnds
+        if self.bnds is not None:
+            self.turbs_to_opt = np.where(np.diff(self.bnds) > 0.001)[0]
+        else:
+            self.turbs_to_opt = np.array(range(self.nturbs), dtype=int)
+
+        if self.exclude_downstream_turbines:
+            downstream_turbines = derive_downstream_turbines(
+                fi=self.fi,
+                wind_direction=self.fi.floris.farm.wind_direction[0]
+            )
+            for i in downstream_turbines:
+                if i in self.turbs_to_opt:
+                    if self.bnds is None:
+                        bnds[i] = [0., 0.]
+                    else:
+                        bnds[i][0] = np.max([self.bnds[i][0], 0.])
+                        bnds[i][1] = np.min([self.bnds[i][1], 0.])
+            self.turbs_to_opt = (
+                [i for i in self.turbs_to_opt if i not in downstream_turbines]
+            )
+
+        # Derive normalized initial condition and bounds
+        x0_subset = [self.x0[i] for i in self.turbs_to_opt]
+        self.x0_norm = self._norm(
+            np.array(x0_subset), self.minimum_yaw_angle, self.maximum_yaw_angle
+        )
+        self.bnds_norm = [
+            (
+                self._norm(
+                    bnds[i][0], self.minimum_yaw_angle, self.maximum_yaw_angle
+                ),
+                self._norm(
+                    bnds[i][1], self.minimum_yaw_angle, self.maximum_yaw_angle
+                ),
+            )
+            for i in self.turbs_to_opt
+        ]
 
     def reinitialize_opt(
         self,
@@ -337,9 +389,9 @@ class YawOptimization(Optimization):
                 turbine.yaw_angle
                 for turbine in self.fi.floris.farm.turbine_map.turbines
             ]
+
+        self.bnds = bnds
         if bnds is not None:
-            self.bnds = bnds
-            self.turbs_to_opt, _ = np.where(np.diff(bnds) > 0.001)
             self.minimum_yaw_angle = np.min([bnds[i][0] for i in range(self.nturbs)])
             self.maximum_yaw_angle = np.max([bnds[i][1] for i in range(self.nturbs)])
 
@@ -347,35 +399,8 @@ class YawOptimization(Optimization):
             self.x0 = [np.max([x, bnds[i][0]]) for i, x in enumerate(self.x0)]
             self.x0 = [np.min([x, bnds[i][1]]) for i, x in enumerate(self.x0)]
         else:
-            self.turbs_to_opt = np.array(range(self.nturbs), dtype=int)
             self._set_opt_bounds(self.minimum_yaw_angle, self.maximum_yaw_angle)
 
-        if exclude_downstream_turbines:
-            downstream_turbines = derive_downstream_turbines(
-                fi=self.fi,
-                wind_direction=self.fi.floris.farm.wind_direction[0]
-            )
-            for i in downstream_turbines:
-                if i in self.turbs_to_opt:
-                    self.bnds[i] = [0., 0.]
-            self.turbs_to_opt = (
-                [i for i in self.turbs_to_opt if i not in downstream_turbines]
-            )
-
-        self.x0_norm = self._norm(
-            np.array(self.x0), self.minimum_yaw_angle, self.maximum_yaw_angle
-        )
-        self.bnds_norm = [
-            (
-                self._norm(
-                    self.bnds[i][0], self.minimum_yaw_angle, self.maximum_yaw_angle
-                ),
-                self._norm(
-                    self.bnds[i][1], self.minimum_yaw_angle, self.maximum_yaw_angle
-                ),
-            )
-            for i in range(self.nturbs)
-        ]
         if opt_method is not None:
             self.opt_method = opt_method
         if opt_options is not None:
@@ -461,12 +486,9 @@ class YawOptimization(Optimization):
                 unc_options=unc_options,
             )
 
-        # Reduce variables to subset
-        self.x0_full = self.x0
-        self.x0 = [self.x0[ti] for ti in self.turbs_to_opt]
-        self.bnds = [self.bnds[ti] for ti in self.turbs_to_opt]
-        self.x0_norm = [self.x0_norm[ti] for ti in self.turbs_to_opt]
-        self.bnds_norm = [self.bnds_norm[ti] for ti in self.turbs_to_opt]
+        self.exclude_downstream_turbines = exclude_downstream_turbines
+        self._reduce_control_variables()
+
 
     # Properties
 

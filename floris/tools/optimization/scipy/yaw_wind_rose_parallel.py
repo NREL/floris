@@ -355,8 +355,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 self.fi.reinitialize_flow_field(
                     wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
                 )
-            self.fi.calculate_wake(yaw_angles=self.x0_full)
-            opt_yaw_angles = self.x0_full
+            self.fi.calculate_wake(yaw_angles=self.x0)
+            opt_yaw_angles = self.x0
             power_opt = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
@@ -367,7 +367,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 "No change in controls suggested for this inflow \
                     condition..."
             )
-            opt_yaw_angles = self.x0_full
+            opt_yaw_angles = self.x0
             power_opt = self.nturbs * [0.0]
 
         # add variables to dataframe
