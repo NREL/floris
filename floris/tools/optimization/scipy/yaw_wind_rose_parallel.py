@@ -51,6 +51,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
         include_unc=False,
         unc_pmfs=None,
         unc_options=None,
+        turbine_weights=None,
+        exclude_downstream_turbines=False,
     ):
         """
         Instantiate YawOptimizationWindRoseParallel object with a
@@ -152,7 +154,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
+            turbine_weights=turbine_weights,
             calc_init_power=False,
+            exclude_downstream_turbines=exclude_downstream_turbines,
         )
 
     # Private methods
@@ -219,7 +223,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                     wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
                 )
             # calculate baseline power
-            self.fi.calculate_wake(yaw_angles=0.0)
+            self.fi.calculate_wake(yaw_angles=self.x0)
             power_base = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
@@ -227,7 +231,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
             )
 
             # calculate power for no wake case
-            self.fi.calculate_wake(no_wake=True)
+            self.fi.calculate_wake(yaw_angles=self.x0, no_wake=True)
             power_no_wake = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
@@ -351,8 +355,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 self.fi.reinitialize_flow_field(
                     wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
                 )
-            self.fi.calculate_wake(yaw_angles=0.0)
-            opt_yaw_angles = self.nturbs * [0.0]
+            self.fi.calculate_wake(yaw_angles=self.x0_full)
+            opt_yaw_angles = self.x0_full
             power_opt = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
@@ -363,7 +367,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 "No change in controls suggested for this inflow \
                     condition..."
             )
-            opt_yaw_angles = self.nturbs * [0.0]
+            opt_yaw_angles = self.x0_full
             power_opt = self.nturbs * [0.0]
 
         # add variables to dataframe
