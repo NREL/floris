@@ -15,7 +15,7 @@
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
-
+from floris.tools.optimization.scipy.derive_downstream_turbines import derive_downstream_turbines
 from .optimization import Optimization
 
 
@@ -40,6 +40,7 @@ class YawOptimization(Optimization):
         unc_options=None,
         turbine_weights=None,
         calc_init_power=True,
+        exclude_downstream_turbines=False
     ):
         """
         Instantiate YawOptimization object with a FlorisInterface object
@@ -152,6 +153,7 @@ class YawOptimization(Optimization):
             unc_options=unc_options,
             turbine_weights=turbine_weights,
             calc_init_power=calc_init_power,
+            exclude_downstream_turbines=exclude_downstream_turbines,
         )
 
     # Private methods
@@ -247,6 +249,7 @@ class YawOptimization(Optimization):
         unc_options=None,
         turbine_weights=None,
         calc_init_power=True,
+        exclude_downstream_turbines=False,
     ):
         """
         This method reinitializes any optimization parameters that are
@@ -345,6 +348,18 @@ class YawOptimization(Optimization):
         else:
             self.turbs_to_opt = np.array(range(self.nturbs), dtype=int)
             self._set_opt_bounds(self.minimum_yaw_angle, self.maximum_yaw_angle)
+
+        if exclude_downstream_turbines:
+            downstream_turbines = derive_downstream_turbines(
+                fi=self.fi,
+                wind_direction=self.fi.floris.farm.wind_direction[0]
+            )
+            for i in downstream_turbines:
+                if i in self.turbs_to_opt:
+                    self.bnds[i] = [0., 0.]
+            self.turbs_to_opt = (
+                [i for i in self.turbs_to_opt if i not in downstream_turbines]
+            )
 
         self.x0_norm = self._norm(
             np.array(self.x0), self.minimum_yaw_angle, self.maximum_yaw_angle
