@@ -38,6 +38,7 @@ class YawOptimization(Optimization):
         include_unc=False,
         unc_pmfs=None,
         unc_options=None,
+        turbine_weights=None,
         calc_init_power=True,
     ):
         """
@@ -109,6 +110,12 @@ class YawOptimization(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            turbine_weights (iterable, optional): weighing terms that allows the
+                user to emphasize power gains at particular turbines or
+                completely ignore power gains from other turbines. The array
+                of turbine powers from floris is multiplied with this array in
+                the calculation of the objective function. Defaults to an array
+                with all values 1.0 and length equal to the number of turbines.
             calc_init_power (bool, optional): If True, calculates initial wind
                 farm power for each set of wind conditions. Defaults to True.
         """
@@ -144,6 +151,7 @@ class YawOptimization(Optimization):
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
             calc_init_power=calc_init_power,
+            turbine_weights=turbine_weights
         )
 
     # Private methods
@@ -158,14 +166,16 @@ class YawOptimization(Optimization):
         # Create a full yaw angle array
         yaw_angles = np.array(self.x0_full, dtype=float)
         yaw_angles[self.turbs_to_opt] = yaw_angles_subset
+
+        self.fi.calculate_wake(yaw_angles=yaw_angles)
+        turbine_powers = self.fi.get_turbine_power(
+            include_unc=self.include_unc,
+            unc_pmfs=self.unc_pmfs,
+            unc_options=self.unc_options,
+        )
+
         return (
-            -1
-            * self.fi.get_farm_power_for_yaw_angle(
-                yaw_angles,
-                include_unc=self.include_unc,
-                unc_pmfs=self.unc_pmfs,
-                unc_options=self.unc_options,
-            )
+            -1. * np.dot(self.turbine_weights, turbine_powers)
             / self.initial_farm_power
         )
 
@@ -235,6 +245,7 @@ class YawOptimization(Optimization):
         include_unc=None,
         unc_pmfs=None,
         unc_options=None,
+        turbine_weights=None,
         calc_init_power=True,
     ):
         """
@@ -302,6 +313,12 @@ class YawOptimization(Optimization):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            turbine_weights (iterable, optional): weighing terms that allows the
+                user to emphasize power gains at particular turbines or
+                completely ignore power gains from other turbines. The array
+                of turbine powers from floris is multiplied with this array in
+                the calculation of the objective function. Defaults to an array
+                with all values 1.0 and length equal to the number of turbines.
             calc_init_power (bool, optional): If True, calculates initial wind
                 farm power for each set of wind conditions. Defaults to True.
         """
@@ -414,6 +431,11 @@ class YawOptimization(Optimization):
                 "yaw_unc": yaw_unc,
                 "yaw_unc_pmf": yaw_unc_pmf,
             }
+
+        if turbine_weights is None:
+            self.turbine_weights = np.ones(self.nturbs)
+        else:
+            self.turbine_weights = np.array(turbine_weights, dtype=float)
 
         if calc_init_power:
             self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
