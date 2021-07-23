@@ -96,7 +96,10 @@ def Ct(
 
 
 def axial_induction(
-    Ct: Union[float, np.ndarray], yaw_angle: Union[float, np.ndarray]
+    # fmt: off
+    Ct: Union[float, np.ndarray],
+    yaw_angle: Union[float, np.ndarray]
+    # fmt: on
 ) -> Union[float, np.ndarray]:
     """
     Axial induction factor of the turbine incorporating
@@ -105,7 +108,9 @@ def axial_induction(
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - Ct * cosd(yaw_angle)))
 
 
-def average_velocity(velocities: np.ndarray) -> float:
+def average_velocity(
+    velocities: np.ndarray, ix_filter: Union[List[Union[int, bool]], np.ndarray] = None
+) -> float:
     """
     This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
@@ -123,8 +128,18 @@ def average_velocity(velocities: np.ndarray) -> float:
     # Remove all invalid numbers from interpolation
     # data = np.array(self.velocities)[~np.isnan(self.velocities)]
 
-    # axis=0 supports multi-turbine input if each turbine is a row
-    return np.cbrt(np.mean(velocities ** 3, axis=0))
+    if isinstance(ix_filter, list):
+        ix_filter = np.array(ix_filter)
+    if ix_filter is None:
+        ix_filter = np.ones(velocities.shape[0], dtype=bool)
+
+    if velocities.ndim == 3:
+        velocities = velocities[ix_filter, :, :]
+    else:
+        velocities[ix_filter, :]
+
+    axis = (1, 2) if velocities.ndim == 3 else (0, 1)
+    return np.cbrt(np.mean(velocities ** 3, axis=axis))
 
 
 @attr.s(frozen=True, auto_attribs=True)
@@ -202,9 +217,9 @@ class Turbine(BaseClass):
     )
 
     # Initialized in the post_init function
-    fCp_interp: Any = attr.ib(init=False)
-    fCt_interp: Any = attr.ib(init=False)
-    power_interp: Any = attr.ib(init=False)
+    fCp_interp: interp1d = attr.ib(init=False)
+    fCt_interp: interp1d = attr.ib(init=False)
+    power_interp: interp1d = attr.ib(init=False)
     rotor_radius: float = float_attrib(init=False)
 
     # For the following parameters, use default values if not user-specified
@@ -259,7 +274,7 @@ class Turbine(BaseClass):
         if sample_wind_speeds < self.power_thrust_table.wind_speed.min():
             return 0.0
         else:
-            _cp = self.fCpInterp(sample_wind_speeds)
+            _cp = self.fCp_interp(sample_wind_speeds)
             if _cp.size > 1:
                 _cp = _cp[0]
             if _cp > 1.0:
@@ -273,7 +288,7 @@ class Turbine(BaseClass):
         if at_wind_speed < self.power_thrust_table.wind_speed.min():
             return 0.99
         else:
-            _ct = self.fCtInterp(at_wind_speed)
+            _ct = self.fCt_interp(at_wind_speed)
             if _ct.size > 1:
                 _ct = _ct[0]
             if _ct > 1.0:
