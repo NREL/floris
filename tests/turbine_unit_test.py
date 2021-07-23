@@ -25,6 +25,7 @@ from src.turbine import (
     Turbine,
     PowerThrustTable,
     power,
+    _filter_convert,
     axial_induction,
     average_velocity,
 )
@@ -101,6 +102,35 @@ def test_turbine_init():
 
 #     # Test the getter-method again
 #     assert turbine_fixture.rotor_radius == 200.0
+
+
+def test_filter_convert():
+    # Test None is returned
+    ix_filter = None
+    sample_arg = 1
+    assert _filter_convert(ix_filter, sample_arg) is None
+
+    # Test a boolean truth array is returned
+    N = 10
+    ix_filter = None
+    sample_arg = np.arange(N)
+    ix_filter = _filter_convert(ix_filter, sample_arg)
+    assert ix_filter.sum() == N
+    assert ix_filter.shape == (N,)
+
+    # Test that a numpy array is returned
+    ix_filter = [1, 2]
+    sample_arg = np.stack(np.arange(4).reshape(-1, 1, 1) * np.ones((3, 3)))
+    ix_filter = _filter_convert(ix_filter, sample_arg)
+    np.testing.assert_array_equal(ix_filter, np.array([1, 2]))
+
+    # Test that a 1-D boolean truth array is returned
+    N = 4
+    ix_filter = None
+    sample_arg = np.stack(np.arange(N).reshape(-1, 1, 1) * np.ones((3, 3)))
+    ix_filter = _filter_convert(ix_filter, sample_arg)
+    assert ix_filter.sum() == N
+    assert ix_filter.shape == (N,)
 
 
 def test_average_velocity():
