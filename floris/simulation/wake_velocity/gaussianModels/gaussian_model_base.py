@@ -406,7 +406,7 @@ class GaussianModel(VelocityDeficit):
         if type(value) is not bool:
             err_msg = (
                 "Value of calculate_VW_velocities must be type "
-                + "float; {} given.".format(type(value))
+                + "bool; {} given.".format(type(value))
             )
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
