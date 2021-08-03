@@ -546,7 +546,7 @@ class Curl(VelocityDeficit):
 
     @initial_deficit.setter
     def initial_deficit(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for " + "initial_deficit: {}, expected float."
             ).format(value)
@@ -582,7 +582,7 @@ class Curl(VelocityDeficit):
 
     @dissipation.setter
     def dissipation(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for " + "dissipation: {}, expected float."
             ).format(value)
@@ -619,7 +619,7 @@ class Curl(VelocityDeficit):
 
     @veer_linear.setter
     def veer_linear(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for " + "veer_linear: {}, expected float."
             ).format(value)
