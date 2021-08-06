@@ -17,21 +17,29 @@ import pytest
 
 
 def turbines_to_array(turbine_list: list):
-    return [[t.Ct, t.power, t.axial_induction, t.average_velocity] for t in turbine_list]
+    return [
+        [t.Ct, t.power, t.axial_induction, t.average_velocity] for t in turbine_list
+    ]
+
 
 def assert_results(test: list, baseline: list):
     if len(test) != len(baseline):
-        raise ValueError("assert_results: test and baseline results have mismatched lengths.")
+        raise ValueError(
+            "assert_results: test and baseline results have mismatched lengths."
+        )
 
     for i in range(len(test)):
-        for j, (t,b) in enumerate(zip(test[i], baseline[i])):
+        for j, (t, b) in enumerate(zip(test[i], baseline[i])):
             # print(j, t, b)
             assert t == pytest.approx(b)
+
 
 def print_test_values(turbine_list: list):
     for t in turbine_list:
         print(
-            "({:.7f}, {:.7f}, {:.7f}, {:.7f}),".format(t.Ct, t.power, t.axial_induction, t.average_velocity)
+            "({:.7f}, {:.7f}, {:.7f}, {:.7f}),".format(
+                t.Ct, t.power, t.axial_induction, t.average_velocity
+            )
         )
 
 
@@ -49,7 +57,6 @@ class SampleInputs:
         self.turbine = {
             "rotor_diameter": 126.0,
             "hub_height": 90.0,
-            "blade_count": 3,
             "pP": 1.88,
             "pT": 1.88,
             "generator_efficiency": 1.0,
@@ -145,13 +152,10 @@ class SampleInputs:
                     30.0,
                 ],
             },
-            "yaw_angle": 0.0,
-            "tilt_angle": 0.0,
-            "TSR": 8.0,
         }
 
         self.farm = {
-            "wind_speeds": [8.0], #, 9.0, 10.0],
+            "wind_speeds": [8.0],  # , 9.0, 10.0],
             "wind_directions": [270.0],
             "turbulence_intensity": [0.1],
             "wind_shear": 0.12,

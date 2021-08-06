@@ -17,7 +17,7 @@ from .wake_velocity.curl import Curl as CurlDeficit
 from .wake_combination.fls import FLS
 from .wake_combination.max import MAX
 from .wake_deflection.curl import Curl as CurlDeflection
-from .wake_velocity.jensen import Jensen
+from .wake_velocity.jensen import JensenVelocityDeficit
 from .wake_deflection.gauss import Gauss as GaussDeflection
 from .wake_combination.sosfs import SOSFS
 from .wake_turbulence.direct import Direct as DirectTurbulence
@@ -74,7 +74,7 @@ class Wake:
         # wake_comb_parameters = parameters["wake_combination_parameters"]
 
         self._velocity_models = {
-            "jensen": Jensen,
+            "jensen": JensenVelocityDeficit,
             "turbopark": TurbOPark,
             "multizone": MultiZone,
             "gauss": GaussDeficit,

@@ -18,9 +18,34 @@ import attr
 import numpy as np
 from scipy.interpolate import interp1d
 from numpy.lib.index_tricks import ix_
+from numpy.lib.function_base import iterable
 
 from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
 from src.base_class import BaseClass
+
+
+def _filter_convert(
+    ix_filter: Union[List[Union[int, bool]], np.ndarray], sample_arg: np.ndarray
+) -> Union[np.ndarray, None]:
+    """Converts the ix_filter to a standard format of `np.ndarray`s for filtering
+    certain arguments.
+
+    Args:
+        ix_filter (Union[List[Union[int, bool]], np.ndarray]): The indices, or truth
+            array-like object to use for filtering.
+        sample_arg (np.ndarray): Any argument that will be filtered, to be used for
+            creating the shape.
+
+    Returns:
+        Union[np.ndarray, None]: Returns an array of a truth or index list if a list is
+            passed, a truth array if ix_filter is None, or None if ix_filter is None
+            and the `sample_arg` is a single value.
+    """
+    if isinstance(ix_filter, list):
+        return np.array(ix_filter)
+    if ix_filter is None and isinstance(sample_arg, np.ndarray):
+        return np.ones(sample_arg.shape[0], dtype=bool)
+    return None
 
 
 def power(
@@ -47,12 +72,7 @@ def power(
     # on a meaningless test), but is actually faster when an array is passed through
     # That said, it adds overhead to convert the floats to 1-D arrays, so I don't
     # recommend just converting all values to arrays
-    if isinstance(ix_filter, list):
-        ix_filter = np.array(ix_filter)
-
-    if ix_filter is None and isinstance(ix_filter, (list, np.ndarray)):
-        ix_filter = np.ones(len(air_density), dtype=bool)
-
+    ix_filter = _filter_convert(ix_filter, air_density)
     if ix_filter is not None:
         air_density = air_density[ix_filter]
         average_velocity = average_velocity[ix_filter]
@@ -76,36 +96,42 @@ def Ct(
     The value is interpolated from the coefficient of thrust vs
     wind speed table using the rotor swept area average velocity.
     """
-    if isinstance(ix_filter, list):
-        ix_filter = np.array(ix_filter)
 
     if isinstance(fCt, list):
         fCt = np.ndarray(fCt)
+    if isinstance(yaw_angle, list):
+        yaw_angle = np.ndarray(yaw_angle)
 
-    if ix_filter is None and isinstance(ix_filter, (list, np.ndarray)):
-        ix_filter = np.ones(len(yaw_angle), dtype=bool)
-
+    ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        velocities = velocities[ix_filter]
+        velocities = velocities[ix_filter, :, :]
         yaw_angle = yaw_angle[ix_filter]
         fCt = fCt[ix_filter]
 
-    Ct = [fCt[i](average_velocity(velocities[i])) for i in range(len(fCt))]
+    Ct = [_fCt(average_velocity(v)) for _fCt, v in zip(fCt, velocities)]
     Ct *= cosd(yaw_angle)  # **self.pP
     return Ct
 
 
 def axial_induction(
-    Ct: Union[float, np.ndarray], yaw_angle: Union[float, np.ndarray]
+    Ct: Union[float, np.ndarray],
+    yaw_angle: Union[float, np.ndarray],
+    ix_filter: Union[List[Union[int, bool]], np.ndarray],
 ) -> Union[float, np.ndarray]:
     """
     Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
     """
+    ix_filter = _filter_convert(ix_filter, yaw_angle)
+    if ix_filter is not None:
+        yaw_angle = yaw_angle[ix_filter]
+        Ct = Ct[ix_filter]
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - Ct * cosd(yaw_angle)))
 
 
-def average_velocity(velocities: np.ndarray) -> float:
+def average_velocity(
+    velocities: np.ndarray, ix_filter: Union[List[Union[int, bool]], np.ndarray] = None
+) -> float:
     """
     This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
@@ -122,9 +148,14 @@ def average_velocity(velocities: np.ndarray) -> float:
     """
     # Remove all invalid numbers from interpolation
     # data = np.array(self.velocities)[~np.isnan(self.velocities)]
+    ix_filter = _filter_convert(ix_filter, velocities)
+    if velocities.ndim == 3:
+        velocities = velocities[ix_filter, :, :]
+    else:
+        velocities[ix_filter, :]
 
-    # axis=0 supports multi-turbine input if each turbine is a row
-    return np.cbrt(np.mean(velocities ** 3, axis=0))
+    axis = (1, 2) if velocities.ndim == 3 else (0, 1)
+    return np.cbrt(np.mean(velocities ** 3, axis=axis))
 
 
 @attr.s(frozen=True, auto_attribs=True)
@@ -202,9 +233,9 @@ class Turbine(BaseClass):
     )
 
     # Initialized in the post_init function
-    fCp_interp: Any = attr.ib(init=False)
-    fCt_interp: Any = attr.ib(init=False)
-    power_interp: Any = attr.ib(init=False)
+    fCp_interp: interp1d = attr.ib(init=False)
+    fCt_interp: interp1d = attr.ib(init=False)
+    power_interp: interp1d = attr.ib(init=False)
     rotor_radius: float = float_attrib(init=False)
 
     # For the following parameters, use default values if not user-specified
@@ -259,7 +290,7 @@ class Turbine(BaseClass):
         if sample_wind_speeds < self.power_thrust_table.wind_speed.min():
             return 0.0
         else:
-            _cp = self.fCpInterp(sample_wind_speeds)
+            _cp = self.fCp_interp(sample_wind_speeds)
             if _cp.size > 1:
                 _cp = _cp[0]
             if _cp > 1.0:
@@ -273,7 +304,7 @@ class Turbine(BaseClass):
         if at_wind_speed < self.power_thrust_table.wind_speed.min():
             return 0.99
         else:
-            _ct = self.fCtInterp(at_wind_speed)
+            _ct = self.fCt_interp(at_wind_speed)
             if _ct.size > 1:
                 _ct = _ct[0]
             if _ct > 1.0:

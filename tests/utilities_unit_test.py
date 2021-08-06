@@ -158,10 +158,3 @@ def test_float_attrib():
     cls.y = "1"
     assert isinstance(cls.y, float)
     assert cls.y == 1.0
-
-
-# x: int = attr.ib(default=1)
-# y: float = float_attrib(default=2.1)
-# z: List[str] = attr.ib(default=["empty"], validator=iter_validator)
-# test: str = attr.ib(default="testing", validator=is_default)
-# model: str = model_attrib(default="test_class")
