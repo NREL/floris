@@ -219,33 +219,6 @@ class YawOptimization(Optimization):
     def _set_opt_bounds(self, minimum_yaw_angle, maximum_yaw_angle):
         self.bnds = [(minimum_yaw_angle, maximum_yaw_angle) for _ in range(self.nturbs)]
 
-    # Public methods
-
-    def optimize(self, verbose=True):
-        """
-        This method solves for the optimum turbine yaw angles for power
-        production given a fixed set of atmospheric conditions
-        (wind speed, direction, etc.).
-
-        Returns:
-            np.array: Optimal yaw angles for each turbine (deg).
-        """
-        if verbose:
-            print("=====================================================")
-            print("Optimizing wake redirection control...")
-            print("Number of parameters to optimize = ", len(self.turbs_to_opt))
-            print("=====================================================")
-
-        opt_yaw_angles = self._optimize()
-
-        if verbose and np.sum(opt_yaw_angles) == 0:
-            print(
-                "No change in controls suggested for this inflow \
-                   condition..."
-            )
-
-        return opt_yaw_angles
-
     def _reduce_control_variables(self):
         """This function reduces the control problem by eliminating turbines
         of which the yaw angles need not be optimized, either because of a
@@ -301,6 +274,33 @@ class YawOptimization(Optimization):
             )
             for i in self.turbs_to_opt
         ]
+
+    # Public methods
+
+    def optimize(self, verbose=True):
+        """
+        This method solves for the optimum turbine yaw angles for power
+        production given a fixed set of atmospheric conditions
+        (wind speed, direction, etc.).
+
+        Returns:
+            np.array: Optimal yaw angles for each turbine (deg).
+        """
+        if verbose:
+            print("=====================================================")
+            print("Optimizing wake redirection control...")
+            print("Number of parameters to optimize = ", len(self.turbs_to_opt))
+            print("=====================================================")
+
+        opt_yaw_angles = self._optimize()
+
+        if verbose and np.sum(opt_yaw_angles) == 0:
+            print(
+                "No change in controls suggested for this inflow \
+                   condition..."
+            )
+
+        return opt_yaw_angles
 
     def reinitialize_opt(
         self,

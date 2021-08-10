@@ -321,8 +321,6 @@ class YawOptimizationWindRose(Optimization):
         )
         return opt_yaw_angles
 
-    # Public methods
-
     def _reduce_control_variables(self):
         """This function reduces the control problem by eliminating turbines
         of which the yaw angles need not be optimized, either because of a
@@ -379,6 +377,8 @@ class YawOptimizationWindRose(Optimization):
             )
             for i in self.turbs_to_opt
         ]
+
+    # Public methods
 
     def reinitialize_opt_wind_rose(
         self,
