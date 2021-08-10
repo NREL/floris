@@ -120,6 +120,13 @@ class YawOptimization(Optimization):
                 with all values 1.0 and length equal to the number of turbines.
             calc_init_power (bool, optional): If True, calculates initial wind
                 farm power for each set of wind conditions. Defaults to True.
+            exclude_downstream_turbines (bool, optional): If True, automatically
+                finds and excludes turbines that are most downstream in the wind
+                farm from the optimization problem. This can significantly reduce
+                the computational time without losing any performance/potential
+                AEP gain. Namely, downstream turbines are automatically fixed
+                to 0.0 deg (or fixed to the closest bound to 0.0, if 0.0 is not
+                possible).
         """
         super().__init__(fi)
 
@@ -263,7 +270,11 @@ class YawOptimization(Optimization):
             )
             for i in downstream_turbines:
                 if i in self.turbs_to_opt:
-                    if self.bnds is None:
+                    if (
+                        (self.bnds is None)
+                        or
+                        ((bnds[i][0] <= 0.) & (bnds[i][1] >= 0.))
+                    ):
                         bnds[i] = [0., 0.]
                     else:
                         id_closest_to_zero = np.argmin(np.abs(self.bnds[i]))

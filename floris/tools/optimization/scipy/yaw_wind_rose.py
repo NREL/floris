@@ -338,8 +338,13 @@ class YawOptimizationWindRose(Optimization):
             )
             for i in downstream_turbines:
                 if i in self.turbs_to_opt:
-                    bnds[i] = [0., 0.]
-                    if self.bnds is not None:
+                    if (
+                        (self.bnds is None)
+                        or
+                        ((bnds[i][0] <= 0.) & (bnds[i][1] >= 0.))
+                    ):
+                        bnds[i] = [0., 0.]
+                    else:
                         id_closest_to_zero = np.argmin(np.abs(self.bnds[i]))
                         bnds[i][0] = self.bnds[i][id_closest_to_zero]
                         bnds[i][1] = self.bnds[i][id_closest_to_zero]
