@@ -243,7 +243,9 @@ class YawOptimizationWindRose(Optimization):
             else:
                 power_init = self.nturbs * [0.0]
 
-            self.initial_farm_powers.append(np.sum(power_init))
+            self.initial_farm_powers.append(
+                np.dot(self.turbine_weights, power_init)
+            )
 
     def _get_power_for_yaw_angle_opt(self, yaw_angles_subset_norm):
         """
@@ -344,17 +346,19 @@ class YawOptimizationWindRose(Optimization):
                 wind_direction=self.fi.floris.farm.wind_direction[0]
             )
             for i in downstream_turbines:
+                # Fix yaw angles to 0. or closest value for downstream turbines
                 if i in self.turbs_to_opt:
                     if (
                         (self.bnds is None)
                         or
-                        ((bnds[i][0] <= 0.) & (bnds[i][1] >= 0.))
+                        ((self.bnds[i][0] <= 0.) & (self.bnds[i][1] >= 0.))
                     ):
-                        bnds[i] = [0., 0.]
+                        self.x0[i] = 0.0
                     else:
                         id_closest_to_zero = np.argmin(np.abs(self.bnds[i]))
-                        bnds[i][0] = self.bnds[i][id_closest_to_zero]
-                        bnds[i][1] = self.bnds[i][id_closest_to_zero]
+                        self.x0[i] = self.bnds[i][id_closest_to_zero]
+
+            # Remove turbines from turbs_to_opt that are downstream
             self.turbs_to_opt = (
                 [i for i in self.turbs_to_opt if i not in downstream_turbines]
             )

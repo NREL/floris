@@ -257,7 +257,6 @@ class YawOptimization(Optimization):
         for the subset of turbines, to be then used in the optimization
         algorithm.
         """
-        bnds = self.bnds
         if self.bnds is not None:
             self.turbs_to_opt = np.where(np.diff(self.bnds) > 0.001)[0]
         else:
@@ -269,17 +268,19 @@ class YawOptimization(Optimization):
                 wind_direction=self.fi.floris.farm.wind_direction[0]
             )
             for i in downstream_turbines:
+                # Fix yaw angles to 0. or closest value for downstream turbines
                 if i in self.turbs_to_opt:
                     if (
                         (self.bnds is None)
                         or
-                        ((bnds[i][0] <= 0.) & (bnds[i][1] >= 0.))
+                        ((self.bnds[i][0] <= 0.) & (self.bnds[i][1] >= 0.))
                     ):
-                        bnds[i] = [0., 0.]
+                        self.x0[i] = 0.0
                     else:
                         id_closest_to_zero = np.argmin(np.abs(self.bnds[i]))
-                        bnds[i][0] = self.bnds[i][id_closest_to_zero]
-                        bnds[i][1] = self.bnds[i][id_closest_to_zero]
+                        self.x0[i] = self.bnds[i][id_closest_to_zero]
+
+            # Remove turbines from turbs_to_opt that are downstream
             self.turbs_to_opt = (
                 [i for i in self.turbs_to_opt if i not in downstream_turbines]
             )
@@ -292,10 +293,10 @@ class YawOptimization(Optimization):
         self.bnds_norm = [
             (
                 self._norm(
-                    bnds[i][0], self.minimum_yaw_angle, self.maximum_yaw_angle
+                    self.bnds[i][0], self.minimum_yaw_angle, self.maximum_yaw_angle
                 ),
                 self._norm(
-                    bnds[i][1], self.minimum_yaw_angle, self.maximum_yaw_angle
+                    self.bnds[i][1], self.minimum_yaw_angle, self.maximum_yaw_angle
                 ),
             )
             for i in self.turbs_to_opt
@@ -491,11 +492,15 @@ class YawOptimization(Optimization):
             self.turbine_weights = np.array(turbine_weights, dtype=float)
 
         if calc_init_power:
-            self.initial_farm_power = self.fi.get_farm_power_for_yaw_angle(
-                self.x0,
-                include_unc=include_unc,
-                unc_pmfs=unc_pmfs,
-                unc_options=unc_options,
+            self.fi.calculate_wake(yaw_angles=self.x0)
+            turbine_powers = self.fi.get_turbine_power(
+                include_unc=self.include_unc,
+                unc_pmfs=self.unc_pmfs,
+                unc_options=self.unc_options,
+            )
+            self.initial_farm_power = np.dot(
+                self.turbine_weights,
+                turbine_powers
             )
 
         self.exclude_downstream_turbines = exclude_downstream_turbines

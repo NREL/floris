@@ -229,7 +229,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 unc_pmfs=self.unc_pmfs,
                 unc_options=self.unc_options,
             )
-
             # calculate power for no wake case
             self.fi.calculate_wake(yaw_angles=self.x0, no_wake=True)
             power_no_wake = self.fi.get_turbine_power(
@@ -241,6 +240,10 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
         else:
             power_base = self.nturbs * [0.0]
             power_no_wake = self.nturbs * [0.0]
+
+        # Add turbine weighing terms
+        power_base = np.multiply(self.turbine_weights, power_base)
+        power_no_wake = np.multiply(self.turbine_weights, power_no_wake)
 
         # add variables to dataframe
         if ti is None:
@@ -369,6 +372,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
             )
             opt_yaw_angles = self.x0
             power_opt = self.nturbs * [0.0]
+
+        # Add turbine weighing terms
+        power_opt = np.multiply(self.turbine_weights, power_opt)
 
         # add variables to dataframe
         if ti is None:
