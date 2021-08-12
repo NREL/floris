@@ -187,7 +187,6 @@ class Turbine(BaseClass):
     Parameters:
         rotor_diameter (:py:obj: float): The rotor diameter (m).
         hub_height (:py:obj: float): The hub height (m).
-        blade_count (:py:obj: float): The number of blades.
         pP (:py:obj: float): The cosine exponent relating the yaw
             misalignment angle to power.
         pT (:py:obj: float): The cosine exponent relating the rotor
@@ -203,16 +202,6 @@ class Turbine(BaseClass):
                 at different wind speeds.
             wind_speed (:py:obj: List[float]): The wind speeds for
                 which the power and thrust values are provided (m/s).
-
-        yaw_angle (:py:obj: float): The yaw angle of the turbine
-            relative to the wind direction (deg). A positive value
-            represents a counter-clockwise rotation relative to the
-            wind direction.
-        tilt_angle (:py:obj: float): The tilt angle of the turbine
-            (deg). Positive values correspond to a downward rotation of
-            the rotor for an upstream turbine.
-        TSR (:py:obj: float): The tip-speed ratio of the turbine. This
-            parameter is used in the "curl" wake model.
         ngrid (*int*, optional): The square root of the number
             of points to use on the turbine grid. This number will be
             squared so that the points can be evenly distributed.
@@ -231,6 +220,9 @@ class Turbine(BaseClass):
     power_thrust_table: Dict[str, List[float]] = attr.ib(
         converter=PowerThrustTable.from_dict, kw_only=True,
     )
+    # ngrid: float = float_attrib()  # TODO: goes here or on the Grid?
+    # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
+    # use_points_on_perimeter: bool = bool_attrib()
 
     # Initialized in the post_init function
     fCp_interp: interp1d = attr.ib(init=False)
