@@ -236,7 +236,6 @@ class Turbine(BaseClass):
     fCp_interp: interp1d = attr.ib(init=False)
     fCt_interp: interp1d = attr.ib(init=False)
     power_interp: interp1d = attr.ib(init=False)
-    rotor_radius: float = float_attrib(init=False)
 
     # For the following parameters, use default values if not user-specified
     # self.ngrid = int(input_dictionary["ngrid"]) if "ngrid" in input_dictionary else 5
@@ -251,7 +250,6 @@ class Turbine(BaseClass):
     # self.use_turbulence_correction = False
 
     def __attrs_post_init__(self) -> None:
-        self.rotor_radius = self.rotor_diameter / 2.0
 
         # Post-init initialization for the power curve interpolation functions
         wind_speeds = self.power_thrust_table.wind_speed
@@ -312,3 +310,17 @@ class Turbine(BaseClass):
             if _ct <= 0.0:
                 return 0.0001
             return float(_ct)
+
+    @property
+    def rotor_radius(self) -> float:
+        """
+        Rotor radius of the turbine in meters.
+
+        Returns:
+            float: The rotor radius of the turbine.
+        """
+        return self.rotor_diameter / 2.0
+
+    @rotor_radius.setter
+    def rotor_radius(self, value: float) -> None:
+        self.rotor_diameter = value * 2.0
