@@ -15,16 +15,16 @@
 
 import attr
 import pytest
-from src.base_model import BaseModel
+from src.base_class import BaseClass
 
 
 @attr.s(auto_attribs=True)
-class TestClassNoModelString(BaseModel):
+class TestClassNoModelString(BaseClass):
     x: int = attr.ib(default=1, converter=int)
 
 
 @attr.s(auto_attribs=True)
-class TestClass(BaseModel):
+class TestClass(BaseClass):
     x: int = attr.ib(default=1, converter=int)
     model_string: str = attr.ib(default="test", converter=str)
 

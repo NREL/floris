@@ -31,7 +31,8 @@ jobs:
     #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run tests
       run: |
-        pytest tests/
+        # pytest tests/
+        pytest tests/  --ignore tests/ignore --ignore tests/reg_tests
     - name: Generate coverage report
       # Run these tests on unit tests only so that we avoid inflating our code
       # coverage through the regression tests
@@ -39,7 +40,7 @@ jobs:
       run: |
         pip install pytest
         pip install pytest-cov
-        pytest --cov=./ --cov-report=xml `find . -name "*_test.py" -not -name "*regression*"`
+        pytest --cov=./ --cov-report=xml tests/  --ignore tests/ignore --ignore tests/reg_tests
     - name: Upload coverage to Codecov  
       uses: codecov/codecov-action@v1
       with:
