@@ -17,7 +17,6 @@ from typing import Any, Dict, List, Union
 import attr
 import numpy as np
 from scipy.interpolate import interp1d
-from numpy.lib.index_tricks import ix_
 from numpy.lib.function_base import iterable
 
 from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
@@ -50,10 +49,10 @@ def _filter_convert(
 
 def power(
     air_density: Union[float, np.ndarray],
-    average_velocity: Union[float, np.ndarray],
+    velocities: np.ndarray,  # rows: turbines; columns: velocities
     yaw_angle: Union[float, np.ndarray],
     pP: Union[float, np.ndarray],
-    power_interp: callable,
+    power_interp: Union[callable, List[callable]],
     ix_filter: Union[List[int], np.ndarray] = None,
 ) -> float:
     """
@@ -72,17 +71,34 @@ def power(
     # on a meaningless test), but is actually faster when an array is passed through
     # That said, it adds overhead to convert the floats to 1-D arrays, so I don't
     # recommend just converting all values to arrays
+
+    if isinstance(air_density, list):
+        air_density = np.array(air_density)
+    if isinstance(yaw_angle, list):
+        yaw_angle = np.array(yaw_angle)
+    if isinstance(pP, list):
+        pP = np.array(pP)
+    if isinstance(power_interp, list):
+        power_interp = np.array(power_interp)
+
     ix_filter = _filter_convert(ix_filter, air_density)
     if ix_filter is not None:
         air_density = air_density[ix_filter]
-        average_velocity = average_velocity[ix_filter]
+        velocities = velocities[ix_filter]
         yaw_angle = yaw_angle[ix_filter]
         pP = pP[ix_filter]
+        power_interp = power_interp[ix_filter]
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
-    yaw_effective_velocity = average_velocity * cosd(yaw_angle) ** pW
-    return air_density * power_interp(yaw_effective_velocity)
+    yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
+
+    if isinstance(power_interp, np.ndarray):
+        p = [_fCp(v) for _fCp, v in zip(power_interp, yaw_effective_velocity)]
+    else:
+        p = power_interp(yaw_effective_velocity)    
+    p *= air_density
+    return p
 
 
 def Ct(
@@ -98,9 +114,9 @@ def Ct(
     """
 
     if isinstance(fCt, list):
-        fCt = np.ndarray(fCt)
+        fCt = np.array(fCt)
     if isinstance(yaw_angle, list):
-        yaw_angle = np.ndarray(yaw_angle)
+        yaw_angle = np.array(yaw_angle)
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
@@ -108,25 +124,39 @@ def Ct(
         yaw_angle = yaw_angle[ix_filter]
         fCt = fCt[ix_filter]
 
-    Ct = [_fCt(average_velocity(v)) for _fCt, v in zip(fCt, velocities)]
+    if isinstance(fCt, np.ndarray):
+        Ct = [_fCt(average_velocity(v)) for _fCt, v in zip(fCt, velocities)]
+    else:
+        Ct = fCt(average_velocity(velocities))
+
     Ct *= cosd(yaw_angle)  # **self.pP
     return Ct
 
 
 def axial_induction(
-    Ct: Union[float, np.ndarray],
+    velocities: np.ndarray,  # rows: turbines; columns: velocities
     yaw_angle: Union[float, np.ndarray],
-    ix_filter: Union[List[Union[int, bool]], np.ndarray],
+    fCt: Union[callable, List[callable]],
+    ix_filter: Union[List[int], np.ndarray] = None
 ) -> Union[float, np.ndarray]:
     """
     Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
-    """
+    """  
+
+    if isinstance(fCt, list):
+        fCt = np.array(fCt)
+    if isinstance(yaw_angle, list):
+        yaw_angle = np.array(yaw_angle)
+
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
+        velocities = velocities[ix_filter, :, :]
         yaw_angle = yaw_angle[ix_filter]
-        Ct = Ct[ix_filter]
-    return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - Ct * cosd(yaw_angle)))
+        fCt = fCt[ix_filter]
+
+    thrust_coefficient = Ct(velocities, yaw_angle, fCt)
+    return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
 
 def average_velocity(
