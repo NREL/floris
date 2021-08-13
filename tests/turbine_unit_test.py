@@ -198,7 +198,7 @@ def test_turbine_power():
     # Single turbine
     wind_speed = 10.0
     p = power(
-        air_density=1.225,
+        air_density=1.0,
         velocities=wind_speed * np.ones((5, 5)),
         yaw_angle=0.0,
         pP=turbine.pP,
@@ -214,7 +214,7 @@ def test_turbine_power():
     ix_filter = [0, 2]
 
     p = power(
-        air_density=1.225 * np.ones(4),
+        air_density=1.0 * np.ones(4),
         velocities=np.ones((3, 3)) * rng,  # 4 turbines with 3 x 3 velocity array; shape (4,3,3)
         yaw_angle=np.zeros(4),
         pP=4 * [turbine.pP],

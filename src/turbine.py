@@ -96,7 +96,7 @@ def power(
     if isinstance(power_interp, np.ndarray):
         p = [_fCp(v) for _fCp, v in zip(power_interp, yaw_effective_velocity)]
     else:
-        p = power_interp(yaw_effective_velocity)    
+        p = power_interp(yaw_effective_velocity)
     p *= air_density
     return p
 
