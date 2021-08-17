@@ -101,6 +101,23 @@ def test_turbine_rotor_radius():
     assert turbine.rotor_radius == 200.0
 
 
+def test_rotor_area():
+
+    turbine_data = SampleInputs().turbine
+    turbine = Turbine.from_dict(turbine_data)
+
+    # Test that the area is set correctly from the input file
+    assert turbine.rotor_area == np.pi * (turbine_data["rotor_diameter"] / 2.0) ** 2
+
+    # Test the area setter method since it actually sets the radius and then the diameter
+    turbine.rotor_area = np.pi
+    assert turbine.rotor_radius == 1
+    assert turbine.rotor_diameter == 2
+
+    # Test the getter-method again
+    assert turbine.rotor_area == np.pi
+
+
 def test_filter_convert():
     # Test None is returned
     ix_filter = None
