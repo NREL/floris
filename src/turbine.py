@@ -15,6 +15,7 @@
 from typing import Any, Dict, List, Union
 
 import attr
+import math
 import numpy as np
 from scipy.interpolate import interp1d
 from numpy.lib.function_base import iterable
@@ -346,3 +347,17 @@ class Turbine(BaseClass):
     @rotor_radius.setter
     def rotor_radius(self, value: float) -> None:
         self.rotor_diameter = value * 2.0
+
+    @property
+    def rotor_area(self) -> float:
+        """
+        Rotor area of the turbine in meters squared.
+
+        Returns:
+            float: The rotor area of the turbine.
+        """
+        return np.pi * self.rotor_radius ** 2
+
+    @rotor_area.setter
+    def rotor_area(self, value: float) -> None:
+        self.rotor_radius = math.sqrt(value / np.pi)
