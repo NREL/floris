@@ -79,7 +79,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
             maximum_ws (float, optional): Maximum wind speed at which
                 optimization is performed (m/s). Assumes optimal yaw offsets
                 are zero above this wind speed. Defaults to 25.
-            x0 (iterable, optional): The initial yaw conditions (deg). If none
+            x0 (iterable, optional): The initial guess for the optimal solution
+                of yaw angles (deg) that maximize the objective function. If none
                 are specified, they are set to the current yaw angles for all
                 turbines. Defaults to None.
             bnds (iterable, optional): Bounds for the yaw angles (tuples of
@@ -223,14 +224,14 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                     wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
                 )
             # calculate baseline power
-            self.fi.calculate_wake(yaw_angles=self.x0)
+            self.fi.calculate_wake(yaw_angles=self.x_baseline)
             power_base = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
                 unc_options=self.unc_options,
             )
             # calculate power for no wake case
-            self.fi.calculate_wake(yaw_angles=self.x0, no_wake=True)
+            self.fi.calculate_wake(yaw_angles=self.x_baseline, no_wake=True)
             power_no_wake = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
@@ -358,8 +359,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 self.fi.reinitialize_flow_field(
                     wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
                 )
-            self.fi.calculate_wake(yaw_angles=self.x0)
-            opt_yaw_angles = self.x0
+            opt_yaw_angles = self.x_baseline
+            self.fi.calculate_wake(yaw_angles=opt_yaw_angles)
             power_opt = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
@@ -370,7 +371,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 "No change in controls suggested for this inflow \
                     condition..."
             )
-            opt_yaw_angles = self.x0
+            opt_yaw_angles = self.x_baseline
             power_opt = self.nturbs * [0.0]
 
         # Add turbine weighing terms
@@ -518,7 +519,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
         print("=====================================================")
         print("Optimizing wake redirection control in parallel...")
         print("Number of wind conditions to optimize = ", len(self.wd))
-        print("Number of yaw angles to optimize = ", len(self.x0))
+        print("Number of yaw angles to optimize = ", len(self.turbs_to_opt))
         print("=====================================================")
 
         df_opt = pd.DataFrame()

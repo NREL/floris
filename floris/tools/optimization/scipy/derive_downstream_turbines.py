@@ -23,8 +23,12 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.10, plot_lines=F
     turbines in the farm. This allows the user to exclude these turbines
     from a control setpoint optimization, for example. This function
     assumes a very simplified wake function where the wakes are assumed
-    very wide. This saves time compared to FLORIS and gives a conservative
-    estimate.
+    very wide, with an initial width of twice the rotor diameter. This wake
+    model is defined to be very conservative and provide unreasonably wide
+    wakes to ensure all conditions, including variability and high turbulence,
+    are captured when determing which turbines are upstream and which turbines
+    are downstream. This simple model saves time compared to FLORIS. The default
+    wake slope parameter of 0.10 is a reliable number for conservative estimates.
 
     Args:
         fi ([floris object]): FLORIS object of the farm of interest.
