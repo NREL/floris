@@ -32,6 +32,7 @@ class YawOptimization(Optimization):
         fi,
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
+        yaw_angles_baseline=None,
         x0=None,
         bnds=None,
         opt_method="SLSQP",
@@ -54,10 +55,24 @@ class YawOptimization(Optimization):
                 angle (deg). Defaults to 0.0.
             maximum_yaw_angle (float, optional): Maximum constraint on yaw
                 angle (deg). Defaults to 25.0.
+            yaw_angles_baseline (iterable, optional): The baseline yaw angles
+                used to calculate the initial/baseline power production in the
+                wind farm and used to normalize the cost function. If the variable
+                exclude_downstream_turbines=True then the downstream turbines
+                that are excluded in the optimization will have their yaw angles
+                fixed to their value specified in this variable; yaw_angles_baseline.
+                If none are specified, this variable is set equal to the current
+                yaw angles in the floris object that is passed to this class. 
+                Defaults to None.
             x0 (iterable, optional): The initial guess for the optimal solution
-                of yaw angles (deg) that maximize the objective function. If none
-                are specified, they are set to the current yaw angles for all
-                turbines. Defaults to None.
+                of yaw angles (deg) that maximize the objective function. Note that,
+                if exclude_downstream_turbines=True, the initial guesses for the
+                downstream turbines are ignored since they are not part of the
+                optimization. Instead, the yaw angles for those turbines are equal
+                to the values in yaw_angles_baseline. Hence, the values in x0 are
+                only used for turbines in self.turbs_to_opt. If none are
+                specified, they are set to be equal to yaw_angles_baseline.
+                Defaults to None.
             bnds (iterable, optional): Bounds for the yaw angles (tuples of
                 min, max values for each turbine (deg)). If none are
                 specified, they are set to (minimum_yaw_angle,
@@ -153,6 +168,7 @@ class YawOptimization(Optimization):
         self.reinitialize_opt(
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
+            yaw_angles_baseline=yaw_angles_baseline,
             x0=x0,
             bnds=bnds,
             opt_method=opt_method,
@@ -175,7 +191,7 @@ class YawOptimization(Optimization):
             self.maximum_yaw_angle
         )
         # Create a full yaw angle array
-        yaw_angles = np.array(self.x0, dtype=float)
+        yaw_angles = np.array(self.yaw_angles_baseline, dtype=float)
         yaw_angles[self.turbs_to_opt] = yaw_angles_subset
 
         self.fi.calculate_wake(yaw_angles=yaw_angles)
@@ -198,7 +214,7 @@ class YawOptimization(Optimization):
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
         """
-        opt_yaw_angles = np.array(self.x0, dtype=float)
+        opt_yaw_angles = np.array(self.yaw_angles_baseline, dtype=float)
         self._reduce_control_variables()
 
         if len(self.turbs_to_opt) > 0:
@@ -294,6 +310,7 @@ class YawOptimization(Optimization):
         self,
         minimum_yaw_angle=None,
         maximum_yaw_angle=None,
+        yaw_angles_baseline=None,
         x0=None,
         bnds=None,
         opt_method=None,
@@ -314,10 +331,24 @@ class YawOptimization(Optimization):
                 angle (deg). Defaults to None.
             maximum_yaw_angle (float, optional): Maximum constraint on yaw
                 angle (deg). Defaults to None.
+            yaw_angles_baseline (iterable, optional): The baseline yaw angles
+                used to calculate the initial/baseline power production in the
+                wind farm and used to normalize the cost function. If the variable
+                exclude_downstream_turbines=True then the downstream turbines
+                that are excluded in the optimization will have their yaw angles
+                fixed to their value specified in this variable; yaw_angles_baseline.
+                If none are specified, this variable is set equal to the current
+                yaw angles in the floris object that is passed to this class. 
+                Defaults to None.
             x0 (iterable, optional): The initial guess for the optimal solution
-                of yaw angles (deg) that maximize the objective function. If none
-                are specified, they are set to the current yaw angles for all
-                turbines. Defaults to None.
+                of yaw angles (deg) that maximize the objective function. Note that,
+                if exclude_downstream_turbines=True, the initial guesses for the
+                downstream turbines are ignored since they are not part of the
+                optimization. Instead, the yaw angles for those turbines are equal
+                to the values in yaw_angles_baseline. Hence, the values in x0 are
+                only used for turbines in self.turbs_to_opt. If none are
+                specified, they are set to be equal to yaw_angles_baseline.
+                Defaults to None.
             bnds (iterable, optional): Bounds for the yaw angles (tuples of
                 min, max values for each turbine (deg)). If none are specified,
                 they are set to (minimum_yaw_angle, maximum_yaw_angle) for
@@ -384,16 +415,19 @@ class YawOptimization(Optimization):
             self.minimum_yaw_angle = minimum_yaw_angle
         if maximum_yaw_angle is not None:
             self.maximum_yaw_angle = maximum_yaw_angle
-        self.x_baseline = [
+        if yaw_angles_baseline is not None:
+            self.yaw_angles_baseline = yaw_angles_baseline
+        else:
+            self.yaw_angles_baseline = [
                 turbine.yaw_angle
                 for turbine in self.fi.floris.farm.turbine_map.turbines
         ]
         if x0 is not None:
             self.x0 = x0
-            if not all(np.array(x0) == np.array(self.x_baseline)):
-                print("WARNING: Baseline yaw angle in FLORIS differ from initial optimization conditions (self.x0)")
+            if not all(np.array(x0) == np.array(self.yaw_angles_baseline)):
+                print("INFO: Baseline yaw angles in FLORIS differ from initial guess in optimization (self.x0)")
         else:
-            self.x0 = self.x_baseline
+            self.x0 = self.yaw_angles_baseline
         self.bnds = bnds
         if bnds is not None:
             self.minimum_yaw_angle = np.min([bnds[i][0] for i in range(self.nturbs)])
@@ -401,16 +435,15 @@ class YawOptimization(Optimization):
         else:
             self._set_opt_bounds(self.minimum_yaw_angle, self.maximum_yaw_angle)
 
-        # Check if x0 and x_baseline exceed any bounds
-        for ti in range(self.nturbs):
-            if self.x_baseline[ti] < self.bnds[ti][0]:
-                print("WARNING: Baseline yaw angle in FLORIS for turbine %d is %.3f and exceeds lower bound constraint of %.3f." % (ti, self.x_baseline[ti], self.bnds[ti][0]))
-            if self.x_baseline[ti] > self.bnds[ti][1]:
-                print("WARNING: Baseline yaw angle in FLORIS for turbine %d is %.3f and exceeds upper bound constraint of %.3f." % (ti, self.x_baseline[ti], self.bnds[ti][1]))
-            if self.x0[ti] < self.bnds[ti][0]:
-                raise ValueError("Initial guess self.x0 for turbine %d is %.3f and exceeds lower bound constraint of %.3f." % (ti, self.x0[ti], self.bnds[ti][0]))
-            if self.x0[ti] > self.bnds[ti][1]:
-                raise ValueError("Initial guess self.x0 for turbine %d is %.3f and exceeds upper bound constraint of %.3f." % (ti, self.x0[ti], self.bnds[ti][1]))
+        # Check if yaw_angles_baseline and x0 exceed any bounds
+        if any(np.array(self.yaw_angles_baseline) < np.array([b[0] for b in self.bnds])):
+            print("WARNING: Baseline yaw angles in FLORIS exceed lower bound constraints.")
+        if any(np.array(self.yaw_angles_baseline) > np.array([b[1] for b in self.bnds])):
+            print("WARNING: Baseline yaw angles in FLORIS exceed upper bound constraints.")
+        if any(np.array(self.x0) < np.array([b[0] for b in self.bnds])):
+            raise ValueError("Initial guess x0 exceeds lower bound constraints.")
+        if any(np.array(self.x0) > np.array([b[1] for b in self.bnds])):
+            raise ValueError("Initial guess x0 exceeds upper bound constraints.")
 
         if opt_method is not None:
             self.opt_method = opt_method
@@ -490,7 +523,7 @@ class YawOptimization(Optimization):
             self.turbine_weights = np.array(turbine_weights, dtype=float)
 
         if calc_init_power:
-            self.fi.calculate_wake(yaw_angles=self.x_baseline)
+            self.fi.calculate_wake(yaw_angles=self.yaw_angles_baseline)
             turbine_powers = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
                 unc_pmfs=self.unc_pmfs,
