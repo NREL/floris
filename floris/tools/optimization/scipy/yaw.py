@@ -421,7 +421,10 @@ class YawOptimization(Optimization):
             self.yaw_angles_baseline = [
                 turbine.yaw_angle
                 for turbine in self.fi.floris.farm.turbine_map.turbines
-        ]
+            ]
+            if any(np.abs(self.yaw_angles_baseline) > 0.0):
+                print("INFO: Baseline yaw angles were not specified and were derived from the floris object.")
+                print("INFO: The inherent yaw angles in the floris object are not all 0.0 degrees.")
         if x0 is not None:
             self.x0 = x0
             if not all(np.array(x0) == np.array(self.yaw_angles_baseline)):
