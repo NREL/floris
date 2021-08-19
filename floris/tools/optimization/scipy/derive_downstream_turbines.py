@@ -17,18 +17,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def derive_downstream_turbines(fi, wind_direction, wake_slope=0.10, plot_lines=False):
+def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=False):
     """Determine which turbines have no effect on other turbines in the
     farm, i.e., which turbines have wakes that do not impact the other
     turbines in the farm. This allows the user to exclude these turbines
     from a control setpoint optimization, for example. This function
     assumes a very simplified wake function where the wakes are assumed
-    very wide, with an initial width of twice the rotor diameter. This wake
-    model is defined to be very conservative and provide unreasonably wide
-    wakes to ensure all conditions, including variability and high turbulence,
-    are captured when determing which turbines are upstream and which turbines
-    are downstream. This simple model saves time compared to FLORIS. The default
-    wake slope parameter of 0.10 is a reliable number for conservative estimates.
+    to have a linearly diverging profile. In comparisons with the FLORIS
+    GCH model, the wake_slope matches well with the FLORIS' wake profiles
+    for a value of wake_slope = 0.5 * turbulence_intensity, where
+    turbulence_intensity is an input to the FLORIS model at the default
+    GCH parameterization. Note that does not include wind direction variability.
+    To be conservative, the user is recommended to use the rule of thumb:
+    `wake_slope = turbulence_intensity`. Hence, the default value for
+    `wake_slope=0.30` should be conservative for turbulence intensities up to
+    0.30 and is likely to provide valid estimates of which turbines are
+    downstream until a turbulence intensity of 0.50. This simple model saves
+    time compared to FLORIS.
 
     Args:
         fi ([floris object]): FLORIS object of the farm of interest.
