@@ -272,16 +272,14 @@ class YawOptimization(Optimization):
         else:
             downstream_turbines = np.array([], dtype=int)
 
-        # Set up a template yaw angles array
-        yaw_angles_template = np.nan * np.zeros(self.nturbs, dtype=float)
-        for ti in equality_constrainted_turbines:
-            # Fix yaw angles for equality-constrained turbines
-            yaw_angles_template[ti] = self.bnds[ti][0]
-        for ti in downstream_turbines:
-            # Fix yaw angles for downstream turbines to value closest to 0.0
-            if (self.bnds[ti][0] <= 0.0) & (self.bnds[ti][1] >= 0.0):
-                yaw_angles_template[ti] = 0.0
-            else:
+        # Set up a template yaw angles array with default solutions. The default
+        # solutions are either 0.0 or the allowable yaw angle closest to 0.0 deg.
+        # This solution addresses both downstream turbines, minimizing their abs.
+        # yaw offset, and additionally fixing equality-constrained turbines to
+        # their appropriate yaw angle.
+        yaw_angles_template = np.zeros(self.nturbs, dtype=float)
+        for ti in range(self.nturbs):
+            if (self.bnds[ti][0] > 0.0) | (self.bnds[ti][1] < 0.0):
                 yaw_angles_template[ti] = (
                     self.bnds[ti][np.argmin(np.abs(self.bnds[ti]))]
                 )
