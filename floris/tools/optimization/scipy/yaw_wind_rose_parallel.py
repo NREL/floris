@@ -91,12 +91,14 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 Defaults to None.
             x0 (iterable, optional): The initial guess for the optimal solution
                 of yaw angles (deg) that maximize the objective function. Note that,
-                if exclude_downstream_turbines=True, the initial guesses for the
+                if exclude_downstream_turbines=True, the initial guesses for any
                 downstream turbines are ignored since they are not part of the
-                optimization. Instead, the yaw angles for those turbines are equal
-                to the values in yaw_angles_baseline. Hence, the values in x0 are
-                only used for turbines in self.turbs_to_opt. If none are
-                specified, they are set to be equal to yaw_angles_baseline.
+                optimization. Instead, the yaw angles for downstream turbines are 0.0
+                or if 0.0 is not within the specified yaw bounds, then it is equal to
+                the lower or upper bound, whichever is closest to 0.0.
+                If no values for x0 are specified, x0 is set to be equal to zeros
+                wherever possible, and if that falls out of bound, then equal to
+                the average of its lower and upper bound for non-downstream turbines.
                 Defaults to None.
             bnds (iterable, optional): Bounds for the yaw angles (tuples of
                 min, max values for each turbine (deg)). If none are specified,
@@ -375,7 +377,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 self.fi.reinitialize_flow_field(
                     wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
                 )
-            opt_yaw_angles = self.yaw_angles_baseline
+            opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
             self.fi.calculate_wake(yaw_angles=opt_yaw_angles)
             power_opt = self.fi.get_turbine_power(
                 include_unc=self.include_unc,
@@ -387,7 +389,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 "No change in controls suggested for this inflow \
                     condition..."
             )
-            opt_yaw_angles = self.yaw_angles_baseline
+            opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
             power_opt = self.nturbs * [0.0]
 
         # Add turbine weighing terms
