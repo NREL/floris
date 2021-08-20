@@ -249,14 +249,10 @@ class YawOptimization(Optimization):
         algorithm.
         """
         if self.bnds is not None:
-            equality_constrainted_turbines, _ = np.where(
-                np.abs(np.diff(self.bnds)) < 0.001
-            )
             self.turbs_to_opt, _ = np.where(
                 np.abs(np.diff(self.bnds)) >= 0.001
             )
         else:
-            equality_constrainted_turbines = np.array([], dtype=int)
             self.turbs_to_opt = np.array(range(self.nturbs), dtype=int)
 
         if self.exclude_downstream_turbines:
@@ -269,8 +265,6 @@ class YawOptimization(Optimization):
             self.turbs_to_opt = (
                 [i for i in self.turbs_to_opt if i not in downstream_turbines]
             )
-        else:
-            downstream_turbines = np.array([], dtype=int)
 
         # Set up a template yaw angles array with default solutions. The default
         # solutions are either 0.0 or the allowable yaw angle closest to 0.0 deg.
