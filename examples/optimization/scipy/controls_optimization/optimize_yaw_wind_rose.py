@@ -81,7 +81,7 @@ hor_plane = fi.get_hor_plane(height=fi.floris.farm.turbines[0].hub_height)
 # Plot and show
 fig, ax = plt.subplots()
 wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
-ax.set_title(r"Baseline flow for U = 8 m/s, Wind Direction = 270$^\\circ$")
+ax.set_title("Baseline flow for U = 8 m/s, Wind Direction = 270$^\\circ$")
 
 # ==============================================================================
 print("Importing wind rose data...")
