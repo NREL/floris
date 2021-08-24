@@ -254,7 +254,7 @@ class Gauss(GaussianModel):
 
     @ka.setter
     def ka(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for ka: {}, " + "expected float."
             ).format(value)
@@ -289,7 +289,7 @@ class Gauss(GaussianModel):
 
     @kb.setter
     def kb(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for kb: {}, " + "expected float."
             ).format(value)
@@ -325,7 +325,7 @@ class Gauss(GaussianModel):
 
     @alpha.setter
     def alpha(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for alpha: {}, " + "expected float."
             ).format(value)
@@ -362,7 +362,7 @@ class Gauss(GaussianModel):
 
     @beta.setter
     def beta(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for beta: {}, " + "expected float."
             ).format(value)

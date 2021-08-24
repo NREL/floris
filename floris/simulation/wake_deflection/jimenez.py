@@ -129,7 +129,7 @@ class Jimenez(VelocityDeflection):
 
     @kd.setter
     def kd(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for kd: {}, " + "expected float."
             ).format(value)
@@ -164,7 +164,7 @@ class Jimenez(VelocityDeflection):
 
     @ad.setter
     def ad(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for ad: {}, " + "expected float."
             ).format(value)
@@ -199,7 +199,7 @@ class Jimenez(VelocityDeflection):
 
     @bd.setter
     def bd(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for bd: {}, " + "expected float."
             ).format(value)

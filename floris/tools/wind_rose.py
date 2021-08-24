@@ -24,9 +24,9 @@ import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+from pyproj import Proj
 
 import floris.utilities as geo
-from pyproj import Proj
 
 
 class WindRose:
@@ -872,7 +872,7 @@ class WindRose:
 
         Then, make a configuration file at ~/.hscfg containing:
 
-            hs_endpoint = https://developer.nrel.gov/api/hsds/
+            hs_endpoint = https://developer.nrel.gov/api/hsds
 
             hs_username = None
 

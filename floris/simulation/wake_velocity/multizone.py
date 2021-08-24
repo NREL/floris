@@ -268,7 +268,7 @@ class MultiZone(VelocityDeficit):
 
     @we.setter
     def we(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for we: {}, " + "expected float."
             ).format(value)
@@ -303,7 +303,7 @@ class MultiZone(VelocityDeficit):
 
     @aU.setter
     def aU(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for aU: {}, " + "expected float."
             ).format(value)
@@ -338,7 +338,7 @@ class MultiZone(VelocityDeficit):
 
     @bU.setter
     def bU(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for bU: {}, " + "expected float."
             ).format(value)
