@@ -18,8 +18,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRose
-
+from .yaw_wind_rose import YawOptimizationWindRose
 from ....logging_manager import LoggerBase
 
 
@@ -87,7 +86,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 that are excluded in the optimization will have their yaw angles
                 fixed to their value specified in this variable; yaw_angles_baseline.
                 If none are specified, this variable is set equal to the current
-                yaw angles in the floris object that is passed to this class. 
+                yaw angles in the floris object that is passed to this class.
                 Defaults to None.
             x0 (iterable, optional): The initial guess for the optimal solution
                 of yaw angles (deg) that maximize the objective function. Note that,
