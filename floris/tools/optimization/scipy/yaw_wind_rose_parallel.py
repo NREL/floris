@@ -71,39 +71,49 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 specified, the current TI value in the Floris object will be
                 used for all optimizations. Defaults to None.
             minimum_yaw_angle (float, optional): Minimum constraint on yaw
-                angle (deg). Defaults to 0.0.
+                angle (deg). This value will be ignored if bnds is also
+                specified. Defaults to 0.0.
             maximum_yaw_angle (float, optional): Maximum constraint on yaw
-                angle (deg). Defaults to 25.0.
+                angle (deg). This value will be ignored if bnds is also
+                specified. Defaults to 25.0.
             minimum_ws (float, optional): Minimum wind speed at which
                 optimization is performed (m/s). Assumes zero power generated
                 below this value. Defaults to 3.
             maximum_ws (float, optional): Maximum wind speed at which
                 optimization is performed (m/s). Assumes optimal yaw offsets
                 are zero above this wind speed. Defaults to 25.
-            yaw_angles_baseline (iterable, optional): The baseline yaw angles
-                used to calculate the initial/baseline power production in the
-                wind farm and used to normalize the cost function. If the variable
-                exclude_downstream_turbines=True then the downstream turbines
-                that are excluded in the optimization will have their yaw angles
-                fixed to their value specified in this variable; yaw_angles_baseline.
-                If none are specified, this variable is set equal to the current
-                yaw angles in the floris object that is passed to this class. 
+            yaw_angles_baseline (iterable, optional): The baseline yaw
+                angles used to calculate the initial and baseline power
+                production in the wind farm and used to normalize the cost
+                function. If none are specified, this variable is set equal
+                to the current yaw angles in floris. Note that this variable
+                need not meet the yaw constraints specified in self.bnds,
+                yet a warning is raised if it does to inform the user.
                 Defaults to None.
-            x0 (iterable, optional): The initial guess for the optimal solution
-                of yaw angles (deg) that maximize the objective function. Note that,
-                if exclude_downstream_turbines=True, the initial guesses for any
-                downstream turbines are ignored since they are not part of the
-                optimization. Instead, the yaw angles for downstream turbines are 0.0
-                or if 0.0 is not within the specified yaw bounds, then it is equal to
-                the lower or upper bound, whichever is closest to 0.0.
-                If no values for x0 are specified, x0 is set to be equal to zeros
-                wherever possible, and if that falls out of bound, then equal to
-                the average of its lower and upper bound for non-downstream turbines.
-                Defaults to None.
-            bnds (iterable, optional): Bounds for the yaw angles (tuples of
-                min, max values for each turbine (deg)). If none are specified,
-                they are set to (minimum_yaw_angle, maximum_yaw_angle) for each
-                turbine. Defaults to None.
+            x0 (iterable, optional): The initial guess for the optimization
+                problem. These values must meet the constraints specified
+                in self.bnds. Note that, if exclude_downstream_turbines=True,
+                the initial guess for any downstream turbines are ignored
+                since they are not part of the optimization. Instead, the yaw
+                angles for those turbines are 0.0 if that meets the lower and
+                upper bound, or otherwise as close to 0.0 as feasible. If no
+                values for x0 are specified, x0 is set to be equal to zeros
+                wherever feasible (w.r.t. the bounds), and equal to the
+                average of its lower and upper bound for all non-downstream
+                turbines otherwise. Defaults to None.
+            bnds (iterable, optional): Bounds for the yaw angles, as tuples of
+                min, max values for each turbine (deg). One can fix the yaw
+                angle of certain turbines to a predefined value by setting that
+                turbine's lower bound equal to its upper bound (i.e., an
+                equality constraint), as: bnds[ti] = (x, x), where x is the
+                fixed yaw angle assigned to the turbine. This works for both
+                zero and nonzero yaw angles. Moreover, if 
+                exclude_downstream_turbines=True, the yaw angles for all
+                downstream turbines will be 0.0 or a feasible value closest to
+                0.0. If none are specified, the bounds are set to
+                (minimum_yaw_angle, maximum_yaw_angle) for each turbine. Note
+                that, if bnds is not none, its values overwrite any value given
+                in minimum_yaw_angle and maximum_yaw_angle. Defaults to None.
             opt_method (str, optional): The optimization method used by
                 scipy.optimize.minize. Defaults to 'SLSQP'.
             opt_options (dictionary, optional): Optimization options used by
@@ -112,15 +122,15 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 'eps': 0.01}. Defaults to None.
             include_unc (bool, optional): Determines whether wind direction or
                 yaw uncertainty are included. If True, uncertainty in wind
-                direction and/or yaw position is included when determining wind
-                farm power. Uncertainty is included by computing the mean wind
-                farm power for a distribution of wind direction and yaw
-                position deviations from the intended wind direction and yaw
-                angles. Defaults to False.
+                direction and/or yaw position is included when determining
+                wind farm power. Uncertainty is included by computing the
+                mean wind farm power for a distribution of wind direction
+                and yaw position deviations from the intended wind direction
+                and yaw angles. Defaults to False.
             unc_pmfs (dictionary, optional): A dictionary containing
-                probability mass functions describing the distribution of wind
-                direction and yaw position deviations when wind direction and
-                or yaw position uncertainty is included in the power
+                probability mass functions describing the distribution of
+                wind direction and yaw position deviations when wind direction
+                and/or yaw position uncertainty is included in the power
                 calculations. Contains the following key-value pairs:
 
                 -   **wd_unc** (*np.array*): The wind direction
@@ -155,6 +165,21 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 If none are specified, default values of
                 {'std_wd': 4.95, 'std_yaw': 1.75, 'pmf_res': 1.0,
                 'pdf_cutoff': 0.995} are used. Defaults to None.
+            turbine_weights (iterable, optional): weighing terms that allow
+                the user to emphasize power gains at particular turbines or
+                completely ignore power gains from other turbines. The array
+                of turbine powers from floris is multiplied with this array
+                in the calculation of the objective function. If None, this
+                is an array with all values 1.0 and length equal to the
+                number of turbines. Defaults to None.
+            exclude_downstream_turbines (bool, optional): If True,
+                automatically finds and excludes turbines that are most
+                downstream from the optimization problem. This significantly
+                reduces computation time at no loss in performance. The yaw
+                angles of these downstream turbines are fixed to 0.0 deg if
+                the yaw bounds specified in self.bnds allow that, or otherwise
+                are fixed to the lower or upper yaw bound, whichever is closer
+                to 0.0. Defaults to False.
         """
         super().__init__(
             fi,
