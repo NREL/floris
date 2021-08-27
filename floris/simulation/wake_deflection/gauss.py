@@ -399,7 +399,7 @@ class Gauss(VelocityDeflection):
 
     @ka.setter
     def ka(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for ka: {}, " + "expected float."
             ).format(value)
@@ -434,7 +434,7 @@ class Gauss(VelocityDeflection):
 
     @kb.setter
     def kb(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for kb: {}, " + "expected float."
             ).format(value)
@@ -470,7 +470,7 @@ class Gauss(VelocityDeflection):
 
     @alpha.setter
     def alpha(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for alpha: {}, " + "expected float."
             ).format(value)
@@ -507,7 +507,7 @@ class Gauss(VelocityDeflection):
 
     @beta.setter
     def beta(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for beta: {}, " + "expected float."
             ).format(value)
@@ -545,7 +545,7 @@ class Gauss(VelocityDeflection):
 
     @ad.setter
     def ad(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for ad: {}, " + "expected float."
             ).format(value)
@@ -582,7 +582,7 @@ class Gauss(VelocityDeflection):
 
     @bd.setter
     def bd(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for bd: {}, " + "expected float."
             ).format(value)
@@ -650,7 +650,7 @@ class Gauss(VelocityDeflection):
 
     @eps_gain.setter
     def eps_gain(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = "Value of eps_gain must be type " + "float; {} given.".format(
                 type(value)
             )

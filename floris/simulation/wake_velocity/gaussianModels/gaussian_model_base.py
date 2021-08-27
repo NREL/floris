@@ -406,7 +406,7 @@ class GaussianModel(VelocityDeficit):
         if type(value) is not bool:
             err_msg = (
                 "Value of calculate_VW_velocities must be type "
-                + "float; {} given.".format(type(value))
+                + "bool; {} given.".format(type(value))
             )
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
@@ -464,7 +464,7 @@ class GaussianModel(VelocityDeficit):
 
     @eps_gain.setter
     def eps_gain(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = "Value of eps_gain must be type " + "float; {} given.".format(
                 type(value)
             )

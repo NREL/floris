@@ -362,7 +362,9 @@ class PowerRose:
                 "r",
             )
             ax.axhline(
-                100.0 * (df.energy_opt.mean() - df.energy_baseline.mean()),
+                100.0
+                * (df.energy_opt.mean() - df.energy_baseline.mean())
+                / df.energy_baseline.mean(),
                 df.energy_baseline.mean(),
                 color="r",
                 ls="--",

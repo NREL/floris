@@ -174,7 +174,7 @@ class TurbOPark(VelocityDeficit):
 
     @A.setter
     def A(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for A: {}, " + "expected float."
             ).format(value)
@@ -208,7 +208,7 @@ class TurbOPark(VelocityDeficit):
 
     @c1.setter
     def c1(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for c1: {}, " + "expected float."
             ).format(value)
@@ -242,7 +242,7 @@ class TurbOPark(VelocityDeficit):
 
     @c2.setter
     def c2(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for c2: {}, " + "expected float."
             ).format(value)

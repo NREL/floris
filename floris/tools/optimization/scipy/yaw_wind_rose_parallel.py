@@ -18,8 +18,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRose
-
+from .yaw_wind_rose import YawOptimizationWindRose
 from ....logging_manager import LoggerBase
 
 

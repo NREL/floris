@@ -288,7 +288,7 @@ class Blondel(GaussianModel):
 
     @a_s.setter
     def a_s(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for a_s: {}, " + "expected float."
             ).format(value)
@@ -324,7 +324,7 @@ class Blondel(GaussianModel):
 
     @b_s.setter
     def b_s(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for b_s: {}, " + "expected float."
             ).format(value)
@@ -360,7 +360,7 @@ class Blondel(GaussianModel):
 
     @c_s1.setter
     def c_s1(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for c_s1: {}, " + "expected float."
             ).format(value)
@@ -396,7 +396,7 @@ class Blondel(GaussianModel):
 
     @c_s2.setter
     def c_s2(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for c_s2: {}, " + "expected float."
             ).format(value)
@@ -432,7 +432,7 @@ class Blondel(GaussianModel):
 
     @b_f1.setter
     def b_f1(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for b_f1: {}, " + "expected float."
             ).format(value)
@@ -468,7 +468,7 @@ class Blondel(GaussianModel):
 
     @b_f2.setter
     def b_f2(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for b_f2: {}, " + "expected float."
             ).format(value)
@@ -504,7 +504,7 @@ class Blondel(GaussianModel):
 
     @b_f3.setter
     def b_f3(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for b_f3: {}, " + "expected float."
             ).format(value)
@@ -540,7 +540,7 @@ class Blondel(GaussianModel):
 
     @c_f.setter
     def c_f(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for c_f: {}, " + "expected float."
             ).format(value)

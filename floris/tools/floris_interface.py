@@ -875,7 +875,8 @@ class FlorisInterface(LoggerBase):
                     ] * unc_pmfs["yaw_unc_pmf"][
                         i_yaw
                     ] * self.get_farm_power_for_yaw_angle(
-                        list(np.array(yaw_angles) + delta_yaw), no_wake=no_wake
+                        list(np.array(yaw_angles) - delta_wd + delta_yaw),
+                        no_wake=no_wake,
                     )
 
             # reinitialize with original values
@@ -1049,7 +1050,7 @@ class FlorisInterface(LoggerBase):
 
                 for i_yaw, delta_yaw in enumerate(unc_pmfs["yaw_unc"]):
                     self.calculate_wake(
-                        yaw_angles=list(np.array(yaw_angles) + delta_yaw),
+                        yaw_angles=list(np.array(yaw_angles) - delta_wd + delta_yaw),
                         no_wake=no_wake,
                     )
                     mean_farm_power = mean_farm_power + unc_pmfs["wd_unc_pmf"][
