@@ -3,8 +3,8 @@ name: Automated tests & code coverage
 on: [push, pull_request]
 
 jobs:
-  build:
 
+  code-qa-validation:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
