@@ -13,30 +13,37 @@
 # See https://floris.readthedocs.io for documentation
 
 
-# import numpy as np
 import pytest
 import numpy as np
-from src import FlowFieldGrid, TurbineGrid #, Wake, Turbine, FlowField
+from src import FlowFieldGrid, TurbineGrid
 from src.utilities import Vec3
+
+
+GRID_RESOLUTION = 2
+N_TURBINES = 3
+X_COORDS = [
+    0.0,
+    5 * 126.0,
+    10 * 126.0
+]
+Y_COORDS = [
+    0.0,
+    0.0,
+    0.0
+]
+
 
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
-    n_turbines = len(sample_inputs_fixture.farm["layout_x"])
-    turbine_coordinates = []
-    for i in range(n_turbines):
-        turbine_coordinates.append(
-            Vec3([
-                sample_inputs_fixture.farm["layout_x"][i],
-                sample_inputs_fixture.farm["layout_y"][i],
-                0.0
-            ])
-        )
+    turbine_coordinates = list(zip(X_COORDS, Y_COORDS, N_TURBINES * [0.0]))
+    turbine_coordinates = [Vec3(c) for c in turbine_coordinates]
     return TurbineGrid(
         turbine_coordinates,
         sample_inputs_fixture.turbine["rotor_diameter"],
         sample_inputs_fixture.farm["reference_wind_height"],
-        2
+        GRID_RESOLUTION
     )
+
 
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture):
@@ -57,6 +64,7 @@ def flow_field_grid_fixture(sample_inputs_fixture):
         Vec3([2,2,2])
     )
 
+
 def test_turbine_set_grid(turbine_grid_fixture):
     expected_x_grid = [[[0.0, 0.0], [0.0, 0.0]], [[630.0, 630.0], [630.0, 630.0]], [[1260.0, 1260.0], [1260.0, 1260.0]]]
     expected_y_grid = [[[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]]]
@@ -70,6 +78,13 @@ def test_turbine_set_grid(turbine_grid_fixture):
     assert not np.any( turbine_grid_fixture.y - expected_y_grid )
     assert not np.any( turbine_grid_fixture.z - expected_z_grid )
 
+
+def test_turbinegrid_dimensions(turbine_grid_fixture):
+    assert np.shape(turbine_grid_fixture.x) == (N_TURBINES, GRID_RESOLUTION, GRID_RESOLUTION)
+    assert np.shape(turbine_grid_fixture.y) == (N_TURBINES, GRID_RESOLUTION, GRID_RESOLUTION)
+    assert np.shape(turbine_grid_fixture.z) == (N_TURBINES, GRID_RESOLUTION, GRID_RESOLUTION)
+
+
 def test_flow_field_set_bounds(flow_field_grid_fixture):
     assert flow_field_grid_fixture.xmin == -252.0
     assert flow_field_grid_fixture.xmax == 2520.0
@@ -77,6 +92,7 @@ def test_flow_field_set_bounds(flow_field_grid_fixture):
     assert flow_field_grid_fixture.ymax == 252.0
     assert flow_field_grid_fixture.zmin == 0.1
     assert flow_field_grid_fixture.zmax == 540
+
 
 def test_flow_field_set_grid(flow_field_grid_fixture):
     assert [flow_field_grid_fixture.x[0][0][0], flow_field_grid_fixture.y[0][0][0], flow_field_grid_fixture.z[0][0][0]] == [ -252.0, -252.0, 0.1]

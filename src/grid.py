@@ -136,7 +136,7 @@ class TurbineGrid(Grid):
         Create grid points at each turbine for each wind direction and wind speed in the simulation.
         This creates the underlying data structure for the calculation.
 
-        arrays have shape (n turbines, n grid spanwise, n grid vertically)
+        arrays have shape (n turbines, m grid spanwise, m grid vertically)
         - dimension 1: each turbine
         - dimension 2: number of points in the spanwise direction (ngrid)
         - dimension 3: number of points in the vertical dimension (ngrid)
@@ -144,6 +144,10 @@ class TurbineGrid(Grid):
         For example
         - x is [n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
         - y is [n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]
+
+        The x array contains the actual locations in that direction.
+        y and z values are displacements from the x coordinate in the y and z directions.
+        That is to say that each turbine has a local coordinate system located at (x, )
 
         # -   **self.grid_resolution** (*int*, optional): The square root of the number
         #             of points to use on the turbine grid. This number will be
