@@ -39,7 +39,6 @@ from . import (
 )
 from .farm import Farm
 from .grid import Grid, TurbineGrid, FlowFieldGrid
-from .wake import Wake
 from .floris import Floris
 from .turbine import Turbine
 from .base_class import BaseClass

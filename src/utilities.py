@@ -27,12 +27,8 @@ class Vec3:
         set so that Vec3 objects can operate on and with each other directly.
 
         Args:
-            x1 (list(numeric, numeric, numeric), numeric): All three vector
-                components or simply the first component of the vector.
-            x2 (numeric, optional): Second component of the vector if the
-                first argument is not a list. Defaults to None.
-            x3 (numeric, optional): Third component of the vector if the
-                first argument is not a list. Defaults to None.
+            components (list(numeric, numeric, numeric), numeric): All three vector
+                components.
             string_format (str, optional): Format to use in the
                 overloaded __str__ function. Defaults to None.
         """
