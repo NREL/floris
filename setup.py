@@ -21,11 +21,9 @@
 
 import io
 import os
-import sys
-from shutil import rmtree
 from pathlib import Path
 
-from setuptools import Command, setup, find_packages
+from setuptools import setup, find_packages
 
 
 # Package meta-data.
@@ -44,6 +42,7 @@ REQUIRED = [
     "pytest>=4",
     "scipy>=1.1",
     "coloredlogs>=10.0",
+    "attr",
 ]
 
 # What packages are optional?

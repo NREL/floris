@@ -293,7 +293,6 @@ class Turbine(BaseClass):
     """
 
     rotor_diameter: float = float_attrib()
-    rotor_radius: float = float_attrib(init=False)
     hub_height: float = float_attrib()
     pP: float = float_attrib()
     pT: float = float_attrib()
@@ -321,11 +320,6 @@ class Turbine(BaseClass):
     # # initialize to an invalid value until calculated
     # self.air_density = -1
     # self.use_turbulence_correction = False
-
-    @rotor_diameter.validator
-    def check(self, attribute, value) -> None:
-        """Updates `rotor_radius` when `rotor_diameter` is updated"""
-        self.rotor_radius = value / 2.0
 
     def __attrs_post_init__(self) -> None:
 
