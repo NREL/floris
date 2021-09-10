@@ -391,7 +391,7 @@ class Turbine(BaseClass):
         if is_single:
             at_wind_speed = np.array([at_wind_speed])
 
-        _ct = self.fCp_interp(at_wind_speed)
+        _ct = self.fCt_interp(at_wind_speed)
         _ct = np.clip(_ct, 0.0001, 0.9999)
         _ct[at_wind_speed < self.power_thrust_table.wind_speed.min()] = 0.99
 
