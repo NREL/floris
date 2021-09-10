@@ -16,12 +16,12 @@ from typing import Dict, List, Union
 from collections.abc import Iterable
 import math
 
-import attr
 import numpy as np
-from scipy.interpolate import interp1d
 
+import attr
 from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
 from src.base_class import BaseClass
+from scipy.interpolate import interp1d
 
 
 def _filter_convert(
@@ -293,6 +293,7 @@ class Turbine(BaseClass):
     """
 
     rotor_diameter: float = float_attrib()
+    rotor_radius: float = float_attrib(init=False)
     hub_height: float = float_attrib()
     pP: float = float_attrib()
     pT: float = float_attrib()
@@ -320,6 +321,11 @@ class Turbine(BaseClass):
     # # initialize to an invalid value until calculated
     # self.air_density = -1
     # self.use_turbulence_correction = False
+
+    @rotor_diameter.validator
+    def check(self, attribute, value) -> None:
+        """Updates `rotor_radius` when `rotor_diameter` is updated"""
+        self.rotor_radius = value / 2.0
 
     def __attrs_post_init__(self) -> None:
 
@@ -353,7 +359,7 @@ class Turbine(BaseClass):
     def fCp(
         self, sample_wind_speeds: Union[float, np.ndarray]
     ) -> Union[float, np.ndarray]:
-        """????
+        """Calculates the coefficient of power at a given wind speed.
 
         Args:
             sample_wind_speeds (Union[float, np.ndarray]): The wind speed(s).
@@ -373,24 +379,32 @@ class Turbine(BaseClass):
         #     _cp = _cp[0]
         _cp[sample_wind_speeds < self.power_thrust_table.wind_speed.min()] = 0.0
 
-        # Return the data type that matches the input size
+        # Return the data type that matches the input size, but figure out the dimensionality
         if is_single:
             return _cp[0]
         return _cp
 
     def fCt(self, at_wind_speed):
-        # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?
-        if at_wind_speed < self.power_thrust_table.wind_speed.min():
-            return 0.9999
-        else:
-            _ct = self.fCt_interp(at_wind_speed)
-            if _ct.size > 1:
-                _ct = _ct[0]
-            if _ct > 1.0:
-                return 0.9999
-            if _ct <= 0.0:
-                return 0.0001
-            return float(_ct)
+        """Calculates the coefficient of thrust at a given wind speed.
+
+        Args:
+            at_wind_speed (Union[float, np.ndarray]): The wind speed(s).
+
+        Returns:
+            Union[float, np.ndarray]: The coefficient of thrust for a given wind speed.
+        """
+        is_single = not isinstance(at_wind_speed, Iterable)
+        if is_single:
+            at_wind_speed = np.array([at_wind_speed])
+
+        _ct = self.fCp_interp(at_wind_speed)
+        _ct = np.clip(_ct, 0.0001, 0.9999)
+        _ct[at_wind_speed < self.power_thrust_table.wind_speed.min()] = 0.99
+
+        # TODO: DETERMINE THE CORRECT DIMENSIONS FOR AN ARRAY OF WINDSPEEDS
+        if is_single:
+            return _ct[0]
+        return _ct
 
     @property
     def rotor_radius(self) -> float:
