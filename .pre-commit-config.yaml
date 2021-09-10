@@ -14,6 +14,8 @@ repos:
           stages: [commit]
           language_version: python3.7
 
+# TODO: Once, v3 is mostly sorted, I'm going to enable this to do static type checking
+# on the library to ensure commits are sound.
 # -   repo: https://github.com/pre-commit/mirrors-mypy
 #     rev: ""
 #     hooks:
