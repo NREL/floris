@@ -15,10 +15,8 @@
 from typing import Any, Dict, List, Tuple, Union, Callable
 from functools import partial, update_wrapper
 
-import numpy as np
-
 import attr
-from attr import validators
+import numpy as np
 
 
 class Vec3:
@@ -278,7 +276,7 @@ def attrs_array_converter(data: list) -> np.ndarray:
 float_attrib = partial(
     attr.ib,
     converter=float,
-    on_setattr=(attr.setters.convert, attr.setters.validate),
+    on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
     kw_only=True,
 )
 update_wrapper(float_attrib, attr.ib)
