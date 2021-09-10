@@ -15,6 +15,7 @@
 
 import attr
 import pytest
+
 from src.base_class import BaseClass
 
 

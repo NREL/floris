@@ -44,8 +44,8 @@ class TestClass(FromDictMixin):
 
 @attr.s(auto_attribs=True)
 class TestClassArray(FromDictMixin):
-    arr: np.ndarray = attr.ib(
-        default=[1, 2], converter=attrs_array_converter, on_setattr=attr.setters.convert
+    arr: np.ndarray = attr.ib(  # type: ignore
+        default=[1, 2], converter=attrs_array_converter, on_setattr=attr.setters.convert  # type: ignore
     )
 
 

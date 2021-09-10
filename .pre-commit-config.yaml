@@ -14,6 +14,12 @@ repos:
           stages: [commit]
           language_version: python3.7
 
+# -   repo: https://github.com/pre-commit/mirrors-mypy
+#     rev: ""
+#     hooks:
+#         - id: mypy
+#           args: [--no-strict-optional, --ignore-missing-imports]
+
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
