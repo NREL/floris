@@ -16,12 +16,12 @@ from typing import Dict, List, Union
 from collections.abc import Iterable
 import math
 
-import numpy as np
-
 import attr
+import numpy as np
+from scipy.interpolate import interp1d
+
 from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
 from src.base_class import BaseClass
-from scipy.interpolate import interp1d
 
 
 def _filter_convert(
