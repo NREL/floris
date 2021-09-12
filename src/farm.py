@@ -13,9 +13,146 @@
 from typing import Any, Dict, List, Union
 
 import copy
+from typing import Dict, List, Union
+
+import attr
 import numpy as np
-from .utilities import Vec3
+import xarray as xr
+
 from .turbine import Turbine
+from .utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
+
+
+def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
+    return {t_id: Turbine.from_dict(config) for t_id, config in mapping.items()}
+
+
+def generate_turbine_tuple(turbine: Turbine) -> tuple:
+    exclusions = ("power_thrust_table", "model_string")
+    return attr.astuple(
+        turbine, filter=lambda attribute, value: attribute.name not in exclusions
+    )
+
+
+def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
+    exclusions = ("power_thrust_table", "model_string")
+    mapping = attr.asdict(
+        turbine, filter=lambda attribute, value: attribute.name not in exclusions
+    )
+    return list(mapping.keys())
+
+
+@attr.s(auto_attribs=True)
+class FarmGenerator(FromDictMixin):
+    """NewFarm is where wind power plants should be instantiated from a YAML configuration
+    file. The NewFarm will create a heterogenous set of turbines that compose a windfarm,
+    validate the inputs, and then create a vectorized representation of the the turbine
+    data.
+
+    Farm is the container class of the FLORIS package. It brings
+    together all of the component objects after input (i.e., Turbine,
+    Wake, FlowField) and packages everything into the appropriate data
+    type. Farm should also be used as an entry point to probe objects
+    for generating output.
+
+    Args:
+        turbine_id (List[str]): The turbine identifiers to map each turbine to one of
+            the turbine classifications in `turbine_map`.
+        turbine_map (Dict[str, Union[dict, Turbine]]): The dictionary mapping of unique
+            turbines at the wind power plant. Takes either a pre-generated `Turbine`
+            object, or a dictionary that will be used to generate the `Turbine` object.
+        layout_x (Union[List[float], np.ndarray]): The x-coordinates for the turbines at
+            the wind power plant.
+        layout_y (Union[List[float], np.ndarray]): The y-coordinates for the turbines at
+            the wind power plant.
+        wtg (List[str]): The WTG ID values for each turbine. This field acts as metadata
+            only.
+
+    Raises:
+        ValueError: [description]
+        ValueError: [description]
+
+    Returns:
+        [type]: [description]
+    """
+
+    # TODO: Create the mapping of turbines to a farm
+    # TODO: Add an ID filed to the turbines
+    # TODO: create a vectorized implementation of the turbine data
+
+    turbine_id: List[str] = attr.ib(validator=iter_validator(list, str))
+    turbine_map: Dict[str, Union[dict, Turbine]] = attr.ib(converter=create_turbines)
+    layout_x: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
+    layout_y: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
+    wtg_id: List[str] = attr.ib(
+        factory=list,
+        on_setattr=attr.setters.validate,
+        validator=iter_validator(list, str),
+    )
+
+    coordinates: List[Vec3] = attr.ib(init=False)
+
+    rotor_diameter: np.ndarray = attr.ib(init=False)
+    hub_height: np.ndarray = attr.ib(init=False)
+    pP: np.ndarray = attr.ib(init=False)
+    pT: np.ndarray = attr.ib(init=False)
+    generator_efficiency: np.ndarray = attr.ib(init=False)
+    # power_thrust_table: np.ndarray = attr.ib(init=False)  # NOTE: Is this only necessary for the creation of the interpolations?
+    fCp_interp: np.ndarray = attr.ib(init=False)
+    fCt_interp: np.ndarray = attr.ib(init=False)
+    power_interp: np.ndarray = attr.ib(init=False)
+    rotor_radius: np.ndarray = attr.ib(init=False)
+    rotor_area: np.ndarray = attr.ib(init=False)
+    array_data: np.ndarray = attr.ib(init=False)
+
+    # Pre multi-turbine
+    # i  j  k  l  m
+    # wd ws x  y  z
+
+    # With multiple turbines per floris ez (aka Chris)
+    # i  j  k    l  m  n
+    # wd ws t_ix x  y  z
+
+    def __attrs_post_init__(self) -> None:
+        self.coorinates = [
+            Vec3(x, y, self.turbine_map[t_id].hub_height)
+            for x, y, t_id in zip(self.layout_x, self.layout_y, self.turbine_id)
+        ]
+
+        self.generate_farm_points()
+
+    @wtg_id.validator
+    def check_wtg_id(self, instance: str, value: Union[list, List[str]]) -> None:
+        if len(value) == 0:
+            self.wtg_id = [f"t{str(i).zfill(3)}" for i in range(len(self.turbine_id))]
+        elif len(value) < self.turbine_id:
+            raise ValueError("There are too few `wtg_id` values")
+        elif len(value) < self.turbine_id:
+            raise ValueError("There are too many `wtg_id` values")
+
+    def generate_farm_points(self) -> None:
+        # Create an array of turbine values and the column ordering
+        column_order = generate_turbine_attribute_order([self.turbine_map.values()][0])
+        turbine_array = np.array(
+            [generate_turbine_tuple(self.turbine_map[t_id]) for t_id in self.turbine_id]
+        )
+
+        column_ix = {col: i for i, col in enumerate(column_order)}
+        self.rotor_diameter = turbine_array[:, column_ix["rotor_diameter"]]
+        self.rotor_radius = turbine_array[:, column_ix["rotor_radius"]]
+        self.rotor_area = turbine_array[:, column_ix["rotor_area"]]
+        self.hub_height = turbine_array[:, column_ix["hub_height"]]
+        self.pP = turbine_array[:, column_ix["pP"]]
+        self.pT = turbine_array[:, column_ix["pT"]]
+        self.generator_efficiency = turbine_array[:, column_ix["generator_efficiency"]]
+        self.fCp_interp = turbine_array[:, column_ix["fCp_interp"]]
+        self.fCt_interp = turbine_array[:, column_ix["fCt_interp"]]
+        self.power_interp = turbine_array[:, column_ix["power_interp"]]
+
+        self.data_array = xr.DataArray(
+            turbine_array,
+            coords=dict(wtg_id=self.wtg_id, turbine_attributes=column_order),
+        )
 
 
 class FarmController:
@@ -98,7 +235,10 @@ class Farm:
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
 
-        coordinates = [Vec3([x1, x2, turbine.hub_height]) for x1, x2 in list(zip(layout_x, layout_y))]        
+        coordinates = [
+            Vec3([x1, x2, turbine.hub_height])
+            for x1, x2 in list(zip(layout_x, layout_y))
+        ]
         self.turbine_map_dict = {c: copy.deepcopy(turbine) for c in coordinates}
 
         # Turbine control settings indexed by the turbine ID
@@ -153,7 +293,9 @@ class Farm:
         """
         return self.turbine_map_dict.items()
 
-    def set_yaw_angles(self, yaw_angles: list, n_wind_speeds: int, n_wind_directions: int) -> None:
+    def set_yaw_angles(
+        self, yaw_angles: list, n_wind_speeds: int, n_wind_directions: int
+    ) -> None:
         if len(yaw_angles) != len(self.items):
             raise ValueError("Farm.set_yaw_angles: a yaw angle must be given for each turbine.")
 

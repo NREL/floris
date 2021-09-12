@@ -20,7 +20,13 @@ import attr
 import numpy as np
 from scipy.interpolate import interp1d
 
-from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
+from src.utilities import (
+    FromDictMixin,
+    cosd,
+    float_attrib,
+    model_attrib,
+    attrs_array_converter,
+)
 from src.base_class import BaseClass
 
 
@@ -300,11 +306,14 @@ class Turbine(BaseClass):
     power_thrust_table: Dict[str, List[float]] = attr.ib(
         converter=PowerThrustTable.from_dict, kw_only=True,
     )
+    model_string: str = model_attrib(default="turbine")
     # ngrid: float = float_attrib()  # TODO: goes here or on the Grid?
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
 
     # Initialized in the post_init function
+    rotor_radius: float = float_attrib(init=False)
+    rotor_area: float = float_attrib(init=False)
     fCp_interp: interp1d = attr.ib(init=False)
     fCt_interp: interp1d = attr.ib(init=False)
     power_interp: interp1d = attr.ib(init=False)
@@ -322,6 +331,10 @@ class Turbine(BaseClass):
     # self.use_turbulence_correction = False
 
     def __attrs_post_init__(self) -> None:
+
+        # Set the rotor_radius and rotor_area attributes
+        self.rotor_radius = self.rotor_diameter / 2.0
+        self.rotor_area = np.pi * self.rotor_radius ** 2
 
         # Post-init initialization for the power curve interpolation functions
         wind_speeds = self.power_thrust_table.wind_speed
@@ -400,30 +413,32 @@ class Turbine(BaseClass):
             return _ct[0]
         return _ct
 
-    @property
-    def rotor_radius(self) -> float:
+    @rotor_diameter.validator
+    def reset_rotor_diameter_dependencies(self, instance: str, value: float) -> None:
+        """Resets the `rotor_radius` and `rotor_area` attributes.
         """
-        Rotor radius of the turbine in meters.
+        # Temporarily turn off validators to avoid infinite recursion
+        attr.set_run_validators(False)
 
-        Returns:
-            float: The rotor radius of the turbine.
+        # Reset the values
+        self.rotor_radius = value / 2.0
+        self.rotor_area = np.pi * self.rotor_radius ** 2.0
+
+        # Turn validators back on
+        attr.set_run_validators(True)
+
+    @rotor_radius.validator
+    def reset_rotor_radius(self, instance: str, value: float) -> None:
         """
-        return self.rotor_diameter / 2.0
-
-    @rotor_radius.setter
-    def rotor_radius(self, value: float) -> None:
+        Resets the `rotor_diameter` value to trigger the recalculation of
+        `rotor_diameter`, `rotor_radius` and `rotor_area`.
+        """
         self.rotor_diameter = value * 2.0
 
-    @property
-    def rotor_area(self) -> float:
+    @rotor_area.validator
+    def reset_rotor_area(self, instance: str, value: float) -> None:
         """
-        Rotor area of the turbine in meters squared.
-
-        Returns:
-            float: The rotor area of the turbine.
+        Resets the `rotor_radius` value to trigger the recalculation of
+        `rotor_diameter`, `rotor_radius` and `rotor_area`.
         """
-        return np.pi * self.rotor_radius ** 2
-
-    @rotor_area.setter
-    def rotor_area(self, value: float) -> None:
         self.rotor_radius = math.sqrt(value / np.pi)
