@@ -103,7 +103,7 @@ class FarmGenerator(FromDictMixin):
     power_interp: np.ndarray = attr.ib(init=False)
     rotor_radius: np.ndarray = attr.ib(init=False)
     rotor_area: np.ndarray = attr.ib(init=False)
-    array_data: np.ndarray = attr.ib(init=False)
+    array_data: xr.DataArray = attr.ib(init=False)
 
     # Pre multi-turbine
     # i  j  k  l  m
@@ -114,25 +114,42 @@ class FarmGenerator(FromDictMixin):
     # wd ws t_ix x  y  z
 
     def __attrs_post_init__(self) -> None:
-        self.coorinates = [
-            Vec3(x, y, self.turbine_map[t_id].hub_height)
+        self.coordinates = [
+            Vec3([x, y, self.turbine_map[t_id].hub_height])
             for x, y, t_id in zip(self.layout_x, self.layout_y, self.turbine_id)
         ]
 
         self.generate_farm_points()
 
+    @layout_x.validator
+    def check_x_len(self, instance: str, value: Union[List[float], np.ndarray]) -> None:
+        if len(value) < len(self.turbine_id):
+            raise ValueError("Not enough `layout_x` values to match the `turbine_id`s")
+        if len(value) > len(self.turbine_id):
+            raise ValueError("Too many `layout_x` values to match the `turbine_id`s")
+
+    @layout_y.validator
+    def check_y_len(self, instance: str, value: Union[List[float], np.ndarray]) -> None:
+        if len(value) < len(self.turbine_id):
+            raise ValueError("Not enough `layout_y` values to match the `turbine_id`s")
+        if len(value) > len(self.turbine_id):
+            raise ValueError("Too many `layout_y` values to match the `turbine_id`s")
+
     @wtg_id.validator
     def check_wtg_id(self, instance: str, value: Union[list, List[str]]) -> None:
         if len(value) == 0:
-            self.wtg_id = [f"t{str(i).zfill(3)}" for i in range(len(self.turbine_id))]
-        elif len(value) < self.turbine_id:
+            self.wtg_id = [
+                f"t{str(i).zfill(3)}" for i in 1 + np.arange(len(self.turbine_id))
+            ]
+        elif len(value) < len(self.turbine_id):
             raise ValueError("There are too few `wtg_id` values")
-        elif len(value) < self.turbine_id:
+        elif len(value) > len(self.turbine_id):
             raise ValueError("There are too many `wtg_id` values")
 
     def generate_farm_points(self) -> None:
         # Create an array of turbine values and the column ordering
-        column_order = generate_turbine_attribute_order([self.turbine_map.values()][0])
+        arbitrary_turbine = self.turbine_map[self.turbine_id[0]]
+        column_order = generate_turbine_attribute_order(arbitrary_turbine)
         turbine_array = np.array(
             [generate_turbine_tuple(self.turbine_map[t_id]) for t_id in self.turbine_id]
         )
