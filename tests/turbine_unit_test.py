@@ -271,7 +271,7 @@ def test_axial_induction():
     assert ai == 0.25116283939089806
 
     # Multiple turbines with ix filter
-    rng = np.array(WIND_SPEEDS).reshape(-1, 1, 1)  # size 4 x 1 x 1
+    # rng = np.array(WIND_SPEEDS).reshape(-1, 1, 1)  # size 4 x 1 x 1
     ix_filter = [0, 2]
 
     ai = axial_induction(
