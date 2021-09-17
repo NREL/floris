@@ -24,13 +24,16 @@ from ....logging_manager import LoggerBase
 
 class YawOptimizationClustered(YawOptimization, LoggerBase):
     """
-    YawOptimizationWindRose is a subclass of
-    :py:class:`~.tools.optimizationscipy.YawOptimizationWindRose` that is used
-    to perform parallel computing to optimize the yaw angles of all turbines in
-    a Floris Farm for multiple sets of inflow conditions (combinations of wind
-    speed, wind direction, and optionally turbulence intensity) using the scipy
-    optimize package. Parallel optimization is performed using the
-    MPIPoolExecutor method of the mpi4py.futures module.
+    YawOptimization is a subclass of
+    :py:class:`~.tools.optimizationscipy.YawOptimization` that is used to
+    perform optimizations of the yaw angles of all or a subset of wind turbines
+    in a Floris Farm for a single set of inflow conditions using the scipy
+    optimization package. This class facilitates the clusterization of the
+    turbines inside seperate subsets in which the turbines witin each subset
+    exclusively interact with one another and have no impact on turbines
+    in other clusters. This may significantly reduce the computational
+    burden at no loss in performance (assuming the turbine clusters are truly
+    independent).
     """
 
     def __init__(
@@ -165,6 +168,15 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
                 the yaw bounds specified in self.bnds allow that, or otherwise
                 are fixed to the lower or upper yaw bound, whichever is closer
                 to 0.0. Defaults to False.
+            clustering_wake_slope (float, optional): linear slope of the wake
+                in the simplified linear expansion wake model (dy/dx). This
+                model is used to derive wake interactions between turbines and
+                to identify the turbine clusters. A good value is about equal
+                to the turbulence intensity in FLORIS. Though, since yaw
+                optimizations may shift the wake laterally, a safer option
+                is twice the turbulence intensity. The default value is 0.30
+                which should be valid for yaw optimizations at wd_std = 0.0 deg
+                and turbulence intensities up to 15%. Defaults to 0.30.
         """
         super().__init__(
             fi=fi,
@@ -182,7 +194,6 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
             calc_init_power=calc_init_power,
             exclude_downstream_turbines=exclude_downstream_turbines,
         )
-        # Calculate clusters
         self.clustering_wake_slope = clustering_wake_slope
 
 
