@@ -23,7 +23,7 @@ from .yaw_wind_rose_clustered import YawOptimizationWindRoseClustered
 from ....logging_manager import LoggerBase
 
 
-class YawOptimizationWindRoseParallel(YawOptimizationWindRoseClustered, LoggerBase):
+class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered, LoggerBase):
     """
     YawOptimizationWindRoseClustered is a subclass of
     :py:class:`~.tools.optimizationscipy.YawOptimizationWindRoseClustered` that
