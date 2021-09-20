@@ -16,8 +16,11 @@ import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
 
-from .optimization import Optimization
-from .derive_downstream_turbines import derive_downstream_turbines
+from floris.tools.optimization.scipy.optimization import Optimization
+from floris.tools.optimization.scipy.derive_downstream_turbines import derive_downstream_turbines
+
+from floris.tools.optimization.farm_cost_function import _cost_norm_selective_turbines as _cost
+from floris.tools.optimization.other.serial_refinement import minimize_sr
 
 
 class YawOptimization(Optimization):
@@ -162,13 +165,31 @@ class YawOptimization(Optimization):
         super().__init__(fi)
 
         if opt_options is None:
-            self.opt_options = {
-                "maxiter": 50,
-                "disp": True,
-                "iprint": 2,
-                "ftol": 1e-12,
-                "eps": 0.1,
-            }
+            if opt_method.lower() == "sr":
+                # Dictionary for serial refinement
+                opt_options = dict(
+                    {
+                        "Ny_passes": [5, 5],
+                        "refine_solution": False,
+                        "refine_method": "SLSQP",
+                        "refine_options": {
+                            'maxiter': 10,
+                            'disp': False,
+                            'iprint': 1,
+                            'ftol': 1e-7,
+                            'eps': 0.01
+                        }
+                    }
+                )
+            else:
+                # Assume SciPy format
+                self.opt_options = {
+                    "maxiter": 50,
+                    "disp": True,
+                    "iprint": 2,
+                    "ftol": 1e-12,
+                    "eps": 0.1,
+                }
 
         self.unc_pmfs = unc_pmfs
 
@@ -198,28 +219,72 @@ class YawOptimization(Optimization):
 
     # Private methods
 
-    def _yaw_power_opt(self, yaw_angles_subset_norm):
-        # Unnorm subset
-        yaw_angles_subset = self._unnorm(
-            np.array(yaw_angles_subset_norm),
+    def _cost_farm_power(self, yaw_angles_subset_norm):
+        yaw_angles_template_norm = self._norm(
+            self.yaw_angles_template,
             self.minimum_yaw_angle,
-            self.maximum_yaw_angle,
+            self.maximum_yaw_angle
         )
-        # Create a full yaw angle array
-        yaw_angles = np.array(self.yaw_angles_template, copy=True)
-        yaw_angles[self.turbs_to_opt] = yaw_angles_subset
-
-        self.fi.calculate_wake(yaw_angles=yaw_angles)
-        turbine_powers = self.fi.get_turbine_power(
+        return _cost(
+            fi=self.fi,
+            yaw_angles_subset_norm=yaw_angles_subset_norm,
+            turbs_to_opt=self.turbs_to_opt,
+            yaw_angles_norm_template=yaw_angles_template_norm,
+            yaw_norm_lb=self.minimum_yaw_angle,
+            yaw_norm_ub=self.maximum_yaw_angle,
+            farm_power_ub=self.initial_farm_power,
+            turbine_weights=self.turbine_weights,
             include_unc=self.include_unc,
             unc_pmfs=self.unc_pmfs,
             unc_options=self.unc_options,
         )
 
-        return (
-            -1.0
-            * np.dot(self.turbine_weights, turbine_powers)
-            / self.initial_farm_power
+    def _optimize_scipy(self, opt_method=None, opt_options=None):
+        """
+        Find optimum setting of turbine yaw angles for power production
+        given fixed atmospheric conditions (wind speed, direction, etc.)
+        using the scipy.optimize.minimize function.
+
+        Returns:
+            opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+        """
+        # Allow possibility to overwrite and default to self
+        if opt_options is None:
+            opt_options = self.opt_options
+        if opt_method is None:
+            opt_method = self.opt_method
+    
+        # Initialize full optimal yaw angle array
+        opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
+
+        # Reduce number of variables and normalize yaw angles to [0, 1]
+        self._normalize_control_variables()
+
+        # Use SciPy to find the optimal solutions
+        self.residual_plant = minimize(
+            self._cost_farm_power,
+            self.x0_norm,
+            method=opt_method,
+            bounds=self.bnds_norm,
+            options=opt_options,
+        )
+        opt_yaw_angles_subset = self._unnorm(
+            self.residual_plant.x, self.minimum_yaw_angle, self.maximum_yaw_angle
+        )
+        opt_yaw_angles[self.turbs_to_opt] = opt_yaw_angles_subset
+        return opt_yaw_angles
+
+    def _optimize_sr(self):
+        return minimize_sr(
+            fi=self.fi,
+            yaw_angles_template=self.yaw_angles_template,
+            bounds=self.bnds,
+            opt_options=self.opt_options,
+            include_unc=self.include_unc,
+            unc_pmfs=self.unc_pmfs,
+            unc_options=self.unc_options,
+            turbine_weights=self.turbine_weights,
+            turbs_to_opt=self.turbs_to_opt
         )
 
     def _optimize(self):
@@ -230,21 +295,26 @@ class YawOptimization(Optimization):
         Returns:
             opt_yaw_angles (np.array): optimal yaw angles of each turbine.
         """
-        opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
+        # Reduce degrees of freedom and check if optimization necessary
         self._reduce_control_variables()
-        if len(self.turbs_to_opt) > 0:
-            self.residual_plant = minimize(
-                self._yaw_power_opt,
-                self.x0_norm,
-                method=self.opt_method,
-                bounds=self.bnds_norm,
-                options=self.opt_options,
-            )
+        if len(self.turbs_to_opt) <= 0:
+            return self.yaw_angles_template
 
-            opt_yaw_angles_subset = self._unnorm(
-                self.residual_plant.x, self.minimum_yaw_angle, self.maximum_yaw_angle
-            )
-            opt_yaw_angles[self.turbs_to_opt] = opt_yaw_angles_subset
+        if self.opt_method.lower() == "sr":
+            opt_yaw_angles = self._optimize_sr()
+            if self.opt_options["refine_solution"]:
+                # Refinement with SciPy solver (SLSQP)
+                self.x0 = opt_yaw_angles  # Initial condition
+                opt_yaw_angles = self._optimize_scipy(
+                    opt_options=self.opt_options["refine_options"],
+                    opt_method="SLSQP"
+                )
+        
+        elif self.opt_method.lower() == "slsqp":
+            opt_yaw_angles = self._optimize_scipy()
+
+        else:
+            raise ValueError("Unavailable library and/or optimization method specified.")
 
         return opt_yaw_angles
 
@@ -290,9 +360,11 @@ class YawOptimization(Optimization):
         self.yaw_angles_template = yaw_angles_template
 
         # Derive normalized initial condition and bounds
-        x0_subset = [self.x0[i] for i in self.turbs_to_opt]
+        self.x0_subset = [self.x0[i] for i in self.turbs_to_opt]
+
+    def _normalize_control_variables(self):
         self.x0_norm = self._norm(
-            np.array(x0_subset), self.minimum_yaw_angle, self.maximum_yaw_angle
+            np.array(self.x0_subset), self.minimum_yaw_angle, self.maximum_yaw_angle
         )
         self.bnds_norm = [
             (
