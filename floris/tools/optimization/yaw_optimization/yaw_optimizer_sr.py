@@ -1,7 +1,22 @@
-import numpy as np
-from scipy.optimize import minimize
+# Copyright 2021 NREL
 
-from floris.tools.optimization.general_library.optimization import YawOptimization
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See https://floris.readthedocs.io for documentation
+
+
+import copy
+import numpy as np
+
+from .yaw_optimization_base import YawOptimization
 
 
 class YawOptimizationSR(YawOptimization):
@@ -19,6 +34,8 @@ class YawOptimizationSR(YawOptimization):
         unc_options=None,
         turbine_weights=None,
         exclude_downstream_turbines=False,
+        cluster_turbines=False,
+        cluster_wake_slope=0.30,
     ):
         """
             Args:
@@ -60,6 +77,8 @@ class YawOptimizationSR(YawOptimization):
             turbine_weights=turbine_weights,
             calc_init_power=False,
             exclude_downstream_turbines=exclude_downstream_turbines,
+            cluster_turbines=cluster_turbines,
+            cluster_wake_slope=cluster_wake_slope,
             )
 
         self.opt_options = opt_options
@@ -81,7 +100,8 @@ class YawOptimizationSR(YawOptimization):
                 unc_pmfs=self.unc_pmfs,
                 unc_options=self.unc_options,
                 turbine_weights=self.turbine_weights,
-                exclude_downstream_turbines=self.exclude_downstream_turbines
+                exclude_downstream_turbines=self.exclude_downstream_turbines,
+                cluster_turbines=False,
             )
 
     def _serial_refine_single_pass(self, yaw_grid):
@@ -123,7 +143,7 @@ class YawOptimizationSR(YawOptimization):
         self.refinement_solver.x0 = x0  # Overwrite initial condition
         return self.refinement_solver.optimize()
         
-    def optimize(self):
+    def _optimize(self):
         """
         Find optimum setting of turbine yaw angles for power production
         given fixed atmospheric conditions (wind speed, direction, etc.)
@@ -172,3 +192,31 @@ class YawOptimizationSR(YawOptimization):
             yaw_angles_opt = self._refine_solution(x0=yaw_angles_opt)
 
         return yaw_angles_opt
+
+    def optimize(self):
+        """
+        Find optimum setting of turbine yaw angles for power production
+        given fixed atmospheric conditions (wind speed, direction, etc.)
+        using the scipy.optimize.minimize function.
+
+        Returns:
+            opt_yaw_angles (np.array): optimal yaw angles of each turbine.
+        """
+        
+        if not self.cluster_turbines:
+            return self._optimize()
+
+        else:
+            xt = np.array(self.fi.layout_x, dtype=float)
+            yt = np.array(self.fi.layout_y, dtype=float)
+            opt_yaw_angles = np.zeros(self.nturbs, dtype=float)
+            for cl in self.clusters:
+                yopt_c = copy.deepcopy(self)
+                yopt_c.yaw_angles_baseline = np.array(self.yaw_angles_baseline)[cl]
+                yopt_c.turbine_weights = np.array(self.turbine_weights)[cl]
+                yopt_c.bnds = np.array(self.bnds)[cl]
+                yopt_c.x0 = np.array(self.x0)[cl]
+                yopt_c.fi.reinitialize_flow_field(layout_array=[xt[cl], yt[cl]])
+                opt_yaw_angles[cl] = yopt_c._optimize()
+
+        return opt_yaw_angles
