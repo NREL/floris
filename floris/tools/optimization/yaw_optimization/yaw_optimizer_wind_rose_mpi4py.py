@@ -116,7 +116,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                 + "Please refer to https://mpi4py.readthedocs.io/ for "
                 + "guidance on how to properly install the module."
             )
-            self.logger.error(err_msg, stack_info=True)
             raise ImportError(err_msg)
 
         print("=====================================================")

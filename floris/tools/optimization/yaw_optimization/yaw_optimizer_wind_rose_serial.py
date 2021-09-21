@@ -83,8 +83,8 @@ class YawOptimizationWindRose:
         if self.verbose:
             print(
                 "  Computing optimal yaw angles for"
-                + " wind speed = %.2f m/s, " % wd
-                + " wind direction = %.2f deg" % ws
+                + " wind speed = %.2f m/s, " % ws
+                + " wind direction = %.2f deg" % wd
                 + " turbulence intensity = %.3f." % ti
             )
 
