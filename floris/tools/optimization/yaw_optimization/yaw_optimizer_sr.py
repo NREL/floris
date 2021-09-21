@@ -17,6 +17,7 @@ import copy
 import numpy as np
 
 from .yaw_optimization_base import YawOptimization
+from .yaw_optimizer_scipy import YawOptimizationScipy
 
 
 class YawOptimizationSR(YawOptimization):
@@ -33,7 +34,7 @@ class YawOptimizationSR(YawOptimization):
         unc_pmfs=None,
         unc_options=None,
         turbine_weights=None,
-        exclude_downstream_turbines=False,
+        exclude_downstream_turbines=True,
         cluster_turbines=False,
         cluster_wake_slope=0.30,
     ):
@@ -47,16 +48,16 @@ class YawOptimizationSR(YawOptimization):
         if opt_options is None:
             # Default SR parameters
             opt_options={
-                        "Ny_passes": [5, 5],
-                        "refine_solution": True,
-                        "refine_method": "SLSQP",
-                        "refine_options": {
-                            'maxiter': 10,
-                            'disp': True,
-                            'iprint': 1,
-                            'ftol': 1e-7,
-                            'eps': 0.01
-                        }
+                "Ny_passes": [5, 5],
+                "refine_solution": True,
+                "refine_method": "SLSQP",
+                "refine_options": {
+                    'maxiter': 10,
+                    'disp': True,
+                    'iprint': 1,
+                    'ftol': 1e-7,
+                    'eps': 0.01
+                }
             }
         else:
             # Confirm Ny_firstpass and Ny_secondpass are odd integers
@@ -82,27 +83,6 @@ class YawOptimizationSR(YawOptimization):
             )
 
         self.opt_options = opt_options
-        self._init_solution_refiner()
-
-    def _init_solution_refiner(self):
-        if self.opt_options["refine_solution"]:
-            from floris.tools.optimization.general_library import yaw_scipy
-            self.refinement_solver = yaw_scipy.YawOptimizationScipy(
-                fi=self.fi,
-                minimum_yaw_angle=self.minimum_yaw_angle,
-                maximum_yaw_angle=self.maximum_yaw_angle,
-                yaw_angles_baseline=self.yaw_angles_baseline,
-                x0=None,
-                bnds=self.bnds,
-                opt_method=self.opt_options["refine_method"],
-                opt_options=self.opt_options["refine_options"],
-                include_unc=self.include_unc,
-                unc_pmfs=self.unc_pmfs,
-                unc_options=self.unc_options,
-                turbine_weights=self.turbine_weights,
-                exclude_downstream_turbines=self.exclude_downstream_turbines,
-                cluster_turbines=False,
-            )
 
     def _serial_refine_single_pass(self, yaw_grid):
         # Get a list of the turbines in order of x and sort front to back
@@ -140,8 +120,23 @@ class YawOptimizationSR(YawOptimization):
         return yaw_angles_opt
 
     def _refine_solution(self, x0):
-        self.refinement_solver.x0 = x0  # Overwrite initial condition
-        return self.refinement_solver.optimize()
+        refinement_solver = YawOptimizationScipy(
+            fi=self.fi,
+            minimum_yaw_angle=self.minimum_yaw_angle,
+            maximum_yaw_angle=self.maximum_yaw_angle,
+            yaw_angles_baseline=self.yaw_angles_baseline,
+            x0=x0,
+            bnds=self.bnds,
+            opt_method=self.opt_options["refine_method"],
+            opt_options=self.opt_options["refine_options"],
+            include_unc=self.include_unc,
+            unc_pmfs=self.unc_pmfs,
+            unc_options=self.unc_options,
+            turbine_weights=self.turbine_weights,
+            exclude_downstream_turbines=self.exclude_downstream_turbines,
+            cluster_turbines=False,
+        )
+        return refinement_solver.optimize()
         
     def _optimize(self):
         """

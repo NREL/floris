@@ -183,15 +183,12 @@ class YawOptimizationWindRose:
             if self.verbose:
                 print(
                     "Computing wind speed, wind direction, turbulence "
-                    + "intensity set %d out of %d;" % (i, len(self.wd_array))
-                    + " wind speed = %.2f m/s, " % ws
-                    + " wind direction = %.2f deg" % wd
-                    + " turbulence intensity = %.3f." % ti
+                    + "intensity set %d out of %d;" % (i + 1, len(self.wd_array))
                 )
 
             # Optimize case and append to df_opt dataframe
             df_i = self._optimize_one_case(wd=wd, ws=ws, ti=ti)
-            df_opt.append(df_i)
+            df_opt = df_opt.append(df_i)
 
         df_opt.reset_index(drop=True, inplace=True)
         return df_opt

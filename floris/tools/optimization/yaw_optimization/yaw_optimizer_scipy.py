@@ -41,7 +41,7 @@ class YawOptimizationScipy(YawOptimization):
         unc_pmfs=None,
         unc_options=None,
         turbine_weights=None,
-        exclude_downstream_turbines=False,
+        exclude_downstream_turbines=True,
         cluster_turbines=False,
         cluster_wake_slope=0.30,
     ):

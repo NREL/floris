@@ -39,7 +39,7 @@ class YawOptimization:
         unc_options=None,
         turbine_weights=None,
         calc_init_power=True,
-        exclude_downstream_turbines=False,
+        exclude_downstream_turbines=True,
         cluster_turbines=False,
         cluster_wake_slope=0.30,
     ):
