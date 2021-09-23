@@ -71,7 +71,7 @@ class YawOptimizationWindRose:
 
     def plot_clusters(self):
         # Save initial wind direction and loop through array
-        wds_init = self.fi.floris.farm.wind_directions
+        wds_init = self.yaw_opt.fi.floris.farm.wind_direction
         for wd in self.wd_array:
             self.yaw_opt.reinitialize_flow_field(wind_direction=wd)
             self.yaw_opt.plot_clusters()
