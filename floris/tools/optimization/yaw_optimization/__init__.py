@@ -4,5 +4,6 @@ from . import (
     yaw_optimizer_scipy,
     yaw_optimizer_sr,
     yaw_optimizer_wind_rose_mpi4py,
+    yaw_optimizer_wind_rose_multiprocessing,
     yaw_optimizer_wind_rose_serial
 )
