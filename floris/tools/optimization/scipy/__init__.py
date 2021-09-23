@@ -8,4 +8,5 @@ from . import (
     yaw_wind_rose,
     power_density_1D,
     yaw_wind_rose_parallel,
+    derive_downstream_turbines,
 )
