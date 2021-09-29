@@ -319,7 +319,7 @@ class Turbine(BaseClass):
     def fCt(self, at_wind_speed):
         # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?
         if at_wind_speed < self.power_thrust_table.wind_speed.min():
-            return 0.99
+            return 0.9999
         else:
             _ct = self.fCt_interp(at_wind_speed)
             if _ct.size > 1:
