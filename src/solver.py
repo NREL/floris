@@ -4,6 +4,7 @@ import numpy as np
 from .farm import Farm
 from .flow_field import FlowField
 from .grid import TurbineGrid
+from .turbine import axial_induction
 from .wake_velocity.jensen import JensenVelocityDeficit
 
 jensen_deficit_model = JensenVelocityDeficit()
@@ -47,13 +48,20 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
     velocity_deficit = np.zeros_like(flow_field.u_initial)
     
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
-    for i in range(grid.n_turbines):
+    for i in range(grid.n_turbines - 1):
 
         jensen_args['u'] = flow_field.u_initial - velocity_deficit
-        c, turbine_ai = jensen_deficit_model.function(i, **jensen_args)
+        c = jensen_deficit_model.function(i, **jensen_args)
 
-        turbine_ai = np.expand_dims(turbine_ai, axis=(0,1)).T
-        turbine_ai = turbine_ai * np.ones((grid.grid_resolution, grid.grid_resolution))
+        u = flow_field.u_initial - velocity_deficit
+        u[0, i+1:, :, :] = 0
+        turbine_ai = axial_induction(
+            velocities=u[0, :, :, :],
+            yaw_angle=grid.n_turbines*[0.0],
+            fCt=grid.n_turbines*[farm.turbines[0].fCt],
+            ix_filter=[i]
+        )
+        turbine_ai = turbine_ai * np.ones((grid.n_turbines, grid.grid_resolution, grid.grid_resolution))
 
         # flow_field.u[i] = flow_field.u[i-1] * (1 - 2 * turbine_ai * deficit)
         # print(turbine_ai)

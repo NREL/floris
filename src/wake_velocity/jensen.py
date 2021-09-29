@@ -80,13 +80,6 @@ class JensenVelocityDeficit(BaseClass):
         # u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)
         # velocities is 3-dimensional (n turbines, grid res 1, grid res 2)
 
-        turbine_ai = axial_induction(
-            velocities=u[0, :, :, :],
-            yaw_angle=n_turbines*[0.0],
-            fCt=n_turbines*[reference_turbine.fCt],
-            # ix_filter=[i]
-        )
-
         # grid.rotate_fields(flow_field.wind_directions)  # TODO: check the rotations with multiple directions or non-0/270
 
         # Calculate and apply wake mask
@@ -116,7 +109,7 @@ class JensenVelocityDeficit(BaseClass):
         # mask = (((y - y_center) ** 2 + (z - z_center) ** 2) ** 2) > (boundary_line ** 2)
         # c[mask] = 0
 
-        return c, turbine_ai
+        return c
         # u[i] = u[i - 1] * (1 - 2 * turbine_ai * c)
 
         # This combination model is essentially the freestream linear superposition of v2
