@@ -154,18 +154,21 @@ class TurbineGrid(Grid):
         #             squared so that the points can be evenly distributed.
         #             Defaults to 5.
         """
+        # TODO: Where should we locate the coordinate system? Currently, its at
+        # the foot of the turbine where the tower meets the ground.
+
         n_turbines = len(self.turbine_coordinates)
 
         # vector of size [1 x n_turbines]
         x_coordinates = np.expand_dims(
             np.array([c.x1 for c in self.turbine_coordinates]), axis=0
         )
-        y_coordinates = np.expand_dims(
-            np.array([c.x2 for c in self.turbine_coordinates]), axis=0
-        )
-        z_coordinates = np.expand_dims(
-            np.array([c.x3 for c in self.turbine_coordinates]), axis=0
-        )
+        # y_coordinates = np.expand_dims(
+        #     np.array([c.x2 for c in self.turbine_coordinates]), axis=0
+        # )
+        # z_coordinates = np.expand_dims(
+        #     np.array([c.x3 for c in self.turbine_coordinates]), axis=0
+        # )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of

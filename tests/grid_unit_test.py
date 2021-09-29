@@ -31,11 +31,16 @@ Y_COORDS = [
     0.0,
     0.0
 ]
+Z_COORDS = [
+    90.0,
+    90.0,
+    90.0
+]
 
 
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
-    turbine_coordinates = list(zip(X_COORDS, Y_COORDS, N_TURBINES * [0.0]))
+    turbine_coordinates = list(zip(X_COORDS, Y_COORDS, Z_COORDS))
     turbine_coordinates = [Vec3(c) for c in turbine_coordinates]
     return TurbineGrid(
         turbine_coordinates,
@@ -68,7 +73,7 @@ def flow_field_grid_fixture(sample_inputs_fixture):
 def test_turbine_set_grid(turbine_grid_fixture):
     expected_x_grid = [[[0.0, 0.0], [0.0, 0.0]], [[630.0, 630.0], [630.0, 630.0]], [[1260.0, 1260.0], [1260.0, 1260.0]]]
     expected_y_grid = [[[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]]]
-    expected_z_grid = [[[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]], [[-31.5, 31.5], [-31.5, 31.5]]]
+    expected_z_grid = [[[58.5, 121.5], [58.5, 121.5]], [[58.5, 121.5], [58.5, 121.5]], [[58.5, 121.5], [58.5, 121.5]]] 
 
     # subtract the test and expected values which should result in 0's
     # then, search for any elements that are true and negate the results
