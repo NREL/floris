@@ -70,12 +70,13 @@ class Floris(logging_manager.LoggerBase):
         )
 
         # Initialize the simulation objects
-        self.turbine = Turbine(turbine_dict)
+        self.turbine = Turbine(**turbine_dict)
         # self.wake = Wake(wake_dict)
         self.farm = Farm(farm_dict, self.turbine)
         self.flow_field = FlowField(farm_dict)
 
     def go(self):
+        # <<interface>>
         # JensenVelocityDeficit.solver(self.farm, self.flow_field)
         sequential_solver(self.farm, self.flow_field)
 

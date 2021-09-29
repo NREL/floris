@@ -18,7 +18,7 @@ import pytest
 
 def turbines_to_array(turbine_list: list):
     return [
-        [t.Ct, t.power, t.axial_induction, t.average_velocity] for t in turbine_list
+        [ t.average_velocity, t.Ct, t.power, t.axial_induction] for t in turbine_list
     ]
 
 
@@ -34,11 +34,11 @@ def assert_results(test: list, baseline: list):
             assert t == pytest.approx(b)
 
 
-def print_test_values(turbine_list: list):
-    for t in turbine_list:
+def print_test_values(average_velocities: list, thrusts: list, powers: list, axial_inductions: list):
+    for i in range(len(thrusts)):
         print(
             "({:.7f}, {:.7f}, {:.7f}, {:.7f}),".format(
-                t.Ct, t.power, t.axial_induction, t.average_velocity
+                average_velocities[i], thrusts[i], powers[i], axial_inductions[i]
             )
         )
 

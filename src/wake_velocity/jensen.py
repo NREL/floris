@@ -10,11 +10,12 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from typing import Any, Dict
 
+from typing import Any, Dict
 import attr
 import numpy as np
-from src.farm import Farm
+
+from src.turbine import Turbine, axial_induction
 from src.grid import TurbineGrid
 from src.utilities import float_attrib, model_attrib
 from src.base_class import BaseClass
@@ -39,20 +40,25 @@ class JensenVelocityDeficit(BaseClass):
             :keyprefix: jvm-
     """
 
-    we: float = float_attrib(default=-0.05)
+    we: float = float_attrib(default=0.05)
     model_string: str = model_attrib(default="jensen")
 
     def prepare_function(
-        deflection_field: np.array, grid: TurbineGrid, farm: Farm, flow_field: FlowField
+        self,
+        # deflection_field: np.array,
+        grid: TurbineGrid,
+        reference_turbine: Turbine,
+        flow_field: FlowField
     ) -> Dict[str, Any]:
         kwargs = dict(
-            deflection_field=deflection_field,
+            # deflection_field=deflection_field,
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            u=flow_field.u,
+            u=flow_field.u_initial,
+            n_turbines=grid.n_turbines,
             reference_wind_height=flow_field.reference_wind_height,
-            reference_turbine_diameter=flow_field.reference_turbine_diameter,
+            reference_turbine=reference_turbine,
         )
         return kwargs
 
@@ -66,50 +72,53 @@ class JensenVelocityDeficit(BaseClass):
         y: np.ndarray,
         z: np.ndarray,
         u: np.ndarray,
+        n_turbines: int,
         reference_wind_height: float,
-        reference_turbine_diameter: float,
+        reference_turbine: Turbine,
     ) -> None:
 
-        # grid = TurbineGrid(farm.coords, flow_field.reference_turbine_diameter, flow_field.reference_wind_height, 5)
-        # flow_field.initialize_velocity_field(grid)
+        # u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)
+        # velocities is 3-dimensional (n turbines, grid res 1, grid res 2)
 
-        # Turbine axial induction
-        turbine_ai = 0.25790121826746754
+        turbine_ai = axial_induction(
+            velocities=u[0, :, :, :],
+            yaw_angle=n_turbines*[0.0],
+            fCt=n_turbines*[reference_turbine.fCt],
+            # ix_filter=[i]
+        )
 
         # grid.rotate_fields(flow_field.wind_directions)  # TODO: check the rotations with multiple directions or non-0/270
 
         # Calculate and apply wake mask
-        # x = grid.x #mesh_x_rotated - x_coord_rotated
-
-        # m = we
-        # b = flow_field.reference_turbine_diameter / 2.0
-        # c = (flow_field.reference_turbine_diameter / (2 * we * x + flow_field.reference_turbine_diameter)) ** 2
+        # x = grid.x # mesh_x_rotated - x_coord_rotated
         
         # This is the velocity deficit seen by the i'th turbine due to wake effects from upstream turbines.
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))
 
-        # y = m * x + b
-        boundary_line = self.we * x[i] + self.b
+        m = self.we
+        # x = x[i] - x[i - 1] #mesh_x_rotated - x_coord_rotated
+        b = reference_turbine.rotor_diameter / 2.0
 
-        y_upper = boundary_line + y[i]  # + deflection_field
-        y_lower = -1 * boundary_line + y[i]  # + deflection_field
-        z_upper = boundary_line + reference_wind_height
-        z_lower = -1 * boundary_line + reference_wind_height
+        boundary_line = m * x + b
 
+        y_center = np.zeros_like(boundary_line) + y #+ deflection_field
+        z_center = np.zeros_like(boundary_line) + reference_wind_height
+
+        # Calculate the wake velocity deficit ratios
         c = (
-            reference_turbine_diameter
-            / (2 * self.we * (x[i] - x[i - 1]) + reference_turbine_diameter)
-        ) ** 2
-        # c[mesh_x_rotated - x_coord_rotated < 0] = 0
-        c[y[i] > y_upper] = 0
-        c[y[i] < y_lower] = 0
-        c[z[i] > z_upper] = 0
-        c[z[i] < z_lower] = 0
+            (reference_turbine.rotor_diameter / (2 * self.we * (x - x[i]) + reference_turbine.rotor_diameter)) ** 2
+            # * ~(np.array(x - x[i] <= 0.0))  # using this causes nan's in the upstream turbine
+            # * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
+        )
 
-        u[i] = u[i - 1] * (1 - 2 * turbine_ai * c)
+        c[x - x[i] <= 0] = 0
+        # mask = (((y - y_center) ** 2 + (z - z_center) ** 2) ** 2) > (boundary_line ** 2)
+        # c[mask] = 0
 
+        return c, turbine_ai
+        # u[i] = u[i - 1] * (1 - 2 * turbine_ai * c)
 
-# J = JensenVelocityDeficit()
-# function_kwargs = J.prepare_function(grid, farm, field)
-# J.function(i, df, **function_kwargs)
+        # This combination model is essentially the freestream linear superposition of v2
+        # This is used in the original paper.
+        # flow_field.u[i] = flow_field.u[i-1] * (1 - 2 * turbine_ai * c)

@@ -33,6 +33,7 @@ jobs:
       run: |
         # pytest tests/
         pytest tests/  --ignore tests/ignore --ignore tests/reg_tests
+        pytest tests/reg_tests/jensen_jimenez_regression_test.py -k tandem
     - name: Generate coverage report
       # Run these tests on unit tests only so that we avoid inflating our code
       # coverage through the regression tests

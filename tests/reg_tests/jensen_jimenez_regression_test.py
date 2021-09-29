@@ -27,9 +27,9 @@ VELOCITY_MODEL = "jensen"
 DEFLECTION_MODEL = "jimenez"
 
 baseline = [
-    (0.7634300, 1695368.6455473, 0.2568077, 7.9803783),
-    (0.8281095, 771695.5183645, 0.2927016, 6.1586693),
-    (0.8525678, 591183.4224051, 0.3080155, 5.6649575),
+    (7.9803783, 0.7634300, 1695368.6455473, 0.2568077),
+    (6.1586693, 0.8281095, 771695.5183645, 0.2927016),
+    (5.6649575, 0.8525678, 591183.4224051, 0.3080155),
 ]
 
 yawed_baseline = [
@@ -50,36 +50,60 @@ def test_regression_tandem(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
 
-    tic = time.perf_counter()
     floris = Floris(input_dict=sample_inputs_fixture.floris)
-    toc = time.perf_counter()
-    print(f"Initialization in {toc - tic:0.4f} seconds")
-
-    tic = time.perf_counter()
     floris.go()
-    toc = time.perf_counter()
-    print(f"Calculation in {toc - tic:0.4f} seconds")
-    
-    n_turbines = 3
-    turbine1 = floris.farm.turbines[0]
+
+    turbines = floris.farm.turbines
+    n_turbines = len(turbines)
+
     test_results = []
+
+    velocities = floris.flow_field.u[:, :, :, :]
+    yaw_angles = n_turbines * [0.0]
+    thrust_interpolation_func = [t.fCt for t in turbines]
+    power_interpolation_func = [t.power_interp for t in turbines]
+    power_exponent = [t.pP for t in turbines]
+
+    farm_avg_velocities = average_velocity(
+        velocities[0, :, :, :],
+        ix_filter=list(range(n_turbines))
+    )
+    farm_cts = Ct(
+        velocities[0, :, :, :],
+        yaw_angles,
+        thrust_interpolation_func,
+        ix_filter=list(range(n_turbines))
+    )
+    farm_powers = power(
+        n_turbines * [floris.flow_field.air_density],
+        velocities[0, :, :, :],
+        yaw_angles,
+        power_exponent,
+        power_interpolation_func,
+        ix_filter=list(range(n_turbines))
+    )
+    farm_axial_inductions = axial_induction(
+        velocities[0, :, :, :],
+        yaw_angles,
+        thrust_interpolation_func,
+        ix_filter=list(range(n_turbines))
+    )
     for i in range(n_turbines):
-        # print(floris.flow_field.u)
-        ave_vel = average_velocity(floris.flow_field.u[i, 0, :, :])
-        thrust = Ct(ave_vel, 0.0, turbine1.fCt)
-        pwr = power(floris.flow_field.air_density, ave_vel, 0.0, turbine1.pP, turbine1.power_interp)
-        ai = axial_induction(thrust, 0.0)
         this_turbine = [
-                thrust,
-                pwr,
-                ai,
-                ave_vel
+            farm_avg_velocities[i],
+            farm_cts[i],
+            farm_powers[i],
+            farm_axial_inductions[i]
         ]
         test_results.append(this_turbine)
 
-    # print(floris.flow_field.u_initial)
-    # if DEBUG:
-    #     print_test_values(floris.farm.turbine_map.turbines)
+    if DEBUG:
+        print_test_values(
+            farm_avg_velocities,
+            farm_cts,
+            farm_powers,
+            farm_axial_inductions,
+        )
 
     assert_results(test_results, baseline)
 
