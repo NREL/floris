@@ -95,10 +95,11 @@ def power(
     yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
 
     if isinstance(power_interp, np.ndarray):
-        p = [_fCp(v) for _fCp, v in zip(power_interp, yaw_effective_velocity)]
+        p = np.array([_fCp(v) for _fCp, v in zip(power_interp, yaw_effective_velocity)])
     else:
         p = power_interp(yaw_effective_velocity)
     return p * air_density
+
 
 def Ct(
     velocities: np.ndarray,  # rows: turbines; columns: velocities
@@ -124,11 +125,13 @@ def Ct(
         fCt = fCt[ix_filter]
 
     if isinstance(fCt, np.ndarray):
-        Ct = [_fCt(average_velocity(v)) for _fCt, v in zip(fCt, velocities)]
+        # Including cosd(yaw_angle) adds another dimension to the array incorrectly
+        # Ct = np.array([_fCt(average_velocity(v)) * cosd(yaw_angle) for _fCt, v in zip(fCt, velocities)])
+        Ct = np.array([_fCt(average_velocity(v)) for _fCt, v in zip(fCt, velocities)])
     else:
-        Ct = fCt(average_velocity(velocities))
+        turbine_velocity = average_velocity(velocities)
+        Ct = fCt(turbine_velocity) * cosd(yaw_angle)
 
-    Ct *= cosd(yaw_angle)  # **self.pP
     return Ct
 
 
@@ -181,7 +184,7 @@ def average_velocity(
     if velocities.ndim == 3:
         velocities = velocities[ix_filter, :, :]
     else:
-        velocities[ix_filter, :]
+        velocities[:, :]
 
     axis = (1, 2) if velocities.ndim == 3 else (0, 1)
     return np.cbrt(np.mean(velocities ** 3, axis=axis))
