@@ -36,7 +36,7 @@ class FlowField:
         # Since we use grid.z, this is a vertical plane for each turbine
         # Here, the profile is of shape (# turbines, N grid points, M grid points)
         # This velocity profile is 1.0 at the reference wind height and then follows wind shear as an exponent.
-        wind_profile_plane = ( (grid.z + self.reference_wind_height) / self.reference_wind_height) ** self.wind_shear
+        wind_profile_plane = ( grid.z / self.reference_wind_height) ** self.wind_shear
 
         # Add a dimension for each wind speed by broadcasting
         # Here, the profile is of shape (# wind speeds, # turbines, N grid points, M grid points)

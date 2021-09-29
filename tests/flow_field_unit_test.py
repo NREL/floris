@@ -41,12 +41,12 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
 
     # Check that the wind speed profile was created correctly. By setting the shear
     # exponent to 1.0 above, the shear profile is a linear function of height and
-    # the points on the rurbine rotor are equally spaced about the rotor.
+    # the points on the turbine rotor are equally spaced about the rotor.
     # This means that their average should equal the wind speed at the center
     # which is the input wind speed.
-    shape = np.shape(flow_field_fixture.u)
-    n_elements = shape[1] * shape[2] * shape[3]
-    average = np.sum(flow_field_fixture.u, axis=(1,2,3)) / np.array([n_elements, n_elements])
+    shape = np.shape(flow_field_fixture.u[0, 0, :, :])
+    n_elements = shape[0] * shape[1]
+    average = np.sum(flow_field_fixture.u[0, 0, :, :]) / np.array([n_elements])
     assert np.array_equal(average, flow_field_fixture.wind_speeds)
 
     # assert False
