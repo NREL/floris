@@ -16,6 +16,14 @@ from .utilities import Vec3
 from .turbine import Turbine
 
 
+class FarmController:
+    def __init__(self, n_wind_speeds: int, n_wind_directions: int) -> None:
+        self.yaw_angles = []
+    
+    def set_yaw_angles(self, yaw_angles: list) -> None:
+        self.yaw_angles = yaw_angles
+
+
 class Farm:
     """
     Farm is a class containing the objects that make up a FLORIS model.
@@ -88,7 +96,8 @@ class Farm:
         self.turbine_map_dict = {c: copy.deepcopy(turbine) for c in coordinates}
 
         # Turbine control settings indexed by the turbine ID
-        self.set_yaw_angles([0] * len(self.turbine_map_dict), len(input_dictionary["wind_speeds"]), 1)
+        self.farm_controller = FarmController(len(input_dictionary["wind_speeds"]), 1)
+        self.farm_controller.set_yaw_angles([0] * len(self.turbine_map_dict))
 
     def sorted_in_x_as_list(self):
         """
@@ -143,7 +152,9 @@ class Farm:
             raise ValueError("Farm.set_yaw_angles: a yaw angle must be given for each turbine.")
         # TODO: support a user-given yaw angle setting for each wind speed and wind direction
 
-        self.yaw_angles = np.reshape(
-            np.array([yaw_angles] * n_wind_speeds),  # broadcast
-            (len(self.items), n_wind_speeds)  # reshape
+        self.farm_controller.set_yaw_angles(
+            np.reshape(
+                np.array([yaw_angles] * n_wind_speeds),  # broadcast
+                (len(self.items), n_wind_speeds)  # reshape
+            )
         )
