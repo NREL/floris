@@ -10,6 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from typing import Any, Dict, List, Union
+
 import copy
 import numpy as np
 from .utilities import Vec3
@@ -18,9 +20,13 @@ from .turbine import Turbine
 
 class FarmController:
     def __init__(self, n_wind_speeds: int, n_wind_directions: int) -> None:
-        self.yaw_angles = []
+        # TODO: This should hold the yaw settings for each turbine for each wind speed and wind direction
+
+        # Initialize the yaw settings to an empty array
+        # self.set_yaw_angles(np.array((0,)))
+        pass
     
-    def set_yaw_angles(self, yaw_angles: list) -> None:
+    def set_yaw_angles(self, yaw_angles: Union[list, np.ndarray]) -> None:
         self.yaw_angles = yaw_angles
 
 
@@ -97,7 +103,7 @@ class Farm:
 
         # Turbine control settings indexed by the turbine ID
         self.farm_controller = FarmController(len(input_dictionary["wind_speeds"]), 1)
-        self.farm_controller.set_yaw_angles([0] * len(self.turbine_map_dict))
+        self.farm_controller.set_yaw_angles( np.zeros( ( len(self.turbine_map_dict)) ) )
 
     def sorted_in_x_as_list(self):
         """
@@ -150,11 +156,12 @@ class Farm:
     def set_yaw_angles(self, yaw_angles: list, n_wind_speeds: int, n_wind_directions: int) -> None:
         if len(yaw_angles) != len(self.items):
             raise ValueError("Farm.set_yaw_angles: a yaw angle must be given for each turbine.")
-        # TODO: support a user-given yaw angle setting for each wind speed and wind direction
 
-        self.farm_controller.set_yaw_angles(
-            np.reshape(
-                np.array([yaw_angles] * n_wind_speeds),  # broadcast
-                (len(self.items), n_wind_speeds)  # reshape
-            )
-        )
+        # TODO: support a user-given yaw angle setting for each wind speed and wind direction
+        # self.farm_controller.set_yaw_angles(
+        #     np.reshape(
+        #         np.array([yaw_angles] * n_wind_speeds),  # broadcast
+        #         (len(self.items), n_wind_speeds)  # reshape
+        #     )
+        # )
+        self.farm_controller.set_yaw_angles(np.array(yaw_angles))
