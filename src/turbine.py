@@ -125,9 +125,7 @@ def Ct(
         fCt = fCt[ix_filter]
 
     if isinstance(fCt, np.ndarray):
-        # Including cosd(yaw_angle) adds another dimension to the array incorrectly
-        # Ct = np.array([_fCt(average_velocity(v)) * cosd(yaw_angle) for _fCt, v in zip(fCt, velocities)])
-        Ct = np.array([_fCt(average_velocity(v)) for _fCt, v in zip(fCt, velocities)])
+        Ct = np.array([_fCt(average_velocity(v)) * cosd(yaw) for _fCt, v, yaw in zip(fCt, velocities, yaw_angle)])
     else:
         turbine_velocity = average_velocity(velocities)
         Ct = fCt(turbine_velocity) * cosd(yaw_angle)
