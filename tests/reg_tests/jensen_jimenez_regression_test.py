@@ -157,21 +157,67 @@ def test_regression_yaw(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed
     """
-    sample_inputs_fixture.floris["wake"]["properties"][
-        "velocity_model"
-    ] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"][
-        "deflection_model"
-    ] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+
     floris = Floris(input_dict=sample_inputs_fixture.floris)
 
     # yaw the upstream turbine 5 degrees
-    floris.farm.turbines[0].yaw_angle = 5.0
-    floris.farm.flow_field.calculate_wake()
+    floris.farm.set_yaw_angles([5.0, 0.0, 0.0], floris.flow_field.n_wind_speeds, 1) # TODO: n_wind_directions
 
-    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+    floris.go()
+
+    turbines = floris.farm.turbines
+    n_turbines = len(turbines)
+
+
+    test_results = []
+
+    velocities = floris.flow_field.u[:, :, :, :]
+    yaw_angles = n_turbines * [0.0]
+    thrust_interpolation_func = [t.fCt for t in turbines]
+    power_interpolation_func = [t.power_interp for t in turbines]
+    power_exponent = [t.pP for t in turbines]
+
+    farm_avg_velocities = average_velocity(
+        velocities[0, :, :, :],
+        ix_filter=list(range(n_turbines))
+    )
+    farm_cts = Ct(
+        velocities[0, :, :, :],
+        yaw_angles,
+        thrust_interpolation_func,
+        ix_filter=list(range(n_turbines))
+    )
+    farm_powers = power(
+        n_turbines * [floris.flow_field.air_density],
+        velocities[0, :, :, :],
+        yaw_angles,
+        power_exponent,
+        power_interpolation_func,
+        ix_filter=list(range(n_turbines))
+    )
+    farm_axial_inductions = axial_induction(
+        velocities[0, :, :, :],
+        yaw_angles,
+        thrust_interpolation_func,
+        ix_filter=list(range(n_turbines))
+    )
+    for i in range(n_turbines):
+        this_turbine = [
+            farm_avg_velocities[i],
+            farm_cts[i],
+            farm_powers[i],
+            farm_axial_inductions[i]
+        ]
+        test_results.append(this_turbine)
 
     if DEBUG:
-        print_test_values(floris.farm.turbine_map.turbines)
+        print_test_values(
+            farm_avg_velocities,
+            farm_cts,
+            farm_powers,
+            farm_axial_inductions,
+        )
 
     assert_results(test_results, yawed_baseline)

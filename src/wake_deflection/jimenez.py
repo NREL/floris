@@ -10,13 +10,18 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+import attr
 import numpy as np
+from numpy import newaxis as na
 
-from ..utilities import cosd, sind
-from .base_velocity_deflection import VelocityDeflection
+from src.turbine import Turbine, Ct
+from src.utilities import cosd, sind
+from src.utilities import float_attrib, model_attrib
+from src.base_class import BaseClass
 
 
-class Jimenez(VelocityDeflection):
+@attr.s(auto_attribs=True)
+class JimenezVelocityDeflection(BaseClass):
     """
     Jiménez wake deflection model, dervied from
     :cite:`jdm-jimenez2010application`.
@@ -28,36 +33,21 @@ class Jimenez(VelocityDeflection):
             :keyprefix: jdm-
     """
 
-    default_parameters = {"kd": 0.05, "ad": 0.0, "bd": 0.0}
-
-    def __init__(self, parameter_dictionary):
-        """
-        Stores model parameters for use by methods.
-
-        Args:
-            parameter_dictionary (dict): Model-specific parameters.
-                Default values are used when a parameter is not included
-                in `parameter_dictionary`. Possible key-value pairs include:
-
-                    -   **kd** (*float*): Parameter used to determine the skew
-                        angle of the wake.
-                    -   **ad** (*float*): Additional tuning parameter to modify
-                        the wake deflection with a lateral offset.
-                        Defaults to 0.
-                    -   **bd** (*float*): Additional tuning parameter to modify
-                        the wake deflection with a lateral offset.
-                        Defaults to 0.
-
-        """
-        super().__init__(parameter_dictionary)
-        self.model_string = "jimenez"
-        model_dictionary = self._get_model_dict(__class__.default_parameters)
-        self.ad = float(model_dictionary["ad"])
-        self.kd = float(model_dictionary["kd"])
-        self.bd = float(model_dictionary["bd"])
+    kd: float = float_attrib(default=0.05)
+    ad: float = float_attrib(default=0.0)
+    bd: float = float_attrib(default=0.0)
+    model_string: str = model_attrib(default="jimenez")
 
     def function(
-        self, x_locations, y_locations, z_locations, turbine, coord, flow_field
+        self,
+        i: int,
+        # *,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        reference_turbine: Turbine,
+        yaw_angle: float,
+        Ct: float
     ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of
@@ -79,25 +69,25 @@ class Jimenez(VelocityDeflection):
 
         Returns:
             deflection (np.array): Deflected wake centerline.
+
+
+        This function calculates the deflection of the entire flow field
+        given the yaw angle and Ct of the current turbine
         """
 
         # angle of deflection
-        xi_init = cosd(turbine.yaw_angle) * sind(turbine.yaw_angle) * turbine.Ct / 2.0
-
-        x_locations = x_locations - coord.x1
+        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0
+        x_locations = x - x[i]
 
         # yaw displacement
         yYaw_init = (
             xi_init
-            * (
-                15 * (2 * self.kd * x_locations / turbine.rotor_diameter + 1) ** 4.0
-                + xi_init ** 2.0
-            )
+            * (15 * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 4.0 + xi_init ** 2.0)
             / (
-                (30 * self.kd / turbine.rotor_diameter)
-                * (2 * self.kd * x_locations / turbine.rotor_diameter + 1) ** 5.0
+                (30 * self.kd / reference_turbine.rotor_diameter)
+                * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 5.0
             )
-        ) - (xi_init * turbine.rotor_diameter * (15 + xi_init ** 2.0) / (30 * self.kd))
+        ) - (xi_init * reference_turbine.rotor_diameter * (15 + xi_init ** 2.0) / (30 * self.kd))
 
         # corrected yaw displacement with lateral offset
         deflection = yYaw_init + self.ad + self.bd * x_locations

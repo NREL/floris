@@ -15,7 +15,7 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from src.turbine import Turbine, axial_induction
+from src.turbine import Turbine
 from src.grid import TurbineGrid
 from src.utilities import float_attrib, model_attrib
 from src.base_class import BaseClass
@@ -45,18 +45,21 @@ class JensenVelocityDeficit(BaseClass):
 
     def prepare_function(
         self,
-        # deflection_field: np.array,
         grid: TurbineGrid,
         reference_turbine: Turbine,
         flow_field: FlowField
     ) -> Dict[str, Any]:
+        """
+        This function prepares the inputs from the various FLORIS data structures
+        for use in the Jensen model. This should only be used to 'initialize'
+        the inputs. For any data that should be updated successively,
+        do not use this function and instead pass that data directly to
+        the model function.
+        """
         kwargs = dict(
-            # deflection_field=deflection_field,
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            u=flow_field.u_initial,
-            n_turbines=grid.n_turbines,
             reference_wind_height=flow_field.reference_wind_height,
             reference_turbine=reference_turbine,
         )
@@ -64,15 +67,14 @@ class JensenVelocityDeficit(BaseClass):
 
     def function(
         self,
-        i: int,  # need to flesh this and deflection field out more
+        i: int,
+        deflection_field: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        u: np.ndarray,
-        n_turbines: int,
         reference_wind_height: float,
         reference_turbine: Turbine,
     ) -> None:
@@ -95,17 +97,17 @@ class JensenVelocityDeficit(BaseClass):
 
         boundary_line = m * x + b
 
-        y_center = np.zeros_like(boundary_line) + y #+ deflection_field
+        y_center = np.zeros_like(boundary_line) + y + deflection_field
         z_center = np.zeros_like(boundary_line) + reference_wind_height
 
         # Calculate the wake velocity deficit ratios
         c = (
             (reference_turbine.rotor_diameter / (2 * self.we * (x - x[i]) + reference_turbine.rotor_diameter)) ** 2
-            # * ~(np.array(x - x[i] <= 0.0))  # using this causes nan's in the upstream turbine
-            # * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
+            * ~(np.array(x - x[i] <= 0.0))  # using this causes nan's in the upstream turbine
+            * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         )
 
-        c[x - x[i] <= 0] = 0
+        # c[x - x[i] <= 0] = 0
         # mask = (((y - y_center) ** 2 + (z - z_center) ** 2) ** 2) > (boundary_line ** 2)
         # c[mask] = 0
 
