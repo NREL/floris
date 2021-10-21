@@ -33,9 +33,9 @@ baseline = [
 ]
 
 yawed_baseline = [
-    (0.7605249, 1683956.3885389, 0.2548147, 7.9803783),
-    (0.8274579, 777423.9137261, 0.2923090, 6.1728072),
-    (0.8522603, 593267.9301046, 0.3078154, 5.6709666),
+    (7.9803783, 0.7605249, 1683956.3885389, 0.2548147),
+    (6.1728072, 0.8274579, 777423.9137261, 0.2923090),
+    (5.6709666, 0.8522603, 593267.9301046, 0.3078154),
 ]
 
 # Note: compare the yawed vs non-yawed results. The upstream turbine
@@ -174,7 +174,7 @@ def test_regression_yaw(sample_inputs_fixture):
     test_results = []
 
     velocities = floris.flow_field.u[:, :, :, :]
-    yaw_angles = n_turbines * [0.0]
+    yaw_angles = floris.farm.farm_controller.yaw_angles
     thrust_interpolation_func = [t.fCt for t in turbines]
     power_interpolation_func = [t.power_interp for t in turbines]
     power_exponent = [t.pP for t in turbines]
