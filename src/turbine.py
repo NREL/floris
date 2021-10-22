@@ -13,12 +13,11 @@
 # See https://floris.readthedocs.io for documentation
 
 from typing import Any, Dict, List, Union
+import math
 
 import attr
-import math
 import numpy as np
 from scipy.interpolate import interp1d
-from numpy.lib.function_base import iterable
 
 from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
 from src.base_class import BaseClass
