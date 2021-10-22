@@ -50,3 +50,12 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
     assert np.array_equal(average, flow_field_fixture.wind_speeds)
 
     # assert False
+
+def test_flow_field_get_quantities():
+    # TODO: Chris
+    # Get the average velocity for turbine # at all wind speeds greater than 8...
+    # average_velocity(
+    #     flow_field_fixture.u[...]
+    # )
+    assert True
+
