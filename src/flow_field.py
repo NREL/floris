@@ -53,10 +53,10 @@ class FlowField:
         self.u_initial = _wind_speeds * wind_profile_plane
 
         # The broadcast and matrix multiplication above is equivalent to this:
-        # self.u_initial = np.zeros((grid.n_turbines, self.n_wind_speeds, 5, 5))
+        # self.u_initial = np.zeros((self.n_wind_speeds, grid.n_turbines, 5, 5))
         # for i in range(self.n_wind_speeds):
         #     for j in range(grid.n_turbines):
-        #         self.u_initial[j, i, :, :] = self.wind_speeds[i] * wind_profile_plane[i]
+        #         self.u_initial[i, j, :, :] = self.wind_speeds[i] * wind_profile_plane[i]
 
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
