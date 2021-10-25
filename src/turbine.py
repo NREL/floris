@@ -49,17 +49,19 @@ def _filter_convert(
 
 
 def power(
-    air_density: Union[float, np.ndarray],
-    velocities: np.ndarray,  # rows: turbines; columns: velocities
-    yaw_angle: Union[float, np.ndarray],
-    pP: Union[float, np.ndarray],
-    power_interp: Union[callable, List[callable]],
-    ix_filter: Union[List[int], np.ndarray] = None,
-) -> float:
+    air_density: np.ndarray,    # (wind directions, wind speeds, turbines)
+    velocities: np.ndarray,     # (wind directions, wind speeds, turbines, grid, grid)
+    yaw_angle: np.ndarray,      # (wind directions, wind speeds, turbines)
+    pP: np.ndarray,
+    power_interp: np.ndarray,   # (wind directions, wind speeds, turbines)
+    ix_filter: np.ndarray = None,
+) -> np.ndarray:                # (wind directions, wind speeds, turbines)
     """
     Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
     """
+    # TODO: Change the order of input arguments to be consistent with the other
+    # utility functions - velocities first...
     # Update to power calculation which replaces the fixed pP exponent with
     # an exponent pW, that changes the effective wind speed input to the power
     # calculation, rather than scaling the power.  This better handles power
@@ -67,6 +69,9 @@ def power(
     #
     # based on the paper "Optimising yaw control at wind farm level" by
     # Ervin Bossanyi
+
+    # TODO: check this - where is it?
+    # P = 1/2 rho A V^3 Cp
 
     # NOTE: The below has a trivial performance hit for floats being passed (3.4% longer
     # on a meaningless test), but is actually faster when an array is passed through
@@ -82,22 +87,26 @@ def power(
     if isinstance(power_interp, list):
         power_interp = np.array(power_interp)
 
-    ix_filter = _filter_convert(ix_filter, air_density)
+    ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        air_density = air_density[ix_filter]
-        velocities = velocities[ix_filter]
-        yaw_angle = yaw_angle[ix_filter]
-        pP = pP[ix_filter]
-        power_interp = power_interp[ix_filter]
+        air_density = air_density[:, ix_filter]
+        velocities = velocities[:, ix_filter, :, :]
+        yaw_angle = yaw_angle[:, ix_filter]
+        pP = pP[:, ix_filter]
+        power_interp = power_interp[:, ix_filter]
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
 
-    if isinstance(power_interp, np.ndarray):
-        p = np.array([_fCp(v) for _fCp, v in zip(power_interp, yaw_effective_velocity)])
-    else:
-        p = power_interp(yaw_effective_velocity)
+    n_wind_speeds = np.shape(yaw_angle)[0]
+    n_turbines = np.shape(yaw_angle)[1]
+    p = np.zeros_like(yaw_effective_velocity)
+    for i in range(n_wind_speeds):
+        for j in range(n_turbines):
+            interpolator = power_interp[i,j]
+            p[i,j] = interpolator(yaw_effective_velocity[i,j])
+
     return p * air_density
 
 
