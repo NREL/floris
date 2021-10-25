@@ -268,26 +268,25 @@ def test_axial_induction():
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
 
+    baseline_ai = 0.25116283939089806
+
     # Single turbine
     wind_speed = 10.0
     ai = axial_induction(
-        velocities=wind_speed * np.ones((5, 5)),
-        yaw_angle=0.0,
-        fCt=turbine.fCt
+        velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        yaw_angle=np.zeros((1, 1)),
+        fCt=np.array([turbine.fCt]).reshape((1, 1)),
     )
-    assert ai == 0.25116283939089806
+    assert ai == baseline_ai
 
     # Multiple turbines with ix filter
-    rng = np.array(WIND_SPEEDS).reshape(-1, 1, 1)  # size 4 x 1 x 1
-    ix_filter = [0, 2]
-
     ai = axial_induction(
-        velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (4,3,3)
-        yaw_angle=np.zeros(4),
-        fCt=4*[turbine.fCt],
-        ix_filter=ix_filter
+        velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        yaw_angle=np.zeros((1, 4)),
+        fCt=np.array(4 * [turbine.fCt]).reshape((1, 4)),
+        ix_filter=INDEX_FILTER,
     )
 
-    assert len(ai) == len(ix_filter)
-    for calc_ai, truth in zip(ai, [0.2565471298176996, 0.2565471298176996]):
+    assert len(ai[0]) == len(INDEX_FILTER)
+    for calc_ai, truth in zip(ai[0], [0.2565471298176996, 0.2565471298176996]):
         pytest.approx(calc_ai, truth)

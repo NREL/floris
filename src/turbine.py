@@ -148,28 +148,29 @@ def Ct(
 
 
 def axial_induction(
-    velocities: np.ndarray,  # rows: turbines; columns: velocities
-    yaw_angle: Union[float, np.ndarray],
-    fCt: Union[callable, List[callable]],
-    ix_filter: Union[List[int], np.ndarray] = None,
-) -> Union[float, np.ndarray]:
+    velocities: np.ndarray,  # (wind directions, wind speeds, turbines, grid, grid)
+    yaw_angle: np.ndarray,  # (wind directions, wind speeds, turbines)
+    fCt: np.ndarray,  # (wind directions, wind speeds, turbines)
+    ix_filter: np.ndarray = None,
+) -> np.ndarray:  # (wind directions, wind speeds, turbines)
     """
     Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
     """
 
-    if isinstance(fCt, list):
-        fCt = np.array(fCt)
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
+    if isinstance(fCt, list):
+        fCt = np.array(fCt)
 
+    # Get Ct first before modifying any data
+    thrust_coefficient = Ct(velocities, yaw_angle, fCt, ix_filter)
+
+    # Then, process the input arguments as needed for this function
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        velocities = velocities[ix_filter, :, :]
-        yaw_angle = yaw_angle[ix_filter]
-        fCt = fCt[ix_filter]
+        yaw_angle = yaw_angle[:, ix_filter]
 
-    thrust_coefficient = Ct(velocities, yaw_angle, fCt)
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
 
