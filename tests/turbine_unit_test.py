@@ -167,8 +167,8 @@ def test_average_velocity():
     ix_filter = [True, False, True, False]
     velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
         (
-            np.ones((1, 3, 3)),  # The first dimension here is the wind
-            2 * np.ones((1, 3, 3)),  # speed since we are stacking on axis=1
+            np.ones((1, 3, 3)),  # The first dimension here is the wind speed since we are stacking on axis=1
+            2 * np.ones((1, 3, 3)),
             3 * np.ones((1, 3, 3)),
             4 * np.ones((1, 3, 3)),
         ),
@@ -178,8 +178,14 @@ def test_average_velocity():
     assert avg.shape == (1, 2)  # 1 wind speed, 2 turbines filtered
 
     # Pull out the first wind speed for the comparison
-    np.testing.assert_array_equal(avg[0], np.array([1, 3]))
-
+    test_array = np.array([1.0, 3.0])
+    print(test_array)
+    print(avg[0])
+    print(type(avg[0]), type(test_array))
+    print(np.shape(avg[0]), np.shape(test_array))
+    np.testing.assert_equal(avg[0], test_array, verbose=True)
+    np.testing.assert_array_equal(avg[0], test_array, verbose=True)
+    assert False
     # Test integer array filter
     ix_filter = INDEX_FILTER
     velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
