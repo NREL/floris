@@ -178,14 +178,11 @@ def test_average_velocity():
     assert avg.shape == (1, 2)  # 1 wind speed, 2 turbines filtered
 
     # Pull out the first wind speed for the comparison
-    test_array = np.array([1.0, 3.0])
-    print(test_array)
-    print(avg[0])
-    print(type(avg[0]), type(test_array))
-    print(np.shape(avg[0]), np.shape(test_array))
-    np.testing.assert_equal(avg[0], test_array, verbose=True)
-    np.testing.assert_array_equal(avg[0], test_array, verbose=True)
-    assert False
+    assert np.allclose(avg[0], np.array([1.0, 3.0]))
+    # This fails in GitHub Actions due to a difference in precision:
+    # E           assert 3.0000000000000004 == 3.0
+    # np.testing.assert_array_equal(avg[0], np.array([1.0, 3.0]))
+
     # Test integer array filter
     ix_filter = INDEX_FILTER
     velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
@@ -201,7 +198,7 @@ def test_average_velocity():
     assert avg.shape == (1, 2)  # 1 wind speed, 2 turbines filtered
 
     # Pull out the first wind speed for the comparison
-    np.testing.assert_array_equal(avg[0], np.array([1, 3]))
+    assert np.allclose(avg[0], np.array([1.0, 3.0]))
 
 
 def test_ct():
