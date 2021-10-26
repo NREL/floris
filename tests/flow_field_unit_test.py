@@ -30,6 +30,7 @@ def test_n_wind_speeds(flow_field_fixture):
 
 def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
     flow_field_fixture.wind_shear = 1.0
+    turbine_grid_fixture.expand_wind_speed(flow_field_fixture.n_wind_speeds)
     flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
 
     # Check the shape of the velocity arrays: u_initial, v_initial, w_initial  and u, v, w

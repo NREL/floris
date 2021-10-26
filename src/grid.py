@@ -29,7 +29,7 @@ class Grid(ABC):
         self.turbine_coordinates: List[Vec3] = turbine_coordinates
         self.reference_turbine_diameter: float = reference_turbine_diameter
         self.reference_wind_height: float = reference_wind_height
-        self.grid_resolution: float = grid_resolution
+        self.grid_resolution: int = grid_resolution
         # x are the locations in space in the primary direction (typically the direction of the wind)
         # y are the locations in space in the lateral direction
         # z are the locations in space in the vertical direction
@@ -186,24 +186,36 @@ class TurbineGrid(Grid):
         )
 
         # Create the data for the turbine grids
+        # TODO: support wind speed dimension
         self.x = np.reshape(
             x_coordinates.T * template_grid,
             (n_turbines, self.grid_resolution, self.grid_resolution),
         )
-        y_grid = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
-        z_grid = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
-        # print (y_coordinates.T)
-        # print (disc_grid)
+        self.y = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
+        self.z = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
 
         for i, coord in enumerate(self.turbine_coordinates):
             #     # Save the indices of the flow field points for this turbine
             #     # Create the grids
             #     x_grid[i] = coord.x1
-            y_grid[i] = coord.x2 + disc_grid
-            z_grid[i] = coord.x3 + disc_grid
+            self.y[i] = coord.x2 + disc_grid
+            self.z[i] = coord.x3 + disc_grid
 
-        self.y = y_grid
-        self.z = z_grid
+    def expand_wind_speed(self, n_wind_speeds):
+        # Add dimension for wind speed
+        # TODO: there's got to be a better way...
+
+        tmpx = np.zeros( (n_wind_speeds, *np.shape(self.x)) )
+        tmpx[:] = self.x
+        self.x = tmpx
+
+        tmpy = np.zeros( (n_wind_speeds, *np.shape(self.y)) )
+        tmpy[:] = self.y
+        self.y = tmpy
+        
+        tmpz = np.zeros( (n_wind_speeds, *np.shape(self.z)) )
+        tmpz[:] = self.z
+        self.z = tmpz
 
 
 class FlowFieldGrid(Grid):

@@ -14,6 +14,7 @@ jensen_deficit_model = JensenVelocityDeficit()
 def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
 
     grid = TurbineGrid(farm.coords, flow_field.reference_turbine_diameter, flow_field.reference_wind_height, 5)
+    grid.expand_wind_speed(flow_field.n_wind_speeds)
     flow_field.initialize_velocity_field(grid)
 
     # <<interface>>
