@@ -12,7 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Dict, List, Union
+from typing import Dict, List, Union
+from collections.abc import Iterable
 import math
 
 import attr
@@ -55,9 +56,22 @@ def power(
     power_interp: Union[callable, List[callable]],
     ix_filter: Union[List[int], np.ndarray] = None,
 ) -> float:
-    """
-    Power produced by a turbine adjusted for yaw and tilt. Value
+    """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
+
+    Args:
+        air_density (Union[float, np.ndarray]): The air density value(s) at each turbine.
+        velocities (np.ndarray): The velocity field at a turbine. Shape should be: (number
+            of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine..
+        pP (Union[float, np.ndarray]): The pP value(s) of the cosine exponent relating
+            the yaw misalignment angle to power for each turbine.
+        power_interp (Union[callable, List[callable]]): The power interpolation function
+            for each turbine.
+        ix_filter (Union[List[int], np.ndarray], optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
+    Returns:
+        float: The power, in Watts, for each turbine after adjusting for yaw and tilt.
     """
     # Update to power calculation which replaces the fixed pP exponent with
     # an exponent pW, that changes the effective wind speed input to the power
@@ -106,10 +120,23 @@ def Ct(
     fCt: Union[callable, List[callable]],
     ix_filter: Union[List[int], np.ndarray] = None,
 ) -> np.ndarray:
-    """
-    Thrust coefficient of a turbine incorporating the yaw angle.
+    """Thrust coefficient of a turbine incorporating the yaw angle.
     The value is interpolated from the coefficient of thrust vs
     wind speed table using the rotor swept area average velocity.
+
+    Args:
+        velocities (np.ndarray): The velocity field at the turbine; should be shape:
+            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine..
+        fCt (Union[callable, List[callable]]): The thrust coefficient for each turbine.
+        ix_filter (Union[List[int], np.ndarray], optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
+    Raises:
+        ValueError: [description]
+        ValueError: [description]
+
+    Returns:
+        np.ndarray: [description]
     """
 
     if isinstance(yaw_angle, list):
@@ -136,12 +163,22 @@ def axial_induction(
     velocities: np.ndarray,  # rows: turbines; columns: velocities
     yaw_angle: Union[float, np.ndarray],
     fCt: Union[callable, List[callable]],
-    ix_filter: Union[List[int], np.ndarray] = None
+    ix_filter: Union[List[int], np.ndarray] = None,
 ) -> Union[float, np.ndarray]:
-    """
-    Axial induction factor of the turbine incorporating
+    """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
-    """  
+
+    Args:
+        velocities (np.ndarray): The velocity field at each turbine; should be shape:
+            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
+        fCt (Union[callable, List[callable]]): The thrust coefficient function for each
+            turbine.
+        ix_filter (Union[List[int], np.ndarray], optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
+    Returns:
+        Union[float, np.ndarray]: [description]
+    """
 
     if isinstance(fCt, list):
         fCt = np.array(fCt)
@@ -155,25 +192,27 @@ def axial_induction(
         fCt = fCt[ix_filter]
 
     thrust_coefficient = Ct(velocities, yaw_angle, fCt)
-    return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
+    return (
+        0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
+    )
 
 
 def average_velocity(
-    velocities: np.ndarray, ix_filter: Union[List[Union[int, bool]], np.ndarray] = None
-) -> float:
-    """
-    This property calculates and returns the cube root of the
+    velocities: np.ndarray, ix_filter: Union[List[Union[int, bool]], np.ndarray] = None,
+) -> Union[float, np.ndarray]:
+    """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
 
     **Note:** The velocity is scaled to an effective velocity by the yaw.
 
+    Args:
+        velocities (np.ndarray): The velocity field at each turbine; should be shape:
+            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
+        ix_filter (Union[List[Union[int, bool]], np.ndarray], optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
     Returns:
-        float: The average velocity across a rotor.
-
-    Examples:
-        To get the average velocity for a turbine:
-
-        >>> avg_vel = floris.farm.turbines[0].average_velocity()
+        Union[float, np.ndarray]: The average velocity across the rotor(s).
     """
     # Remove all invalid numbers from interpolation
     # data = np.array(self.velocities)[~np.isnan(self.velocities)]
@@ -189,6 +228,18 @@ def average_velocity(
 
 @attr.s(frozen=True, auto_attribs=True)
 class PowerThrustTable(FromDictMixin):
+    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
+
+    Args:
+        power ([type]): The power produced at a given windspeed.
+        thrust ([type]): The thrust at a given windspeed.
+        wind_speed ([type]): Windspeed values, m/s.
+
+    Raises:
+        ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
+        ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
+    """
+
     power: List[float] = attr.ib(converter=attrs_array_converter)
     thrust: List[float] = attr.ib(converter=attrs_array_converter)
     wind_speed: List[float] = attr.ib(converter=attrs_array_converter)
@@ -299,19 +350,33 @@ class Turbine(BaseClass):
             * velocities ** 3
         )
 
-    def fCp(self, sample_wind_speeds):
-        # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?
-        if sample_wind_speeds < self.power_thrust_table.wind_speed.min():
-            return 0.0
-        else:
-            _cp = self.fCp_interp(sample_wind_speeds)
-            if _cp.size > 1:
-                _cp = _cp[0]
-            if _cp > 1.0:
-                return 1.0
-            if _cp < 0.0:
-                return 0.0
-            return float(_cp)
+    def fCp(
+        self, sample_wind_speeds: Union[float, np.ndarray]
+    ) -> Union[float, np.ndarray]:
+        """????
+
+        Args:
+            sample_wind_speeds (Union[float, np.ndarray]): The wind speed(s).
+
+        Returns:
+            Union[float, np.ndarray]: The coefficient of power for a given wind speed.
+        """
+        is_single = not isinstance(sample_wind_speeds, Iterable)
+        if is_single:
+            sample_wind_speeds = np.array([sample_wind_speeds])
+
+        _cp = self.fCp_interp(sample_wind_speeds)
+        _cp = np.clip(_cp, 0, 1)
+
+        # TODO: What are the circumstances that led to this?
+        # if _cp.size > 1:
+        #     _cp = _cp[0]
+        _cp[sample_wind_speeds < self.power_thrust_table.wind_speed.min()] = 0.0
+
+        # Return the data type that matches the input size
+        if is_single:
+            return _cp[0]
+        return _cp
 
     def fCt(self, at_wind_speed):
         # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?
