@@ -73,7 +73,7 @@ def test_sort_turbines():
     turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
 
-    layout_x = [farm_data["layout_x"]]
+    layout_x = farm_data["layout_x"]
     layout_y = [630, 0, 1260]
     turbine_id = ["t1"] * len(layout_x)
     turbine_map = dict(t1=turbine_data)
