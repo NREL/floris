@@ -107,4 +107,4 @@ def test_make_fail_to_demonstrate_xarray_properties():
     print(
         "\nWTG IDs:", farm.data_array.wtg_id
     )  # what a coordinate looks like (this one is dim 0)
-    assert 1 == 2
+    assert True
