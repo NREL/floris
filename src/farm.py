@@ -19,15 +19,24 @@ from .turbine import Turbine
 
 
 class FarmController:
-    def __init__(self, n_wind_speeds: int, n_wind_directions: int) -> None:
+    def __init__(self, n_wind_directions: int, n_wind_speeds: int, n_turbines: int) -> None:
         # TODO: This should hold the yaw settings for each turbine for each wind speed and wind direction
 
         # Initialize the yaw settings to an empty array
-        # self.set_yaw_angles(np.array((0,)))
-        pass
+        self.yaw_angles = np.zeros((n_wind_speeds, n_turbines))
     
-    def set_yaw_angles(self, yaw_angles: Union[list, np.ndarray]) -> None:
-        self.yaw_angles = yaw_angles
+    def set_yaw_angles(self, yaw_angles: np.ndarray) -> None:
+        """
+        Set the yaw angles for each wind turbine at each atmospheric
+        condition.
+
+        Args:
+            yaw_angles (np.ndarray): Array of dimensions (n wind directions,
+            n wind speeds, n turbines)
+        """
+        # if yaw_angles.ndim != 3:
+        #     raise ValueError("yaw_angles must be set for each turbine at each atmospheric condition.")
+        self.yaw_angles[:] = yaw_angles
 
 
 class Farm:
@@ -102,8 +111,11 @@ class Farm:
         self.turbine_map_dict = {c: copy.deepcopy(turbine) for c in coordinates}
 
         # Turbine control settings indexed by the turbine ID
-        self.farm_controller = FarmController(len(input_dictionary["wind_speeds"]), 1)
-        self.farm_controller.set_yaw_angles( np.zeros( ( len(self.turbine_map_dict)) ) )
+        self.farm_controller = FarmController(
+            len(input_dictionary["wind_directions"]),
+            len(input_dictionary["wind_speeds"]),
+            len(layout_x)
+        )
 
     def sorted_in_x_as_list(self):
         """
@@ -152,16 +164,3 @@ class Farm:
             :py:class:`~.turbine.Turbine`.
         """
         return self.turbine_map_dict.items()
-
-    def set_yaw_angles(self, yaw_angles: list, n_wind_speeds: int, n_wind_directions: int) -> None:
-        if len(yaw_angles) != len(self.items):
-            raise ValueError("Farm.set_yaw_angles: a yaw angle must be given for each turbine.")
-
-        # TODO: support a user-given yaw angle setting for each wind speed and wind direction
-        # self.farm_controller.set_yaw_angles(
-        #     np.reshape(
-        #         np.array([yaw_angles] * n_wind_speeds),  # broadcast
-        #         (len(self.items), n_wind_speeds)  # reshape
-        #     )
-        # )
-        self.farm_controller.set_yaw_angles(np.array(yaw_angles))

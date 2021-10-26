@@ -134,19 +134,6 @@ class Floris(logging_manager.LoggerBase):
 
         self.reinitialize_turbines()
 
-    def set_yaw_angles(self, yaw_angles: list):
-        """
-        Sets the yaw angles for all turbines on the
-        :py:obj:`~.turbine.Turbine` objects directly.
-
-        Args:
-            yaw_angles (float or list( float )): A single value to set
-                all turbine yaw angles or a list of yaw angles corresponding
-                to individual turbine yaw angles. Yaw angles are expected
-                in degrees.
-        """
-        self.farm.set_yaw_angles(yaw_angles, self.flow_field.n_wind_speeds, 1)
-
     def update_hub_heights(self):
         """
         Triggers a rebuild of the internal Python dictionary. This may be
