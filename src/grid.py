@@ -183,6 +183,9 @@ class TurbineGrid(Grid):
 
     def expand_wind_speed(self, n_wind_speeds):
         # Add dimension for wind speed
+        # self.x = np.resize(self.x, (n_wind_speeds, *self.x.shape))
+        # self.y = np.resize(self.x, (n_wind_speeds, *self.x.shape))
+        # self.z = np.resize(self.x, (n_wind_speeds, *self.x.shape))
         # TODO: there's got to be a better way...
 
         tmpx = np.zeros((n_wind_speeds, *np.shape(self.x)))

@@ -98,8 +98,7 @@ def power(
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
 
-    n_wind_speeds = np.shape(yaw_angle)[0]
-    n_turbines = np.shape(yaw_angle)[1]
+    n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     p = np.zeros_like(yaw_effective_velocity)
     for i in range(n_wind_speeds):
         for j in range(n_turbines):
@@ -132,8 +131,7 @@ def Ct(
         yaw_angle = yaw_angle[:, ix_filter]
         fCt = fCt[:, ix_filter]
 
-    n_wind_speeds = np.shape(yaw_angle)[0]
-    n_turbines = np.shape(yaw_angle)[1]
+    n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     average_velocities = average_velocity(velocities)
     thrust_coefficient = np.zeros_like(average_velocities)
     for i in range(n_wind_speeds):

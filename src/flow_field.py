@@ -41,7 +41,7 @@ class FlowField:
         # This is also of shape (# wind speeds, # turbines, N grid points, M grid points)
 
         # find the total number of elements in lower dimensions for each wind speed
-        n_elements = np.prod([d for d in np.shape(grid.z[0])])
+        n_elements = grid.z[0].size
         # broadcast the input wind speeds to an array of this size
         _wind_speeds = np.array(n_elements * [self.wind_speeds]).T
         # reshape based on the wind profile array
