@@ -45,25 +45,28 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
 
     # This is u_wake
     velocity_deficit = np.zeros_like(flow_field.u_initial)
-    
+
+    array_fct = np.array( flow_field.n_wind_speeds * [t.fCt for t in farm.turbines] ).reshape((flow_field.n_wind_speeds, grid.n_turbines))
+
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines - 1):
 
         u = flow_field.u_initial - velocity_deficit
-        u[0, i+1:, :, :] = 0
+        u[:, i+1:, :, :] = 0  # TODO: explain
 
         thrust_coefficient = Ct(
-            velocities=u[0, i, :, :],
-            yaw_angle=farm.farm_controller.yaw_angles[i],
-            fCt=farm.turbines[0].fCt,
+            velocities=u,
+            yaw_angle=farm.farm_controller.yaw_angles,
+            fCt=array_fct,
+            ix_filter=[i]
         )
-        deflection_field = jimenez_deflection_model.function(
+        deflection_field = jimenez_deflection_model.function( # n wind speeds, n turbines, grid x, grid y
             i,
             grid.x,
             grid.y,
             grid.z,
             farm.turbines[0],
-            farm.farm_controller.yaw_angles[i],
+            farm.farm_controller.yaw_angles,
             thrust_coefficient
         )
 
@@ -71,14 +74,15 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
         c = jensen_deficit_model.function(i, deflection_field, **jensen_args)
 
         turbine_ai = axial_induction(
-            velocities=u[0, i, :, :],
-            yaw_angle=farm.farm_controller.yaw_angles[i],
-            fCt=farm.turbines[0].fCt,
+            velocities=u,
+            yaw_angle=farm.farm_controller.yaw_angles,
+            fCt=array_fct,
+            ix_filter=[i]
         )
-        turbine_ai = turbine_ai * np.ones((grid.n_turbines, grid.grid_resolution, grid.grid_resolution))
+        turbine_ai = turbine_ai[:,:,None,None] * np.ones((flow_field.n_wind_speeds, grid.n_turbines, grid.grid_resolution, grid.grid_resolution))
 
-        turb_u_wake = 2 * turbine_ai * c * flow_field.u_initial[0, :, :, :] 
+        turb_u_wake = 2 * turbine_ai * c * flow_field.u_initial
 
-        velocity_deficit[0, :, :, :] = np.sqrt((velocity_deficit[0, :, :, :] ** 2) + (turb_u_wake ** 2))
+        velocity_deficit = np.sqrt((velocity_deficit ** 2) + (turb_u_wake ** 2))
 
     flow_field.u = flow_field.u_initial - velocity_deficit

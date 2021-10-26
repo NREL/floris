@@ -59,41 +59,39 @@ def test_regression_tandem(sample_inputs_fixture):
     test_results = []
 
     velocities = floris.flow_field.u[:, :, :, :]
-    yaw_angles = n_turbines * [0.0]
-    thrust_interpolation_func = [t.fCt for t in turbines]
-    power_interpolation_func = [t.power_interp for t in turbines]
-    power_exponent = [t.pP for t in turbines]
+    n_wind_speeds = np.shape(velocities)[0] # TODO: change to 1 when wind direction is added
+
+    yaw_angles = floris.farm.farm_controller.yaw_angles
+    thrust_interpolation_func = np.array(n_wind_speeds * [t.fCt for t in turbines]).reshape( (n_wind_speeds, n_turbines) )
+    power_interpolation_func = np.array(n_wind_speeds * [t.power_interp for t in turbines]).reshape( (n_wind_speeds, n_turbines) )
+    power_exponent = np.array(n_wind_speeds * [t.pP for t in turbines]).reshape( (n_wind_speeds, n_turbines) )
 
     farm_avg_velocities = average_velocity(
-        velocities[0, :, :, :],
-        ix_filter=list(range(n_turbines))
+        velocities,
     )
     farm_cts = Ct(
-        velocities[0, :, :, :],
+        velocities,
         yaw_angles,
         thrust_interpolation_func,
-        ix_filter=list(range(n_turbines))
     )
     farm_powers = power(
-        n_turbines * [floris.flow_field.air_density],
-        velocities[0, :, :, :],
+        np.array(n_turbines * n_wind_speeds * [floris.flow_field.air_density]).reshape( (n_wind_speeds, n_turbines) ),
+        velocities,
         yaw_angles,
         power_exponent,
         power_interpolation_func,
-        ix_filter=list(range(n_turbines))
     )
     farm_axial_inductions = axial_induction(
-        velocities[0, :, :, :],
+        velocities,
         yaw_angles,
         thrust_interpolation_func,
-        ix_filter=list(range(n_turbines))
     )
     for i in range(n_turbines):
         this_turbine = [
-            farm_avg_velocities[i],
-            farm_cts[i],
-            farm_powers[i],
-            farm_axial_inductions[i]
+            farm_avg_velocities[0, i],
+            farm_cts[0, i],
+            farm_powers[0, i],
+            farm_axial_inductions[0, i]
         ]
         test_results.append(this_turbine)
 
