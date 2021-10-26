@@ -10,9 +10,12 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from typing import Any, Dict
+
 import attr
 import numpy as np
 
+from src.grid import TurbineGrid
 from src.turbine import Turbine
 from src.utilities import cosd, sind, float_attrib, model_attrib
 from src.base_class import BaseClass
@@ -36,16 +39,29 @@ class JimenezVelocityDeflection(BaseClass):
     bd: float = float_attrib(default=0.0)
     model_string: str = model_attrib(default="jimenez")
 
+    def prepare_function(self, grid: TurbineGrid, reference_turbine: Turbine, yaw_angle: np.ndarray) -> Dict[str, Any]:
+        """
+        This function prepares the inputs from the various FLORIS data structures
+        for use in the Jensen model. This should only be used to 'initialize'
+        the inputs. For any data that should be updated successively,
+        do not use this function and instead pass that data directly to
+        the model function.
+        """
+        kwargs = dict(
+            x=grid.x,
+            reference_turbine=reference_turbine,
+            yaw_angle=yaw_angle,
+        )
+        return kwargs
+
     def function(
         self,
         i: int,
-        # *,
+        Ct: np.ndarray,  # (n wind speeds, n turbines)
+        *,
         x: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
-        y: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
-        z: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
         reference_turbine: Turbine,
         yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
-        Ct: np.ndarray,  # (n wind speeds, n turbines)
     ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of

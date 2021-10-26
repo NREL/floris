@@ -26,6 +26,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
     flow_field.initialize_velocity_field(grid)
 
     # <<interface>>
+    jimenez_args = jimenez_deflection_model.prepare_function(grid, farm.turbines[0], farm.farm_controller.yaw_angles)
     jensen_args = jensen_deficit_model.prepare_function(grid, farm.turbines[0], flow_field)
 
     # This is u_wake
@@ -48,13 +49,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
             ix_filter=[i],
         )
         deflection_field = jimenez_deflection_model.function(  # n wind speeds, n turbines, grid x, grid y
-            i,
-            grid.x,
-            grid.y,
-            grid.z,
-            farm.turbines[0],
-            farm.farm_controller.yaw_angles,
-            thrust_coefficient,
+            i, thrust_coefficient, **jimenez_args
         )
 
         # jensen_args['u'] = flow_field.u_initial - velocity_deficit
