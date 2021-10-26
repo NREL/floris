@@ -24,8 +24,7 @@ from src.base_class import BaseClass
 
 
 def _filter_convert(
-    ix_filter: Union[List[Union[int, bool]], np.ndarray],
-    sample_arg: np.ndarray
+    ix_filter: Union[List[Union[int, bool]], np.ndarray], sample_arg: np.ndarray
 ) -> Union[np.ndarray, None]:
     """Converts the ix_filter to a standard format of `np.ndarray`s for filtering
     certain arguments.
@@ -174,10 +173,7 @@ def axial_induction(
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
 
-def average_velocity(
-    velocities: np.ndarray,
-    ix_filter: Union[List[Union[int, bool]], np.ndarray] = None
-) -> float:
+def average_velocity(velocities: np.ndarray, ix_filter: Union[List[Union[int, bool]], np.ndarray] = None) -> float:
     """
     This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
@@ -217,9 +213,7 @@ class PowerThrustTable(FromDictMixin):
         if any(el.ndim > 1 for el in inputs):
             raise ValueError("power, thrust, and wind_speed inputs must be 1-D!")
         if self.power.size != sum(el.size for el in inputs) / 3:
-            raise ValueError(
-                "power, thrust, and wind_speed inputs must be the same size!"
-            )
+            raise ValueError("power, thrust, and wind_speed inputs must be the same size!")
 
 
 @attr.s(auto_attribs=True)
@@ -319,13 +313,7 @@ class Turbine(BaseClass):
         This is used to initialize the power interpolation method used to
         compute turbine power.
         """
-        return (
-            0.5
-            * self.rotor_area
-            * self.fCp(velocities)
-            * self.generator_efficiency
-            * velocities ** 3
-        )
+        return 0.5 * self.rotor_area * self.fCp(velocities) * self.generator_efficiency * velocities ** 3
 
     def fCp(self, sample_wind_speeds):
         # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?

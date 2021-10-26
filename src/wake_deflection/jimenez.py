@@ -12,11 +12,9 @@
 
 import attr
 import numpy as np
-from numpy import newaxis as na
 
-from src.turbine import Turbine, Ct
-from src.utilities import cosd, sind
-from src.utilities import float_attrib, model_attrib
+from src.turbine import Turbine
+from src.utilities import cosd, sind, float_attrib, model_attrib
 from src.base_class import BaseClass
 
 
@@ -42,12 +40,12 @@ class JimenezVelocityDeflection(BaseClass):
         self,
         i: int,
         # *,
-        x: np.ndarray, # (n_wind_speeds, n turbines, n grid, n grid)
-        y: np.ndarray, # (n_wind_speeds, n turbines, n grid, n grid)
-        z: np.ndarray, # (n_wind_speeds, n turbines, n grid, n grid)
+        x: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
+        y: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
+        z: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
         reference_turbine: Turbine,
-        yaw_angle: np.ndarray, # (n wind speeds, n turbines)
-        Ct: np.ndarray # (n wind speeds, n turbines)
+        yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
+        Ct: np.ndarray,  # (n wind speeds, n turbines)
     ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of
@@ -88,24 +86,26 @@ class JimenezVelocityDeflection(BaseClass):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
-        yaw_angle = yaw_angle[:, i:i+1, None, None]
+        yaw_angle = yaw_angle[:, i : i + 1, None, None]
 
         # Ct is given for only the current turbine, so broadcast
         # this to the grid dimesions
         Ct = Ct[:, :, None, None]
 
         # angle of deflection
-        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0 # (n wind speeds, n turbines)
-        x_locations = x - x[i] # (n turbines, n grid, n grid)
+        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
+        x_locations = x - x[i]  # (n turbines, n grid, n grid)
 
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
         A = 15 * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / reference_turbine.rotor_diameter) * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 5.0
+        B = (30 * self.kd / reference_turbine.rotor_diameter) * (
+            2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1
+        ) ** 5.0
         C = xi_init * reference_turbine.rotor_diameter * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
-        yYaw_init = ( xi_init * A / B) - ( C / D )
+        yYaw_init = (xi_init * A / B) - (C / D)
 
         # corrected yaw displacement with lateral offset
         # This has the same shape as the grid - n turbines, grid x, grid y

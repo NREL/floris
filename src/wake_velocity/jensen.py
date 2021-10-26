@@ -12,11 +12,12 @@
 
 
 from typing import Any, Dict
+
 import attr
 import numpy as np
 
-from src.turbine import Turbine
 from src.grid import TurbineGrid
+from src.turbine import Turbine
 from src.utilities import float_attrib, model_attrib
 from src.base_class import BaseClass
 from src.flow_field import FlowField
@@ -27,7 +28,7 @@ class JensenVelocityDeficit(BaseClass):
     """
     The Jensen model computes the wake velocity deficit based on the classic
     Jensen/Park model :cite:`jvm-jensen1983note`.
-        
+
     -   **we** (*float*): The linear wake decay constant that
         defines the cone boundary for the wake as well as the
         velocity deficit. D/2 +/- we*x is the cone boundary for the
@@ -43,12 +44,7 @@ class JensenVelocityDeficit(BaseClass):
     we: float = float_attrib(default=0.05)
     model_string: str = model_attrib(default="jensen")
 
-    def prepare_function(
-        self,
-        grid: TurbineGrid,
-        reference_turbine: Turbine,
-        flow_field: FlowField
-    ) -> Dict[str, Any]:
+    def prepare_function(self, grid: TurbineGrid, reference_turbine: Turbine, flow_field: FlowField) -> Dict[str, Any]:
         """
         This function prepares the inputs from the various FLORIS data structures
         for use in the Jensen model. This should only be used to 'initialize'
@@ -86,7 +82,7 @@ class JensenVelocityDeficit(BaseClass):
 
         # Calculate and apply wake mask
         # x = grid.x # mesh_x_rotated - x_coord_rotated
-        
+
         # This is the velocity deficit seen by the i'th turbine due to wake effects from upstream turbines.
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))

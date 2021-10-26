@@ -10,12 +10,13 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+import copy
 from typing import Any, Dict, List, Union
 
-import copy
 import numpy as np
-from .utilities import Vec3
+
 from .turbine import Turbine
+from .utilities import Vec3
 
 
 class FarmController:
@@ -24,7 +25,7 @@ class FarmController:
 
         # Initialize the yaw settings to an empty array
         self.yaw_angles = np.zeros((n_wind_speeds, n_turbines))
-    
+
     def set_yaw_angles(self, yaw_angles: np.ndarray) -> None:
         """
         Set the yaw angles for each wind turbine at each atmospheric
@@ -107,14 +108,12 @@ class Farm:
             self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
 
-        coordinates = [Vec3([x1, x2, turbine.hub_height]) for x1, x2 in list(zip(layout_x, layout_y))]        
+        coordinates = [Vec3([x1, x2, turbine.hub_height]) for x1, x2 in list(zip(layout_x, layout_y))]
         self.turbine_map_dict = {c: copy.deepcopy(turbine) for c in coordinates}
 
         # Turbine control settings indexed by the turbine ID
         self.farm_controller = FarmController(
-            len(input_dictionary["wind_directions"]),
-            len(input_dictionary["wind_speeds"]),
-            len(layout_x)
+            len(input_dictionary["wind_directions"]), len(input_dictionary["wind_speeds"]), len(layout_x)
         )
 
     def sorted_in_x_as_list(self):

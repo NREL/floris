@@ -13,18 +13,19 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import pickle
 import json
+import pickle
 
 import src.logging_manager as logging_manager
 
 from .farm import Farm
+from .grid import TurbineGrid
+from .solver import sequential_solver
+
 # from .wake import Wake
 from .turbine import Turbine
 from .flow_field import FlowField
 from .wake_velocity.jensen import JensenVelocityDeficit
-from .grid import TurbineGrid
-from .solver import sequential_solver
 
 
 class Floris(logging_manager.LoggerBase):
@@ -55,7 +56,7 @@ class Floris(logging_manager.LoggerBase):
             raise ValueError("Floris: No input file or dictionary given.")
 
         turbine_dict = input_dict.pop("turbine")
-        wake_dict = input_dict.pop("wake")
+        # wake_dict = input_dict.pop("wake")
         farm_dict = input_dict.pop("farm")
         meta_dict = input_dict
 
@@ -79,7 +80,6 @@ class Floris(logging_manager.LoggerBase):
         # <<interface>>
         # JensenVelocityDeficit.solver(self.farm, self.flow_field)
         sequential_solver(self.farm, self.flow_field)
-
 
     # Utility functions
 
@@ -106,24 +106,12 @@ class Floris(logging_manager.LoggerBase):
         ]
         if wake_model not in valid_wake_models:
             # TODO: logging
-            raise Exception(
-                "Invalid wake model. Valid options include: {}.".format(
-                    ", ".join(valid_wake_models)
-                )
-            )
+            raise Exception("Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models)))
 
         self.flow_field.wake.velocity_model = wake_model
-        if (
-            wake_model == "jensen"
-            or wake_model == "multizone"
-            or wake_model == "turbopark"
-        ):
+        if wake_model == "jensen" or wake_model == "multizone" or wake_model == "turbopark":
             self.flow_field.wake.deflection_model = "jimenez"
-        elif (
-            wake_model == "blondel"
-            or wake_model == "ishihara_qian"
-            or "gauss" in wake_model
-        ):
+        elif wake_model == "blondel" or wake_model == "ishihara_qian" or "gauss" in wake_model:
             self.flow_field.wake.deflection_model = "gauss"
         else:
             self.flow_field.wake.deflection_model = wake_model
