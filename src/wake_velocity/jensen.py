@@ -101,9 +101,10 @@ class JensenVelocityDeficit(BaseClass):
         z_center = np.zeros_like(boundary_line) + reference_wind_height
 
         # Calculate the wake velocity deficit ratios
+        # Do we need to do masking here or can it be handled in the solver?
         c = (
-            (reference_turbine.rotor_diameter / (2 * self.we * (x - x[i]) + reference_turbine.rotor_diameter)) ** 2
-            * ~(np.array(x - x[i] <= 0.0))  # using this causes nan's in the upstream turbine
+            (reference_turbine.rotor_diameter / (2 * self.we * (x - x[:, i]) + reference_turbine.rotor_diameter)) ** 2
+            * ~(np.array(x - x[:, i] <= 0.0))  # using this causes nan's in the upstream turbine
             * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         )
 
