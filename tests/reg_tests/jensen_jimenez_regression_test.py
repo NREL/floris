@@ -12,25 +12,56 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import copy
 import numpy as np
-from pytest import approx
 
-from tests.conftest import assert_results, print_test_values, turbines_to_array
+from tests.conftest import assert_results, assert_results_arrays, print_test_values, turbines_to_array
 from src import Floris
 from src.turbine import power, Ct, axial_induction, average_velocity
 
-import time
 
 DEBUG = False
 VELOCITY_MODEL = "jensen"
 DEFLECTION_MODEL = "jimenez"
 
-baseline = [
-    (7.9803783, 0.7634300, 1695368.6455473, 0.2568077),
-    (6.1586693, 0.8281095, 771695.5183645, 0.2927016),
-    (5.6649575, 0.8525678, 591183.4224051, 0.3080155),
-]
+
+
+baseline = np.array([
+    # 8 m/s
+    [
+        [7.9803783, 0.7634300, 1695368.6455473, 0.2568077],
+        [6.1586693, 0.8281095, 771695.5183645, 0.2927016],
+        [5.6649575, 0.8525678, 591183.4224051, 0.3080155],
+    ],
+    # 9 m/s
+    [
+        [8.9779256, 0.7625731, 2413659.0651694, 0.2563676],
+        [6.9320149, 0.7949935, 1111075.5222317, 0.2736118],
+        [6.5096913, 0.8119868, 914506.7978006, 0.2831975],
+    ],
+    # 10 m/s
+    [
+        [9.9754729, 0.7527803, 3306006.9741814, 0.2513940],
+        [7.7463403, 0.7694798, 1555119.6348506, 0.2599374],
+        [7.3515939, 0.7807184, 1328908.6335441, 0.2658625],
+    ]
+
+    # TODO: Double check these baselines from floris v2. The
+    # first time I ran it, I got these results, and these
+    # do not match floris v3. Then I ran it again and got the
+    # results above that do match v3. So this is suspicious.
+    # # 9 m/s
+    # [
+    #     [8.9779256, 0.7596713, 2397237.3791443, 0.2543815],
+    #     [6.9478646, 0.7943557, 1118452.7210795, 0.2732599],
+    #     [6.5163235, 0.8117199, 917593.7253615, 0.2830437],
+    # ],
+    # # 10 m/s
+    # [
+    #     [9.9754729, 0.7499157, 3283592.6005045, 0.2494847],
+    #     [7.7632705, 0.7690422, 1565265.2188750, 0.2597097],
+    #     [7.3579086, 0.7805112, 1332252.5927338, 0.2657518],
+    # ]
+])
 
 yawed_baseline = [
     (7.9803783, 0.7605249, 1683956.3885389, 0.2548147),
@@ -56,10 +87,11 @@ def test_regression_tandem(sample_inputs_fixture):
     turbines = floris.farm.turbines
     n_turbines = len(turbines)
 
-    test_results = []
+    test_results = np.zeros( (3, n_turbines, 4) )
 
     velocities = floris.flow_field.u[:, :, :, :]
     n_wind_speeds = np.shape(velocities)[0] # TODO: change to 1 when wind direction is added
+    # n_wind_directions = len(turbines)
 
     yaw_angles = floris.farm.farm_controller.yaw_angles
     thrust_interpolation_func = np.array(n_wind_speeds * [t.fCt for t in turbines]).reshape( (n_wind_speeds, n_turbines) )
@@ -86,14 +118,12 @@ def test_regression_tandem(sample_inputs_fixture):
         yaw_angles,
         thrust_interpolation_func,
     )
-    for i in range(n_turbines):
-        this_turbine = [
-            farm_avg_velocities[0, i],
-            farm_cts[0, i],
-            farm_powers[0, i],
-            farm_axial_inductions[0, i]
-        ]
-        test_results.append(this_turbine)
+    for i in range(3):
+        for j in range(n_turbines):
+            test_results[i, j, 0] = farm_avg_velocities[i, j]
+            test_results[i, j, 1] = farm_cts[i, j]
+            test_results[i, j, 2] = farm_powers[i, j]
+            test_results[i, j, 3] = farm_axial_inductions[i, j]
 
     if DEBUG:
         print_test_values(
@@ -102,8 +132,8 @@ def test_regression_tandem(sample_inputs_fixture):
             farm_powers,
             farm_axial_inductions,
         )
-
-    assert_results(test_results, baseline)
+    
+    assert_results_arrays(test_results, baseline)
 
 def test_regression_rotation(sample_inputs_fixture):
     """
