@@ -38,13 +38,9 @@ class FlowField:
         # This velocity profile is 1.0 at the reference wind height and then follows wind shear as an exponent.
         wind_profile_plane = ( grid.z / self.reference_wind_height) ** self.wind_shear
 
-        # Add a dimension for each wind speed by broadcasting
-        # Here, the profile is of shape (# wind speeds, # turbines, N grid points, M grid points)
-        wind_profile_plane = np.array(self.n_wind_speeds * [wind_profile_plane]) # broadcast
-
         # Create the array containing the initial uniform wind profile
         # This is also of shape (# wind speeds, # turbines, N grid points, M grid points)
-        n_elements = np.prod([d for d in np.shape(grid.z)])                     # find the total number of elements in lower dimensions for each wind speed
+        n_elements = np.prod([d for d in np.shape(grid.z[0])])                  # find the total number of elements in lower dimensions for each wind speed
         _wind_speeds = np.array( n_elements * [self.wind_speeds]).T             # broadcast the input wind speeds to an array of this size
         _wind_speeds = np.reshape(_wind_speeds, np.shape(wind_profile_plane))   # reshape based on the wind profile array
 
