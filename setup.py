@@ -43,6 +43,7 @@ REQUIRED = [
     "scipy>=1.1",
     "coloredlogs>=10.0",
     "attr",
+    "xarray",
 ]
 
 # What packages are optional?
