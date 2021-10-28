@@ -226,7 +226,7 @@ class SampleInputs:
 
         self.farm = {
             "wind_speeds": [8.0, 9.0, 10.0],
-            "wind_directions": [270.0, 270.0, 270.0],  # , 293.0, 315.0],
+            "wind_directions": [270.0, 270.0],  # , 293.0, 315.0],
             "turbulence_intensity": [0.1],
             "wind_shear": 0.12,
             "wind_veer": 0.0,
