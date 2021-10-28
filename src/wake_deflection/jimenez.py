@@ -45,9 +45,9 @@ class JimenezVelocityDeflection(BaseClass):
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        reference_turbine: Turbine,
+        reference_rotor_diameter: float,
         yaw_angle: float,
-        Ct: float
+        Ct: float,
     ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of
@@ -82,12 +82,12 @@ class JimenezVelocityDeflection(BaseClass):
         # yaw displacement
         yYaw_init = (
             xi_init
-            * (15 * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 4.0 + xi_init ** 2.0)
+            * (15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0)
             / (
-                (30 * self.kd / reference_turbine.rotor_diameter)
-                * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 5.0
+                (30 * self.kd / reference_rotor_diameter)
+                * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 5.0
             )
-        ) - (xi_init * reference_turbine.rotor_diameter * (15 + xi_init ** 2.0) / (30 * self.kd))
+        ) - (xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0) / (30 * self.kd))
 
         # corrected yaw displacement with lateral offset
         deflection = yYaw_init + self.ad + self.bd * x_locations

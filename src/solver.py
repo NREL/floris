@@ -13,13 +13,13 @@ jensen_deficit_model = JensenVelocityDeficit()
 
 def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
 
-    grid = TurbineGrid(farm.coords, flow_field.reference_turbine_diameter, flow_field.reference_wind_height, 5)
+    grid = TurbineGrid(farm.coordinates, flow_field.reference_turbine_diameter, flow_field.reference_wind_height, 5)
     flow_field.initialize_velocity_field(grid)
 
     # <<interface>>
     jensen_args = jensen_deficit_model.prepare_function(
         grid,
-        farm.turbines[0],
+        farm.rotor_diameter[0],
         flow_field
     )
 
@@ -54,16 +54,16 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
         thrust_coefficient = Ct(
             velocities=u[0, i, :, :],
             yaw_angle=farm.farm_controller.yaw_angles[i],
-            fCt=farm.turbines[0].fCt,
+            fCt=farm.fCt_interp[i],
         )
         deflection_field = jimenez_deflection_model.function(
             i,
             grid.x,
             grid.y,
             grid.z,
-            farm.turbines[0],
+            farm.rotor_diameter[i],
             farm.farm_controller.yaw_angles[i],
-            thrust_coefficient
+            thrust_coefficient,
         )
 
         # jensen_args['u'] = flow_field.u_initial - velocity_deficit
@@ -72,7 +72,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
         turbine_ai = axial_induction(
             velocities=u[0, i, :, :],
             yaw_angle=farm.farm_controller.yaw_angles[i],
-            fCt=farm.turbines[0].fCt,
+            fCt=farm.fCt_interp[i],
         )
         turbine_ai = turbine_ai * np.ones((grid.n_turbines, grid.grid_resolution, grid.grid_resolution))
 

@@ -27,7 +27,7 @@ class FarmController:
         # Initialize the yaw settings to an empty array
         # self.set_yaw_angles(np.array((0,)))
         pass
-    
+
     def set_yaw_angles(self, yaw_angles: Union[list, np.ndarray]) -> None:
         self.yaw_angles = yaw_angles
 
@@ -128,8 +128,8 @@ class Farm(FromDictMixin):
 
         # TODO: Enable the farm controller
         # # Turbine control settings indexed by the turbine ID
-        # self.farm_controller = FarmController(len(input_dictionary["wind_speeds"]), 1)
-        # self.farm_controller.set_yaw_angles( np.zeros( ( len(self.turbine_map_dict)) ) )
+        self.farm_controller = FarmController(1, 1)  # TODO placeholder
+        self.farm_controller.set_yaw_angles(np.zeros((len(self.layout_x))))
 
     @layout_x.validator
     def check_x_len(self, instance: str, value: Union[List[float], np.ndarray]) -> None:
