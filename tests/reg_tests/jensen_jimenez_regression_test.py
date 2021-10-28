@@ -88,11 +88,11 @@ def test_regression_tandem(sample_inputs_fixture):
     turbines = floris.farm.turbines
     n_turbines = len(turbines)
 
-    test_results = np.zeros((3, 3, n_turbines, 4))
-
     velocities = floris.flow_field.u[:, :, :, :, :]
     n_wind_directions = np.shape(velocities)[0]
     n_wind_speeds = np.shape(velocities)[1]
+
+    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     yaw_angles = floris.farm.farm_controller.yaw_angles
     thrust_interpolation_func = np.array(n_wind_directions * n_wind_speeds * [t.fCt for t in turbines]).reshape(
@@ -206,11 +206,11 @@ def test_regression_yaw(sample_inputs_fixture):
     turbines = floris.farm.turbines
     n_turbines = len(turbines)
 
-    test_results = np.zeros((3, 3, n_turbines, 4))
-
     velocities = floris.flow_field.u[:, :, :, :, :]
     n_wind_directions = np.shape(velocities)[0]
     n_wind_speeds = np.shape(velocities)[1]
+
+    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     yaw_angles = floris.farm.farm_controller.yaw_angles
     thrust_interpolation_func = np.array(n_wind_directions * n_wind_speeds * [t.fCt for t in turbines]).reshape(
