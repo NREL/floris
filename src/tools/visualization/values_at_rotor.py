@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 def plot_rotor_values(
     values: np.ndarray,
-    titles: np.ndarray,
+    # titles: np.ndarray,
     max_width: int = 4,
     cmap: str = "coolwarm",
     return_fig_objects: bool = False,
@@ -70,14 +70,13 @@ def plot_rotor_values(
     fig = plt.figure(dpi=200, figsize=(16, 16))
     axes = fig.subplots(nrows, ncols)
 
-    for ax, t, (i, j) in zip(
-        axes.flatten(), titles.flatten(), product(range(n_wd), range(n_ws))
-    ):
+    # for ax, t, (i, j) in zip(axes.flatten(), titles.flatten(), product(range(n_wd), range(n_ws))):
+    for ax, (i, j) in zip(axes.flatten(), product(range(n_wd), range(n_ws))):
         ax.imshow(values[i, j], cmap=cmap, norm=norm)
 
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.set_title(t)
+        # ax.set_title(t)
 
     if extra > 0:
         for ax in axes[-1][-extra:]:
