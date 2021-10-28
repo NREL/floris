@@ -88,18 +88,22 @@ def test_regression_tandem(sample_inputs_fixture):
     turbines = floris.farm.turbines
     n_turbines = len(turbines)
 
-    test_results = np.zeros((3, n_turbines, 4))
+    test_results = np.zeros((3, 3, n_turbines, 4))
 
-    velocities = floris.flow_field.u[:, :, :, :]
-    n_wind_speeds = np.shape(velocities)[0]  # TODO: change to 1 when wind direction is added
-    # n_wind_directions = len(turbines)
+    velocities = floris.flow_field.u[:, :, :, :, :]
+    n_wind_directions = np.shape(velocities)[0]
+    n_wind_speeds = np.shape(velocities)[1]
 
     yaw_angles = floris.farm.farm_controller.yaw_angles
-    thrust_interpolation_func = np.array(n_wind_speeds * [t.fCt for t in turbines]).reshape((n_wind_speeds, n_turbines))
-    power_interpolation_func = np.array(n_wind_speeds * [t.power_interp for t in turbines]).reshape(
-        (n_wind_speeds, n_turbines)
+    thrust_interpolation_func = np.array(n_wind_directions * n_wind_speeds * [t.fCt for t in turbines]).reshape(
+        (n_wind_directions, n_wind_speeds, n_turbines)
     )
-    power_exponent = np.array(n_wind_speeds * [t.pP for t in turbines]).reshape((n_wind_speeds, n_turbines))
+    power_interpolation_func = np.array(n_wind_directions * n_wind_speeds * [t.power_interp for t in turbines]).reshape(
+        (n_wind_directions, n_wind_speeds, n_turbines)
+    )
+    power_exponent = np.array(n_wind_directions * n_wind_speeds * [t.pP for t in turbines]).reshape(
+        (n_wind_directions, n_wind_speeds, n_turbines)
+    )
 
     farm_avg_velocities = average_velocity(
         velocities,
@@ -110,7 +114,9 @@ def test_regression_tandem(sample_inputs_fixture):
         thrust_interpolation_func,
     )
     farm_powers = power(
-        np.array(n_turbines * n_wind_speeds * [floris.flow_field.air_density]).reshape((n_wind_speeds, n_turbines)),
+        np.array(n_turbines * n_wind_speeds * n_wind_directions * [floris.flow_field.air_density]).reshape(
+            (n_wind_directions, n_wind_speeds, n_turbines)
+        ),
         velocities,
         yaw_angles,
         power_exponent,
@@ -121,12 +127,13 @@ def test_regression_tandem(sample_inputs_fixture):
         yaw_angles,
         thrust_interpolation_func,
     )
-    for i in range(3):
-        for j in range(n_turbines):
-            test_results[i, j, 0] = farm_avg_velocities[i, j]
-            test_results[i, j, 1] = farm_cts[i, j]
-            test_results[i, j, 2] = farm_powers[i, j]
-            test_results[i, j, 3] = farm_axial_inductions[i, j]
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
+                test_results[i, j, k, 1] = farm_cts[i, j, k]
+                test_results[i, j, k, 2] = farm_powers[i, j, k]
+                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
 
     if DEBUG:
         print_test_values(
@@ -136,7 +143,7 @@ def test_regression_tandem(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results, baseline)
+    assert_results_arrays(test_results[0], baseline)
 
 
 # def test_regression_rotation(sample_inputs_fixture):
@@ -192,25 +199,29 @@ def test_regression_yaw(sample_inputs_fixture):
     floris = Floris(input_dict=sample_inputs_fixture.floris)
 
     # yaw the upstream turbine 5 degrees
-    floris.farm.farm_controller.set_yaw_angles([5.0, 0.0, 0.0])  # TODO: n_wind_directions
+    floris.farm.farm_controller.set_yaw_angles([5.0, 0.0, 0.0])
 
     floris.go()
 
     turbines = floris.farm.turbines
     n_turbines = len(turbines)
 
-    test_results = np.zeros((3, n_turbines, 4))
+    test_results = np.zeros((3, 3, n_turbines, 4))
 
-    velocities = floris.flow_field.u[:, :, :, :]
-    n_wind_speeds = np.shape(velocities)[0]  # TODO: change to 1 when wind direction is added
-    # n_wind_directions = len(turbines)
+    velocities = floris.flow_field.u[:, :, :, :, :]
+    n_wind_directions = np.shape(velocities)[0]
+    n_wind_speeds = np.shape(velocities)[1]
 
     yaw_angles = floris.farm.farm_controller.yaw_angles
-    thrust_interpolation_func = np.array(n_wind_speeds * [t.fCt for t in turbines]).reshape((n_wind_speeds, n_turbines))
-    power_interpolation_func = np.array(n_wind_speeds * [t.power_interp for t in turbines]).reshape(
-        (n_wind_speeds, n_turbines)
+    thrust_interpolation_func = np.array(n_wind_directions * n_wind_speeds * [t.fCt for t in turbines]).reshape(
+        (n_wind_directions, n_wind_speeds, n_turbines)
     )
-    power_exponent = np.array(n_wind_speeds * [t.pP for t in turbines]).reshape((n_wind_speeds, n_turbines))
+    power_interpolation_func = np.array(n_wind_directions * n_wind_speeds * [t.power_interp for t in turbines]).reshape(
+        (n_wind_directions, n_wind_speeds, n_turbines)
+    )
+    power_exponent = np.array(n_wind_directions * n_wind_speeds * [t.pP for t in turbines]).reshape(
+        (n_wind_directions, n_wind_speeds, n_turbines)
+    )
 
     farm_avg_velocities = average_velocity(
         velocities,
@@ -221,7 +232,9 @@ def test_regression_yaw(sample_inputs_fixture):
         thrust_interpolation_func,
     )
     farm_powers = power(
-        np.array(n_turbines * n_wind_speeds * [floris.flow_field.air_density]).reshape((n_wind_speeds, n_turbines)),
+        np.array(n_turbines * n_wind_speeds * n_wind_directions * [floris.flow_field.air_density]).reshape(
+            (n_wind_directions, n_wind_speeds, n_turbines)
+        ),
         velocities,
         yaw_angles,
         power_exponent,
@@ -232,12 +245,13 @@ def test_regression_yaw(sample_inputs_fixture):
         yaw_angles,
         thrust_interpolation_func,
     )
-    for i in range(3):
-        for j in range(n_turbines):
-            test_results[i, j, 0] = farm_avg_velocities[i, j]
-            test_results[i, j, 1] = farm_cts[i, j]
-            test_results[i, j, 2] = farm_powers[i, j]
-            test_results[i, j, 3] = farm_axial_inductions[i, j]
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
+                test_results[i, j, k, 1] = farm_cts[i, j, k]
+                test_results[i, j, k, 2] = farm_powers[i, j, k]
+                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
 
     if DEBUG:
         print_test_values(
@@ -247,4 +261,4 @@ def test_regression_yaw(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results, yawed_baseline)
+    assert_results_arrays(test_results[0], yawed_baseline)

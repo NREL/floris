@@ -15,8 +15,11 @@
 
 import numpy as np
 import pytest
+
 from src import FlowField
-from .grid_unit_test import turbine_grid_fixture, N_TURBINES
+
+from .grid_unit_test import N_TURBINES
+
 
 @pytest.fixture
 def flow_field_fixture(sample_inputs_fixture):
@@ -28,27 +31,34 @@ def test_n_wind_speeds(flow_field_fixture):
     assert flow_field_fixture.n_wind_speeds > 0
 
 
+def test_n_wind_directions(flow_field_fixture):
+    assert flow_field_fixture.n_wind_directions > 0
+
+
 def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
     flow_field_fixture.wind_shear = 1.0
-    turbine_grid_fixture.expand_wind_speed(flow_field_fixture.n_wind_speeds)
+    turbine_grid_fixture.expand_atmospheric_conditions(
+        flow_field_fixture.n_wind_directions, flow_field_fixture.n_wind_speeds
+    )
     flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
 
     # Check the shape of the velocity arrays: u_initial, v_initial, w_initial  and u, v, w
     # Dimensions are (# wind speeds, # turbines, N grid points, M grid points)
-    assert np.shape(flow_field_fixture.u)[0] == flow_field_fixture.n_wind_speeds
-    assert np.shape(flow_field_fixture.u)[1] == N_TURBINES
-    assert np.shape(flow_field_fixture.u)[2] == turbine_grid_fixture.grid_resolution
+    assert np.shape(flow_field_fixture.u)[0] == flow_field_fixture.n_wind_directions
+    assert np.shape(flow_field_fixture.u)[1] == flow_field_fixture.n_wind_speeds
+    assert np.shape(flow_field_fixture.u)[2] == N_TURBINES
     assert np.shape(flow_field_fixture.u)[3] == turbine_grid_fixture.grid_resolution
+    assert np.shape(flow_field_fixture.u)[4] == turbine_grid_fixture.grid_resolution
 
     # Check that the wind speed profile was created correctly. By setting the shear
     # exponent to 1.0 above, the shear profile is a linear function of height and
     # the points on the turbine rotor are equally spaced about the rotor.
     # This means that their average should equal the wind speed at the center
     # which is the input wind speed.
-    shape = np.shape(flow_field_fixture.u[0, 0, :, :])
+    shape = np.shape(flow_field_fixture.u[0, 0, 0, :, :])
     n_elements = shape[0] * shape[1]
-    average = np.sum(flow_field_fixture.u[:, 0, :, :], axis=(1,2)) / np.array([n_elements])
-    assert np.array_equal(average, flow_field_fixture.wind_speeds)
+    average = np.sum(flow_field_fixture.u[:, :, 0, :, :], axis=(-2, -1)) / np.array([n_elements])
+    assert np.array_equal(average, np.reshape(flow_field_fixture.wind_speeds, (-1, 1)) * np.ones((3, 3)))
 
 
 def test_flow_field_get_quantities():
@@ -58,4 +68,3 @@ def test_flow_field_get_quantities():
     #     flow_field_fixture.u[...]
     # )
     assert True
-

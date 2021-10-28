@@ -23,9 +23,7 @@ from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_convert
 from src.base_class import BaseClass
 
 
-def _filter_convert(
-    ix_filter: Union[List[Union[int, bool]], np.ndarray], sample_arg: np.ndarray
-) -> Union[np.ndarray, None]:
+def _filter_convert(ix_filter: np.ndarray, sample_arg: np.ndarray) -> Union[np.ndarray, None]:
     """Converts the ix_filter to a standard format of `np.ndarray`s for filtering
     certain arguments.
 
@@ -43,7 +41,7 @@ def _filter_convert(
     if isinstance(ix_filter, list):
         return np.array(ix_filter)
     if ix_filter is None and isinstance(sample_arg, np.ndarray):
-        return np.ones(sample_arg.shape[0], dtype=bool)
+        return np.ones(sample_arg.shape[-1], dtype=bool)
     return None
 
 
@@ -88,22 +86,23 @@ def power(
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        air_density = air_density[:, ix_filter]
-        velocities = velocities[:, ix_filter, :, :]
-        yaw_angle = yaw_angle[:, ix_filter]
-        pP = pP[:, ix_filter]
-        power_interp = power_interp[:, ix_filter]
+        air_density = air_density[:, :, ix_filter]
+        velocities = velocities[:, :, ix_filter, :, :]
+        yaw_angle = yaw_angle[:, :, ix_filter]
+        pP = pP[:, :, ix_filter]
+        power_interp = power_interp[:, :, ix_filter]
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
 
-    n_wind_speeds, n_turbines, *_ = yaw_angle.shape
+    n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     p = np.zeros_like(yaw_effective_velocity)
-    for i in range(n_wind_speeds):
-        for j in range(n_turbines):
-            interpolator = power_interp[i, j]
-            p[i, j] = interpolator(yaw_effective_velocity[i, j])
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                interpolator = power_interp[i, j, k]
+                p[i, j, k] = interpolator(yaw_effective_velocity[i, j, k])
 
     return p * air_density
 
@@ -127,17 +126,18 @@ def Ct(
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        velocities = velocities[:, ix_filter, :, :]
-        yaw_angle = yaw_angle[:, ix_filter]
-        fCt = fCt[:, ix_filter]
+        velocities = velocities[:, :, ix_filter, :, :]
+        yaw_angle = yaw_angle[:, :, ix_filter]
+        fCt = fCt[:, :, ix_filter]
 
-    n_wind_speeds, n_turbines, *_ = yaw_angle.shape
+    n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     average_velocities = average_velocity(velocities)
     thrust_coefficient = np.zeros_like(average_velocities)
-    for i in range(n_wind_speeds):
-        for j in range(n_turbines):
-            _fCt = fCt[i, j]
-            thrust_coefficient[i, j] = _fCt(average_velocities[i, j])
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                _fCt = fCt[i, j, k]
+                thrust_coefficient[i, j, k] = _fCt(average_velocities[i, j, k])
 
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
 
@@ -166,7 +166,7 @@ def axial_induction(
     # Then, process the input arguments as needed for this function
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        yaw_angle = yaw_angle[:, ix_filter]
+        yaw_angle = yaw_angle[:, :, ix_filter]
 
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
@@ -193,8 +193,8 @@ def average_velocity(velocities: np.ndarray, ix_filter: Union[List[Union[int, bo
     # (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)
 
     if ix_filter is not None:
-        velocities = velocities[:, ix_filter, :, :]
-    axis = (2, 3)
+        velocities = velocities[:, :, ix_filter, :, :]
+    axis = (3, 4)
     return np.cbrt(np.mean(velocities ** 3, axis=axis))
 
 

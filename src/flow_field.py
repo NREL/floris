@@ -38,10 +38,10 @@ class FlowField:
         wind_profile_plane = (grid.z / self.reference_wind_height) ** self.wind_shear
 
         # Create the array containing the initial uniform wind profile
-        # This is also of shape (# wind speeds, # turbines, N grid points, M grid points)
-
+        # This is of shape (# wind speeds, # turbines, N grid points, M grid points)
+        #
         # find the total number of elements in lower dimensions for each wind speed
-        n_elements = grid.z[0].size
+        n_elements = grid.z[0, 0].size
         # broadcast the input wind speeds to an array of this size
         _wind_speeds = np.array(n_elements * [self.wind_speeds]).T
         # reshape based on the wind profile array
@@ -67,3 +67,7 @@ class FlowField:
     @property
     def n_wind_speeds(self) -> int:
         return len(self.wind_speeds)
+
+    @property
+    def n_wind_directions(self) -> int:
+        return len(self.wind_directions)

@@ -22,7 +22,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
         flow_field.reference_wind_height,
         5,
     )
-    grid.expand_wind_speed(flow_field.n_wind_speeds)
+    grid.expand_atmospheric_conditions(flow_field.n_wind_directions, flow_field.n_wind_speeds)
     flow_field.initialize_velocity_field(grid)
 
     # <<interface>>
@@ -32,15 +32,16 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
     # This is u_wake
     velocity_deficit = np.zeros_like(flow_field.u_initial)
 
-    array_fct = np.array(flow_field.n_wind_speeds * [t.fCt for t in farm.turbines]).reshape(
-        (flow_field.n_wind_speeds, grid.n_turbines)
-    )
+    array_fct = np.array(
+        flow_field.n_wind_directions * flow_field.n_wind_speeds * [t.fCt for t in farm.turbines]
+    ).reshape((flow_field.n_wind_directions, flow_field.n_wind_speeds, grid.n_turbines))
+    # Add a dimension for wind directions
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines - 1):
 
         u = flow_field.u_initial - velocity_deficit
-        u[:, i + 1 :, :, :] = 0  # TODO: explain
+        u[:, :, i + 1 :, :, :] = 0  # TODO: explain
 
         thrust_coefficient = Ct(
             velocities=u,
@@ -61,8 +62,9 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
             fCt=array_fct,
             ix_filter=[i],
         )
-        turbine_ai = turbine_ai[:, :, None, None] * np.ones(
+        turbine_ai = turbine_ai[:, :, :, None, None] * np.ones(
             (
+                flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
                 grid.n_turbines,
                 grid.grid_resolution,

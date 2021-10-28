@@ -24,7 +24,7 @@ class FarmController:
         # TODO: This should hold the yaw settings for each turbine for each wind speed and wind direction
 
         # Initialize the yaw settings to an empty array
-        self.yaw_angles = np.zeros((n_wind_speeds, n_turbines))
+        self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, n_turbines))
 
     def set_yaw_angles(self, yaw_angles: np.ndarray) -> None:
         """
@@ -37,7 +37,7 @@ class FarmController:
         """
         # if yaw_angles.ndim != 3:
         #     raise ValueError("yaw_angles must be set for each turbine at each atmospheric condition.")
-        self.yaw_angles[:] = yaw_angles
+        self.yaw_angles[:, :] = yaw_angles
 
 
 class Farm:

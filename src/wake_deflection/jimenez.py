@@ -102,15 +102,15 @@ class JimenezVelocityDeflection(BaseClass):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
-        yaw_angle = yaw_angle[:, i : i + 1, None, None]
+        yaw_angle = yaw_angle[:, :, i : i + 1, None, None]
 
         # Ct is given for only the current turbine, so broadcast
         # this to the grid dimesions
-        Ct = Ct[:, :, None, None]
+        Ct = Ct[:, :, :, None, None]
 
         # angle of deflection
         xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
-        x_locations = x - x[i]  # (n turbines, n grid, n grid)
+        x_locations = x - x[:, :, i]  # (n turbines, n grid, n grid)
 
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
