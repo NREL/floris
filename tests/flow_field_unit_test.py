@@ -18,7 +18,7 @@ import pytest
 
 from src import FlowField
 
-from .grid_unit_test import N_TURBINES
+from .grid_unit_test import N_TURBINES, turbine_grid_fixture
 
 
 @pytest.fixture
@@ -58,7 +58,8 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
     shape = np.shape(flow_field_fixture.u[0, 0, 0, :, :])
     n_elements = shape[0] * shape[1]
     average = np.sum(flow_field_fixture.u[:, :, 0, :, :], axis=(-2, -1)) / np.array([n_elements])
-    assert np.array_equal(average, np.reshape(flow_field_fixture.wind_speeds, (-1, 1)) * np.ones((3, 3)))
+    baseline = np.reshape(flow_field_fixture.wind_speeds, (1, -1)) * np.ones((flow_field_fixture.n_wind_directions, flow_field_fixture.n_wind_speeds))
+    assert np.array_equal(average, baseline)
 
 
 def test_flow_field_get_quantities():
