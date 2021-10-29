@@ -172,16 +172,18 @@ class Farm(FromDictMixin):
             [generate_turbine_tuple(self.turbine_map[t_id]) for t_id in self.turbine_id]
         )
 
+        # TODO: how to handle multiple data types xarray
         column_ix = {col: i for i, col in enumerate(column_order)}
-        self.rotor_diameter = turbine_array[:, column_ix["rotor_diameter"]]
-        self.rotor_radius = turbine_array[:, column_ix["rotor_radius"]]
-        self.rotor_area = turbine_array[:, column_ix["rotor_area"]]
-        self.hub_height = turbine_array[:, column_ix["hub_height"]]
-        self.pP = turbine_array[:, column_ix["pP"]]
-        self.pT = turbine_array[:, column_ix["pT"]]
-        self.generator_efficiency = turbine_array[:, column_ix["generator_efficiency"]]
-        self.fCp_interp = turbine_array[:, column_ix["fCp_interp"]]
+        self.rotor_diameter = turbine_array[:, column_ix["rotor_diameter"]].astype(float)
+        self.rotor_radius = turbine_array[:, column_ix["rotor_radius"]].astype(float)
+        self.rotor_area = turbine_array[:, column_ix["rotor_area"]].astype(float)
+        self.hub_height = turbine_array[:, column_ix["hub_height"]].astype(float)
+        self.pP = turbine_array[:, column_ix["pP"]].astype(float)
+        self.pT = turbine_array[:, column_ix["pT"]].astype(float)
+        self.generator_efficiency = turbine_array[:, column_ix["generator_efficiency"]].astype(float)
         self.fCt_interp = turbine_array[:, column_ix["fCt_interp"]]
+        # TODO: should we have both fCp_interp and power_interp
+        self.fCp_interp = turbine_array[:, column_ix["fCp_interp"]]
         self.power_interp = turbine_array[:, column_ix["power_interp"]]
 
         self.data_array = xr.DataArray(
