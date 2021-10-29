@@ -47,7 +47,11 @@ def test_power_thrust_table():
     # Test that the values are immutable
     with pytest.raises(attr.exceptions.FrozenInstanceError):
         table.power = np.arange(len(table.power))
+
+    with pytest.raises(attr.exceptions.FrozenInstanceError):
         table.thrust = np.arange(len(table.thrust))
+
+    with pytest.raises(attr.exceptions.FrozenInstanceError):
         table.wind_speed = np.arange(len(table.wind_speed))
 
     # Test for initialization errors

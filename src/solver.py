@@ -16,12 +16,7 @@ jensen_deficit_model = JensenVelocityDeficit()
 
 def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
 
-    grid = TurbineGrid(
-        farm.coords,
-        flow_field.reference_turbine_diameter,
-        flow_field.reference_wind_height,
-        5,
-    )
+    grid = TurbineGrid(farm.coordinates, flow_field.reference_turbine_diameter, flow_field.reference_wind_height, 5)
     grid.expand_wind_speed(flow_field.n_wind_speeds)
     flow_field.initialize_velocity_field(grid)
 
@@ -45,7 +40,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
         thrust_coefficient = Ct(
             velocities=u,
             yaw_angle=farm.farm_controller.yaw_angles,
-            fCt=array_fct,
+            fCt=farm.fCt_interp,
             ix_filter=[i],
         )
         deflection_field = jimenez_deflection_model.function(  # n wind speeds, n turbines, grid x, grid y
@@ -58,7 +53,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
         turbine_ai = axial_induction(
             velocities=u,
             yaw_angle=farm.farm_controller.yaw_angles,
-            fCt=array_fct,
+            fCt=farm.fCt_interp,
             ix_filter=[i],
         )
         turbine_ai = turbine_ai[:, :, None, None] * np.ones(

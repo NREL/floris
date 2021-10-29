@@ -73,7 +73,19 @@ class Floris(logging_manager.LoggerBase):
         # Initialize the simulation objects
         self.turbine = Turbine(**turbine_dict)
         # self.wake = Wake(wake_dict)
-        self.farm = Farm(farm_dict, self.turbine)
+
+        layout_x = farm_dict["layout_x"]
+        layout_y = farm_dict["layout_y"]
+        wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
+        turbine_id = ["t1"] * len(layout_x)
+        turbine_map = dict(t1=turbine_dict)
+        self.farm = Farm(
+            turbine_id=turbine_id,
+            turbine_map=turbine_map,
+            layout_x=layout_x,
+            layout_y=layout_y,
+            wtg_id=wtg_id,
+        )
         self.flow_field = FlowField(farm_dict)
 
     def go(self):

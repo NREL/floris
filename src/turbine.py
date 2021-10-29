@@ -12,6 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from typing import Dict, List, Union
+from collections.abc import Iterable
 import math
 from typing import Any, Dict, List, Union
 
@@ -19,7 +21,13 @@ import attr
 import numpy as np
 from scipy.interpolate import interp1d
 
-from src.utilities import FromDictMixin, cosd, float_attrib, attrs_array_converter
+from src.utilities import (
+    FromDictMixin,
+    cosd,
+    float_attrib,
+    model_attrib,
+    attrs_array_converter,
+)
 from src.base_class import BaseClass
 
 
@@ -48,16 +56,28 @@ def _filter_convert(
 
 
 def power(
-    air_density: np.ndarray,  # (wind directions, wind speeds, turbines)
-    velocities: np.ndarray,  # (wind directions, wind speeds, turbines, grid, grid)
-    yaw_angle: np.ndarray,  # (wind directions, wind speeds, turbines)
+    air_density: np.ndarray,
+    velocities: np.ndarray,
+    yaw_angle: np.ndarray,
     pP: np.ndarray,
-    power_interp: np.ndarray,  # (wind directions, wind speeds, turbines)
+    power_interp: np.ndarray,
     ix_filter: np.ndarray = None,
-) -> np.ndarray:  # (wind directions, wind speeds, turbines)
-    """
-    Power produced by a turbine adjusted for yaw and tilt. Value
+) -> np.ndarray:
+    """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
+
+    Args:
+        air_density (np.ndarray[wd, ws, turbines]): The air density value(s) at each turbine.
+        velocities (np.ndarray[wd, ws, turbines, grid1, grid2]): The velocity field at a turbine.
+        pP (np.ndarray[wd, ws, turbines]): The pP value(s) of the cosine exponent relating
+            the yaw misalignment angle to power for each turbine.
+        power_interp (np.ndarray[wd, ws, turbines]): The power interpolation function
+            for each turbine.
+        ix_filter (np.ndarray, optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
+    Returns:
+        np.ndarray: The power, in Watts, for each turbine after adjusting for yaw and tilt.
     """
     # TODO: Change the order of input arguments to be consistent with the other
     # utility functions - velocities first...
@@ -113,11 +133,23 @@ def Ct(
     yaw_angle: np.ndarray,  # (wind directions, wind speeds, turbines)
     fCt: np.ndarray,  # (wind directions, wind speeds, turbines)
     ix_filter: np.ndarray = None,
-) -> np.ndarray:  # (wind directions, wind speeds, turbines)
-    """
-    Thrust coefficient of a turbine incorporating the yaw angle.
+) -> np.ndarray:  # (wind directions, wind speeds, turbines)   
+    """Thrust coefficient of a turbine incorporating the yaw angle.
     The value is interpolated from the coefficient of thrust vs
     wind speed table using the rotor swept area average velocity.
+
+    Args:
+        velocities (np.ndarray[wd, ws, turbines, grid1, grid2]): The velocity field at a turbine.
+        fCt (np.array[wd, ws, turbines]): The thrust coefficient for each turbine.
+        ix_filter (np.ndarray, optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
+    Raises:
+        ValueError: [description]
+        ValueError: [description]
+
+    Returns:
+        np.ndarray: [description]
     """
 
     if isinstance(yaw_angle, list):
@@ -150,9 +182,19 @@ def axial_induction(
     fCt: np.ndarray,  # (wind directions, wind speeds, turbines)
     ix_filter: np.ndarray = None,
 ) -> np.ndarray:  # (wind directions, wind speeds, turbines)
-    """
-    Axial induction factor of the turbine incorporating
+    """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
+
+    Args:
+        velocities (np.ndarray): The velocity field at each turbine; should be shape:
+            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
+        fCt (np.array): The thrust coefficient function for each
+            turbine.
+        ix_filter (np.ndarray, optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
+    Returns:
+        Union[float, np.ndarray]: [description]
     """
 
     if isinstance(yaw_angle, list):
@@ -171,20 +213,20 @@ def axial_induction(
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
 
-def average_velocity(velocities: np.ndarray, ix_filter: Union[List[Union[int, bool]], np.ndarray] = None) -> float:
-    """
-    This property calculates and returns the cube root of the
+def average_velocity(velocities: np.ndarray, ix_filter: Union[List[Union[int, bool]], np.ndarray] = None) -> np.ndarray:
+    """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
 
     **Note:** The velocity is scaled to an effective velocity by the yaw.
 
+    Args:
+        velocities (np.ndarray): The velocity field at each turbine; should be shape:
+            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
+        ix_filter (Union[List[Union[int, bool]], np.ndarray], optional): The boolean array, or
+            integer indices to filter out before calculation. Defaults to None.
+
     Returns:
-        float: The average velocity across a rotor.
-
-    Examples:
-        To get the average velocity for a turbine:
-
-        >>> avg_vel = floris.farm.turbines[0].average_velocity()
+        Union[float, np.ndarray]: The average velocity across the rotor(s).
     """
     # Remove all invalid numbers from interpolation
     # data = np.array(self.velocities)[~np.isnan(self.velocities)]
@@ -200,6 +242,17 @@ def average_velocity(velocities: np.ndarray, ix_filter: Union[List[Union[int, bo
 
 @attr.s(frozen=True, auto_attribs=True)
 class PowerThrustTable(FromDictMixin):
+    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
+
+    Args:
+        power ([type]): The power produced at a given windspeed.
+        thrust ([type]): The thrust at a given windspeed.
+        wind_speed ([type]): Windspeed values, m/s.
+
+    Raises:
+        ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
+        ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
+    """
     # TODO: How to handle duplicate entries for a single wind speed?
     # This affects the interpolation in fCt / fCp
     power: List[float] = attr.ib(converter=attrs_array_converter)
@@ -261,11 +314,14 @@ class Turbine(BaseClass):
         converter=PowerThrustTable.from_dict,
         kw_only=True,
     )
+    model_string: str = model_attrib(default="turbine")
     # ngrid: float = float_attrib()  # TODO: goes here or on the Grid?
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
 
     # Initialized in the post_init function
+    rotor_radius: float = float_attrib(init=False)
+    rotor_area: float = float_attrib(init=False)
     fCp_interp: interp1d = attr.ib(init=False)
     fCt_interp: interp1d = attr.ib(init=False)
     power_interp: interp1d = attr.ib(init=False)
@@ -283,6 +339,10 @@ class Turbine(BaseClass):
     # self.use_turbulence_correction = False
 
     def __attrs_post_init__(self) -> None:
+
+        # Set the rotor_radius and rotor_area attributes
+        self.rotor_radius = self.rotor_diameter / 2.0
+        self.rotor_area = np.pi * self.rotor_radius ** 2
 
         # Post-init initialization for the power curve interpolation functions
         wind_speeds = self.power_thrust_table.wind_speed
@@ -313,19 +373,32 @@ class Turbine(BaseClass):
         """
         return 0.5 * self.rotor_area * self.fCp(velocities) * self.generator_efficiency * velocities ** 3
 
-    def fCp(self, sample_wind_speeds):
-        # NOTE: IS THIS SUPPOSED TO BE A SINGLE INPUT?
-        if sample_wind_speeds < self.power_thrust_table.wind_speed.min():
-            return 0.0
-        else:
-            _cp = self.fCp_interp(sample_wind_speeds)
-            if _cp.size > 1:
-                _cp = _cp[0]
-            if _cp > 1.0:
-                return 1.0
-            if _cp < 0.0:
-                return 0.0
-            return float(_cp)
+
+    def fCp(
+        self, sample_wind_speeds: Union[float, np.ndarray]
+    ) -> Union[float, np.ndarray]:
+        """Calculates the coefficient of power at a given wind speed.
+
+        Returns:
+            Union[float, np.ndarray]: The coefficient of power for a given wind speed.
+        """
+        is_single = not isinstance(sample_wind_speeds, Iterable)
+        if is_single:
+            sample_wind_speeds = np.array([sample_wind_speeds])
+
+        _cp = self.fCp_interp(sample_wind_speeds)
+        _cp = np.clip(_cp, 0, 1)
+
+        # TODO: What are the circumstances that led to this?
+        # if _cp.size > 1:
+        #     _cp = _cp[0]
+        _cp[sample_wind_speeds < self.power_thrust_table.wind_speed.min()] = 0.0
+
+        # Return the data type that matches the input size, but figure out the dimensionality
+        if is_single:
+            return _cp[0]
+        return _cp
+
 
     def fCt(self, at_wind_speed: np.ndarray) -> np.ndarray:
         """
@@ -340,34 +413,37 @@ class Turbine(BaseClass):
             at_wind_speed (np.ndarray): Wind speeds to find Ct
 
         Returns:
-            np.ndarray: The interpolates Ct values
+            np.ndarray: The interpolated Ct values
         """
         return self.fCt_interp(at_wind_speed)
 
-    @property
-    def rotor_radius(self) -> float:
-        """
-        Rotor radius of the turbine in meters.
 
-        Returns:
-            float: The rotor radius of the turbine.
+    @rotor_diameter.validator
+    def reset_rotor_diameter_dependencies(self, instance: str, value: float) -> None:
+        """Resets the `rotor_radius` and `rotor_area` attributes.
         """
-        return self.rotor_diameter / 2.0
+        # Temporarily turn off validators to avoid infinite recursion
+        attr.set_run_validators(False)
 
-    @rotor_radius.setter
-    def rotor_radius(self, value: float) -> None:
+        # Reset the values
+        self.rotor_radius = value / 2.0
+        self.rotor_area = np.pi * self.rotor_radius ** 2.0
+
+        # Turn validators back on
+        attr.set_run_validators(True)
+
+    @rotor_radius.validator
+    def reset_rotor_radius(self, instance: str, value: float) -> None:
+        """
+        Resets the `rotor_diameter` value to trigger the recalculation of
+        `rotor_diameter`, `rotor_radius` and `rotor_area`.
+        """
         self.rotor_diameter = value * 2.0
 
-    @property
-    def rotor_area(self) -> float:
+    @rotor_area.validator
+    def reset_rotor_area(self, instance: str, value: float) -> None:
         """
-        Rotor area of the turbine in meters squared.
-
-        Returns:
-            float: The rotor area of the turbine.
+        Resets the `rotor_radius` value to trigger the recalculation of
+        `rotor_diameter`, `rotor_radius` and `rotor_area`.
         """
-        return np.pi * self.rotor_radius ** 2
-
-    @rotor_area.setter
-    def rotor_area(self, value: float) -> None:
         self.rotor_radius = math.sqrt(value / np.pi)

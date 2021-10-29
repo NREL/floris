@@ -60,7 +60,7 @@ class JimenezVelocityDeflection(BaseClass):
         Ct: np.ndarray,  # (n wind speeds, n turbines)
         *,
         x: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
-        reference_turbine: Turbine,
+        reference_rotor_diameter: float,
         yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
     ):
         """
@@ -114,11 +114,11 @@ class JimenezVelocityDeflection(BaseClass):
 
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
-        A = 15 * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / reference_turbine.rotor_diameter) * (
-            2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1
+        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
+        B = (30 * self.kd / reference_rotor_diameter) * (
+            2 * self.kd * x_locations / reference_rotor_diameter + 1
         ) ** 5.0
-        C = xi_init * reference_turbine.rotor_diameter * (15 + xi_init ** 2.0)
+        C = xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
         yYaw_init = (xi_init * A / B) - (C / D)

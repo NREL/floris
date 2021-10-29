@@ -44,7 +44,12 @@ class JensenVelocityDeficit(BaseClass):
     we: float = float_attrib(default=0.05)
     model_string: str = model_attrib(default="jensen")
 
-    def prepare_function(self, grid: TurbineGrid, reference_turbine: Turbine, flow_field: FlowField) -> Dict[str, Any]:
+    def prepare_function(
+        self,
+        grid: TurbineGrid,
+        reference_rotor_diameter: float,
+        flow_field: FlowField
+    ) -> Dict[str, Any]:
         """
         This function prepares the inputs from the various FLORIS data structures
         for use in the Jensen model. This should only be used to 'initialize'
@@ -57,7 +62,7 @@ class JensenVelocityDeficit(BaseClass):
             y=grid.y,
             z=grid.z,
             reference_wind_height=flow_field.reference_wind_height,
-            reference_turbine=reference_turbine,
+            reference_rotor_diameter=reference_rotor_diameter,
         )
         return kwargs
 
@@ -72,7 +77,7 @@ class JensenVelocityDeficit(BaseClass):
         y: np.ndarray,
         z: np.ndarray,
         reference_wind_height: float,
-        reference_turbine: Turbine,
+        reference_rotor_diameter: float,
     ) -> None:
 
         # u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)
@@ -89,7 +94,7 @@ class JensenVelocityDeficit(BaseClass):
 
         m = self.we
         # x = x[i] - x[i - 1] #mesh_x_rotated - x_coord_rotated
-        b = reference_turbine.rotor_diameter / 2.0
+        b = reference_rotor_diameter / 2.0
 
         boundary_line = m * x + b
 
@@ -99,8 +104,8 @@ class JensenVelocityDeficit(BaseClass):
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
         c = (
-            (reference_turbine.rotor_diameter / (2 * self.we * (x - x[:, i]) + reference_turbine.rotor_diameter)) ** 2
-            * ~(np.array(x - x[:, i] <= 0.0))  # using this causes nan's in the upstream turbine
+            (reference_rotor_diameter / (2 * self.we * (x - x[i]) + reference_rotor_diameter)) ** 2
+            * ~(np.array(x - x[i] <= 0.0))  # using this causes nan's in the upstream turbine
             * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         )
 
