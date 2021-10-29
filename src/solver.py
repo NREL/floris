@@ -21,15 +21,11 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
     flow_field.initialize_velocity_field(grid)
 
     # <<interface>>
-    jimenez_args = jimenez_deflection_model.prepare_function(grid, farm.turbines[0], farm.farm_controller.yaw_angles)
-    jensen_args = jensen_deficit_model.prepare_function(grid, farm.turbines[0], flow_field)
+    jimenez_args = jimenez_deflection_model.prepare_function(grid, farm.rotor_diameter[:, [0]], farm.farm_controller.yaw_angles)
+    jensen_args = jensen_deficit_model.prepare_function(grid, farm.rotor_diameter[:, [0]], flow_field)
 
     # This is u_wake
     velocity_deficit = np.zeros_like(flow_field.u_initial)
-
-    array_fct = np.array(flow_field.n_wind_speeds * [t.fCt for t in farm.turbines]).reshape(
-        (flow_field.n_wind_speeds, grid.n_turbines)
-    )
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines - 1):
@@ -67,6 +63,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
 
         turb_u_wake = 2 * turbine_ai * c * flow_field.u_initial
 
-        velocity_deficit = np.sqrt((velocity_deficit ** 2) + (turb_u_wake ** 2))
+        velocity_deficit = np.sqrt(( velocity_deficit ** 2) + (turb_u_wake ** 2))
 
     flow_field.u = flow_field.u_initial - velocity_deficit

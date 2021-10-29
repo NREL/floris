@@ -83,16 +83,17 @@ def test_regression_tandem(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
 
     floris = Floris(input_dict=sample_inputs_fixture.floris)
+
+    n_turbines = len(floris.farm.layout_x)
+    n_wind_speeds = floris.flow_field.n_wind_speeds  # TODO: change to 1 when wind direction is added
+
     floris.go()
 
     n_turbines = len(floris.farm.layout_x)
 
     test_results = np.zeros((3, n_turbines, 4))
 
-    velocities = floris.flow_field.u[:, :, :, :]
-    n_wind_speeds = np.shape(velocities)[0]  # TODO: change to 1 when wind direction is added
-    # n_wind_directions = len(turbines)
-
+    velocities = floris.flow_field.u
     yaw_angles = floris.farm.farm_controller.yaw_angles
 
     farm_avg_velocities = average_velocity(
@@ -185,19 +186,18 @@ def test_regression_yaw(sample_inputs_fixture):
 
     floris = Floris(input_dict=sample_inputs_fixture.floris)
 
+    n_turbines = len(floris.farm.layout_x)
+    n_wind_speeds = floris.flow_field.n_wind_speeds  # TODO: change to 1 when wind direction is added
+    # n_wind_directions = len(turbines)
+
     # yaw the upstream turbine 5 degrees
-    floris.farm.farm_controller.set_yaw_angles([5.0, 0.0, 0.0])  # TODO: n_wind_directions
+    floris.farm.farm_controller.set_yaw_angles(np.array([5.0, 0.0, 0.0]))  # TODO: n_wind_directions
 
     floris.go()
 
-    n_turbines = len(floris.farm.layout_x)
-
     test_results = np.zeros((3, n_turbines, 4))
 
-    velocities = floris.flow_field.u[:, :, :, :]
-    n_wind_speeds = np.shape(velocities)[0]  # TODO: change to 1 when wind direction is added
-    # n_wind_directions = len(turbines)
-
+    velocities = floris.flow_field.u
     yaw_angles = floris.farm.farm_controller.yaw_angles
 
     farm_avg_velocities = average_velocity(
