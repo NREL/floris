@@ -39,7 +39,12 @@ class JimenezVelocityDeflection(BaseClass):
     bd: float = float_attrib(default=0.0)
     model_string: str = model_attrib(default="jimenez")
 
-    def prepare_function(self, grid: TurbineGrid, reference_turbine: Turbine, yaw_angle: np.ndarray) -> Dict[str, Any]:
+    def prepare_function(
+        self,
+        grid: TurbineGrid,
+        reference_rotor_diameter: float,
+        yaw_angle: np.ndarray,
+    ) -> Dict[str, Any]:
         """
         This function prepares the inputs from the various FLORIS data structures
         for use in the Jensen model. This should only be used to 'initialize'
@@ -49,7 +54,7 @@ class JimenezVelocityDeflection(BaseClass):
         """
         kwargs = dict(
             x=grid.x,
-            reference_turbine=reference_turbine,
+            reference_rotor_diameter=reference_rotor_diameter,
             yaw_angle=yaw_angle,
         )
         return kwargs
@@ -60,7 +65,7 @@ class JimenezVelocityDeflection(BaseClass):
         Ct: np.ndarray,  # (n wind speeds, n turbines)
         *,
         x: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
-        reference_turbine: Turbine,
+        reference_rotor_diameter: float,
         yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
     ):
         """
@@ -110,15 +115,15 @@ class JimenezVelocityDeflection(BaseClass):
 
         # angle of deflection
         xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
-        x_locations = x - x[:, :, i:i+1]  # (n turbines, n grid, n grid)
+        x_locations = x - x[:, :, :, i:i+1]  # (n turbines, n grid, n grid)
 
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
-        A = 15 * (2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / reference_turbine.rotor_diameter) * (
-            2 * self.kd * x_locations / reference_turbine.rotor_diameter + 1
+        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter[:, :, :, None, None] + 1) ** 4.0 + xi_init ** 2.0
+        B = (30 * self.kd / reference_rotor_diameter[:, :, :, None, None]) * (
+            2 * self.kd * x_locations / reference_rotor_diameter[:, :, :, None, None] + 1
         ) ** 5.0
-        C = xi_init * reference_turbine.rotor_diameter * (15 + xi_init ** 2.0)
+        C = xi_init * reference_rotor_diameter[:, :, :, None, None] * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
         yYaw_init = (xi_init * A / B) - (C / D)
