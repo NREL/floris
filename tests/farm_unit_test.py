@@ -108,3 +108,23 @@ def test_make_fail_to_demonstrate_xarray_properties():
         "\nWTG IDs:", farm.data_array.wtg_id
     )  # what a coordinate looks like (this one is dim 0)
     assert True
+
+def test_turbine_array_rotor_diameter():
+    """
+    This tests the rotor diameter column of the turbine array
+    but it also verifies the other columns of type float.
+    """
+    turbine_data = SampleInputs().turbine
+    farm_data = SampleInputs().farm
+
+    layout_x = farm_data["layout_x"]
+    layout_y = farm_data["layout_y"]
+    wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
+    turbine_id = ["t1"] * len(layout_x)
+    turbine_map = dict(t1=turbine_data)
+
+    farm = Farm(turbine_id, turbine_map, layout_x, layout_y, wtg_id)
+    assert np.array_equal(
+        farm.rotor_diameter,
+        np.array( len(farm_data["layout_x"]) * [turbine_data["rotor_diameter"]] )
+    )
