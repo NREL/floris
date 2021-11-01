@@ -109,7 +109,7 @@ class SampleInputs:
                     0.04806545,
                     0.04536883,
                     0.04287006,
-                    0.04055141
+                    0.04055141,
                 ],
                 "thrust": [
                     1.19187945,
@@ -159,7 +159,7 @@ class SampleInputs:
                     0.06345518,
                     0.06032267,
                     0.05741999,
-                    0.05472609
+                    0.05472609,
                 ],
                 "wind_speed": [
                     2.0,
@@ -209,13 +209,13 @@ class SampleInputs:
                     24.0,
                     24.5,
                     25.0,
-                    25.5
-                ]
+                    25.5,
+                ],
             },
         }
 
         self.farm = {
-            "wind_speeds": [8.0], #, 9.0], #, 10.0],
+            "wind_speeds": [8.0],  # , 9.0],  # , 10.0],
             "wind_directions": [270.0],
             "turbulence_intensity": [0.1],
             "wind_shear": 0.12,

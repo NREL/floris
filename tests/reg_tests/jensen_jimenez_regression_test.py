@@ -53,16 +53,12 @@ def test_regression_tandem(sample_inputs_fixture):
     floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.go()
 
-    turbines = floris.farm.turbines
-    n_turbines = len(turbines)
+    n_turbines = len(floris.farm.layout_x)
 
     test_results = []
 
     velocities = floris.flow_field.u[:, :, :, :]
-    yaw_angles = n_turbines * [0.0]
-    thrust_interpolation_func = [t.fCt for t in turbines]
-    power_interpolation_func = [t.power_interp for t in turbines]
-    power_exponent = [t.pP for t in turbines]
+    yaw_angles = floris.farm.farm_controller.yaw_angles
 
     farm_avg_velocities = average_velocity(
         velocities[0, :, :, :],
@@ -71,21 +67,21 @@ def test_regression_tandem(sample_inputs_fixture):
     farm_cts = Ct(
         velocities[0, :, :, :],
         yaw_angles,
-        thrust_interpolation_func,
+        floris.farm.fCt_interp,
         ix_filter=list(range(n_turbines))
     )
     farm_powers = power(
         n_turbines * [floris.flow_field.air_density],
         velocities[0, :, :, :],
         yaw_angles,
-        power_exponent,
-        power_interpolation_func,
+        floris.farm.pP,
+        floris.farm.power_interp,
         ix_filter=list(range(n_turbines))
     )
     farm_axial_inductions = axial_induction(
         velocities[0, :, :, :],
         yaw_angles,
-        thrust_interpolation_func,
+        floris.farm.fCt_interp,
         ix_filter=list(range(n_turbines))
     )
     for i in range(n_turbines):
@@ -163,21 +159,16 @@ def test_regression_yaw(sample_inputs_fixture):
     floris = Floris(input_dict=sample_inputs_fixture.floris)
 
     # yaw the upstream turbine 5 degrees
-    floris.farm.set_yaw_angles([5.0, 0.0, 0.0], floris.flow_field.n_wind_speeds, 1) # TODO: n_wind_directions
+    floris.farm.farm_controller.set_yaw_angles([5.0, 0.0, 0.0]) # TODO: n_wind_directions
 
     floris.go()
 
-    turbines = floris.farm.turbines
-    n_turbines = len(turbines)
-
+    n_turbines = len(floris.farm.layout_x)
 
     test_results = []
 
     velocities = floris.flow_field.u[:, :, :, :]
     yaw_angles = floris.farm.farm_controller.yaw_angles
-    thrust_interpolation_func = [t.fCt for t in turbines]
-    power_interpolation_func = [t.power_interp for t in turbines]
-    power_exponent = [t.pP for t in turbines]
 
     farm_avg_velocities = average_velocity(
         velocities[0, :, :, :],
@@ -186,21 +177,21 @@ def test_regression_yaw(sample_inputs_fixture):
     farm_cts = Ct(
         velocities[0, :, :, :],
         yaw_angles,
-        thrust_interpolation_func,
+        floris.farm.fCt_interp,
         ix_filter=list(range(n_turbines))
     )
     farm_powers = power(
         n_turbines * [floris.flow_field.air_density],
         velocities[0, :, :, :],
         yaw_angles,
-        power_exponent,
-        power_interpolation_func,
+        floris.farm.pP,
+        floris.farm.power_interp,
         ix_filter=list(range(n_turbines))
     )
     farm_axial_inductions = axial_induction(
         velocities[0, :, :, :],
         yaw_angles,
-        thrust_interpolation_func,
+        floris.farm.fCt_interp,
         ix_filter=list(range(n_turbines))
     )
     for i in range(n_turbines):

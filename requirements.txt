@@ -5,6 +5,7 @@
 numpy
 pytest
 scipy
+xarray
 
 # utilities
 coloredlogs
