@@ -1,0 +1,101 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.4.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+// Domain size and number of cells.
+xMin                 0.0;                         // Minimum x-extent of domain (m).
+yMin                 0.0;                         // Minimum y-extent of domain (m).
+zMin                 0.0;                         // Minimum z-extent of domain (m).
+xMax                 5000.0;                      // Maximum x-extent of domain (m).
+yMax                 1800.0;                      // Maximum y-extent of domain (m).
+zMax                 1000.0;                      // Maximum z-extent of domain (m).
+nx                   500;                         // Number of cells in x-direction.
+ny                   180;                         // Number of cells in y-direction.
+nz                   100;                         // Number of cells in z-direction.
+
+
+
+
+// Number of cores and domain decomposition information.
+nCores               180;                         // Number of cores on which to run this case.
+decompType           scotch;                      // Decomposition algorithm.  "simple" and "scotch" are good choices.
+decompOrder          (6 6 5);                   // Order of the decomposition number of partitions in (x y z)-directions.
+
+
+
+
+// Planar averaging and source term statistics options.
+statisticsOn         true;                        // Gather planar-averaged flow statistics.
+statisticsFrequency  5;                           // Frequency in time steps of statistics gathering.
+meanStartTime        20300;                       // Time to start accumulating the mean.
+corrStartTime        20400;                       // Time to start accumulating the correlations.
+avgStartTime	     20300; 			  // Time to start accumulating the mean.
+
+
+// Initial values for the variables.
+// Note that U and T get overwritten if setFieldsABL is called.
+U0Mag                8.0;                         // Initial condition for wind speed (m/s).
+dir                  270.0;                       // Initial condition for wind direction (deg).
+windHeight           80.0;                       // Height at which to drive mean wind to U0Mag/dir (m).
+p_rgh0               0.0;                         // Initial pressure (minus the hydrostatic variation and normalized by density) (m^2/s^2).
+nuSgs0               0.0;                         // Initial SGS viscosity (m^2/s).
+k0                   0.1;                         // Initial SGS turbulent kinetic energy (m^2/s^2).
+kappat0              0.0;                         // Initial SGS temperature diffusivity (m^2/s).
+TGradUpper           0.003;                       // Potential temperature gradient above the strong inversion (K/m).
+zInversion           750.0;                       // Height of the middle of the initial strong capping inversion (m).
+inversionWidth       100.0;                       // Vertical width of the intial strong capping inversion (m).
+TBottom              300.0;                       // Initial potential temperature at bottom of strong capping inversion (K).
+TTop                 305.0;                       // Initial potential temperature at top of strong capping inversion (K).
+
+
+
+// General conditions and parameters.
+Pr                   0.7;                         // Molecular Prandtl number.
+Prt                  0.33333333;                  // Turbulent Prandtl number.
+nu                   1.0E-5;                      // Molecular viscosity (m^2/s).
+TRef                 300.0;                       // Reference potential temperature (K).
+latitude             41.3;                        // Latitude on the Earth of the site (deg).
+EarthPeriod          24.0;                        // Earth's rotation period (hr).
+
+
+
+// SGS model inputs.
+LESModel             oneEqEddyABL;                // SGS model selection.
+ce                   0.93;                        // SGS model constant.
+ck                   0.0673;                      // SGS model constant.
+
+
+
+
+// Surface conditions.
+qwall               (0.0 0.0 0.0);                // Temperature flux at wall (modify the z-value).  A negative value is flux into domain (K-m/s).
+Rwall               (0.0 0.0 0.0 0.0 0.0 0.0);    // Initial wall shear stress (m^2/s^2).
+kappa                0.4;                         // von Karman constant.
+z0                   0.15;                        // Surface roughness (m).
+//STABLE CASES
+//betaM                15.0;                        // Monin-Obukhov wall shear stress model constant.
+//gammaM               4.9;                         // Monin-Obukhov wall shear stress model constant.
+//betaH                9.0;                         // Monin-Obukhov wall temperature flux model constant.
+//gammaH               7.8;                         // Monin-Obukhov wall temperature flux model constant.
+//alphaH               1.0;                         // Monin-Obukhov wall temperature flux model constant.
+//heatingRate          0.0;                         // Surface temperature change rate (when not directly setting temperature flux) (K/s).
+//NEUTRAL and UNSTABLE
+betaM                16.0;
+gammaM               5.0;
+betaH                9.0;
+gammaH               7.8;
+alphaH               1.0;
+
+
+
+
+
+
+#inputMode           merge
+
+// ************************************************************************* //
+

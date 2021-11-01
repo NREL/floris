@@ -1,0 +1,111 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default                        backward;
+//  default                        CrankNicolson 1.0;
+}
+
+gradSchemes
+{
+    default                        Gauss linear;
+    grad(U)                        Gauss linear;
+}
+
+divSchemes
+{
+    default                        Gauss linear;
+  //div(phi,U)                     Gauss linear;
+  //div(phi,T)                     Gauss linear;
+    div(phi,U)                     Gauss localBlended linear upwind;
+    div(phi,T)                     Gauss localBlended linear upwind;
+    div(R)                         Gauss linear;
+    div(U)                         Gauss linear;
+    div((nuEff*dev(grad(U).T())))  Gauss linear;
+    div(B)                         Gauss linear;
+    div(phi,B)                     Gauss linear;
+    div(phi,k)                     Gauss linear;
+}
+
+laplacianSchemes
+{
+    default                        Gauss linear corrected;
+    laplacian(rUA,p)               Gauss linear corrected;
+    laplacian((1|A(U)),p)          Gauss linear corrected;
+    laplacian(interpolate((1|A(U))),p) Gauss linear corrected;
+    laplacian(interpolate((1|A(U))),pd) Gauss linear corrected;
+    laplacian(nu,U)                Gauss linear corrected;
+    laplacian(nuEff,U)             Gauss linear corrected;
+    laplacian(kappaEff,T)          Gauss linear corrected;
+    laplacian(DBEff,B)             Gauss linear corrected;
+    laplacian(nuSgs,U)             Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default                        linear;
+}
+
+snGradSchemes
+{
+    default                        corrected;
+}
+
+fluxRequired
+{
+    default                        no;
+    p_rgh                            ;
+}
+
+schemeBlending
+{
+
+    // Table of blending factors vs. cell face size.
+    faceSizeBlendingTable
+    (
+    // area          U        T
+        (0.096      0.996  0.980 )
+        (0.39       0.996  0.980 )
+        (1.563      0.997  0.985 )
+        (6.25       0.998  0.990 )
+        (25         0.999  0.995 )
+        (100        1.000  1.000 )
+        (1E6        1.000  1.000 )
+    );
+
+
+    // Height above which blending factor begins to transition
+    // from heightBlendingFactor_z1 to heightBlendingFactor_z2.
+    heightBlending_z1            800.0;
+
+    // Height above which blending factor is heightBlendingFactor_z2.
+    heightBlending_z2            1000.0;
+
+
+    heightBlendingFactorU_z1     1.0;
+    heightBlendingFactorU_z2     0.9;
+
+    heightBlendingFactorT_z1     1.0;
+    heightBlendingFactorT_z2     0.9;
+
+
+    // In calculating height, use wall distance or absolute distance.
+    useWallDistZ                 false;
+}
+
+// ************************************************************************* //
