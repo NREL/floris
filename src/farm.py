@@ -21,16 +21,24 @@ from .utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converte
 
 
 class FarmController:
-    def __init__(self, n_wind_speeds: int, n_wind_directions: int) -> None:
+    def __init__(self, n_wind_speeds: int, n_turbines: int) -> None:
         # TODO: This should hold the yaw settings for each turbine for each wind speed and wind direction
 
         # Initialize the yaw settings to an empty array
-        # self.set_yaw_angles(np.array((0,)))
-        pass
+        self.yaw_angles = np.zeros((n_wind_speeds, n_turbines))
 
-    def set_yaw_angles(self, yaw_angles: Union[list, np.ndarray]) -> None:
-        self.yaw_angles = yaw_angles
+    def set_yaw_angles(self, yaw_angles: np.ndarray) -> None:
+        """
+        Set the yaw angles for each wind turbine at each atmospheric
+        condition.
 
+        Args:
+            yaw_angles (np.ndarray): Array of dimensions (n wind directions,
+            n wind speeds, n turbines)
+        """
+        if yaw_angles.ndim != 1:
+            raise ValueError("yaw_angles must be set for each turbine at each atmospheric condition.")
+        self.yaw_angles[:] = yaw_angles
 
 def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
     return {t_id: Turbine.from_dict(config) for t_id, config in mapping.items()}
@@ -87,6 +95,7 @@ class Farm(FromDictMixin):
 
     turbine_id: List[str] = attr.ib(validator=iter_validator(list, str))
     turbine_map: Dict[str, Union[dict, Turbine]] = attr.ib(converter=create_turbines)
+    wind_speeds: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
     layout_x: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
     layout_y: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
     wtg_id: List[str] = attr.ib(
@@ -128,8 +137,7 @@ class Farm(FromDictMixin):
 
         # TODO: Enable the farm controller
         # # Turbine control settings indexed by the turbine ID
-        self.farm_controller = FarmController(1, 1)  # TODO placeholder
-        self.farm_controller.set_yaw_angles(np.zeros((len(self.layout_x))))
+        self.farm_controller = FarmController(len(self.wind_speeds), len(self.layout_x))
 
     @layout_x.validator
     def check_x_len(self, instance: str, value: Union[List[float], np.ndarray]) -> None:
@@ -163,24 +171,27 @@ class Farm(FromDictMixin):
         turbine_array = np.array(
             [generate_turbine_tuple(self.turbine_map[t_id]) for t_id in self.turbine_id]
         )
+        turbine_array = np.resize(
+            turbine_array, (self.wind_speeds.shape[0], *turbine_array.shape)
+        )
 
         # TODO: how to handle multiple data types xarray
         column_ix = {col: i for i, col in enumerate(column_order)}
-        self.rotor_diameter = turbine_array[:, column_ix["rotor_diameter"]].astype(float)
-        self.rotor_radius = turbine_array[:, column_ix["rotor_radius"]].astype(float)
-        self.rotor_area = turbine_array[:, column_ix["rotor_area"]].astype(float)
-        self.hub_height = turbine_array[:, column_ix["hub_height"]].astype(float)
-        self.pP = turbine_array[:, column_ix["pP"]].astype(float)
-        self.pT = turbine_array[:, column_ix["pT"]].astype(float)
-        self.generator_efficiency = turbine_array[:, column_ix["generator_efficiency"]].astype(float)
-        self.fCt_interp = turbine_array[:, column_ix["fCt_interp"]]
+        self.rotor_diameter = turbine_array[:, :, column_ix["rotor_diameter"]].astype(float)
+        self.rotor_radius = turbine_array[:, :, column_ix["rotor_radius"]].astype(float)
+        self.rotor_area = turbine_array[:, :, column_ix["rotor_area"]].astype(float)
+        self.hub_height = turbine_array[:, :, column_ix["hub_height"]].astype(float)
+        self.pP = turbine_array[:, :, column_ix["pP"]].astype(float)
+        self.pT = turbine_array[:, :, column_ix["pT"]].astype(float)
+        self.generator_efficiency = turbine_array[:, :, column_ix["generator_efficiency"]].astype(float)
+        self.fCt_interp = turbine_array[:, :, column_ix["fCt_interp"]]
         # TODO: should we have both fCp_interp and power_interp
-        self.fCp_interp = turbine_array[:, column_ix["fCp_interp"]]
-        self.power_interp = turbine_array[:, column_ix["power_interp"]]
+        self.fCp_interp = turbine_array[:, :, column_ix["fCp_interp"]]
+        self.power_interp = turbine_array[:, :, column_ix["power_interp"]]
 
         self.data_array = xr.DataArray(
             turbine_array,
-            coords=dict(wtg_id=self.wtg_id, turbine_attributes=column_order),
+            coords=dict(wind_speeds=self.wind_speeds, wtg_id=self.wtg_id, turbine_attributes=column_order),
             attrs=dict(layout_x=self.layout_x, layout_y=self.layout_y),
         )
 

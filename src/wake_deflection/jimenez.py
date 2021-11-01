@@ -10,13 +10,14 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from typing import Any, Dict
+
 import attr
 import numpy as np
-from numpy import newaxis as na
 
-from src.turbine import Turbine, Ct
-from src.utilities import cosd, sind
-from src.utilities import float_attrib, model_attrib
+from src.grid import TurbineGrid
+from src.turbine import Turbine
+from src.utilities import cosd, sind, float_attrib, model_attrib
 from src.base_class import BaseClass
 
 
@@ -38,16 +39,34 @@ class JimenezVelocityDeflection(BaseClass):
     bd: float = float_attrib(default=0.0)
     model_string: str = model_attrib(default="jimenez")
 
+    def prepare_function(
+        self,
+        grid: TurbineGrid,
+        reference_rotor_diameter: float,
+        yaw_angle: np.ndarray,
+    ) -> Dict[str, Any]:
+        """
+        This function prepares the inputs from the various FLORIS data structures
+        for use in the Jensen model. This should only be used to 'initialize'
+        the inputs. For any data that should be updated successively,
+        do not use this function and instead pass that data directly to
+        the model function.
+        """
+        kwargs = dict(
+            x=grid.x,
+            reference_rotor_diameter=reference_rotor_diameter,
+            yaw_angle=yaw_angle,
+        )
+        return kwargs
+
     def function(
         self,
         i: int,
-        # *,
-        x: np.ndarray,
-        y: np.ndarray,
-        z: np.ndarray,
+        Ct: np.ndarray,  # (n wind speeds, n turbines)
+        *,
+        x: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
         reference_rotor_diameter: float,
-        yaw_angle: float,
-        Ct: float,
+        yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
     ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of
@@ -75,21 +94,42 @@ class JimenezVelocityDeflection(BaseClass):
         given the yaw angle and Ct of the current turbine
         """
 
+        # NOTE: Its important to remember the rules of broadcasting here.
+        # An operation between two np.arrays of different sizes involves
+        # broadcasting. First, the rank and then the dimensions are compared.
+        # If the ranks are different, new dimensions of size 1 are added to
+        # the missing dimensions. Then, arrays can be combined (arithmetic)
+        # if corresponding dimensions are either the same size or 1.
+        # https://numpy.org/doc/stable/user/basics.broadcasting.html
+        # Here, many dimensions are 1, but these are essentially treated
+        # as a scalar value for that dimension.
+
+        # yaw_angle is all turbine yaw angles for each wind speed
+        # Extract and broadcast only the current turbine yaw setting
+        # for all wind speeds
+        yaw_angle = yaw_angle[:, i : i + 1, None, None]
+
+        # Ct is given for only the current turbine, so broadcast
+        # this to the grid dimesions
+        Ct = Ct[:, :, None, None]
+
         # angle of deflection
-        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0
-        x_locations = x - x[i]
+        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
+        x_locations = x - x[i]  # (n turbines, n grid, n grid)
 
         # yaw displacement
-        yYaw_init = (
-            xi_init
-            * (15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0)
-            / (
-                (30 * self.kd / reference_rotor_diameter)
-                * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 5.0
-            )
-        ) - (xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0) / (30 * self.kd))
+        #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
+        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter[:, :, None, None] + 1) ** 4.0 + xi_init ** 2.0
+        B = (30 * self.kd / reference_rotor_diameter[:, :, None, None]) * (
+            2 * self.kd * x_locations / reference_rotor_diameter[:, :, None, None] + 1
+        ) ** 5.0
+        C = xi_init * reference_rotor_diameter[:, :, None, None] * (15 + xi_init ** 2.0)
+        D = 30 * self.kd
+
+        yYaw_init = (xi_init * A / B) - (C / D)
 
         # corrected yaw displacement with lateral offset
+        # This has the same shape as the grid - n turbines, grid x, grid y
         deflection = yYaw_init + self.ad + self.bd * x_locations
 
         x = np.unique(x_locations)

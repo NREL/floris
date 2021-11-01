@@ -37,6 +37,7 @@ Z_COORDS = [
     90.0
 ]
 
+# TODO: test the dimension expansion
 
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:

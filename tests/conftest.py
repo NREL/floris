@@ -14,6 +14,7 @@
 
 
 import pytest
+import numpy as np
 
 
 def turbines_to_array(turbine_list: list):
@@ -21,6 +22,15 @@ def turbines_to_array(turbine_list: list):
         [ t.average_velocity, t.Ct, t.power, t.axial_induction] for t in turbine_list
     ]
 
+def assert_results_arrays(test: np.array, baseline: np.array):
+    if np.shape(test) != np.shape(baseline):
+        raise ValueError(
+            "test and baseline results have mismatched shapes."
+        )
+
+    for test_dim0, baseline_dim0 in zip(test, baseline):
+        for test_dim1, baseline_dim1 in zip(test_dim0, baseline_dim0):
+            assert np.allclose(test_dim1, baseline_dim1)
 
 def assert_results(test: list, baseline: list):
     if len(test) != len(baseline):
@@ -215,7 +225,7 @@ class SampleInputs:
         }
 
         self.farm = {
-            "wind_speeds": [8.0],  # , 9.0],  # , 10.0],
+            "wind_speeds": [8.0, 9.0, 10.0],
             "wind_directions": [270.0],
             "turbulence_intensity": [0.1],
             "wind_shear": 0.12,

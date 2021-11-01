@@ -12,11 +12,12 @@
 
 
 from typing import Any, Dict
+
 import attr
 import numpy as np
 
-from src.turbine import Turbine
 from src.grid import TurbineGrid
+from src.turbine import Turbine
 from src.utilities import float_attrib, model_attrib
 from src.base_class import BaseClass
 from src.flow_field import FlowField
@@ -27,7 +28,7 @@ class JensenVelocityDeficit(BaseClass):
     """
     The Jensen model computes the wake velocity deficit based on the classic
     Jensen/Park model :cite:`jvm-jensen1983note`.
-        
+
     -   **we** (*float*): The linear wake decay constant that
         defines the cone boundary for the wake as well as the
         velocity deficit. D/2 +/- we*x is the cone boundary for the
@@ -86,14 +87,14 @@ class JensenVelocityDeficit(BaseClass):
 
         # Calculate and apply wake mask
         # x = grid.x # mesh_x_rotated - x_coord_rotated
-        
+
         # This is the velocity deficit seen by the i'th turbine due to wake effects from upstream turbines.
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))
 
         m = self.we
         # x = x[i] - x[i - 1] #mesh_x_rotated - x_coord_rotated
-        b = reference_rotor_diameter / 2.0
+        b = reference_rotor_diameter[:, :, None, None] / 2.0
 
         boundary_line = m * x + b
 
@@ -101,9 +102,10 @@ class JensenVelocityDeficit(BaseClass):
         z_center = np.zeros_like(boundary_line) + reference_wind_height
 
         # Calculate the wake velocity deficit ratios
+        # Do we need to do masking here or can it be handled in the solver?
         c = (
-            (reference_rotor_diameter / (2 * self.we * (x - x[i]) + reference_rotor_diameter)) ** 2
-            * ~(np.array(x - x[i] <= 0.0))  # using this causes nan's in the upstream turbine
+            (reference_rotor_diameter[:, :, None, None] / (2 * self.we * (x - x[:, i]) + reference_rotor_diameter[:, :, None, None])) ** 2
+            * ~(np.array(x - x[:, i] <= 0.0))  # using this causes nan's in the upstream turbine
             * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         )
 

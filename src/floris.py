@@ -13,18 +13,19 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import pickle
 import json
+import pickle
 
 import src.logging_manager as logging_manager
 
 from .farm import Farm
+from .grid import TurbineGrid
+from .solver import sequential_solver
+
 # from .wake import Wake
 from .turbine import Turbine
 from .flow_field import FlowField
 from .wake_velocity.jensen import JensenVelocityDeficit
-from .grid import TurbineGrid
-from .solver import sequential_solver
 
 
 class Floris(logging_manager.LoggerBase):
@@ -55,7 +56,7 @@ class Floris(logging_manager.LoggerBase):
             raise ValueError("Floris: No input file or dictionary given.")
 
         turbine_dict = input_dict.pop("turbine")
-        wake_dict = input_dict.pop("wake")
+        # wake_dict = input_dict.pop("wake")
         farm_dict = input_dict.pop("farm")
         meta_dict = input_dict
 
@@ -73,6 +74,7 @@ class Floris(logging_manager.LoggerBase):
         self.turbine = Turbine(**turbine_dict)
         # self.wake = Wake(wake_dict)
 
+        wind_speeds = farm_dict["wind_speeds"]
         layout_x = farm_dict["layout_x"]
         layout_y = farm_dict["layout_y"]
         wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
@@ -81,6 +83,7 @@ class Floris(logging_manager.LoggerBase):
         self.farm = Farm(
             turbine_id=turbine_id,
             turbine_map=turbine_map,
+            wind_speeds=wind_speeds,
             layout_x=layout_x,
             layout_y=layout_y,
             wtg_id=wtg_id,
@@ -117,24 +120,12 @@ class Floris(logging_manager.LoggerBase):
         ]
         if wake_model not in valid_wake_models:
             # TODO: logging
-            raise Exception(
-                "Invalid wake model. Valid options include: {}.".format(
-                    ", ".join(valid_wake_models)
-                )
-            )
+            raise Exception("Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models)))
 
         self.flow_field.wake.velocity_model = wake_model
-        if (
-            wake_model == "jensen"
-            or wake_model == "multizone"
-            or wake_model == "turbopark"
-        ):
+        if wake_model == "jensen" or wake_model == "multizone" or wake_model == "turbopark":
             self.flow_field.wake.deflection_model = "jimenez"
-        elif (
-            wake_model == "blondel"
-            or wake_model == "ishihara_qian"
-            or "gauss" in wake_model
-        ):
+        elif wake_model == "blondel" or wake_model == "ishihara_qian" or "gauss" in wake_model:
             self.flow_field.wake.deflection_model = "gauss"
         else:
             self.flow_field.wake.deflection_model = wake_model
@@ -144,19 +135,6 @@ class Floris(logging_manager.LoggerBase):
         )
 
         self.reinitialize_turbines()
-
-    def set_yaw_angles(self, yaw_angles: list):
-        """
-        Sets the yaw angles for all turbines on the
-        :py:obj:`~.turbine.Turbine` objects directly.
-
-        Args:
-            yaw_angles (float or list( float )): A single value to set
-                all turbine yaw angles or a list of yaw angles corresponding
-                to individual turbine yaw angles. Yaw angles are expected
-                in degrees.
-        """
-        self.farm.set_yaw_angles(yaw_angles, self.flow_field.n_wind_speeds, 1)
 
     def update_hub_heights(self):
         """

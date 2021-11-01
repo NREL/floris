@@ -30,8 +30,8 @@ from src.turbine import (
 from tests.conftest import SampleInputs
 
 
-WIND_SPEEDS = [8.0, 9.0, 8.0, 11.0]
-WIND_SPEEDS_BROADCAST = np.array(WIND_SPEEDS).reshape(-1, 1, 1)  # size 4 x 1 x 1
+WIND_SPEEDS = [8.0, 9.0, 10.0, 11.0]
+WIND_SPEEDS_BROADCAST = np.reshape(np.array(WIND_SPEEDS), (1, -1, 1, 1))  # size 4 x 1 x 1
 INDEX_FILTER = [0, 2]
 
 
@@ -78,15 +78,9 @@ def test_turbine_init():
 
     pt_data = turbine_data["power_thrust_table"]
     assert isinstance(turbine.power_thrust_table, PowerThrustTable)
-    np.testing.assert_array_equal(
-        turbine.power_thrust_table.power, np.array(pt_data["power"])
-    )
-    np.testing.assert_array_equal(
-        turbine.power_thrust_table.thrust, np.array(pt_data["thrust"])
-    )
-    np.testing.assert_array_equal(
-        turbine.power_thrust_table.wind_speed, np.array(pt_data["wind_speed"])
-    )
+    np.testing.assert_array_equal(turbine.power_thrust_table.power, np.array(pt_data["power"]))
+    np.testing.assert_array_equal(turbine.power_thrust_table.thrust, np.array(pt_data["thrust"]))
+    np.testing.assert_array_equal(turbine.power_thrust_table.wind_speed, np.array(pt_data["wind_speed"]))
 
     assert isinstance(turbine.fCp_interp, interp1d)
     assert isinstance(turbine.fCt_interp, interp1d)
@@ -104,7 +98,6 @@ def test_rotor_radius():
 
     # Test the radius setter method since it actually sets the diameter
     turbine.rotor_radius = 200.0
-    print(turbine.rotor_diameter, turbine.rotor_radius)
     assert turbine.rotor_diameter == 400.0
 
     # Test the getter-method again
@@ -159,31 +152,57 @@ def test_filter_convert():
 
 def test_average_velocity():
     # TODO: why do we use cube root - mean - cube (like rms) instead of a simple average (np.mean)?
-    velocities = np.ones((5, 5))
+    velocities = np.ones((1, 1, 5, 5))
     assert average_velocity(velocities) == 1
 
+    # Constructs an array of shape 1 x 2 x 3 x 3 with first turbine all 1, second turbine all 2
     velocities = np.stack(
-        (np.ones((3, 3)), 2 * np.ones((3, 3)))
-    )  # 2 x 3 x 3 array with first turbine all 1, second turbine all 2
-    np.testing.assert_array_equal(average_velocity(velocities), 1 + np.arange(2))
+        (
+            np.ones((1, 3, 3)),  # The first dimension here is the wind
+            2 * np.ones((1, 3, 3)),  # speed since we are stacking on axis=1
+        ),
+        axis=1,
+    )
+
+    # Pull out the first wind speed for the test
+    np.testing.assert_array_equal(average_velocity(velocities)[0], np.array([1, 2]))
 
     # Test boolean filter
-    rng = np.arange(4).reshape(-1, 1, 1)
     ix_filter = [True, False, True, False]
-    velocities = np.stack(rng * np.ones((3, 3)))
+    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        (
+            np.ones((1, 3, 3)),  # The first dimension here is the wind speed since we are stacking on axis=1
+            2 * np.ones((1, 3, 3)),
+            3 * np.ones((1, 3, 3)),
+            4 * np.ones((1, 3, 3)),
+        ),
+        axis=1,
+    )
     avg = average_velocity(velocities, ix_filter)
-    assert avg.shape == (2,)
-    np.testing.assert_array_equal(avg, np.array([0, 2]))
+    assert avg.shape == (1, 2)  # 1 wind speed, 2 turbines filtered
+
+    # Pull out the first wind speed for the comparison
+    assert np.allclose(avg[0], np.array([1.0, 3.0]))
+    # This fails in GitHub Actions due to a difference in precision:
+    # E           assert 3.0000000000000004 == 3.0
+    # np.testing.assert_array_equal(avg[0], np.array([1.0, 3.0]))
 
     # Test integer array filter
-    rng = np.arange(4).reshape(-1, 1, 1)
-    ix_filter = [0, 2]
-    velocities = np.stack(
-        rng * np.ones((3, 3))
-    )  # 4 turbines with 3 x 3 velocity array; shape (4,3,3)
+    ix_filter = INDEX_FILTER
+    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        (
+            np.ones((1, 3, 3)),  # The first dimension here is the wind
+            2 * np.ones((1, 3, 3)),  # speed since we are stacking on axis=1
+            3 * np.ones((1, 3, 3)),
+            4 * np.ones((1, 3, 3)),
+        ),
+        axis=1,
+    )
     avg = average_velocity(velocities, ix_filter)
-    assert avg.shape == (2,)
-    np.testing.assert_array_equal(avg, np.array([0, 2]))
+    assert avg.shape == (1, 2)  # 1 wind speed, 2 turbines filtered
+
+    # Pull out the first wind speed for the comparison
+    assert np.allclose(avg[0], np.array([1.0, 3.0]))
 
 
 def test_ct():
@@ -193,28 +212,27 @@ def test_ct():
 
     # Single turbine
     wind_speed = 10.0
-    thrust = Ct(velocities=wind_speed * np.ones((5, 5)), yaw_angle=0.0, fCt=turbine.fCt)
+    thrust = Ct(
+        velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        yaw_angle=np.zeros((1, 1)),
+        fCt=np.array([turbine.fCt]).reshape((1, 1)),
+    )
 
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
     assert thrust == turbine_data["power_thrust_table"]["thrust"][truth_index]
 
     # Multiple turbines with index filter
     thrusts = Ct(
-        velocities=np.ones((3, 3))
-        * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (4,3,3)
-        yaw_angle=np.zeros(4),
-        fCt=4 * [turbine.fCt],
+        velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        yaw_angle=np.zeros((1, 4)),
+        fCt=np.array(4 * [turbine.fCt]).reshape((1, 4)),
         ix_filter=INDEX_FILTER,
     )
-
-    assert len(thrusts) == len(INDEX_FILTER)
-    assert isinstance(thrusts, np.ndarray)
+    assert len(thrusts[0]) == len(INDEX_FILTER)
 
     for i, index in enumerate(INDEX_FILTER):
-        truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(
-            WIND_SPEEDS[index]
-        )
-        assert thrusts[i] == turbine_data["power_thrust_table"]["thrust"][truth_index]
+        truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(WIND_SPEEDS[index])
+        assert thrusts[0, i] == turbine_data["power_thrust_table"]["thrust"][truth_index]
 
 
 def test_power():
@@ -225,37 +243,31 @@ def test_power():
     # Single turbine
     wind_speed = 10.0
     p = power(
-        air_density=1.0,
-        velocities=wind_speed * np.ones((5, 5)),
-        yaw_angle=0.0,
-        pP=turbine.pP,
-        power_interp=turbine.fCp,
+        air_density=1.0 * np.ones((1, 1)),
+        velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        yaw_angle=np.zeros((1, 1)),
+        pP=turbine.pP * np.ones((1, 1)),
+        power_interp=np.array([turbine.fCp]).reshape((1, 1)),
     )
 
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
     assert p == turbine_data["power_thrust_table"]["power"][truth_index]
 
     # Multiple turbines with ix filter
-    ix_filter = [0, 2]
-
+    # Why are we using air density of 1.0 here? If not 1, the test fails.
     p = power(
-        air_density=1.0 * np.ones(4),
-        velocities=np.ones((3, 3))
-        * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (4,3,3)
-        yaw_angle=np.zeros(4),
-        pP=4 * [turbine.pP],
-        power_interp=4 * [turbine.fCp],
-        ix_filter=ix_filter,
+        air_density=1.0 * np.ones((1, 4)),
+        velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        yaw_angle=np.zeros((1, 4)),
+        pP=turbine.pP * np.ones((1, 4)),
+        power_interp=np.array(4 * [turbine.fCp]).reshape((1, 4)),
+        ix_filter=INDEX_FILTER,
     )
+    assert len(p[0]) == len(INDEX_FILTER)
 
-    assert len(p) == len(ix_filter)
-    assert isinstance(p, np.ndarray)
-
-    for i, index in enumerate(ix_filter):
-        truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(
-            WIND_SPEEDS[index]
-        )
-        assert p[i] == turbine_data["power_thrust_table"]["power"][truth_index]
+    for i, index in enumerate(INDEX_FILTER):
+        truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(WIND_SPEEDS[index])
+        assert p[0, i] == turbine_data["power_thrust_table"]["power"][truth_index]
 
 
 def test_axial_induction():
@@ -263,25 +275,25 @@ def test_axial_induction():
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
 
+    baseline_ai = 0.25116283939089806
+
     # Single turbine
     wind_speed = 10.0
     ai = axial_induction(
-        velocities=wind_speed * np.ones((5, 5)), yaw_angle=0.0, fCt=turbine.fCt
+        velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        yaw_angle=np.zeros((1, 1)),
+        fCt=np.array([turbine.fCt]).reshape((1, 1)),
     )
-    assert ai == 0.25116283939089806
+    assert ai == baseline_ai
 
     # Multiple turbines with ix filter
-    # rng = np.array(WIND_SPEEDS).reshape(-1, 1, 1)  # size 4 x 1 x 1
-    ix_filter = [0, 2]
-
     ai = axial_induction(
-        velocities=np.ones((3, 3))
-        * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (4,3,3)
-        yaw_angle=np.zeros(4),
-        fCt=4 * [turbine.fCt],
-        ix_filter=ix_filter,
+        velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        yaw_angle=np.zeros((1, 4)),
+        fCt=np.array(4 * [turbine.fCt]).reshape((1, 4)),
+        ix_filter=INDEX_FILTER,
     )
 
-    assert len(ai) == len(ix_filter)
-    for calc_ai, truth in zip(ai, [0.2565471298176996, 0.2565471298176996]):
+    assert len(ai[0]) == len(INDEX_FILTER)
+    for calc_ai, truth in zip(ai[0], [0.2565471298176996, 0.2565471298176996]):
         pytest.approx(calc_ai, truth)

@@ -14,6 +14,7 @@ def test_farm_init_homogenous_turbines():
     turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
 
+    wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
@@ -22,7 +23,14 @@ def test_farm_init_homogenous_turbines():
 
     coordinates = [Vec3([x, y, 90.0]) for x, y in zip(layout_x, layout_y)]
 
-    farm = Farm(turbine_id, turbine_map, layout_x, layout_y, wtg_id)
+    farm = Farm(
+        turbine_id,
+        turbine_map,
+        wind_speeds,
+        layout_x,
+        layout_y,
+        wtg_id
+    )
 
     # Check initial values
     assert farm.coordinates == coordinates
@@ -39,46 +47,83 @@ def test_farm_init_homogenous_turbines():
 
     # Shape should be N turbines x 10 turbine attributes
     assert isinstance(farm.data_array, xr.DataArray)
-    assert farm.data_array.shape == (len(layout_x), 10)
+    assert farm.data_array.shape == (len(wind_speeds), len(layout_x), 10)
 
     # Check the shape of one of the attribute arrays
-    assert farm.rotor_diameter.shape == (len(layout_x),)
+    assert farm.rotor_diameter.shape == (len(wind_speeds), len(layout_x),)
 
     # Check generated WTG IDs is the default
-    farm = Farm(turbine_id, turbine_map, layout_x, layout_y)
+    farm = Farm(
+        turbine_id,
+        turbine_map,
+        wind_speeds,
+        layout_x,
+        layout_y
+    )
     assert farm.wtg_id == ["t0001", "t0002", "t0003"]
 
     # Check the layout_x validator
     layout_x_fail_too_few = layout_x[:-1]
     with pytest.raises(ValueError):
-        Farm(turbine_id, turbine_map, layout_x_fail_too_few, layout_y)
+        Farm(
+            turbine_id,
+            turbine_map,
+            wind_speeds,
+            layout_x_fail_too_few,
+            layout_y
+        )
 
     layout_x_fail_too_many = deepcopy(layout_x)
     layout_x_fail_too_many.append(3)
     with pytest.raises(ValueError):
-        Farm(turbine_id, turbine_map, layout_x_fail_too_many, layout_y)
+        Farm(
+            turbine_id,
+            turbine_map,
+            wind_speeds,
+            layout_x_fail_too_many,
+            layout_y
+        )
 
     # Check the layout_y validator
     layout_y_fail_too_few = layout_y[:-1]
     with pytest.raises(ValueError):
-        Farm(turbine_id, turbine_map, layout_x, layout_y_fail_too_few)
+        Farm(
+            turbine_id,
+            turbine_map,
+            wind_speeds,
+            layout_x,
+            layout_y_fail_too_few
+        )
 
     layout_y_fail_too_many = deepcopy(layout_y)
     layout_y_fail_too_many.append(3)
     with pytest.raises(ValueError):
-        Farm(turbine_id, turbine_map, layout_x, layout_y_fail_too_many)
+        Farm(
+            turbine_id,
+            turbine_map,
+            wind_speeds,
+            layout_x,
+            layout_y_fail_too_many
+        )
 
 
 def test_sort_turbines():
     turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
 
+    wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = [630, 0, 1260]
     turbine_id = ["t1"] * len(layout_x)
     turbine_map = dict(t1=turbine_data)
 
-    farm = Farm(turbine_id, turbine_map, layout_x, layout_y)
+    farm = Farm(
+        turbine_id,
+        turbine_map,
+        wind_speeds,
+        layout_x,
+        layout_y
+    )
 
     x_sort = farm.sort_turbines(by="x")
     assert np.all(x_sort == np.array([0, 1, 2]))
@@ -91,13 +136,21 @@ def test_make_fail_to_demonstrate_xarray_properties():
     turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
 
+    wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
     turbine_id = ["t1"] * len(layout_x)
     turbine_map = dict(t1=turbine_data)
 
-    farm = Farm(turbine_id, turbine_map, layout_x, layout_y, wtg_id)
+    farm = Farm(
+        turbine_id,
+        turbine_map,
+        wind_speeds,
+        layout_x,
+        layout_y,
+        wtg_id
+    )
     print("The array:\n", farm.data_array)
     print("\n----------\n")
     print("Columns:", farm.data_array.turbine_attributes)
@@ -117,14 +170,25 @@ def test_turbine_array_rotor_diameter():
     turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
 
+    wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
     turbine_id = ["t1"] * len(layout_x)
     turbine_map = dict(t1=turbine_data)
 
-    farm = Farm(turbine_id, turbine_map, layout_x, layout_y, wtg_id)
+    n_wind_speeds = len(farm_data["wind_speeds"])
+    n_turbines = len(farm_data["layout_x"])
+
+    farm = Farm(
+        turbine_id,
+        turbine_map,
+        wind_speeds,
+        layout_x,
+        layout_y,
+        wtg_id
+    )
     assert np.array_equal(
         farm.rotor_diameter,
-        np.array( len(farm_data["layout_x"]) * [turbine_data["rotor_diameter"]] )
+        np.array(n_wind_speeds * n_turbines * [turbine_data["rotor_diameter"]]).reshape( (n_wind_speeds, n_turbines) )
     )

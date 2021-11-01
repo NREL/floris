@@ -1,6 +1,6 @@
 [tool.black]
-target-version=["py36", "py37"]
-line-length=88
+target-version=["py36", "py37", "py38", "py39"]
+line-length=120
 
 include = '\.pyi?$'
 exclude = '''
