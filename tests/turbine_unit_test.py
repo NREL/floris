@@ -138,17 +138,19 @@ def test_filter_convert():
     # the function should return None
     ix_filter = 1
     sample_arg = np.arange(N)
-    assert _filter_convert(ix_filter, sample_arg) is None
+    with pytest.raises(TypeError):
+        _filter_convert(ix_filter, sample_arg)
 
     # When the sample_arg is not a Numpy array, the function
     # should return None
     ix_filter = None
     sample_arg = [1,2,3]
-    assert _filter_convert(ix_filter, sample_arg) is None
+    with pytest.raises(TypeError):
+        _filter_convert(ix_filter, sample_arg)
 
     # When the sample_arg is a Numpy array and the index filter
     # is None, a boolean array containing all True should be
-    # returned with the same shale as the sample_arg.
+    # returned with the same shape as the sample_arg.
     ix_filter = None
     sample_arg = np.arange(N)
     ix_filter = _filter_convert(ix_filter, sample_arg)
