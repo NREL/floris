@@ -53,14 +53,12 @@ def _filter_convert(ix_filter: Union[np.ndarray, None], sample_arg: np.ndarray) 
     # Check that the ix_filter is either None or an Iterable. Otherwise,
     # there's nothing we can do with it.
     if not isinstance(ix_filter, Iterable) and ix_filter is not None:
-        # TODO: @rob raise an error?
-        return None
+        raise TypeError("Expected ix_filter to be an Iterable or None")
     
     # Check that the sample_arg is a Numpy array. If it isn't, we
     # can't get its shape.
     if not isinstance(sample_arg, np.ndarray):
-        # TODO: @rob raise an error?
-        return None
+        raise TypeError("Expected sample_arg to be np.ndarray")
 
     # At this point, the arguments have this type:
     # ix_filter: Union[Iterable, None]
