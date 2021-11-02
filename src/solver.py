@@ -21,8 +21,8 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
     flow_field.initialize_velocity_field(grid)
 
     # <<interface>>
-    jimenez_args = jimenez_deflection_model.prepare_function(grid, farm.rotor_diameter[:, [0]], farm.farm_controller.yaw_angles)
-    jensen_args = jensen_deficit_model.prepare_function(grid, farm.rotor_diameter[:, [0]], flow_field)
+    jimenez_args = jimenez_deflection_model.prepare_function(grid, farm.rotor_diameter[:, :, [0]], farm.farm_controller.yaw_angles)
+    jensen_args = jensen_deficit_model.prepare_function(grid, farm.rotor_diameter[:, :, [0]], flow_field)
 
     # This is u_wake
     velocity_deficit = np.zeros_like(flow_field.u_initial)
