@@ -31,26 +31,47 @@ from src.utilities import (
 from src.base_class import BaseClass
 
 
-def _filter_convert(ix_filter: np.ndarray, sample_arg: np.ndarray) -> Union[np.ndarray, None]:
-    """Converts the ix_filter to a standard format of `np.ndarray`s for filtering
+def _filter_convert(ix_filter: Union[np.ndarray, None], sample_arg: np.ndarray) -> Union[np.ndarray, None]:
+    """This function selects turbine indeces from the given array of turbine properties
+    over the simulation's atmospheric conditions (wind directions / wind speeds).
+    It converts the ix_filter to a standard format of `np.ndarray`s for filtering
     certain arguments.
 
     Args:
-        ix_filter (Union[List[Union[int, bool]], np.ndarray]): The indices, or truth
-            array-like object to use for filtering.
+        ix_filter (Union[np.ndarray, None]): The indices, or truth array-like object to
+            use for filtering. None implies that all indeces in the sample_arg
+            should be selected.
         sample_arg (np.ndarray): Any argument that will be filtered, to be used for
-            creating the shape.
+            creating the shape. This should be of shape:
+            (n wind directions, n wind speeds, n turbines)
 
     Returns:
         Union[np.ndarray, None]: Returns an array of a truth or index list if a list is
             passed, a truth array if ix_filter is None, or None if ix_filter is None
             and the `sample_arg` is a single value.
     """
-    if isinstance(ix_filter, list):
-        return np.array(ix_filter)
-    if ix_filter is None and isinstance(sample_arg, np.ndarray):
+    # Check that the ix_filter is either None or an Iterable. Otherwise,
+    # there's nothing we can do with it.
+    if not isinstance(ix_filter, Iterable) and ix_filter is not None:
+        raise TypeError("Expected ix_filter to be an Iterable or None")
+    
+    # Check that the sample_arg is a Numpy array. If it isn't, we
+    # can't get its shape.
+    if not isinstance(sample_arg, np.ndarray):
+        raise TypeError("Expected sample_arg to be np.ndarray")
+
+    # At this point, the arguments have this type:
+    # ix_filter: Union[Iterable, None]
+    # sample_arg: np.ndarray
+
+    # Return all values in the turbine-dimension
+    # if the index filter is None
+    if ix_filter is None:
         return np.ones(sample_arg.shape[-1], dtype=bool)
-    return None
+
+    # Finally, we should have an index filter list of type Iterable,
+    # so cast it to Numpy array and return
+    return np.array(ix_filter)
 
 
 def power(

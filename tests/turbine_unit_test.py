@@ -132,29 +132,44 @@ def test_rotor_area():
 
 
 def test_filter_convert():
-    # Test None is returned
-    ix_filter = None
-    sample_arg = 1
-    assert _filter_convert(ix_filter, sample_arg) is None
+    N = 4
 
-    # Test a boolean truth array is returned
-    N = 10
+    # When the index filter is not None or a Numpy array,
+    # the function should return None
+    ix_filter = 1
+    sample_arg = np.arange(N)
+    with pytest.raises(TypeError):
+        _filter_convert(ix_filter, sample_arg)
+
+    # When the sample_arg is not a Numpy array, the function
+    # should return None
+    ix_filter = None
+    sample_arg = [1,2,3]
+    with pytest.raises(TypeError):
+        _filter_convert(ix_filter, sample_arg)
+
+    # When the sample_arg is a Numpy array and the index filter
+    # is None, a boolean array containing all True should be
+    # returned with the same shape as the sample_arg.
     ix_filter = None
     sample_arg = np.arange(N)
     ix_filter = _filter_convert(ix_filter, sample_arg)
     assert ix_filter.sum() == N
     assert ix_filter.shape == (N,)
 
-    # Test that a numpy array is returned
+    # When the index filter is given as a Python list, the
+    # function should return the values cast to a Numpy array
     ix_filter = [1, 2]
-    sample_arg = np.stack(np.arange(4).reshape(-1, 1, 1) * np.ones((3, 3)))
+    sample_arg = np.arange(N).reshape(1, 1, N)
     ix_filter = _filter_convert(ix_filter, sample_arg)
     np.testing.assert_array_equal(ix_filter, np.array([1, 2]))
 
     # Test that a 1-D boolean truth array is returned
-    N = 4
+    # When the index filter is None and the sample_arg
+    # is a Numpy array of values, the returned filter indeces
+    # should be all True and have the shape of the turbine-dimension
     ix_filter = None
-    sample_arg = np.stack(np.arange(N).reshape(-1, 1, 1) * np.ones((3, 3)))
+    sample_arg = np.arange(N).reshape(1, 1, N)
     ix_filter = _filter_convert(ix_filter, sample_arg)
     assert ix_filter.sum() == N
     assert ix_filter.shape == (N,)
