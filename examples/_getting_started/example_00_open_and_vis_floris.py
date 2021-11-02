@@ -15,13 +15,14 @@
 
 import matplotlib.pyplot as plt
 
-import floris.tools as wfct
+from src.tools.floris_interface import FlorisInterface
+from src.tools.visualization import visualize_cut_plane
 
 
 # Initialize the FLORIS interface fi
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi = FlorisInterface("../example_input.json")
 
 # Calculate wake
 fi.calculate_wake()
@@ -31,5 +32,5 @@ hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+visualize_cut_plane(hor_plane, ax=ax)
 plt.show()

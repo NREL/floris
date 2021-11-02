@@ -15,7 +15,8 @@
 
 import matplotlib.pyplot as plt
 
-import floris.tools as wfct
+from src.tools.floris_interface import FlorisInterface
+from src.tools.visualization import visualize_cut_plane, plot_turbines_with_fi
 
 
 """
@@ -35,14 +36,14 @@ for example when optimizing yaw angles
 """
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi = FlorisInterface("../example_input.json")
 
 
 # Declare a short-cut visualization function for brevity in this example
 def plot_slice_shortcut(fi, ax, title):
     # Get horizontal plane at default height (hub-height)
     hor_plane = fi.get_hor_plane()
-    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax, minSpeed=4.0, maxSpeed=8.0)
+    visualize_cut_plane(hor_plane, ax=ax, minSpeed=4.0, maxSpeed=8.0)
 
 
 # Define a plot
@@ -87,12 +88,12 @@ plot_slice_shortcut(fi, axarr[6], "Air Density=1.0")
 fi.reinitialize_flow_field(layout_array=[[0, 500], [0, 0]])  # TODO IS THIS RIGHT?
 fi.calculate_wake()
 plot_slice_shortcut(fi, axarr[7], "Change layout")
-wfct.visualization.plot_turbines_with_fi(axarr[7], fi)
+plot_turbines_with_fi(axarr[7], fi)
 
 # Changes the yaw angles
 fi.calculate_wake(yaw_angles=[25, 10])
 plot_slice_shortcut(fi, axarr[8], "Change yaw angles")
-wfct.visualization.plot_turbines_with_fi(axarr[8], fi)
+plot_turbines_with_fi(axarr[8], fi)
 
 
 plt.show()

@@ -18,17 +18,20 @@
 
 import matplotlib.pyplot as plt
 
-import floris.tools as wfct
+from src.tools.floris_interface import FlorisInterface
+from src.tools.visualization import visualize_cut_plane
 
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi = FlorisInterface("../example_input.json")
 
 # Set to 2x2 farm
-fi.reinitialize_flow_field(layout_array=[[0, 0, 600, 600], [0, 300, 0, 300]])
+fi.floris.farm.layout_x = [0, 0, 600, 600]
+fi.floris.farm.layout_y = [0, 300, 0, 300]
 
 # Change turbine 0 and 3 to have a 35 m rotor diameter
-fi.change_turbine([0, 3], {"rotor_diameter": 35})
+fi.floris.farm.rotor_diameter[0] = 35
+fi.floris.farm.rotor_diameter[3] = 35
 
 # Calculate wake
 fi.calculate_wake()
@@ -38,5 +41,5 @@ hor_plane = fi.get_hor_plane()
 
 # Plot and show
 fig, ax = plt.subplots()
-wfct.visualization.visualize_cut_plane(hor_plane, ax=ax)
+visualize_cut_plane(hor_plane, ax=ax)
 plt.show()
