@@ -635,26 +635,28 @@ class FlowField:
                 u_wake, coord, self, rotated_x, rotated_y, rotated_z
             )
 
-            # get the wake deflection field
-            deflection = self._compute_turbine_wake_deflection(
-                rotated_x, rotated_y, rotated_z, turbine, coord, self
-            )
+            if not no_wake:
+                # get the wake deflection field
+                deflection = self._compute_turbine_wake_deflection(
+                    rotated_x, rotated_y, rotated_z, turbine, coord, self
+                )
 
-            # get the velocity deficit accounting for the deflection
-            (
-                turb_u_wake,
-                turb_v_wake,
-                turb_w_wake,
-            ) = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
-            )
+                # get the velocity deficit accounting for the deflection
+                (
+                    turb_u_wake,
+                    turb_v_wake,
+                    turb_w_wake,
+                ) = self._compute_turbine_velocity_deficit(
+                    rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
+                )
 
             ###########
             # include turbulence model for the gaussian wake model from
             # Porte-Agel
             if (
-                "crespo_hernandez" == self.wake.turbulence_model.model_string
-                or self.wake.turbulence_model.model_string == "ishihara_qian"
+                ("crespo_hernandez" == self.wake.turbulence_model.model_string
+                or self.wake.turbulence_model.model_string == "ishihara_qian")
+                and not no_wake
             ):
                 # compute area overlap of wake on other turbines and update
                 # downstream turbine turbulence intensities
