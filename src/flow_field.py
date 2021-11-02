@@ -37,26 +37,9 @@ class FlowField:
         # This velocity profile is 1.0 at the reference wind height and then follows wind shear as an exponent.
         wind_profile_plane = (grid.z / self.reference_wind_height) ** self.wind_shear
 
-        # Create the array containing the initial uniform wind profile
-        # This is also of shape (# wind speeds, # turbines, N grid points, M grid points)
-
-        # find the total number of elements in lower dimensions for each wind speed
-        n_elements = grid.z[0].size
-        # broadcast the input wind speeds to an array of this size
-        _wind_speeds = np.array(n_elements * [self.wind_speeds]).T
-        # reshape based on the wind profile array
-        _wind_speeds = np.reshape(_wind_speeds, np.shape(wind_profile_plane))
-
         # Create the sheer-law wind profile
-        # This array is of shape (# wind speeds, # turbines, N grid points, M grid points)
-        self.u_initial = _wind_speeds * wind_profile_plane
-
-        # The broadcast and matrix multiplication above is equivalent to this:
-        # self.u_initial = np.zeros((self.n_wind_speeds, grid.n_turbines, 5, 5))
-        # for i in range(self.n_wind_speeds):
-        #     for j in range(grid.n_turbines):
-        #         self.u_initial[i, j, :, :] = self.wind_speeds[i] * wind_profile_plane[i]
-
+        # This array is of shape (# wind directions, # wind speeds, # turbines, N grid points, M grid points)
+        self.u_initial = self.wind_speeds[None, :, None, None, None] * wind_profile_plane
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
@@ -67,3 +50,7 @@ class FlowField:
     @property
     def n_wind_speeds(self) -> int:
         return len(self.wind_speeds)
+
+    @property
+    def n_wind_directions(self) -> int:
+        return len(self.wind_directions)

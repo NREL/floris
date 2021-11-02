@@ -74,6 +74,7 @@ class Floris(logging_manager.LoggerBase):
         self.turbine = Turbine(**turbine_dict)
         # self.wake = Wake(wake_dict)
 
+        wind_directions = farm_dict["wind_directions"]
         wind_speeds = farm_dict["wind_speeds"]
         layout_x = farm_dict["layout_x"]
         layout_y = farm_dict["layout_y"]
@@ -83,6 +84,7 @@ class Floris(logging_manager.LoggerBase):
         self.farm = Farm(
             turbine_id=turbine_id,
             turbine_map=turbine_map,
+            wind_directions=wind_directions,
             wind_speeds=wind_speeds,
             layout_x=layout_x,
             layout_y=layout_y,

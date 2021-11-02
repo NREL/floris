@@ -94,7 +94,7 @@ class JensenVelocityDeficit(BaseClass):
 
         m = self.we
         # x = x[i] - x[i - 1] #mesh_x_rotated - x_coord_rotated
-        b = reference_rotor_diameter[:, :, None, None] / 2.0
+        b = reference_rotor_diameter[:, :, :, None, None] / 2.0
 
         boundary_line = m * x + b
 
@@ -104,8 +104,9 @@ class JensenVelocityDeficit(BaseClass):
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
         c = (
-            (reference_rotor_diameter[:, :, None, None] / (2 * self.we * (x - x[:, i]) + reference_rotor_diameter[:, :, None, None])) ** 2
-            * ~(np.array(x - x[:, i] <= 0.0))  # using this causes nan's in the upstream turbine
+            # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
+            (reference_rotor_diameter[:, :, :, None, None] / (2 * self.we * (x - x[:, :, i:i+1]) + reference_rotor_diameter[:, :, :, None, None])) ** 2
+            * ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine
             * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         )
 

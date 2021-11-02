@@ -131,9 +131,7 @@ class TurbineGrid(Grid):
         - x is [n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
         - y is [n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]
 
-        The x array contains the actual locations in that direction.
-        y and z values are displacements from the x coordinate in the y and z directions.
-        That is to say that each turbine has a local coordinate system located at (x, )
+        The x,y,z arrays contain the actual locations in that direction.
 
         # -   **self.grid_resolution** (*int*, optional): The square root of the number
         #             of points to use on the turbine grid. This number will be
@@ -166,11 +164,11 @@ class TurbineGrid(Grid):
         disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution)
 
         # Create the data for the turbine grids
-        # TODO: support wind speed dimension
         self.x = np.reshape(
             x_coordinates.T * template_grid,
             (n_turbines, self.grid_resolution, self.grid_resolution),
         )
+        # TODO: ?initialize with correct number of dimensions and then expand them as needed later
         self.y = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
         self.z = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
 
@@ -180,24 +178,26 @@ class TurbineGrid(Grid):
             #     x_grid[i] = coord.x1
             self.y[i] = coord.x2 + disc_grid
             self.z[i] = coord.x3 + disc_grid
+            # self.y[:, :, i] = coord.x2 + disc_grid
+            # self.z[:, :, i] = coord.x3 + disc_grid
 
-    def expand_wind_speed(self, n_wind_speeds):
-        # Add dimension for wind speed
+    def expand_atmospheric_conditions(self, n_wind_directions, n_wind_speeds):
+        # Add dimension for wind direction and wind speed
         # self.x = np.resize(self.x, (n_wind_speeds, *self.x.shape))
         # self.y = np.resize(self.x, (n_wind_speeds, *self.x.shape))
         # self.z = np.resize(self.x, (n_wind_speeds, *self.x.shape))
         # TODO: there's got to be a better way...
 
-        tmpx = np.zeros((n_wind_speeds, *np.shape(self.x)))
-        tmpx[:] = self.x
+        tmpx = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.x)))
+        tmpx[:, :] = self.x
         self.x = tmpx
 
-        tmpy = np.zeros((n_wind_speeds, *np.shape(self.y)))
-        tmpy[:] = self.y
+        tmpy = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.y)))
+        tmpy[:, :] = self.y
         self.y = tmpy
 
-        tmpz = np.zeros((n_wind_speeds, *np.shape(self.z)))
-        tmpz[:] = self.z
+        tmpz = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.z)))
+        tmpz[:, :] = self.z
         self.z = tmpz
 
 

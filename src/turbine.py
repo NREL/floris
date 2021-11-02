@@ -31,28 +31,49 @@ from src.utilities import (
 from src.base_class import BaseClass
 
 
-def _filter_convert(
-    ix_filter: Union[List[Union[int, bool]], np.ndarray], sample_arg: np.ndarray
-) -> Union[np.ndarray, None]:
-    """Converts the ix_filter to a standard format of `np.ndarray`s for filtering
+def _filter_convert(ix_filter: Union[np.ndarray, None], sample_arg: np.ndarray) -> Union[np.ndarray, None]:
+    """This function selects turbine indeces from the given array of turbine properties
+    over the simulation's atmospheric conditions (wind directions / wind speeds).
+    It converts the ix_filter to a standard format of `np.ndarray`s for filtering
     certain arguments.
 
     Args:
-        ix_filter (Union[List[Union[int, bool]], np.ndarray]): The indices, or truth
-            array-like object to use for filtering.
+        ix_filter (Union[np.ndarray, None]): The indices, or truth array-like object to
+            use for filtering. None implies that all indeces in the sample_arg
+            should be selected.
         sample_arg (np.ndarray): Any argument that will be filtered, to be used for
-            creating the shape.
+            creating the shape. This should be of shape:
+            (n wind directions, n wind speeds, n turbines)
 
     Returns:
         Union[np.ndarray, None]: Returns an array of a truth or index list if a list is
             passed, a truth array if ix_filter is None, or None if ix_filter is None
             and the `sample_arg` is a single value.
     """
-    if isinstance(ix_filter, list):
-        return np.array(ix_filter)
-    if ix_filter is None and isinstance(sample_arg, np.ndarray):
-        return np.ones(sample_arg.shape[0], dtype=bool)
-    return None
+    # Check that the ix_filter is either None or an Iterable. Otherwise,
+    # there's nothing we can do with it.
+    if not isinstance(ix_filter, Iterable) and ix_filter is not None:
+        # TODO: @rob raise an error?
+        return None
+    
+    # Check that the sample_arg is a Numpy array. If it isn't, we
+    # can't get its shape.
+    if not isinstance(sample_arg, np.ndarray):
+        # TODO: @rob raise an error?
+        return None
+
+    # At this point, the arguments have this type:
+    # ix_filter: Union[Iterable, None]
+    # sample_arg: np.ndarray
+
+    # Return all values in the turbine-dimension
+    # if the index filter is None
+    if ix_filter is None:
+        return np.ones(sample_arg.shape[-1], dtype=bool)
+
+    # Finally, we should have an index filter list of type Iterable,
+    # so cast it to Numpy array and return
+    return np.array(ix_filter)
 
 
 def power(
@@ -108,22 +129,23 @@ def power(
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        air_density = air_density[:, ix_filter]
-        velocities = velocities[:, ix_filter, :, :]
-        yaw_angle = yaw_angle[:, ix_filter]
-        pP = pP[:, ix_filter]
-        power_interp = power_interp[:, ix_filter]
+        air_density = air_density[:, :, ix_filter]
+        velocities = velocities[:, :, ix_filter, :, :]
+        yaw_angle = yaw_angle[:, :, ix_filter]
+        pP = pP[:, :, ix_filter]
+        power_interp = power_interp[:, :, ix_filter]
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
 
-    n_wind_speeds, n_turbines, *_ = yaw_angle.shape
+    n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     p = np.zeros_like(yaw_effective_velocity)
-    for i in range(n_wind_speeds):
-        for j in range(n_turbines):
-            interpolator = power_interp[i, j]
-            p[i, j] = interpolator(yaw_effective_velocity[i, j])
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                interpolator = power_interp[i, j, k]
+                p[i, j, k] = interpolator(yaw_effective_velocity[i, j, k])
 
     return p * air_density
 
@@ -159,17 +181,18 @@ def Ct(
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        velocities = velocities[:, ix_filter, :, :]
-        yaw_angle = yaw_angle[:, ix_filter]
-        fCt = fCt[:, ix_filter]
+        velocities = velocities[:, :, ix_filter, :, :]
+        yaw_angle = yaw_angle[:, :, ix_filter]
+        fCt = fCt[:, :, ix_filter]
 
-    n_wind_speeds, n_turbines, *_ = yaw_angle.shape
+    n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     average_velocities = average_velocity(velocities)
     thrust_coefficient = np.zeros_like(average_velocities)
-    for i in range(n_wind_speeds):
-        for j in range(n_turbines):
-            _fCt = fCt[i, j]
-            thrust_coefficient[i, j] = _fCt(average_velocities[i, j])
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                _fCt = fCt[i, j, k]
+                thrust_coefficient[i, j, k] = _fCt(average_velocities[i, j, k])
 
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
 
@@ -208,7 +231,7 @@ def axial_induction(
     # Then, process the input arguments as needed for this function
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        yaw_angle = yaw_angle[:, ix_filter]
+        yaw_angle = yaw_angle[:, :, ix_filter]
 
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
@@ -235,8 +258,8 @@ def average_velocity(velocities: np.ndarray, ix_filter: Union[List[Union[int, bo
     # (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)
 
     if ix_filter is not None:
-        velocities = velocities[:, ix_filter, :, :]
-    axis = (2, 3)
+        velocities = velocities[:, :, ix_filter, :, :]
+    axis = (3, 4)
     return np.cbrt(np.mean(velocities ** 3, axis=axis))
 
 

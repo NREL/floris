@@ -107,23 +107,23 @@ class JimenezVelocityDeflection(BaseClass):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
-        yaw_angle = yaw_angle[:, i : i + 1, None, None]
+        yaw_angle = yaw_angle[:, :, i:i+1, None, None]
 
         # Ct is given for only the current turbine, so broadcast
         # this to the grid dimesions
-        Ct = Ct[:, :, None, None]
+        Ct = Ct[:, :, :, None, None]
 
         # angle of deflection
         xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
-        x_locations = x - x[i]  # (n turbines, n grid, n grid)
+        x_locations = x - x[:, :, :, i:i+1]  # (n turbines, n grid, n grid)
 
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
-        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter[:, :, None, None] + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / reference_rotor_diameter[:, :, None, None]) * (
-            2 * self.kd * x_locations / reference_rotor_diameter[:, :, None, None] + 1
+        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter[:, :, :, None, None] + 1) ** 4.0 + xi_init ** 2.0
+        B = (30 * self.kd / reference_rotor_diameter[:, :, :, None, None]) * (
+            2 * self.kd * x_locations / reference_rotor_diameter[:, :, :, None, None] + 1
         ) ** 5.0
-        C = xi_init * reference_rotor_diameter[:, :, None, None] * (15 + xi_init ** 2.0)
+        C = xi_init * reference_rotor_diameter[:, :, :, None, None] * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
         yYaw_init = (xi_init * A / B) - (C / D)

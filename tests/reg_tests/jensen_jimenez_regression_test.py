@@ -91,9 +91,11 @@ def test_regression_tandem(sample_inputs_fixture):
 
     n_turbines = len(floris.farm.layout_x)
 
-    test_results = np.zeros((3, n_turbines, 4))
+    velocities = floris.flow_field.u[:, :, :, :, :]
+    n_wind_directions = np.shape(velocities)[0]
+    n_wind_speeds = np.shape(velocities)[1]
 
-    velocities = floris.flow_field.u
+    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
     yaw_angles = floris.farm.farm_controller.yaw_angles
 
     farm_avg_velocities = average_velocity(
@@ -105,7 +107,9 @@ def test_regression_tandem(sample_inputs_fixture):
         floris.farm.fCt_interp,
     )
     farm_powers = power(
-        np.array(n_turbines * n_wind_speeds * [floris.flow_field.air_density]).reshape((n_wind_speeds, n_turbines)),
+        np.array(n_turbines * n_wind_speeds * n_wind_directions * [floris.flow_field.air_density]).reshape(
+            (n_wind_directions, n_wind_speeds, n_turbines)
+        ),
         velocities,
         yaw_angles,
         floris.farm.pP,
@@ -116,12 +120,13 @@ def test_regression_tandem(sample_inputs_fixture):
         yaw_angles,
         floris.farm.fCt_interp,
     )
-    for i in range(3):
-        for j in range(n_turbines):
-            test_results[i, j, 0] = farm_avg_velocities[i, j]
-            test_results[i, j, 1] = farm_cts[i, j]
-            test_results[i, j, 2] = farm_powers[i, j]
-            test_results[i, j, 3] = farm_axial_inductions[i, j]
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
+                test_results[i, j, k, 1] = farm_cts[i, j, k]
+                test_results[i, j, k, 2] = farm_powers[i, j, k]
+                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
 
     if DEBUG:
         print_test_values(
@@ -131,7 +136,7 @@ def test_regression_tandem(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results, baseline)
+    assert_results_arrays(test_results[0], baseline)
 
 
 # def test_regression_rotation(sample_inputs_fixture):
@@ -195,9 +200,13 @@ def test_regression_yaw(sample_inputs_fixture):
 
     floris.go()
 
-    test_results = np.zeros((3, n_turbines, 4))
+    n_turbines = len(floris.farm.layout_x)
 
-    velocities = floris.flow_field.u
+    velocities = floris.flow_field.u[:, :, :, :, :]
+    n_wind_directions = np.shape(velocities)[0]
+    n_wind_speeds = np.shape(velocities)[1]
+
+    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
     yaw_angles = floris.farm.farm_controller.yaw_angles
 
     farm_avg_velocities = average_velocity(
@@ -209,7 +218,9 @@ def test_regression_yaw(sample_inputs_fixture):
         floris.farm.fCt_interp,
     )
     farm_powers = power(
-        np.array(n_turbines * n_wind_speeds * [floris.flow_field.air_density]).reshape((n_wind_speeds, n_turbines)),
+        np.array(n_turbines * n_wind_speeds * n_wind_directions * [floris.flow_field.air_density]).reshape(
+            (n_wind_directions, n_wind_speeds, n_turbines)
+        ),
         velocities,
         yaw_angles,
         floris.farm.pP,
@@ -220,12 +231,13 @@ def test_regression_yaw(sample_inputs_fixture):
         yaw_angles,
         floris.farm.fCt_interp,
     )
-    for i in range(3):
-        for j in range(n_turbines):
-            test_results[i, j, 0] = farm_avg_velocities[i, j]
-            test_results[i, j, 1] = farm_cts[i, j]
-            test_results[i, j, 2] = farm_powers[i, j]
-            test_results[i, j, 3] = farm_axial_inductions[i, j]
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
+                test_results[i, j, k, 1] = farm_cts[i, j, k]
+                test_results[i, j, k, 2] = farm_powers[i, j, k]
+                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
 
     if DEBUG:
         print_test_values(
@@ -235,4 +247,4 @@ def test_regression_yaw(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results, yawed_baseline)
+    assert_results_arrays(test_results[0], yawed_baseline)
