@@ -1,5 +1,7 @@
 # Codecov configuration file
 
+comment: false
+
 coverage:
     range: 0..100  # sets the range for the color bar in the dashboard
     round: down
