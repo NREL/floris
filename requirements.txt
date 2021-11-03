@@ -1,11 +1,13 @@
 # Requirements list for floris
 
 # simulation
-# matplotlib>=3
 numpy
 pytest
 scipy
 xarray
+
+# tools
+matplotlib
 
 # utilities
 coloredlogs
