@@ -17,7 +17,6 @@ import numpy as np
 from src import Floris
 from src.turbine import Ct, power, axial_induction, average_velocity
 from tests.conftest import print_test_values, turbines_to_array, assert_results_arrays
-from src.tools.visualization import values_at_rotor
 
 DEBUG = False
 VELOCITY_MODEL = "jensen"
@@ -137,9 +136,6 @@ def test_regression_tandem(sample_inputs_fixture):
         )
 
     assert_results_arrays(test_results[0], baseline)
-    values_at_rotor.plot_rotor_values(
-        floris.flow_field.u
-    )
 
 
 # def test_regression_rotation(sample_inputs_fixture):
