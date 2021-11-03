@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 def plot_rotor_values(
     values: np.ndarray,
-    # titles: np.ndarray,
+    titles: np.ndarray = None,
     max_width: int = 4,
     cmap: str = "coolwarm",
     return_fig_objects: bool = False,
@@ -24,8 +24,8 @@ def plot_rotor_values(
     Parameters:
         values (np.ndarray): The 5-dimensional array of values to plot. Should be:
             N wind directions x N wind speeds x N turbines X N rotor points X N rotor points.
-        titles (np.ndarray): The string values to label each plot, and should be of the
-            same shape as `values`.
+        titles (None | np.ndarray): The string values to label each plot, and should be of the
+            same shape as `values`, by default None.
         max_width (int): The maximum number of subplots in one row, default 4.
         cmap (str): The matplotlib colormap to be used, default "coolwarm".
         return_fig_objects (bool): Indicator to return the primary figure objects for
@@ -40,7 +40,7 @@ def plot_rotor_values(
 
     cmap = plt.cm.get_cmap(name=cmap)
 
-    n_wd, n_ws, *_ = values.shape
+    n_wd, n_ws, n_turb, *_ = values.shape
 
     vmin = values.min()
     vmax = values.max()
@@ -70,13 +70,18 @@ def plot_rotor_values(
     fig = plt.figure(dpi=200, figsize=(16, 16))
     axes = fig.subplots(nrows, ncols)
 
-    # for ax, t, (i, j) in zip(axes.flatten(), titles.flatten(), product(range(n_wd), range(n_ws))):
-    for ax, (i, j) in zip(axes.flatten(), product(range(n_wd), range(n_ws))):
-        ax.imshow(values[i, j], cmap=cmap, norm=norm)
+    # Create the title values if they aren't already existing
+    indices = list(product(range(n_wd), range(n_ws), range(n_turb)))
+    if titles is None:
+        titles = np.array([f"Wind Direction: {i}\nWind Speed: {j}\n Turbine: {k}" for i, j, k in indices])
+        titles = titles.reshape(n_wd, n_ws, n_turb)
+
+    for ax, t, (i, j, k) in zip(axes.flatten(), titles.flatten(), indices):
+        ax.imshow(values[i, j, k], cmap=cmap, norm=norm)
 
         ax.set_xticks([])
         ax.set_yticks([])
-        # ax.set_title(t)
+        ax.set_title(t)
 
     if extra > 0:
         for ax in axes[-1][-extra:]:
