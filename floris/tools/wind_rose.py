@@ -46,7 +46,9 @@ class WindRose:
             :keyprefix: wr-
     """
 
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         """
         Instantiate a WindRose object and set some initial parameter values.
         No explicit arguments required, and an additional method will need to

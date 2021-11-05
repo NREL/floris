@@ -12,28 +12,21 @@
 
 # See https://floris.readthedocs.io for documentation
 
+
 import copy
 
 import numpy as np
-import pandas as pd
+from scipy.optimize import minimize
 
-from .yaw import YawOptimization
-from .cluster_turbines import cluster_turbines
-from ....logging_manager import LoggerBase
+from .yaw_optimization_base import YawOptimization
 
 
-class YawOptimizationClustered(YawOptimization, LoggerBase):
+class YawOptimizationScipy(YawOptimization):
     """
-    YawOptimization is a subclass of
-    :py:class:`~.tools.optimizationscipy.YawOptimization` that is used to
-    perform optimizations of the yaw angles of all or a subset of wind turbines
-    in a Floris Farm for a single set of inflow conditions using the scipy
-    optimization package. This class facilitates the clusterization of the
-    turbines inside seperate subsets in which the turbines witin each subset
-    exclusively interact with one another and have no impact on turbines
-    in other clusters. This may significantly reduce the computational
-    burden at no loss in performance (assuming the turbine clusters are truly
-    independent).
+    YawOptimizationScipy is a subclass of
+    :py:class:`floris.tools.optimization.general_library.YawOptimization` that is
+    used to optimize the yaw angles of all turbines in a Floris Farm for a single
+    set of inflow conditions using the SciPy optimize package.
     """
 
     def __init__(
@@ -50,15 +43,16 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
         unc_pmfs=None,
         unc_options=None,
         turbine_weights=None,
-        calc_init_power=True,
-        exclude_downstream_turbines=False,
-        clustering_wake_slope=0.30,
+        exclude_downstream_turbines=True,
+        cluster_turbines=False,
+        cluster_wake_slope=0.30,
+        verify_convergence=True,
     ):
         """
-        Instantiate YawOptimization object with a FlorisInterface object
+        Instantiate YawOptimizationScipy object with a FlorisInterface object
         and assign parameter values.
 
-        Args:
+            Args:
             fi (:py:class:`~.tools.floris_interface.FlorisInterface`):
                 Interface used to interact with the Floris object.
             minimum_yaw_angle (float, optional): Minimum constraint on yaw
@@ -92,7 +86,7 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -100,11 +94,11 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
                 that, if bnds is not none, its values overwrite any value given
                 in minimum_yaw_angle and maximum_yaw_angle. Defaults to None.
             opt_method (str, optional): The optimization method used by
-                scipy.optimize.minize. Defaults to 'SLSQP'.
+                scipy.optimize.minimize. Defaults to 'SLSQP'.
             opt_options (dictionary, optional): Optimization options used by
-                scipy.optimize.minize. If none are specified, they are set to
-                {'maxiter': 100, 'disp': False, 'iprint': 1, 'ftol': 1e-7,
-                'eps': 0.01}. Defaults to None.
+                scipy.optimize.minimize. If none are specified, they are set to
+                {'maxiter': 100, 'disp': True, 'iprint': 2, 'ftol': 1e-12,
+                'eps': 0.1}. Defaults to None.
             include_unc (bool, optional): Determines whether wind direction or
                 yaw uncertainty are included. If True, uncertainty in wind
                 direction and/or yaw position is included when determining
@@ -168,7 +162,12 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
                 the yaw bounds specified in self.bnds allow that, or otherwise
                 are fixed to the lower or upper yaw bound, whichever is closer
                 to 0.0. Defaults to False.
-            clustering_wake_slope (float, optional): linear slope of the wake
+            cluster_turbines (bool, optional): if True, clusters the wind
+                turbines into sectors and optimizes the cost function for each
+                farm sector separately. This can significantly reduce the
+                computational cost involved if the farm can indeed be separated
+                into multiple clusters. Defaults to False.
+            cluster_wake_slope (float, optional): linear slope of the wake
                 in the simplified linear expansion wake model (dy/dx). This
                 model is used to derive wake interactions between turbines and
                 to identify the turbine clusters. A good value is about equal
@@ -177,7 +176,26 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
                 is twice the turbulence intensity. The default value is 0.30
                 which should be valid for yaw optimizations at wd_std = 0.0 deg
                 and turbulence intensities up to 15%. Defaults to 0.30.
+            verify_convergence (bool, optional): specifies whether the found
+                optimal yaw angles will be checked for accurately convergence.
+                With large farms, especially when using SciPy or other global
+                optimization methods, solutions do not always converge and
+                turbines that should have a 0.0 deg actually have a 1.0 deg
+                angle, for example. By enabling this function, the final yaw
+                angles are compared to their baseline values one-by-one for
+                the turbines to make sure no such convergence issues arise.
+                Defaults to True.
         """
+        if opt_options is None:
+            # Default SciPy parameters
+            opt_options = {
+                "maxiter": 100,
+                "disp": True,
+                "iprint": 2,
+                "ftol": 1e-12,
+                "eps": 0.1,
+            }
+
         super().__init__(
             fi=fi,
             minimum_yaw_angle=minimum_yaw_angle,
@@ -185,104 +203,151 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
             yaw_angles_baseline=yaw_angles_baseline,
             x0=x0,
             bnds=bnds,
-            opt_method=opt_method,
-            opt_options=opt_options,
             include_unc=include_unc,
             unc_pmfs=unc_pmfs,
             unc_options=unc_options,
             turbine_weights=turbine_weights,
-            calc_init_power=calc_init_power,
+            calc_init_power=True,
             exclude_downstream_turbines=exclude_downstream_turbines,
-        )
-        self.clustering_wake_slope = clustering_wake_slope
-
-
-    def _cluster_turbines(self):
-        wind_directions = self.fi.floris.farm.wind_direction
-        if (np.std(wind_directions) > 0.001):
-            raise ValueError("Wind directions must be uniform for clustering algorithm.")
-        self.clusters = cluster_turbines(
-            fi=self.fi,
-            wind_direction=self.fi.floris.farm.wind_direction[0],
-            wake_slope=self.clustering_wake_slope
+            cluster_turbines=cluster_turbines,
+            cluster_wake_slope=cluster_wake_slope,
+            verify_convergence=verify_convergence,
         )
 
-    def plot_clusters(self):
-        cluster_turbines(
-            fi=self.fi,
-            wind_direction=self.fi.floris.farm.wind_direction[0],
-            wake_slope=self.clustering_wake_slope,
-            plot_lines=True
-        )
-        
-    def optimize(self, verbose=True):
+        self.opt_method = opt_method
+        self.opt_options = opt_options
+
+    def _cost_full_yaw_angle_array(self, yaw_angles_normalized):
         """
-        This method solves for the optimum turbine yaw angles for power
-        production given a fixed set of atmospheric conditions
-        (wind speed, direction, etc.).
+        Calculate the optimization cost function for a predefined set of
+        normalized turbine yaw angles. The cost function equals minus one
+        times the weighted wind farm power. This weighted wind farm power may
+        or may not include uncertainty, as specified by the user.
+
+        Args:
+            yaw_angles_normalized ([iteratible]): List or array-like with the
+            normalized turbine yaw angles (dimensionless). This list should be
+            equal in length to the number of turbines in the farm.
 
         Returns:
-            np.array: Optimal yaw angles for each turbine (deg).
+            J_norm ([float]): Normalized optimization cost.
         """
-        if verbose:
-            print("=====================================================")
-            print("Optimizing wake redirection control...")
-            print("Number of parameters to optimize = ", len(self.turbs_to_opt))
-            print("=====================================================")
-
-        # Cluster turbines first
-        self._cluster_turbines()
-        if verbose:
-            print("Clustered turbines into %d separate clusters." % len(self.clusters))
-
-        # Save parameters to a full list
-        yaw_angles_template_full = copy.copy(self.yaw_angles_template)
-        yaw_angles_baseline_full = copy.copy(self.yaw_angles_baseline)
-        turbine_weights_full = copy.copy(self.turbine_weights)
-        bnds_full = copy.copy(self.bnds)
-        # nturbs_full = copy.copy(self.nturbs)
-        x0_full = copy.copy(self.x0)
-        fi_full = copy.deepcopy(self.fi)
-
-        # Overwrite parameters for each cluster and optimize
-        opt_yaw_angles = np.zeros_like(x0_full)
-        for ci, cl in enumerate(self.clusters):
-            if verbose:
-                print("=====================================================")
-                print("Optimizing %d parameters in cluster %d." % (len(cl), ci))
-                print("=====================================================")
-            self.yaw_angles_template = np.array(yaw_angles_template_full)[cl]
-            self.yaw_angles_baseline = np.array(yaw_angles_baseline_full)[cl]
-            self.turbine_weights = np.array(turbine_weights_full)[cl]
-            self.bnds = np.array(bnds_full)[cl]
-            self.x0 = np.array(x0_full)[cl]
-            self.fi = copy.deepcopy(fi_full)
-            self.fi.reinitialize_flow_field(
-                layout_array=[
-                    np.array(fi_full.layout_x)[cl],
-                    np.array(fi_full.layout_y)[cl]
-                ]
-            )
-            opt_yaw_angles[cl] = self._optimize()
-
-        # Restore parameters
-        self.yaw_angles_template = yaw_angles_template_full
-        self.yaw_angles_baseline = yaw_angles_baseline_full
-        self.turbine_weights = turbine_weights_full
-        self.bnds = bnds_full
-        self.x0 = x0_full
-        self.fi = fi_full
-        self.fi.reinitialize_flow_field(
-            layout_array=[
-                np.array(fi_full.layout_x),
-                np.array(fi_full.layout_y)
-            ]
+        # Undo normalization in yaw_angles
+        yaw_angles = self._unnorm(
+            yaw_angles_normalized,
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle,
         )
-    
-        if verbose and np.sum(np.abs(opt_yaw_angles)) == 0:
-            print(
-                "No change in controls suggested for this inflow \
-                   condition..."
-            )
+
+        # Calculate cost
+        self.fi.calculate_wake(yaw_angles=yaw_angles)
+        turbine_powers = self.fi.get_turbine_power(
+            include_unc=self.include_unc,
+            unc_pmfs=self.unc_pmfs,
+            unc_options=self.unc_options,
+        )
+
+        # Normalize cost
+        J = -1.0 * np.dot(self.turbine_weights, turbine_powers)
+        J_norm = J / self.initial_farm_power
+
+        return J_norm
+
+    def _cost(self, yaw_angles_subset_norm):
+        """
+        Calculate the optimization cost function for a predefined subset of
+        normalized turbine yaw angles. This subset of yaw angles is exclusive
+        for the turbines that are actually part of the optimization function.
+        Turbines that were previously excluded from the optimization, e.g.,
+        because they are downstream or before they are bounded to a fixed
+        value, are not part of this yaw angle subset. The cost function equals
+        minus one times the weighted wind farm power. This weighted wind farm
+        power may or may not include uncertainty, as specified by the user.
+
+
+        Args:
+            yaw_angles_subset_norm ([iteratible]): List or array-like with the
+            normalized subset of turbine yaw angles (dimensionless). This list
+            should be equal in length to the number of turbines that are
+            optimized, self.turbs_to_opt.
+
+        Returns:
+            J_norm ([float]): Normalized optimization cost.
+        """
+        # Combine template yaw angles and subset
+        yaw_angles_norm = self._norm(
+            self.yaw_angles_template,
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle,
+        )
+        yaw_angles_norm[self.turbs_to_opt] = yaw_angles_subset_norm
+        return self._cost_full_yaw_angle_array(yaw_angles_norm)
+
+    def _optimize(self):
+        """
+        Find optimum setting of turbine yaw angles for a single turbine
+        cluster that maximizes the weighted wind farm power production
+        given fixed atmospheric conditions (wind speed, direction, etc.)
+        using the scipy.optimize.minimize function.
+
+        Returns:
+            opt_yaw_angles (np.array): Optimal yaw angles in degrees. This
+            array is equal in length to the number of turbines in the farm.
+        """
+        # Reduce degrees of freedom and check if optimization necessary
+        self._reduce_control_variables()
+        if len(self.turbs_to_opt) <= 0:
+            return self.yaw_angles_template
+
+        # Initialize full optimal yaw angle array
+        opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
+
+        # Reduce number of variables and normalize yaw angles to [0, 1]
+        self._normalize_control_variables()
+
+        # Use SciPy to find the optimal solutions
+        self.residual_plant = minimize(
+            self._cost,
+            self.x0_norm,
+            method=self.opt_method,
+            bounds=self.bnds_norm,
+            options=self.opt_options,
+        )
+        opt_yaw_angles_subset = self._unnorm(
+            self.residual_plant.x,
+            self.minimum_yaw_angle,
+            self.maximum_yaw_angle,
+        )
+        opt_yaw_angles[self.turbs_to_opt] = opt_yaw_angles_subset
+        opt_yaw_angles = self._verify_solution(yaw_angles_opt=opt_yaw_angles)
+        return opt_yaw_angles
+
+    def optimize(self):
+        """
+        Find optimum setting of turbine yaw angles for each of the turbine
+        clusters that maximizes the weighted wind farm power production
+        given fixed atmospheric conditions (wind speed, direction, etc.)
+        using the scipy.optimize.minimize function.
+
+        Returns:
+            opt_yaw_angles (np.array): Optimal yaw angles in degrees. This
+            array is equal in length to the number of turbines in the farm.
+        """
+
+        if not self.cluster_turbines:
+            return self._optimize()
+
+        else:
+            xt = np.array(self.fi.layout_x, dtype=float)
+            yt = np.array(self.fi.layout_y, dtype=float)
+            opt_yaw_angles = np.zeros(self.nturbs, dtype=float)
+            for cl in self.clusters:
+                yopt_c = copy.deepcopy(self)
+                yopt_c.yaw_angles_baseline = np.array(self.yaw_angles_baseline)[cl]
+                yopt_c.turbine_weights = np.array(self.turbine_weights)[cl]
+                yopt_c.bnds = np.array(self.bnds)[cl]
+                yopt_c.x0 = np.array(self.x0)[cl]
+                yopt_c.fi.reinitialize_flow_field(layout_array=[xt[cl], yt[cl]])
+                opt_yaw_angles[cl] = yopt_c._optimize()
 
         return opt_yaw_angles

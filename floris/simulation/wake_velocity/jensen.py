@@ -112,7 +112,9 @@ class Jensen(VelocityDeficit):
         # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
         # filter points beyond the wake boundary
-        mask = ((y_locations - y_center) ** 2 + (z_locations - z_center) ** 2) > (boundary_line ** 2)
+        mask = ((y_locations - y_center) ** 2 + (z_locations - z_center) ** 2) > (
+            boundary_line ** 2
+        )
         c[mask] = 0
 
         return (
