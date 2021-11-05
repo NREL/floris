@@ -19,7 +19,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import floris.tools as wfct
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
+    YawOptimizationSR,
+)
 
 
 def load_floris():
@@ -67,7 +69,7 @@ if __name__ == "__main__":
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
         include_unc=True,
-        unc_options =  {
+        unc_options={
             "std_wd": 5.0,
             "std_yaw": 0.0,
             "pmf_res": 1.0,
@@ -83,25 +85,25 @@ if __name__ == "__main__":
     # Get baseline power productions
     fi.calculate_wake(yaw_angles=np.zeros(num_turbs))
     Pbl_wdstd0p00 = fi.get_farm_power(include_unc=False)
-    Pbl_wdstd5p00 =  fi.get_farm_power(
+    Pbl_wdstd5p00 = fi.get_farm_power(
         include_unc=True,
-        unc_options =  {"std_wd": 5, "std_yaw": 0, "pmf_res": 1, "pdf_cutoff": 0.995}
+        unc_options={"std_wd": 5, "std_yaw": 0, "pmf_res": 1, "pdf_cutoff": 0.995},
     )
 
     # Check performance baseline yaw angles for two different uncertainty levels
     fi.calculate_wake(yaw_angles=yaw_angles_deterministic)
-    Popt_deterministic_wdstd0p00 =  fi.get_farm_power(include_unc=False)
-    Popt_deterministic_wdstd5p00 =  fi.get_farm_power(
+    Popt_deterministic_wdstd0p00 = fi.get_farm_power(include_unc=False)
+    Popt_deterministic_wdstd5p00 = fi.get_farm_power(
         include_unc=True,
-        unc_options =  {"std_wd": 5, "std_yaw": 0, "pmf_res": 1, "pdf_cutoff": 0.995}
+        unc_options={"std_wd": 5, "std_yaw": 0, "pmf_res": 1, "pdf_cutoff": 0.995},
     )
 
     # Check performance robust yaw angles for two different uncertainty levels
     fi.calculate_wake(yaw_angles=yaw_angles_stochastic)
-    Popt_stochastic_wdstd0p00 =  fi.get_farm_power(include_unc=False)
-    Popt_stochastic_wdstd5p00 =  fi.get_farm_power(
+    Popt_stochastic_wdstd0p00 = fi.get_farm_power(include_unc=False)
+    Popt_stochastic_wdstd5p00 = fi.get_farm_power(
         include_unc=True,
-        unc_options =  {"std_wd": 5, "std_yaw": 0, "pmf_res": 1, "pdf_cutoff": 0.995}
+        unc_options={"std_wd": 5, "std_yaw": 0, "pmf_res": 1, "pdf_cutoff": 0.995},
     )
 
     print("==========================================")

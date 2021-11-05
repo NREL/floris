@@ -31,12 +31,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
     """
 
     def __init__(
-        self,
-        yaw_optimization_obj,
-        wd_array,
-        ws_array,
-        ti_array=None,
-        verbose=True
+        self, yaw_optimization_obj, wd_array, ws_array, ti_array=None, verbose=True
     ):
         """
         Instantiate YawOptimizationWindRoseParallel object with a yaw optimization
@@ -64,9 +59,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             wd_array=wd_array,
             ws_array=ws_array,
             ti_array=ti_array,
-            verbose=verbose
+            verbose=verbose,
         )
-
 
     # Public methods
 
@@ -133,7 +127,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                 self._optimize_one_case,
                 np.array(self.wd_array, dtype=float),
                 np.array(self.ws_array, dtype=float),
-                np.array(self.ti_array, dtype=float)
+                np.array(self.ti_array, dtype=float),
             ):
                 df_opt = df_opt.append(df_one_case)
 

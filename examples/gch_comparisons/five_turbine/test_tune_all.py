@@ -12,13 +12,15 @@
 # See read the https://floris.readthedocs.io for documentation
 
 
+import numpy as np
 import matplotlib
 
-matplotlib.use('tkagg')
 import floris.tools as wfct
-import numpy as np
 
-print('Running FLORIS with no yaw...')
+
+matplotlib.use("tkagg")
+
+print("Running FLORIS with no yaw...")
 # Instantiate the FLORIS object
 
 N = 10
@@ -47,12 +49,16 @@ for i in range(N):
     for j in range(N):
         for k in range(N):
             for l in range(N):
-                print(count, 'out of ', N ** 4)
+                print(count, "out of ", N ** 4)
                 count = count + 1
                 fi.floris.farm.flow_field.wake.velocity_model.ti_initial = ti_initial[i]
-                fi.floris.farm.flow_field.wake.velocity_model.ti_constant = ti_constant[j]
+                fi.floris.farm.flow_field.wake.velocity_model.ti_constant = ti_constant[
+                    j
+                ]
                 fi.floris.farm.flow_field.wake.velocity_model.ti_ai = ti_ai[k]
-                fi.floris.farm.flow_field.wake.velocity_model.ti_downstream = ti_downstream[l]
+                fi.floris.farm.flow_field.wake.velocity_model.ti_downstream = (
+                    ti_downstream[l]
+                )
 
                 # fi.reinitialize_flow_field(layout_array=(layout_x, layout_y),wind_direction=wind_direction)
                 fi.reinitialize_flow_field(turbulence_intensity=0.09)
@@ -79,11 +85,13 @@ for i in range(N):
                 power_opt = fi.get_farm_power()
                 SOWFA_opt_hi = 1000 * np.array([988.4, 1030.0, 1443.8, 1141.8])
                 GCH_opt_hi = fi.get_turbine_power()[1:]
-                gain_hi = 100. * (power_opt - power_initial) / power_initial
-                print('==========================================')
+                gain_hi = 100.0 * (power_opt - power_initial) / power_initial
+                print("==========================================")
                 print(ti_initial[i], ti_constant[j], ti_ai[k], ti_downstream[l])
-                print('Total Power Gain HI TI = %.1f%%' %
-                      (100. * (power_opt - power_initial) / power_initial))
+                print(
+                    "Total Power Gain HI TI = %.1f%%"
+                    % (100.0 * (power_opt - power_initial) / power_initial)
+                )
                 # print('==========================================')
 
                 # # =============================================================================
@@ -100,7 +108,7 @@ for i in range(N):
 
                 # Initial power output
                 power_initial = fi.get_farm_power()
-                SOWFA_base = 1000 * np.array([654.7, 764.8, 825., 819.8])
+                SOWFA_base = 1000 * np.array([654.7, 764.8, 825.0, 819.8])
                 GCH_base = fi.get_turbine_power()[1:]
 
                 # Perform optimization
@@ -112,33 +120,44 @@ for i in range(N):
                 SOWFA_opt = 1000 * np.array([929.8, 1083.5, 1425.5, 1105.1])
                 GCH_opt = fi.get_turbine_power()[1:]
                 # print('==========================================')
-                gain_low = 100. * (power_opt - power_initial) / power_initial
-                print('Total Power Gain Low TI = %.1f%%' %
-                      (100. * (power_opt - power_initial) / power_initial))
+                gain_low = 100.0 * (power_opt - power_initial) / power_initial
+                print(
+                    "Total Power Gain Low TI = %.1f%%"
+                    % (100.0 * (power_opt - power_initial) / power_initial)
+                )
                 # print('==========================================')
                 err = np.sum(
-                    (SOWFA_base - GCH_base) ** 2 + (SOWFA_opt - GCH_opt) ** 2 + (SOWFA_base_hi - GCH_base_hi) ** 2 + (
-                                SOWFA_opt_hi - GCH_opt_hi) ** 2) / (10 ** 3)
-                print('err = ', err, minErr)
+                    (SOWFA_base - GCH_base) ** 2
+                    + (SOWFA_opt - GCH_opt) ** 2
+                    + (SOWFA_base_hi - GCH_base_hi) ** 2
+                    + (SOWFA_opt_hi - GCH_opt_hi) ** 2
+                ) / (10 ** 3)
+                print("err = ", err, minErr)
                 if err < minErr:
                     minErr = err
-                    print('found min error: ', i, j, k, l)
+                    print("found min error: ", i, j, k, l)
                     opt_params[0] = i
                     opt_params[1] = j
                     opt_params[2] = k
                     opt_params[3] = l
 
-print('Optimal parameters:')
+print("Optimal parameters:")
 print(opt_params)
-print('ti_initial = ', ti_initial[int(opt_params[0])])
-print('ti_constant = ', ti_constant[int(opt_params[1])])
-print('ti_ai = ', ti_ai[int(opt_params[2])])
-print('ti_downstream = ', ti_downstream[int(opt_params[3])])
+print("ti_initial = ", ti_initial[int(opt_params[0])])
+print("ti_constant = ", ti_constant[int(opt_params[1])])
+print("ti_ai = ", ti_ai[int(opt_params[2])])
+print("ti_downstream = ", ti_downstream[int(opt_params[3])])
 
-fi.floris.farm.flow_field.wake.velocity_model.ti_initial = ti_initial[int(opt_params[0])]
-fi.floris.farm.flow_field.wake.velocity_model.ti_constant = ti_constant[int(opt_params[1])]
+fi.floris.farm.flow_field.wake.velocity_model.ti_initial = ti_initial[
+    int(opt_params[0])
+]
+fi.floris.farm.flow_field.wake.velocity_model.ti_constant = ti_constant[
+    int(opt_params[1])
+]
 fi.floris.farm.flow_field.wake.velocity_model.ti_ai = ti_ai[int(opt_params[2])]
-fi.floris.farm.flow_field.wake.velocity_model.ti_downstream = ti_downstream[int(opt_params[3])]
+fi.floris.farm.flow_field.wake.velocity_model.ti_downstream = ti_downstream[
+    int(opt_params[3])
+]
 
 # HI TI
 fi.reinitialize_flow_field(turbulence_intensity=0.09)
@@ -150,11 +169,13 @@ yaw_angles = [25, 25, 25, 0, 0]
 fi.reinitialize_flow_field()
 fi.calculate_wake(yaw_angles=yaw_angles)
 power_opt = fi.get_farm_power()
-gain_hi = 100. * (power_opt - power_initial) / power_initial
-print('==========================================')
+gain_hi = 100.0 * (power_opt - power_initial) / power_initial
+print("==========================================")
 print(ti_initial[i], ti_constant[j], ti_ai[k], ti_downstream[l])
-print('Total Power Gain HI TI = %.1f%%' %
-      (100. * (power_opt - power_initial) / power_initial))
+print(
+    "Total Power Gain HI TI = %.1f%%"
+    % (100.0 * (power_opt - power_initial) / power_initial)
+)
 # print('==========================================')
 
 # LOW TI
@@ -169,10 +190,8 @@ yaw_angles = [25, 25, 25, 0, 0]
 fi.reinitialize_flow_field()
 fi.calculate_wake(yaw_angles=yaw_angles)
 power_opt = fi.get_farm_power()
-gain_low = 100. * (power_opt - power_initial) / power_initial
-print('Total Power Gain Low TI = %.1f%%' %
-      (100. * (power_opt - power_initial) / power_initial))
-
-
-
-
+gain_low = 100.0 * (power_opt - power_initial) / power_initial
+print(
+    "Total Power Gain Low TI = %.1f%%"
+    % (100.0 * (power_opt - power_initial) / power_initial)
+)

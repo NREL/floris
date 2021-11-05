@@ -14,10 +14,11 @@
 
 
 import copy
+
 import numpy as np
 
-from .yaw_optimization_base import YawOptimization
 from .yaw_optimizer_scipy import YawOptimizationScipy
+from .yaw_optimization_base import YawOptimization
 
 
 class YawOptimizationSR(YawOptimization):
@@ -77,7 +78,7 @@ class YawOptimizationSR(YawOptimization):
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -199,9 +200,7 @@ class YawOptimizationSR(YawOptimization):
             # Confirm Ny_firstpass and Ny_secondpass are odd integers
             for Ny in opt_options["Ny_passes"]:
                 if (not isinstance(Ny, int)) or (Ny % 2 == 0):
-                    raise ValueError(
-                        "Ny_passes must contain exclusively odd integers"
-                    )
+                    raise ValueError("Ny_passes must contain exclusively odd integers")
 
         super().__init__(
             fi=fi,
@@ -254,9 +253,7 @@ class YawOptimizationSR(YawOptimization):
         turbines_ordered = np.argsort(layout_x_rot)
 
         # Remove turbines that need not be optimized
-        turbines_ordered = [
-            ti for ti in turbines_ordered if ti in self.turbs_to_opt
-        ]
+        turbines_ordered = [ti for ti in turbines_ordered if ti in self.turbs_to_opt]
 
         J_farm_opt = -1  # Initialize optimal solution
         yaw_angles_opt = np.array(self.yaw_angles_template, dtype=float)
@@ -349,9 +346,7 @@ class YawOptimizationSR(YawOptimization):
                 if (ub + yaw_grid_offsets[ti]) > self.bnds[ti][1]:
                     ub = self.bnds[ti][1] - yaw_grid_offsets[ti]
 
-                yaw_search_space[ti] = yaw_grid_offsets[ti] + np.linspace(
-                    lb, ub, Ny
-                )
+                yaw_search_space[ti] = yaw_grid_offsets[ti] + np.linspace(lb, ub, Ny)
 
             # Single pass through all turbines
             yaw_angles_opt = self._serial_refine_single_pass(yaw_search_space)
@@ -369,9 +364,7 @@ class YawOptimizationSR(YawOptimization):
             yaw_angles_opt = self._refine_solution(x0=yaw_angles_opt)
         else:
             # Without a refinement solver, do verify_solution ourselves
-            yaw_angles_opt = self._verify_solution(
-                yaw_angles_opt=yaw_angles_opt
-            )
+            yaw_angles_opt = self._verify_solution(yaw_angles_opt=yaw_angles_opt)
 
         return yaw_angles_opt
 
@@ -396,15 +389,11 @@ class YawOptimizationSR(YawOptimization):
             opt_yaw_angles = np.zeros(self.nturbs, dtype=float)
             for cl in self.clusters:
                 yopt_c = copy.deepcopy(self)
-                yopt_c.yaw_angles_baseline = np.array(
-                    self.yaw_angles_baseline
-                )[cl]
+                yopt_c.yaw_angles_baseline = np.array(self.yaw_angles_baseline)[cl]
                 yopt_c.turbine_weights = np.array(self.turbine_weights)[cl]
                 yopt_c.bnds = np.array(self.bnds)[cl]
                 yopt_c.x0 = np.array(self.x0)[cl]
-                yopt_c.fi.reinitialize_flow_field(
-                    layout_array=[xt[cl], yt[cl]]
-                )
+                yopt_c.fi.reinitialize_flow_field(layout_array=[xt[cl], yt[cl]])
                 opt_yaw_angles[cl] = yopt_c._optimize()
 
         return opt_yaw_angles

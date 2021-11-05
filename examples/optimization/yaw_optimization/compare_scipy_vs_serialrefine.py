@@ -14,15 +14,18 @@
 
 
 import os
+from time import perf_counter as timerpc
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from time import perf_counter as timerpc
-
 import floris.tools as wfct
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
+    YawOptimizationSR,
+)
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import (
+    YawOptimizationScipy,
+)
 
 
 def load_floris():
@@ -46,7 +49,7 @@ def load_optimizer_slsqp(fi):
         yaw_angles_baseline=np.zeros(num_turbs),  # Yaw angles for baseline case
         minimum_yaw_angle=0.0,  # Allowable yaw angles lower bound
         maximum_yaw_angle=25.0,  # Allowable yaw angles upper bound
-        opt_options = {
+        opt_options={
             "maxiter": 100,
             "disp": True,
             "iprint": 2,
@@ -68,12 +71,12 @@ def load_optimizer_sr(fi):
             "refine_solution": True,
             "refine_method": "SLSQP",
             "refine_options": {
-                'maxiter': 10,
-                'disp': True,
-                'iprint': 2,
-                'ftol': 1e-7,
-                'eps': 0.01
-            }
+                "maxiter": 10,
+                "disp": True,
+                "iprint": 2,
+                "ftol": 1e-7,
+                "eps": 0.01,
+            },
         },
         exclude_downstream_turbines=True,  # Exclude downstream turbines automatically
     )
@@ -95,12 +98,12 @@ if __name__ == "__main__":
     # all optimizations successfully. The power gain/optimization performance is
     # also tested.
     dict_out = dict()
-    for method in ['sr', 'slsqp']:
+    for method in ["sr", "slsqp"]:
         print("==========================================")
         print("Calculating optimal solutions using %s." % method.upper())
 
         # Load the right yaw optimizer object
-        if method == 'sr':
+        if method == "sr":
             yaw_opt = load_optimizer_sr(fi=fi)
         else:
             yaw_opt = load_optimizer_slsqp(fi=fi)
@@ -117,7 +120,7 @@ if __name__ == "__main__":
             yaw_opt.reinitialize_flow_field(
                 wind_direction=wd_array[i],
                 wind_speed=ws_array[i],
-                turbulence_intensity=ti_array[i]
+                turbulence_intensity=ti_array[i],
             )
             yaw_angles_opt = yaw_opt.optimize()
             end_time = timerpc()
@@ -126,7 +129,7 @@ if __name__ == "__main__":
             yaw_opt.fi.reinitialize_flow_field(
                 wind_direction=wd_array[i],
                 wind_speed=ws_array[i],
-                turbulence_intensity=ti_array[i]
+                turbulence_intensity=ti_array[i],
             )
 
             yaw_opt.fi.calculate_wake(np.zeros(num_turbs))
@@ -136,37 +139,37 @@ if __name__ == "__main__":
             gain_array[i] = 100.0 * (Popt - Pbl) / Pbl
             clock_time[i] = end_time - start_time
 
-        dict_out[method] = {'gain': gain_array, 'time': clock_time}
+        dict_out[method] = {"gain": gain_array, "time": clock_time}
 
     # Now print results
     print("==========================================")
     print("Total Power Gain = ")
     for i in range(len(wd_array)):
         wd = wd_array[i]
-        gain = dict_out['sr']['gain'][i]
+        gain = dict_out["sr"]["gain"][i]
         print("Case [%d]: wd = %.2f deg. Gain: %.3f %% [SR]" % (i, wd, gain))
 
-        gain = dict_out['slsqp']['gain'][i]
+        gain = dict_out["slsqp"]["gain"][i]
         print("Case [%d]: wd = %.2f deg. Gain: %.3f %% [SLSQP]" % (i, wd, gain))
         print(" ")
     print("==========================================")
 
     print("==========================================")
-    print("Total time spent: %.2f s [SR]" % np.sum(dict_out['sr']['time']))
-    print("Total time spent: %.2f s [SLSQP]" % np.sum(dict_out['slsqp']['time']))
+    print("Total time spent: %.2f s [SR]" % np.sum(dict_out["sr"]["time"]))
+    print("Total time spent: %.2f s [SLSQP]" % np.sum(dict_out["slsqp"]["time"]))
     print("==========================================")
 
     # And make plots
     fig, ax = plt.subplots(nrows=2, sharex=True)
-    ax[0].bar(x=wd_array - 5, height=dict_out['sr']['gain'], width=10, label='SR')
-    ax[0].bar(x=wd_array + 5, height=dict_out['slsqp']['gain'], width=10, label='SLSQP')
+    ax[0].bar(x=wd_array - 5, height=dict_out["sr"]["gain"], width=10, label="SR")
+    ax[0].bar(x=wd_array + 5, height=dict_out["slsqp"]["gain"], width=10, label="SLSQP")
     ax[0].set_xticks(wd_array)
     ax[0].set_ylabel("Power gain (%)")
     ax[0].set_xlabel("Wind direction (deg)")
     ax[0].legend()
 
-    ax[1].bar(x=wd_array - 5, height=dict_out['sr']['time'], width=10, label='SR')
-    ax[1].bar(x=wd_array + 5, height=dict_out['slsqp']['time'], width=10, label='SLSQP')
+    ax[1].bar(x=wd_array - 5, height=dict_out["sr"]["time"], width=10, label="SR")
+    ax[1].bar(x=wd_array + 5, height=dict_out["slsqp"]["time"], width=10, label="SLSQP")
     ax[1].set_xticks(wd_array)
     ax[1].set_ylabel("Computation time (s)")
     ax[1].set_xlabel("Wind direction (deg)")

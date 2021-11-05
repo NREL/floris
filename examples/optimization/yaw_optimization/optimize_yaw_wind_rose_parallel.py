@@ -14,14 +14,17 @@
 
 
 import os
+from time import perf_counter as timerpc
 
 import numpy as np
 
-from time import perf_counter as timerpc
-
 import floris.tools as wfct
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_wind_rose_mpi4py import YawOptimizationWindRoseParallel
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
+    YawOptimizationSR,
+)
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_wind_rose_mpi4py import (
+    YawOptimizationWindRoseParallel,
+)
 
 
 def load_floris():
@@ -65,7 +68,7 @@ if __name__ == "__main__":
         yaw_optimization_obj=load_optimizer(),
         wd_array=wd_array,
         ws_array=ws_array,
-        ti_array=ti_array
+        ti_array=ti_array,
     )
 
     # =============================================================================
@@ -84,7 +87,10 @@ if __name__ == "__main__":
         wd = df_opt.loc[i, "wd"]
         Pbl = df_opt.loc[i, "power_baseline_weighted"]
         Popt = df_opt.loc[i, "power_opt_weighted"]
-        print("Case [%d]: wd = %.2f deg. Gain: %.3f %%" % (i, wd, 100.0 * (Popt-Pbl)/Pbl))
+        print(
+            "Case [%d]: wd = %.2f deg. Gain: %.3f %%"
+            % (i, wd, 100.0 * (Popt - Pbl) / Pbl)
+        )
     print("==========================================")
 
     print("==========================================")

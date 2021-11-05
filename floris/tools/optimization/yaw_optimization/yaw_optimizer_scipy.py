@@ -14,6 +14,7 @@
 
 
 import copy
+
 import numpy as np
 from scipy.optimize import minimize
 
@@ -22,7 +23,7 @@ from .yaw_optimization_base import YawOptimization
 
 class YawOptimizationScipy(YawOptimization):
     """
-    YawOptimizationScipy is a subclass of 
+    YawOptimizationScipy is a subclass of
     :py:class:`floris.tools.optimization.general_library.YawOptimization` that is
     used to optimize the yaw angles of all turbines in a Floris Farm for a single
     set of inflow conditions using the SciPy optimize package.
@@ -85,7 +86,7 @@ class YawOptimizationScipy(YawOptimization):
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -221,7 +222,7 @@ class YawOptimizationScipy(YawOptimization):
         Calculate the optimization cost function for a predefined set of
         normalized turbine yaw angles. The cost function equals minus one
         times the weighted wind farm power. This weighted wind farm power may
-        or may not include uncertainty, as specified by the user. 
+        or may not include uncertainty, as specified by the user.
 
         Args:
             yaw_angles_normalized ([iteratible]): List or array-like with the
@@ -342,15 +343,11 @@ class YawOptimizationScipy(YawOptimization):
             opt_yaw_angles = np.zeros(self.nturbs, dtype=float)
             for cl in self.clusters:
                 yopt_c = copy.deepcopy(self)
-                yopt_c.yaw_angles_baseline = np.array(
-                    self.yaw_angles_baseline
-                )[cl]
+                yopt_c.yaw_angles_baseline = np.array(self.yaw_angles_baseline)[cl]
                 yopt_c.turbine_weights = np.array(self.turbine_weights)[cl]
                 yopt_c.bnds = np.array(self.bnds)[cl]
                 yopt_c.x0 = np.array(self.x0)[cl]
-                yopt_c.fi.reinitialize_flow_field(
-                    layout_array=[xt[cl], yt[cl]]
-                )
+                yopt_c.fi.reinitialize_flow_field(layout_array=[xt[cl], yt[cl]])
                 opt_yaw_angles[cl] = yopt_c._optimize()
 
         return opt_yaw_angles

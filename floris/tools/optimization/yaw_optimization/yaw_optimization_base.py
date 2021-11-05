@@ -16,10 +16,7 @@
 import numpy as np
 from scipy.stats import norm
 
-from .yaw_optimization_tools import (
-    cluster_turbines,
-    derive_downstream_turbines,
-)
+from .yaw_optimization_tools import cluster_turbines, derive_downstream_turbines
 
 
 class YawOptimization:
@@ -85,7 +82,7 @@ class YawOptimization:
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -220,9 +217,7 @@ class YawOptimization:
             minimum_yaw_angle ([float]): Minimum turbine yaw angle in degrees.
             maximum_yaw_angle ([float]): Maximum turbine yaw angle in degrees.
         """
-        self.bnds = [
-            (minimum_yaw_angle, maximum_yaw_angle) for _ in range(self.nturbs)
-        ]
+        self.bnds = [(minimum_yaw_angle, maximum_yaw_angle) for _ in range(self.nturbs)]
 
     def _reduce_control_variables(self):
         """
@@ -236,9 +231,7 @@ class YawOptimization:
         to be used in the optimization.
         """
         if self.bnds is not None:
-            self.turbs_to_opt, _ = np.where(
-                np.abs(np.diff(self.bnds)) >= 0.001
-            )
+            self.turbs_to_opt, _ = np.where(np.abs(np.diff(self.bnds)) >= 0.001)
         else:
             self.turbs_to_opt = np.array(range(self.nturbs), dtype=int)
 
@@ -410,7 +403,7 @@ class YawOptimization:
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -535,17 +528,11 @@ class YawOptimization:
 
         if bnds is not None:
             self.bnds = bnds
-            self.minimum_yaw_angle = np.min(
-                [bnds[i][0] for i in range(self.nturbs)]
-            )
-            self.maximum_yaw_angle = np.max(
-                [bnds[i][1] for i in range(self.nturbs)]
-            )
+            self.minimum_yaw_angle = np.min([bnds[i][0] for i in range(self.nturbs)])
+            self.maximum_yaw_angle = np.max([bnds[i][1] for i in range(self.nturbs)])
         else:
             if class_initialization:
-                self._set_opt_bounds(
-                    self.minimum_yaw_angle, self.maximum_yaw_angle
-                )
+                self._set_opt_bounds(self.minimum_yaw_angle, self.maximum_yaw_angle)
 
         if x0 is not None:
             self.x0 = x0
@@ -557,25 +544,17 @@ class YawOptimization:
                         self.x0[ti] = np.mean(self.bnds[ti])
 
         if any(
-            np.array(self.yaw_angles_baseline)
-            < np.array([b[0] for b in self.bnds])
+            np.array(self.yaw_angles_baseline) < np.array([b[0] for b in self.bnds])
         ):
             print("INFO: yaw_angles_baseline exceed lower bound constraints.")
         if any(
-            np.array(self.yaw_angles_baseline)
-            > np.array([b[1] for b in self.bnds])
+            np.array(self.yaw_angles_baseline) > np.array([b[1] for b in self.bnds])
         ):
-            print(
-                "INFO: yaw_angles_baseline in FLORIS exceed upper bound constraints."
-            )
+            print("INFO: yaw_angles_baseline in FLORIS exceed upper bound constraints.")
         if any(np.array(self.x0) < np.array([b[0] for b in self.bnds])):
-            raise ValueError(
-                "Initial guess x0 exceeds lower bound constraints."
-            )
+            raise ValueError("Initial guess x0 exceeds lower bound constraints.")
         if any(np.array(self.x0) > np.array([b[1] for b in self.bnds])):
-            raise ValueError(
-                "Initial guess x0 exceeds upper bound constraints."
-            )
+            raise ValueError("Initial guess x0 exceeds upper bound constraints.")
 
         if include_unc is not None:
             self.include_unc = include_unc
@@ -631,9 +610,7 @@ class YawOptimization:
                     yaw_bnd * self.unc_options["pmf_res"],
                     2 * yaw_bnd + 1,
                 )
-                yaw_unc_pmf = norm.pdf(
-                    yaw_unc, scale=self.unc_options["std_yaw"]
-                )
+                yaw_unc_pmf = norm.pdf(yaw_unc, scale=self.unc_options["std_yaw"])
                 # normalize so sum = 1.0
                 yaw_unc_pmf = yaw_unc_pmf / np.sum(yaw_unc_pmf)
             else:
@@ -748,9 +725,7 @@ class YawOptimization:
             yaw_angles_opt_full = np.array(self.yaw_angles_baseline)
             yaw_angles_opt_full[self.turbs_to_opt] = yaw_angles_opt
 
-        yaw_angles_baseline = np.array(
-            self.yaw_angles_baseline, dtype=float, copy=True
-        )
+        yaw_angles_baseline = np.array(self.yaw_angles_baseline, dtype=float, copy=True)
 
         # Preventative rounding of tiny values, do not print anything.
         yaw_diff = np.abs(yaw_angles_opt_full - yaw_angles_baseline)
@@ -760,9 +735,7 @@ class YawOptimization:
         # Preventative rounding of larger yet small nonzero yaw angles,
         # as specified by the user.
         yaw_diff = np.abs(yaw_angles_opt_full - yaw_angles_baseline)
-        turbs_below_offset = np.where(
-            (yaw_diff < min_yaw_offset) & (yaw_diff > 0.0)
-        )[0]
+        turbs_below_offset = np.where((yaw_diff < min_yaw_offset) & (yaw_diff > 0.0))[0]
         n = len(turbs_below_offset)
         if n > 0:
             yo = yaw_angles_opt_full[turbs_below_offset]
@@ -780,9 +753,7 @@ class YawOptimization:
 
         # Turbines to test
         turbs_to_check = [
-            t
-            for t in self.turbs_to_opt
-            if (np.abs(x_opt[t]) >= min_yaw_offset)
+            t for t in self.turbs_to_opt if (np.abs(x_opt[t]) >= min_yaw_offset)
         ]
 
         # Calculate power production under setting values to its baseline value.
@@ -799,9 +770,7 @@ class YawOptimization:
                     print(
                         "Baseline value {:.2f} for turbine {} ".format(xn, ti)
                         + "yields {:.3e}% more farm ".format(100.0 * gain)
-                        + "power than user-provided value of {:.2f}.".format(
-                            xo
-                        )
+                        + "power than user-provided value of {:.2f}.".format(xo)
                     )
                 x_opt[ti] = yaw_angles_baseline[ti]
             elif (power_opt / power_test - 1) < (min_power_gain_for_yaw / 100):

@@ -13,13 +13,12 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import multiprocessing as mp
+
 import numpy as np
 import pandas as pd
 
-import multiprocessing as mp
-
 from .yaw_optimizer_wind_rose_serial import YawOptimizationWindRose
-
 
 
 class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
@@ -40,7 +39,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         ws_array,
         ti_array=None,
         num_processes=None,
-        verbose=True
+        verbose=True,
     ):
         """
         Instantiate YawOptimizationWindRoseParallel object with a yaw optimization
@@ -71,15 +70,14 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             wd_array=wd_array,
             ws_array=ws_array,
             ti_array=ti_array,
-            verbose=verbose
+            verbose=verbose,
         )
 
         if num_processes is None:
             num_processes = mp.cpu_count()
             print("Using %d cores for parallel processing." % num_processes)
-        
-        self.num_processes = num_processes
 
+        self.num_processes = num_processes
 
     # Public methods
 
@@ -122,7 +120,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         """
 
         print("=====================================================")
-        print("Optimizing wake redirection control in parallel using multiprocessing...")
+        print(
+            "Optimizing wake redirection control in parallel using multiprocessing..."
+        )
         print("Number of wind conditions to optimize = ", len(self.wd_array))
         print("=====================================================")
 
@@ -136,7 +136,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             ws = self.ws_array[i]
             ti = self.ti_array[i]
             args.append([wd, ws, ti])
-            
+
         with mp.Pool(self.num_processes) as p:
             df_list = p.starmap(self._optimize_one_case, args)
 

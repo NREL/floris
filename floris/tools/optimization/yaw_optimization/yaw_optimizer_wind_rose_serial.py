@@ -28,12 +28,7 @@ class YawOptimizationWindRose:
     """
 
     def __init__(
-        self,
-        yaw_optimization_obj,
-        wd_array,
-        ws_array,
-        ti_array=None,
-        verbose=True
+        self, yaw_optimization_obj, wd_array, ws_array, ti_array=None, verbose=True
     ):
         """
         Instantiate YawOptimizationWindRose object with a yaw optimization
@@ -64,7 +59,7 @@ class YawOptimizationWindRose:
             self.ti_array = np.ones_like(wd_array) * ti_ambient
         else:
             self.ti_array = ti_array
-        
+
         self.verbose = verbose
 
     # Public methods
@@ -75,7 +70,7 @@ class YawOptimizationWindRose:
         for wd in self.wd_array:
             self.yaw_opt.reinitialize_flow_field(wind_direction=wd)
             self.yaw_opt.plot_clusters()
-        
+
         # Restore initial wind directions
         self.yaw_opt.reinitialize_flow_field(wind_direction=wds_init)
 
@@ -128,7 +123,7 @@ class YawOptimizationWindRose:
                 "yaw_angles": [opt_yaw_angles],
             }
         )
-            
+
     def optimize(self):
         """
         This method solves for the optimum turbine yaw angles for power

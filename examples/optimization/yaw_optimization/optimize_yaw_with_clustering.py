@@ -1,12 +1,13 @@
 import os
+from time import perf_counter as timerpc
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from time import perf_counter as timerpc
-
 import floris.tools as wfct
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
+    YawOptimizationSR,
+)
 
 
 def load_floris():
@@ -14,10 +15,40 @@ def load_floris():
     fi = wfct.floris_interface.FlorisInterface(
         os.path.join(file_dir, "../../example_input.json")
     )
-    layout_x = [1512., 1890., 2646.,    0.,  378., 3402.,  378.,  882.,
-                1134., 2394., 2646., 2268.,  504., 2898.,  756.]
-    layout_y = [3024., 3024., 1512., 3276.,  126.,  756.,  882., 2898.,
-                1764., 3024., 2142.,  630., 3150., 1638., 1008.]
+    layout_x = [
+        1512.0,
+        1890.0,
+        2646.0,
+        0.0,
+        378.0,
+        3402.0,
+        378.0,
+        882.0,
+        1134.0,
+        2394.0,
+        2646.0,
+        2268.0,
+        504.0,
+        2898.0,
+        756.0,
+    ]
+    layout_y = [
+        3024.0,
+        3024.0,
+        1512.0,
+        3276.0,
+        126.0,
+        756.0,
+        882.0,
+        2898.0,
+        1764.0,
+        3024.0,
+        2142.0,
+        630.0,
+        3150.0,
+        1638.0,
+        1008.0,
+    ]
     fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
     return fi
 
@@ -77,8 +108,8 @@ if __name__ == "__main__":
         maximum_yaw_angle=20.0,  # Upper bound for the yaw angle for all turbines
         include_unc=False,  # No wind direction variability in floris simulations
         exclude_downstream_turbines=True,  # Exclude downstream turbines automatically
-        cluster_turbines=True, # With clustering
-        cluster_wake_slope=0.30
+        cluster_turbines=True,  # With clustering
+        cluster_wake_slope=0.30,
     )
     yaw_angles_clust = yaw_opt.optimize()  # Perform optimization
     end_time_clust = timerpc()
@@ -96,10 +127,12 @@ if __name__ == "__main__":
 
     print("==========================================")
     print(
-        "Total Power Gain (full farm)= %.3f%%" % (100.0 * (power_opt_full - power_initial) / power_initial)
+        "Total Power Gain (full farm)= %.3f%%"
+        % (100.0 * (power_opt_full - power_initial) / power_initial)
     )
     print(
-        "Total Power Gain (clustered)= %.3f%%" % (100.0 * (power_opt_clust - power_initial) / power_initial)
+        "Total Power Gain (clustered)= %.3f%%"
+        % (100.0 * (power_opt_clust - power_initial) / power_initial)
     )
     print("==========================================")
 
@@ -112,5 +145,7 @@ if __name__ == "__main__":
     print("Plotting the FLORIS flowfield with yaw angles from cluster optimization...")
     # =============================================================================
     fig, ax = plot_hor_slice(fi)
-    ax.set_title("Optimal Wake Steering (clustered) for U = 8 m/s, Wind Direction = 270$^\\circ$")
+    ax.set_title(
+        "Optimal Wake Steering (clustered) for U = 8 m/s, Wind Direction = 270$^\\circ$"
+    )
     plt.show()

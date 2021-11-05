@@ -19,7 +19,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import floris.tools as wfct
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
+    YawOptimizationSR,
+)
 
 
 def load_floris():
@@ -90,7 +92,8 @@ if __name__ == "__main__":
 
     print("==========================================")
     print(
-        "Total Power Gain = %.1f%%" % (100.0 * (power_opt - power_initial) / power_initial)
+        "Total Power Gain = %.1f%%"
+        % (100.0 * (power_opt - power_initial) / power_initial)
     )
     print("==========================================")
     # =============================================================================

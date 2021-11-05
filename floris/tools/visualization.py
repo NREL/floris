@@ -179,24 +179,24 @@ def visualize_quiver(
     cut_plane, ax=None, minSpeed=None, maxSpeed=None, downSamp=1, **kwargs
 ):
     """
-        Visualize the in-plane flows in a cut_plane using quiver.
+    Visualize the in-plane flows in a cut_plane using quiver.
 
-        Args:
-            cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
-                plane through wind plant.
-            ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
-                to None.
-            minSpeed (float, optional): Minimum value of wind speed for
-                contours. Defaults to None.
-            maxSpeed (float, optional): Maximum value of wind speed for
-                contours. Defaults to None.
-            downSamp (int, optional): Down sample the number of quiver arrows
-                from underlying grid.
-            **kwargs: Additional parameters to pass to `ax.streamplot`.
+    Args:
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
+            plane through wind plant.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
+            to None.
+        minSpeed (float, optional): Minimum value of wind speed for
+            contours. Defaults to None.
+        maxSpeed (float, optional): Maximum value of wind speed for
+            contours. Defaults to None.
+        downSamp (int, optional): Down sample the number of quiver arrows
+            from underlying grid.
+        **kwargs: Additional parameters to pass to `ax.streamplot`.
 
-        Returns:
-            im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
-        """
+    Returns:
+        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
+    """
     if not ax:
         fig, ax = plt.subplots()
 

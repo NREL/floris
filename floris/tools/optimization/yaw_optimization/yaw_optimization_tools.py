@@ -122,8 +122,8 @@ def cluster_turbines(fi, wind_direction=None, wake_slope=0.30, plot_lines=False)
         )
         # Determine which turbines are affected by this turbine ('ii')
         affecting_following_turbs = [
-                determine_if_in_wake(x_rot_srt[iii], y_rot_srt[iii])
-                for iii in range(n_turbs)
+            determine_if_in_wake(x_rot_srt[iii], y_rot_srt[iii])
+            for iii in range(n_turbs)
         ]
 
         # Determine by which turbines this turbine ('ii') is affected
@@ -181,7 +181,7 @@ def cluster_turbines(fi, wind_direction=None, wake_slope=0.30, plot_lines=False)
         ax.set_xlim([np.min(x_rot) - 500.0, x1])
         ax.set_ylim([np.min(y_rot) - 500.0, np.max(y_rot) + 500.0])
         for ci, cl in enumerate(clusters):
-            ax.plot(x_rot[cl], y_rot[cl], 'o', label='cluster %d' % ci)
+            ax.plot(x_rot[cl], y_rot[cl], "o", label="cluster %d" % ci)
         ax.legend()
 
     return clusters
@@ -307,7 +307,10 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=F
         ax.set_xlim([np.min(x_rot) - 500.0, x1])
         ax.set_ylim([np.min(y_rot) - 500.0, np.max(y_rot) + 500.0])
         ax.plot(
-            x_rot[turbs_downstream], y_rot[turbs_downstream], "o", color="green",
+            x_rot[turbs_downstream],
+            y_rot[turbs_downstream],
+            "o",
+            color="green",
         )
 
     return turbs_downstream
