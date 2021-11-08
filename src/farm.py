@@ -219,3 +219,7 @@ class Farm(FromDictMixin):
             return np.argsort(self.layout_y)
         else:
             raise ValueError("`by` must be set to one of 'x' or 'y'!")
+
+    @property
+    def n_turbines(self):
+        return len(self.layout_x)
