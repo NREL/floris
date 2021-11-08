@@ -28,7 +28,14 @@ class YawOptimizationWindRose:
     """
 
     def __init__(
-        self, yaw_optimization_obj, wd_array, ws_array, ti_array=None, verbose=True
+        self,
+        yaw_optimization_obj,
+        wd_array,
+        ws_array,
+        ti_array=None,
+        minimum_ws=0.0,
+        maximum_ws=25.0,
+        verbose=True,
     ):
         """
         Instantiate YawOptimizationWindRose object with a yaw optimization
@@ -47,6 +54,14 @@ class YawOptimizationWindRose:
                 values for which the yaw angles are optimized. If not
                 specified, the current TI value in the Floris object will be
                 used for all optimizations. Defaults to None.
+            minimum_ws (float, optional): Lower bound on the wind speed for which
+                yaw angles are to be optimized. If the ambient wind speed is below
+                this value, the optimal yaw angles will default to the baseline
+                yaw angles. If None is specified, defaults to 0.0 (m/s).
+            maximum_ws (float, optional): Upper bound on the wind speed for which
+                yaw angles are to be optimized. If the ambient wind speed is above
+                this value, the optimal yaw angles will default to the baseline
+                yaw angles. If None is specified, defaults to 25.0 (m/s).
             verbose (bool, optional): If True, print progress and information about
                 the optimization. Useful for debugging. Defaults to True.
         """
@@ -55,10 +70,15 @@ class YawOptimizationWindRose:
         self.wd_array = wd_array
         self.ws_array = ws_array
         if ti_array is None:
-            ti_ambient = np.min(self.yaw_opt.fi.floris.farm.turbulence_intensity)
+            ti_ambient = np.min(
+                self.yaw_opt.fi.floris.farm.turbulence_intensity
+            )
             self.ti_array = np.ones_like(wd_array) * ti_ambient
         else:
             self.ti_array = ti_array
+
+        self.minimum_ws = minimum_ws
+        self.maximum_ws = maximum_ws
 
         self.verbose = verbose
 
@@ -85,14 +105,18 @@ class YawOptimizationWindRose:
 
         # Optimizing wake redirection control
         self.yaw_opt.reinitialize_flow_field(
-            wind_direction=[wd],
-            wind_speed=[ws],
-            turbulence_intensity=[ti],
+            wind_direction=[wd], wind_speed=[ws], turbulence_intensity=[ti]
         )
-        opt_yaw_angles = self.yaw_opt.optimize()
+        if ((ws >= self.minimum_ws) and (ws <= self.maximum_ws)):
+            opt_yaw_angles = self.yaw_opt.optimize()
+        else:
+            print("   Skipping optimization: outside of wind speed bounds.")
+            opt_yaw_angles = self.yaw_opt.yaw_angles_baseline
 
         # Calculate baseline power
-        self.yaw_opt.fi.calculate_wake(yaw_angles=self.yaw_opt.yaw_angles_baseline)
+        self.yaw_opt.fi.calculate_wake(
+            yaw_angles=self.yaw_opt.yaw_angles_baseline
+        )
         power_turbs_base = self.yaw_opt.fi.get_turbine_power(
             include_unc=self.yaw_opt.include_unc,
             unc_pmfs=self.yaw_opt.unc_pmfs,
@@ -175,15 +199,10 @@ class YawOptimizationWindRose:
             wd = self.wd_array[i]
             ws = self.ws_array[i]
             ti = self.ti_array[i]
-            if self.verbose:
-                print(
-                    "Computing wind speed, wind direction, turbulence "
-                    + "intensity set %d out of %d;" % (i + 1, len(self.wd_array))
-                )
 
             # Optimize case and append to df_opt dataframe
             df_i = self._optimize_one_case(wd=wd, ws=ws, ti=ti)
             df_opt = df_opt.append(df_i)
 
-        df_opt.reset_index(drop=True, inplace=True)
+        df_opt = df_opt.reset_index(drop=True)
         return df_opt

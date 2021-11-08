@@ -31,7 +31,14 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
     """
 
     def __init__(
-        self, yaw_optimization_obj, wd_array, ws_array, ti_array=None, verbose=True
+        self,
+        yaw_optimization_obj,
+        wd_array,
+        ws_array,
+        ti_array=None,
+        minimum_ws=0.0,
+        maximum_ws=25.0,
+        verbose=True,
     ):
         """
         Instantiate YawOptimizationWindRoseParallel object with a yaw optimization
@@ -50,6 +57,14 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                 values for which the yaw angles are optimized. If not
                 specified, the current TI value in the Floris object will be
                 used for all optimizations. Defaults to None.
+            minimum_ws (float, optional): Lower bound on the wind speed for which
+                yaw angles are to be optimized. If the ambient wind speed is below
+                this value, the optimal yaw angles will default to the baseline
+                yaw angles. If None is specified, defaults to 0.0 (m/s).
+            maximum_ws (float, optional): Upper bound on the wind speed for which
+                yaw angles are to be optimized. If the ambient wind speed is above
+                this value, the optimal yaw angles will default to the baseline
+                yaw angles. If None is specified, defaults to 25.0 (m/s).
             verbose (bool, optional): If True, print progress and information about
                 the optimization. Useful for debugging. Defaults to True.
         """
@@ -59,6 +74,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             wd_array=wd_array,
             ws_array=ws_array,
             ti_array=ti_array,
+            minimum_ws=minimum_ws,
+            maximum_ws=maximum_ws,
             verbose=verbose,
         )
 
@@ -131,5 +148,5 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             ):
                 df_opt = df_opt.append(df_one_case)
 
-        df_opt.reset_index(drop=True, inplace=True)
+        df_opt = df_opt.reset_index(drop=True)
         return df_opt
