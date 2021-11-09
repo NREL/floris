@@ -15,7 +15,6 @@
 
 import multiprocessing as mp
 
-import numpy as np
 import pandas as pd
 
 from .yaw_optimizer_wind_rose_serial import YawOptimizationWindRose
@@ -38,6 +37,8 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
         wd_array,
         ws_array,
         ti_array=None,
+        minimum_ws=0.0,
+        maximum_ws=25.0,
         num_processes=None,
         verbose=True,
     ):
@@ -58,6 +59,14 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
                 values for which the yaw angles are optimized. If not
                 specified, the current TI value in the Floris object will be
                 used for all optimizations. Defaults to None.
+            minimum_ws (float, optional): Lower bound on the wind speed for which
+                yaw angles are to be optimized. If the ambient wind speed is below
+                this value, the optimal yaw angles will default to the baseline
+                yaw angles. If None is specified, defaults to 0.0 (m/s).
+            maximum_ws (float, optional): Upper bound on the wind speed for which
+                yaw angles are to be optimized. If the ambient wind speed is above
+                this value, the optimal yaw angles will default to the baseline
+                yaw angles. If None is specified, defaults to 25.0 (m/s).
             num_processes (int, optional): Number of processes to use in the
                 multiprocessing pool. If None specified, automatically determines the
                 number of cores available on your system. Defaults to None.
@@ -70,7 +79,9 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             wd_array=wd_array,
             ws_array=ws_array,
             ti_array=ti_array,
-            verbose=verbose,
+            minimum_ws=minimum_ws,
+            maximum_ws=maximum_ws,
+            verbose=verbose
         )
 
         if num_processes is None:
@@ -141,5 +152,5 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose):
             df_list = p.starmap(self._optimize_one_case, args)
 
         df_opt = pd.concat(df_list, ignore_index=True)
-        df_opt.reset_index(drop=True, inplace=True)
+        df_opt = df_opt.reset_index(drop=True)
         return df_opt
