@@ -62,9 +62,9 @@ class JimenezVelocityDeflection(BaseClass):
     def function(
         self,
         i: int,
-        Ct: np.ndarray,  # (n wind speeds, n turbines)
+        Ct: np.ndarray,
         *,
-        x: np.ndarray,  # (n_wind_speeds, n turbines, n grid, n grid)
+        x: np.ndarray,
         reference_rotor_diameter: float,
         yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
     ):

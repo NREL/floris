@@ -53,16 +53,8 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
 
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture):
-    n_turbines = len(sample_inputs_fixture.farm["layout_x"])
-    turbine_coordinates = []
-    for i in range(n_turbines):
-        turbine_coordinates.append(
-            Vec3([
-                sample_inputs_fixture.farm["layout_x"][i],
-                sample_inputs_fixture.farm["layout_y"][i],
-                0.0
-            ])
-        )
+    turbine_coordinates = list(zip(X_COORDS, Y_COORDS, Z_COORDS))
+    turbine_coordinates = [Vec3(c) for c in turbine_coordinates]
     return FlowFieldGrid(
         turbine_coordinates,
         sample_inputs_fixture.turbine["rotor_diameter"],

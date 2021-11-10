@@ -14,7 +14,6 @@
 
 
 import json
-import pickle
 
 import src.logging_manager as logging_manager
 

@@ -25,7 +25,6 @@ class FlowField:
         self.wind_speeds = np.array(input_dictionary["wind_speeds"])
         self.wind_directions = np.array(input_dictionary["wind_directions"])
         self.reference_wind_height = input_dictionary["reference_wind_height"]
-        self.reference_turbine_diameter = input_dictionary["reference_turbine_diameter"]
         self.air_density = input_dictionary["air_density"]
 
     def initialize_velocity_field(self, grid: Grid) -> None:

@@ -12,7 +12,6 @@ class Grid(ABC):
         self,
         turbine_coordinates: List[Vec3],
         reference_turbine_diameter: float,
-        reference_wind_height: float,
         grid_resolution: int,
     ) -> None:
         """
@@ -28,7 +27,6 @@ class Grid(ABC):
         """
         self.turbine_coordinates: List[Vec3] = turbine_coordinates
         self.reference_turbine_diameter: float = reference_turbine_diameter
-        self.reference_wind_height: float = reference_wind_height
         self.grid_resolution: int = grid_resolution
         # x are the locations in space in the primary direction (typically the direction of the wind)
         # y are the locations in space in the lateral direction
@@ -104,15 +102,15 @@ class TurbineGrid(Grid):
         self,
         turbine_coordinates: List[Vec3],
         reference_turbine_diameter: float,
-        reference_wind_height: float,
         grid_resolution: int,
     ) -> None:
         # establishes a data structure with grid on each turbine
         # the x,y,z points here are the grid points on the turbine swept area
+        # TODO: should reference_turbine_diameter be here or in Farm? currently in both.
+        #       Both may be fine, they could be different maybe.
         super().__init__(
             turbine_coordinates,
             reference_turbine_diameter,
-            reference_wind_height,
             grid_resolution,
         )
         self.set_grid()
@@ -219,7 +217,6 @@ class FlowFieldGrid(Grid):
         super().__init__(
             turbine_coordinates,
             reference_turbine_diameter,
-            reference_wind_height,
             grid_resolution,
         )
 

@@ -28,10 +28,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField) -> None:
     velocity_deficit = np.zeros_like(flow_field.u_initial)
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
-    for i in range(grid.n_turbines - 1):
+    for i in range(grid.n_turbines):
 
         u = flow_field.u_initial - velocity_deficit
-        u[:, :, i + 1 :, :, :] = 0  # TODO: explain
+        u[:, :, i+1:, :, :] = 0  # TODO: explain
 
         thrust_coefficient = Ct(
             velocities=u,

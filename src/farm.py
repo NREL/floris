@@ -212,6 +212,8 @@ class Farm(FromDictMixin):
             np.ndarray: The index order for retrieving data from `data_array` or any
                 other farm object.
         """
+        # TODO: This should live on the Grid since that's where the
+        # rotated coordinates are stored
 
         if by == "x":
             return np.argsort(self.layout_x)
@@ -223,3 +225,7 @@ class Farm(FromDictMixin):
     @property
     def n_turbines(self):
         return len(self.layout_x)
+
+    @property
+    def reference_turbine_diameter(self):
+        return self.rotor_diameter[0, 0, 0]
