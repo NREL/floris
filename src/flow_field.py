@@ -46,6 +46,22 @@ class FlowField:
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
 
+    def finalize(self, unsorted_indeces):
+        n_wind_directions = np.shape(self.u)[0]
+        n_turbines = np.shape(self.u)[2]
+
+        _u = np.zeros_like(self.u)
+        _v = np.zeros_like(self.v)
+        _w = np.zeros_like(self.w)
+        for i in range(n_wind_directions):
+            for j in range(n_turbines):
+                _u[i, :, j] = self.u[i, :, unsorted_indeces[i, j]]
+                _v[i, :, j] = self.v[i, :, unsorted_indeces[i, j]]
+                _w[i, :, j] = self.w[i, :, unsorted_indeces[i, j]]
+        self.u = _u
+        self.v = _v
+        self.w = _w
+
     @property
     def n_wind_speeds(self) -> int:
         return len(self.wind_speeds)

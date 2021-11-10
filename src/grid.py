@@ -202,6 +202,22 @@ class TurbineGrid(Grid):
                 self.y[i, :, j] = _y[i, :, self.sorted_indeces[i, j]]
                 self.z[i, :, j] = _z[i, :, self.sorted_indeces[i, j]]
 
+    def finalize(self):
+        n_wind_directions = np.shape(self.x)[0]
+        n_turbines = np.shape(self.x)[2]
+
+        _x = np.zeros_like(self.x)
+        _y = np.zeros_like(self.y)
+        _z = np.zeros_like(self.z)
+        for i in range(n_wind_directions):
+            for j in range(n_turbines):
+                _x[i, :, j] = self.x[i, :, self.unsorted_indeces[i, j]]
+                _y[i, :, j] = self.x[i, :, self.unsorted_indeces[i, j]]
+                _z[i, :, j] = self.x[i, :, self.unsorted_indeces[i, j]]
+        self.x = _x
+        self.y = _y
+        self.z = _z
+
 class FlowFieldGrid(Grid):
     """
     Primarily used by the Curl model and for visualization
