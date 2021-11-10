@@ -102,6 +102,8 @@ class TurbineGrid(Grid):
         self,
         turbine_coordinates: List[Vec3],
         reference_turbine_diameter: float,
+        wind_directions: np.array,
+        wind_speeds: np.array,
         grid_resolution: int,
     ) -> None:
         # establishes a data structure with grid on each turbine
@@ -113,21 +115,23 @@ class TurbineGrid(Grid):
             reference_turbine_diameter,
             grid_resolution,
         )
-        self.set_grid()
+        self.set_grid(wind_directions, wind_speeds)
 
-    def set_grid(self) -> None:
+    def set_grid(self, wind_directions, wind_speeds) -> None:
         """
         Create grid points at each turbine for each wind direction and wind speed in the simulation.
         This creates the underlying data structure for the calculation.
 
-        arrays have shape (n turbines, m grid spanwise, m grid vertically)
-        - dimension 1: each turbine
-        - dimension 2: number of points in the spanwise direction (ngrid)
-        - dimension 3: number of points in the vertical dimension (ngrid)
+        arrays have shape (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)
+        - dimension 1: each wind direction
+        - dimension 2: each wind speed
+        - dimension 3: each turbine
+        - dimension 4: number of points in the spanwise direction (ngrid)
+        - dimension 5: number of points in the vertical dimension (ngrid)
 
         For example
-        - x is [n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
-        - y is [n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]
+        - x is [n wind direction, n wind speeds, n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
+        - y is [n wind direction, n wind speeds, n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]
 
         The x,y,z arrays contain the actual locations in that direction.
 
@@ -135,69 +139,68 @@ class TurbineGrid(Grid):
         #             of points to use on the turbine grid. This number will be
         #             squared so that the points can be evenly distributed.
         #             Defaults to 5.
+
+        If the grid conforms to the sequential solver interface, it must be sorted from upstream to downstream
         """
         # TODO: Where should we locate the coordinate system? Currently, its at
         # the foot of the turbine where the tower meets the ground.
 
         n_turbines = len(self.turbine_coordinates)
+        n_wind_directions = len(wind_directions)
+        n_wind_speeds = len(wind_speeds)
 
-        # vector of size [1 x n_turbines]
-        x_coordinates = np.expand_dims(np.array([c.x1 for c in self.turbine_coordinates]), axis=0)
-        # y_coordinates = np.expand_dims(
-        #     np.array([c.x2 for c in self.turbine_coordinates]), axis=0
-        # )
-        # z_coordinates = np.expand_dims(
-        #     np.array([c.x3 for c in self.turbine_coordinates]), axis=0
-        # )
+        wind_deviation_from_west = -1 * ((wind_directions - 270) % 360 + 360) % 360
+        wind_deviation_from_west = np.reshape(wind_deviation_from_west, (n_wind_directions, 1, 1) )
+
+        x_coordinates = np.array([c.x1 for c in self.turbine_coordinates])
+        y_coordinates = np.array([c.x2 for c in self.turbine_coordinates])
+        z_coordinates = np.array([c.x3 for c in self.turbine_coordinates])
+        x_coordinates = x_coordinates[None, None, :]
+        y_coordinates = y_coordinates[None, None, :]
+        z_coordinates = z_coordinates[None, None, :]
+
+        # Find center of rotation
+        x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
+        y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+
+        # Rotate turbine coordinates
+        x_coord_offset = x_coordinates - x_center_of_rotation
+        y_coord_offset = y_coordinates - y_center_of_rotation
+        x_coord_rotated = x_coord_offset * cosd(wind_deviation_from_west) - y_coord_offset * sind(wind_deviation_from_west) + x_center_of_rotation
+        y_coord_rotated = x_coord_offset * sind(wind_deviation_from_west) + y_coord_offset * cosd(wind_deviation_from_west) + y_center_of_rotation
+
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
         #         the rotor radius.
         #         Defaults to 0.5.
+
+        # Create the data for the turbine grids
         radius_ratio = 0.5
         disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
-        template_grid = np.ones((n_turbines, self.grid_resolution * self.grid_resolution))
+        template_grid = np.ones((n_wind_directions, n_wind_speeds, n_turbines, self.grid_resolution, self.grid_resolution))
 
         # Calculate the radial distance from the center of the turbine rotor
         disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution)
+        template_rotor = template_grid * ( disc_grid * np.ones((5,5)) )
 
-        # Create the data for the turbine grids
-        self.x = np.reshape(
-            x_coordinates.T * template_grid,
-            (n_turbines, self.grid_resolution, self.grid_resolution),
-        )
-        # TODO: ?initialize with correct number of dimensions and then expand them as needed later
-        self.y = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
-        self.z = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
+        _x = x_coord_rotated[:, :, :, None, None] * template_grid
+        _y = y_coord_rotated[:, :, :, None, None] + template_rotor
+        _z = z_coordinates[:, :, :, None, None] + template_rotor
 
-        for i, coord in enumerate(self.turbine_coordinates):
-            #     # Save the indices of the flow field points for this turbine
-            #     # Create the grids
-            #     x_grid[i] = coord.x1
-            self.y[i] = coord.x2 + disc_grid
-            self.z[i] = coord.x3 + disc_grid
-            # self.y[:, :, i] = coord.x2 + disc_grid
-            # self.z[:, :, i] = coord.x3 + disc_grid
+        # Get the sorted indeces for the x coordinates. These are the indeces
+        # to sort the turbines from upstream to downstream for all wind directions
+        self.sorted_indeces = np.array([np.argsort(_x[i, 0, :, 0, 0]) for i in range(n_wind_directions)])
+        self.unsorted_indeces = np.array([np.argsort(self.sorted_indeces[i]) for i in range(n_wind_directions)])
 
-    def expand_atmospheric_conditions(self, n_wind_directions, n_wind_speeds):
-        # Add dimension for wind direction and wind speed
-        # self.x = np.resize(self.x, (n_wind_speeds, *self.x.shape))
-        # self.y = np.resize(self.x, (n_wind_speeds, *self.x.shape))
-        # self.z = np.resize(self.x, (n_wind_speeds, *self.x.shape))
-        # TODO: there's got to be a better way...
-
-        tmpx = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.x)))
-        tmpx[:, :] = self.x
-        self.x = tmpx
-
-        tmpy = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.y)))
-        tmpy[:, :] = self.y
-        self.y = tmpy
-
-        tmpz = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.z)))
-        tmpz[:, :] = self.z
-        self.z = tmpz
-
+        self.x = np.zeros_like(_x)
+        self.y = np.zeros_like(_y)
+        self.z = np.zeros_like(_z)
+        for i in range(n_wind_directions):
+            for j in range(n_turbines):
+                self.x[i, :, j] = _x[i, :, self.sorted_indeces[i, j]]
+                self.y[i, :, j] = _y[i, :, self.sorted_indeces[i, j]]
+                self.z[i, :, j] = _z[i, :, self.sorted_indeces[i, j]]
 
 class FlowFieldGrid(Grid):
     """
