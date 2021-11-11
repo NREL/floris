@@ -53,6 +53,37 @@ def print_test_values(average_velocities: list, thrusts: list, powers: list, axi
         )
 
 
+
+WIND_DIRECTIONS = [  # , 293.0, 315.0],
+    270.0,
+    270.0,
+]
+N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
+WIND_SPEEDS = [
+    8.0,
+    9.0,
+    10.0,
+    11.0,
+]
+N_WIND_SPEEDS = len(WIND_SPEEDS)
+N_TURBINES = 3
+X_COORDS = [
+    0.0,
+    5 * 126.0,
+    10 * 126.0
+]
+Y_COORDS = [
+    0.0,
+    0.0,
+    0.0
+]
+Z_COORDS = [
+    90.0,
+    90.0,
+    90.0
+]
+GRID_RESOLUTION = 2
+
 @pytest.fixture
 def sample_inputs_fixture():
     return SampleInputs()
@@ -225,8 +256,8 @@ class SampleInputs:
         }
 
         self.farm = {
-            "wind_speeds": [8.0, 9.0, 10.0],
-            "wind_directions": [270.0, 270.0],  # , 293.0, 315.0],
+            "wind_speeds": WIND_SPEEDS,
+            "wind_directions": WIND_DIRECTIONS,
             "turbulence_intensity": [0.1],
             "wind_shear": 0.12,
             "wind_veer": 0.0,
