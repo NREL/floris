@@ -35,8 +35,7 @@ jobs:
         # -rA displays the captured output for all tests after they're run
         # See the docs: https://doc.pytest.org/en/latest/reference/reference.html#command-line-flags
         pytest -rA tests/  --ignore tests/ignore --ignore tests/reg_tests
-        pytest -rA tests/reg_tests/jensen_jimenez_regression_test.py -k tandem
-        pytest -rA tests/reg_tests/jensen_jimenez_regression_test.py -k yaw
+        pytest -rA tests/reg_tests/jensen_jimenez_regression_test.py
     - name: Generate coverage report
       # Run these tests on unit tests only so that we avoid inflating our code
       # coverage through the regression tests
