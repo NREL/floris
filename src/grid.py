@@ -149,9 +149,11 @@ class TurbineGrid(Grid):
         n_wind_directions = len(wind_directions)
         n_wind_speeds = len(wind_speeds)
 
+        # Calculate the difference in given wind direction from 270 / West
         wind_deviation_from_west = -1 * ((wind_directions - 270) % 360 + 360) % 360
         wind_deviation_from_west = np.reshape(wind_deviation_from_west, (n_wind_directions, 1, 1) )
 
+        # Construct the arrays storing the turbine locations
         x_coordinates = np.array([c.x1 for c in self.turbine_coordinates])
         y_coordinates = np.array([c.x2 for c in self.turbine_coordinates])
         z_coordinates = np.array([c.x3 for c in self.turbine_coordinates])
@@ -159,11 +161,11 @@ class TurbineGrid(Grid):
         y_coordinates = y_coordinates[None, None, :]
         z_coordinates = z_coordinates[None, None, :]
 
-        # Find center of rotation
+        # Find center of rotation - this is the center of box bounding all of the turbines
         x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
         y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
 
-        # Rotate turbine coordinates
+        # Rotate turbine coordinates about the center
         x_coord_offset = x_coordinates - x_center_of_rotation
         y_coord_offset = y_coordinates - y_center_of_rotation
         x_coord_rotated = x_coord_offset * cosd(wind_deviation_from_west) - y_coord_offset * sind(wind_deviation_from_west) + x_center_of_rotation
@@ -184,15 +186,21 @@ class TurbineGrid(Grid):
         disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution)
         template_rotor = template_grid * ( disc_grid * np.ones((self.grid_resolution, self.grid_resolution)) )
 
+        # Construct the turbine grids
+        # Here, they are already rotated to the correct orientation for each wind direction
         _x = x_coord_rotated[:, :, :, None, None] * template_grid
         _y = y_coord_rotated[:, :, :, None, None] + template_rotor
         _z = z_coordinates[:, :, :, None, None] + template_rotor
 
+        # Sort the turbines at each wind direction
+
         # Get the sorted indeces for the x coordinates. These are the indeces
-        # to sort the turbines from upstream to downstream for all wind directions
+        # to sort the turbines from upstream to downstream for all wind directions.
+        # Also, store the indeces to sort them back for when the calculation finishes.
         self.sorted_indeces = np.array([np.argsort(_x[i, 0, :, 0, 0]) for i in range(n_wind_directions)])
         self.unsorted_indeces = np.array([np.argsort(self.sorted_indeces[i]) for i in range(n_wind_directions)])
 
+        # Put the turbines into the final arrays in their sorted order
         self.x = np.zeros_like(_x)
         self.y = np.zeros_like(_y)
         self.z = np.zeros_like(_z)
@@ -206,6 +214,8 @@ class TurbineGrid(Grid):
         n_wind_directions = np.shape(self.x)[0]
         n_turbines = np.shape(self.x)[2]
 
+        # Replace the turbines in their unsorted order so that
+        # we can report values in a sane way.
         _x = np.zeros_like(self.x)
         _y = np.zeros_like(self.y)
         _z = np.zeros_like(self.z)
