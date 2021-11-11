@@ -15,7 +15,7 @@
 
 import pytest
 import numpy as np
-from src import FlowFieldGrid, TurbineGrid
+from src import TurbineGrid #, FlowFieldGrid
 from src.utilities import Vec3
 from tests.conftest import X_COORDS, Y_COORDS, Z_COORDS, N_TURBINES
 from tests.conftest import GRID_RESOLUTION
@@ -36,16 +36,16 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
     )
 
 
-@pytest.fixture
-def flow_field_grid_fixture(sample_inputs_fixture):
-    turbine_coordinates = list(zip(X_COORDS, Y_COORDS, Z_COORDS))
-    turbine_coordinates = [Vec3(c) for c in turbine_coordinates]
-    return FlowFieldGrid(
-        turbine_coordinates,
-        sample_inputs_fixture.turbine["rotor_diameter"],
-        sample_inputs_fixture.farm["reference_wind_height"],
-        Vec3([2,2,2])
-    )
+# @pytest.fixture
+# def flow_field_grid_fixture(sample_inputs_fixture):
+#     turbine_coordinates = list(zip(X_COORDS, Y_COORDS, Z_COORDS))
+#     turbine_coordinates = [Vec3(c) for c in turbine_coordinates]
+#     return FlowFieldGrid(
+#         turbine_coordinates,
+#         sample_inputs_fixture.turbine["rotor_diameter"],
+#         sample_inputs_fixture.farm["reference_wind_height"],
+#         Vec3([2,2,2])
+#     )
 
 
 def test_turbine_set_grid(turbine_grid_fixture):
