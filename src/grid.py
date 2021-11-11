@@ -218,61 +218,61 @@ class TurbineGrid(Grid):
         self.y = _y
         self.z = _z
 
-class FlowFieldGrid(Grid):
-    """
-    Primarily used by the Curl model and for visualization
-    """
+# class FlowFieldGrid(Grid):
+#     """
+#     Primarily used by the Curl model and for visualization
+#     """
 
-    def __init__(
-        self,
-        turbine_coordinates: List[Vec3],
-        reference_turbine_diameter: float,
-        reference_wind_height: float,
-        grid_resolution: Vec3,
-    ) -> None:
+#     def __init__(
+#         self,
+#         turbine_coordinates: List[Vec3],
+#         reference_turbine_diameter: float,
+#         reference_wind_height: float,
+#         grid_resolution: Vec3,
+#     ) -> None:
 
-        # the x,y points are a regular grid based on given domain bounds
+#         # the x,y points are a regular grid based on given domain bounds
 
-        super().__init__(
-            turbine_coordinates,
-            reference_turbine_diameter,
-            grid_resolution,
-        )
+#         super().__init__(
+#             turbine_coordinates,
+#             reference_turbine_diameter,
+#             grid_resolution,
+#         )
 
-        self.set_bounds()
-        self.set_grid()
+#         self.set_bounds()
+#         self.set_grid()
 
-    def set_bounds(self) -> None:
-        # TODO: Should this be called "compute_bounds?"
-        #   anything set_ could require an argument to set a value
-        #   other functions that set variables based on previous inputs could be "compute_"
-        #   anything that returns values, even if they are computed on the fly, could be get_ (instead of @property)
-        """
-        Calculates the domain bounds for the current wake model. The bounds
-        are calculated based on preset extents from the
-        given layout. The bounds consist of the minimum and maximum values
-        in the x-, y-, and z-directions.
+#     def set_bounds(self) -> None:
+#         # TODO: Should this be called "compute_bounds?"
+#         #   anything set_ could require an argument to set a value
+#         #   other functions that set variables based on previous inputs could be "compute_"
+#         #   anything that returns values, even if they are computed on the fly, could be get_ (instead of @property)
+#         """
+#         Calculates the domain bounds for the current wake model. The bounds
+#         are calculated based on preset extents from the
+#         given layout. The bounds consist of the minimum and maximum values
+#         in the x-, y-, and z-directions.
 
-        If the Curl model is used, the predefined bounds are always set.
-        """
-        # For the curl model, bounds are hard coded
-        coords = self.turbine_coordinates
-        x = [coord.x1 for coord in coords]
-        y = [coord.x2 for coord in coords]
-        eps = 0.1
-        self.xmin = min(x) - 2 * self.reference_turbine_diameter
-        self.xmax = max(x) + 10 * self.reference_turbine_diameter
-        self.ymin = min(y) - 2 * self.reference_turbine_diameter
-        self.ymax = max(y) + 2 * self.reference_turbine_diameter
-        self.zmin = 0 + eps
-        self.zmax = 6 * self.reference_wind_height
+#         If the Curl model is used, the predefined bounds are always set.
+#         """
+#         # For the curl model, bounds are hard coded
+#         coords = self.turbine_coordinates
+#         x = [coord.x1 for coord in coords]
+#         y = [coord.x2 for coord in coords]
+#         eps = 0.1
+#         self.xmin = min(x) - 2 * self.reference_turbine_diameter
+#         self.xmax = max(x) + 10 * self.reference_turbine_diameter
+#         self.ymin = min(y) - 2 * self.reference_turbine_diameter
+#         self.ymax = max(y) + 2 * self.reference_turbine_diameter
+#         self.zmin = 0 + eps
+#         self.zmax = 6 * self.reference_wind_height
 
-    def set_grid(self) -> None:
-        """
-        Create a structured grid for the entire flow field domain.
-        resolution: Vec3
-        """
-        x_points = np.linspace(self.xmin, self.xmax, int(self.grid_resolution.x1))
-        y_points = np.linspace(self.ymin, self.ymax, int(self.grid_resolution.x2))
-        z_points = np.linspace(self.zmin, self.zmax, int(self.grid_resolution.x3))
-        self.x, self.y, self.z = np.meshgrid(x_points, y_points, z_points, indexing="ij")
+#     def set_grid(self) -> None:
+#         """
+#         Create a structured grid for the entire flow field domain.
+#         resolution: Vec3
+#         """
+#         x_points = np.linspace(self.xmin, self.xmax, int(self.grid_resolution.x1))
+#         y_points = np.linspace(self.ymin, self.ymax, int(self.grid_resolution.x2))
+#         z_points = np.linspace(self.zmin, self.zmax, int(self.grid_resolution.x3))
+#         self.x, self.y, self.z = np.meshgrid(x_points, y_points, z_points, indexing="ij")
