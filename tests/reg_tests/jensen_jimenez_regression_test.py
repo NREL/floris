@@ -130,7 +130,7 @@ def test_regression_tandem(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results[0], baseline)
+    assert_results_arrays(test_results[0,0:3], baseline)
 
 def test_regression_rotation(sample_inputs_fixture):
     """
@@ -268,4 +268,4 @@ def test_regression_yaw(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results[0], yawed_baseline)
+    assert_results_arrays(test_results[0,0:3], yawed_baseline)
