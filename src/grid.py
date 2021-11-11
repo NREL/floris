@@ -182,7 +182,7 @@ class TurbineGrid(Grid):
 
         # Calculate the radial distance from the center of the turbine rotor
         disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution)
-        template_rotor = template_grid * ( disc_grid * np.ones((5,5)) )
+        template_rotor = template_grid * ( disc_grid * np.ones((self.grid_resolution, self.grid_resolution)) )
 
         _x = x_coord_rotated[:, :, :, None, None] * template_grid
         _y = y_coord_rotated[:, :, :, None, None] + template_rotor

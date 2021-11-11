@@ -106,6 +106,7 @@ class Floris(logging_manager.LoggerBase):
             self.flow_field.wind_speeds,
             5,
         )
+        # TODO: where do we pass in grid_resolution? Hardcoded to 5 above.
 
         self.flow_field.initialize_velocity_field(grid)
 
