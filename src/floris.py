@@ -12,11 +12,16 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
 
 import json
 import pickle
+from pathlib import Path
+
+import attr
 
 import src.logging_manager as logging_manager
+from src.utilities import FromDictMixin
 
 from .farm import Farm
 from .grid import TurbineGrid
@@ -28,12 +33,52 @@ from .flow_field import FlowField
 from .wake_velocity.jensen import JensenVelocityDeficit
 
 
-class Floris(logging_manager.LoggerBase):
+@attr.s(auto_attribs=True)
+class Floris(logging_manager.LoggerBase, FromDictMixin):
     """
     Top-level class that describes a Floris model and initializes the
     simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to
     access other objects within the model.
     """
+
+    # TODO: Need to make this iterative in case of multiple turbines
+    turbine: list[Turbine] = attr.ib(converter=Turbine.from_dict)
+
+    farm: Farm | dict = attr.ib(converter=Farm.from_dict)
+    logging: dict = attr.ib()
+    # TODO: needs converter for mapping this, but could be done in floris interface
+    turbine_map: dict[str, Turbine] = attr.ib()
+    wake: dict = attr.ib(init=False)
+    flow_field: FlowField = attr.ib(init=False)
+
+    def __attrs_post_init__(self) -> None:
+        self.flow_field = FlowField(attr.asdict(self.farm))
+
+        # Configure logging
+        logging_manager.configure_console_log(
+            self.logging["console"]["enable"],
+            self.logging["console"]["level"],
+        )
+        logging_manager.configure_file_log(
+            self.logging["file"]["enable"],
+            self.logging["file"]["level"],
+        )
+
+    @classmethod
+    def from_json(input_file_path: str | Path) -> Floris:
+        """Creates a `Floris` instance from a JSON file.
+
+        Args:
+            input_file_path (str): The relative or absolute file path and name to the
+                JSON input file.
+
+        Returns:
+            Floris: The class object instance.
+        """
+        input_file_path = Path(input_file_path).resolve()
+        with open(input_file_path) as json_file:
+            input_dict = json.load(json_file)
+        return Floris.from_dict(input_dict)
 
     def __init__(self, input_file_path=None, input_dict=None):
         """
@@ -46,29 +91,10 @@ class Floris(logging_manager.LoggerBase):
                 be parsed and converted to a Python dict.
             input_dict (dict, optional): Python dict given directly.
         """
-        # Parse the input into dictionaries
-        if input_file_path is not None:
-            input_file = open(input_file_path)
-            input_dict = json.load(input_file)
-        elif input_dict is not None:
-            input_dict = input_dict.copy()
-        else:
-            raise ValueError("Floris: No input file or dictionary given.")
-
         turbine_dict = input_dict.pop("turbine")
         # wake_dict = input_dict.pop("wake")
         farm_dict = input_dict.pop("farm")
         meta_dict = input_dict
-
-        # Configure logging
-        logging_manager.configure_console_log(
-            meta_dict["logging"]["console"]["enable"],
-            meta_dict["logging"]["console"]["level"],
-        )
-        logging_manager.configure_file_log(
-            meta_dict["logging"]["file"]["enable"],
-            meta_dict["logging"]["file"]["level"],
-        )
 
         # Initialize the simulation objects
         self.turbine = Turbine(**turbine_dict)
