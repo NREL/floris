@@ -29,27 +29,23 @@ package so any additional modules should be included there.
 
 from pathlib import Path
 
-from . import (
-    utilities,
-    wake_velocity,
-    logging_manager,
-    wake_deflection,
-    wake_turbulence,
-    wake_combination,
-)
-from .farm import Farm
-from .grid import Grid, TurbineGrid #, FlowFieldGrid
-from .floris import Floris
-from .turbine import Turbine
-from .base_class import BaseClass
-from .flow_field import FlowField
-from .model_generator import model_creator
+# Provide full-path imports here for all modules
+# that should be included in the simulation package.
+# Since some of these depend on each other, the order
+# that they are listed here does matter.
+from src.simulation.base_class import BaseClass
+from src.simulation.turbine import Turbine, Ct, power, axial_induction, average_velocity
+from src.simulation.farm import Farm
+from src.simulation.grid import Grid, TurbineGrid #, FlowFieldGrid
+from src.simulation.flow_field import FlowField
+from src.simulation.solver import sequential_solver
+from src.simulation.floris import Floris
 
-
-ROOT = Path(__file__).parent
-with open(ROOT.parent / "VERSION") as version_file:
+ROOT = Path(__file__).parent.parent.parent
+with open(ROOT / "VERSION") as version_file:
     VERSION = version_file.read().strip()
 __version__ = VERSION
 
 # initialize the logger
-logging_manager._setup_logger()
+import src.logging_manager
+src.logging_manager._setup_logger()

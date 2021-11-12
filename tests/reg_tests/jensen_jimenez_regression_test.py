@@ -14,8 +14,8 @@
 
 import numpy as np
 
-from src import Floris
-from src.turbine import Ct, power, axial_induction, average_velocity
+from src.simulation import Floris
+from src.simulation.turbine import Ct, power, axial_induction, average_velocity
 from tests.conftest import print_test_values, turbines_to_array, assert_results_arrays
 
 DEBUG = False

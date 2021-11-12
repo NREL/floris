@@ -16,7 +16,7 @@
 import numpy as np
 import pytest
 
-from src import FlowField
+from src.simulation import FlowField
 
 from tests.grid_unit_test import turbine_grid_fixture
 from tests.conftest import N_TURBINES

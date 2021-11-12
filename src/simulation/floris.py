@@ -17,9 +17,9 @@ import json
 
 import src.logging_manager as logging_manager
 
-from .farm import Farm
-from .grid import TurbineGrid
-from .solver import sequential_solver
+from src.simulation import Farm
+from src.simulation import TurbineGrid
+from src.simulation import sequential_solver
 
 # from .wake import Wake
 from .turbine import Turbine

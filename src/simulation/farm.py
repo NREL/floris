@@ -16,8 +16,8 @@ import attr
 import numpy as np
 import xarray as xr
 
-from .turbine import Turbine
-from .utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
+from src.simulation import Turbine
+from src.utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
 
 
 class FarmController:

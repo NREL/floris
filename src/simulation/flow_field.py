@@ -15,7 +15,7 @@
 
 import numpy as np
 
-from .grid import Grid
+from src.simulation import Grid
 
 
 class FlowField:

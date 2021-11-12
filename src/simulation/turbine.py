@@ -28,7 +28,7 @@ from src.utilities import (
     model_attrib,
     attrs_array_converter,
 )
-from src.base_class import BaseClass
+from src.simulation import BaseClass
 
 
 def _filter_convert(ix_filter: Union[np.ndarray, None], sample_arg: np.ndarray) -> Union[np.ndarray, None]:

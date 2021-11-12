@@ -16,11 +16,11 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from src.grid import TurbineGrid
-from src.turbine import Turbine
+from src.simulation import TurbineGrid
+from src.simulation import Turbine
 from src.utilities import float_attrib, model_attrib
-from src.base_class import BaseClass
-from src.flow_field import FlowField
+from src.simulation import BaseClass
+from src.simulation import FlowField
 
 
 @attr.s(auto_attribs=True)

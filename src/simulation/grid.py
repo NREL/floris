@@ -4,7 +4,7 @@ from typing import List, Tuple
 import numpy as np
 from numpy import newaxis as na
 
-from .utilities import Vec3, cosd, sind, tand
+from src.utilities import Vec3, cosd, sind, tand
 
 
 class Grid(ABC):
