@@ -222,8 +222,8 @@ class TurbineGrid(Grid):
         for i in range(n_wind_directions):
             for j in range(n_turbines):
                 _x[i, :, j] = self.x[i, :, self.unsorted_indeces[i, j]]
-                _y[i, :, j] = self.x[i, :, self.unsorted_indeces[i, j]]
-                _z[i, :, j] = self.x[i, :, self.unsorted_indeces[i, j]]
+                _y[i, :, j] = self.y[i, :, self.unsorted_indeces[i, j]]
+                _z[i, :, j] = self.z[i, :, self.unsorted_indeces[i, j]]
         self.x = _x
         self.y = _y
         self.z = _z
