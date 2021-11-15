@@ -1,5 +1,4 @@
 # Copyright 2021 NREL
-
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,15 +12,20 @@
 # See https://floris.readthedocs.io for documentation
 
 
+from __future__ import annotations
+
 import copy
+from pathlib import Path
 from itertools import repeat
 from multiprocessing import cpu_count
 from multiprocessing.pool import Pool
 
+import attr
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from numpy.lib.arraysetops import isin
 
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
@@ -38,6 +42,7 @@ def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
     return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)
 
 
+@attr.s(auto_attribs=True)
 class FlorisInterface(LoggerBase):
     """
     FlorisInterface provides a high-level user interface to many of the
@@ -46,33 +51,29 @@ class FlorisInterface(LoggerBase):
     methods on objects within FLORIS.
     """
 
-    def __init__(self, input_file=None, input_dict=None):
-        """
-        Initialize the FLORIS interface by pointing toward an input file or
-        dictionary. Inputs from either **input_file** or **input_dict** are
-        parsed within the :py:class:`~.simulation.input_reader` through
-        the :py:class:`~.simulation.floris` object. Either an
-        **input_file** or **input_dict** is required.
+    configuration: dict | str | Path
+    floris: Floris = attr.ib(init=False)
 
-        Args:
-            input_file (str, optional): A string path to the json input file.
-                Defaults to None.
-            input_dict (dict, optional): A Python dictionary of inputs.
-                Defaults to None.
+    def __attrs_post_init__(self) -> None:
+        self.create_floris()
 
-        Raises:
-            ValueError: Input file or dictionary must be supplied.
-        """
-        if input_file is None and input_dict is None:
-            err_msg = "Input file or dictionary must be supplied"
-            self.logger.error(err_msg, stack_info=True)
-            raise ValueError(err_msg)
-        self.input_file = input_file
-        self.floris = Floris(input_file=input_file, input_dict=input_dict)
+    def create_floris(self) -> None:
+        if isinstance(self.configuration, (str, Path)):
+            self.configuration = Path(self.configuration).resolve()
+            if self.configuration.suffix in ("yml", "yaml"):
+                self.floris = Floris.from_yaml(self.configuration)
+            elif self.configuration.suffix == "json":
+                self.floris = Floris.from_json(self.configuration)
+            else:
+                raise ValueError(
+                    "The Floris `configuration` file inputs must be of type YAML", "(.yml or .yaml) or JSON (.json)!"
+                )
+        elif isinstance(self.configuration, dict):
+            self.floris = Floris.from_dict(self.configuration)
+        else:
+            raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'!")
 
-    def calculate_wake(
-        self, yaw_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False
-    ):
+    def calculate_wake(self, yaw_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False):
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
         :py:meth:`~.FlowField.calculate_wake` methods.
@@ -162,34 +163,23 @@ class FlorisInterface(LoggerBase):
                 turbine_map = TurbineMap(
                     layout_array[0],
                     layout_array[1],
-                    [
-                        copy.deepcopy(self.floris.farm.turbines[0])
-                        for ii in range(len(layout_array[0]))
-                    ],
+                    [copy.deepcopy(self.floris.farm.turbines[0]) for ii in range(len(layout_array[0]))],
                 )
             if wind_layout is None:
                 wind_layout = wind_map.wind_layout
             if wind_speed is None:
                 wind_speed = wind_map.input_speed
             else:
-                wind_speed = (
-                    wind_speed if isinstance(wind_speed, list) else [wind_speed]
-                )
+                wind_speed = wind_speed if isinstance(wind_speed, list) else [wind_speed]
             if wind_direction is None:
                 wind_direction = wind_map.input_direction
             else:
-                wind_direction = (
-                    wind_direction
-                    if isinstance(wind_direction, list)
-                    else [wind_direction]
-                )
+                wind_direction = wind_direction if isinstance(wind_direction, list) else [wind_direction]
             if turbulence_intensity is None:
                 turbulence_intensity = wind_map.input_ti
             else:
                 turbulence_intensity = (
-                    turbulence_intensity
-                    if isinstance(turbulence_intensity, list)
-                    else [turbulence_intensity]
+                    turbulence_intensity if isinstance(turbulence_intensity, list) else [turbulence_intensity]
                 )
 
             wind_map = WindMap(
@@ -208,9 +198,7 @@ class FlorisInterface(LoggerBase):
 
                 # If not a list, convert to list
                 # TODO: What if tuple? Or
-                wind_speed = (
-                    wind_speed if isinstance(wind_speed, list) else [wind_speed]
-                )
+                wind_speed = wind_speed if isinstance(wind_speed, list) else [wind_speed]
 
                 wind_map.input_speed = wind_speed
                 wind_map.calculate_wind_speed()
@@ -219,9 +207,7 @@ class FlorisInterface(LoggerBase):
                 # If not a list, convert to list
                 # TODO: What if tuple? Or
                 turbulence_intensity = (
-                    turbulence_intensity
-                    if isinstance(turbulence_intensity, list)
-                    else [turbulence_intensity]
+                    turbulence_intensity if isinstance(turbulence_intensity, list) else [turbulence_intensity]
                 )
                 wind_map.input_ti = turbulence_intensity
                 wind_map.calculate_turbulence_intensity()
@@ -229,17 +215,10 @@ class FlorisInterface(LoggerBase):
             if wind_direction is not None:
                 # If not a list, convert to list
                 # TODO: What if tuple? Or
-                wind_direction = (
-                    wind_direction
-                    if isinstance(wind_direction, list)
-                    else [wind_direction]
-                )
+                wind_direction = wind_direction if isinstance(wind_direction, list) else [wind_direction]
                 wind_map.input_direction = wind_direction
                 wind_map.calculate_wind_direction()
-                if (
-                    self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
-                    is not None
-                ):
+                if self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution is not None:
                     self.floris.farm.turbine_map.reinitialize_turbines()
 
             # redefine wind_map in Farm object
@@ -300,9 +279,7 @@ class FlorisInterface(LoggerBase):
 
             # Get the flow data and extract the plane using it
             flow_data = self.get_flow_data()
-            return get_plane_from_flow_data(
-                flow_data, normal_vector=normal_vector, x3_value=x3_value
-            )
+            return get_plane_from_flow_data(flow_data, normal_vector=normal_vector, x3_value=x3_value)
 
         # If x1 and x2 bounds are not provided, use rules of thumb
         if normal_vector == "z":  # Rules of thumb for horizontal plane
@@ -323,9 +300,7 @@ class FlorisInterface(LoggerBase):
                 y = [coord.x2 for coord in coords]
                 x1_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
             if x2_bounds is None:
-                hub_height = self.floris.farm.flow_field.turbine_map.turbines[
-                    0
-                ].hub_height
+                hub_height = self.floris.farm.flow_field.turbine_map.turbines[0].hub_height
                 x2_bounds = (10, hub_height * 2)
         if normal_vector == "y":  # Rules of thumb for cut plane plane
             if x1_bounds is None:
@@ -334,9 +309,7 @@ class FlorisInterface(LoggerBase):
                 x = [coord.x1 for coord in coords]
                 x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
             if x2_bounds is None:
-                hub_height = self.floris.farm.flow_field.turbine_map.turbines[
-                    0
-                ].hub_height
+                hub_height = self.floris.farm.flow_field.turbine_map.turbines[0].hub_height
                 x2_bounds = (10, hub_height * 2)
 
         # Set up the points to test
@@ -512,9 +485,7 @@ class FlorisInterface(LoggerBase):
         # If height not provided, use the hub height
         if height is None:
             height = self.floris.farm.flow_field.turbine_map.turbines[0].hub_height
-            self.logger.info(
-                "Default to hub height = %.1f for horizontal plane." % height
-            )
+            self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
         # Get the points of data in a dataframe
         df = self.get_plane_of_points(
@@ -538,9 +509,7 @@ class FlorisInterface(LoggerBase):
             )
         return hor_plane
 
-    def get_cross_plane(
-        self, x_loc, y_resolution=200, z_resolution=200, y_bounds=None, z_bounds=None
-    ):
+    def get_cross_plane(self, x_loc, y_resolution=200, z_resolution=200, y_bounds=None, z_bounds=None):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
         object containing the velocity field in a vertical plane cut through
@@ -575,9 +544,7 @@ class FlorisInterface(LoggerBase):
         # Compute and return the cutplane
         return CutPlane(df)
 
-    def get_y_plane(
-        self, y_loc, x_resolution=200, z_resolution=200, x_bounds=None, z_bounds=None
-    ):
+    def get_y_plane(self, y_loc, x_resolution=200, z_resolution=200, x_bounds=None, z_bounds=None):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
         object containing the velocity field in a vertical plane cut through
@@ -654,9 +621,7 @@ class FlorisInterface(LoggerBase):
                 )
             else:
                 self.logger.info("Assuming model resolution")
-                resolution = (
-                    self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
-                )
+                resolution = self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
 
         # Get a copy for the flow field so don't change underlying grid points
         flow_field = copy.deepcopy(self.floris.farm.flow_field)
@@ -687,21 +652,9 @@ class FlorisInterface(LoggerBase):
 
         # find percent velocity deficit
         if velocity_deficit:
-            u = (
-                abs(u - flow_field.u_initial.flatten(order=order))
-                / flow_field.u_initial.flatten(order=order)
-                * 100
-            )
-            v = (
-                abs(v - flow_field.v_initial.flatten(order=order))
-                / flow_field.v_initial.flatten(order=order)
-                * 100
-            )
-            w = (
-                abs(w - flow_field.w_initial.flatten(order=order))
-                / flow_field.w_initial.flatten(order=order)
-                * 100
-            )
+            u = abs(u - flow_field.u_initial.flatten(order=order)) / flow_field.u_initial.flatten(order=order) * 100
+            v = abs(v - flow_field.v_initial.flatten(order=order)) / flow_field.v_initial.flatten(order=order) * 100
+            w = abs(w - flow_field.w_initial.flatten(order=order)) / flow_field.w_initial.flatten(order=order) * 100
 
         # Determine spacing, dimensions and origin
         unique_x = np.sort(np.unique(x))
@@ -714,9 +667,7 @@ class FlorisInterface(LoggerBase):
         )
         dimensions = Vec3(len(unique_x), len(unique_y), len(unique_z))
         origin = Vec3(0.0, 0.0, 0.0)
-        return FlowData(
-            x, y, z, u, v, w, spacing=spacing, dimensions=dimensions, origin=origin
-        )
+        return FlowData(x, y, z, u, v, w, spacing=spacing, dimensions=dimensions, origin=origin)
 
     def get_yaw_angles(self):
         """
@@ -727,9 +678,7 @@ class FlorisInterface(LoggerBase):
         Returns:
             np.array: Wind turbine yaw angles.
         """
-        yaw_angles = [
-            turbine.yaw_angle for turbine in self.floris.farm.turbine_map.turbines
-        ]
+        yaw_angles = [turbine.yaw_angle for turbine in self.floris.farm.turbine_map.turbines]
         return yaw_angles
 
     def get_farm_power(
@@ -815,10 +764,7 @@ class FlorisInterface(LoggerBase):
                 if unc_options["std_wd"] > 0:
                     wd_bnd = int(
                         np.ceil(
-                            norm.ppf(
-                                unc_options["pdf_cutoff"], scale=unc_options["std_wd"]
-                            )
-                            / unc_options["pmf_res"]
+                            norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"]
                         )
                     )
                     wd_unc = np.linspace(
@@ -836,10 +782,7 @@ class FlorisInterface(LoggerBase):
                 if unc_options["std_yaw"] > 0:
                     yaw_bnd = int(
                         np.ceil(
-                            norm.ppf(
-                                unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]
-                            )
-                            / unc_options["pmf_res"]
+                            norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]) / unc_options["pmf_res"]
                         )
                     )
                     yaw_unc = np.linspace(
@@ -870,14 +813,9 @@ class FlorisInterface(LoggerBase):
                 self.reinitialize_flow_field(wind_direction=wd_orig + delta_wd)
 
                 for i_yaw, delta_yaw in enumerate(unc_pmfs["yaw_unc"]):
-                    mean_farm_power = mean_farm_power + unc_pmfs["wd_unc_pmf"][
-                        i_wd
-                    ] * unc_pmfs["yaw_unc_pmf"][
+                    mean_farm_power = mean_farm_power + unc_pmfs["wd_unc_pmf"][i_wd] * unc_pmfs["yaw_unc_pmf"][
                         i_yaw
-                    ] * self.get_farm_power_for_yaw_angle(
-                        list(np.array(yaw_angles) - delta_wd + delta_yaw),
-                        no_wake=no_wake,
-                    )
+                    ] * self.get_farm_power_for_yaw_angle(list(np.array(yaw_angles) + delta_yaw), no_wake=no_wake)
 
             # reinitialize with original values
             self.reinitialize_flow_field(wind_direction=wd_orig)
@@ -899,16 +837,10 @@ class FlorisInterface(LoggerBase):
             np.array: lists of x, y, and (optionally) z coordinates of
                       each turbine
         """
-        xcoords = np.array(
-            [turbine.x1 for turbine in self.floris.farm.turbine_map.coords]
-        )
-        ycoords = np.array(
-            [turbine.x2 for turbine in self.floris.farm.turbine_map.coords]
-        )
+        xcoords = np.array([turbine.x1 for turbine in self.floris.farm.turbine_map.coords])
+        ycoords = np.array([turbine.x2 for turbine in self.floris.farm.turbine_map.coords])
         if z:
-            zcoords = np.array(
-                [turbine.x3 for turbine in self.floris.farm.turbine_map.coords]
-            )
+            zcoords = np.array([turbine.x3 for turbine in self.floris.farm.turbine_map.coords])
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
@@ -992,10 +924,7 @@ class FlorisInterface(LoggerBase):
                 if unc_options["std_wd"] > 0:
                     wd_bnd = int(
                         np.ceil(
-                            norm.ppf(
-                                unc_options["pdf_cutoff"], scale=unc_options["std_wd"]
-                            )
-                            / unc_options["pmf_res"]
+                            norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"]
                         )
                     )
                     wd_unc = np.linspace(
@@ -1004,9 +933,7 @@ class FlorisInterface(LoggerBase):
                         2 * wd_bnd + 1,
                     )
                     wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options["std_wd"])
-                    wd_unc_pmf = wd_unc_pmf / np.sum(
-                        wd_unc_pmf
-                    )  # normalize so sum = 1.0
+                    wd_unc_pmf = wd_unc_pmf / np.sum(wd_unc_pmf)  # normalize so sum = 1.0
                 else:
                     wd_unc = np.zeros(1)
                     wd_unc_pmf = np.ones(1)
@@ -1014,10 +941,7 @@ class FlorisInterface(LoggerBase):
                 if unc_options["std_yaw"] > 0:
                     yaw_bnd = int(
                         np.ceil(
-                            norm.ppf(
-                                unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]
-                            )
-                            / unc_options["pmf_res"]
+                            norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]) / unc_options["pmf_res"]
                         )
                     )
                     yaw_unc = np.linspace(
@@ -1026,9 +950,7 @@ class FlorisInterface(LoggerBase):
                         2 * yaw_bnd + 1,
                     )
                     yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options["std_yaw"])
-                    yaw_unc_pmf = yaw_unc_pmf / np.sum(
-                        yaw_unc_pmf
-                    )  # normalize so sum = 1.0
+                    yaw_unc_pmf = yaw_unc_pmf / np.sum(yaw_unc_pmf)  # normalize so sum = 1.0
                 else:
                     yaw_unc = np.zeros(1)
                     yaw_unc_pmf = np.ones(1)
@@ -1050,14 +972,12 @@ class FlorisInterface(LoggerBase):
 
                 for i_yaw, delta_yaw in enumerate(unc_pmfs["yaw_unc"]):
                     self.calculate_wake(
-                        yaw_angles=list(np.array(yaw_angles) - delta_wd + delta_yaw),
+                        yaw_angles=list(np.array(yaw_angles) + delta_yaw),
                         no_wake=no_wake,
                     )
-                    mean_farm_power = mean_farm_power + unc_pmfs["wd_unc_pmf"][
-                        i_wd
-                    ] * unc_pmfs["yaw_unc_pmf"][i_yaw] * np.array(
-                        [turbine.power for turbine in self.floris.farm.turbines]
-                    )
+                    mean_farm_power = mean_farm_power + unc_pmfs["wd_unc_pmf"][i_wd] * unc_pmfs["yaw_unc_pmf"][
+                        i_yaw
+                    ] * np.array([turbine.power for turbine in self.floris.farm.turbines])
 
             # reinitialize with original values
             self.reinitialize_flow_field(wind_direction=wd_orig)
@@ -1096,9 +1016,7 @@ class FlorisInterface(LoggerBase):
         Returns:
             list: Thrust coefficient for each wind turbine.
         """
-        turb_ct_array = [
-            turbine.Ct for turbine in self.floris.farm.flow_field.turbine_map.turbines
-        ]
+        turb_ct_array = [turbine.Ct for turbine in self.floris.farm.flow_field.turbine_map.turbines]
         return turb_ct_array
 
     def get_turbine_ti(self):
@@ -1109,8 +1027,7 @@ class FlorisInterface(LoggerBase):
             list: Thrust ti for each wind turbine.
         """
         turb_ti_array = [
-            turbine.current_turbulence_intensity
-            for turbine in self.floris.farm.flow_field.turbine_map.turbines
+            turbine.current_turbulence_intensity for turbine in self.floris.farm.flow_field.turbine_map.turbines
         ]
         return turb_ti_array
 
@@ -1179,13 +1096,9 @@ class FlorisInterface(LoggerBase):
 
         self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
 
-        return self.get_farm_power(
-            include_unc=include_unc, unc_pmfs=unc_pmfs, unc_options=unc_options
-        )
+        return self.get_farm_power(include_unc=include_unc, unc_pmfs=unc_pmfs, unc_options=unc_options)
 
-    def get_farm_AEP(
-        self, wd, ws, freq, yaw=None, limit_ws=False, ws_limit_tol=0.001, ws_cutout=30.0
-    ):
+    def get_farm_AEP(self, wd, ws, freq, yaw=None, limit_ws=False, ws_limit_tol=0.001, ws_cutout=30.0):
         """
         Estimate annual energy production (AEP) for distributions of wind
         speed, wind direction and yaw offset.
@@ -1239,11 +1152,7 @@ class FlorisInterface(LoggerBase):
                 farm_power = self.get_farm_power()
 
                 # check if power has stopped increasing
-                if (
-                    limit_ws
-                    & (farm_power > 0)
-                    & (np.abs(farm_power / prev_pow[wd[i]] - 1) < ws_limit_tol)
-                ):
+                if limit_ws & (farm_power > 0) & (np.abs(farm_power / prev_pow[wd[i]] - 1) < ws_limit_tol):
                     use_prev_pow[wd[i]] = True
 
                 prev_pow[wd[i]] = farm_power
@@ -1300,9 +1209,7 @@ class FlorisInterface(LoggerBase):
         chunksize = int(np.ceil(num_cases / jobs))
 
         with Pool(jobs) as pool:
-            opt = pool.starmap(
-                global_calc_one_AEP_case, global_arguments, chunksize=chunksize
-            )
+            opt = pool.starmap(global_calc_one_AEP_case, global_arguments, chunksize=chunksize)
             # add AEP to overall AEP
             opt_AEP = opt_AEP + np.sum(opt)
 
@@ -1334,16 +1241,12 @@ class FlorisInterface(LoggerBase):
             cur_power = self.get_farm_power()
         ws += 1.0
 
-        self.reinitialize_flow_field(
-            layout_array=(orig_layout_x, orig_layout_y), wind_speed=ws
-        )
+        self.reinitialize_flow_field(layout_array=(orig_layout_x, orig_layout_y), wind_speed=ws)
         self.calculate_wake()
         self.max_power = self.get_farm_power()
         self.ws_limit = ws
 
-    def change_turbine(
-        self, turb_num_array, turbine_change_dict, update_specified_wind_height=False
-    ):
+    def change_turbine(self, turb_num_array, turbine_change_dict, update_specified_wind_height=False):
         """
         Change turbine properties for specified turbines.
 
@@ -1359,26 +1262,18 @@ class FlorisInterface(LoggerBase):
 
         # Alert user if changing hub-height and not specified wind height
         if ("hub_height" in turbine_change_dict) and (not update_specified_wind_height):
-            self.logger.info(
-                "Note, updating hub height but not updating "
-                + "the specfied_wind_height"
-            )
+            self.logger.info("Note, updating hub height but not updating " + "the specfied_wind_height")
 
         if ("hub_height" in turbine_change_dict) and update_specified_wind_height:
             self.logger.info(
-                "Note, specfied_wind_height changed to hub-height: %.1f"
-                % turbine_change_dict["hub_height"]
+                "Note, specfied_wind_height changed to hub-height: %.1f" % turbine_change_dict["hub_height"]
             )
-            self.reinitialize_flow_field(
-                specified_wind_height=turbine_change_dict["hub_height"]
-            )
+            self.reinitialize_flow_field(specified_wind_height=turbine_change_dict["hub_height"])
 
         # Now go through turbine list and re-init any in turb_num_array
         for t_idx in turb_num_array:
             self.logger.info("Updating turbine: %00d" % t_idx)
-            self.floris.farm.turbines[t_idx].change_turbine_parameters(
-                turbine_change_dict
-            )
+            self.floris.farm.turbines[t_idx].change_turbine_parameters(turbine_change_dict)
 
         # Make sure to update turbine map in case hub-height has changed
         self.floris.farm.flow_field.turbine_map.update_hub_heights()
@@ -1428,9 +1323,7 @@ class FlorisInterface(LoggerBase):
                 recovery from GCH model. Defaults to *True*.
         """
         model_params = self.get_model_parameters()
-        use_secondary_steering = model_params["Wake Deflection Parameters"][
-            "use_secondary_steering"
-        ]
+        use_secondary_steering = model_params["Wake Deflection Parameters"]["use_secondary_steering"]
 
         if enable:
             model_params["Wake Velocity Parameters"]["use_yaw_added_recovery"] = True
@@ -1443,9 +1336,7 @@ class FlorisInterface(LoggerBase):
 
             # If secondary steering is also off, disable calculate_VW_velocities
             if not use_secondary_steering:
-                model_params["Wake Velocity Parameters"][
-                    "calculate_VW_velocities"
-                ] = False
+                model_params["Wake Velocity Parameters"]["calculate_VW_velocities"] = False
 
         self.set_model_parameters(model_params)
         self.reinitialize_flow_field()
@@ -1462,9 +1353,7 @@ class FlorisInterface(LoggerBase):
             steering from GCH model. Defaults to *True*.
         """
         model_params = self.get_model_parameters()
-        use_yaw_added_recovery = model_params["Wake Velocity Parameters"][
-            "use_yaw_added_recovery"
-        ]
+        use_yaw_added_recovery = model_params["Wake Velocity Parameters"]["use_yaw_added_recovery"]
 
         if enable:
             model_params["Wake Deflection Parameters"]["use_secondary_steering"] = True
@@ -1477,9 +1366,7 @@ class FlorisInterface(LoggerBase):
 
             # If yar is also off, disable calculate_VW_velocities
             if not use_yaw_added_recovery:
-                model_params["Wake Velocity Parameters"][
-                    "calculate_VW_velocities"
-                ] = False
+                model_params["Wake Velocity Parameters"]["calculate_VW_velocities"] = False
 
         self.set_model_parameters(model_params)
         self.reinitialize_flow_field()
@@ -1612,9 +1499,7 @@ class FlorisInterface(LoggerBase):
         Returns:
             dict: Dictionary containing model parameters and their values.
         """
-        model_params = get_params(
-            self, params, wake_velocity_model, wake_deflection_model, turbulence_model
-        )
+        model_params = get_params(self, params, wake_velocity_model, wake_deflection_model, turbulence_model)
 
         return model_params
 

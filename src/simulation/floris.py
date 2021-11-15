@@ -19,6 +19,7 @@ import pickle
 from pathlib import Path
 
 import attr
+import yaml
 
 import src.logging_manager as logging_manager
 from src.utilities import FromDictMixin
@@ -75,6 +76,21 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         input_file_path = Path(input_file_path).resolve()
         with open(input_file_path) as json_file:
             input_dict = json.load(json_file)
+        return Floris.from_dict(input_dict)
+
+    @classmethod
+    def from_yaml(input_file_path: str | Path) -> Floris:
+        """Creates a `Floris` instance from a YAML file.
+
+        Args:
+            input_file_path (str): The relative or absolute file path and name to the
+                YAML input file.
+
+        Returns:
+            Floris: The class object instance
+        """
+        input_file_path = Path(input_file_path).resolve()
+        input_dict = yaml.load(input_file_path, Loader=yaml.SafeLoader)
         return Floris.from_dict(input_dict)
 
     def __init__(self, input_file_path=None, input_dict=None):
