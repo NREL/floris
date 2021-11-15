@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from src.farm import Farm
+from src.simulation import Farm
 from src.utilities import Vec3
 from tests.conftest import SampleInputs
 

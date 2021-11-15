@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --ntasks=36                             # Request number of CPU cores
+#SBATCH --time=4:00:00                       # Job should run for time
+#SBATCH --account=<project_handle>                 # Accounting
+#SBATCH --job-name=yaw_opt_example            # Job name
+#SBATCH --mail-user <your email address>    # user email for notifcations
+#SBATCH --mail-type ALL                         # ALL will notify for BEIGN,END,FAIL
+#SBATCH --output=yaw_opt_example.%j.out      # %j will be replaced with job ID
+
+source $HOME/.bash_profile
+source $HOME/.bashrc
+Floris_Python
+cd <floris/examples/optimization/scipy/controls_optimization path>
+srun python -m mpi4py.futures optimize_yaw_wind_rose_parallel.py

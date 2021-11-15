@@ -16,9 +16,10 @@
 import numpy as np
 import pytest
 
-from src import FlowField
+from src.simulation import FlowField
 
-from .grid_unit_test import N_TURBINES, turbine_grid_fixture
+from tests.grid_unit_test import turbine_grid_fixture
+from tests.conftest import N_TURBINES
 
 
 @pytest.fixture
@@ -37,9 +38,6 @@ def test_n_wind_directions(flow_field_fixture):
 
 def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
     flow_field_fixture.wind_shear = 1.0
-    turbine_grid_fixture.expand_atmospheric_conditions(
-        flow_field_fixture.n_wind_directions, flow_field_fixture.n_wind_speeds
-    )
     flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
 
     # Check the shape of the velocity arrays: u_initial, v_initial, w_initial  and u, v, w

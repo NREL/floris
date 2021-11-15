@@ -1,0 +1,39 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "";
+    case            "";
+    instance        "";
+    local           "";
+
+    class           dictionary;
+    object          transportProperties;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include        "../setUp"
+
+
+transportModel Newtonian;
+
+// Molecular viscosity
+nu              nu [0 2 -1 0 0 0 0] $nu;
+
+// Reference temperature
+TRef            TRef [0 0 0 1 0 0 0] $TRef;
+
+// Prandtl numbers
+Pr              Pr  [0 0 0 0 0 0 0] $Pr;
+Prt             Prt [0 0 0 0 0 0 0] $Prt;
+// ************************************************************************* //

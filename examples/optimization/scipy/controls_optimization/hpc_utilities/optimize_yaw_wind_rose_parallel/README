@@ -1,0 +1,21 @@
+An example showing how the example_optimize_yaw_wind_rose_parallel python code can be run on 
+NREL's Eagle HPC system is provided in runscript_example_optimize_yaw_wind_rose_parallel, which 
+can be submitted using the command:
+$ sbatch runscript_example_optimize_yaw_wind_rose_parallel
+
+Before submitting runscript_example_optimize_yaw_wind_rose_parallel, the following should be added
+to ~/.bashrc and a conda environment called 'floris' should be created, 
+containing the floris package: 
+
+Floris_Python()
+{
+   module purge
+   module load conda/5.3
+   module load intel-mpi/2018.0.3
+   export PREFIX=~/.conda-envs/floris
+   export PATH=$PREFIX/bin:$PATH
+   export FI_PROVIDER_PATH=$PREFIX/lib/libfabric/prov
+   export LD_LIBRARY_PATH=$PREFIX/lib/libfabric:$PREFIX/lib/release_mt:$LD_LIBRARY_PATH
+   source activate floris
+   export I_MPI_PMI_LIBRARY=/nopt/slurm/current/lib/libpmi.so
+}

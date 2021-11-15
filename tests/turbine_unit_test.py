@@ -18,20 +18,21 @@ import numpy as np
 import pytest
 from scipy.interpolate import interp1d
 
-from src.turbine import (
+from src.simulation import (
     Ct,
     Turbine,
-    PowerThrustTable,
     power,
-    _filter_convert,
     axial_induction,
     average_velocity,
 )
+from src.simulation.turbine import (
+    PowerThrustTable,
+    _filter_convert,
+)
+
 from tests.conftest import SampleInputs
+from tests.conftest import WIND_SPEEDS
 
-
-WIND_DIRECTIONS = [270.0, 293.0, 315.0]  # TODO: 0, -N, 360, 460
-WIND_SPEEDS = [8.0, 9.0, 10.0, 11.0]
 
 # size 3 x 4 x 1 x 1
 WIND_SPEEDS_BROADCAST = np.stack(

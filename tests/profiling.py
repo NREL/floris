@@ -19,7 +19,7 @@ import time
 import cProfile
 from copy import deepcopy
 
-from src import Floris
+from src.simulation import Floris
 
 
 if len(sys.argv) > 1:
