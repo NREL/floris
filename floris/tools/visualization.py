@@ -118,7 +118,7 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
 
 
 def visualize_cut_plane(
-    cut_plane, ax=None, minSpeed=None, maxSpeed=None, cmap="coolwarm", levels=None
+    cut_plane, ax=None, minSpeed=None, maxSpeed=None, cmap="coolwarm", levels=None, title = None
 ):
     """
     Generate pseudocolor mesh plot of the cut_plane.
@@ -134,6 +134,7 @@ def visualize_cut_plane(
             contours. Defaults to None.
         cmap (str, optional): Colormap specifier. Defaults to
             'coolwarm'.
+        title : Image title
 
     Returns:
         im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
@@ -170,6 +171,9 @@ def visualize_cut_plane(
 
     # Make equal axis
     ax.set_aspect("equal")
+    
+    # Make title
+    ax.set_title(title)
 
     # Return im
     return im
