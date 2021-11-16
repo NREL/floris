@@ -12,10 +12,9 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Dict, List, Union
-from collections.abc import Iterable
 import math
 from typing import Any, Dict, List, Union
+from collections.abc import Iterable
 
 import attr
 import numpy as np
@@ -32,14 +31,14 @@ from src.base_class import BaseClass
 
 
 def _filter_convert(ix_filter: Union[np.ndarray, None], sample_arg: np.ndarray) -> Union[np.ndarray, None]:
-    """This function selects turbine indeces from the given array of turbine properties
+    """This function selects turbine indices from the given array of turbine properties
     over the simulation's atmospheric conditions (wind directions / wind speeds).
     It converts the ix_filter to a standard format of `np.ndarray`s for filtering
     certain arguments.
 
     Args:
         ix_filter (Union[np.ndarray, None]): The indices, or truth array-like object to
-            use for filtering. None implies that all indeces in the sample_arg
+            use for filtering. None implies that all indices in the sample_arg
             should be selected.
         sample_arg (np.ndarray): Any argument that will be filtered, to be used for
             creating the shape. This should be of shape:
@@ -54,7 +53,7 @@ def _filter_convert(ix_filter: Union[np.ndarray, None], sample_arg: np.ndarray) 
     # there's nothing we can do with it.
     if not isinstance(ix_filter, Iterable) and ix_filter is not None:
         raise TypeError("Expected ix_filter to be an Iterable or None")
-    
+
     # Check that the sample_arg is a Numpy array. If it isn't, we
     # can't get its shape.
     if not isinstance(sample_arg, np.ndarray):
@@ -153,7 +152,7 @@ def Ct(
     yaw_angle: np.ndarray,  # (wind directions, wind speeds, turbines)
     fCt: np.ndarray,  # (wind directions, wind speeds, turbines)
     ix_filter: np.ndarray = None,
-) -> np.ndarray:  # (wind directions, wind speeds, turbines)   
+) -> np.ndarray:  # (wind directions, wind speeds, turbines)
     """Thrust coefficient of a turbine incorporating the yaw angle.
     The value is interpolated from the coefficient of thrust vs
     wind speed table using the rotor swept area average velocity.
@@ -274,6 +273,7 @@ class PowerThrustTable(FromDictMixin):
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
         ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
     """
+
     # TODO: How to handle duplicate entries for a single wind speed?
     # This affects the interpolation in fCt / fCp
     power: List[float] = attr.ib(converter=attrs_array_converter)
@@ -394,10 +394,7 @@ class Turbine(BaseClass):
         """
         return 0.5 * self.rotor_area * self.fCp(velocities) * self.generator_efficiency * velocities ** 3
 
-
-    def fCp(
-        self, sample_wind_speeds: Union[float, np.ndarray]
-    ) -> Union[float, np.ndarray]:
+    def fCp(self, sample_wind_speeds: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         """Calculates the coefficient of power at a given wind speed.
 
         Returns:
@@ -420,7 +417,6 @@ class Turbine(BaseClass):
             return _cp[0]
         return _cp
 
-
     def fCt(self, at_wind_speed: np.ndarray) -> np.ndarray:
         """
         Given an array of wind speeds, this function
@@ -438,11 +434,9 @@ class Turbine(BaseClass):
         """
         return self.fCt_interp(at_wind_speed)
 
-
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: str, value: float) -> None:
-        """Resets the `rotor_radius` and `rotor_area` attributes.
-        """
+        """Resets the `rotor_radius` and `rotor_area` attributes."""
         # Temporarily turn off validators to avoid infinite recursion
         attr.set_run_validators(False)
 

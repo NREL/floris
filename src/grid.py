@@ -206,36 +206,20 @@ class TurbineGrid(Grid):
         # Get the sorted indices for the x coordinates. These are the indices
         # to sort the turbines from upstream to downstream for all wind directions.
         # Also, store the indices to sort them back for when the calculation finishes.
-        self.sorted_indices = np.array([np.argsort(_x[i, 0, :, 0, 0]) for i in range(n_wind_directions)])
-        self.unsorted_indices = np.array([np.argsort(self.sorted_indices[i]) for i in range(n_wind_directions)])
+        self.sorted_indices = _x.argsort(axis=2)
+        self.unsorted_indices = self.sorted_indices.argsort(axis=2)
 
         # Put the turbines into the final arrays in their sorted order
-        self.x = np.zeros_like(_x)
-        self.y = np.zeros_like(_y)
-        self.z = np.zeros_like(_z)
-        for i in range(n_wind_directions):
-            for j in range(n_turbines):
-                self.x[i, :, j] = _x[i, :, self.sorted_indices[i, j]]
-                self.y[i, :, j] = _y[i, :, self.sorted_indices[i, j]]
-                self.z[i, :, j] = _z[i, :, self.sorted_indices[i, j]]
+        self.x = np.take_along_axis(_x, self.sorted_indices, axis=2)
+        self.y = np.take_along_axis(_y, self.sorted_indices, axis=2)
+        self.z = np.take_along_axis(_z, self.sorted_indices, axis=2)
 
     def finalize(self):
-        n_wind_directions = np.shape(self.x)[0]
-        n_turbines = np.shape(self.x)[2]
-
         # Replace the turbines in their unsorted order so that
         # we can report values in a sane way.
-        _x = np.zeros_like(self.x)
-        _y = np.zeros_like(self.y)
-        _z = np.zeros_like(self.z)
-        for i in range(n_wind_directions):
-            for j in range(n_turbines):
-                _x[i, :, j] = self.x[i, :, self.unsorted_indices[i, j]]
-                _y[i, :, j] = self.y[i, :, self.unsorted_indices[i, j]]
-                _z[i, :, j] = self.z[i, :, self.unsorted_indices[i, j]]
-        self.x = _x
-        self.y = _y
-        self.z = _z
+        self.x = np.take_along_axis(self.x, self.unsorted_indices, axis=2)
+        self.y = np.take_along_axis(self.y, self.unsorted_indices, axis=2)
+        self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
 
 
 # class FlowFieldGrid(Grid):
