@@ -27,8 +27,7 @@ from src.turbine import (
     axial_induction,
     average_velocity,
 )
-from tests.conftest import SampleInputs
-from tests.conftest import WIND_SPEEDS
+from tests.conftest import WIND_SPEEDS, SampleInputs
 
 
 # size 3 x 4 x 1 x 1
@@ -142,7 +141,7 @@ def test_filter_convert():
     # When the sample_arg is not a Numpy array, the function
     # should return None
     ix_filter = None
-    sample_arg = [1,2,3]
+    sample_arg = [1, 2, 3]
     with pytest.raises(TypeError):
         _filter_convert(ix_filter, sample_arg)
 
@@ -164,7 +163,7 @@ def test_filter_convert():
 
     # Test that a 1-D boolean truth array is returned
     # When the index filter is None and the sample_arg
-    # is a Numpy array of values, the returned filter indeces
+    # is a Numpy array of values, the returned filter indices
     # should be all True and have the shape of the turbine-dimension
     ix_filter = None
     sample_arg = np.arange(N).reshape(1, 1, N)
