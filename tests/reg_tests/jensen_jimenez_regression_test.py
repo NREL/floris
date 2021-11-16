@@ -43,6 +43,12 @@ baseline = np.array(
             [7.7463403, 0.7694798, 1555119.6348506, 0.2599374],
             [7.3515939, 0.7807184, 1328908.6335441, 0.2658625],
         ],
+        # 11 m/s
+        [
+            [10.9730201, 0.7304328, 4373591.7174990, 0.2404007],
+            [8.6282011, 0.7618323, 2145598.3751232, 0.2559879],
+            [8.1492048, 0.7625163, 1808647.8917100, 0.2563385],
+        ]
     ]
 )
 
@@ -66,6 +72,12 @@ yawed_baseline = np.array(
             [7.7632705, 0.7690422, 1565265.2188750, 0.2597097],
             [7.3579086, 0.7805112, 1332252.5927338, 0.2657518],
         ],
+        # 11 m/s
+        [
+            [10.9730201, 0.7276532, 4344217.6993801, 0.2386508],
+            [ 8.6452693, 0.7618684, 2158680.9632462, 0.2560064],
+            [ 8.1535164, 0.7625046, 1811581.5799780, 0.2563325],
+        ]
     ]
 )
 
@@ -130,7 +142,7 @@ def test_regression_tandem(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results[0,0:3], baseline)
+    assert_results_arrays(test_results[0], baseline)
 
 def test_regression_rotation(sample_inputs_fixture):
     """
@@ -268,4 +280,4 @@ def test_regression_yaw(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results[0,0:3], yawed_baseline)
+    assert_results_arrays(test_results[0], yawed_baseline)
