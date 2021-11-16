@@ -26,7 +26,26 @@ from src.utilities import FromDictMixin
 from src.simulation import Farm, Turbine, FlowField, TurbineGrid, sequential_solver
 
 # from .wake import Wake
-from .wake_velocity.jensen import JensenVelocityDeficit
+from src.simulation.wake_velocity import CurlVelocityDeficit, JensenVelocityDeficit
+from src.simulation.wake_deflection import JimenezVelocityDeflection
+
+
+MODEL_MAP = {
+    # "wake_combination": {"""The Combination Models"""},
+    "wake_deflection": {"jimenez": JimenezVelocityDeflection},
+    # "wake_turbulence": {"""The Turbulence Models"""},
+    "wake_velocity": {"curl": CurlVelocityDeficit, "jensen": JensenVelocityDeficit},
+}
+VALID_WAKE_MODELS = [
+    "jensen",
+    "turbopark",
+    "multizone",
+    "gauss",
+    "gauss_legacy",
+    "blondel",
+    "ishihara_qian",
+    "curl",
+]
 
 
 def convert_dict_to_turbine(turbine_map: dict[str, dict]) -> dict[str, Turbine]:
@@ -69,6 +88,8 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             self.logging["file"]["enable"],
             self.logging["file"]["level"],
         )
+
+        self.set_wake_model()
 
     @classmethod
     def from_json(input_file_path: str | Path) -> Floris:
@@ -177,24 +198,20 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         Raises:
             Exception: Invalid wake model.
         """
-        valid_wake_models = [
-            "jensen",
-            "turbopark",
-            "multizone",
-            "gauss",
-            "gauss_legacy",
-            "blondel",
-            "ishihara_qian",
-            "curl",
-        ]
-        if wake_model not in valid_wake_models:
+
+        if wake_model not in VALID_WAKE_MODELS:
             # TODO: logging
             raise Exception("Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models)))
 
-        self.flow_field.wake.velocity_model = wake_model
-        if wake_model == "jensen" or wake_model == "multizone" or wake_model == "turbopark":
-            self.flow_field.wake.deflection_model = "jimenez"
-        elif wake_model == "blondel" or wake_model == "ishihara_qian" or "gauss" in wake_model:
+        model_properties = self.wake["properties"]
+        model_parameters = model_properties["parameters"]
+
+        model_string = model_properties["deflection_model"]
+        velocity_model = MODEL_MAP["model_string"]
+        model_def = model_parameters["wake_deflection_parameters"][model_string]
+        self.flow_field.wake.velocity_model = velocity_model.from_dict(model_string)
+
+        if wake_model == "blondel" or wake_model == "ishihara_qian" or "gauss" in wake_model:
             self.flow_field.wake.deflection_model = "gauss"
         else:
             self.flow_field.wake.deflection_model = wake_model
