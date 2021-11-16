@@ -47,9 +47,9 @@ class FlowField:
         self.w = self.w_initial.copy()
 
     def finalize(self, unsorted_indices):
-        self.u = np.take_along_axis(self.u, self.unsorted_indices, axis=2)
-        self.v = np.take_along_axis(self.v, self.unsorted_indices, axis=2)
-        self.w = np.take_along_axis(self.w, self.unsorted_indices, axis=2)
+        self.u = np.take_along_axis(self.u, unsorted_indices, axis=2)
+        self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
+        self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
 
     @property
     def n_wind_speeds(self) -> int:
