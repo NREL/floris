@@ -92,27 +92,28 @@ class JensenVelocityDeficit(BaseClass):
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))
 
-        m = self.we
-        # x = x[i] - x[i - 1] #mesh_x_rotated - x_coord_rotated
-        b = reference_rotor_diameter[:, :, :, None, None] / 2.0
+        reference_rotor_radius = reference_rotor_diameter[:, :, :, None, None] / 2.0
 
-        boundary_line = m * x + b
+        # y = m * x + b
+        boundary_line = self.we * x + reference_rotor_radius
 
-        y_center = np.zeros_like(boundary_line) + y + deflection_field
-        z_center = np.zeros_like(boundary_line) + reference_wind_height
+        y_i = np.mean(y[:, :, i:i+1], axis=(3,4))
+        y_i = y_i[:, :, :, None, None] + deflection_field
+        z_i = np.mean(z[:, :, i:i+1], axis=(3,4))
+        z_i = z_i[:, :, :, None, None]
 
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
-        c = (
-            # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
-            (reference_rotor_diameter[:, :, :, None, None] / (2 * self.we * (x - x[:, :, i:i+1]) + reference_rotor_diameter[:, :, :, None, None])) ** 2
-            * ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine
-            * ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
-        )
-
-        # c[x - x[i] <= 0] = 0
-        # mask = (((y - y_center) ** 2 + (z - z_center) ** 2) ** 2) > (boundary_line ** 2)
-        # c[mask] = 0
+        # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
+        dx = x - x[:, :, i:i+1]
+        c = ( reference_rotor_radius / ( reference_rotor_radius + self.we * dx ) ) ** 2
+        # c *= ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.
+        # c *= ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
+        # np.nan_to_num
+        # C should be 0 at the current turbine and everywhere in front of it
+        c[x - x[:, :, i:i+1] <= 0.0] = 0.0
+        mask = ((y - y_i) ** 2 + (z - z_i) ** 2) > (boundary_line ** 2)
+        c[mask] = 0.0
 
         return c
         # u[i] = u[i - 1] * (1 - 2 * turbine_ai * c)

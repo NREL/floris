@@ -25,7 +25,6 @@ class FlowField:
         self.wind_speeds = np.array(input_dictionary["wind_speeds"])
         self.wind_directions = np.array(input_dictionary["wind_directions"])
         self.reference_wind_height = input_dictionary["reference_wind_height"]
-        self.reference_turbine_diameter = input_dictionary["reference_turbine_diameter"]
         self.air_density = input_dictionary["air_density"]
 
     def initialize_velocity_field(self, grid: Grid) -> None:
@@ -46,6 +45,11 @@ class FlowField:
         self.u = self.u_initial.copy()
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
+
+    def finalize(self, unsorted_indices):
+        self.u = np.take_along_axis(self.u, unsorted_indices, axis=2)
+        self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
+        self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
 
     @property
     def n_wind_speeds(self) -> int:

@@ -12,7 +12,6 @@ class Grid(ABC):
         self,
         turbine_coordinates: List[Vec3],
         reference_turbine_diameter: float,
-        reference_wind_height: float,
         grid_resolution: int,
     ) -> None:
         """
@@ -28,7 +27,6 @@ class Grid(ABC):
         """
         self.turbine_coordinates: List[Vec3] = turbine_coordinates
         self.reference_turbine_diameter: float = reference_turbine_diameter
-        self.reference_wind_height: float = reference_wind_height
         self.grid_resolution: int = grid_resolution
         # x are the locations in space in the primary direction (typically the direction of the wind)
         # y are the locations in space in the lateral direction
@@ -104,32 +102,36 @@ class TurbineGrid(Grid):
         self,
         turbine_coordinates: List[Vec3],
         reference_turbine_diameter: float,
-        reference_wind_height: float,
+        wind_directions: np.array,
+        wind_speeds: np.array,
         grid_resolution: int,
     ) -> None:
         # establishes a data structure with grid on each turbine
         # the x,y,z points here are the grid points on the turbine swept area
+        # TODO: should reference_turbine_diameter be here or in Farm? currently in both.
+        #       Both may be fine, they could be different maybe.
         super().__init__(
             turbine_coordinates,
             reference_turbine_diameter,
-            reference_wind_height,
             grid_resolution,
         )
-        self.set_grid()
+        self.set_grid(wind_directions, wind_speeds)
 
-    def set_grid(self) -> None:
+    def set_grid(self, wind_directions, wind_speeds) -> None:
         """
         Create grid points at each turbine for each wind direction and wind speed in the simulation.
         This creates the underlying data structure for the calculation.
 
-        arrays have shape (n turbines, m grid spanwise, m grid vertically)
-        - dimension 1: each turbine
-        - dimension 2: number of points in the spanwise direction (ngrid)
-        - dimension 3: number of points in the vertical dimension (ngrid)
+        arrays have shape (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)
+        - dimension 1: each wind direction
+        - dimension 2: each wind speed
+        - dimension 3: each turbine
+        - dimension 4: number of points in the spanwise direction (ngrid)
+        - dimension 5: number of points in the vertical dimension (ngrid)
 
         For example
-        - x is [n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
-        - y is [n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]
+        - x is [n wind direction, n wind speeds, n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
+        - y is [n wind direction, n wind speeds, n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]
 
         The x,y,z arrays contain the actual locations in that direction.
 
@@ -137,126 +139,144 @@ class TurbineGrid(Grid):
         #             of points to use on the turbine grid. This number will be
         #             squared so that the points can be evenly distributed.
         #             Defaults to 5.
+
+        If the grid conforms to the sequential solver interface, it must be sorted from upstream to downstream
         """
         # TODO: Where should we locate the coordinate system? Currently, its at
         # the foot of the turbine where the tower meets the ground.
 
         n_turbines = len(self.turbine_coordinates)
+        n_wind_directions = len(wind_directions)
+        n_wind_speeds = len(wind_speeds)
 
-        # vector of size [1 x n_turbines]
-        x_coordinates = np.expand_dims(np.array([c.x1 for c in self.turbine_coordinates]), axis=0)
-        # y_coordinates = np.expand_dims(
-        #     np.array([c.x2 for c in self.turbine_coordinates]), axis=0
-        # )
-        # z_coordinates = np.expand_dims(
-        #     np.array([c.x3 for c in self.turbine_coordinates]), axis=0
-        # )
+        # Calculate the difference in given wind direction from 270 / West
+        wind_deviation_from_west = -1 * ((wind_directions - 270) % 360 + 360) % 360
+        wind_deviation_from_west = np.reshape(wind_deviation_from_west, (n_wind_directions, 1, 1))
+
+        # Construct the arrays storing the turbine locations
+        x_coordinates = np.array([c.x1 for c in self.turbine_coordinates])
+        y_coordinates = np.array([c.x2 for c in self.turbine_coordinates])
+        z_coordinates = np.array([c.x3 for c in self.turbine_coordinates])
+        x_coordinates = x_coordinates[None, None, :]
+        y_coordinates = y_coordinates[None, None, :]
+        z_coordinates = z_coordinates[None, None, :]
+
+        # Find center of rotation - this is the center of box bounding all of the turbines
+        x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
+        y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+
+        # Rotate turbine coordinates about the center
+        x_coord_offset = x_coordinates - x_center_of_rotation
+        y_coord_offset = y_coordinates - y_center_of_rotation
+        x_coord_rotated = (
+            x_coord_offset * cosd(wind_deviation_from_west)
+            - y_coord_offset * sind(wind_deviation_from_west)
+            + x_center_of_rotation
+        )
+        y_coord_rotated = (
+            x_coord_offset * sind(wind_deviation_from_west)
+            + y_coord_offset * cosd(wind_deviation_from_west)
+            + y_center_of_rotation
+        )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
         #         the rotor radius.
         #         Defaults to 0.5.
+
+        # Create the data for the turbine grids
         radius_ratio = 0.5
         disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
-        template_grid = np.ones((n_turbines, self.grid_resolution * self.grid_resolution))
+        template_grid = np.ones(
+            (n_wind_directions, n_wind_speeds, n_turbines, self.grid_resolution, self.grid_resolution)
+        )
 
         # Calculate the radial distance from the center of the turbine rotor
         disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution)
+        template_rotor = template_grid * (disc_grid * np.ones((self.grid_resolution, self.grid_resolution)))
 
-        # Create the data for the turbine grids
-        self.x = np.reshape(
-            x_coordinates.T * template_grid,
-            (n_turbines, self.grid_resolution, self.grid_resolution),
-        )
-        # TODO: ?initialize with correct number of dimensions and then expand them as needed later
-        self.y = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
-        self.z = np.zeros((n_turbines, self.grid_resolution, self.grid_resolution))
+        # Construct the turbine grids
+        # Here, they are already rotated to the correct orientation for each wind direction
+        _x = x_coord_rotated[:, :, :, None, None] * template_grid
+        _y = y_coord_rotated[:, :, :, None, None] + template_rotor
+        _z = z_coordinates[:, :, :, None, None] + template_rotor
 
-        for i, coord in enumerate(self.turbine_coordinates):
-            #     # Save the indices of the flow field points for this turbine
-            #     # Create the grids
-            #     x_grid[i] = coord.x1
-            self.y[i] = coord.x2 + disc_grid
-            self.z[i] = coord.x3 + disc_grid
-            # self.y[:, :, i] = coord.x2 + disc_grid
-            # self.z[:, :, i] = coord.x3 + disc_grid
+        # Sort the turbines at each wind direction
 
-    def expand_atmospheric_conditions(self, n_wind_directions, n_wind_speeds):
-        # Add dimension for wind direction and wind speed
-        # self.x = np.resize(self.x, (n_wind_speeds, *self.x.shape))
-        # self.y = np.resize(self.x, (n_wind_speeds, *self.x.shape))
-        # self.z = np.resize(self.x, (n_wind_speeds, *self.x.shape))
-        # TODO: there's got to be a better way...
+        # Get the sorted indices for the x coordinates. These are the indices
+        # to sort the turbines from upstream to downstream for all wind directions.
+        # Also, store the indices to sort them back for when the calculation finishes.
+        self.sorted_indices = _x.argsort(axis=2)
+        self.unsorted_indices = self.sorted_indices.argsort(axis=2)
 
-        tmpx = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.x)))
-        tmpx[:, :] = self.x
-        self.x = tmpx
+        # Put the turbines into the final arrays in their sorted order
+        self.x = np.take_along_axis(_x, self.sorted_indices, axis=2)
+        self.y = np.take_along_axis(_y, self.sorted_indices, axis=2)
+        self.z = np.take_along_axis(_z, self.sorted_indices, axis=2)
 
-        tmpy = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.y)))
-        tmpy[:, :] = self.y
-        self.y = tmpy
-
-        tmpz = np.zeros((n_wind_directions, n_wind_speeds, *np.shape(self.z)))
-        tmpz[:, :] = self.z
-        self.z = tmpz
+    def finalize(self):
+        # Replace the turbines in their unsorted order so that
+        # we can report values in a sane way.
+        self.x = np.take_along_axis(self.x, self.unsorted_indices, axis=2)
+        self.y = np.take_along_axis(self.y, self.unsorted_indices, axis=2)
+        self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
 
 
-class FlowFieldGrid(Grid):
-    """
-    Primarily used by the Curl model and for visualization
-    """
+# class FlowFieldGrid(Grid):
+#     """
+#     Primarily used by the Curl model and for visualization
+#     """
 
-    def __init__(
-        self,
-        turbine_coordinates: List[Vec3],
-        reference_turbine_diameter: float,
-        reference_wind_height: float,
-        grid_resolution: Vec3,
-    ) -> None:
+#     def __init__(
+#         self,
+#         turbine_coordinates: List[Vec3],
+#         reference_turbine_diameter: float,
+#         reference_wind_height: float,
+#         grid_resolution: Vec3,
+#     ) -> None:
 
-        # the x,y points are a regular grid based on given domain bounds
+#         # the x,y points are a regular grid based on given domain bounds
 
-        super().__init__(
-            turbine_coordinates,
-            reference_turbine_diameter,
-            reference_wind_height,
-            grid_resolution,
-        )
+#         super().__init__(
+#             turbine_coordinates,
+#             reference_turbine_diameter,
+#             grid_resolution,
+#         )
 
-        self.set_bounds()
-        self.set_grid()
+#         self.set_bounds()
+#         self.set_grid()
 
-    def set_bounds(self) -> None:
-        # TODO: Should this be called "compute_bounds?"
-        #   anything set_ could require an argument to set a value
-        #   other functions that set variables based on previous inputs could be "compute_"
-        #   anything that returns values, even if they are computed on the fly, could be get_ (instead of @property)
-        """
-        Calculates the domain bounds for the current wake model. The bounds
-        are calculated based on preset extents from the
-        given layout. The bounds consist of the minimum and maximum values
-        in the x-, y-, and z-directions.
+#     def set_bounds(self) -> None:
+#         # TODO: Should this be called "compute_bounds?"
+#         #   anything set_ could require an argument to set a value
+#         #   other functions that set variables based on previous inputs could be "compute_"
+#         #   anything that returns values, even if they are computed on the fly, could be get_ (instead of @property)
+#         """
+#         Calculates the domain bounds for the current wake model. The bounds
+#         are calculated based on preset extents from the
+#         given layout. The bounds consist of the minimum and maximum values
+#         in the x-, y-, and z-directions.
 
-        If the Curl model is used, the predefined bounds are always set.
-        """
-        # For the curl model, bounds are hard coded
-        coords = self.turbine_coordinates
-        x = [coord.x1 for coord in coords]
-        y = [coord.x2 for coord in coords]
-        eps = 0.1
-        self.xmin = min(x) - 2 * self.reference_turbine_diameter
-        self.xmax = max(x) + 10 * self.reference_turbine_diameter
-        self.ymin = min(y) - 2 * self.reference_turbine_diameter
-        self.ymax = max(y) + 2 * self.reference_turbine_diameter
-        self.zmin = 0 + eps
-        self.zmax = 6 * self.reference_wind_height
+#         If the Curl model is used, the predefined bounds are always set.
+#         """
+#         # For the curl model, bounds are hard coded
+#         coords = self.turbine_coordinates
+#         x = [coord.x1 for coord in coords]
+#         y = [coord.x2 for coord in coords]
+#         eps = 0.1
+#         self.xmin = min(x) - 2 * self.reference_turbine_diameter
+#         self.xmax = max(x) + 10 * self.reference_turbine_diameter
+#         self.ymin = min(y) - 2 * self.reference_turbine_diameter
+#         self.ymax = max(y) + 2 * self.reference_turbine_diameter
+#         self.zmin = 0 + eps
+#         self.zmax = 6 * self.reference_wind_height
 
-    def set_grid(self) -> None:
-        """
-        Create a structured grid for the entire flow field domain.
-        resolution: Vec3
-        """
-        x_points = np.linspace(self.xmin, self.xmax, int(self.grid_resolution.x1))
-        y_points = np.linspace(self.ymin, self.ymax, int(self.grid_resolution.x2))
-        z_points = np.linspace(self.zmin, self.zmax, int(self.grid_resolution.x3))
-        self.x, self.y, self.z = np.meshgrid(x_points, y_points, z_points, indexing="ij")
+#     def set_grid(self) -> None:
+#         """
+#         Create a structured grid for the entire flow field domain.
+#         resolution: Vec3
+#         """
+#         x_points = np.linspace(self.xmin, self.xmax, int(self.grid_resolution.x1))
+#         y_points = np.linspace(self.ymin, self.ymax, int(self.grid_resolution.x2))
+#         z_points = np.linspace(self.zmin, self.zmax, int(self.grid_resolution.x3))
+#         self.x, self.y, self.z = np.meshgrid(x_points, y_points, z_points, indexing="ij")

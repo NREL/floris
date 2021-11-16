@@ -14,7 +14,6 @@
 
 
 import json
-import pickle
 
 import src.logging_manager as logging_manager
 
@@ -92,10 +91,31 @@ class Floris(logging_manager.LoggerBase):
         )
         self.flow_field = FlowField(farm_dict)
 
-    def go(self):
+    def annual_energy_production(self, wind_rose):
+        # self.steady_state_atmospheric_condition()
+        pass
+
+    def steady_state_atmospheric_condition(self):
+
+        # <<interface>>
+        # Initialize grid and field quanitities
+        grid = TurbineGrid(
+            self.farm.coordinates,
+            self.farm.reference_turbine_diameter,
+            self.flow_field.wind_directions,
+            self.flow_field.wind_speeds,
+            5,
+        )
+        # TODO: where do we pass in grid_resolution? Hardcoded to 5 above.
+
+        self.flow_field.initialize_velocity_field(grid)
+
         # <<interface>>
         # JensenVelocityDeficit.solver(self.farm, self.flow_field)
-        sequential_solver(self.farm, self.flow_field)
+        sequential_solver(self.farm, self.flow_field, grid)
+
+        grid.finalize()
+        self.flow_field.finalize(grid.unsorted_indices)
 
     # Utility functions
 
