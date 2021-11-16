@@ -100,11 +100,8 @@ class Jensen(VelocityDeficit):
 
         boundary_line = m * x + b
 
-        y_upper = boundary_line + turbine_coord.x2 + deflection_field
-        y_lower = -1 * boundary_line + turbine_coord.x2 + deflection_field
-
-        z_upper = boundary_line + turbine.hub_height
-        z_lower = -1 * boundary_line + turbine.hub_height
+        y_center = np.zeros_like(boundary_line) + turbine_coord.x2 + deflection_field
+        z_center = np.zeros_like(boundary_line) + turbine.hub_height
 
         # calculate the wake velocity
         c = (
@@ -112,13 +109,13 @@ class Jensen(VelocityDeficit):
             / (2 * self.we * (x_locations - turbine_coord.x1) + turbine.rotor_diameter)
         ) ** 2
 
-        # filter points upstream and beyond the upper and
-        # lower bounds of the wake
+        # filter points upstream
         c[x_locations - turbine_coord.x1 < 0] = 0
-        c[y_locations > y_upper] = 0
-        c[y_locations < y_lower] = 0
-        c[z_locations > z_upper] = 0
-        c[z_locations < z_lower] = 0
+        # filter points beyond the wake boundary
+        mask = ((y_locations - y_center) ** 2 + (z_locations - z_center) ** 2) > (
+            boundary_line ** 2
+        )
+        c[mask] = 0
 
         return (
             2 * turbine.aI * c * flow_field.u_initial,
@@ -148,7 +145,7 @@ class Jensen(VelocityDeficit):
 
     @we.setter
     def we(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for we: {}, " + "expected float."
             ).format(value)

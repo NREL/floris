@@ -13,107 +13,71 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
-import pytest
+from pytest import approx
 
+from tests.conftest import print_test_values, turbines_to_array
 from floris.simulation import Floris
+from tests.reg_tests.curl_regression_test import baseline as curl_baseline
+from tests.reg_tests.gauss_regression_test import baseline as gauss_baseline
 
 
-try:
-    from .gauss_regression_test import GaussRegressionTest
-except ImportError:
-    from gauss_regression_test import GaussRegressionTest
-try:
-    from .curl_regression_test import CurlRegressionTest
-except ImportError:
-    from curl_regression_test import CurlRegressionTest
+DEBUG = False
 
 
-class ChangeModelTest:
-    """
-    This test checks the ability to change the wake models programmatically.
-    These tests use the baselines from other regression tests.
-
-    Currently, it tests the parameters on the Turbines.
-    TODO:
-    - Timing test
-    - Memory test
-    """
-
-    def __init__(self):
-        self.debug = False
-
-
-def test_gauss_to_curl_to_gauss():
+def test_gauss_to_curl_to_gauss(sample_inputs_fixture):
     """
     Start with the Gauss wake model
     Then, switch to Curl
     Then, switch back to Gauss
     """
-    test_class = ChangeModelTest()
-
     # Establish that the Gauss test passes
-    gauss_test_class = GaussRegressionTest()
-    floris = Floris(input_dict=gauss_test_class.input_dict)
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = "gauss_legacy"
+    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = "gauss"
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = gauss_test_class.baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        baseline = gauss_baseline
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])
 
     # Change the model to Curl, rerun calculate_wake, and compare to Curl
     floris.farm.set_wake_model("curl")
     floris.farm.flow_field.calculate_wake()
 
-    curl_test_class = CurlRegressionTest()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = curl_test_class.baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        baseline = curl_baseline
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])
 
     # Change back to Gauss, rerun calculate_wake, and compare to gauss
-    floris.farm.set_wake_model("gauss")
+    floris.farm.set_wake_model("gauss_legacy")
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = gauss_test_class.baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        baseline = gauss_baseline
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])

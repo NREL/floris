@@ -53,6 +53,7 @@ def visualize_layout(
     limit_dist=None,
     turbine_face_north=False,
     one_index_turbine=False,
+    black_and_white=False,
 ):
     """
     Make a plot which shows the turbine locations, and important wakes.
@@ -136,7 +137,10 @@ def visualize_layout(
             if x[1] > x[0]:
                 continue
 
-            (l,) = ax.plot(x, y)
+            if black_and_white:
+                (l,) = ax.plot(x, y, color="k")
+            else:
+                (l,) = ax.plot(x, y)
             # linetext = '%.2f m --- %.2f D --- %.2f Deg --- %.2f Deg' % (
             #     dist.loc[t1,t2],
             #     dist.loc[t1,t2]/D,

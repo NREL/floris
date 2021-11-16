@@ -179,6 +179,10 @@ class TurbineMap(LoggerBase):
 
         return wake_list
 
+    def reinitialize_turbines(self):
+        for turbine in self.turbines:
+            turbine.initialize_turbine()
+
     @property
     def turbines(self):
         """

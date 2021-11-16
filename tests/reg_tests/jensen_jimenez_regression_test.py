@@ -14,79 +14,70 @@
 
 import copy
 
-import numpy as np
-import pytest
+from pytest import approx
 
+from tests.conftest import print_test_values, turbines_to_array
 from floris.simulation import Floris, TurbineMap
 
 
-try:
-    from .sample_inputs import SampleInputs
-except ImportError:
-    from sample_inputs import SampleInputs
+DEBUG = False
+VELOCITY_MODEL = "jensen"
+DEFLECTION_MODEL = "jimenez"
+
+baseline = [
+    (0.7634300, 1695368.6455473, 0.2568077, 7.9803783),
+    (0.8281095, 771695.5183645, 0.2927016, 6.1586693),
+    (0.8525678, 591183.4224051, 0.3080155, 5.6649575),
+]
+
+yawed_baseline = [
+    (0.7605249, 1683956.3885389, 0.2548147, 7.9803783),
+    (0.8274579, 777423.9137261, 0.2923090, 6.1728072),
+    (0.8522603, 593267.9301046, 0.3078154, 5.6709666),
+]
+
+# Note: compare the yawed vs non-yawed results. The upstream turbine
+# power should be lower in the yawed case. The following turbine
+# powers should higher in the yawed case.
 
 
-class JensenJimenezRegressionTest:
-    """
-    """
-
-    def __init__(self):
-        sample_inputs = SampleInputs()
-        sample_inputs.floris["wake"]["properties"]["velocity_model"] = "jensen"
-        sample_inputs.floris["wake"]["properties"]["deflection_model"] = "jimenez"
-        self.input_dict = sample_inputs.floris
-        self.debug = False
-
-    def baseline(self, turbine_index):
-        baseline = [
-            (0.4632706, 0.7655828, 1793661.6494183, 0.2579167, 7.9736330),
-            (0.4553179, 0.8273480, 807133.4600243, 0.2922430, 6.1456034),
-            (0.4494880, 0.8498521, 622820.0654135, 0.3062554, 5.6611213),
-        ]
-        return baseline[turbine_index]
-
-    def yawed_baseline(self, turbine_index):
-        baseline = [
-            (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
-            (0.4554894, 0.8266861, 813067.4207660, 0.2918451, 6.1598540),
-            (0.4495612, 0.8495696, 624931.5642086, 0.3060732, 5.6672040),
-        ]
-        return baseline[turbine_index]
-
-
-def test_regression_tandem():
+def test_regression_tandem(sample_inputs_fixture):
     """
     Tandem turbines
     """
-    test_class = JensenJimenezRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])
 
 
-def test_regression_rotation():
+def test_regression_rotation(sample_inputs_fixture):
     """
     Turbines in tandem and rotated.
     The result from 270 degrees should match the results from 360 degrees.
     """
-    test_class = JensenJimenezRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
     wind_map = floris.farm.wind_map
 
@@ -94,7 +85,6 @@ def test_regression_rotation():
     floris.farm.flow_field.calculate_wake()
     turbine = floris.farm.turbine_map.turbines[0]
     unwaked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -102,7 +92,6 @@ def test_regression_rotation():
     )
     turbine = floris.farm.turbine_map.turbines[1]
     first_waked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -110,7 +99,6 @@ def test_regression_rotation():
     )
     turbine = floris.farm.turbine_map.turbines[2]
     second_waked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -123,8 +111,9 @@ def test_regression_rotation():
     new_map = TurbineMap(
         [0.0, 0.0, 0.0],
         [
-            10 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"],
-            5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"],
+            10
+            * sample_inputs_fixture.floris["turbine"]["properties"]["rotor_diameter"],
+            5 * sample_inputs_fixture.floris["turbine"]["properties"]["rotor_diameter"],
             0.0,
         ],
         [
@@ -139,52 +128,48 @@ def test_regression_rotation():
     floris.farm.flow_field.calculate_wake()
 
     turbine = floris.farm.turbine_map.turbines[0]
-    assert pytest.approx(turbine.Cp) == unwaked_baseline[0]
-    assert pytest.approx(turbine.Ct) == unwaked_baseline[1]
-    assert pytest.approx(turbine.power) == unwaked_baseline[2]
-    assert pytest.approx(turbine.aI) == unwaked_baseline[3]
-    assert pytest.approx(turbine.average_velocity) == unwaked_baseline[4]
+    assert approx(turbine.Ct) == unwaked_baseline[0]
+    assert approx(turbine.power) == unwaked_baseline[1]
+    assert approx(turbine.aI) == unwaked_baseline[2]
+    assert approx(turbine.average_velocity) == unwaked_baseline[3]
 
     turbine = floris.farm.turbine_map.turbines[1]
-    assert pytest.approx(turbine.Cp) == first_waked_baseline[0]
-    assert pytest.approx(turbine.Ct) == first_waked_baseline[1]
-    assert pytest.approx(turbine.power) == first_waked_baseline[2]
-    assert pytest.approx(turbine.aI) == first_waked_baseline[3]
-    assert pytest.approx(turbine.average_velocity) == first_waked_baseline[4]
+    assert approx(turbine.Ct) == first_waked_baseline[0]
+    assert approx(turbine.power) == first_waked_baseline[1]
+    assert approx(turbine.aI) == first_waked_baseline[2]
+    assert approx(turbine.average_velocity) == first_waked_baseline[3]
 
     turbine = floris.farm.turbine_map.turbines[2]
-    assert pytest.approx(turbine.Cp) == second_waked_baseline[0]
-    assert pytest.approx(turbine.Ct) == second_waked_baseline[1]
-    assert pytest.approx(turbine.power) == second_waked_baseline[2]
-    assert pytest.approx(turbine.aI) == second_waked_baseline[3]
-    assert pytest.approx(turbine.average_velocity) == second_waked_baseline[4]
+    assert approx(turbine.Ct) == second_waked_baseline[0]
+    assert approx(turbine.power) == second_waked_baseline[1]
+    assert approx(turbine.aI) == second_waked_baseline[2]
+    assert approx(turbine.average_velocity) == second_waked_baseline[3]
 
 
-def test_regression_yaw():
+def test_regression_yaw(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed
     """
-    test_class = JensenJimenezRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
 
     # yaw the upstream turbine 5 degrees
-    rotation_angle = 5.0
-    floris.farm.set_yaw_angles([rotation_angle, 0.0])
+    floris.farm.turbines[0].yaw_angle = 5.0
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.yawed_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        baseline = yawed_baseline
+        assert test_results[i][0] == approx(baseline[i][0])
+        assert test_results[i][1] == approx(baseline[i][1])
+        assert test_results[i][2] == approx(baseline[i][2])
+        assert test_results[i][3] == approx(baseline[i][3])

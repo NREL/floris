@@ -15,105 +15,89 @@
 
 import copy
 
-import numpy as np
-import pytest
+from pytest import approx
 
+from tests.conftest import print_test_values, turbines_to_array
 from floris.simulation import Floris, TurbineMap
 
 
-try:
-    from .sample_inputs import SampleInputs
-except ImportError:
-    from sample_inputs import SampleInputs
+DEBUG = False
+VELOCITY_MODEL = "gauss_legacy"
+DEFLECTION_MODEL = "gauss"
+
+baseline = [
+    (0.7634300, 1695368.6455473, 0.2568077, 7.9803783),
+    (0.8436903, 651362.9121753, 0.3023199, 5.8384411),
+    (0.8385498, 686209.4710003, 0.2990957, 5.9388958),
+]
+
+yawed_baseline = [
+    (0.7605249, 1683956.3885389, 0.2548147, 7.9803783),
+    (0.8419285, 663305.9063892, 0.3012090, 5.8728701),
+    (0.8383413, 687622.7755572, 0.2989660, 5.9429700),
+]
+
+gch_baseline = [
+    (0.7605249, 1683956.3885389, 0.2548147, 7.9803783),
+    (0.8409478, 669953.8921404, 0.3005933, 5.8920347),
+    (0.8370054, 696678.9863587, 0.2981370, 5.9690770),
+]
+
+yaw_added_recovery_baseline = [
+    (0.7605249, 1683956.3885389, 0.2548147, 7.9803783),
+    (0.8409481, 669952.1496101, 0.3005934, 5.8920297),
+    (0.8372996, 694684.9361087, 0.2983193, 5.9633286),
+]
+
+secondary_steering_baseline = [
+    (0.7605249, 1683956.3885389, 0.2548147, 7.9803783),
+    (0.8419282, 663307.6815433, 0.3012088, 5.8728752),
+    (0.8380415, 689655.4839532, 0.2987797, 5.9488299),
+]
+
+# Note: compare the yawed vs non-yawed results. The upstream turbine
+# power should be lower in the yawed case. The following turbine
+# powers should higher in the yawed case.
 
 
-class GaussRegressionTest:
-    """
-    """
-
-    def __init__(self):
-        sample_inputs = SampleInputs()
-        sample_inputs.floris["wake"]["properties"]["velocity_model"] = "gauss"
-        sample_inputs.floris["wake"]["properties"]["deflection_model"] = "gauss"
-        self.input_dict = sample_inputs.floris
-        self.debug = False
-
-    def baseline(self, turbine_index):
-        baseline = [
-            (0.4632706, 0.7655828, 1793661.6494183, 0.2579167, 7.9736330),
-            (0.4529770, 0.8363843, 729117.4390409, 0.2977528, 5.9510659),
-            (0.4574196, 0.8192350, 881978.4823849, 0.2874177, 6.3202663),
-        ]
-        return baseline[turbine_index]
-
-    def yawed_baseline(self, turbine_index):
-        baseline = [
-            (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
-            (0.4534739, 0.8344660, 745219.1570045, 0.2965706, 5.9923643),
-            (0.4574952, 0.8189433, 884755.7595666, 0.2872462, 6.3265451),
-        ]
-        return baseline[turbine_index]
-
-    def gch_baseline(self, turbine_index):
-        baseline = [
-            (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
-            (0.4535845, 0.8340392, 748834.7449840, 0.2963086, 6.0015520),
-            (0.4579510, 0.8171837, 901641.6247690, 0.2862149, 6.3644267),
-        ]
-        return baseline[turbine_index]
-
-    def yaw_added_recovery_baseline(self, turbine_index):
-        baseline = [
-            (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
-            (0.4535845, 0.8340392, 748834.7449840, 0.2963086, 6.0015520),
-            (0.4572521, 0.8198817, 875841.5697827, 0.2877983, 6.3063432),
-        ]
-        return baseline[turbine_index]
-
-    def secondary_steering_baseline(self, turbine_index):
-        # TODO: why are these the same as yawed_baselines?
-        #   does SS not work affect the current configuration?
-        baseline = [
-            (0.4632733, 0.7626695, 1780861.5909742, 0.2559061, 7.9736330),
-            (0.4534739, 0.8344660, 745219.1570045, 0.2965706, 5.9923643),
-            (0.4574952, 0.8189433, 884755.7595666, 0.2872462, 6.3265451),
-        ]
-        return baseline[turbine_index]
-
-
-def test_regression_tandem():
+def test_regression_tandem(sample_inputs_fixture):
     """
     Tandem turbines
     """
-    test_class = GaussRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        check = baseline
+        assert test_results[i][0] == approx(check[i][0])
+        assert test_results[i][1] == approx(check[i][1])
+        assert test_results[i][2] == approx(check[i][2])
+        assert test_results[i][3] == approx(check[i][3])
 
 
-def test_regression_rotation():
+def test_regression_rotation(sample_inputs_fixture):
     """
     Turbines in tandem and rotated.
     The result from 270 degrees should match the results from 360 degrees.
     """
-    test_class = GaussRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
     fresh_turbine = copy.deepcopy(floris.farm.turbine_map.turbines[0])
     wind_map = floris.farm.wind_map
 
@@ -121,7 +105,6 @@ def test_regression_rotation():
     floris.farm.flow_field.calculate_wake()
     turbine = floris.farm.turbine_map.turbines[0]
     unwaked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -129,7 +112,6 @@ def test_regression_rotation():
     )
     turbine = floris.farm.turbine_map.turbines[1]
     first_waked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
@@ -137,21 +119,21 @@ def test_regression_rotation():
     )
     turbine = floris.farm.turbine_map.turbines[2]
     second_waked_baseline = (
-        turbine.Cp,
         turbine.Ct,
         turbine.power,
         turbine.aI,
         turbine.average_velocity,
     )
 
-    ### rotated
+    # rotated
     wind_map.input_direction = [360]
     wind_map.calculate_wind_direction()
     new_map = TurbineMap(
         [0.0, 0.0, 0.0],
         [
-            10 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"],
-            5 * test_class.input_dict["turbine"]["properties"]["rotor_diameter"],
+            10
+            * sample_inputs_fixture.floris["turbine"]["properties"]["rotor_diameter"],
+            5 * sample_inputs_fixture.floris["turbine"]["properties"]["rotor_diameter"],
             0.0,
         ],
         [
@@ -166,207 +148,163 @@ def test_regression_rotation():
     floris.farm.flow_field.calculate_wake()
 
     turbine = floris.farm.turbine_map.turbines[0]
-    assert pytest.approx(turbine.Cp) == unwaked_baseline[0]
-    assert pytest.approx(turbine.Ct) == unwaked_baseline[1]
-    assert pytest.approx(turbine.power) == unwaked_baseline[2]
-    assert pytest.approx(turbine.aI) == unwaked_baseline[3]
-    assert pytest.approx(turbine.average_velocity) == unwaked_baseline[4]
+    assert approx(turbine.Ct) == unwaked_baseline[0]
+    assert approx(turbine.power) == unwaked_baseline[1]
+    assert approx(turbine.aI) == unwaked_baseline[2]
+    assert approx(turbine.average_velocity) == unwaked_baseline[3]
 
     turbine = floris.farm.turbine_map.turbines[1]
-    assert pytest.approx(turbine.Cp) == first_waked_baseline[0]
-    assert pytest.approx(turbine.Ct) == first_waked_baseline[1]
-    assert pytest.approx(turbine.power) == first_waked_baseline[2]
-    assert pytest.approx(turbine.aI) == first_waked_baseline[3]
-    assert pytest.approx(turbine.average_velocity) == first_waked_baseline[4]
+    assert approx(turbine.Ct) == first_waked_baseline[0]
+    assert approx(turbine.power) == first_waked_baseline[1]
+    assert approx(turbine.aI) == first_waked_baseline[2]
+    assert approx(turbine.average_velocity) == first_waked_baseline[3]
 
     turbine = floris.farm.turbine_map.turbines[2]
-    assert pytest.approx(turbine.Cp) == second_waked_baseline[0]
-    assert pytest.approx(turbine.Ct) == second_waked_baseline[1]
-    assert pytest.approx(turbine.power) == second_waked_baseline[2]
-    assert pytest.approx(turbine.aI) == second_waked_baseline[3]
-    assert pytest.approx(turbine.average_velocity) == second_waked_baseline[4]
+    assert approx(turbine.Ct) == second_waked_baseline[0]
+    assert approx(turbine.power) == second_waked_baseline[1]
+    assert approx(turbine.aI) == second_waked_baseline[2]
+    assert approx(turbine.average_velocity) == second_waked_baseline[3]
 
 
-def test_regression_yaw():
+def test_regression_yaw(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed
     """
-    test_class = GaussRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
 
     # yaw the upstream turbine 5 degrees
-    rotation_angle = 5.0
-    floris.farm.set_yaw_angles([rotation_angle, 0.0, 0.0])
+    floris.farm.turbines[0].yaw_angle = 5.0
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.yawed_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        check = yawed_baseline
+        assert test_results[i][0] == approx(check[i][0])
+        assert test_results[i][1] == approx(check[i][1])
+        assert test_results[i][2] == approx(check[i][2])
+        assert test_results[i][3] == approx(check[i][3])
 
 
-def test_regression_gch():
+def test_regression_gch(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed and yaw added recovery
     correction enabled
     """
-    test_class = GaussRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
-    floris.farm.set_yaw_angles([5.0, 0.0, 0.0])
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris.farm.turbines[0].yaw_angle = 5.0
 
-    # With secondary steering off, GCH should be same as Gauss
+    # With GCH off (via conftest), GCH should be same as Gauss
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.yawed_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
 
-    # With secondary steering on, the results should change
-    floris.farm.wake.velocity_model.use_yaw_added_recovery = True
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        check = yawed_baseline
+        assert test_results[i][0] == approx(check[i][0])
+        assert test_results[i][1] == approx(check[i][1])
+        assert test_results[i][2] == approx(check[i][2])
+        assert test_results[i][3] == approx(check[i][3])
+
+    # With GCH on, the results should change
     floris.farm.wake.deflection_model.use_secondary_steering = True
-    floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.gch_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
-
-
-def test_regression_yaw_added_recovery():
-    """
-    Tandem turbines with the upstream turbine yawed and yaw added recovery
-    correction enabled
-    """
-    test_class = GaussRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
-    floris.farm.set_yaw_angles([5.0, 0.0, 0.0])
-
-    # With yaw added recovery off, GCH should be same as Gauss
-    floris.farm.wake.velocity_model.use_yaw_added_recovery = False
-    floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.yawed_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
-
-    # With yaw added recovery on, the results should change
     floris.farm.wake.velocity_model.use_yaw_added_recovery = True
+    floris.farm.wake.velocity_model.calculate_VW_velocities = True
+    floris.farm.flow_field.reinitialize_flow_field()
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.yaw_added_recovery_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        check = gch_baseline
+        assert test_results[i][0] == approx(check[i][0])
+        assert test_results[i][1] == approx(check[i][1])
+        assert test_results[i][2] == approx(check[i][2])
+        assert test_results[i][3] == approx(check[i][3])
 
 
-def test_regression_secondary_steering():
+def test_regression_yaw_added_recovery(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed and yaw added recovery
     correction enabled
     """
-    test_class = GaussRegressionTest()
-    floris = Floris(input_dict=test_class.input_dict)
-    floris.farm.set_yaw_angles([5.0, 0.0, 0.0])
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris.farm.turbines[0].yaw_angle = 5.0
 
-    # With secondary steering off, GCH should be same as Gauss
+    # Enable yaw-added recorvery
+    floris.farm.wake.velocity_model.use_yaw_added_recovery = True
+    floris.farm.wake.velocity_model.calculate_VW_velocities = True
+    floris.farm.flow_field.reinitialize_flow_field()
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.yawed_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
 
-    # With secondary steering on, the results should change
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        check = yaw_added_recovery_baseline
+        assert test_results[i][0] == approx(check[i][0])
+        assert test_results[i][1] == approx(check[i][1])
+        assert test_results[i][2] == approx(check[i][2])
+        assert test_results[i][3] == approx(check[i][3])
+
+
+def test_regression_secondary_steering(sample_inputs_fixture):
+    """
+    Tandem turbines with the upstream turbine yawed and yaw added recovery
+    correction enabled
+    """
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "velocity_model"
+    ] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"][
+        "deflection_model"
+    ] = DEFLECTION_MODEL
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris.farm.turbines[0].yaw_angle = 5.0
+
+    # Enable secondary steering
     floris.farm.wake.deflection_model.use_secondary_steering = True
+    floris.farm.wake.velocity_model.calculate_VW_velocities = True
+    floris.farm.flow_field.reinitialize_flow_field()
     floris.farm.flow_field.calculate_wake()
-    for i, turbine in enumerate(floris.farm.turbine_map.turbines):
-        if test_class.debug:
-            print(
-                "({:.7f}, {:.7f}, {:.7f}, {:.7f}, {:.7f})".format(
-                    turbine.Cp,
-                    turbine.Ct,
-                    turbine.power,
-                    turbine.aI,
-                    turbine.average_velocity,
-                )
-            )
-        baseline = test_class.secondary_steering_baseline(i)
-        assert pytest.approx(turbine.Cp) == baseline[0]
-        assert pytest.approx(turbine.Ct) == baseline[1]
-        assert pytest.approx(turbine.power) == baseline[2]
-        assert pytest.approx(turbine.aI) == baseline[3]
-        assert pytest.approx(turbine.average_velocity) == baseline[4]
+
+    test_results = turbines_to_array(floris.farm.turbine_map.turbines)
+
+    if DEBUG:
+        print_test_values(floris.farm.turbine_map.turbines)
+
+    for i in range(len(floris.farm.turbine_map.turbines)):
+        check = secondary_steering_baseline
+        assert test_results[i][0] == approx(check[i][0])
+        assert test_results[i][1] == approx(check[i][1])
+        assert test_results[i][2] == approx(check[i][2])
+        assert test_results[i][3] == approx(check[i][3])

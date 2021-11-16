@@ -120,7 +120,7 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_initial.setter
     def ti_initial(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for " + "initial: {}, expected float."
             ).format(value)
@@ -156,7 +156,7 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_constant.setter
     def ti_constant(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for " + "constant: {}, expected float."
             ).format(value)
@@ -193,7 +193,7 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_ai.setter
     def ti_ai(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for " + "ai: {}, expected float."
             ).format(value)
@@ -229,7 +229,7 @@ class CrespoHernandez(WakeTurbulence):
 
     @ti_downstream.setter
     def ti_downstream(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for " + "downstream: {}, expected float."
             ).format(value)

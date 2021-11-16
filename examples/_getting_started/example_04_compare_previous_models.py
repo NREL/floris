@@ -36,7 +36,8 @@ fig, axarr = plt.subplots(2, 5, figsize=(16, 4))
 # of the models for an aligned and yaw case to show some differences
 for idx, (fi, name) in enumerate(
     zip(
-        [fi_jensen,fi_turbopark, fi_mz, fi_gauss, fi_gch], ["Jensen", "TurbOPark",  "Multizone", "Gaussian", "GCH"]
+        [fi_jensen, fi_turbopark, fi_mz, fi_gauss, fi_gch],
+        ["Jensen", "TurbOPark", "Multizone", "Gaussian", "GCH"],
     )
 ):
 
@@ -44,7 +45,7 @@ for idx, (fi, name) in enumerate(
     fi.calculate_wake(yaw_angles=[0])
     ax = axarr[0, idx]
     hor_plane = fi.get_hor_plane()
-    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax,minSpeed=4,maxSpeed=8)
+    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax, minSpeed=4, maxSpeed=8)
     ax.set_title(name)
     axarr[0, 0].set_ylabel("Aligned")
 
@@ -52,7 +53,7 @@ for idx, (fi, name) in enumerate(
     fi.calculate_wake(yaw_angles=[25])
     ax = axarr[1, idx]
     hor_plane = fi.get_hor_plane()
-    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax,minSpeed=4,maxSpeed=8)
+    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax, minSpeed=4, maxSpeed=8)
     axarr[1, 0].set_ylabel("Yawed")
 
 

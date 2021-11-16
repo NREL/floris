@@ -101,8 +101,16 @@ class FlowField(LoggerBase):
             pt = turbine.rloc * turbine.rotor_radius
 
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
-            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
+            yt = np.linspace(
+                x2 - pt,
+                x2 + pt,
+                ngrid,
+            )
+            zt = np.linspace(
+                x3 - pt,
+                x3 + pt,
+                ngrid,
+            )
 
             x_grid[i] = xt[i]
             y_grid[i] = yt
@@ -243,6 +251,11 @@ class FlowField(LoggerBase):
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
+        self.u = self.u_initial.copy()
+        self.v = self.v_initial.copy()
+        self.w = self.w_initial.copy()
+
+    def reset_uvw(self):
         self.u = self.u_initial.copy()
         self.v = self.v_initial.copy()
         self.w = self.w_initial.copy()
@@ -560,9 +573,9 @@ class FlowField(LoggerBase):
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
     def calc_wake_init(self, points, track_n_upstream_wakes):
@@ -573,6 +586,9 @@ class FlowField(LoggerBase):
             points ([type], optional): [description]. Defaults to None.
             track_n_upstream_wakes (bool, optional): [description]. Defaults to False.
         """
+        if self.wake.velocity_model.model_grid_resolution is not None:
+            self.reset_uvw()
+
         if points is not None:
             # add points to flow field grid points
             self._compute_initialized_domain(points=points)
@@ -583,9 +599,9 @@ class FlowField(LoggerBase):
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of

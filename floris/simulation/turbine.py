@@ -110,16 +110,11 @@ class Turbine(LoggerBase):
         self.air_density = -1
         self.use_turbulence_correction = False
 
-        self._initialize_turbine()
-
-        # The indices for this Turbine instance's points from the FlowField
-        # are set in `FlowField._discretize_turbine_domain` and stored
-        # in this variable.
-        self.flow_field_point_indices = None
+        self.initialize_turbine()
 
     # Private methods
 
-    def _initialize_turbine(self):
+    def initialize_turbine(self):
         # Initialize the turbine given saved parameter settings
 
         # Precompute interps
@@ -144,6 +139,11 @@ class Turbine(LoggerBase):
         # Compute list of inner powers
         inner_power = np.array([self._power_inner_function(ws) for ws in wind_speed])
         self.powInterp = interp1d(wind_speed, inner_power, fill_value="extrapolate")
+
+        # The indices for this Turbine instance's points from the FlowField
+        # are set in `FlowField._discretize_turbine_domain` and stored
+        # in this variable.
+        self.flow_field_point_indices = None
 
     def _create_swept_area_grid(self):
         # TODO: add validity check:
@@ -247,7 +247,7 @@ class Turbine(LoggerBase):
                 "Setting {} to {}".format(param, turbine_change_dict[param])
             )
             setattr(self, param, turbine_change_dict[param])
-        self._initialize_turbine()
+        self.initialize_turbine()
 
     def calculate_swept_area_velocities(
         self, local_wind_speed, coord, x, y, z, additional_wind_speed=None
@@ -274,7 +274,7 @@ class Turbine(LoggerBase):
 
         # TODO:
         # # PREVIOUS METHOD========================
-        # # UNCOMMENT IF ANY ISSUE UNCOVERED WITH NEW MOETHOD
+        # # UNCOMMENT IF ANY ISSUE UNCOVERED WITH NEW METHOD
         # x_grid = x
         # y_grid = y
         # z_grid = z
@@ -304,11 +304,18 @@ class Turbine(LoggerBase):
             x_array = np.ones_like(y_array) * coord.x1
             grid_array = np.column_stack([x_array, y_array, z_array])
 
-            ii = np.argmin(distance_matrix(flow_grid_points, grid_array), axis=0)
+            ii = np.array(
+                [
+                    np.argmin(
+                        np.sum((flow_grid_points - grid_array[i, :]) ** 2, axis=1)
+                    )
+                    for i in range(len(grid_array))
+                ]
+            )
+            self.flow_field_point_indices = ii
         else:
             ii = self.flow_field_point_indices
 
-        # return np.array(data)
         if additional_wind_speed is not None:
             return (
                 np.array(u_at_turbine.flatten()[ii]),
@@ -590,33 +597,51 @@ class Turbine(LoggerBase):
 
         return avg_vel
 
-    @property
-    def Cp(self):
-        """
-        This property returns the power coeffcient of a turbine.
+    # NOTE: Temporarily comment out because not used anywhere
+    # When placing back, need to infer Cp from power since that
+    # is where interpolation happens. TODO: Open research question
+    # whether Cp should include yaw correction or not; or is it just
+    # necessary to label it as such?
+    # @property
+    # def Cp(self):
+    #     """
+    #     This property returns the power coeffcient of a turbine.
 
-        This property returns the coefficient of power of the turbine
-        using the rotor swept area average velocity, interpolated from
-        the coefficient of power table. The average velocity is
-        calculated as the cube root of the mean cubed velocity in the
-        rotor area.
+    #     This property returns the coefficient of power of the turbine
+    #     using the rotor swept area average velocity, interpolated from
+    #     the coefficient of power table. The average velocity is
+    #     calculated as the cube root of the mean cubed velocity in the
+    #     rotor area.
 
-        **Note:** The velocity is scalled to an effective velocity by the yaw.
+    #     **Note:** The velocity is scalled to an effective velocity by the yaw.
 
-        Returns:
-            float: The power coefficient of a turbine at the current
-            operating conditions.
+    #     Returns:
+    #         float: The power coefficient of a turbine at the current
+    #         operating conditions.
 
-        Examples:
-            To get the power coefficient value for a turbine:
+    #     Examples:
+    #         To get the power coefficient value for a turbine:
 
-            >>> Cp = floris.farm.turbines[0].Cp()
-        """
-        # Compute the yaw effective velocity
-        pW = self.pP / 3.0  # Convert from pP to pW
-        yaw_effective_velocity = self.average_velocity * cosd(self.yaw_angle) ** pW
+    #         >>> Cp = floris.farm.turbines[0].Cp()
+    #     """
+    #     # Compute the yaw effective velocity
+    #     pW = self.pP / 3.0  # Convert from pP to w
+    #     pV = self.pT / 3.0  # convert from pT to w
+    #     yaw_effective_velocity = (
+    #         self.average_velocity
+    #         * (cosd(self.yaw_angle) ** pW)
+    #         * (cosd(self.tilt_angle) ** pV)
+    #     )
 
-        return self._fCp(yaw_effective_velocity)
+    #     P_avail = (
+    #         0.5
+    #         * self.air_density
+    #         * np.pi
+    #         * (self.rotor_diameter / 2) ** 2
+    #         * yaw_effective_velocity ** 3
+    #     )
+
+    #     return self.power / P_avail
 
     @property
     def Ct(self):

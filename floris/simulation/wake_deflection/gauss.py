@@ -297,22 +297,29 @@ class Gauss(VelocityDeflection):
             rC = yLocs ** 2 + zC ** 2
 
             # find wake deflection from CRV
-            test_gamma = np.linspace(-45, 45, 91)
+            min_yaw = -45.0
+            max_yaw = 45.0
+            test_yaw = np.linspace(min_yaw, max_yaw, 91)
             avg_V = np.mean(V[idx])
-            target_yaw_ix = None
 
             # what yaw angle would have produced that same average spanwise velocity
-            yaw = test_gamma  # [i]
-
             vel_top = (
                 (HH + D / 2) / flow_field.specified_wind_height
             ) ** flow_field.wind_shear
             vel_bottom = (
                 (HH - D / 2) / flow_field.specified_wind_height
             ) ** flow_field.wind_shear
-            Gamma_top = (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+            Gamma_top = (
+                (np.pi / 8) * D * vel_top * Uinf * Ct * sind(test_yaw) * cosd(test_yaw)
+            )
             Gamma_bottom = (
-                -(np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+                -(np.pi / 8)
+                * D
+                * vel_bottom
+                * Uinf
+                * Ct
+                * sind(test_yaw)
+                * cosd(test_yaw)
             )
             Gamma_wake_rotation = (
                 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
@@ -330,38 +337,46 @@ class Gauss(VelocityDeflection):
             )
 
             tmp = avg_V - np.mean(Veff, axis=1)
-            target_yaw_ix = np.argmin(np.abs(tmp))
 
-            if target_yaw_ix is not None:
-                yaw_effective = test_gamma[target_yaw_ix]
+            # return indices of sorted residuals to find effective yaw angle
+            order = np.argsort(np.abs(tmp))
+            idx_1 = order[0]
+            idx_2 = order[1]
+
+            # check edge case, if true, assign max yaw value
+            if idx_1 == 90 or idx_2 == 90:
+                yaw_effective = max_yaw
+            # check edge case, if true, assign min yaw value
+            elif idx_1 == 0 or idx_2 == 0:
+                yaw_effective = -min_yaw
+            # for each identified minimum residual, use adjacent points to determine
+            # two equations of line and find the intersection of the two lines to
+            # determine the effective yaw angle to add; the if/else structure is based
+            # on which residual index is larger
             else:
-                err_msg = "No effective yaw angle is found. Set to 0."
-                self.logger.warning(err_msg, stack_info=True)
-                yaw_effective = 0.0
+                if idx_1 > idx_2:
+                    idx_right = idx_1 + 1  # adjacent point
+                    idx_left = idx_2 - 1  # adjacent point
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_1])  # slope
+                    mL = abs(tmp[idx_2]) - abs(tmp[idx_left])  # slope
+                    bR = abs(tmp[idx_1]) - mR * float(idx_1)  # intercept
+                    bL = abs(tmp[idx_2]) - mL * float(idx_2)  # intercept
+                else:
+                    idx_right = idx_2 + 1  # adjacent point
+                    idx_left = idx_1 - 1  # adjacent point
+                    mR = abs(tmp[idx_right]) - abs(tmp[idx_2])  # slope
+                    mL = abs(tmp[idx_1]) - abs(tmp[idx_left])  # slope
+                    bR = abs(tmp[idx_2]) - mR * float(idx_2)  # intercept
+                    bL = abs(tmp[idx_1]) - mL * float(idx_1)  # intercept
+
+                # find the value at the intersection of the two lines
+                ival = (bR - bL) / (mL - mR)
+                # convert the indice into degrees
+                yaw_effective = ival - max_yaw
 
             return yaw_effective + turbine.yaw_angle
-
         else:
             return turbine.yaw_angle
-
-    @property
-    def use_secondary_steering(self):
-        """
-        Flag to use secondary steering on the wake deflection using methods
-        developed in :cite:`bvd-King2019Controls`.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (bool): Value to set.
-
-        Returns:
-            float: Value currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._use_secondary_steering
 
     @property
     def ka(self):
@@ -384,7 +399,7 @@ class Gauss(VelocityDeflection):
 
     @ka.setter
     def ka(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for ka: {}, " + "expected float."
             ).format(value)
@@ -419,7 +434,7 @@ class Gauss(VelocityDeflection):
 
     @kb.setter
     def kb(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for kb: {}, " + "expected float."
             ).format(value)
@@ -455,7 +470,7 @@ class Gauss(VelocityDeflection):
 
     @alpha.setter
     def alpha(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for alpha: {}, " + "expected float."
             ).format(value)
@@ -492,7 +507,7 @@ class Gauss(VelocityDeflection):
 
     @beta.setter
     def beta(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for beta: {}, " + "expected float."
             ).format(value)
@@ -530,7 +545,7 @@ class Gauss(VelocityDeflection):
 
     @ad.setter
     def ad(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for ad: {}, " + "expected float."
             ).format(value)
@@ -567,7 +582,7 @@ class Gauss(VelocityDeflection):
 
     @bd.setter
     def bd(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = (
                 "Invalid value type given for bd: {}, " + "expected float."
             ).format(value)
@@ -580,6 +595,25 @@ class Gauss(VelocityDeflection):
                     "Current value of bd, {0}, is not equal to tuned " + "value of {1}."
                 ).format(value, __class__.default_parameters["bd"])
             )
+
+    @property
+    def use_secondary_steering(self):
+        """
+        Flag to use secondary steering on the wake deflection using methods
+        developed in :cite:`bvd-King2019Controls`.
+
+        **Note:** This is a virtual property used to "get" or "set" a value.
+
+        Args:
+            value (bool): Value to set.
+
+        Returns:
+            float: Value currently set.
+
+        Raises:
+            ValueError: Invalid value.
+        """
+        return self._use_secondary_steering
 
     @use_secondary_steering.setter
     def use_secondary_steering(self, value):
@@ -616,7 +650,7 @@ class Gauss(VelocityDeflection):
 
     @eps_gain.setter
     def eps_gain(self, value):
-        if type(value) is not float:
+        if type(value) is not float and type(value) is not int:
             err_msg = "Value of eps_gain must be type " + "float; {} given.".format(
                 type(value)
             )

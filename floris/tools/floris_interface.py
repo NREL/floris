@@ -25,7 +25,7 @@ from scipy.stats import norm
 
 from floris.simulation import Floris, Turbine, WindMap, TurbineMap
 
-from .cut_plane import CutPlane, get_plane_from_flow_data
+from .cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
 from .flow_data import FlowData
 from ..utilities import Vec3
 from .visualization import visualize_cut_plane
@@ -236,6 +236,11 @@ class FlorisInterface(LoggerBase):
                 )
                 wind_map.input_direction = wind_direction
                 wind_map.calculate_wind_direction()
+                if (
+                    self.floris.farm.flow_field.wake.velocity_model.model_grid_resolution
+                    is not None
+                ):
+                    self.floris.farm.turbine_map.reinitialize_turbines()
 
             # redefine wind_map in Farm object
             self.floris.farm.wind_map = wind_map
@@ -289,7 +294,7 @@ class FlorisInterface(LoggerBase):
 
             # If this is a gridded model, must extract from full flow field
             self.logger.info(
-                "Model identified as %s requires use of underlying grid print"
+                "Model identified as %s requires use of underlying grid points"
                 % self.floris.farm.flow_field.wake.velocity_model.model_string
             )
 
@@ -522,7 +527,16 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute and return the cutplane
-        return CutPlane(df)
+        hor_plane = CutPlane(df)
+        if self.floris.farm.wake.velocity_model.model_grid_resolution is not None:
+            hor_plane = change_resolution(
+                hor_plane,
+                resolution=(
+                    self.floris.farm.wake.velocity_model.model_grid_resolution.x1,
+                    self.floris.farm.wake.velocity_model.model_grid_resolution.x2,
+                ),
+            )
+        return hor_plane
 
     def get_cross_plane(
         self, x_loc, y_resolution=200, z_resolution=200, y_bounds=None, z_bounds=None
@@ -848,7 +862,7 @@ class FlorisInterface(LoggerBase):
                 }
 
             mean_farm_power = 0.0
-            wd_orig = np.array(self.floris.farm.wind_map.input_direction)
+            wd_orig = self.floris.farm.wind_map.input_direction[0]
 
             yaw_angles = self.get_yaw_angles()
 
@@ -861,7 +875,8 @@ class FlorisInterface(LoggerBase):
                     ] * unc_pmfs["yaw_unc_pmf"][
                         i_yaw
                     ] * self.get_farm_power_for_yaw_angle(
-                        list(np.array(yaw_angles) + delta_yaw), no_wake=no_wake
+                        list(np.array(yaw_angles) - delta_wd + delta_yaw),
+                        no_wake=no_wake,
                     )
 
             # reinitialize with original values
@@ -1026,7 +1041,7 @@ class FlorisInterface(LoggerBase):
                 }
 
             mean_farm_power = np.zeros(len(self.floris.farm.turbines))
-            wd_orig = np.array(self.floris.farm.wind_map.input_direction)
+            wd_orig = self.floris.farm.wind_map.input_direction[0]
 
             yaw_angles = self.get_yaw_angles()
 
@@ -1035,7 +1050,7 @@ class FlorisInterface(LoggerBase):
 
                 for i_yaw, delta_yaw in enumerate(unc_pmfs["yaw_unc"]):
                     self.calculate_wake(
-                        yaw_angles=list(np.array(yaw_angles) + delta_yaw),
+                        yaw_angles=list(np.array(yaw_angles) - delta_wd + delta_yaw),
                         no_wake=no_wake,
                     )
                     mean_farm_power = mean_farm_power + unc_pmfs["wd_unc_pmf"][
@@ -1385,7 +1400,7 @@ class FlorisInterface(LoggerBase):
         """
         for turbine in self.floris.farm.turbines:
             turbine.use_points_on_perimeter = use_points_on_perimeter
-            turbine._initialize_turbine()
+            turbine.initialize_turbine()
 
     def set_gch(self, enable=True):
         """
@@ -1623,6 +1638,7 @@ class FlorisInterface(LoggerBase):
         limit_dist=None,
         turbine_face_north=False,
         one_index_turbine=False,
+        black_and_white=False,
     ):
         """
         Visualize the layout of the wind farm in the floris instance.
@@ -1656,6 +1672,7 @@ class FlorisInterface(LoggerBase):
             limit_dist=limit_dist,
             turbine_face_north=turbine_face_north,
             one_index_turbine=one_index_turbine,
+            black_and_white=black_and_white,
         )
 
     def show_flow_field(self, ax=None):

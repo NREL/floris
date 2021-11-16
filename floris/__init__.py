@@ -66,7 +66,7 @@ from .tools import optimization
 
 
 ROOT = Path(__file__).parent
-with open(ROOT.parent / "VERSION") as version_file:
+with open(ROOT / "VERSION") as version_file:
     VERSION = version_file.read().strip()
 __version__ = VERSION
 
