@@ -16,8 +16,8 @@ import attr
 import numpy as np
 import xarray as xr
 
-from src.simulation import Turbine
 from src.utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
+from src.simulation import Turbine
 
 
 class FarmController:
@@ -40,22 +40,19 @@ class FarmController:
             raise ValueError("yaw_angles must be set for each turbine at each atmospheric condition.")
         self.yaw_angles[:, :] = yaw_angles
 
+
 def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
     return {t_id: Turbine.from_dict(config) for t_id, config in mapping.items()}
 
 
 def generate_turbine_tuple(turbine: Turbine) -> tuple:
     exclusions = ("power_thrust_table", "model_string")
-    return attr.astuple(
-        turbine, filter=lambda attribute, value: attribute.name not in exclusions
-    )
+    return attr.astuple(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
 
 
 def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
     exclusions = ("power_thrust_table", "model_string")
-    mapping = attr.asdict(
-        turbine, filter=lambda attribute, value: attribute.name not in exclusions
-    )
+    mapping = attr.asdict(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
     return list(mapping.keys())
 
 
@@ -157,9 +154,7 @@ class Farm(FromDictMixin):
     @wtg_id.validator
     def check_wtg_id(self, instance: str, value: Union[list, List[str]]) -> None:
         if len(value) == 0:
-            self.wtg_id = [
-                f"t{str(i).zfill(4)}" for i in 1 + np.arange(len(self.turbine_id))
-            ]
+            self.wtg_id = [f"WTG_{str(i).zfill(4)}" for i in 1 + np.arange(len(self.turbine_id))]
         elif len(value) < len(self.turbine_id):
             raise ValueError("There are too few `wtg_id` values")
         elif len(value) > len(self.turbine_id):
@@ -169,9 +164,7 @@ class Farm(FromDictMixin):
         # Create an array of turbine values and the column ordering
         arbitrary_turbine = self.turbine_map[self.turbine_id[0]]
         column_order = generate_turbine_attribute_order(arbitrary_turbine)
-        turbine_array = np.array(
-            [generate_turbine_tuple(self.turbine_map[t_id]) for t_id in self.turbine_id]
-        )
+        turbine_array = np.array([generate_turbine_tuple(self.turbine_map[t_id]) for t_id in self.turbine_id])
         turbine_array = np.resize(
             turbine_array, (self.wind_directions.shape[0], self.wind_speeds.shape[0], *turbine_array.shape)
         )
@@ -192,7 +185,12 @@ class Farm(FromDictMixin):
 
         self.data_array = xr.DataArray(
             turbine_array,
-            coords=dict(wind_directions=self.wind_directions, wind_speeds=self.wind_speeds, wtg_id=self.wtg_id, turbine_attributes=column_order),
+            coords=dict(
+                wind_directions=self.wind_directions,
+                wind_speeds=self.wind_speeds,
+                wtg_id=self.wtg_id,
+                turbine_attributes=column_order,
+            ),
             attrs=dict(layout_x=self.layout_x, layout_y=self.layout_y),
         )
 

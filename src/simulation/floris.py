@@ -23,12 +23,22 @@ import yaml
 
 import src.logging_manager as logging_manager
 from src.utilities import FromDictMixin
-from src.simulation import Farm, TurbineGrid, sequential_solver
+from src.simulation import Farm, Turbine, FlowField, TurbineGrid, sequential_solver
 
 # from .wake import Wake
-from .turbine import Turbine
-from .flow_field import FlowField
 from .wake_velocity.jensen import JensenVelocityDeficit
+
+
+def convert_dict_to_turbine(turbine_map: dict[str, dict]) -> dict[str, Turbine]:
+    """Converts the dictionary of turbine input data to a dictionary of `Turbine`s.
+
+    Args:
+        turbine_map (dict[str, dict]): The "turbine" dictionary from the input file/dictionary.
+
+    Returns:
+        dict[str, Turbine]: The dictionary of `Turbine`s.
+    """
+    return {key: Turbine.from_dict(val) for key, val in turbine_map.items()}
 
 
 @attr.s(auto_attribs=True)
@@ -39,17 +49,15 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     access other objects within the model.
     """
 
-    # TODO: Need to make this iterative in case of multiple turbines
-    turbine: list[Turbine] = attr.ib(converter=Turbine.from_dict)
-
-    farm: Farm | dict = attr.ib(converter=Farm.from_dict)
+    farm: Farm | dict = attr.ib()
     logging: dict = attr.ib()
     # TODO: needs converter for mapping this, but could be done in floris interface
-    turbine_map: dict[str, Turbine] = attr.ib()
+    turbine_map: dict[str, Turbine] = attr.ib(converter=convert_dict_to_turbine)
     wake: dict = attr.ib(init=False)
     flow_field: FlowField = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
+        self.create_farm()
         self.flow_field = FlowField(attr.asdict(self.farm))
 
         # Configure logging
@@ -90,46 +98,45 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             Floris: The class object instance
         """
         input_file_path = Path(input_file_path).resolve()
-        input_dict = yaml.load(input_file_path, Loader=yaml.SafeLoader)
+        input_dict = yaml.load(open(input_file_path, "r"), Loader=yaml.SafeLoader)
         return Floris.from_dict(input_dict)
 
-    def __init__(self, input_file_path=None, input_dict=None):
-        """
-        Import this class with one of the two optional input arguments
-        to create a Floris model. The `input_dict` and `input_file`
-        should both conform to the same data format.
+    def _prepare_for_save(self) -> dict:
+        output_dict = dict(
+            farm=attr.asdict(self.farm),
+            logging=self.logging,
+            turbine_map={key: attr.asdict(val) for key, val in self.turbine_map.items()},
+            wake={},  # TODO
+            flow_field=attr.asdict(self.flow_field),
+        )
+        return output_dict
+
+    def to_json(self, output_file_path: str) -> None:
+        """Converts the `Floris` object to an input-ready JSON file at `output_file_path`.
 
         Args:
-            input_file (str, optional): Path to the input file which will
-                be parsed and converted to a Python dict.
-            input_dict (dict, optional): Python dict given directly.
+            output_file_path (str): The full path and filename for where to save the JSON file.
         """
-        turbine_dict = input_dict.pop("turbine")
-        # wake_dict = input_dict.pop("wake")
-        farm_dict = input_dict.pop("farm")
-        meta_dict = input_dict
+        output_dict = self._prepare_for_save()
+        with open(output_file_path, "w+") as f:
+            yaml.dump(output_dict, f, indent=2, sort_keys=False)
 
-        # Initialize the simulation objects
-        self.turbine = Turbine(**turbine_dict)
-        # self.wake = Wake(wake_dict)
+    def to_yaml(self, output_file_path: str) -> None:
+        """Converts the `Floris` object to an input-ready YAML file at `output_file_path`.
 
-        wind_directions = farm_dict["wind_directions"]
-        wind_speeds = farm_dict["wind_speeds"]
-        layout_x = farm_dict["layout_x"]
-        layout_y = farm_dict["layout_y"]
-        wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
-        turbine_id = ["t1"] * len(layout_x)
-        turbine_map = dict(t1=turbine_dict)
-        self.farm = Farm(
-            turbine_id=turbine_id,
-            turbine_map=turbine_map,
-            wind_directions=wind_directions,
-            wind_speeds=wind_speeds,
-            layout_x=layout_x,
-            layout_y=layout_y,
-            wtg_id=wtg_id,
-        )
-        self.flow_field = FlowField(farm_dict)
+        Args:
+            output_file_path (str): The full path and filename for where to save the YAML file.
+        """
+        output_dict = self._prepare_for_save()
+        with open(output_file_path, "w+") as f:
+            yaml.dump(output_dict, f, default_flow_style=False)
+
+    def create_farm(self) -> None:
+        # TODO: create the proper turbine mapping
+        if len(self.farm["turbine_id"]) == 0:
+            self.farm["turbine_id"] = [*self.turbine.keys()][0] * len(self.farm["layout_x"])
+        self.farm["turbine_map"] = self.turbine_map
+        self.farm = Farm.from_dict(self.farm)
 
     def annual_energy_production(self, wind_rose):
         # self.steady_state_atmospheric_condition()
