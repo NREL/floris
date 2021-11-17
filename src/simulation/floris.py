@@ -31,8 +31,6 @@ from src.simulation import (
     TurbineGrid,
     sequential_solver,
 )
-
-# from .wake import Wake
 from src.simulation.wake_velocity import CurlVelocityDeficit, JensenVelocityDeficit
 from src.simulation.wake_deflection import JimenezVelocityDeflection
 

@@ -1,36 +1,35 @@
-name: floris_input_file_Example
-description: Example FLORIS Input file  # not used
-floris_version: v3.0.0
+description: Example FLORIS Input file
 farm:
-  description: Example 2x2 Wind Farm  # not used
-  name: farm_example_2x2  # not used
-  __comment__: specified_wind_height of -1 uses the first turbine's hub height;
-    After initialization, specified_wind_height is a free parameter.
+  __comment__: specified_wind_height of -1 uses the first turbine's hub height; After
+    initialization, specified_wind_height is a free parameter.
   air_density: 1.225
-  turbine_id:
-  - nrel_5mw  # maps to the turbine["name"] subdictionary
-  wtg_id:
-  - WTG-1  # optional, unique identifier for each turbine
+  description: Example 2x2 Wind Farm
   layout_x:
   - 0.0
   layout_y:
   - 0.0
+  name: farm_example_2x2
+  reference_turbine_diameter: 126.0
+  reference_wind_height: 90.0
   specified_wind_height: -1
+  turbine_id:
+  - nrel_5mw
   turbulence_intensity:
   - 0.06
+  type: farm
   wind_directions:
   - 270.0
   wind_shear: 0.12
   wind_speeds:
   - 8.0
   wind_veer: 0.0
-  wind_x:  # not used
+  wind_x:
   - 0
-  wind_y:  # not used
+  wind_y:
   - 0
-  reference_wind_height: 90.0
-  reference_turbine_diameter: 126.0
-  type: farm  # not used
+  wtg_id:
+  - WTG-1
+floris_version: v3.0.0
 logging:
   console:
     enable: false
@@ -38,12 +37,13 @@ logging:
   file:
     enable: false
     level: WARNING
+name: floris_input_file_Example
 turbine:
   nrel_5mw:
-    description: NREL 5MW  # not used
-    TSR: 8.0  # not used
-    blade_count: 3  # not used
-    blade_pitch: 0.0  # not used
+    TSR: 8.0
+    blade_count: 3
+    blade_pitch: 0.0
+    description: NREL 5MW
     generator_efficiency: 1.0
     hub_height: 90.0
     pP: 1.88
@@ -197,19 +197,20 @@ turbine:
       - 25.0
       - 25.5
     rotor_diameter: 126.0
-    tilt_angle: 0.0  # not used
-    use_points_on_perimeter: false  # not used
-    yaw_angle: 0.0  # not used
-    type: turbine  # not used
+    tilt_angle: 0.0
+    type: turbine
+    use_points_on_perimeter: false
+    yaw_angle: 0.0
 type: floris_input
 wake:
-  type: wake
-  name: wake_default
   description: wake
-  combination_model: sosfs
-  deflection_model: jimenez
-  velocity_model: jensen
-  turbulence_model: crespo_hernandez
+  model_strings:
+    combination_model: null
+    deflection_model: jimenez
+    turbulence_model: null
+    velocity_model: jensen
+  name: wake_default
+  type: wake
   wake_deflection_parameters:
     gauss:
       ad: 0.0

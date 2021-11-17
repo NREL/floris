@@ -222,13 +222,15 @@
   },
   "type": "floris_input",
   "wake": {
-    "combination_model": "sosfs",
-    "deflection_model": "jimenez",
     "description": "wake",
+    "model_strings": {
+      "combination_model": null,
+      "deflection_model": "jimenez",
+      "turbulence_model": null,
+      "velocity_model": "jensen"
+    },
     "name": "wake_default",
-    "turbulence_model": "crespo_hernandez",
     "type": "wake",
-    "velocity_model": "jensen",
     "wake_deflection_parameters": {
       "gauss": {
         "ad": 0.0,

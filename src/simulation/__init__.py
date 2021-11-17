@@ -25,29 +25,31 @@ All modules and package can be imported with
 
 The ``__init__.py`` file enables the import of all modules in this
 package so any additional modules should be included there.
+
+isort:skip_file
 """
 
 from pathlib import Path
 
-from src.simulation.farm import Farm
-from src.simulation.grid import Grid, TurbineGrid  # , FlowFieldGrid
-from src.simulation.wake import Wake
-from src.simulation.floris import Floris
-from src.simulation.solver import sequential_solver
-from src.simulation.turbine import Ct, Turbine, power, axial_induction, average_velocity
-
-# Provide full-path imports here for all modules
+# NOTE: Provide full-path imports here for all modules
 # that should be included in the simulation package.
 # Since some of these depend on each other, the order
 # that they are listed here does matter.
 from src.simulation.base_class import BaseClass
+from src.simulation.turbine import Ct, Turbine, power, axial_induction, average_velocity
+from src.simulation.farm import Farm
+from src.simulation.grid import Grid, TurbineGrid  # , FlowFieldGrid
 from src.simulation.flow_field import FlowField
+from src.simulation.wake import Wake
+from src.simulation.solver import sequential_solver
+from src.simulation.floris import Floris
 
 
 ROOT = Path(__file__).parent.parent.parent
 with open(ROOT / "VERSION") as version_file:
     VERSION = version_file.read().strip()
 __version__ = VERSION
+
 
 # initialize the logger
 import src.logging_manager

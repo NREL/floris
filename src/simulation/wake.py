@@ -13,6 +13,8 @@
 # See https://floris.readthedocs.io for documentation
 
 
+from typing import Any
+
 import attr
 
 from src.utilities import model_attrib
@@ -54,28 +56,6 @@ MODEL_MAP = {
 }
 
 
-def read_wake_properties(config: dict) -> dict:
-
-    models = ("combination", "deflection", "turbulence", "velocity")
-    wake_models = {}
-    for model_type in models:
-        model_opts = MODEL_MAP[f"wake_{model_type}"]
-        try:
-            model_string = config[f"{model_type}_model"]
-        except KeyError:
-            wake_models[model_type] = None
-            continue  # TODO: We don't have to create all model types?
-
-        if model_string not in model_opts:
-            raise ValueError(
-                f"Invalid wake {model_type} model: {model_string}. Valid options include: {', '.join(model_opts)}"
-            )
-        model = model_opts[model_string]
-        model_def = config[f"wake_{model_type}_parameters"][model_string]
-        wake_models[model_type] = model.from_dict(model_def)
-    return wake_models
-
-
 @attr.s(auto_attribs=True)
 class Wake(BaseClass):
     """
@@ -94,18 +74,48 @@ class Wake(BaseClass):
                 be instantiated.
     """
 
-    wake: dict = attr.ib(converter=read_wake_properties)
-    combination_model = attr.ib(init=False)
-    deflection_model = attr.ib(init=False)
-    turbulence_model = attr.ib(init=False)
-    velocity_model = attr.ib(init=False)
-    model_string = model_attrib(default="wake")
+    model_strings: dict
+    wake_combination_parameters: dict = attr.ib(factory=dict)
+    wake_deflection_parameters: dict = attr.ib(factory=dict)
+    wake_turbulence_parameters: dict = attr.ib(factory=dict)
+    wake_velocity_parameters: dict = attr.ib(factory=dict)
+
+    combination_model: Any = attr.ib(init=False)
+    deflection_model: Any = attr.ib(init=False)
+    turbulence_model: Any = attr.ib(init=False)
+    velocity_model: Any = attr.ib(init=False)
+    model_string: str = model_attrib(default="wake")
 
     def __attrs_post_init__(self) -> None:
-        self.combination_model = self.wake["combination"]
-        self.deflection_model = self.wake["deflection"]
-        self.turbulence_model = self.wake["turbulence"]
-        self.velocity_model = self.wake["velocity"]
+        self.model_generator()
+
+    def model_generator(self) -> Any:
+        models = ("combination", "deflection", "turbulence", "velocity")
+        wake_models = {}
+        for model_type in models:
+            model_opts = MODEL_MAP[f"wake_{model_type}"]
+            try:
+                model_string = self.model_strings[f"{model_type}_model"]
+            except KeyError:
+                wake_models[model_type] = None
+                continue  # TODO: We don't have to create all model types?
+
+            print(model_string)
+            if model_string is None:
+                wake_models[model_type] = None
+                continue  # TODO: We don't have to create all model types?
+            elif model_string not in model_opts:
+                raise ValueError(
+                    f"Invalid wake {model_type} model: {model_string}. Valid options include: {', '.join(model_opts)}"
+                )
+            model = model_opts[model_string]
+            model_def = getattr(self, f"wake_{model_type}_parameters")[model_string]
+            wake_models[model_type] = model.from_dict(model_def)
+
+        self.combination_model = wake_models["combination"]
+        self.deflection_model = wake_models["deflection"]
+        self.turbulence_model = wake_models["turbulence"]
+        self.velocity_model = wake_models["velocity"]
 
     @property
     def deflection_function(self):

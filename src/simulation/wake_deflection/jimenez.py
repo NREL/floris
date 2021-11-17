@@ -15,10 +15,10 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from src.simulation import TurbineGrid
-from src.simulation import Turbine
 from src.utilities import cosd, sind, float_attrib, model_attrib
-from src.simulation import BaseClass
+from src.simulation import TurbineGrid
+from src.simulation.turbine import Turbine
+from src.simulation.base_class import BaseClass
 
 
 @attr.s(auto_attribs=True)
@@ -107,7 +107,7 @@ class JimenezVelocityDeflection(BaseClass):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
-        yaw_angle = yaw_angle[:, :, i:i+1, None, None]
+        yaw_angle = yaw_angle[:, :, i : i + 1, None, None]
 
         # Ct is given for only the current turbine, so broadcast
         # this to the grid dimesions
@@ -115,7 +115,7 @@ class JimenezVelocityDeflection(BaseClass):
 
         # angle of deflection
         xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
-        x_locations = x - x[:, :, :, i:i+1]  # (n turbines, n grid, n grid)
+        x_locations = x - x[:, :, :, i : i + 1]  # (n turbines, n grid, n grid)
 
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)

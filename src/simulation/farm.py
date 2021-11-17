@@ -24,8 +24,7 @@ from src.utilities import (
     iter_validator,
     attrs_array_converter,
 )
-from src.simulation import Turbine
-from src.simulation.base_class import BaseClass
+from src.simulation import Turbine, BaseClass
 
 
 class FarmController:
