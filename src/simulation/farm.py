@@ -16,8 +16,16 @@ import attr
 import numpy as np
 import xarray as xr
 
-from src.utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
+from src.utilities import (
+    Vec3,
+    FromDictMixin,
+    float_attrib,
+    model_attrib,
+    iter_validator,
+    attrs_array_converter,
+)
 from src.simulation import Turbine
+from src.simulation.base_class import BaseClass
 
 
 class FarmController:
@@ -42,7 +50,14 @@ class FarmController:
 
 
 def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
-    return {t_id: Turbine.from_dict(config) for t_id, config in mapping.items()}
+    for t_id, config in mapping.items():
+        if isinstance(config, dict):
+            mapping[t_id] = Turbine.from_dict(config)
+        elif isinstance(config, Turbine):
+            pass
+        else:
+            raise TypeError("The Turbine mapping must either be a dictionary of `Turbine` object!")
+        return mapping
 
 
 def generate_turbine_tuple(turbine: Turbine) -> tuple:
@@ -57,7 +72,7 @@ def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
 
 
 @attr.s(auto_attribs=True)
-class Farm(FromDictMixin):
+class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
     file. The Farm will create a heterogenous set of turbines that compose a windfarm,
     validate the inputs, and then create a vectorized representation of the the turbine
@@ -94,13 +109,24 @@ class Farm(FromDictMixin):
     turbine_map: Dict[str, Union[dict, Turbine]] = attr.ib(converter=create_turbines)
     wind_directions: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
     wind_speeds: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
+    # These weren't located anywhere else, so it's being placed here
+    wind_shear: float = float_attrib()
+    wind_veer: float = float_attrib()
+
     layout_x: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
     layout_y: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
+
+    # These weren't located anywhere else, so it's being placed here
+    air_density: float = float_attrib()
+    reference_wind_height: float = float_attrib()
+    reference_turbine_diameter: float = float_attrib()
+
     wtg_id: List[str] = attr.ib(
         factory=list,
         on_setattr=attr.setters.validate,
         validator=iter_validator(list, str),
     )
+    model_string: str = model_attrib(default="farm")
 
     coordinates: List[Vec3] = attr.ib(init=False)
 
@@ -183,7 +209,7 @@ class Farm(FromDictMixin):
         self.fCp_interp = turbine_array[:, :, :, column_ix["fCp_interp"]]
         self.power_interp = turbine_array[:, :, :, column_ix["power_interp"]]
 
-        self.data_array = xr.DataArray(
+        self.array_data = xr.DataArray(
             turbine_array,
             coords=dict(
                 wind_directions=self.wind_directions,

@@ -37,14 +37,16 @@ MODEL_MAP = {
     "wake_velocity": {"curl": CurlVelocityDeficit, "jensen": JensenVelocityDeficit},
 }
 VALID_WAKE_MODELS = [
-    "jensen",
-    "turbopark",
-    "multizone",
-    "gauss",
-    "gauss_legacy",
-    "blondel",
-    "ishihara_qian",
+    # NOTE: These are all models I've applied the attrs routines to
+    # "blondel",
     "curl",
+    # "gauss",
+    # "gauss_legacy",
+    "ishihara_qian",
+    "jensen",
+    "jimenez"
+    # "multizone",
+    # "turbopark",
 ]
 
 
@@ -71,13 +73,13 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     farm: Farm | dict = attr.ib()
     logging: dict = attr.ib()
     # TODO: needs converter for mapping this, but could be done in floris interface
-    turbine_map: dict[str, Turbine] = attr.ib(converter=convert_dict_to_turbine)
-    wake: dict = attr.ib(init=False)
+    turbine: dict[str, Turbine] = attr.ib(converter=convert_dict_to_turbine)
+    wake: dict = attr.ib()
     flow_field: FlowField = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.create_farm()
-        self.flow_field = FlowField(attr.asdict(self.farm))
+        self.flow_field = FlowField(self.farm._get_model_dict())
 
         # Configure logging
         logging_manager.configure_console_log(
@@ -92,7 +94,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         self.set_wake_model()
 
     @classmethod
-    def from_json(input_file_path: str | Path) -> Floris:
+    def from_json(cls, input_file_path: str | Path) -> Floris:
         """Creates a `Floris` instance from a JSON file.
 
         Args:
@@ -108,7 +110,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         return Floris.from_dict(input_dict)
 
     @classmethod
-    def from_yaml(input_file_path: str | Path) -> Floris:
+    def from_yaml(cls, input_file_path: str | Path) -> Floris:
         """Creates a `Floris` instance from a YAML file.
 
         Args:
@@ -126,7 +128,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         output_dict = dict(
             farm=attr.asdict(self.farm),
             logging=self.logging,
-            turbine_map={key: attr.asdict(val) for key, val in self.turbine_map.items()},
+            turbine_map={key: attr.asdict(val) for key, val in self.turbine.items()},
             wake={},  # TODO
             flow_field=attr.asdict(self.flow_field),
         )
@@ -156,7 +158,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # TODO: create the proper turbine mapping
         if len(self.farm["turbine_id"]) == 0:
             self.farm["turbine_id"] = [*self.turbine.keys()][0] * len(self.farm["layout_x"])
-        self.farm["turbine_map"] = self.turbine_map
+        self.farm["turbine_map"] = self.turbine
         self.farm = Farm.from_dict(self.farm)
 
     def annual_energy_production(self, wind_rose):
@@ -187,7 +189,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
     # Utility functions
 
-    def set_wake_model(self, wake_model):
+    def set_wake_model(self):
         """
         Sets the velocity deficit model to use as given, and determines the
         wake deflection model based on the selected velocity deficit model.
@@ -199,28 +201,41 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             Exception: Invalid wake model.
         """
 
-        if wake_model not in VALID_WAKE_MODELS:
-            # TODO: logging
-            raise Exception("Invalid wake model. Valid options include: {}.".format(", ".join(valid_wake_models)))
-
         model_properties = self.wake["properties"]
         model_parameters = model_properties["parameters"]
 
+        model_string = model_properties["velocity_model"]
+        if model_string not in VALID_WAKE_MODELS:
+            # TODO: logging
+            raise Exception(
+                f"Invalid wake velocity model: {model_string}. Valid options include: {', '.join(VALID_WAKE_MODELS)}."
+            )
+
+        velocity_model = MODEL_MAP["wake_velocity"][model_string]
+        model_def = model_parameters["wake_velocity_parameters"][model_string]
+        wake_velocity_model = velocity_model.from_dict(model_string)
+
         model_string = model_properties["deflection_model"]
-        velocity_model = MODEL_MAP["model_string"]
+        if model_string not in VALID_WAKE_MODELS:
+            # TODO: logging
+            raise Exception(
+                f"Invalid wake deflection model: {model_string}. Valid options include: {', '.join(VALID_WAKE_MODELS)}."
+            )
+
+        deflection_model = MODEL_MAP["wake_deflection"][model_string]
         model_def = model_parameters["wake_deflection_parameters"][model_string]
-        self.flow_field.wake.velocity_model = velocity_model.from_dict(model_string)
+        wake_deflection_model = deflection_model.from_dict(model_string)
 
-        if wake_model == "blondel" or wake_model == "ishihara_qian" or "gauss" in wake_model:
-            self.flow_field.wake.deflection_model = "gauss"
-        else:
-            self.flow_field.wake.deflection_model = wake_model
+        # if wake_model == "blondel" or wake_model == "ishihara_qian" or "gauss" in wake_model:
+        #     self.flow_field.wake.deflection_model = "gauss"
+        # else:
+        #     self.flow_field.wake.deflection_model = wake_model
 
-        self.flow_field.reinitialize_flow_field(
-            with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution
-        )
+        # self.flow_field.reinitialize_flow_field(
+        #     with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution
+        # )
 
-        self.reinitialize_turbines()
+        # self.reinitialize_turbines()
 
     def update_hub_heights(self):
         """

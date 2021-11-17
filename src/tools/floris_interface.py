@@ -27,15 +27,16 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 from numpy.lib.arraysetops import isin
 
-from floris.simulation import Floris, Turbine, WindMap, TurbineMap
+from src.utilities import Vec3
+from src.simulation import Floris, Turbine
+from src.logging_manager import LoggerBase
 
-from .cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
-from .flow_data import FlowData
-from ..utilities import Vec3
-from .visualization import visualize_cut_plane
-from ..logging_manager import LoggerBase
-from .layout_functions import visualize_layout, build_turbine_loc
-from .interface_utilities import get_params, set_params, show_params
+
+# from .cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
+# from .flow_data import FlowData
+# from .visualization import visualize_cut_plane
+# from .layout_functions import visualize_layout, build_turbine_loc
+# from .interface_utilities import get_params, set_params, show_params
 
 
 def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
@@ -60,9 +61,9 @@ class FlorisInterface(LoggerBase):
     def create_floris(self) -> None:
         if isinstance(self.configuration, (str, Path)):
             self.configuration = Path(self.configuration).resolve()
-            if self.configuration.suffix in ("yml", "yaml"):
+            if self.configuration.suffix in (".yml", ".yaml"):
                 self.floris = Floris.from_yaml(self.configuration)
-            elif self.configuration.suffix == "json":
+            elif self.configuration.suffix == ".json":
                 self.floris = Floris.from_json(self.configuration)
             else:
                 raise ValueError(
