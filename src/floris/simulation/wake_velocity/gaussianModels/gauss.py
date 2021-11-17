@@ -73,6 +73,7 @@ class GaussVelocityDeficit(BaseClass):
         self,
         i: int,
         deflection_field: np.ndarray,
+        turbulence_intensity: np.ndarray,
         Ct: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
@@ -94,10 +95,7 @@ class GaussVelocityDeficit(BaseClass):
 
         # Ct is given for only the current turbine, so broadcast
         # this to the grid dimesions
-        Ct = Ct[:, :, :, None, None]
-
-        # TODO
-        turbulence_intensity = 0.1 * np.ones_like(Ct)
+        Ct = Ct[:, :, :, None, None] * np.ones((1,1,1,5,5))
 
         # Construct arrays for the current turbine's location
         x_i = np.mean(x[:, :, i:i+1], axis=(3,4))
@@ -128,7 +126,7 @@ class GaussVelocityDeficit(BaseClass):
         x0 += x_i
 
         # Masks
-        near_wake_mask = np.array(x > xR) * np.array(x < x0)  # This mask defines the near wake; keeps the areas downstream and including xR and upstream and including x0
+        near_wake_mask = np.array(x > xR) * np.array(x < x0)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
         far_wake_mask = np.array(x >= x0)
 
 
@@ -216,6 +214,3 @@ def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine
 
 def gaussian_function(C, r, n, sigma):
     return C * np.exp(-1 * r ** n / (2 * sigma ** 2))
-
-# def gaussian_function(U, C, r, n, sigma):
-#     return U * C * np.exp(-1 * r ** n / (2 * sigma ** 2))
