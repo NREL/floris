@@ -23,7 +23,14 @@ import yaml
 
 import src.logging_manager as logging_manager
 from src.utilities import FromDictMixin
-from src.simulation import Farm, Turbine, FlowField, TurbineGrid, sequential_solver
+from src.simulation import (
+    Farm,
+    Wake,
+    Turbine,
+    FlowField,
+    TurbineGrid,
+    sequential_solver,
+)
 
 # from .wake import Wake
 from src.simulation.wake_velocity import CurlVelocityDeficit, JensenVelocityDeficit
@@ -72,9 +79,8 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
     farm: Farm | dict = attr.ib()
     logging: dict = attr.ib()
-    # TODO: needs converter for mapping this, but could be done in floris interface
     turbine: dict[str, Turbine] = attr.ib(converter=convert_dict_to_turbine)
-    wake: dict = attr.ib()
+    wake: Wake = attr.ib(converter=Wake.from_dict)
     flow_field: FlowField = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
@@ -90,8 +96,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             self.logging["file"]["enable"],
             self.logging["file"]["level"],
         )
-
-        self.set_wake_model()
 
     @classmethod
     def from_json(cls, input_file_path: str | Path) -> Floris:

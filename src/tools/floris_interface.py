@@ -25,11 +25,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-from numpy.lib.arraysetops import isin
 
 from src.utilities import Vec3
-from src.simulation import Floris, Turbine
 from src.logging_manager import LoggerBase
+from src.simulation.floris import Floris
 
 
 # from .cut_plane import CutPlane, change_resolution, get_plane_from_flow_data

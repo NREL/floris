@@ -17,7 +17,9 @@ import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
 from src.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
-from src.simulation import Farm, BaseClass, FlowField, TurbineGrid
+
+# from src.simulation import Farm, BaseClass, FlowField, TurbineGrid
+from src.simulation import Farm, BaseClass, FlowField
 
 
 @attr.s(auto_attribs=True)
@@ -85,7 +87,7 @@ class CurlVelocityDeficit(BaseClass):
     # TODO: Turbine and coordinates still need to be sorted out
     # TODO: we need to differentiate between x_locations and flow_field.x somehow
     def prepare_function(
-        deflection_field: np.array, grid: TurbineGrid, farm: Farm, flow_field: FlowField
+        deflection_field: np.array, grid: "TurbineGrid", farm: "Farm", flow_field: "FlowField"
     ) -> Dict[str, Any]:
         kwargs = dict(
             deflection_field=deflection_field,
