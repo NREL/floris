@@ -44,6 +44,7 @@ REQUIRED = [
     "coloredlogs>=10.0",
     "attr",
     "xarray",
+    "pyyaml",
 ]
 
 # What packages are optional?
