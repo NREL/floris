@@ -115,7 +115,7 @@ class Floris(logging_manager.LoggerBase):
         sequential_solver(self.farm, self.flow_field, grid)
 
         grid.finalize()
-        self.flow_field.finalize(grid.unsorted_indeces)
+        self.flow_field.finalize(grid.unsorted_indices)
 
     # Utility functions
 
