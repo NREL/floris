@@ -85,7 +85,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
             velocity_deficit = velocity_deficit_model.function(
                 i,
                 deflection_field,
-                turbine_turbulence_intensity,
+                turbine_turbulence_intensity[:, :, i:i+1, :, :],
                 thrust_coefficient,
                 **deficit_model_args
             )
