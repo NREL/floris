@@ -187,57 +187,9 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         sequential_solver(self.farm, self.flow_field, grid)
 
         grid.finalize()
-        self.flow_field.finalize(grid.unsorted_indeces)
+        self.flow_field.finalize(grid.unsorted_indices)
 
     # Utility functions
-
-    def set_wake_model(self):
-        """
-        Sets the velocity deficit model to use as given, and determines the
-        wake deflection model based on the selected velocity deficit model.
-
-        Args:
-            wake_model (str): The desired wake model.
-
-        Raises:
-            Exception: Invalid wake model.
-        """
-
-        model_properties = self.wake["properties"]
-        model_parameters = model_properties["parameters"]
-
-        model_string = model_properties["velocity_model"]
-        if model_string not in VALID_WAKE_MODELS:
-            # TODO: logging
-            raise Exception(
-                f"Invalid wake velocity model: {model_string}. Valid options include: {', '.join(VALID_WAKE_MODELS)}."
-            )
-
-        velocity_model = MODEL_MAP["wake_velocity"][model_string]
-        model_def = model_parameters["wake_velocity_parameters"][model_string]
-        wake_velocity_model = velocity_model.from_dict(model_string)
-
-        model_string = model_properties["deflection_model"]
-        if model_string not in VALID_WAKE_MODELS:
-            # TODO: logging
-            raise Exception(
-                f"Invalid wake deflection model: {model_string}. Valid options include: {', '.join(VALID_WAKE_MODELS)}."
-            )
-
-        deflection_model = MODEL_MAP["wake_deflection"][model_string]
-        model_def = model_parameters["wake_deflection_parameters"][model_string]
-        wake_deflection_model = deflection_model.from_dict(model_string)
-
-        # if wake_model == "blondel" or wake_model == "ishihara_qian" or "gauss" in wake_model:
-        #     self.flow_field.wake.deflection_model = "gauss"
-        # else:
-        #     self.flow_field.wake.deflection_model = wake_model
-
-        # self.flow_field.reinitialize_flow_field(
-        #     with_resolution=self.flow_field.wake.velocity_model.model_grid_resolution
-        # )
-
-        # self.reinitialize_turbines()
 
     def update_hub_heights(self):
         """

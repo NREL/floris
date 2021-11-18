@@ -100,7 +100,6 @@ class Wake(BaseClass):
                 wake_models[model_type] = None
                 continue  # TODO: We don't have to create all model types?
 
-            print(model_string)
             if model_string is None:
                 wake_models[model_type] = None
                 continue  # TODO: We don't have to create all model types?
