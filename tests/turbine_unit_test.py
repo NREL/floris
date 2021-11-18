@@ -18,16 +18,20 @@ import numpy as np
 import pytest
 from scipy.interpolate import interp1d
 
-from src.turbine import (
+from src.simulation import (
     Ct,
     Turbine,
-    PowerThrustTable,
     power,
-    _filter_convert,
     axial_induction,
     average_velocity,
 )
-from tests.conftest import WIND_SPEEDS, SampleInputs
+from src.simulation.turbine import (
+    PowerThrustTable,
+    _filter_convert,
+)
+
+from tests.conftest import SampleInputs
+from tests.conftest import WIND_SPEEDS
 
 
 # size 3 x 4 x 1 x 1

@@ -15,7 +15,7 @@
 
 import pytest
 import numpy as np
-from src import TurbineGrid #, FlowFieldGrid
+from src.simulation import TurbineGrid #, FlowFieldGrid
 from src.utilities import Vec3
 from tests.conftest import X_COORDS, Y_COORDS, Z_COORDS, N_TURBINES
 from tests.conftest import GRID_RESOLUTION

@@ -16,7 +16,7 @@
 import attr
 import pytest
 
-from src.base_class import BaseClass
+from src.simulation import BaseClass
 
 
 @attr.s(auto_attribs=True)
