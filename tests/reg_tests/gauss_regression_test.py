@@ -160,3 +160,140 @@ def test_regression_tandem(sample_inputs_fixture):
 
     assert_results_arrays(test_results[0], baseline)
 
+
+def test_regression_rotation(sample_inputs_fixture):
+    """
+    Turbines in tandem and rotated.
+    The result from 270 degrees should match the results from 360 degrees.
+
+    Wind from the West (Left)
+      0         1  x->
+     |__________|
+    0|0         2
+     |
+     |
+     |
+    1|1         3
+
+    y
+    |
+    V
+
+    Wind from the North (Top), rotated
+      0         1  x->
+     |__________|
+    0|2         3
+     |
+     |
+     |
+    1|0         1
+
+    y
+    |
+    V
+
+    In 270, turbines 2 and 3 are waked. In 360, turbines 1 and 3 are waked.
+    The test compares turbines 2 and 3 with 1 and 3 from 270 and 360.
+    """
+    TURBINE_DIAMETER = sample_inputs_fixture.floris["turbine"]["rotor_diameter"]
+
+    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["farm"]["wind_directions"] = [270.0, 360.0]
+    sample_inputs_fixture.floris["farm"]["wind_speeds"] = [8.0]
+    sample_inputs_fixture.floris["farm"]["layout_x"] = [
+        0.0,
+        0.0,
+        5 * TURBINE_DIAMETER,
+        5 * TURBINE_DIAMETER,
+    ]
+    sample_inputs_fixture.floris["farm"]["layout_y"] = [
+        0.0,
+        5 * TURBINE_DIAMETER,
+        0.0,
+        5 * TURBINE_DIAMETER
+    ]
+
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris.steady_state_atmospheric_condition()
+
+    velocities = floris.flow_field.u[:, :, :, :, :]
+
+    farm_avg_velocities = average_velocity(
+        velocities,
+    )
+
+    t0_270 = farm_avg_velocities[0, 0, 0]  # upstream
+    t1_270 = farm_avg_velocities[0, 0, 1]  # upstream
+    t2_270 = farm_avg_velocities[0, 0, 2]  # waked
+    t3_270 = farm_avg_velocities[0, 0, 3]  # waked
+
+    t0_360 = farm_avg_velocities[1, 0, 0]  # upstream
+    t1_360 = farm_avg_velocities[1, 0, 1]  # waked
+    t2_360 = farm_avg_velocities[1, 0, 2]  # upstream
+    t3_360 = farm_avg_velocities[1, 0, 3]  # waked
+    
+    assert np.array_equal(t0_270, t2_360)
+    assert np.array_equal(t1_270, t0_360)
+    assert np.array_equal(t2_270, t3_360)
+    assert np.array_equal(t3_270, t1_360)
+
+
+def test_regression_yaw(sample_inputs_fixture):
+    """
+    Tandem turbines with the upstream turbine yawed
+    """
+    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+
+    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris.farm.farm_controller.set_yaw_angles(np.array([5.0, 0.0, 0.0]))
+    floris.steady_state_atmospheric_condition()
+
+    n_turbines = len(floris.farm.layout_x)
+    n_wind_speeds = floris.flow_field.n_wind_speeds
+    n_wind_directions = floris.flow_field.n_wind_directions
+
+    velocities = floris.flow_field.u[:, :, :, :, :]
+    yaw_angles = floris.farm.farm_controller.yaw_angles
+    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
+
+    farm_avg_velocities = average_velocity(
+        velocities,
+    )
+    farm_cts = Ct(
+        velocities,
+        yaw_angles,
+        floris.farm.fCt_interp,
+    )
+    farm_powers = power(
+        np.array(n_turbines * n_wind_speeds * n_wind_directions * [floris.flow_field.air_density]).reshape(
+            (n_wind_directions, n_wind_speeds, n_turbines)
+        ),
+        velocities,
+        yaw_angles,
+        floris.farm.pP,
+        floris.farm.power_interp,
+    )
+    farm_axial_inductions = axial_induction(
+        velocities,
+        yaw_angles,
+        floris.farm.fCt_interp,
+    )
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
+                test_results[i, j, k, 1] = farm_cts[i, j, k]
+                test_results[i, j, k, 2] = farm_powers[i, j, k]
+                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
+
+    if DEBUG:
+        print_test_values(
+            farm_avg_velocities,
+            farm_cts,
+            farm_powers,
+            farm_axial_inductions,
+        )
+
+    assert_results_arrays(test_results[0], yawed_baseline)
