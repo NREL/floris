@@ -172,11 +172,11 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # <<interface>>
         # Initialize grid and field quanitities
         grid = TurbineGrid(
-            self.farm.coordinates,
-            self.farm.reference_turbine_diameter,
-            self.flow_field.wind_directions,
-            self.flow_field.wind_speeds,
-            5,
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=5,
         )
         # TODO: where do we pass in grid_resolution? Hardcoded to 5 above.
 

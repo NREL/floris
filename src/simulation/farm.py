@@ -10,11 +10,14 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from __future__ import annotations
+
 from typing import Dict, List, Union
 
 import attr
 import numpy as np
 import xarray as xr
+import numpy.typing as npt
 
 from src.utilities import (
     Vec3,
@@ -27,6 +30,10 @@ from src.utilities import (
 from src.simulation import Turbine, BaseClass
 
 
+NDArrayFloat = npt.NDArray[np.float64]
+NDArrayInt = npt.NDArray[np.int_]
+
+
 class FarmController:
     def __init__(self, n_wind_directions: int, n_wind_speeds: int, n_turbines: int) -> None:
         # TODO: This should hold the yaw settings for each turbine for each wind speed and wind direction
@@ -34,14 +41,14 @@ class FarmController:
         # Initialize the yaw settings to an empty array
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, n_turbines))
 
-    def set_yaw_angles(self, yaw_angles: np.ndarray) -> None:
+    def set_yaw_angles(self, yaw_angles: NDArrayFloat) -> None:
         """
         Set the yaw angles for each wind turbine at each atmospheric
         condition.
 
         Args:
-            yaw_angles (np.ndarray): Array of dimensions (n wind directions,
-            n wind speeds, n turbines)
+            yaw_angles (NDArrayFloat): Array of yaw angles with dimensions (n wind directions,
+            n wind speeds, n turbines).
         """
         if yaw_angles.ndim != 1:
             raise ValueError("yaw_angles must be set for each turbine at each atmospheric condition.")
@@ -84,16 +91,18 @@ class Farm(BaseClass):
     for generating output.
 
     Args:
-        turbine_id (List[str]): The turbine identifiers to map each turbine to one of
+        turbine_id (list[str]): The turbine identifiers to map each turbine to one of
             the turbine classifications in `turbine_map`.
-        turbine_map (Dict[str, Union[dict, Turbine]]): The dictionary mapping of unique
+        turbine_map (dict[str, dict | Turbine]): The dictionary mapping of unique
             turbines at the wind power plant. Takes either a pre-generated `Turbine`
             object, or a dictionary that will be used to generate the `Turbine` object.
-        layout_x (Union[List[float], np.ndarray]): The x-coordinates for the turbines at
+        wind_directions (list[float] | NDArrayFloat): The wind directions.
+        wind_speeds (list[float] | NDArrayFloat): The wind speeds.
+        layout_x (list[float] | NDArrayInt): The x-coordinates for the turbines at
             the wind power plant.
-        layout_y (Union[List[float], np.ndarray]): The y-coordinates for the turbines at
+        layout_y (list[float] | NDArrayInt]): The y-coordinates for the turbines at
             the wind power plant.
-        wtg (List[str]): The WTG ID values for each turbine. This field acts as metadata
+        wtg (list[str]): The WTG ID values for each turbine. This field acts as metadata
             only.
 
     Raises:
@@ -104,42 +113,39 @@ class Farm(BaseClass):
         [type]: [description]
     """
 
-    turbine_id: List[str] = attr.ib(validator=iter_validator(list, str))
-    turbine_map: Dict[str, Union[dict, Turbine]] = attr.ib(converter=create_turbines)
-    wind_directions: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
-    wind_speeds: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
-    # These weren't located anywhere else, so it's being placed here
-    wind_shear: float = float_attrib()
-    wind_veer: float = float_attrib()
-
-    layout_x: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
-    layout_y: Union[List[float], np.ndarray] = attr.ib(converter=attrs_array_converter)
-
-    # These weren't located anywhere else, so it's being placed here
-    air_density: float = float_attrib()
-    reference_wind_height: float = float_attrib()
-    reference_turbine_diameter: float = float_attrib()
-
+    turbine_id: list[str] = attr.ib(validator=iter_validator(list, str))
+    turbine_map: dict[str, dict | Turbine] = attr.ib(converter=create_turbines)
+    wind_directions: list[float] | NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    wind_speeds: list[float] | NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    layout_x: list[float] | NDArrayInt = attr.ib(converter=attrs_array_converter)
+    layout_y: list[float] | NDArrayInt = attr.ib(converter=attrs_array_converter)
     wtg_id: List[str] = attr.ib(
         factory=list,
         on_setattr=attr.setters.validate,
         validator=iter_validator(list, str),
     )
+    # These weren't located anywhere else, so it's being placed here
+    wind_shear: float = float_attrib()
+    wind_veer: float = float_attrib()
+    air_density: float = float_attrib()
+    reference_wind_height: float = float_attrib()
+    reference_turbine_diameter: float = float_attrib()
+
     model_string: str = model_attrib(default="farm")
 
-    coordinates: List[Vec3] = attr.ib(init=False)
+    coordinates: list[Vec3] = attr.ib(init=False)
 
-    rotor_diameter: np.ndarray = attr.ib(init=False)
-    hub_height: np.ndarray = attr.ib(init=False)
-    pP: np.ndarray = attr.ib(init=False)
-    pT: np.ndarray = attr.ib(init=False)
-    generator_efficiency: np.ndarray = attr.ib(init=False)
+    rotor_diameter: NDArrayFloat = attr.ib(init=False)
+    hub_height: NDArrayFloat = attr.ib(init=False)
+    pP: NDArrayFloat = attr.ib(init=False)
+    pT: NDArrayFloat = attr.ib(init=False)
+    generator_efficiency: NDArrayFloat = attr.ib(init=False)
     # power_thrust_table: np.ndarray = attr.ib(init=False)  # NOTE: Is this only necessary for the creation of the interpolations?
-    fCp_interp: np.ndarray = attr.ib(init=False)
-    fCt_interp: np.ndarray = attr.ib(init=False)
-    power_interp: np.ndarray = attr.ib(init=False)
-    rotor_radius: np.ndarray = attr.ib(init=False)
-    rotor_area: np.ndarray = attr.ib(init=False)
+    fCp_interp: NDArrayFloat = attr.ib(init=False)
+    fCt_interp: NDArrayFloat = attr.ib(init=False)
+    power_interp: NDArrayFloat = attr.ib(init=False)
+    rotor_radius: NDArrayFloat = attr.ib(init=False)
+    rotor_area: NDArrayFloat = attr.ib(init=False)
     array_data: xr.DataArray = attr.ib(init=False)
 
     # Pre multi-turbine
@@ -163,21 +169,21 @@ class Farm(BaseClass):
         self.farm_controller = FarmController(len(self.wind_directions), len(self.wind_speeds), len(self.layout_x))
 
     @layout_x.validator
-    def check_x_len(self, instance: str, value: Union[List[float], np.ndarray]) -> None:
+    def check_x_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
         if len(value) < len(self.turbine_id):
             raise ValueError("Not enough `layout_x` values to match the `turbine_id`s")
         if len(value) > len(self.turbine_id):
             raise ValueError("Too many `layout_x` values to match the `turbine_id`s")
 
     @layout_y.validator
-    def check_y_len(self, instance: str, value: Union[List[float], np.ndarray]) -> None:
+    def check_y_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
         if len(value) < len(self.turbine_id):
             raise ValueError("Not enough `layout_y` values to match the `turbine_id`s")
         if len(value) > len(self.turbine_id):
             raise ValueError("Too many `layout_y` values to match the `turbine_id`s")
 
     @wtg_id.validator
-    def check_wtg_id(self, instance: str, value: Union[list, List[str]]) -> None:
+    def check_wtg_id(self, instance: attr.Attribute, value: list | list[str]) -> None:
         if len(value) == 0:
             self.wtg_id = [f"WTG_{str(i).zfill(4)}" for i in 1 + np.arange(len(self.turbine_id))]
         elif len(value) < len(self.turbine_id):
@@ -225,14 +231,14 @@ class Farm(BaseClass):
         # self.generate_farm_points()
         pass
 
-    def sort_turbines(self, by: str) -> np.ndarray:
+    def sort_turbines(self, by: str) -> NDArrayInt:
         """Sorts the turbines by the given dimension.
 
         Args:
             by (str): The dimension to sort by; should be one of x or y.
 
         Returns:
-            np.ndarray: The index order for retrieving data from `data_array` or any
+            NDArrayInt: The index order for retrieving data from `data_array` or any
                 other farm object.
         """
         # TODO: This should live on the Grid since that's where the
