@@ -34,10 +34,8 @@ class Grid(ABC):
     """
 
     # TODO: We'll want to consider how this expands to multiple turbine types
-    turbine_coordinates: list[Vec3]  # TODO: Should this be an array to match the Farm data?
+    turbine_coordinates: list[Vec3] = attr.ib(on_setattr=attr.setters.validate)
     reference_turbine_diameter: float
-    wind_directions: np.array
-    wind_speeds: np.array
     grid_resolution: int
     wind_directions: NDArrayFloat = attr.ib(
         converter=attrs_array_converter, on_setattr=(attr.setters.convert, attr.setters.validate)
@@ -47,14 +45,14 @@ class Grid(ABC):
     )
 
     n_turbines: int = attr.ib(init=False)
+    n_wind_speeds: int = attr.ib(init=False)
+    n_wind_directions: int = attr.ib(init=False)
     turbine_coordinates_array: NDArrayFloat = attr.ib(init=False)
-    coordinate_shape: tuple[int, int, int] = attr.ib(init=False)
     x: NDArrayFloat = attr.ib(init=False)
     y: NDArrayFloat = attr.ib(init=False)
     z: NDArrayFloat = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
-        self.n_turbines = len(self.turbine_coordinates)
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
 
     @turbine_coordinates.validator
@@ -172,7 +170,7 @@ class TurbineGrid(Grid):
         super().__attrs_post_init__()
         self.set_grid(self.wind_directions, self.wind_speeds)
 
-    def set_grid(self, wind_directions, wind_speeds) -> None:
+    def set_grid(self) -> None:
         """
         Create grid points at each turbine for each wind direction and wind speed in the simulation.
         This creates the underlying data structure for the calculation.
@@ -200,13 +198,9 @@ class TurbineGrid(Grid):
         # TODO: Where should we locate the coordinate system? Currently, its at
         # the foot of the turbine where the tower meets the ground.
 
-        n_turbines = len(self.turbine_coordinates)
-        n_wind_directions = len(wind_directions)
-        n_wind_speeds = len(wind_speeds)
-
         # Calculate the difference in given wind direction from 270 / West
-        wind_deviation_from_west = -1 * ((wind_directions - 270) % 360 + 360) % 360
-        wind_deviation_from_west = np.reshape(wind_deviation_from_west, (n_wind_directions, 1, 1))
+        wind_deviation_from_west = -1 * ((self.wind_directions - 270) % 360 + 360) % 360
+        wind_deviation_from_west = np.reshape(wind_deviation_from_west, (self.n_wind_directions, 1, 1))
 
         # Construct the arrays storing the turbine locations
         x_coordinates, y_coordinates, z_coordinates = self.turbine_coordinates_array.T
@@ -241,7 +235,13 @@ class TurbineGrid(Grid):
         radius_ratio = 0.5
         disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
         template_grid = np.ones(
-            (n_wind_directions, n_wind_speeds, n_turbines, self.grid_resolution, self.grid_resolution)
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                self.n_turbines,
+                self.grid_resolution,
+                self.grid_resolution,
+            )
         )
 
         # Calculate the radial distance from the center of the turbine rotor

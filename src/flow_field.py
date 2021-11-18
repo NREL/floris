@@ -46,9 +46,15 @@ class FlowField(FromDictMixin):
     v: NDArrayFloat = attr.ib(init=False)
     w: NDArrayFloat = attr.ib(init=False)
 
-    def __attrs_post_init__(self) -> None:
-        self.n_wind_speeds = len(self.wind_speeds)
-        self.n_wind_directions = len(self.wind_directions)
+    @wind_speeds.validator
+    def wind_speeds_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+        """Using the validator method to keep the `n_wind_speeds` attribute up to date."""
+        self.n_wind_speeds = value.size
+
+    @wind_directions.validator
+    def wind_directionss_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+        """Using the validator method to keep the `n_wind_directions` attribute up to date."""
+        self.n_wind_directions = value.size
 
     def initialize_velocity_field(self, grid: Grid) -> None:
 
@@ -73,5 +79,3 @@ class FlowField(FromDictMixin):
         self.u = np.take_along_axis(self.u, unsorted_indices, axis=2)
         self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
-
-    #TODO: update n_wind_speeds and n_wind_directions when changing wind_speeds and wind_directions
