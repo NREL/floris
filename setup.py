@@ -38,7 +38,7 @@ REQUIRES_PYTHON = ">=3.6.0"
 REQUIRED = [
     # simulation
     "matplotlib>=3",
-    "numpy>=1.16",
+    "numpy>=1.20",
     "pytest>=4",
     "scipy>=1.1",
     "coloredlogs>=10.0",
