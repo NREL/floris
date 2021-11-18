@@ -39,9 +39,7 @@ class Vec3:
         # likely negligible.
 
         if len(components) != 3:
-            raise TypeError(
-                "Vec3 requires 3 components, {} given.".format(len(components))
-            )
+            raise TypeError("Vec3 requires 3 components, {} given.".format(len(components)))
 
         self.components = [float(c) for c in components]
 
@@ -64,12 +62,8 @@ class Vec3:
             center_of_rotation = Vec3([0.0, 0.0, 0.0])
         x1offset = self.x1 - center_of_rotation.x1
         x2offset = self.x2 - center_of_rotation.x2
-        self.x1prime = (
-            x1offset * cosd(theta) - x2offset * sind(theta) + center_of_rotation.x1
-        )
-        self.x2prime = (
-            x2offset * cosd(theta) + x1offset * sind(theta) + center_of_rotation.x2
-        )
+        self.x1prime = x1offset * cosd(theta) - x2offset * sind(theta) + center_of_rotation.x1
+        self.x2prime = x2offset * cosd(theta) + x1offset * sind(theta) + center_of_rotation.x2
         self.x3prime = self.x3
 
     def __str__(self):
@@ -100,9 +94,7 @@ class Vec3:
             return Vec3([self.x1 / arg, self.x2 / arg, self.x3 / arg])
 
     def __eq__(self, arg):
-        return False not in np.isclose(
-            [self.x1, self.x2, self.x3], [arg.x1, arg.x2, arg.x3]
-        )
+        return False not in np.isclose([self.x1, self.x2, self.x3], [arg.x1, arg.x2, arg.x3])
 
     def __hash__(self):
         return hash((self.x1, self.x2, self.x3))
@@ -235,9 +227,7 @@ class FromDictMixin:
             cls
                 The `attr`-defined class.
         """
-        return cls(
-            **{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data}  # type: ignore
-        )
+        return cls(**{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data})  # type: ignore
 
 
 def is_default(instance, attribute, value):
@@ -280,6 +270,16 @@ float_attrib = partial(
     kw_only=True,
 )
 update_wrapper(float_attrib, attr.ib)
+
+
+# Avoids constant redefinition of the same attr.ib properties for int model attributes
+int_attrib = partial(
+    attr.ib,
+    converter=int,
+    on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+    kw_only=True,
+)
+update_wrapper(int_attrib, attr.ib)
 
 
 model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)  # type: ignore

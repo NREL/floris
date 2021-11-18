@@ -12,20 +12,39 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
 
+import attr
 import numpy as np
+
+from src.utilities import FromDictMixin, int_attrib, float_attrib, attrs_array_converter
 
 from .grid import Grid
 
 
-class FlowField:
-    def __init__(self, input_dictionary):
-        self.wind_shear = input_dictionary["wind_shear"]
-        self.wind_veer = input_dictionary["wind_veer"]
-        self.wind_speeds = np.array(input_dictionary["wind_speeds"])
-        self.wind_directions = np.array(input_dictionary["wind_directions"])
-        self.reference_wind_height = input_dictionary["reference_wind_height"]
-        self.air_density = input_dictionary["air_density"]
+@attr.s(auto_attribs=True)
+class FlowField(FromDictMixin):
+    wind_shear: float = float_attrib()
+    wind_veer: float = float_attrib()
+    wind_speeds: np.ndarray = attr.ib(converter=attrs_array_converter)
+    wind_directions: np.ndarray = attr.ib(converter=attrs_array_converter)
+    reference_wind_height: int = int_attrib()
+    air_density: float = float_attrib()
+
+    n_wind_speeds: int = attr.ib(init=False)
+    n_wind_directions: int = attr.ib(init=False)
+
+    u_initial: np.ndarray = attr.ib(init=False)
+    v_initial: np.ndarray = attr.ib(init=False)
+    w_initial: np.ndarray = attr.ib(init=False)
+
+    u: np.ndarray = attr.ib(init=False)
+    v: np.ndarray = attr.ib(init=False)
+    w: np.ndarray = attr.ib(init=False)
+
+    def __attrs_post_init__(self) -> None:
+        self.n_wind_speeds = len(self.wind_speeds)
+        self.n_wind_directions = len(self.wind_directions)
 
     def initialize_velocity_field(self, grid: Grid) -> None:
 
@@ -51,10 +70,4 @@ class FlowField:
         self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
 
-    @property
-    def n_wind_speeds(self) -> int:
-        return len(self.wind_speeds)
-
-    @property
-    def n_wind_directions(self) -> int:
-        return len(self.wind_directions)
+    #TODO: update n_wind_speeds and n_wind_directions when changing wind_speeds and wind_directions
