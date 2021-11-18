@@ -38,7 +38,7 @@ REQUIRES_PYTHON = ">=3.6.0"
 REQUIRED = [
     # simulation
     "matplotlib>=3",
-    "numpy>=1.16",
+    "numpy>=1.20",
     "pytest>=4",
     "scipy>=1.1",
     "coloredlogs>=10.0",
@@ -49,7 +49,7 @@ REQUIRED = [
 # What packages are optional?
 EXTRAS = {
     "docs": {"readthedocs-sphinx-ext", "Sphinx", "sphinxcontrib-napoleon"},
-    "develop": {"pre-commit", "black", "isort", "flake8"},
+    "develop": {"pre-commit", "black", "isort", "flake8", "flake8-docstrings"},
 }
 
 # The rest you shouldn't have to touch too much :)
