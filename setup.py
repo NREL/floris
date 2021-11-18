@@ -49,7 +49,7 @@ REQUIRED = [
 # What packages are optional?
 EXTRAS = {
     "docs": {"readthedocs-sphinx-ext", "Sphinx", "sphinxcontrib-napoleon"},
-    "develop": {"pre-commit", "black", "isort", "flake8"},
+    "develop": {"pre-commit", "black", "isort", "flake8", "flake8-docstrings"},
 }
 
 # The rest you shouldn't have to touch too much :)
