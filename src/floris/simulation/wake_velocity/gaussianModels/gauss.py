@@ -82,7 +82,7 @@ class GaussVelocityDeficit(BaseClass):
         y: np.ndarray,
         z: np.ndarray,
         reference_hub_height: float,
-        reference_rotor_diameter: float,
+        reference_rotor_diameter: np.ndarray,
         yaw_angle: np.ndarray,
         u_initial: np.ndarray,
         wind_veer: float
@@ -118,7 +118,7 @@ class GaussVelocityDeficit(BaseClass):
         # Compute the bounds of the near and far wake regions and a mask
 
         # Start of the near wake
-        xR, _ = mask_upstream_wake(y, x_i, y_i, yaw_angle)
+        xR = x_i
 
         # Start of the far wake
         x0 = reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - Ct) )
