@@ -16,31 +16,35 @@ from __future__ import annotations
 
 import attr
 import numpy as np
+import numpy.typing as npt
 
 from src.utilities import FromDictMixin, int_attrib, float_attrib, attrs_array_converter
 
 from .grid import Grid
 
 
+NDArrayFloat = npt.NDArray[np.float64]
+
+
 @attr.s(auto_attribs=True)
 class FlowField(FromDictMixin):
     wind_shear: float = float_attrib()
     wind_veer: float = float_attrib()
-    wind_speeds: np.ndarray = attr.ib(converter=attrs_array_converter)
-    wind_directions: np.ndarray = attr.ib(converter=attrs_array_converter)
+    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     reference_wind_height: int = int_attrib()
     air_density: float = float_attrib()
 
     n_wind_speeds: int = attr.ib(init=False)
     n_wind_directions: int = attr.ib(init=False)
 
-    u_initial: np.ndarray = attr.ib(init=False)
-    v_initial: np.ndarray = attr.ib(init=False)
-    w_initial: np.ndarray = attr.ib(init=False)
+    u_initial: NDArrayFloat = attr.ib(init=False)
+    v_initial: NDArrayFloat = attr.ib(init=False)
+    w_initial: NDArrayFloat = attr.ib(init=False)
 
-    u: np.ndarray = attr.ib(init=False)
-    v: np.ndarray = attr.ib(init=False)
-    w: np.ndarray = attr.ib(init=False)
+    u: NDArrayFloat = attr.ib(init=False)
+    v: NDArrayFloat = attr.ib(init=False)
+    w: NDArrayFloat = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.n_wind_speeds = len(self.wind_speeds)

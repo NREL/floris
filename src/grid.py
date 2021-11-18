@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 import attr
 import numpy as np
+import numpy.typing as npt
 from numpy import newaxis as na
 
 from .utilities import Vec3, cosd, sind, attrs_array_converter
@@ -46,11 +47,11 @@ class Grid(ABC):
     )
 
     n_turbines: int = attr.ib(init=False)
-    turbine_coordinates_array: np.ndarray = attr.ib(init=False)
+    turbine_coordinates_array: NDArrayFloat = attr.ib(init=False)
     coordinate_shape: tuple[int, int, int] = attr.ib(init=False)
-    x: np.ndarray = attr.ib(init=False)
-    y: np.ndarray = attr.ib(init=False)
-    z: np.ndarray = attr.ib(init=False)
+    x: NDArrayFloat = attr.ib(init=False)
+    y: NDArrayFloat = attr.ib(init=False)
+    z: NDArrayFloat = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.n_turbines = len(self.turbine_coordinates)
@@ -121,18 +122,20 @@ class Grid(ABC):
         self.y = mesh_y_rotated
 
     @staticmethod
-    def rotate_turbine_locations(coords: np.ndarray | list[Vec3], wd: int | float) -> tuple[np.ndarray, np.ndarray]:
+    def rotate_turbine_locations(
+        coords: NDArrayFloat | list[Vec3], wd: int | float
+    ) -> tuple[NDArrayFloat, NDArrayFloat]:
         """Rotates the turbine locations with respect to a wind direction.
 
         Args:
-            coords (np.ndarray): Either the `Grid.turbine_coordinates` `list` of `Vec3`
-            objects or the `Grid.turbine_coordinates_array` 2D array object.
+            coords (NDArrayFloat | list[Vec3]): Either the `Grid.turbine_coordinates`
+            `list` of `Vec3` objects or the `Grid.turbine_coordinates_array` 2D array object.
             wd (int): The wind direction to rotate the coordinate field.
 
         Returns:
-            tuple[np.ndarray, np.ndarray]: The rotated x and y coordinates
+            tuple[NDArrayFloat, NDArrayFloat]: The rotated x and y coordinates
         """
-        if isinstance(coords, np.ndarray):
+        if isinstance(coords, NDArrayFloat):
             x_coord, y_coord, _ = coords.T
         else:
             x_coord = np.array([c.x1 for c in coords])
@@ -277,6 +280,7 @@ class TurbineGrid(Grid):
 #     Primarily used by the Curl model and for visualization
 
 #     Args:
+#         grid_resolution (`Vec3`): The number of grid points to be created in each direction.
 #         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
 #         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
 #         grid_resolution (:py:obj:`int`): The number of points on each turbine
