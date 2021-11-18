@@ -168,7 +168,7 @@ class TurbineGrid(Grid):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
-        self.set_grid(self.wind_directions, self.wind_speeds)
+        self.set_grid()
 
     def set_grid(self) -> None:
         """
