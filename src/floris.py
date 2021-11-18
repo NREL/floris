@@ -89,7 +89,7 @@ class Floris(logging_manager.LoggerBase):
             layout_y=layout_y,
             wtg_id=wtg_id,
         )
-        self.flow_field = FlowField(farm_dict)
+        self.flow_field = FlowField.from_dict(farm_dict)
 
     def annual_energy_production(self, wind_rose):
         # self.steady_state_atmospheric_condition()
@@ -100,11 +100,11 @@ class Floris(logging_manager.LoggerBase):
         # <<interface>>
         # Initialize grid and field quanitities
         grid = TurbineGrid(
-            self.farm.coordinates,
-            self.farm.reference_turbine_diameter,
-            self.flow_field.wind_directions,
-            self.flow_field.wind_speeds,
-            5,
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=5,
         )
         # TODO: where do we pass in grid_resolution? Hardcoded to 5 above.
 
