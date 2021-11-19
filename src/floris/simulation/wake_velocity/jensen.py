@@ -124,7 +124,10 @@ class JensenVelocityDeficit(BaseClass):
         mask = ((y - y_i) ** 2 + (z - z_i) ** 2) > (boundary_line ** 2)
         c[mask] = 0.0
 
-        return c
+        velocity_deficit = 2 * turbine_ai * c
+
+        return velocity_deficit
+
         # u[i] = u[i - 1] * (1 - 2 * turbine_ai * c)
 
         # This combination model is essentially the freestream linear superposition of v2
