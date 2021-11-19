@@ -22,14 +22,14 @@ import numpy as np
 import numpy.typing as npt
 from scipy.interpolate import interp1d
 
-from src.utilities import (
+from floris.utilities import (
     FromDictMixin,
     cosd,
     float_attrib,
     model_attrib,
     attrs_array_converter,
 )
-from src.simulation import BaseClass
+from floris.simulation import BaseClass
 
 
 NDArrayFloat = npt.NDArray[np.float64]

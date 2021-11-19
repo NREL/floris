@@ -10,32 +10,4 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# See https://floris.readthedocs.io for documentation
-
-
-import re
-import sys
-import time
-import cProfile
-from copy import deepcopy
-
-from floris.simulation import Floris
-
-
-if len(sys.argv) > 1:
-    floris = Floris(sys.argv[1])
-else:
-    floris = Floris("example_input.json")
-floris.farm.flow_field.calculate_wake()
-
-start = time.time()
-
-
-def run_floris():
-    floris = Floris("example_input.json")
-    return floris
-
-
-cProfile.run('re.compile("floris.farm.flow_field.calculate_wake()")')
-end = time.time()
-print(start, end, end - start)
+from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit

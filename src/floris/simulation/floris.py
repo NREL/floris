@@ -15,11 +15,11 @@
 
 import json
 
-import src.logging_manager as logging_manager
+import floris.logging_manager as logging_manager
 
-from src.simulation import Farm
-from src.simulation import TurbineGrid
-from src.simulation import sequential_solver
+from floris.simulation import Farm
+from floris.simulation import TurbineGrid
+from floris.simulation import sequential_solver
 
 # from .wake import Wake
 from .turbine import Turbine

@@ -19,7 +19,7 @@ import attr
 import numpy as np
 import pytest
 
-from src.utilities import (
+from floris.utilities import (
     FromDictMixin,
     cosd,
     sind,

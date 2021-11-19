@@ -3,8 +3,8 @@ from abc import abstractmethod, abstractstaticmethod
 from typing import Any, Dict
 
 import attr
-from src.utilities import FromDictMixin
-from src.logging_manager import LoggerBase
+from floris.utilities import FromDictMixin
+from floris.logging_manager import LoggerBase
 
 
 @attr.s(auto_attribs=True)

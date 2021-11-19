@@ -7,7 +7,7 @@ import numpy as np
 import numpy.typing as npt
 from numpy import newaxis as na
 
-from src.utilities import Vec3, cosd, sind, attrs_array_converter
+from floris.utilities import Vec3, cosd, sind, attrs_array_converter
 
 
 NDArrayFloat = npt.NDArray[np.float64]

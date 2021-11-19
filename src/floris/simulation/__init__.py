@@ -14,7 +14,7 @@
 
 
 """
-The :py:obj:`floris` package contains :py:obj:`src.utilities` module
+The :py:obj:`floris` package contains :py:obj:`floris.utilities` module
 and the modules that make up the FLORIS software. The floris simulation
 modules are used to complete a wake simulation for a given wind farm
 and turbine configuration.
@@ -27,25 +27,18 @@ The ``__init__.py`` file enables the import of all modules in this
 package so any additional modules should be included there.
 """
 
-from pathlib import Path
-
 # Provide full-path imports here for all modules
 # that should be included in the simulation package.
 # Since some of these depend on each other, the order
 # that they are listed here does matter.
-from src.simulation.base_class import BaseClass
-from src.simulation.turbine import Turbine, Ct, power, axial_induction, average_velocity
-from src.simulation.farm import Farm
-from src.simulation.grid import Grid, TurbineGrid #, FlowFieldGrid
-from src.simulation.flow_field import FlowField
-from src.simulation.solver import sequential_solver
-from src.simulation.floris import Floris
-
-ROOT = Path(__file__).parent.parent.parent
-with open(ROOT / "VERSION") as version_file:
-    VERSION = version_file.read().strip()
-__version__ = VERSION
+from .base_class import BaseClass
+from .turbine import Turbine, Ct, power, axial_induction, average_velocity
+from .farm import Farm
+from .grid import Grid, TurbineGrid #, FlowFieldGrid
+from .flow_field import FlowField
+from .solver import sequential_solver
+from .floris import Floris
 
 # initialize the logger
-import src.logging_manager
-src.logging_manager._setup_logger()
+import floris.logging_manager
+floris.logging_manager._setup_logger()

@@ -15,8 +15,8 @@
 
 import pytest
 import numpy as np
-from src.simulation import TurbineGrid #, FlowFieldGrid
-from src.utilities import Vec3
+from floris.simulation import TurbineGrid #, FlowFieldGrid
+from floris.utilities import Vec3
 from tests.conftest import X_COORDS, Y_COORDS, Z_COORDS, N_TURBINES
 from tests.conftest import GRID_RESOLUTION
 from tests.conftest import WIND_DIRECTIONS, WIND_SPEEDS, N_WIND_DIRECTIONS, N_WIND_SPEEDS

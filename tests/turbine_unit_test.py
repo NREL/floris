@@ -18,14 +18,14 @@ import numpy as np
 import pytest
 from scipy.interpolate import interp1d
 
-from src.simulation import (
+from floris.simulation import (
     Ct,
     Turbine,
     power,
     axial_induction,
     average_velocity,
 )
-from src.simulation.turbine import (
+from floris.simulation.turbine import (
     PowerThrustTable,
     _filter_convert,
 )

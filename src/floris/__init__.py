@@ -10,4 +10,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from src.simulation.wake_velocity.jensen import JensenVelocityDeficit
+# See https://floris.readthedocs.io for documentation
+
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent.parent
+with open(ROOT / "VERSION") as version_file:
+    VERSION = version_file.read().strip()
+__version__ = VERSION

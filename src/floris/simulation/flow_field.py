@@ -18,9 +18,9 @@ import attr
 import numpy as np
 import numpy.typing as npt
 
-from src.utilities import FromDictMixin, int_attrib, float_attrib, attrs_array_converter
+from floris.utilities import FromDictMixin, int_attrib, float_attrib, attrs_array_converter
 
-from src.simulation import Grid
+from floris.simulation import Grid
 
 
 NDArrayFloat = npt.NDArray[np.float64]

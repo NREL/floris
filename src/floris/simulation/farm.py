@@ -19,8 +19,8 @@ import numpy as np
 import xarray as xr
 import numpy.typing as npt
 
-from src.simulation import Turbine
-from src.utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
+from floris.simulation import Turbine
+from floris.utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
 
 
 NDArrayFloat = npt.NDArray[np.float64]

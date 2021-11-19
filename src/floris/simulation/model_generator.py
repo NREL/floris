@@ -1,7 +1,7 @@
 """Defines the BaseClass parent class for all models to be based upon."""
 
-from src.simulation.wake_velocity import JensenVelocityDeficit
-from src.simulation.wake_velocity import Curl
+from floris.simulation.wake_velocity import JensenVelocityDeficit
+from floris.simulation.wake_velocity import Curl
 
 
 MODEL_MAP = {
