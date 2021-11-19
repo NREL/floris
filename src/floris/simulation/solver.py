@@ -9,11 +9,14 @@ from floris.simulation import FlowField
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
 from floris.simulation.wake_velocity.gaussianModels.gauss import GaussVelocityDeficit
 from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
+from floris.simulation.wake_deflection.gauss import GaussVelocityDeflection
 
 
-jimenez_deflection_model = JimenezVelocityDeflection()
 jensen_deficit_model = JensenVelocityDeficit()
 gauss_deficit_model = GaussVelocityDeficit()
+
+jimenez_deflection_model = JimenezVelocityDeflection()
+gauss_deflection_model = GaussVelocityDeflection()
 
 # deficit_model = "jensen"
 deficit_model = "gauss"
@@ -21,9 +24,10 @@ deficit_model = "gauss"
 # <<interface>>
 if deficit_model == "jensen":
     velocity_deficit_model = jensen_deficit_model
+    deflection_model = jimenez_deflection_model
 elif deficit_model == "gauss":
     velocity_deficit_model = gauss_deficit_model
-deflection_model = jimenez_deflection_model
+    deflection_model = gauss_deflection_model
 
 def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> None:
     # Algorithm
@@ -33,7 +37,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
     # Move on to the next turbine.
 
     # <<interface>>
-    jimenez_args = deflection_model.prepare_function(grid, farm, flow_field)
+    deflection_model_args = deflection_model.prepare_function(grid, farm, flow_field)
     deficit_model_args = velocity_deficit_model.prepare_function(grid, farm, flow_field)
 
     # This is u_wake
@@ -63,7 +67,19 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
-        deflection_field = deflection_model.function(i, thrust_coefficient, **jimenez_args)
+        if deficit_model == "jensen":
+            deflection_field = deflection_model.function(
+                i,
+                thrust_coefficient,
+                **deflection_model_args
+            )
+        elif deficit_model == "gauss":
+            deflection_field = deflection_model.function(
+                i,
+                turbine_turbulence_intensity[:, :, i:i+1, :, :],
+                thrust_coefficient,
+                **deflection_model_args
+            )
 
         turbine_ai = axial_induction(
             velocities=u,
@@ -81,7 +97,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
                 **deficit_model_args
             )
         elif deficit_model == "gauss":
-            # print(turbine_turbulence_intensity[0,0])
             velocity_deficit = velocity_deficit_model.function(
                 i,
                 deflection_field,
