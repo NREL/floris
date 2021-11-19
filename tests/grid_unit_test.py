@@ -68,6 +68,28 @@ def test_turbinegrid_dimensions(turbine_grid_fixture):
     assert np.shape(turbine_grid_fixture.z) == (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES, GRID_RESOLUTION, GRID_RESOLUTION)
 
 
+def test_turbinegrid_dynamic_properties(turbine_grid_fixture):
+    assert turbine_grid_fixture.n_turbines == N_TURBINES
+    assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS
+    assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS
+
+    # TODO: @Rob @Chris This breaks n_turbines since the validator is not run. Is this case ok? Do we enforce that turbine_coordinates must be set by =?
+    # turbine_grid_fixture.turbine_coordinates.append(Vec3([100.0, 200.0, 300.0]))
+    # assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
+
+    turbine_grid_fixture.turbine_coordinates = [*turbine_grid_fixture.turbine_coordinates, Vec3([100.0, 200.0, 300.0])]
+    assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
+
+    turbine_grid_fixture.wind_speeds = [*turbine_grid_fixture.wind_speeds, 0.0]
+    assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS + 1
+
+    turbine_grid_fixture.wind_directions = [*turbine_grid_fixture.wind_directions, 0.0]
+    assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS + 1
+
+
+
+
+
 # def test_flow_field_set_bounds(flow_field_grid_fixture):
 #     assert flow_field_grid_fixture.xmin == -252.0
 #     assert flow_field_grid_fixture.xmax == 2520.0

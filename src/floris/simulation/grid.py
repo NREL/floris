@@ -60,7 +60,7 @@ class Grid(ABC):
         """Ensures all elements are `Vec3` objects and keeps the `n_turbines` attribute up to date."""
         types = np.unique([isinstance(c, Vec3) for c in value])
         if not all(types):
-            raise TypeError("'turbine_coordinates' should be all `Vec3` objects!")
+            raise TypeError("'turbine_coordinates' must be `Vec3` objects.")
 
         self.n_turbines = len(value)
 
