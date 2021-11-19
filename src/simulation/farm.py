@@ -114,23 +114,16 @@ class Farm(BaseClass):
     """
 
     turbine_id: list[str] = attr.ib(validator=iter_validator(list, str))
-    turbine_map: dict[str, dict | Turbine] = attr.ib(converter=create_turbines)
-    wind_directions: list[float] | NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    wind_speeds: list[float] | NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    layout_x: list[float] | NDArrayInt = attr.ib(converter=attrs_array_converter)
-    layout_y: list[float] | NDArrayInt = attr.ib(converter=attrs_array_converter)
+    turbine_map: dict[str, Turbine] = attr.ib(converter=create_turbines)
+    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    layout_x: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    layout_y: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     wtg_id: List[str] = attr.ib(
         factory=list,
         on_setattr=attr.setters.validate,
         validator=iter_validator(list, str),
     )
-    # These weren't located anywhere else, so it's being placed here
-    wind_shear: float = float_attrib()
-    wind_veer: float = float_attrib()
-    air_density: float = float_attrib()
-    reference_wind_height: float = float_attrib()
-    reference_turbine_diameter: float = float_attrib()
-
     model_string: str = model_attrib(default="farm")
 
     coordinates: list[Vec3] = attr.ib(init=False)
@@ -140,7 +133,6 @@ class Farm(BaseClass):
     pP: NDArrayFloat = attr.ib(init=False)
     pT: NDArrayFloat = attr.ib(init=False)
     generator_efficiency: NDArrayFloat = attr.ib(init=False)
-    # power_thrust_table: np.ndarray = attr.ib(init=False)  # NOTE: Is this only necessary for the creation of the interpolations?
     fCp_interp: NDArrayFloat = attr.ib(init=False)
     fCt_interp: NDArrayFloat = attr.ib(init=False)
     power_interp: NDArrayFloat = attr.ib(init=False)

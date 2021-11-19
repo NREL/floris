@@ -227,7 +227,7 @@ class FromDictMixin:
             cls
                 The `attr`-defined class.
         """
-        return cls(**{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data})  # type: ignore
+        return cls(**{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init is not False})  # type: ignore
 
 
 def is_default(instance, attribute, value):

@@ -75,15 +75,14 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     access other objects within the model.
     """
 
-    farm: Farm | dict = attr.ib()
+    farm: Farm = attr.ib()
     logging: dict = attr.ib()
     turbine: dict[str, Turbine] = attr.ib(converter=convert_dict_to_turbine)
     wake: Wake = attr.ib(converter=Wake.from_dict)
-    flow_field: FlowField = attr.ib(init=False)
+    flow_field: FlowField = attr.ib(converter=FlowField.from_dict)
 
     def __attrs_post_init__(self) -> None:
         self.create_farm()
-        self.flow_field = FlowField(self.farm._get_model_dict())
 
         # Configure logging
         logging_manager.configure_console_log(
@@ -130,8 +129,8 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         output_dict = dict(
             farm=attr.asdict(self.farm),
             logging=self.logging,
-            turbine_map={key: attr.asdict(val) for key, val in self.turbine.items()},
-            wake={},  # TODO
+            turbine={key: attr.asdict(val) for key, val in self.turbine.items()},
+            wake=attr.asdict(self.wake),
             flow_field=attr.asdict(self.flow_field),
         )
         return output_dict
@@ -157,7 +156,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             yaml.dump(output_dict, f, default_flow_style=False)
 
     def create_farm(self) -> None:
-        # TODO: create the proper turbine mapping
         if len(self.farm["turbine_id"]) == 0:
             self.farm["turbine_id"] = [*self.turbine.keys()][0] * len(self.farm["layout_x"])
         self.farm["turbine_map"] = self.turbine

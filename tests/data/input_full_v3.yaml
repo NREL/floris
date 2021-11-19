@@ -1,35 +1,41 @@
+type: floris_input
+name: floris_input_file_Example
 description: Example FLORIS Input file
+floris_version: v3.0.0
 farm:
+  type: farm
+  name: farm_example_2x2
+  description: Example 2x2 Wind Farm
   __comment__: specified_wind_height of -1 uses the first turbine's hub height; After
     initialization, specified_wind_height is a free parameter.
-  air_density: 1.225
-  description: Example 2x2 Wind Farm
   layout_x:
   - 0.0
   layout_y:
   - 0.0
-  name: farm_example_2x2
-  reference_turbine_diameter: 126.0
-  reference_wind_height: 90.0
-  specified_wind_height: -1
   turbine_id:
   - nrel_5mw
   turbulence_intensity:
   - 0.06
-  type: farm
-  wind_directions:
-  - 270.0
-  wind_shear: 0.12
-  wind_speeds:
-  - 8.0
-  wind_veer: 0.0
   wind_x:
   - 0
   wind_y:
   - 0
   wtg_id:
   - WTG-1
-floris_version: v3.0.0
+  wind_directions:
+  - 270.0
+  wind_speeds:
+  - 8.0
+flow_field:
+  wind_veer: 0.0
+  wind_shear: 0.12
+  air_density: 1.225
+  reference_wind_height: 90.0
+  reference_turbine_diameter: 126.0
+  wind_directions:
+  - 270.0
+  wind_speeds:
+  - 8.0
 logging:
   console:
     enable: false
@@ -37,9 +43,9 @@ logging:
   file:
     enable: false
     level: WARNING
-name: floris_input_file_Example
 turbine:
   nrel_5mw:
+    type: turbine
     TSR: 8.0
     blade_count: 3
     blade_pitch: 0.0
@@ -198,19 +204,17 @@ turbine:
       - 25.5
     rotor_diameter: 126.0
     tilt_angle: 0.0
-    type: turbine
     use_points_on_perimeter: false
     yaw_angle: 0.0
-type: floris_input
 wake:
+  type: wake
+  name: wake_default
   description: wake
   model_strings:
     combination_model: null
     deflection_model: jimenez
     turbulence_model: null
     velocity_model: jensen
-  name: wake_default
-  type: wake
   wake_deflection_parameters:
     gauss:
       ad: 0.0
@@ -225,7 +229,6 @@ wake:
       bd: 0.0
       kd: 0.05
   wake_turbulence_parameters:
-    None: None
     crespo_hernandez:
       ai: 0.8
       constant: 0.37

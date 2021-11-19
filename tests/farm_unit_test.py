@@ -11,21 +11,16 @@ from tests.conftest import SampleInputs
 
 
 def test_farm_init_homogenous_turbines():
-    turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
+    turbine_data = SampleInputs().turbine
 
     wind_directions = farm_data["wind_directions"]
     wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
-    turbine_id = ["t1"] * len(layout_x)
-    turbine_map = dict(t1=turbine_data)
-    wind_shear = farm_data["wind_shear"]
-    wind_veer = farm_data["wind_veer"]
-    reference_wind_height = farm_data["reference_wind_height"]
-    reference_turbine_diameter = farm_data["reference_turbine_diameter"]
-    air_density = farm_data["air_density"]
+    turbine_id = ["test_turb"] * len(layout_x)
+    turbine_map = deepcopy(turbine_data)
 
     coordinates = [Vec3([x, y, 90.0]) for x, y in zip(layout_x, layout_y)]
 
@@ -37,11 +32,6 @@ def test_farm_init_homogenous_turbines():
         layout_x=layout_x,
         layout_y=layout_y,
         wtg_id=wtg_id,
-        wind_shear=wind_shear,
-        wind_veer=wind_veer,
-        air_density=air_density,
-        reference_wind_height=reference_wind_height,
-        reference_turbine_diameter=reference_turbine_diameter,
     )
 
     # Check initial values
@@ -51,11 +41,11 @@ def test_farm_init_homogenous_turbines():
     assert farm.wtg_id == wtg_id
 
     # Check generated values
-    assert np.all(farm.rotor_diameter == turbine_data["rotor_diameter"])
-    assert np.all(farm.hub_height == turbine_data["hub_height"])
-    assert np.all(farm.pP == turbine_data["pP"])
-    assert np.all(farm.pT == turbine_data["pT"])
-    assert np.all(farm.generator_efficiency == turbine_data["generator_efficiency"])
+    assert np.all(farm.rotor_diameter == turbine_data["test_turb"]["rotor_diameter"])
+    assert np.all(farm.hub_height == turbine_data["test_turb"]["hub_height"])
+    assert np.all(farm.pP == turbine_data["test_turb"]["pP"])
+    assert np.all(farm.pT == turbine_data["test_turb"]["pT"])
+    assert np.all(farm.generator_efficiency == turbine_data["test_turb"]["generator_efficiency"])
 
     # Shape should be N turbines x 10 turbine attributes
     assert isinstance(farm.array_data, xr.DataArray)
@@ -76,11 +66,6 @@ def test_farm_init_homogenous_turbines():
         wind_speeds=wind_speeds,
         layout_x=layout_x,
         layout_y=layout_y,
-        wind_shear=wind_shear,
-        wind_veer=wind_veer,
-        air_density=air_density,
-        reference_wind_height=reference_wind_height,
-        reference_turbine_diameter=reference_turbine_diameter,
     )
     assert farm.wtg_id == ["WTG_0001", "WTG_0002", "WTG_0003"]
 
@@ -95,11 +80,6 @@ def test_farm_init_homogenous_turbines():
             layout_x=layout_x_fail_too_few,
             layout_y=layout_y,
             wtg_id=wtg_id,
-            wind_shear=wind_shear,
-            wind_veer=wind_veer,
-            air_density=air_density,
-            reference_wind_height=reference_wind_height,
-            reference_turbine_diameter=reference_turbine_diameter,
         )
 
     layout_x_fail_too_many = deepcopy(layout_x)
@@ -112,11 +92,6 @@ def test_farm_init_homogenous_turbines():
             wind_speeds=wind_speeds,
             layout_x=layout_x_fail_too_many,
             layout_y=layout_y,
-            wind_shear=wind_shear,
-            wind_veer=wind_veer,
-            air_density=air_density,
-            reference_wind_height=reference_wind_height,
-            reference_turbine_diameter=reference_turbine_diameter,
         )
 
     # Check the layout_y validator
@@ -129,11 +104,6 @@ def test_farm_init_homogenous_turbines():
             wind_speeds=wind_speeds,
             layout_x=layout_x,
             layout_y=layout_y_fail_too_few,
-            wind_shear=wind_shear,
-            wind_veer=wind_veer,
-            air_density=air_density,
-            reference_wind_height=reference_wind_height,
-            reference_turbine_diameter=reference_turbine_diameter,
         )
 
     layout_y_fail_too_many = deepcopy(layout_y)
@@ -146,29 +116,19 @@ def test_farm_init_homogenous_turbines():
             wind_speeds=wind_speeds,
             layout_x=layout_x,
             layout_y=layout_y_fail_too_many,
-            wind_shear=wind_shear,
-            wind_veer=wind_veer,
-            air_density=air_density,
-            reference_wind_height=reference_wind_height,
-            reference_turbine_diameter=reference_turbine_diameter,
         )
 
 
 def test_sort_turbines():
-    turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
+    turbine_data = SampleInputs().turbine
 
     wind_directions = farm_data["wind_directions"]
     wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = [630, 0, 1260]
-    turbine_id = ["t1"] * len(layout_x)
-    turbine_map = dict(t1=turbine_data)
-    wind_shear = farm_data["wind_shear"]
-    wind_veer = farm_data["wind_veer"]
-    reference_wind_height = farm_data["reference_wind_height"]
-    reference_turbine_diameter = farm_data["reference_turbine_diameter"]
-    air_density = farm_data["air_density"]
+    turbine_id = ["test_turb"] * len(layout_x)
+    turbine_map = deepcopy(turbine_data)
 
     farm = Farm(
         turbine_id=turbine_id,
@@ -177,11 +137,6 @@ def test_sort_turbines():
         wind_speeds=wind_speeds,
         layout_x=layout_x,
         layout_y=layout_y,
-        wind_shear=wind_shear,
-        wind_veer=wind_veer,
-        air_density=air_density,
-        reference_wind_height=reference_wind_height,
-        reference_turbine_diameter=reference_turbine_diameter,
     )
 
     x_sort = farm.sort_turbines(by="x")
@@ -192,21 +147,16 @@ def test_sort_turbines():
 
 
 def test_make_fail_to_demonstrate_xarray_properties():
-    turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
+    turbine_data = SampleInputs().turbine
 
     wind_directions = farm_data["wind_directions"]
     wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
-    turbine_id = ["t1"] * len(layout_x)
-    turbine_map = dict(t1=turbine_data)
-    wind_shear = farm_data["wind_shear"]
-    wind_veer = farm_data["wind_veer"]
-    reference_wind_height = farm_data["reference_wind_height"]
-    reference_turbine_diameter = farm_data["reference_turbine_diameter"]
-    air_density = farm_data["air_density"]
+    turbine_id = ["test_turb"] * len(layout_x)
+    turbine_map = deepcopy(turbine_data)
 
     farm = Farm(
         turbine_id=turbine_id,
@@ -215,11 +165,6 @@ def test_make_fail_to_demonstrate_xarray_properties():
         wind_speeds=wind_speeds,
         layout_x=layout_x,
         layout_y=layout_y,
-        wind_shear=wind_shear,
-        wind_veer=wind_veer,
-        air_density=air_density,
-        reference_wind_height=reference_wind_height,
-        reference_turbine_diameter=reference_turbine_diameter,
         wtg_id=wtg_id,
     )
     print("The array:\n", farm.array_data)
@@ -235,21 +180,16 @@ def test_turbine_array_rotor_diameter():
     This tests the rotor diameter column of the turbine array
     but it also verifies the other columns of type float.
     """
-    turbine_data = SampleInputs().turbine
     farm_data = SampleInputs().farm
+    turbine_data = SampleInputs().turbine
 
     wind_directions = farm_data["wind_directions"]
     wind_speeds = farm_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
-    turbine_id = ["t1"] * len(layout_x)
-    turbine_map = dict(t1=turbine_data)
-    wind_shear = farm_data["wind_shear"]
-    wind_veer = farm_data["wind_veer"]
-    reference_wind_height = farm_data["reference_wind_height"]
-    reference_turbine_diameter = farm_data["reference_turbine_diameter"]
-    air_density = farm_data["air_density"]
+    turbine_id = ["test_turb"] * len(layout_x)
+    turbine_map = deepcopy(turbine_data)
 
     n_wind_directions = len(farm_data["wind_directions"])
     n_wind_speeds = len(farm_data["wind_speeds"])
@@ -262,16 +202,11 @@ def test_turbine_array_rotor_diameter():
         wind_speeds=wind_speeds,
         layout_x=layout_x,
         layout_y=layout_y,
-        wind_shear=wind_shear,
-        wind_veer=wind_veer,
-        air_density=air_density,
-        reference_wind_height=reference_wind_height,
-        reference_turbine_diameter=reference_turbine_diameter,
         wtg_id=wtg_id,
     )
     assert np.array_equal(
         farm.rotor_diameter,
-        np.array(n_wind_directions * n_wind_speeds * n_turbines * [turbine_data["rotor_diameter"]]).reshape(
-            (n_wind_directions, n_wind_speeds, n_turbines)
-        ),
+        np.array(
+            n_wind_directions * n_wind_speeds * n_turbines * [turbine_data["test_turb"]["rotor_diameter"]]
+        ).reshape((n_wind_directions, n_wind_speeds, n_turbines)),
     )

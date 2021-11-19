@@ -34,6 +34,7 @@ def test_read_dict():
 
 def test_init():
     fi = Floris.from_dict(DICT_INPUT)
+    print(fi)
     assert isinstance(fi.farm, Farm)
     assert isinstance(fi.logging, dict)
     for turb in fi.turbine.values():
@@ -42,12 +43,13 @@ def test_init():
     assert isinstance(fi.flow_field, FlowField)
 
 
-# def test_prepare_for_save():
-#     # Fails until v3/attrs_expansion is merged
-#     fi = Floris.from_dict(DICT_INPUT)
-#     new_input = fi._prepare_for_save()
-#     new_fi = Floris.from_dict(new_input)
-#     assert fi == new_fi
+def test_prepare_for_save():
+    # Need to define some __eq__ methods for this to work out correctly
+    fi = Floris.from_dict(DICT_INPUT)
+    new_input = fi._prepare_for_save()
+    fi.to_yaml("delete.yaml")
+    new_fi = Floris.from_dict(new_input)
+    # assert fi == new_fi
 
 
 def test_annual_energy_production():

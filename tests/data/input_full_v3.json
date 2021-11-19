@@ -2,7 +2,6 @@
   "description": "Example FLORIS Input file",
   "farm": {
     "__comment__": "specified_wind_height of -1 uses the first turbine's hub height; After initialization, specified_wind_height is a free parameter.",
-    "air_density": 1.225,
     "description": "Example 2x2 Wind Farm",
     "layout_x": [
       0.0
@@ -11,9 +10,6 @@
       0.0
     ],
     "name": "farm_example_2x2",
-    "reference_turbine_diameter": 126.0,
-    "reference_wind_height": 90.0,
-    "specified_wind_height": -1,
     "turbine_id": [
       "nrel_5mw"
     ],
@@ -24,11 +20,9 @@
     "wind_directions": [
       270.0
     ],
-    "wind_shear": 0.12,
     "wind_speeds": [
       8.0
     ],
-    "wind_veer": 0.0,
     "wind_x": [
       0
     ],
@@ -40,6 +34,19 @@
     ]
   },
   "floris_version": "v3.0.0",
+  "flow_field": {
+    "air_density": 1.225,
+    "reference_turbine_diameter": 126.0,
+    "reference_wind_height": 90.0,
+    "wind_directions": [
+      270.0
+    ],
+    "wind_shear": 0.12,
+    "wind_speeds": [
+      8.0
+    ],
+    "wind_veer": 0.0
+  },
   "logging": {
     "console": {
       "enable": false,
