@@ -16,7 +16,6 @@ import attr
 import numpy as np
 
 from floris.simulation import TurbineGrid
-from floris.simulation import Turbine
 from floris.simulation import FlowField
 from floris.simulation import Farm
 from floris.utilities import cosd, sind, float_attrib, model_attrib
@@ -47,13 +46,6 @@ class JimenezVelocityDeflection(BaseClass):
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
-        """
-        This function prepares the inputs from the various FLORIS data structures
-        for use in the Jensen model. This should only be used to 'initialize'
-        the inputs. For any data that should be updated successively,
-        do not use this function and instead pass that data directly to
-        the model function.
-        """
         reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
             (
                 flow_field.n_wind_directions,
@@ -76,7 +68,7 @@ class JimenezVelocityDeflection(BaseClass):
         Ct: np.ndarray,
         *,
         x: np.ndarray,
-        reference_rotor_diameter: float,
+        reference_rotor_diameter: np.ndarray,
         yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
     ):
         """

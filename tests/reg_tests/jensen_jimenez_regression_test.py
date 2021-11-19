@@ -205,7 +205,6 @@ def test_regression_rotation(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    print(farm_avg_velocities)
 
     t0_270 = farm_avg_velocities[0, 0, 0]  # upstream
     t1_270 = farm_avg_velocities[0, 0, 1]  # upstream
