@@ -17,7 +17,7 @@ from typing import Any
 
 import attr
 
-from floris.utilities import model_attrib
+from floris.utilities import model_attrib, attr_serializer, attr_floris_filter
 from floris.simulation.base_class import BaseClass
 from floris.simulation.wake_velocity.curl import CurlVelocityDeficit
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
@@ -115,6 +115,30 @@ class Wake(BaseClass):
         self.deflection_model = wake_models["deflection"]
         self.turbulence_model = wake_models["turbulence"]
         self.velocity_model = wake_models["velocity"]
+
+    def asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `Wake` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+
+        def create_dict(wake_model):
+            if wake_model is None:
+                return {}
+            output = attr.asdict(wake_model, filter=attr_floris_filter, value_serializer=attr_serializer)
+            return {wake_model.model_string: output}
+
+        output = dict(
+            model_strings=self.model_strings,
+            wake_combination_parameters=create_dict(self.combination_model),
+            wake_deflection_parameters=create_dict(self.deflection_model),
+            wake_turbulence_parameters=create_dict(self.turbulence_model),
+            wake_velocity_parameters=create_dict(self.velocity_model),
+        )
+        return output
 
     @property
     def deflection_function(self):

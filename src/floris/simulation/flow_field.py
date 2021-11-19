@@ -22,6 +22,8 @@ from floris.utilities import (
     FromDictMixin,
     int_attrib,
     float_attrib,
+    attr_serializer,
+    attr_floris_filter,
     attrs_array_converter,
 )
 from floris.simulation import Grid
@@ -42,13 +44,13 @@ class FlowField(FromDictMixin):
     n_wind_speeds: int = attr.ib(init=False)
     n_wind_directions: int = attr.ib(init=False)
 
-    u_initial: NDArrayFloat = attr.ib(default=np.empty((1)))
-    v_initial: NDArrayFloat = attr.ib(default=np.empty((1)))
-    w_initial: NDArrayFloat = attr.ib(default=np.empty((1)))
+    u_initial: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    v_initial: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    w_initial: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
 
-    u: NDArrayFloat = attr.ib(default=np.empty((1)))
-    v: NDArrayFloat = attr.ib(default=np.empty((1)))
-    w: NDArrayFloat = attr.ib(default=np.empty((1)))
+    u: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    v: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    w: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
@@ -83,3 +85,13 @@ class FlowField(FromDictMixin):
         self.u = np.take_along_axis(self.u, unsorted_indices, axis=2)
         self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
+
+    def asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `FlowField` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+        return attr.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)

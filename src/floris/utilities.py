@@ -284,3 +284,20 @@ update_wrapper(int_attrib, attr.ib)
 
 model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)  # type: ignore
 update_wrapper(model_attrib, attr.ib)
+
+
+def attr_serializer(inst: type, field: attr.Attribute, value: Any):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    return value
+
+
+def attr_floris_filter(inst: attr.Attribute, value: Any) -> bool:
+    if inst.init is False:
+        return False
+    if value is None:
+        return False
+    if isinstance(value, np.ndarray):
+        if value.size == 0:
+            return False
+    return True

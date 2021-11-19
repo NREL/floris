@@ -27,6 +27,7 @@ from floris.utilities import (
     attrs_array_converter,
 )
 from floris.simulation import Turbine
+from src.floris.utilities import attr_serializer, attr_floris_filter
 from floris.simulation.base_class import BaseClass
 
 
@@ -242,6 +243,16 @@ class Farm(BaseClass):
             return np.argsort(self.layout_y)
         else:
             raise ValueError("`by` must be set to one of 'x' or 'y'!")
+
+    def asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `Farm` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+        return attr.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
 
     @property
     def n_turbines(self):

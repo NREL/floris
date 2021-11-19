@@ -127,11 +127,11 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
     def _prepare_for_save(self) -> dict:
         output_dict = dict(
-            farm=attr.asdict(self.farm),
+            farm=self.farm.asdict(),
             logging=self.logging,
-            turbine={key: attr.asdict(val) for key, val in self.turbine.items()},
-            wake=attr.asdict(self.wake),
-            flow_field=attr.asdict(self.flow_field),
+            turbine={key: val.asdict() for key, val in self.turbine.items()},
+            wake=self.wake.asdict(),
+            flow_field=self.flow_field.asdict(),
         )
         return output_dict
 
@@ -143,7 +143,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         """
         output_dict = self._prepare_for_save()
         with open(output_file_path, "w+") as f:
-            yaml.dump(output_dict, f, indent=2, sort_keys=False)
+            json.dump(output_dict, f, indent=2, sort_keys=False)
 
     def to_yaml(self, output_file_path: str) -> None:
         """Converts the `Floris` object to an input-ready YAML file at `output_file_path`.
