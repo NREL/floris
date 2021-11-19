@@ -7,7 +7,7 @@ from floris.simulation import TurbineGrid
 from floris.simulation import Ct, axial_induction
 from floris.simulation import FlowField
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
-from floris.simulation.wake_velocity.gaussianModels.gauss import GaussVelocityDeficit
+from floris.simulation.wake_velocity.gauss import GaussVelocityDeficit
 from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
 from floris.simulation.wake_deflection.gauss import GaussVelocityDeflection
 
