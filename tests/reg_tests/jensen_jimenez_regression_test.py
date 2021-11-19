@@ -181,6 +181,8 @@ def test_regression_rotation(sample_inputs_fixture):
         5 * TURBINE_DIAMETER,
     ]
     sample_inputs_fixture.floris["farm"]["layout_y"] = [0.0, 5 * TURBINE_DIAMETER, 0.0, 5 * TURBINE_DIAMETER]
+    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
+    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.steady_state_atmospheric_condition()

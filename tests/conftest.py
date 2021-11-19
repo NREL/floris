@@ -246,10 +246,6 @@ class SampleInputs:
         self.farm = {
             "wind_speeds": WIND_SPEEDS,
             "wind_directions": WIND_DIRECTIONS,
-            "turbulence_intensity": [0.1],
-            "wind_shear": 0.12,
-            "wind_veer": 0.0,
-            "air_density": 1.225,
             "turbine_id": ["test_turb", "test_turb", "test_turb"],
             "layout_x": [
                 0.0,
@@ -259,6 +255,15 @@ class SampleInputs:
             "layout_y": [0.0, 0.0, 0.0],
             "wind_x": [0],
             "wind_y": [0],
+        }
+
+        self.flow_field = {
+            "wind_speeds": WIND_SPEEDS,
+            "wind_directions": WIND_DIRECTIONS,
+            "turbulence_intensity": [0.1],
+            "wind_shear": 0.12,
+            "wind_veer": 0.0,
+            "air_density": 1.225,
             "reference_wind_height": self.turbine["test_turb"]["hub_height"],
             "reference_turbine_diameter": self.turbine["test_turb"]["rotor_diameter"],
         }
@@ -288,6 +293,7 @@ class SampleInputs:
 
         self.floris = {
             "farm": self.farm,
+            "flow_field": self.flow_field,
             "turbine": self.turbine,
             "wake": self.wake,
             "logging": {

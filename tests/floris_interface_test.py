@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.tools.floris_interface import FlorisInterface
+from floris.tools.floris_interface import FlorisInterface
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"

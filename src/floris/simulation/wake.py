@@ -17,11 +17,11 @@ from typing import Any
 
 import attr
 
-from src.utilities import model_attrib
-from src.simulation.base_class import BaseClass
-from src.simulation.wake_velocity.curl import CurlVelocityDeficit
-from src.simulation.wake_velocity.jensen import JensenVelocityDeficit
-from src.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
+from floris.utilities import model_attrib
+from floris.simulation.base_class import BaseClass
+from floris.simulation.wake_velocity.curl import CurlVelocityDeficit
+from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
+from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
 
 
 # from .wake_combination.fls import FLS

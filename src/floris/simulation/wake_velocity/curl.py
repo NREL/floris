@@ -16,10 +16,10 @@ import attr
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-from src.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
-from src.simulation import Farm, TurbineGrid
-from src.simulation.base_class import BaseClass
-from src.simulation.flow_field import FlowField
+from floris.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
+from floris.simulation import Farm, TurbineGrid
+from floris.simulation.base_class import BaseClass
+from floris.simulation.flow_field import FlowField
 
 
 @attr.s(auto_attribs=True)

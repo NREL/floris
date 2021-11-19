@@ -3,8 +3,8 @@ from typing import List, Tuple, Union
 import attr
 import numpy as np
 
-from src.utilities import Vec3, cosd, sind, tand
-from src.base_class import BaseClass
+from floris.utilities import Vec3, cosd, sind, tand
+from floris.base_class import BaseClass
 
 
 try:
@@ -44,9 +44,7 @@ class GaussMixin:
             # self.logger.error(err_msg, stack_info=True)
             raise ValueError(err_msg)
 
-    def yaw_added_turbulence_mixing(
-        self, coord, turbine, flow_field, x_locations, y_locations, z_locations
-    ):
+    def yaw_added_turbulence_mixing(self, coord, turbine, flow_field, x_locations, y_locations, z_locations):
         """
         This method computes the added turbulence due to yaw misalignment.  Yaw misalignment induces additional
         mixing in the flow and causes the wakes to recover faster.
@@ -64,9 +62,7 @@ class GaussMixin:
         """
         if self.use_yaw_added_recovery:
             # compute turbulence modification
-            V, W = self.calc_VW(
-                coord, turbine, flow_field, x_locations, y_locations, z_locations
-            )
+            V, W = self.calc_VW(coord, turbine, flow_field, x_locations, y_locations, z_locations)
 
             # calculate fluctuations
             v_prime = flow_field.v + V
@@ -80,9 +76,7 @@ class GaussMixin:
                 (np.abs(x_locations - coord.x1) <= turbine.rotor_diameter / 4)
                 & (np.abs(y_locations - coord.x2) < turbine.rotor_diameter)
             )
-            TKE = (1 / 2) * (
-                u_prime ** 2 + np.mean(v_prime[idx]) ** 2 + np.mean(w_prime[idx]) ** 2
-            )
+            TKE = (1 / 2) * (u_prime ** 2 + np.mean(v_prime[idx]) ** 2 + np.mean(w_prime[idx]) ** 2)
 
             # convert TKE back to TI
             TI_total = turbine.TKE_to_TI(TKE)
@@ -94,9 +88,7 @@ class GaussMixin:
 
         return TI_mixing
 
-    def calculate_VW(
-        self, V, W, coord, turbine, flow_field, x_locations, y_locations, z_locations
-    ):
+    def calculate_VW(self, V, W, coord, turbine, flow_field, x_locations, y_locations, z_locations):
         """
         This method calculates the V- and W-component velocities using
         methods developed in [1].
@@ -129,14 +121,10 @@ class GaussMixin:
                 - W-component velocity deficits across the flow field.
         """
         if not self.calculate_VW_velocities:
-            V, W = self.calc_VW(
-                coord, turbine, flow_field, x_locations, y_locations, z_locations
-            )
+            V, W = self.calc_VW(coord, turbine, flow_field, x_locations, y_locations, z_locations)
         return V, W
 
-    def yaw_added_recovery_correction(
-        self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord
-    ):
+    def yaw_added_recovery_correction(self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord):
         """
         This method corrects the U-component velocities when yaw added recovery
         is enabled. For more details on how the velocities are changed, see [1].
@@ -175,9 +163,7 @@ class GaussMixin:
         return U
 
     # TODO: CLEANUP
-    def calc_VW(
-        self, coord, turbine, flow_field, x_locations, y_locations, z_locations
-    ):
+    def calc_VW(self, coord, turbine, flow_field, x_locations, y_locations, z_locations):
         """
         This method calculates the V- and W-component velocities using
         methods developed in [1].
@@ -211,23 +197,11 @@ class GaussMixin:
         Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
 
         scale = 1.0
-        vel_top = (
-            Uinf
-            * ((HH + D / 2) / flow_field.reference_wind_height) ** flow_field.wind_shear
-        ) / Uinf
-        vel_bottom = (
-            Uinf
-            * ((HH - D / 2) / flow_field.reference_wind_height) ** flow_field.wind_shear
-        ) / Uinf
-        Gamma_top = (
-            scale * (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
-        )
-        Gamma_bottom = (
-            -scale * (np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
-        )
-        Gamma_wake_rotation = (
-            0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
-        )
+        vel_top = (Uinf * ((HH + D / 2) / flow_field.reference_wind_height) ** flow_field.wind_shear) / Uinf
+        vel_bottom = (Uinf * ((HH - D / 2) / flow_field.reference_wind_height) ** flow_field.wind_shear) / Uinf
+        Gamma_top = scale * (np.pi / 8) * D * vel_top * Uinf * Ct * sind(yaw) * cosd(yaw)
+        Gamma_bottom = -scale * (np.pi / 8) * D * vel_bottom * Uinf * Ct * sind(yaw) * cosd(yaw)
+        Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
 
         # compute the spanwise and vertical velocities induced by yaw
         eps = self.eps_gain * D  # Use set value
@@ -236,9 +210,7 @@ class GaussMixin:
         lmda = D / 8
         kappa = 0.41
         lm = kappa * z_locations / (1 + kappa * z_locations / lmda)
-        z = np.linspace(
-            z_locations.min(), z_locations.max(), flow_field.u_initial.shape[2]
-        )
+        z = np.linspace(z_locations.min(), z_locations.max(), flow_field.u_initial.shape[2])
         dudz_initial = np.gradient(flow_field.u_initial, z, axis=2)
         nu = lm ** 2 * np.abs(dudz_initial[0, :, :])
 
@@ -344,10 +316,7 @@ class GaussMixin:
         zLocs = z_locations + 0.01 + HH
         V6 = (
             (
-                (
-                    (zLocs * -Gamma_wake_rotation)
-                    / (2 * np.pi * (yLocs ** 2 + zLocs ** 2))
-                )
+                ((zLocs * -Gamma_wake_rotation) / (2 * np.pi * (yLocs ** 2 + zLocs ** 2)))
                 * (1 - np.exp(-(yLocs ** 2 + zLocs ** 2) / (eps ** 2)))
                 + 0.0
             )
@@ -367,21 +336,15 @@ class GaussMixin:
         W = W1 + W2 + W3 + W4 + W5 + W6
 
         # no spanwise and vertical velocity upstream of the turbine
-        V[
-            x_locations < coord.x1 - 1
-        ] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
-        W[
-            x_locations < coord.x1 - 1
-        ] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+        V[x_locations < coord.x1 - 1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+        W[x_locations < coord.x1 - 1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
 
         W[W < 0] = 0
 
         return V, W
 
     @staticmethod
-    def mask_upstream_wake(
-        y_locations: np.ndarray, turbine_coord: Vec3, yaw: float
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def mask_upstream_wake(y_locations: np.ndarray, turbine_coord: Vec3, yaw: float) -> Tuple[np.ndarray, np.ndarray]:
         """
         Calculates values to be used for masking the upstream wake relative to
         the current turbine.
@@ -403,9 +366,7 @@ class GaussMixin:
         return xR, yR
 
     @staticmethod
-    def initial_velocity_deficits(
-        U_local: np.ndarray, Ct: float
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def initial_velocity_deficits(U_local: np.ndarray, Ct: float) -> Tuple[np.ndarray, np.ndarray]:
         """
         Calculates the initial velocity deficits used in determining the wake
         expansion in a Gaussian wake velocity model.
@@ -463,9 +424,7 @@ class GaussMixin:
         return sigma_y0, sigma_z0
 
     @staticmethod
-    def gaussian_function(
-        U: np.ndarray, C: np.ndarray, r: float, n: float, sigma: np.ndarray
-    ) -> np.ndarray:
+    def gaussian_function(U: np.ndarray, C: np.ndarray, r: float, n: float, sigma: np.ndarray) -> np.ndarray:
         """
         A general form of the Gaussian function used in the Gaussian wake
         models.

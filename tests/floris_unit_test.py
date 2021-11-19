@@ -3,12 +3,12 @@ from pathlib import Path
 import yaml
 import numpy as np
 
-from src.simulation.farm import Farm
-from src.simulation.wake import Wake
-from src.simulation.floris import Floris
-from src.simulation.turbine import Turbine
-from src.simulation.flow_field import FlowField
-from src.tools.floris_interface import FlorisInterface
+from floris.simulation.farm import Farm
+from floris.simulation.wake import Wake
+from floris.simulation.floris import Floris
+from floris.simulation.turbine import Turbine
+from floris.simulation.flow_field import FlowField
+from floris.tools.floris_interface import FlorisInterface
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"

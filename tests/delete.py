@@ -6,8 +6,8 @@ import attr
 import numpy as np
 import xarray as xr
 
-from src.turbine import Turbine, PowerThrustTable
-from src.utilities import float_attrib, iter_validator
+from floris.turbine import Turbine, PowerThrustTable
+from floris.utilities import float_attrib, iter_validator
 
 
 turbine_data = {
