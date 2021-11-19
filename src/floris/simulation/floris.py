@@ -21,9 +21,9 @@ from pathlib import Path
 import attr
 import yaml
 
-import src.logging_manager as logging_manager
-from src.utilities import FromDictMixin
-from src.simulation import (
+import floris.logging_manager as logging_manager
+from floris.utilities import FromDictMixin
+from floris.simulation import (
     Farm,
     Wake,
     Turbine,
@@ -31,8 +31,8 @@ from src.simulation import (
     TurbineGrid,
     sequential_solver,
 )
-from src.simulation.wake_velocity import CurlVelocityDeficit, JensenVelocityDeficit
-from src.simulation.wake_deflection import JimenezVelocityDeflection
+from floris.simulation.wake_velocity import CurlVelocityDeficit, JensenVelocityDeficit
+from floris.simulation.wake_deflection import JimenezVelocityDeflection
 
 
 MODEL_MAP = {

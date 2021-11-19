@@ -5,9 +5,9 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from src.utilities import Vec3
-from src.simulation import Farm
 from tests.conftest import SampleInputs
+from floris.utilities import Vec3
+from floris.simulation import Farm
 
 
 def test_farm_init_homogenous_turbines():

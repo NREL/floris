@@ -15,12 +15,11 @@
 
 import pytest
 
-from src.utilities import convert_to_Vec3
+from floris.utilities import convert_to_Vec3, Vec3
 
 
 @pytest.fixture
 def vec3_fixture():
-    from src.utilities import Vec3
 
     return Vec3([4, 4, 0])
 
@@ -31,8 +30,6 @@ def test_instantiation_with_list():
     The class should raise an exception if the length of
     points is not 3.
     """
-    from src.utilities import Vec3
-
     vec3 = Vec3([1, 2, 3])
     assert vec3.x1 == 1.0
     assert vec3.x2 == 2.0
@@ -66,8 +63,6 @@ def test_rotation_off_origin(vec3_fixture):
     of rotation located and 1.5x the vector should result in a vector
     located at 2x the original value.
     """
-    from src.utilities import Vec3
-
     center_of_rotation = Vec3([vec3_fixture.x1 / 2.0, vec3_fixture.x2 / 2.0, 0.0])
     vec3_fixture.rotate_on_x3(180, center_of_rotation)
     assert pytest.approx(vec3_fixture.x1prime) == 0.0
@@ -87,8 +82,6 @@ def test_add(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from src.utilities import Vec3
-
     scalar = vec3_fixture + 1
     assert scalar.x1 == vec3_fixture.x1 + 1
     assert scalar.x2 == vec3_fixture.x2 + 1
@@ -106,8 +99,6 @@ def test_subtract(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from src.utilities import Vec3
-
     scalar = vec3_fixture - 1
     assert scalar.x1 == vec3_fixture.x1 - 1
     assert scalar.x2 == vec3_fixture.x2 - 1
@@ -125,8 +116,6 @@ def test_multiply(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from src.utilities import Vec3
-
     scalar = vec3_fixture * 10
     assert scalar.x1 == vec3_fixture.x1 * 10
     assert scalar.x2 == vec3_fixture.x2 * 10
@@ -144,8 +133,6 @@ def test_divide(vec3_fixture):
     all components.
     It should also accept a Vec3 value and perform an element-wise operation.
     """
-    from src.utilities import Vec3
-
     scalar = vec3_fixture / 10.0
     assert scalar.x1 == vec3_fixture.x1 / 10.0
     assert scalar.x2 == vec3_fixture.x2 / 10.0
@@ -162,8 +149,6 @@ def test_equality(vec3_fixture):
     The overloaded equality operator should compare each component to the
     same components of the right-hand-side value.
     """
-    from src.utilities import Vec3
-
     rhs = Vec3([vec3_fixture.x1, vec3_fixture.x2, vec3_fixture.x3])
     assert vec3_fixture == rhs
 
@@ -182,8 +167,6 @@ def test_string_formatting():
     The class has a default string representation and allows for custom
     string formatting.
     """
-    from src.utilities import Vec3
-
     vec3 = Vec3([1, 2, 3])
     assert str(vec3) == "   1.000    2.000    3.000"
 

@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from src.simulation import Farm
-from src.simulation import TurbineGrid
-from src.simulation import Ct, axial_induction
-from src.simulation import FlowField
-from src.simulation.wake_velocity.jensen import JensenVelocityDeficit
-from src.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
+from floris.simulation import Farm
+from floris.simulation import TurbineGrid
+from floris.simulation import Ct, axial_induction
+from floris.simulation import FlowField
+from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
+from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
 
 
 jimenez_deflection_model = JimenezVelocityDeflection()

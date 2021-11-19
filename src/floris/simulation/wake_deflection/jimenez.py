@@ -15,10 +15,8 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from src.utilities import cosd, sind, float_attrib, model_attrib
-from src.simulation import TurbineGrid
-from src.simulation.turbine import Turbine
-from src.simulation.base_class import BaseClass
+from floris.utilities import cosd, sind, float_attrib, model_attrib
+from floris.simulation import Turbine, BaseClass, TurbineGrid
 
 
 @attr.s(auto_attribs=True)

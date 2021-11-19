@@ -16,7 +16,7 @@
 import attr
 import pytest
 
-from src.simulation import BaseClass
+from floris.simulation import BaseClass
 
 
 @attr.s(auto_attribs=True)

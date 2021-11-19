@@ -19,15 +19,15 @@ import numpy as np
 import xarray as xr
 import numpy.typing as npt
 
-from src.utilities import (
+from floris.utilities import (
     Vec3,
     FromDictMixin,
-    float_attrib,
     model_attrib,
     iter_validator,
     attrs_array_converter,
 )
-from src.simulation import Turbine, BaseClass
+from floris.simulation import Turbine
+from floris.simulation.base_class import BaseClass
 
 
 NDArrayFloat = npt.NDArray[np.float64]
