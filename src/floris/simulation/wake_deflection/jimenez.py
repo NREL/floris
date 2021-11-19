@@ -17,6 +17,8 @@ import numpy as np
 
 from floris.simulation import TurbineGrid
 from floris.simulation import Turbine
+from floris.simulation import FlowField
+from floris.simulation import Farm
 from floris.utilities import cosd, sind, float_attrib, model_attrib
 from floris.simulation import BaseClass
 
@@ -42,8 +44,8 @@ class JimenezVelocityDeflection(BaseClass):
     def prepare_function(
         self,
         grid: TurbineGrid,
-        reference_rotor_diameter: float,
-        yaw_angle: np.ndarray,
+        farm: Farm,
+        flow_field: FlowField
     ) -> Dict[str, Any]:
         """
         This function prepares the inputs from the various FLORIS data structures
@@ -52,10 +54,19 @@ class JimenezVelocityDeflection(BaseClass):
         do not use this function and instead pass that data directly to
         the model function.
         """
+        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
+            (
+                flow_field.n_wind_directions,
+                flow_field.n_wind_speeds,
+                grid.n_turbines,
+                1,
+                1
+            )
+        )
         kwargs = dict(
             x=grid.x,
             reference_rotor_diameter=reference_rotor_diameter,
-            yaw_angle=yaw_angle,
+            yaw_angle=farm.farm_controller.yaw_angles,
         )
         return kwargs
 
@@ -107,6 +118,7 @@ class JimenezVelocityDeflection(BaseClass):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
+        # TODO: handle in prepare?
         yaw_angle = yaw_angle[:, :, i:i+1, None, None]
 
         # Ct is given for only the current turbine, so broadcast
@@ -119,11 +131,11 @@ class JimenezVelocityDeflection(BaseClass):
 
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
-        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter[:, :, :, None, None] + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / reference_rotor_diameter[:, :, :, None, None]) * (
-            2 * self.kd * x_locations / reference_rotor_diameter[:, :, :, None, None] + 1
+        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
+        B = (30 * self.kd / reference_rotor_diameter) * (
+            2 * self.kd * x_locations / reference_rotor_diameter + 1
         ) ** 5.0
-        C = xi_init * reference_rotor_diameter[:, :, :, None, None] * (15 + xi_init ** 2.0)
+        C = xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
         yYaw_init = (xi_init * A / B) - (C / D)

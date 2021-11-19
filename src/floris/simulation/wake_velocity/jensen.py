@@ -20,6 +20,7 @@ from floris.simulation import TurbineGrid
 from floris.simulation import Turbine
 from floris.utilities import float_attrib, model_attrib
 from floris.simulation import BaseClass
+from floris.simulation import Farm
 from floris.simulation import FlowField
 
 
@@ -47,7 +48,7 @@ class JensenVelocityDeficit(BaseClass):
     def prepare_function(
         self,
         grid: TurbineGrid,
-        reference_rotor_diameter: float,
+        farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
         """
@@ -57,12 +58,20 @@ class JensenVelocityDeficit(BaseClass):
         do not use this function and instead pass that data directly to
         the model function.
         """
+        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
+            (
+                flow_field.n_wind_directions,
+                flow_field.n_wind_speeds,
+                grid.n_turbines,
+                1,
+                1
+            )
+        )
         kwargs = dict(
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            reference_wind_height=flow_field.reference_wind_height,
-            reference_rotor_diameter=reference_rotor_diameter,
+            reference_rotor_diameter=reference_rotor_diameter
         )
         return kwargs
 
@@ -70,14 +79,14 @@ class JensenVelocityDeficit(BaseClass):
         self,
         i: int,
         deflection_field: np.ndarray,
+        turbine_ai: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        reference_wind_height: float,
-        reference_rotor_diameter: float,
+        reference_rotor_diameter: float, # (n wd, n ws, n turb)
     ) -> None:
 
         # u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)
@@ -92,7 +101,7 @@ class JensenVelocityDeficit(BaseClass):
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))
 
-        reference_rotor_radius = reference_rotor_diameter[:, :, :, None, None] / 2.0
+        reference_rotor_radius = reference_rotor_diameter / 2.0
 
         # y = m * x + b
         boundary_line = self.we * x + reference_rotor_radius
