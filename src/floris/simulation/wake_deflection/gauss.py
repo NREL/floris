@@ -15,11 +15,11 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from src.simulation import TurbineGrid
-from src.simulation import FlowField
-from src.simulation import Farm
-from src.utilities import cosd, sind, tand, float_attrib, model_attrib, bool_attrib
-from src.simulation import BaseClass
+from floris.simulation import TurbineGrid
+from floris.simulation import FlowField
+from floris.simulation import Farm
+from floris.utilities import cosd, sind, tand, float_attrib, model_attrib, bool_attrib
+from floris.simulation import BaseClass
 
 
 @attr.s(auto_attribs=True)
