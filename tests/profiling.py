@@ -25,14 +25,14 @@ from floris.simulation import Floris
 if len(sys.argv) > 1:
     floris = Floris(sys.argv[1])
 else:
-    floris = Floris("example_input.json")
+    floris = Floris.from_json("examples/example_input.json")
 floris.farm.flow_field.calculate_wake()
 
 start = time.time()
 
 
 def run_floris():
-    floris = Floris("example_input.json")
+    floris = Floris.from_json("examples/example_input.json")
     return floris
 
 
