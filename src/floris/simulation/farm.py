@@ -24,10 +24,11 @@ from floris.utilities import (
     FromDictMixin,
     model_attrib,
     iter_validator,
+    attr_serializer,
+    attr_floris_filter,
     attrs_array_converter,
 )
 from floris.simulation import Turbine
-from src.floris.utilities import attr_serializer, attr_floris_filter
 from floris.simulation.base_class import BaseClass
 
 
