@@ -116,7 +116,7 @@ class Wake(BaseClass):
         self.turbulence_model = wake_models["turbulence"]
         self.velocity_model = wake_models["velocity"]
 
-    def asdict(self) -> dict:
+    def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `Wake` formats.

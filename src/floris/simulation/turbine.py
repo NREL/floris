@@ -380,7 +380,7 @@ class Turbine(BaseClass):
     # self.air_density = -1
     # self.use_turbulence_correction = False
 
-    def asdict(self) -> dict:
+    def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `Turbine` formats.

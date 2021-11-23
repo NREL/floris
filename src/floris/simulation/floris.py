@@ -104,11 +104,11 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
     def _prepare_for_save(self) -> dict:
         output_dict = dict(
-            farm=self.farm.asdict(),
+            farm=self.farm._asdict(),
             logging=self.logging,
-            turbine={key: val.asdict() for key, val in self.turbine.items()},
-            wake=self.wake.asdict(),
-            flow_field=self.flow_field.asdict(),
+            turbine={key: val._asdict() for key, val in self.turbine.items()},
+            wake=self.wake._asdict(),
+            flow_field=self.flow_field._asdict(),
         )
         return output_dict
 

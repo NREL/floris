@@ -245,7 +245,7 @@ class Farm(BaseClass):
         else:
             raise ValueError("`by` must be set to one of 'x' or 'y'!")
 
-    def asdict(self) -> dict:
+    def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `Farm` formats.
