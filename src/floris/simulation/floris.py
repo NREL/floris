@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 import json
-import pickle
 from pathlib import Path
 
 import attr
@@ -31,28 +30,6 @@ from floris.simulation import (
     TurbineGrid,
     sequential_solver,
 )
-from floris.simulation.wake_velocity import CurlVelocityDeficit, JensenVelocityDeficit
-from floris.simulation.wake_deflection import JimenezVelocityDeflection
-
-
-MODEL_MAP = {
-    # "wake_combination": {"""The Combination Models"""},
-    "wake_deflection": {"jimenez": JimenezVelocityDeflection},
-    # "wake_turbulence": {"""The Turbulence Models"""},
-    "wake_velocity": {"curl": CurlVelocityDeficit, "jensen": JensenVelocityDeficit},
-}
-VALID_WAKE_MODELS = [
-    # NOTE: These are all models I've applied the attrs routines to
-    # "blondel",
-    "curl",
-    # "gauss",
-    # "gauss_legacy",
-    "ishihara_qian",
-    "jensen",
-    "jimenez"
-    # "multizone",
-    # "turbopark",
-]
 
 
 def convert_dict_to_turbine(turbine_map: dict[str, dict]) -> dict[str, Turbine]:
