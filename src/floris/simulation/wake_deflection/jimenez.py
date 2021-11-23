@@ -119,8 +119,8 @@ class JimenezVelocityDeflection(BaseClass):
 
         # angle of deflection
         xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
-        x_locations = x - x[:, :, :, i:i+1]  # (n turbines, n grid, n grid)
-
+        x_locations = x - x[:, :, i:i+1]  # (n turbines, n grid, n grid)
+        print(np.shape(x_locations))
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
         A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
