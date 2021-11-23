@@ -114,9 +114,10 @@ class Wake(BaseClass):
             model_def = getattr(self, f"wake_{model_type}_parameters")[model_string]
             wake_models[model_type] = model.from_dict(model_def)
 
-        self.combination_model = wake_models["combination"]
+        # TODO: Uncomment the two models once implemented
+        # self.combination_model = wake_models["combination"]
         self.deflection_model = wake_models["deflection"]
-        self.turbulence_model = wake_models["turbulence"]
+        # self.turbulence_model = wake_models["turbulence"]
         self.velocity_model = wake_models["velocity"]
 
     def _asdict(self) -> dict:
@@ -134,11 +135,12 @@ class Wake(BaseClass):
             output = attr.asdict(wake_model, filter=attr_floris_filter, value_serializer=attr_serializer)
             return {wake_model.model_string: output}
 
+        # TODO: Uncomment these lines once the models are implemented
         output = dict(
             model_strings=self.model_strings,
-            wake_combination_parameters=create_dict(self.combination_model),
+            # wake_combination_parameters=create_dict(self.combination_model),
             wake_deflection_parameters=create_dict(self.deflection_model),
-            wake_turbulence_parameters=create_dict(self.turbulence_model),
+            # wake_turbulence_parameters=create_dict(self.turbulence_model),
             wake_velocity_parameters=create_dict(self.velocity_model),
         )
         return output
