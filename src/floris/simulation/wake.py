@@ -49,9 +49,10 @@ from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
 
 
 MODEL_MAP = {
-    "wake_combination": {},
+    # TODO: Need to uncomment these two model types once we have implementations
+    # "wake_combination": {},
     "wake_deflection": {"jimenez": JimenezVelocityDeflection},
-    "wake_turbulence": {},
+    # "wake_turbulence": {},
     "wake_velocity": {"curl": CurlVelocityDeficit, "jensen": JensenVelocityDeficit},
 }
 
@@ -90,15 +91,17 @@ class Wake(BaseClass):
         self.model_generator()
 
     def model_generator(self) -> Any:
-        models = ("combination", "deflection", "turbulence", "velocity")
+        # models = ("combination", "deflection", "turbulence", "velocity")
+        models = ("deflection", "velocity")  # TODO: Use the above line once all models are implemented
         wake_models = {}
         for model_type in models:
             model_opts = MODEL_MAP[f"wake_{model_type}"]
             try:
                 model_string = self.model_strings[f"{model_type}_model"]
-            except KeyError:
-                wake_models[model_type] = None
-                continue  # TODO: We don't have to create all model types?
+            except KeyError as e:
+                raise KeyError(
+                    f"Model: '{model_string}' of type wake {model_type} is invalid. Valid options include: {', '.join(model_opts)} "
+                ) from e
 
             if model_string is None:
                 wake_models[model_type] = None
