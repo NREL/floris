@@ -47,8 +47,6 @@ def test_prepare_for_save():
     # Need to define some __eq__ methods for this to work out correctly
     fi = Floris.from_dict(DICT_INPUT)
     new_input = fi._prepare_for_save()
-    # fi.to_yaml("delete.yaml")
-    # fi.to_json("delete.json")
     new_fi = Floris.from_dict(new_input)
     # assert fi == new_fi
 
