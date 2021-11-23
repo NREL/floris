@@ -58,6 +58,14 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
     
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
+        x_i = np.mean(grid.x[:, :, i:i+1], axis=(3, 4))
+        x_i = x_i[:, :, :, None, None]
+
+        y_i = np.mean(grid.y[:, :, i:i+1], axis=(3, 4))        
+        y_i = y_i[:, :, :, None, None]
+
+        z_i = np.mean(grid.z[:, :, i:i+1], axis=(3, 4))
+        z_i = z_i[:, :, :, None, None]
 
         u = flow_field.u_initial - wake_field
 
@@ -67,16 +75,22 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
+        thrust_coefficient = thrust_coefficient[:, :, :, None, None]
+
         if deficit_model == "jensen":
             deflection_field = deflection_model.function(
                 i,
+                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
                 thrust_coefficient,
                 **deflection_model_args
             )
         elif deficit_model == "gauss":
             deflection_field = deflection_model.function(
-                i,
-                turbine_turbulence_intensity[:, :, i:i+1, :, :],
+                x_i,
+                y_i,
+                z_i,
+                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
+                turbine_turbulence_intensity[:, :, i:i+1],
                 thrust_coefficient,
                 **deflection_model_args
             )
@@ -87,30 +101,30 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
+        turbine_ai = turbine_ai[:, :, :, None, None]
 
         if deficit_model == "jensen":
             velocity_deficit = velocity_deficit_model.function(
-                i,
-                deflection_field,
+                x_i,
+                y_i + deflection_field,
+                z_i,
                 turbine_ai,
                 **deficit_model_args
             )
         elif deficit_model == "gauss":
             velocity_deficit = velocity_deficit_model.function(
-                i,
+                x_i,
+                y_i,
+                z_i,
                 deflection_field,
-                turbine_turbulence_intensity[:, :, i:i+1, :, :],
+                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
+                turbine_turbulence_intensity[:, :, i:i+1],
                 thrust_coefficient,
                 **deficit_model_args
             )
 
         # Sum of squares combination model to incorporate the current turbine's velocity into the main array
         wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
-
-        x_i = np.mean(grid.x[:, :, i:i+1], axis=(3,4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y[:, :, i:i+1], axis=(3,4))
-        y_i = y_i[:, :, :, None, None]
 
         wake_added_turbulence_intensity = crespo_hernandez(
             ambient_turbulence_intensity,

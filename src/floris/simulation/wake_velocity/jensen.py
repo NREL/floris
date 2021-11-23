@@ -16,7 +16,7 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from floris.simulation import TurbineGrid
+from floris.simulation import Grid
 from floris.simulation import Turbine
 from floris.utilities import float_attrib, model_attrib
 from floris.simulation import BaseClass
@@ -47,7 +47,7 @@ class JensenVelocityDeficit(BaseClass):
 
     def prepare_function(
         self,
-        grid: TurbineGrid,
+        grid: Grid,
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
@@ -75,8 +75,9 @@ class JensenVelocityDeficit(BaseClass):
 
     def function(
         self,
-        i: int,
-        deflection_field: np.ndarray,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        z_i: np.ndarray,
         turbine_ai: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
@@ -104,25 +105,22 @@ class JensenVelocityDeficit(BaseClass):
         # y = m * x + b
         boundary_line = self.we * x + reference_rotor_radius
 
-        y_i = np.mean(y[:, :, i:i+1], axis=(3,4))
-        y_i = y_i[:, :, :, None, None] + deflection_field
-        z_i = np.mean(z[:, :, i:i+1], axis=(3,4))
-        z_i = z_i[:, :, :, None, None]
-
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
         # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
-        dx = x - x[:, :, i:i+1]
+        dx = x - x_i
+        dy = y - y_i
+        dz = z - z_i
         c = ( reference_rotor_radius / ( reference_rotor_radius + self.we * dx ) ) ** 2
         # c *= ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.
         # c *= ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         # np.nan_to_num
         # C should be 0 at the current turbine and everywhere in front of it
-        c[x - x[:, :, i:i+1] <= 0.0] = 0.0
-        mask = ((y - y_i) ** 2 + (z - z_i) ** 2) > (boundary_line ** 2)
+        c[dx <= 0.0] = 0.0
+        mask = (dy ** 2 + dz ** 2) > (boundary_line ** 2)
         c[mask] = 0.0
 
-        velocity_deficit = 2 * (turbine_ai.T * c.T).T
+        velocity_deficit = 2 * turbine_ai * c
 
         return velocity_deficit
 

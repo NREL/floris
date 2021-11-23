@@ -15,7 +15,7 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from floris.simulation import TurbineGrid
+from floris.simulation import Grid
 from floris.utilities import float_attrib, model_attrib, cosd, sind, tand
 from floris.simulation import BaseClass
 from floris.simulation import Farm
@@ -33,7 +33,7 @@ class GaussVelocityDeficit(BaseClass):
 
     def prepare_function(
         self,
-        grid: TurbineGrid,
+        grid: Grid,
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
@@ -42,18 +42,14 @@ class GaussVelocityDeficit(BaseClass):
             (
                 flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1
+                *grid.template_grid.shape
             )
         )
         reference_hub_height = farm.hub_height[0, 0, 0] * np.ones(
             (
                 flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1
+                *grid.template_grid.shape
             )
         )
 
@@ -63,7 +59,6 @@ class GaussVelocityDeficit(BaseClass):
             z=grid.z,
             reference_hub_height=reference_hub_height,
             reference_rotor_diameter=reference_rotor_diameter,
-            yaw_angle=farm.farm_controller.yaw_angles,
             u_initial=flow_field.u_initial,
             wind_veer=flow_field.wind_veer
         )
@@ -71,8 +66,11 @@ class GaussVelocityDeficit(BaseClass):
 
     def function(
         self,
-        i: int,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        z_i: np.ndarray,
         deflection_field: np.ndarray,
+        yaw_angle: np.ndarray,
         turbulence_intensity: np.ndarray,
         Ct: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
@@ -83,7 +81,6 @@ class GaussVelocityDeficit(BaseClass):
         z: np.ndarray,
         reference_hub_height: float,
         reference_rotor_diameter: np.ndarray,
-        yaw_angle: np.ndarray,
         u_initial: np.ndarray,
         wind_veer: float
     ) -> None:
@@ -91,20 +88,7 @@ class GaussVelocityDeficit(BaseClass):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
-        yaw_angle = -1 * yaw_angle[:, :, i:i+1, None, None]  # Opposite sign convention in this model
-
-        # Ct is given for only the current turbine, so broadcast
-        # this to the grid dimesions
-        Ct = Ct[:, :, :, None, None] * np.ones((1,1,1,5,5))
-
-        # Construct arrays for the current turbine's location
-        x_i = np.mean(x[:, :, i:i+1], axis=(3,4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(y[:, :, i:i+1], axis=(3,4))
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(z[:, :, i:i+1], axis=(3,4))
-        z_i = z_i[:, :, :, None, None]
-
+        yaw_angle = -1 * yaw_angle  # Opposite sign convention in this model
 
         # Initialize the velocity deficit
         uR = u_initial * Ct / ( 2.0 * (1 - np.sqrt(1 - Ct) ) )

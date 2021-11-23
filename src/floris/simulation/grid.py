@@ -75,6 +75,9 @@ class Grid(ABC):
     y: NDArrayFloat = attr.ib(init=False)
     z: NDArrayFloat = attr.ib(init=False)
 
+    template_grid: NDArrayInt = attr.ib(init=False)
+    grid_axes: Iterable = attr.ib(init=False)
+
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
 
@@ -97,6 +100,9 @@ class Grid(ABC):
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
+    @abstractmethod
+    def define_template_grid(self) -> None:
+        raise NotImplementedError("Grid.define_template_grid")
 
     @abstractmethod
     def set_grid(self) -> None:

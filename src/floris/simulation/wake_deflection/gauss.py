@@ -15,7 +15,7 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from floris.simulation import TurbineGrid
+from floris.simulation import Grid
 from floris.simulation import FlowField
 from floris.simulation import Farm
 from floris.utilities import cosd, sind, tand, float_attrib, model_attrib, bool_attrib
@@ -82,7 +82,7 @@ class GaussVelocityDeflection(BaseClass):
 
     def prepare_function(
         self,
-        grid: TurbineGrid,
+        grid: Grid,
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
@@ -91,9 +91,7 @@ class GaussVelocityDeflection(BaseClass):
             (
                 flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1
+                *grid.template_grid.shape
             )
         )
 
@@ -104,13 +102,15 @@ class GaussVelocityDeflection(BaseClass):
             freestream_velocity=flow_field.u_initial,
             wind_veer=flow_field.wind_veer,
             reference_rotor_diameter=reference_rotor_diameter,
-            yaw_angle=farm.farm_controller.yaw_angles,
         )
         return kwargs
 
     def function(
         self,
-        i: int,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        z_i: np.ndarray,
+        yaw: np.ndarray,
         turbulence_intensity: np.ndarray,
         Ct: np.ndarray,
         *,
@@ -120,7 +120,6 @@ class GaussVelocityDeflection(BaseClass):
         freestream_velocity: np.ndarray,
         wind_veer: float,
         reference_rotor_diameter: float,
-        yaw_angle: np.ndarray,
     ):
         """
         Calculates the deflection field of the wake. See
@@ -151,22 +150,6 @@ class GaussVelocityDeflection(BaseClass):
 
         # opposite sign convention in this model
         tilt = 0.0 #turbine.tilt_angle
-
-        yaw = yaw_angle[:, :, i:i+1, None, None]
-
-        # Ct is given for only the current turbine, so broadcast
-        # this to the grid dimesions
-        Ct = Ct[:, :, :, None, None] * np.ones((1,1,1,5,5))
-
-        # Construct arrays for the current turbine's location
-        x_i = np.mean(x[:, :, i:i+1], axis=(3,4))
-        x_i = x_i[:, :, :, None, None]
-        # x_i = x[:, :, i:i+1, :, :]
-        # y_i = y[:, :, i:i+1, :, :]
-        y_i = np.mean(y[:, :, i:i+1], axis=(3,4))
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(z[:, :, i:i+1], axis=(3,4))
-        z_i = z_i[:, :, :, None, None]
 
         # initial velocity deficits
         uR = (

@@ -15,7 +15,7 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from floris.simulation import TurbineGrid
+from floris.simulation import Grid
 from floris.simulation import FlowField
 from floris.simulation import Farm
 from floris.utilities import cosd, sind, float_attrib, model_attrib
@@ -42,7 +42,7 @@ class JimenezVelocityDeflection(BaseClass):
 
     def prepare_function(
         self,
-        grid: TurbineGrid,
+        grid: Grid,
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
@@ -50,26 +50,23 @@ class JimenezVelocityDeflection(BaseClass):
             (
                 flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1
+                *grid.template_grid.shape
             )
         )
         kwargs = dict(
             x=grid.x,
             reference_rotor_diameter=reference_rotor_diameter,
-            yaw_angle=farm.farm_controller.yaw_angles,
         )
         return kwargs
 
     def function(
         self,
         i: int,
+        yaw_angle: np.ndarray,
         Ct: np.ndarray,
         *,
         x: np.ndarray,
         reference_rotor_diameter: np.ndarray,
-        yaw_angle: np.ndarray,  # (n wind speeds, n turbines)
     ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of
@@ -107,22 +104,11 @@ class JimenezVelocityDeflection(BaseClass):
         # Here, many dimensions are 1, but these are essentially treated
         # as a scalar value for that dimension.
 
-        # yaw_angle is all turbine yaw angles for each wind speed
-        # Extract and broadcast only the current turbine yaw setting
-        # for all wind speeds
-        # TODO: handle in prepare?
-        yaw_angle = yaw_angle[:, :, i:i+1, None, None]
-
-        # Ct is given for only the current turbine, so broadcast
-        # this to the grid dimesions
-        Ct = Ct[:, :, :, None, None]
-
         # angle of deflection
-        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
-        x_locations = x - x[:, :, i:i+1]  # (n turbines, n grid, n grid)
-        print(np.shape(x_locations))
+        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0
+        x_locations = x - x[:, :, i:i+1]
+
         # yaw displacement
-        #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
         A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
         B = (30 * self.kd / reference_rotor_diameter) * (
             2 * self.kd * x_locations / reference_rotor_diameter + 1
@@ -133,7 +119,7 @@ class JimenezVelocityDeflection(BaseClass):
         yYaw_init = (xi_init * A / B) - (C / D)
 
         # corrected yaw displacement with lateral offset
-        # This has the same shape as the grid - n turbines, grid x, grid y
+        # This has the same shape as the grid
         deflection = yYaw_init + self.ad + self.bd * x_locations
 
         x = np.unique(x_locations)

@@ -70,8 +70,12 @@ class FlowField(FromDictMixin):
         wind_profile_plane = (grid.z / self.reference_wind_height) ** self.wind_shear
 
         # Create the sheer-law wind profile
-        # This array is of shape (# wind directions, # wind speeds, # turbines, N grid points, M grid points)
-        self.u_initial = (self.wind_speeds[None, :, None].T * wind_profile_plane.T).T
+        # This array is of shape (# wind directions, # wind speeds, grid.template_array)
+        # Since generally grid.template_array may be many different shapes, we use transposes
+        # here to do broadcasting from left to right (transposed), and then transpose back.
+        # The result is an array the wind speed and wind direction dimensions on the left side
+        # of the shape and the grid.template array on the right
+        self.u_initial = (self.wind_speeds[None, :].T * wind_profile_plane.T).T
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
