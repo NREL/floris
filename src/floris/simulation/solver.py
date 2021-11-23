@@ -156,20 +156,20 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
     flow_field.u = flow_field.u_initial - wake_field
 
 
-def crespo_hernandez(ambient_TI, x_coord_downstream, x_coord_upstream, rotor_diameter, aI):
+def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
     ti_initial = 0.1
     ti_constant = 0.5
     ti_ai = 0.8
     ti_downstream = -0.32
 
     # turbulence intensity calculation based on Crespo et. al.
-    ti_calculation = (
+    ti = (
         ti_constant
-      * aI ** ti_ai
+      * axial_induction ** ti_ai
       * ambient_TI ** ti_initial
-      * ((x_coord_downstream - x_coord_upstream) / rotor_diameter) ** ti_downstream
+      * ((x - x_i) / rotor_diameter) ** ti_downstream
     )
-    return ti_calculation
+    return ti
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
     """
@@ -275,34 +275,33 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, grid: FlowFie
         # Sum of squares combination model to incorporate the current turbine's velocity into the main array
         wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
 
-        # wake_added_turbulence_intensity = crespo_hernandez(
-        #     ambient_turbulence_intensity,
-        #     grid.x,
-        #     x_i,
-        #     reference_rotor_diameter,
-        #     turbine_ai
-        # )
+        wake_added_turbulence_intensity = crespo_hernandez(
+            ambient_turbulence_intensity,
+            grid.x,
+            x_i,
+            reference_rotor_diameter,
+            axial_induction_i
+        )
 
-        # # Calculate wake overlap for wake-added turbulence (WAT)
-        # # turb_wake_field = flow_field.u_initial - wake_field
-        # # area_overlap = calculate_area_overlap(
-        # #     turb_wake_field, flow_field.u_initial, 5, 5
-        # # )
-        # area_overlap = np.sum(velocity_deficit * flow_field.u_initial > 0.05, axis=(3, 4)) / (turbine_grid.grid_resolution * turbine_grid.grid_resolution)
-        # area_overlap = area_overlap[:, :, :, None, None]
-
-        # # Modify wake added turbulence by wake area overlap
-        # downstream_influence_length = 15 * reference_rotor_diameter
-        # ti_added = (
-        #     area_overlap
-        #     * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
-        #     * np.array(grid.x > x_i)
-        #     * np.array(np.abs(y_i - grid.y) < 2 * reference_rotor_diameter)
-        #     * np.array(grid.x <= downstream_influence_length + x_i)
+        # Calculate wake overlap for wake-added turbulence (WAT)
+        # turb_wake_field = flow_field.u_initial - wake_field
+        # area_overlap = calculate_area_overlap(
+        #     turb_wake_field, flow_field.u_initial, 5, 5
         # )
+        area_overlap = np.sum(velocity_deficit * flow_field.u_initial > 0.05, axis=(3, 4)) / (turbine_grid.grid_resolution * turbine_grid.grid_resolution)
+        area_overlap = area_overlap[:, :, :, None, None]
+
+        # Modify wake added turbulence by wake area overlap
+        downstream_influence_length = 15 * reference_rotor_diameter
+        ti_added = (
+            area_overlap
+            * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
+            * np.array(grid.x > x_i)
+            * np.array(np.abs(y_i - grid.y) < 2 * reference_rotor_diameter)
+            * np.array(grid.x <= downstream_influence_length + x_i)
+        )
 
         # Combine turbine TIs with WAT
-        # turbine_turbulence_intensity = np.maximum( np.sqrt( ti_added ** 2 + ambient_turbulence_intensity ** 2 ) , turbine_turbulence_intensity )
-        turbine_turbulence_intensity = turbine_turbulence_intensity
+        turbine_turbulence_intensity = np.maximum( np.sqrt( ti_added ** 2 + ambient_turbulence_intensity ** 2 ) , turbine_turbulence_intensity )
 
     flow_field.u = flow_field.u_initial - wake_field
