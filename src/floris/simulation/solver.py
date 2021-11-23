@@ -79,7 +79,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
 
         if deficit_model == "jensen":
             deflection_field = deflection_model.function(
-                i,
+                x_i,
                 farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
                 thrust_coefficient,
                 **deflection_model_args
@@ -88,7 +88,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
             deflection_field = deflection_model.function(
                 x_i,
                 y_i,
-                z_i,
                 farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
                 turbine_turbulence_intensity[:, :, i:i+1],
                 thrust_coefficient,
@@ -115,7 +114,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
             velocity_deficit = velocity_deficit_model.function(
                 x_i,
                 y_i,
-                z_i,
                 deflection_field,
                 farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
                 turbine_turbulence_intensity[:, :, i:i+1],
@@ -220,57 +218,57 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, grid: FlowFie
 
         u = flow_field.u_initial - wake_field
 
-        thrust_coefficient = Ct(
+        ct_i = Ct(
             velocities=u,
             yaw_angle=farm.farm_controller.yaw_angles,
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
-        thrust_coefficient = thrust_coefficient[:, :, :, None, None]
+        ct_i = ct_i[:, :, :, None, None]
+
+        axial_induction_i = axial_induction(
+            velocities=u,
+            yaw_angle=farm.farm_controller.yaw_angles,
+            fCt=farm.fCt_interp,
+            ix_filter=[i],
+        )
+        axial_induction_i = axial_induction_i[:, :, :, None, None]
+
+        yaw_i = farm.farm_controller.yaw_angles[:, :, i:i+1, None, None]
 
         if deficit_model == "jensen":
             deflection_field = deflection_model.function(
                 x_i,
-                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
-                thrust_coefficient,
+                yaw_i,
+                ct_i,
                 **deflection_model_args
             )
         elif deficit_model == "gauss":
             deflection_field = deflection_model.function(
                 x_i,
                 y_i,
-                z_i,
-                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
+                yaw_i,
                 turbine_turbulence_intensity[:, :, i:i+1],
-                thrust_coefficient,
+                ct_i,
                 **deflection_model_args
             )
-
-        turbine_ai = axial_induction(
-            velocities=u,
-            yaw_angle=farm.farm_controller.yaw_angles,
-            fCt=farm.fCt_interp,
-            ix_filter=[i],
-        )
-        turbine_ai = turbine_ai[:, :, :, None, None]
 
         if deficit_model == "jensen":
             velocity_deficit = velocity_deficit_model.function(
                 x_i,
                 y_i + deflection_field,
                 z_i,
-                turbine_ai,
+                axial_induction_i,
                 **deficit_model_args
             )
         elif deficit_model == "gauss":
             velocity_deficit = velocity_deficit_model.function(
                 x_i,
                 y_i,
-                z_i,
                 deflection_field,
-                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
+                yaw_i,
                 turbine_turbulence_intensity[:, :, i:i+1],
-                thrust_coefficient,
+                ct_i,
                 **deficit_model_args
             )
 

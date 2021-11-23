@@ -109,10 +109,9 @@ class GaussVelocityDeflection(BaseClass):
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
-        z_i: np.ndarray,
-        yaw: np.ndarray,
-        turbulence_intensity: np.ndarray,
-        Ct: np.ndarray,
+        yaw_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
         *,
         x: np.ndarray,
         y: np.ndarray,
@@ -154,24 +153,24 @@ class GaussVelocityDeflection(BaseClass):
         # initial velocity deficits
         uR = (
             freestream_velocity
-          * Ct
+          * ct_i
           * cosd(tilt)
-          * cosd(yaw)
-          / (2.0 * (1 - np.sqrt(1 - (Ct * cosd(tilt) * cosd(yaw)))))
+          * cosd(yaw_i)
+          / (2.0 * (1 - np.sqrt(1 - (ct_i * cosd(tilt) * cosd(yaw_i)))))
         )
-        u0 = freestream_velocity * np.sqrt(1 - Ct)
+        u0 = freestream_velocity * np.sqrt(1 - ct_i)
 
         # length of near wake
         x0 = (
             reference_rotor_diameter
-            * (cosd(yaw) * (1 + np.sqrt(1 - Ct * cosd(yaw))))
-            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity + 2 * self.beta * (1 - np.sqrt(1 - Ct))))
+            * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
+            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
             + x_i
         )
 
         # wake expansion parameters
-        ky = self.ka * turbulence_intensity + self.kb
-        kz = self.ka * turbulence_intensity + self.kb
+        ky = self.ka * turbulence_intensity_i + self.kb
+        kz = self.ka * turbulence_intensity_i + self.kb
 
         C0 = 1 - u0 / freestream_velocity
         M0 = C0 * (2 - C0)
@@ -179,15 +178,14 @@ class GaussVelocityDeflection(BaseClass):
 
         # initial Gaussian wake expansion
         sigma_z0 = reference_rotor_diameter * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
-        sigma_y0 = sigma_z0 * cosd(yaw) * cosd(wind_veer)
+        sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
 
         yR = y - y_i
         xR = x_i # yR * tand(yaw) + x_i
-        # print(x_i[0,0])
-        # print(xR[0,0])
+
         # yaw parameters (skew angle and distance from centerline)
         # skew angle in radians
-        theta_c0 = self.dm * (0.3 * np.radians(yaw) / cosd(yaw)) * (1 - np.sqrt(1 - Ct * cosd(yaw)))
+        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i)) * (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
         delta0 = np.tan(theta_c0) * (x0 - x_i)  # initial wake deflection;
         # NOTE: use np.tan here since theta_c0 is radians
 

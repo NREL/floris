@@ -61,9 +61,9 @@ class JimenezVelocityDeflection(BaseClass):
 
     def function(
         self,
-        i: int,
-        yaw_angle: np.ndarray,
-        Ct: np.ndarray,
+        x_i: np.ndarray,
+        yaw_i: np.ndarray,
+        ct_i: np.ndarray,
         *,
         x: np.ndarray,
         reference_rotor_diameter: np.ndarray,
@@ -105,8 +105,8 @@ class JimenezVelocityDeflection(BaseClass):
         # as a scalar value for that dimension.
 
         # angle of deflection
-        xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0
-        x_locations = x - x[:, :, i:i+1]
+        xi_init = cosd(yaw_i) * sind(yaw_i) * ct_i / 2.0
+        x_locations = x - x_i
 
         # yaw displacement
         A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0

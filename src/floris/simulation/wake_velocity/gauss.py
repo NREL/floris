@@ -68,11 +68,10 @@ class GaussVelocityDeficit(BaseClass):
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
-        z_i: np.ndarray,
-        deflection_field: np.ndarray,
-        yaw_angle: np.ndarray,
-        turbulence_intensity: np.ndarray,
-        Ct: np.ndarray,
+        deflection_field_i: np.ndarray,
+        yaw_angle_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
@@ -88,11 +87,11 @@ class GaussVelocityDeficit(BaseClass):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
-        yaw_angle = -1 * yaw_angle  # Opposite sign convention in this model
+        yaw_angle = -1 * yaw_angle_i  # Opposite sign convention in this model
 
         # Initialize the velocity deficit
-        uR = u_initial * Ct / ( 2.0 * (1 - np.sqrt(1 - Ct) ) )
-        u0 = u_initial * np.sqrt(1 - Ct)
+        uR = u_initial * ct_i / ( 2.0 * (1 - np.sqrt(1 - ct_i) ) )
+        u0 = u_initial * np.sqrt(1 - ct_i)
 
         # Initial lateral bounds
         sigma_z0 = reference_rotor_diameter * 0.5 * np.sqrt(uR / (u_initial + u0))
@@ -105,8 +104,8 @@ class GaussVelocityDeficit(BaseClass):
         xR = x_i
 
         # Start of the far wake
-        x0 = reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - Ct) )
-        x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity + 2 * self.beta * (1 - np.sqrt(1 - Ct) ) )
+        x0 = reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
+        x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) ) )
         x0 += x_i
 
         # Masks
@@ -123,10 +122,10 @@ class GaussVelocityDeficit(BaseClass):
         near_wake_ramp_down = (x0 - x) / (x0 - xR)  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
         # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
 
-        sigma_y = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(Ct / 2.0) + near_wake_ramp_up * sigma_y0
+        sigma_y = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
         sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * reference_rotor_diameter
         
-        sigma_z = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(Ct / 2.0) + near_wake_ramp_up * sigma_z0
+        sigma_z = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
         sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * reference_rotor_diameter
 
         r, C = rC(
@@ -135,10 +134,10 @@ class GaussVelocityDeficit(BaseClass):
             sigma_z,
             y,
             y_i,
-            deflection_field,
+            deflection_field_i,
             z,
             reference_hub_height,
-            Ct,
+            ct_i,
             yaw_angle,
             reference_rotor_diameter
         )
@@ -150,8 +149,8 @@ class GaussVelocityDeficit(BaseClass):
         # Compute the velocity deficit in the FAR WAKE region
 
         # Wake expansion in the lateral (y) and the vertical (z)
-        ky = self.ka * turbulence_intensity + self.kb  # wake expansion parameters
-        kz = self.ka * turbulence_intensity + self.kb  # wake expansion parameters
+        ky = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
+        kz = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
         sigma_y = (ky * (x - x0) + sigma_y0) * far_wake_mask + sigma_y0 * np.array(x < x0)
         sigma_z = (kz * (x - x0) + sigma_z0) * far_wake_mask + sigma_z0 * np.array(x < x0)
 
@@ -161,10 +160,10 @@ class GaussVelocityDeficit(BaseClass):
             sigma_z,
             y,
             y_i,
-            deflection_field,
+            deflection_field_i,
             z,
             reference_hub_height,
-            Ct,
+            ct_i,
             yaw_angle,
             reference_rotor_diameter
         )

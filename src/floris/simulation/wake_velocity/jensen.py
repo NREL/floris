@@ -78,7 +78,7 @@ class JensenVelocityDeficit(BaseClass):
         x_i: np.ndarray,
         y_i: np.ndarray,
         z_i: np.ndarray,
-        turbine_ai: np.ndarray,
+        axial_induction_i: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
@@ -120,7 +120,7 @@ class JensenVelocityDeficit(BaseClass):
         mask = (dy ** 2 + dz ** 2) > (boundary_line ** 2)
         c[mask] = 0.0
 
-        velocity_deficit = 2 * turbine_ai * c
+        velocity_deficit = 2 * axial_induction_i * c
 
         return velocity_deficit
 
