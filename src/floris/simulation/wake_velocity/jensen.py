@@ -62,9 +62,7 @@ class JensenVelocityDeficit(BaseClass):
             (
                 flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1
+                *grid.template_grid.shape
             )
         )
         kwargs = dict(

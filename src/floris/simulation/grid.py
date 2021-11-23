@@ -117,7 +117,18 @@ class TurbineGrid(Grid):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
+        self.define_template_grid()
         self.set_grid()
+
+    def define_template_grid(self):
+        self.template_grid = np.ones(
+            (
+                self.n_turbines,
+                self.grid_resolution,
+                self.grid_resolution
+            )
+        )
+        self.grid_axes = (3, 4)
 
     def set_grid(self) -> None:
         """
