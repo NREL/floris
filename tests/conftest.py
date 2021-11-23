@@ -49,7 +49,7 @@ def print_test_values(average_velocities: list, thrusts: list, powers: list, axi
         )
 
 
-WIND_DIRECTIONS = [  # , 293.0, 315.0],
+WIND_DIRECTIONS = [
     270.0,
     360.0,
     293.0,
@@ -64,9 +64,21 @@ WIND_SPEEDS = [
 ]
 N_WIND_SPEEDS = len(WIND_SPEEDS)
 N_TURBINES = 3
-X_COORDS = [0.0, 5 * 126.0, 10 * 126.0]
-Y_COORDS = [0.0, 0.0, 0.0]
-Z_COORDS = [90.0, 90.0, 90.0]
+X_COORDS = [
+    0.0,
+    5 * 126.0,
+    10 * 126.0
+]
+Y_COORDS = [
+    0.0,
+    0.0,
+    0.0
+]
+Z_COORDS = [
+    90.0,
+    90.0,
+    90.0
+]
 GRID_RESOLUTION = 2
 
 
@@ -246,15 +258,21 @@ class SampleInputs:
         self.farm = {
             "wind_speeds": WIND_SPEEDS,
             "wind_directions": WIND_DIRECTIONS,
-            "turbine_id": ["test_turb", "test_turb", "test_turb"],
+            "turbine_id": [
+                "test_turb",
+                "test_turb",
+                "test_turb"
+            ],
             "layout_x": [
                 0.0,
                 5 * self.turbine["test_turb"]["rotor_diameter"],
                 10 * self.turbine["test_turb"]["rotor_diameter"],
             ],
-            "layout_y": [0.0, 0.0, 0.0],
-            "wind_x": [0],
-            "wind_y": [0],
+            "layout_y": [
+                0.0,
+                0.0,
+                0.0
+            ],
         }
 
         self.flow_field = {

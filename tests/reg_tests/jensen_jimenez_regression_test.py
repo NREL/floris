@@ -180,7 +180,12 @@ def test_regression_rotation(sample_inputs_fixture):
         5 * TURBINE_DIAMETER,
         5 * TURBINE_DIAMETER,
     ]
-    sample_inputs_fixture.floris["farm"]["layout_y"] = [0.0, 5 * TURBINE_DIAMETER, 0.0, 5 * TURBINE_DIAMETER]
+    sample_inputs_fixture.floris["farm"]["layout_y"] = [
+        0.0,
+        5 * TURBINE_DIAMETER,
+        0.0,
+        5 * TURBINE_DIAMETER
+    ]
     sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
     sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
 
@@ -192,7 +197,6 @@ def test_regression_rotation(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    print(farm_avg_velocities)
 
     t0_270 = farm_avg_velocities[0, 0, 0]  # upstream
     t1_270 = farm_avg_velocities[0, 0, 1]  # upstream

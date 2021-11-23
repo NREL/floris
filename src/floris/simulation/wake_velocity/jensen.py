@@ -91,21 +91,21 @@ class JensenVelocityDeficit(BaseClass):
         # y = m * x + b
         boundary_line = self.we * x + reference_rotor_radius
 
-        y_i = np.mean(y[:, :, i : i + 1], axis=(3, 4))
+        y_i = np.mean(y[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None] + deflection_field
-        z_i = np.mean(z[:, :, i : i + 1], axis=(3, 4))
+        z_i = np.mean(z[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
 
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
         # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
-        dx = x - x[:, :, i : i + 1]
+        dx = x - x[:, :, i:i+1]
         c = (reference_rotor_radius / (reference_rotor_radius + self.we * dx)) ** 2
         # c *= ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.
         # c *= ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         # np.nan_to_num
         # C should be 0 at the current turbine and everywhere in front of it
-        c[x - x[:, :, i : i + 1] <= 0.0] = 0.0
+        c[x - x[:, :, i:i+1] <= 0.0] = 0.0
         mask = ((y - y_i) ** 2 + (z - z_i) ** 2) > (boundary_line ** 2)
         c[mask] = 0.0
 
