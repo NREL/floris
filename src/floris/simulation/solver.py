@@ -87,7 +87,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid) -> N
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
-        turbine_ai = turbine_ai[:, :, :, None, None]
 
         if deficit_model == "jensen":
             velocity_deficit = velocity_deficit_model.function(

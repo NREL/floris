@@ -86,7 +86,7 @@ class JensenVelocityDeficit(BaseClass):
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        reference_rotor_diameter: float, # (n wd, n ws, n turb)
+        reference_rotor_diameter: float,
     ) -> None:
 
         # u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)
@@ -124,7 +124,7 @@ class JensenVelocityDeficit(BaseClass):
         mask = ((y - y_i) ** 2 + (z - z_i) ** 2) > (boundary_line ** 2)
         c[mask] = 0.0
 
-        velocity_deficit = 2 * turbine_ai * c
+        velocity_deficit = 2 * (turbine_ai.T * c.T).T
 
         return velocity_deficit
 

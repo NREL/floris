@@ -137,7 +137,7 @@ def power(
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         air_density = air_density[:, :, ix_filter]
-        velocities = velocities[:, :, ix_filter, :, :]
+        velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         pP = pP[:, :, ix_filter]
         power_interp = power_interp[:, :, ix_filter]
@@ -185,7 +185,7 @@ def Ct(
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        velocities = velocities[:, :, ix_filter, :, :]
+        velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         fCt = fCt[:, :, ix_filter]
 
@@ -264,8 +264,8 @@ def average_velocity(velocities: NDArrayFloat, ix_filter: NDArrayFilter | Iterab
     # (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)
 
     if ix_filter is not None:
-        velocities = velocities[:, :, ix_filter, :, :]
-    axis = (3, 4)
+        velocities = velocities[:, :, ix_filter]
+    axis = tuple([3 + i for i in range(velocities.ndim - 3)])
     return np.cbrt(np.mean(velocities ** 3, axis=axis))
 
 

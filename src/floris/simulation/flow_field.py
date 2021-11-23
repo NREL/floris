@@ -71,7 +71,7 @@ class FlowField(FromDictMixin):
 
         # Create the sheer-law wind profile
         # This array is of shape (# wind directions, # wind speeds, # turbines, N grid points, M grid points)
-        self.u_initial = self.wind_speeds[None, :, None, None, None] * wind_profile_plane
+        self.u_initial = (self.wind_speeds[None, :, None].T * wind_profile_plane.T).T
         self.v_initial = np.zeros(np.shape(self.u_initial))
         self.w_initial = np.zeros(np.shape(self.u_initial))
 
