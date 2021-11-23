@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Iterable
 
 import attr
 import numpy as np
@@ -53,19 +54,15 @@ class Grid(ABC):
     Args:
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int`): The number of points on each turbine
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type
     """
 
     # TODO: We'll want to consider how this expands to multiple turbine types
     turbine_coordinates: list[Vec3] = attr.ib(on_setattr=attr.setters.validate)
     reference_turbine_diameter: float
-    grid_resolution: int
-    wind_directions: NDArrayFloat = attr.ib(
-        converter=attrs_array_converter, on_setattr=(attr.setters.convert, attr.setters.validate)
-    )
-    wind_speeds: NDArrayFloat = attr.ib(
-        converter=attrs_array_converter, on_setattr=(attr.setters.convert, attr.setters.validate)
-    )
+    grid_resolution: int | Iterable = attr.ib(on_setattr=attr.setters.validate)
+    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter, on_setattr=(attr.setters.convert, attr.setters.validate))
+    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter, on_setattr=(attr.setters.convert, attr.setters.validate))
 
     n_turbines: int = attr.ib(init=False)
     n_wind_speeds: int = attr.ib(init=False)
@@ -99,6 +96,18 @@ class Grid(ABC):
     def wind_directionss_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
+
+    @grid_resolution.validator
+    def grid_resolution_validator(self, instance: attr.Attribute, value: int | Iterable) -> None:
+        """Check that grid resolution is given as int or Vec3 with int components."""
+        if isinstance(value, int):
+            return
+        elif isinstance(value, Iterable):
+            assert type(value[0]) is int
+            assert type(value[1]) is int
+            assert type(value[2]) is int
+        else:
+            raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
 
     @abstractmethod
     def define_template_grid(self) -> None:
@@ -240,58 +249,95 @@ class TurbineGrid(Grid):
         self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
 
 
-# class FlowFieldGrid(Grid):
-#     """
-#     Primarily used by the Curl model and for visualization
+class FlowFieldGrid(Grid):
+    """
+    Args:
+        grid_resolution (`Vec3`): The number of grid points to be created in each direction.
+        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
+        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        grid_resolution (:py:obj:`int`): The number of points on each turbine
+    """
 
-#     Args:
-#         grid_resolution (`Vec3`): The number of grid points to be created in each direction.
-#         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
-#         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-#         grid_resolution (:py:obj:`int`): The number of points on each turbine
-#     """
+    grid_resolution: Iterable
+    xmin: float = attr.ib(init=False)
+    xmax: float = attr.ib(init=False)
+    ymin: float = attr.ib(init=False)
+    ymax: float = attr.ib(init=False)
+    zmin: float = attr.ib(init=False)
+    zmax: float = attr.ib(init=False)
 
-#     grid_resolution: Vec3
-#     xmin: float = attr.ib(init=False)
-#     xmax: float = attr.ib(init=False)
-#     ymin: float = attr.ib(init=False)
-#     ymax: float = attr.ib(init=False)
-#     zmin: float = attr.ib(init=False)
-#     zmax: float = attr.ib(init=False)
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
+        self.define_template_grid()
+        self.set_grid()
 
-#     def __attrs_post_init__(self) -> None:
-#         super().__attrs_post_init__()
-#         self.set_bounds()
-#         self.set_grid()
+    def define_template_grid(self):
+        self.template_grid = np.ones(
+            (
+                int(self.grid_resolution[0]),
+                int(self.grid_resolution[1]),
+                int(self.grid_resolution[2]),
+            )
+        )
+        self.grid_axes = (2, 3, 4)
 
-#     def set_bounds(self) -> None:
-#         # TODO: Should this be called "compute_bounds?"
-#         #   anything set_ could require an argument to set a value
-#         #   other functions that set variables based on previous inputs could be "compute_"
-#         #   anything that returns values, even if they are computed on the fly, could be get_ (instead of @property)
-#         """
-#         Calculates the domain bounds for the current wake model. The bounds
-#         are calculated based on preset extents from the
-#         given layout. The bounds consist of the minimum and maximum values
-#         in the x-, y-, and z-directions.
+    def set_grid(self) -> None:
+        """
+        Create a structured grid for the entire flow field domain.
+        resolution: Vec3
 
-#         If the Curl model is used, the predefined bounds are always set.
-#         """
-#         # For the curl model, bounds are hard coded
-#         eps = 0.1
-#         self.xmin = min(self.turbine_coordinates_array[:, 0]) - 2 * self.reference_turbine_diameter
-#         self.xmax = max(self.turbine_coordinates_array[:, 0]) + 10 * self.reference_turbine_diameter
-#         self.ymin = min(self.turbine_coordinates_array[:, 1]) - 2 * self.reference_turbine_diameter
-#         self.ymax = max(self.turbine_coordinates_array[:, 1]) + 2 * self.reference_turbine_diameter
-#         self.zmin = 0 + eps
-#         self.zmax = 6 * self.reference_wind_height
+        Calculates the domain bounds for the current wake model. The bounds
+        are calculated based on preset extents from the
+        given layout. The bounds consist of the minimum and maximum values
+        in the x-, y-, and z-directions.
 
-#     def set_grid(self) -> None:
-#         """
-#         Create a structured grid for the entire flow field domain.
-#         resolution: Vec3
-#         """
-#         x_points = np.linspace(self.xmin, self.xmax, int(self.grid_resolution.x1))
-#         y_points = np.linspace(self.ymin, self.ymax, int(self.grid_resolution.x2))
-#         z_points = np.linspace(self.zmin, self.zmax, int(self.grid_resolution.x3))
-#         self.x, self.y, self.z = np.meshgrid(x_points, y_points, z_points, indexing="ij")
+        If the Curl model is used, the predefined bounds are always set.
+        """
+        # Calculate the difference in given wind direction from 270 / West
+        wind_deviation_from_west = -1 * ((self.wind_directions - 270) % 360 + 360) % 360
+        wind_deviation_from_west = np.reshape(wind_deviation_from_west, (self.n_wind_directions, 1, 1))
+
+        # Construct the arrays storing the grid points
+        eps = 0.01
+        xmin = min(self.turbine_coordinates_array[:, 0]) - 2 * self.reference_turbine_diameter
+        xmax = max(self.turbine_coordinates_array[:, 0]) + 10 * self.reference_turbine_diameter
+        ymin = min(self.turbine_coordinates_array[:, 1]) - 2 * self.reference_turbine_diameter
+        ymax = max(self.turbine_coordinates_array[:, 1]) + 2 * self.reference_turbine_diameter
+        zmin = 0 + eps
+        zmax = 6 * max(self.turbine_coordinates_array[:, 2])
+
+        x_points, y_points, z_points = np.meshgrid(
+            np.linspace(xmin, xmax, int(self.grid_resolution[0])),
+            np.linspace(ymin, ymax, int(self.grid_resolution[1])),
+            np.linspace(zmin, zmax, int(self.grid_resolution[2])),
+            indexing="ij"
+        )
+
+        x_coordinates = x_points[None, None, :, :, :] + np.zeros(
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                *self.template_grid.shape
+            )
+        )
+        y_coordinates = y_points[None, None, :, :, :] + np.zeros(
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                *self.template_grid.shape
+            )
+        )
+        z_coordinates = z_points[None, None, :, :, :] + np.zeros(
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                *self.template_grid.shape
+            )
+        )
+
+        self.x = x_coordinates
+        self.y = y_coordinates
+        self.z = z_coordinates
+
+    def finalize(self):
+        pass
