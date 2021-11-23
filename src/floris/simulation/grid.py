@@ -1,3 +1,18 @@
+# Copyright 2021 NREL
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See https://floris.readthedocs.io for documentation
+
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -26,6 +41,14 @@ class Grid(ABC):
 
     The grid will have to be reestablished for each wind direction since the planform
     area of the farm will be different.
+
+    x are the locations in space in the primary direction (typically the direction of the wind)
+    y are the locations in space in the lateral direction
+    z are the locations in space in the vertical direction
+    u are the velocity components at each point in space
+    v are the velocity components at each point in space
+    w are the velocity components at each point in space
+    all of these arrays are the same size
 
     Args:
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
@@ -74,84 +97,10 @@ class Grid(ABC):
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
-    # x are the locations in space in the primary direction (typically the direction of the wind)
-    # y are the locations in space in the lateral direction
-    # z are the locations in space in the vertical direction
-    # u are the velocity components at each point in space
-    # v are the velocity components at each point in space
-    # w are the velocity components at each point in space
-    # all of these arrays are the same size
-
-    # @abstractmethod
-    # def set_bounds(self) -> None:
-    #     # TODO: Should this be called "compute_bounds?"
-    #     #   anything set_ could require an argument to set a value
-    #     #   other functions that set variables based on previous inputs could be "compute_"
-    #     #   anything that returns values, even if they are computed on the fly, could be get_ (instead of @property)
-    #     raise NotImplementedError("Grid.set_bounds")
-
-    # def get_bounds(self) -> List[float]:
-    #     """
-    #     The minimum and maximum values of the bounds of the computational domain.
-    #     """
-    #     return [self.xmin, self.xmax, self.ymin, self.ymax, self.zmin, self.zmax]
 
     @abstractmethod
     def set_grid(self) -> None:
         raise NotImplementedError("Grid.set_grid")
-
-    def rotate_fields(self, wd: int | float) -> None:
-        # Find center of rotation
-        x_center_of_rotation = (np.min(self.x) + np.max(self.x)) / 2
-        y_center_of_rotation = (np.min(self.y) + np.max(self.y)) / 2
-
-        angle = ((wd - 270) % 360 + 360) % 360
-        # angle = (wd - 270) % 360 # Is this the same as above?
-
-        # Rotate grid points
-        x_offset = self.x - x_center_of_rotation
-        y_offset = self.y - y_center_of_rotation
-        mesh_x_rotated = x_offset * cosd(angle) - y_offset * sind(angle) + x_center_of_rotation
-        mesh_y_rotated = x_offset * sind(angle) + y_offset * cosd(angle) + y_center_of_rotation
-
-        # print(np.shape(mesh_x_rotated))
-        # lkj
-        self.x = mesh_x_rotated
-        self.y = mesh_y_rotated
-
-    @staticmethod
-    def rotate_turbine_locations(
-        coords: NDArrayFloat | list[Vec3], wd: int | float
-    ) -> tuple[NDArrayFloat, NDArrayFloat]:
-        """Rotates the turbine locations with respect to a wind direction.
-
-        Args:
-            coords (NDArrayFloat | list[Vec3]): Either the `Grid.turbine_coordinates`
-            `list` of `Vec3` objects or the `Grid.turbine_coordinates_array` 2D array object.
-            wd (int): The wind direction to rotate the coordinate field.
-
-        Returns:
-            tuple[NDArrayFloat, NDArrayFloat]: The rotated x and y coordinates
-        """
-        if isinstance(coords, NDArrayFloat):
-            x_coord, y_coord, _ = coords.T
-        else:
-            x_coord = np.array([c.x1 for c in coords])
-            y_coord = np.array([c.x2 for c in coords])
-
-        # Find center of rotation
-        x_center_of_rotation = (np.min(x_coord) + np.max(x_coord)) / 2
-        y_center_of_rotation = (np.min(y_coord) + np.max(y_coord)) / 2
-
-        angle = ((wd - 270) % 360 + 360) % 360
-        # angle = (wd - 270) % 360 # Is this the same as above?
-
-        # Rotate turbine coordinates
-        x_coord_offset = x_coord - x_center_of_rotation
-        y_coord_offset = y_coord - y_center_of_rotation
-        x_coord_rotated = x_coord_offset * cosd(angle) - y_coord_offset * sind(angle) + x_center_of_rotation
-        y_coord_rotated = x_coord_offset * sind(angle) + y_coord_offset * cosd(angle) + y_center_of_rotation
-        return x_coord_rotated, y_coord_rotated
 
 
 @attr.s(auto_attribs=True)
