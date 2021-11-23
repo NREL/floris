@@ -14,21 +14,26 @@
 
 
 import matplotlib.pyplot as plt
+import numpy as np
 
-from src.tools.floris_interface import FlorisInterface
-from src.tools.visualization import visualize_cut_plane
+from floris.tools import FlorisInterface
+from floris.tools.visualization import visualize_cut_plane
 
 
 # Initialize the FLORIS interface fi
 # For basic usage, the florice interface provides a simplified interface to
 # the underlying classes
-fi = FlorisInterface("../example_input.json")
+fi = FlorisInterface("/Users/rmudafor/Development/floris/examples/example_input.json")
+fi.floris.farm.farm_controller.set_yaw_angles(np.array([25.0, 0.0, 0.0]))
 
 # Calculate wake
-fi.calculate_wake()
+fi.floris.solve_for_viz()
 
 # Get horizontal plane at default height (hub-height)
-hor_plane = fi.get_hor_plane()
+hor_plane = fi.get_hor_plane(
+    x_resolution=100,
+    y_resolution=100,
+)
 
 # Plot and show
 fig, ax = plt.subplots()

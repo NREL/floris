@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from floris.simulation import Farm
-from floris.simulation import TurbineGrid
+from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.simulation import Ct, axial_induction
 from floris.simulation import FlowField
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
@@ -186,4 +186,125 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
     # than some tolerance. These are all the points in the wake. The ratio of
     # these points to the total points is the portion of wake overlap.
     return np.sum(freestream_velocities - wake_velocities > 0.05, axis=(3, 4)) / (y_ngrid * z_ngrid)
-    
+
+def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, grid: FlowFieldGrid, turbine_grid: TurbineGrid) -> None:
+    # Algorithm
+    # Do the calculate for a single wind speed and wind direction with the TurbineGrid
+    # with a single point on the grid. Then, use this result to fill in the full FlowField
+
+    deflection_model_args = deflection_model.prepare_function(grid, farm, flow_field)
+    deficit_model_args = velocity_deficit_model.prepare_function(grid, farm, flow_field)
+
+    wake_field = np.zeros_like(flow_field.u_initial)
+
+    turbine_turbulence_intensity = 0.1 * np.ones_like(grid.x)
+    ambient_turbulence_intensity = 0.1 * np.ones_like(grid.x)
+
+    reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
+        (
+            flow_field.n_wind_directions,
+            flow_field.n_wind_speeds,
+            *grid.grid_resolution
+        )
+    )
+
+    for i in range(grid.n_turbines):
+        x_i = np.mean(turbine_grid.x[:, :, i:i+1], axis=(3, 4))
+        x_i = x_i[:, :, :, None, None]
+
+        y_i = np.mean(turbine_grid.y[:, :, i:i+1], axis=(3, 4))        
+        y_i = y_i[:, :, :, None, None]
+
+        z_i = np.mean(turbine_grid.z[:, :, i:i+1], axis=(3, 4))
+        z_i = z_i[:, :, :, None, None]
+
+        u = flow_field.u_initial - wake_field
+
+        thrust_coefficient = Ct(
+            velocities=u,
+            yaw_angle=farm.farm_controller.yaw_angles,
+            fCt=farm.fCt_interp,
+            ix_filter=[i],
+        )
+        thrust_coefficient = thrust_coefficient[:, :, :, None, None]
+
+        if deficit_model == "jensen":
+            deflection_field = deflection_model.function(
+                x_i,
+                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
+                thrust_coefficient,
+                **deflection_model_args
+            )
+        elif deficit_model == "gauss":
+            deflection_field = deflection_model.function(
+                x_i,
+                y_i,
+                z_i,
+                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
+                turbine_turbulence_intensity[:, :, i:i+1],
+                thrust_coefficient,
+                **deflection_model_args
+            )
+
+        turbine_ai = axial_induction(
+            velocities=u,
+            yaw_angle=farm.farm_controller.yaw_angles,
+            fCt=farm.fCt_interp,
+            ix_filter=[i],
+        )
+        turbine_ai = turbine_ai[:, :, :, None, None]
+
+        if deficit_model == "jensen":
+            velocity_deficit = velocity_deficit_model.function(
+                x_i,
+                y_i + deflection_field,
+                z_i,
+                turbine_ai,
+                **deficit_model_args
+            )
+        elif deficit_model == "gauss":
+            velocity_deficit = velocity_deficit_model.function(
+                x_i,
+                y_i,
+                z_i,
+                deflection_field,
+                farm.farm_controller.yaw_angles[:, :, i:i+1, None, None],
+                turbine_turbulence_intensity[:, :, i:i+1],
+                thrust_coefficient,
+                **deficit_model_args
+            )
+
+        # Sum of squares combination model to incorporate the current turbine's velocity into the main array
+        wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
+
+        # wake_added_turbulence_intensity = crespo_hernandez(
+        #     ambient_turbulence_intensity,
+        #     grid.x,
+        #     x_i,
+        #     reference_rotor_diameter,
+        #     turbine_ai
+        # )
+
+        # # Calculate wake overlap for wake-added turbulence (WAT)
+        # # turb_wake_field = flow_field.u_initial - wake_field
+        # # area_overlap = calculate_area_overlap(
+        # #     turb_wake_field, flow_field.u_initial, 5, 5
+        # # )
+        # area_overlap = np.sum(velocity_deficit * flow_field.u_initial > 0.05, axis=(3, 4)) / (turbine_grid.grid_resolution * turbine_grid.grid_resolution)
+        # area_overlap = area_overlap[:, :, :, None, None]
+
+        # # Modify wake added turbulence by wake area overlap
+        # downstream_influence_length = 15 * reference_rotor_diameter
+        # ti_added = (
+        #     area_overlap
+        #     * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
+        #     * np.array(grid.x > x_i)
+        #     * np.array(np.abs(y_i - grid.y) < 2 * reference_rotor_diameter)
+        #     * np.array(grid.x <= downstream_influence_length + x_i)
+        # )
+
+        # Combine turbine TIs with WAT
+        # turbine_turbulence_intensity = np.maximum( np.sqrt( ti_added ** 2 + ambient_turbulence_intensity ** 2 ) , turbine_turbulence_intensity )
+        turbine_turbulence_intensity = turbine_turbulence_intensity
+
+    flow_field.u = flow_field.u_initial - wake_field

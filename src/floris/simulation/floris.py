@@ -14,17 +14,17 @@
 
 
 import json
+import copy
 
 import floris.logging_manager as logging_manager
 
 from floris.simulation import Farm
-from floris.simulation import TurbineGrid
-from floris.simulation import sequential_solver
+from floris.simulation import TurbineGrid, FlowFieldGrid
+from floris.simulation import sequential_solver, full_flow_sequential_solver
 
 # from .wake import Wake
 from .turbine import Turbine
 from .flow_field import FlowField
-from .wake_velocity.jensen import JensenVelocityDeficit
 
 
 class Floris(logging_manager.LoggerBase):
@@ -116,6 +116,35 @@ class Floris(logging_manager.LoggerBase):
 
         grid.finalize()
         self.flow_field.finalize(grid.unsorted_indices)
+
+    def solve_for_viz(self):
+        # Do the calculation with the TurbineGrid for a single wind speed
+        # and wind direction and 1 point on the grid. Then, use the result
+        # to construct the full flow field grid.
+        # This function call should be for a single wind direction and wind speed
+        # since the memory consumption is very large.
+
+        # self.steady_state_atmospheric_condition()
+
+        # turbine_based_floris = copy.deepcopy(self)
+        turbine_grid = TurbineGrid(
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=5,
+        )
+        flow_field_grid = FlowFieldGrid(
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=(100, 100, 7),
+        )
+        self.flow_field.initialize_velocity_field(flow_field_grid)
+
+        full_flow_sequential_solver(self.farm, self.flow_field, flow_field_grid, turbine_grid)
+
 
     # Utility functions
 
