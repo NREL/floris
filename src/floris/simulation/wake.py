@@ -150,9 +150,6 @@ class Wake(BaseClass):
         """
         Function to calculate the wake deflection. This is dynamically
         gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.base_velocity_deflection.VelocityDeflection`
         """
         return self.deflection_model.function
 
@@ -161,9 +158,6 @@ class Wake(BaseClass):
         """
         Function to calculate the velocity deficit. This is dynamically
         gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.base_velocity_deficit.VelocityDeficit`
         """
         return self.velocity_model.function
 
@@ -172,9 +166,6 @@ class Wake(BaseClass):
         """
         Function to calculate the turbulence impact. This is dynamically
         gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.wake_turbulence.base_wake_turbulence.WakeTurbulence`
         """
         return self.turbulence_model.function
 
@@ -183,8 +174,5 @@ class Wake(BaseClass):
         """
         Function to apply the calculated wake to the freestream field.
         This is dynamically gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.wake_combination.base_wake_combination.WakeCombination`
         """
         return self.combination_model.function

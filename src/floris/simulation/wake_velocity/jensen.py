@@ -42,7 +42,10 @@ class JensenVelocityDeficit(BaseClass):
     model_string: str = model_attrib(default="jensen")
 
     def prepare_function(
-        self, grid: TurbineGrid, reference_rotor_diameter: float, flow_field: FlowField
+        self,
+        grid: TurbineGrid,
+        reference_rotor_diameter: float,
+        flow_field: FlowField
     ) -> Dict[str, Any]:
         """
         This function prepares the inputs from the various FLORIS data structures

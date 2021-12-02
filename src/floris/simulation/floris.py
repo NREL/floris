@@ -163,13 +163,3 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         grid.finalize()
         self.flow_field.finalize(grid.unsorted_indices)
-
-    # Utility functions
-
-    def update_hub_heights(self):
-        """
-        Triggers a rebuild of the internal Python dictionary. This may be
-        used to update the z-component of the turbine coordinates if
-        the hub height has changed.
-        """
-        self.turbine_map_dict = self._build_internal_dict(self.coords, self.turbines)
