@@ -250,6 +250,7 @@ class TurbineGrid(Grid):
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
         _x = x_coord_rotated[:, :, :, None, None] * template_grid
+        # [:, None] on disc_grid below is effectively a transpose of this vector; compare with disc_grid.reshape(1,-1).T
         _y = y_coord_rotated[:, :, :, None, None] + template_grid * ( disc_grid[:, None] * np.ones((self.grid_resolution, self.grid_resolution)) )
         _z = z_coordinates[:, :, :, None, None] + template_grid * ( disc_grid * np.ones((self.grid_resolution, self.grid_resolution)) )
 
