@@ -1,40 +1,8 @@
 {
-  "farm": {
-    "layout_x": [
-      0.0
-    ],
-    "layout_y": [
-      0.0
-    ],
-    "turbulence_intensity": [
-      0.06
-    ],
-    "wind_directions": [
-      270.0
-    ],
-    "wind_speeds": [
-      9.0
-    ],
-    "wind_x": [
-      0
-    ],
-    "wind_y": [
-      0
-    ]
-  },
-  "flow_field": {
-    "air_density": 1.225,
-    "reference_turbine_diameter": 126.0,
-    "reference_wind_height": 90.0,
-    "wind_directions": [
-      270.0
-    ],
-    "wind_shear": 0.12,
-    "wind_speeds": [
-      9.0
-    ],
-    "wind_veer": 0.0
-  },
+  "name": "example_floris_input_file",
+  "description": "Single turbine with Jensen / Jimenez wake models",
+  "floris_version": "v3.0.0",
+
   "logging": {
     "console": {
       "enable": true,
@@ -45,12 +13,43 @@
       "level": "INFO"
     }
   },
+
+  "farm": {
+    "layout_x": [
+      0.0
+    ],
+    "layout_y": [
+      0.0
+    ],
+    "turbine_id": [
+      "nrel_5mw"
+    ],
+    "wtg_id": [
+      "WTG-1"
+    ]
+  },
+
+  "flow_field": {
+    "air_density": 1.225,
+    "reference_turbine_diameter": 126.0,
+    "reference_wind_height": 90.0,
+    "turbulence_intensity": [
+      0.06
+    ],
+    "wind_directions": [
+      270.0
+    ],
+    "wind_shear": 0.12,
+    "wind_speeds": [
+      8.0
+    ],
+    "wind_veer": 0.0
+  },
+
   "turbine": {
-    "test": {
+    "nrel_5mw": {
       "generator_efficiency": 1.0,
       "hub_height": 90.0,
-      "pP": 1.88,
-      "pT": 1.88,
       "power_thrust_table": {
         "power": [
           0.0,
@@ -203,15 +202,18 @@
           25.5
         ]
       },
+      "pP": 1.88,
+      "pT": 1.88,
       "rotor_diameter": 126.0
     }
   },
+
   "wake": {
     "model_strings": {
-      "combination_model": "sosfs",
+      "combination_model": null,
       "deflection_model": "gauss",
-      "turbulence_model": "crespo_hernandez",
-      "velocity_model": "gauss_legacy"
+      "turbulence_model": null,
+      "velocity_model": "gauss"
     },
     "parameters": {
       "wake_deflection_parameters": {
@@ -221,16 +223,8 @@
           "use_secondary_steering": true
         }
       },
-      "wake_turbulence_parameters": {
-        "crespo_hernandez": {
-          "ai": 0.8,
-          "constant": 0.5,
-          "downstream": -0.32,
-          "initial": 0.1
-        }
-      },
       "wake_velocity_parameters": {
-        "gauss_legacy": {
+        "gauss": {
           "calculate_VW_velocities": true,
           "eps_gain": 0.2,
           "ka": 0.38,
