@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Union
+from typing import Any, Dict, List
 
 import attr
 import numpy as np
@@ -34,6 +34,12 @@ from floris.simulation.base_class import BaseClass
 
 NDArrayFloat = npt.NDArray[np.float64]
 NDArrayInt = npt.NDArray[np.int_]
+
+
+def _farm_filter(inst: attr.Attribute, value: Any) -> bool:
+    if inst.name in ("wind_directions", "wind_speeds"):
+        return False
+    return attr_floris_filter(inst, value)
 
 
 class FarmController:
@@ -253,7 +259,7 @@ class Farm(BaseClass):
         Returns:
             dict: All key, vaue pais required for class recreation.
         """
-        return attr.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
+        return attr.asdict(self, filter=_farm_filter, value_serializer=attr_serializer)
 
     @property
     def n_turbines(self):
