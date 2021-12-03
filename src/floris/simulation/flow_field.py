@@ -18,8 +18,14 @@ import attr
 import numpy as np
 import numpy.typing as npt
 
-from floris.utilities import FromDictMixin, int_attrib, float_attrib, attrs_array_converter
-
+from floris.utilities import (
+    FromDictMixin,
+    int_attrib,
+    float_attrib,
+    attr_serializer,
+    attr_floris_filter,
+    attrs_array_converter,
+)
 from floris.simulation import Grid
 
 
@@ -28,23 +34,23 @@ NDArrayFloat = npt.NDArray[np.float64]
 
 @attr.s(auto_attribs=True)
 class FlowField(FromDictMixin):
-    wind_shear: float = float_attrib()
     wind_veer: float = float_attrib()
+    wind_shear: float = float_attrib()
+    air_density: float = float_attrib()
+    reference_wind_height: int = int_attrib()
     wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    reference_wind_height: int = int_attrib()
-    air_density: float = float_attrib()
 
     n_wind_speeds: int = attr.ib(init=False)
     n_wind_directions: int = attr.ib(init=False)
 
-    u_initial: NDArrayFloat = attr.ib(init=False)
-    v_initial: NDArrayFloat = attr.ib(init=False)
-    w_initial: NDArrayFloat = attr.ib(init=False)
+    u_initial: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    v_initial: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    w_initial: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
 
-    u: NDArrayFloat = attr.ib(init=False)
-    v: NDArrayFloat = attr.ib(init=False)
-    w: NDArrayFloat = attr.ib(init=False)
+    u: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    v: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
+    w: NDArrayFloat = attr.ib(default=np.array([], dtype=float))
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
@@ -79,3 +85,13 @@ class FlowField(FromDictMixin):
         self.u = np.take_along_axis(self.u, unsorted_indices, axis=2)
         self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
+
+    def _asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `FlowField` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+        return attr.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)

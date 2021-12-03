@@ -44,6 +44,7 @@ REQUIRED = [
     "coloredlogs>=10.0",
     "attr",
     "xarray",
+    "pyyaml",
 ]
 
 # What packages are optional?
@@ -83,7 +84,7 @@ setup(
     python_requires=REQUIRES_PYTHON,
     url=URL,
     package_dir={"": "src"},
-    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    packages=find_packages(where="src", exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of 'packages':
     # py_modules=['mypackage'],
     # entry_points={

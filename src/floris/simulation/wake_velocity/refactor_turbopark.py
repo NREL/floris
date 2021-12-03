@@ -1,8 +1,8 @@
 import attr
 import numpy as np
 
-from src.utilities import Vec3, float_attrib, model_attrib
-from src.base_class import BaseClass
+from floris.utilities import Vec3, float_attrib, model_attrib
+from floris.base_class import BaseClass
 
 
 @attr.s(auto_attribs=True)

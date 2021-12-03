@@ -3,9 +3,9 @@ from typing import List
 import attr
 import numpy as np
 
-from src.utilities import Vec3, FromDictMixin, tand, float_attrib, model_attrib
-from src.base_class import BaseClass
-from src.wake_velocity.gaussianModels.refactor_gauss_mixin import GaussMixin
+from floris.utilities import Vec3, FromDictMixin, tand, float_attrib, model_attrib
+from floris.base_class import BaseClass
+from floris.wake_velocity.gaussianModels.refactor_gauss_mixin import GaussMixin
 
 
 @attr.s(auto_attribs=True)
@@ -79,9 +79,7 @@ class IshiharaQian(BaseClass, GaussMixin):
     eps_gain: float = float_attrib(default=0.2)
     model_string: model_attrib(default="ishiharaquian")
 
-    def _calculate_model_parameters(
-        self, param: NestedParameter, Ct: float, TI: float
-    ) -> float:
+    def _calculate_model_parameters(self, param: NestedParameter, Ct: float, TI: float) -> float:
         """Calculates the model parameters using current conditions and provided settings.
 
         Parameters

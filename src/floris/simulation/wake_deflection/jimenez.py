@@ -15,10 +15,8 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from floris.simulation import TurbineGrid
-from floris.simulation import Turbine
 from floris.utilities import cosd, sind, float_attrib, model_attrib
-from floris.simulation import BaseClass
+from floris.simulation import Turbine, BaseClass, TurbineGrid
 
 
 @attr.s(auto_attribs=True)
@@ -116,7 +114,7 @@ class JimenezVelocityDeflection(BaseClass):
         # angle of deflection
         xi_init = cosd(yaw_angle) * sind(yaw_angle) * Ct / 2.0  # (n wind speeds, n turbines)
         x_locations = x - x[:, :, i:i+1]  # (n turbines, n grid, n grid)
-        print(np.shape(x_locations))
+
         # yaw displacement
         #          (n wind speeds, n Turbines, grid x, grid y)                               (n  wind speeds, n turbines)
         A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter[:, :, :, None, None] + 1) ** 4.0 + xi_init ** 2.0

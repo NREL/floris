@@ -6,6 +6,11 @@ coverage:
     range: 0..100  # sets the range for the color bar in the dashboard
     round: down
     precision: 2
+    status:
+        project:
+            default:
+                # allow coverage to drop by this amount and still post success
+                threshold: 10%
 
 ignore:
     - "setup.py"
