@@ -3,8 +3,8 @@ from typing import List
 import attr
 import numpy as np
 
-from src.utilities import Vec3, float_attrib, model_attrib, iter_validator
-from src.base_class import BaseClass
+from floris.utilities import Vec3, float_attrib, model_attrib, iter_validator
+from floris.base_class import BaseClass
 
 
 @attr.s(auto_attribs=True)

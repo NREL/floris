@@ -13,242 +13,143 @@
 # See https://floris.readthedocs.io for documentation
 
 
-from .wake_velocity.curl import Curl as CurlDeficit
-from .wake_combination.fls import FLS
-from .wake_combination.max import MAX
-from .wake_deflection.curl import Curl as CurlDeflection
-from .wake_velocity.jensen import JensenVelocityDeficit
-from .wake_deflection.gauss import Gauss as GaussDeflection
-from .wake_combination.sosfs import SOSFS
-from .wake_turbulence.direct import Direct as DirectTurbulence
-from .wake_deflection.jimenez import Jimenez
-from .wake_velocity.multizone import MultiZone
-from .wake_velocity.turbopark import TurbOPark
-from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
-from .wake_turbulence.crespo_hernandez import (
-    CrespoHernandez as CrespoHernandezTurbulence,
-)
-from .wake_velocity.gaussianModels.gauss import Gauss as GaussDeficit
-from .wake_velocity.base_velocity_deficit import VelocityDeficit
-from .wake_turbulence.base_wake_turbulence import WakeTurbulence
-from .wake_velocity.gaussianModels.blondel import Blondel as BlondelDeficit
-from .wake_combination.base_wake_combination import WakeCombination
-from .wake_deflection.base_velocity_deflection import VelocityDeflection
-from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaussDeficit
-from .wake_velocity.gaussianModels.ishihara_qian import (
-    IshiharaQian as IshiharaQianDeficit,
-)
+from typing import Any
+
+import attr
+
+from floris.utilities import model_attrib, attr_serializer, attr_floris_filter
+from floris.simulation.base_class import BaseClass
+from floris.simulation.wake_velocity.curl import CurlVelocityDeficit
+from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
+from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
 
 
-class Wake:
+# from .wake_combination.fls import FLS
+# from .wake_combination.max import MAX
+# from .wake_deflection.curl import Curl as CurlDeflection
+# from .wake_deflection.gauss import Gauss as GaussDeflection
+# from .wake_combination.sosfs import SOSFS
+# from .wake_turbulence.direct import Direct as DirectTurbulence
+# from .wake_velocity.multizone import MultiZone
+# from .wake_velocity.turbopark import TurbOPark
+# from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
+# from .wake_turbulence.crespo_hernandez import (
+#     CrespoHernandez as CrespoHernandezTurbulence,
+# )
+# from .wake_velocity.gaussianModels.gauss import Gauss as GaussDeficit
+# from .wake_velocity.base_velocity_deficit import VelocityDeficit
+# from .wake_turbulence.base_wake_turbulence import WakeTurbulence
+# from .wake_velocity.gaussianModels.blondel import Blondel as BlondelDeficit
+# from .wake_combination.base_wake_combination import WakeCombination
+# from .wake_deflection.base_velocity_deflection import VelocityDeflection
+# from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaussDeficit
+# from .wake_velocity.gaussianModels.ishihara_qian import (
+#     IshiharaQian as IshiharaQianDeficit,
+# )
+
+
+MODEL_MAP = {
+    # TODO: Need to uncomment these two model types once we have implementations
+    # "wake_combination": {},
+    "wake_deflection": {"jimenez": JimenezVelocityDeflection},
+    # "wake_turbulence": {},
+    "wake_velocity": {"curl": CurlVelocityDeficit, "jensen": JensenVelocityDeficit},
+}
+
+
+@attr.s(auto_attribs=True)
+class Wake(BaseClass):
     """
     Wake is a container class for the wake velocity, deflection,
     turbulence, and combination models.
+
+    Args:
+        wake (:obj:`dict`): The wake's properties input dictionary
+            - velocity_model (str): The name of the velocity model to be
+                instantiated.
+            - turbulence_model (str): The name of the turbulence model to be
+                instantiated.
+            - deflection_model (str): The name of the deflection model to be
+                instantiated.
+            - combination_model (str): The name of the combination model to
+                be instantiated.
     """
 
-    def __init__(self, instance_dictionary):
-        """
-        Configures the mapping from model strings to their respective classes
-        and unpacks the model parameters.
+    model_strings: dict
+    wake_combination_parameters: dict = attr.ib(factory=dict)
+    wake_deflection_parameters: dict = attr.ib(factory=dict)
+    wake_turbulence_parameters: dict = attr.ib(factory=dict)
+    wake_velocity_parameters: dict = attr.ib(factory=dict)
 
-        Args:
-            instance_dictionary (dict): Dictionary consisting of the following
-                items:
+    combination_model: Any = attr.ib(init=False)
+    deflection_model: Any = attr.ib(init=False)
+    turbulence_model: Any = attr.ib(init=False)
+    velocity_model: Any = attr.ib(init=False)
+    model_string: str = model_attrib(default="wake")
 
-                - velocity_model (str): The name of the velocity model to be
-                    instantiated.
-                - turbulence_model (str): The name of the turbulence model to be
-                    instantiated.
-                - deflection_model (str): The name of the deflection model to be
-                    instantiated.
-                - combination_model (str): The name of the combination model to
-                    be instantiated.
-                - parameters (dict): See specific model classes for parameters.
-        """
-        properties = instance_dictionary["properties"]
-        if "parameters" not in properties.keys():
-            self.parameters = {}
-        else:
-            self.parameters = properties["parameters"]
-        # TODO: Add support for tuning wake combination parameters?
-        # wake_comb_parameters = parameters["wake_combination_parameters"]
+    def __attrs_post_init__(self) -> None:
+        self.model_generator()
 
-        self._velocity_models = {
-            "jensen": JensenVelocityDeficit,
-            "turbopark": TurbOPark,
-            "multizone": MultiZone,
-            "gauss": GaussDeficit,
-            "gauss_legacy": LegacyGaussDeficit,
-            "ishihara_qian": IshiharaQianDeficit,
-            "curl": CurlDeficit,
-            "blondel": BlondelDeficit,
-        }
-        self.velocity_model = properties["velocity_model"]
+    def model_generator(self) -> Any:
+        # models = ("combination", "deflection", "turbulence", "velocity")
+        models = ("deflection", "velocity")  # TODO: Use the above line once all models are implemented
+        wake_models = {}
+        for model_type in models:
+            model_opts = MODEL_MAP[f"wake_{model_type}"]
+            try:
+                model_string = self.model_strings[f"{model_type}_model"]
+            except KeyError as e:
+                raise KeyError(
+                    f"Model: '{model_string}' of type wake {model_type} is invalid. Valid options include: {', '.join(model_opts)} "
+                ) from e
 
-        self._turbulence_models = {
-            "crespo_hernandez": CrespoHernandezTurbulence,
-            "ishihara_qian": IshiharaQianTurbulence,
-            "direct": DirectTurbulence,
-            "None": WakeTurbulence,
-        }
-        self.turbulence_model = properties["turbulence_model"]
-
-        self._deflection_models = {
-            "jimenez": Jimenez,
-            "gauss": GaussDeflection,
-            "curl": CurlDeflection,
-        }
-        self.deflection_model = properties["deflection_model"]
-
-        self._combination_models = {"fls": FLS, "sosfs": SOSFS, "max": MAX}
-        self.combination_model = properties["combination_model"]
-
-    # Getters & Setters
-    @property
-    def velocity_model(self):
-        """
-        Velocity model.
-
-        **Note:** This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (str, :py:class:`~.base_velocity_deficit.VelocityDeficit`):
-                A string for the model to set or the model instance itself.
-
-        Returns:
-            :py:class:`~.base_velocity_deficit.VelocityDeficit`:
-                Model currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._velocity_model
-
-    @velocity_model.setter
-    def velocity_model(self, value):
-        if type(value) is str:
-            if "wake_velocity_parameters" not in self.parameters.keys():
-                self._velocity_model = self._velocity_models[value]({})
-            else:
-                self._velocity_model = self._velocity_models[value](
-                    self.parameters["wake_velocity_parameters"]
+            if model_string is None:
+                wake_models[model_type] = None
+                continue  # TODO: We don't have to create all model types?
+            elif model_string not in model_opts:
+                raise ValueError(
+                    f"Invalid wake {model_type} model: {model_string}. Valid options include: {', '.join(model_opts)}"
                 )
-        elif isinstance(value, VelocityDeficit):
-            self._velocity_model = value
-        else:
-            raise ValueError(
-                "Invalid value given for VelocityDeficit: {}".format(value)
-            )
+            model = model_opts[model_string]
+            model_def = getattr(self, f"wake_{model_type}_parameters")[model_string]
+            wake_models[model_type] = model.from_dict(model_def)
 
-    @property
-    def turbulence_model(self):
-        """
-        Turbulence model.
+        # TODO: Uncomment the two models once implemented
+        # self.combination_model = wake_models["combination"]
+        self.deflection_model = wake_models["deflection"]
+        # self.turbulence_model = wake_models["turbulence"]
+        self.velocity_model = wake_models["velocity"]
 
-        **Note**: This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (str, :py:class:`~.base_wake_turbulence.WakeTurbulence`):
-                A string for the model to set or the model instance itself.
+    def _asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `Wake` formats.
 
         Returns:
-            :py:class:`~.base_wake_turbulence.WakeTurbulence`:
-                Model currently set.
-
-        Raises:
-            ValueError: Invalid value.
+            dict: All key, vaue pais required for class recreation.
         """
-        return self._turbulence_model
 
-    @turbulence_model.setter
-    def turbulence_model(self, value):
-        if type(value) is str:
-            if "wake_turbulence_parameters" not in self.parameters.keys():
-                self._turbulence_model = self._turbulence_models[value]({})
-            else:
-                self._turbulence_model = self._turbulence_models[value](
-                    self.parameters["wake_turbulence_parameters"]
-                )
-        elif isinstance(value, WakeTurbulence):
-            self._turbulence_model = value
-        else:
-            raise ValueError("Invalid value given for WakeTurbulence: {}".format(value))
+        def create_dict(wake_model):
+            if wake_model is None:
+                return {}
+            output = attr.asdict(wake_model, filter=attr_floris_filter, value_serializer=attr_serializer)
+            return {wake_model.model_string: output}
 
-    @property
-    def deflection_model(self):
-        """
-        Deflection model.
-
-        **Note**: This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (str, :py:class:`~.base_velocity_deflection.VelocityDeflection`):
-                A string for the model to set or the model instance itself.
-
-        Returns:
-            :py:class:`~.base_velocity_deflection.VelocityDeflection`:
-                Model currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._deflection_model
-
-    @deflection_model.setter
-    def deflection_model(self, value):
-        if type(value) is str:
-            if "wake_deflection_parameters" not in self.parameters.keys():
-                self._deflection_model = self._deflection_models[value]({})
-            else:
-                self._deflection_model = self._deflection_models[value](
-                    self.parameters["wake_deflection_parameters"]
-                )
-        elif isinstance(value, VelocityDeflection):
-            self._deflection_model = value
-        else:
-            raise ValueError(
-                "Invalid value given for VelocityDeflection: {}".format(value)
-            )
-
-    @property
-    def combination_model(self):
-        """
-        Combination model.
-
-        **Note**: This is a virtual property used to "get" or "set" a value.
-
-        Args:
-            value (str, :py:class:`~.base_wake_combination.WakeCombination`):
-                A string for the model to set or the model instance itself.
-
-        Returns:
-            :py:class:`~.base_wake_combination.WakeCombination`:
-                Model currently set.
-
-        Raises:
-            ValueError: Invalid value.
-        """
-        return self._combination_model
-
-    @combination_model.setter
-    def combination_model(self, value):
-        if type(value) is str:
-            self._combination_model = self._combination_models[value]()
-        elif isinstance(value, WakeCombination):
-            self._combination_model = value
-        else:
-            raise ValueError(
-                "Invalid value given for WakeCombination: {}".format(value)
-            )
+        # TODO: Uncomment these lines once the models are implemented
+        output = dict(
+            model_strings=self.model_strings,
+            # wake_combination_parameters=create_dict(self.combination_model),
+            wake_deflection_parameters=create_dict(self.deflection_model),
+            # wake_turbulence_parameters=create_dict(self.turbulence_model),
+            wake_velocity_parameters=create_dict(self.velocity_model),
+        )
+        return output
 
     @property
     def deflection_function(self):
         """
         Function to calculate the wake deflection. This is dynamically
         gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.base_velocity_deflection.VelocityDeflection`
         """
         return self.deflection_model.function
 
@@ -257,9 +158,6 @@ class Wake:
         """
         Function to calculate the velocity deficit. This is dynamically
         gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.base_velocity_deficit.VelocityDeficit`
         """
         return self.velocity_model.function
 
@@ -268,9 +166,6 @@ class Wake:
         """
         Function to calculate the turbulence impact. This is dynamically
         gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.wake_turbulence.base_wake_turbulence.WakeTurbulence`
         """
         return self.turbulence_model.function
 
@@ -279,8 +174,5 @@ class Wake:
         """
         Function to apply the calculated wake to the freestream field.
         This is dynamically gotten from the currently set model.
-
-        Returns:
-            :py:class:`~.wake_combination.base_wake_combination.WakeCombination`
         """
         return self.combination_model.function

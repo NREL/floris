@@ -10,4 +10,5 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from floris.simulation.wake_velocity.curl import CurlVelocityDeficit
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit

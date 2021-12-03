@@ -5,12 +5,12 @@
 
   "logging": {
     "console": {
-      "enable": true,
-      "level": "INFO"
+      "enable": false,
+      "level": "WARNING"
     },
     "file": {
       "enable": false,
-      "level": "INFO"
+      "level": "WARNING"
     }
   },
 
@@ -48,6 +48,8 @@
 
   "turbine": {
     "nrel_5mw": {
+      "blade_count": 3,
+      "blade_pitch": 0.0,
       "generator_efficiency": 1.0,
       "hub_height": 90.0,
       "power_thrust_table": {
@@ -204,33 +206,74 @@
       },
       "pP": 1.88,
       "pT": 1.88,
-      "rotor_diameter": 126.0
+      "rotor_diameter": 126.0,
+      "tilt_angle": 0.0,
+      "TSR": 8.0,
+      "use_points_on_perimeter": false
     }
   },
 
   "wake": {
     "model_strings": {
       "combination_model": null,
-      "deflection_model": "gauss",
+      "deflection_model": "jimenez",
       "turbulence_model": null,
-      "velocity_model": "gauss"
+      "velocity_model": "jensen"
     },
-    "parameters": {
-      "wake_deflection_parameters": {
-        "gauss": {
-          "dm": 1.0,
-          "eps_gain": 0.2,
-          "use_secondary_steering": true
-        }
+    "wake_deflection_parameters": {
+      "gauss": {
+        "ad": 0.0,
+        "alpha": 0.58,
+        "bd": 0.0,
+        "beta": 0.077,
+        "dm": 1.0,
+        "ka": 0.3837,
+        "kb": 0.003678
       },
-      "wake_velocity_parameters": {
-        "gauss": {
-          "calculate_VW_velocities": true,
-          "eps_gain": 0.2,
-          "ka": 0.38,
-          "kb": 0.004,
-          "use_yaw_added_recovery": true
-        }
+      "jimenez": {
+        "ad": 0.0,
+        "bd": 0.0,
+        "kd": 0.05
+      }
+    },
+    "wake_velocity_parameters": {
+      "blondel": {
+        "a_s": 0.179367259,
+        "b_f1": 1.59,
+        "b_f2": -23.3114654,
+        "b_f3": -2.15199155,
+        "b_s": 0.0118889215,
+        "c_f": 2.98262872,
+        "c_s1": 0.0563691592,
+        "c_s2": 0.13290157
+      },
+      "curl": {
+        "ai": 0.8,
+        "constant": 0.73,
+        "dissipation": 0.06,
+        "downstream": -0.275,
+        "initial": 0.1,
+        "initial_deficit": 2.0,
+        "model_grid_resolution": [
+          250,
+          100,
+          75
+        ],
+        "veer_linear": 0.0
+      },
+      "gauss": {
+        "alpha": 0.58,
+        "beta": 0.077,
+        "ka": 0.3837,
+        "kb": 0.003678
+      },
+      "jensen": {
+        "we": 0.05
+      },
+      "turbopark": {
+        "A": 0.6,
+        "c1": 1.5,
+        "c2": 0.8
       }
     }
   }

@@ -25,6 +25,8 @@ All modules and package can be imported with
 
 The ``__init__.py`` file enables the import of all modules in this
 package so any additional modules should be included there.
+
+isort:skip_file
 """
 
 # Provide full-path imports here for all modules
@@ -34,11 +36,14 @@ package so any additional modules should be included there.
 from .base_class import BaseClass
 from .turbine import Turbine, Ct, power, axial_induction, average_velocity
 from .farm import Farm
-from .grid import Grid, TurbineGrid #, FlowFieldGrid
+from .grid import Grid, TurbineGrid  # , FlowFieldGrid
 from .flow_field import FlowField
+from .wake import Wake
 from .solver import sequential_solver
 from .floris import Floris
 
+
 # initialize the logger
 import floris.logging_manager
+
 floris.logging_manager._setup_logger()
