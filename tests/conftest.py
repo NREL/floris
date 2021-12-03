@@ -256,8 +256,6 @@ class SampleInputs:
         }
 
         self.farm = {
-            "wind_speeds": WIND_SPEEDS,
-            "wind_directions": WIND_DIRECTIONS,
             "turbine_id": [
                 "test_turb",
                 "test_turb",
@@ -287,11 +285,9 @@ class SampleInputs:
         }
 
         self.wake = {
-            "type": "wake",
-            "name": "wake_default",
             "model_strings": {
-                "velocity_model": "gauss_legacy",
-                "deflection_model": "gauss",
+                "velocity_model": "jensen",
+                "deflection_model": "jimenez",
                 "combination_model": None,
                 "turbulence_model": None,
             },

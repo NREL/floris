@@ -12,10 +12,11 @@ from floris.simulation import Farm
 
 def test_farm_init_homogenous_turbines():
     farm_data = SampleInputs().farm
+    flow_field_data = SampleInputs().flow_field
     turbine_data = SampleInputs().turbine
 
-    wind_directions = farm_data["wind_directions"]
-    wind_speeds = farm_data["wind_speeds"]
+    wind_directions = flow_field_data["wind_directions"]
+    wind_speeds = flow_field_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
@@ -121,10 +122,11 @@ def test_farm_init_homogenous_turbines():
 
 def test_sort_turbines():
     farm_data = SampleInputs().farm
+    flow_field_data = SampleInputs().flow_field
     turbine_data = SampleInputs().turbine
 
-    wind_directions = farm_data["wind_directions"]
-    wind_speeds = farm_data["wind_speeds"]
+    wind_directions = flow_field_data["wind_directions"]
+    wind_speeds = flow_field_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = [630, 0, 1260]
     turbine_id = ["test_turb"] * len(layout_x)
@@ -148,10 +150,11 @@ def test_sort_turbines():
 
 def test_make_fail_to_demonstrate_xarray_properties():
     farm_data = SampleInputs().farm
+    flow_field_data = SampleInputs().flow_field
     turbine_data = SampleInputs().turbine
 
-    wind_directions = farm_data["wind_directions"]
-    wind_speeds = farm_data["wind_speeds"]
+    wind_directions = flow_field_data["wind_directions"]
+    wind_speeds = flow_field_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
@@ -181,18 +184,19 @@ def test_turbine_array_rotor_diameter():
     but it also verifies the other columns of type float.
     """
     farm_data = SampleInputs().farm
+    flow_field_data = SampleInputs().flow_field
     turbine_data = SampleInputs().turbine
 
-    wind_directions = farm_data["wind_directions"]
-    wind_speeds = farm_data["wind_speeds"]
+    wind_directions = flow_field_data["wind_directions"]
+    wind_speeds = flow_field_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
     turbine_id = ["test_turb"] * len(layout_x)
     turbine_map = deepcopy(turbine_data)
 
-    n_wind_directions = len(farm_data["wind_directions"])
-    n_wind_speeds = len(farm_data["wind_speeds"])
+    n_wind_directions = len(flow_field_data["wind_directions"])
+    n_wind_speeds = len(flow_field_data["wind_speeds"])
     n_turbines = len(farm_data["layout_x"])
 
     farm = Farm(
