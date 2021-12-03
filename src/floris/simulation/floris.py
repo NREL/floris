@@ -136,6 +136,8 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         if len(self.farm["turbine_id"]) == 0:
             self.farm["turbine_id"] = [*self.turbine.keys()][0] * len(self.farm["layout_x"])
         self.farm["turbine_map"] = self.turbine
+        self.farm["wind_speeds"] = self.flow_field.wind_speeds
+        self.farm["wind_directions"] = self.flow_field.wind_directions
         self.farm = Farm.from_dict(self.farm)
 
     def annual_energy_production(self, wind_rose):
