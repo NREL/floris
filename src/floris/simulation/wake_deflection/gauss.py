@@ -78,7 +78,6 @@ class GaussVelocityDeflection(BaseModel):
     dm: float = float_attrib(default=1.0)
     eps_gain: float = float_attrib(default=0.2)
     use_secondary_steering: bool = bool_attrib(default=True)
-    model_string: str = model_attrib(default="gauss")
 
     def prepare_function(
         self,

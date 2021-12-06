@@ -17,9 +17,9 @@ import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
 from floris.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
+from floris.simulation import BaseClass
 from floris.simulation import Farm, TurbineGrid
-from floris.simulation.base_class import BaseClass
-from floris.simulation.flow_field import FlowField
+from floris.simulation import FlowField
 
 
 @attr.s(auto_attribs=True)
@@ -82,7 +82,6 @@ class CurlVelocityDeficit(BaseClass):
     ti_ai: float = float_attrib(default=0.8)
     ti_downstream: float = float_attrib(default=-0.275)
     requires_resolution: bool = attr.ib(default=True, converter=bool)
-    model_string: str = model_attrib(default="curl")
 
     # TODO: Turbine and coordinates still need to be sorted out
     # TODO: we need to differentiate between x_locations and flow_field.x somehow

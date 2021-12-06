@@ -28,8 +28,7 @@ from floris.logging_manager import LoggerBase
 @attr.s(auto_attribs=True)
 class BaseClass(LoggerBase, FromDictMixin):
     """
-    BaseClass object class. This class does the logging and MixIn class inheritance so
-    that it can't be overlooked in creating new models.
+    BaseClass object class. This class does the logging and MixIn class inheritance.
     """
 
     @classmethod
@@ -44,7 +43,7 @@ class BaseClass(LoggerBase, FromDictMixin):
         return {el.name: el.default for el in attr.fields(cls)}
 
     def _get_model_dict(self) -> dict:
-        """Convenience method that wraps the `attr.asdict` method. Returns the model's
+        """Convenience method that wraps the `attr.asdict` method. Returns the object's
         parameters as a dictionary.
 
         Returns
@@ -57,12 +56,10 @@ class BaseClass(LoggerBase, FromDictMixin):
 
 @attr.s(auto_attribs=True)
 class BaseModel(BaseClass, ABC):
-
-    model_string: str = attr.ib(default=None, kw_only=True)
-
-    def __attrs_post_init__(self) -> None:
-        if self.model_string is None:
-            raise ValueError("No 'model_string' defined.")
+    """
+    BaseModel is the generic class for any wake models. It defines the API required to
+    create a valid model.
+    """
 
     @abstractmethod
     def prepare_function() -> None:

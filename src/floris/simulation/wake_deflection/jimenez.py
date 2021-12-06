@@ -35,7 +35,6 @@ class JimenezVelocityDeflection(BaseModel):
     kd: float = float_attrib(default=0.05)
     ad: float = float_attrib(default=0.0)
     bd: float = float_attrib(default=0.0)
-    model_string: str = model_attrib(default="jimenez")
 
     def prepare_function(
         self,
