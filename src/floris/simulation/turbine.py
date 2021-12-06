@@ -356,7 +356,6 @@ class Turbine(BaseClass):
         converter=PowerThrustTable.from_dict,
         kw_only=True,
     )
-    model_string: str = model_attrib(default="turbine")
     # ngrid: float = float_attrib()  # TODO: goes here or on the Grid?
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()

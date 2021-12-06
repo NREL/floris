@@ -3,12 +3,13 @@ from pathlib import Path
 import yaml
 import numpy as np
 
-from floris.simulation.farm import Farm
-from floris.simulation.wake import Wake
-from floris.simulation.floris import Floris
-from floris.simulation.turbine import Turbine
-from floris.simulation.flow_field import FlowField
-from floris.tools.floris_interface import FlorisInterface
+from floris.simulation import (
+    Farm,
+    Floris,
+    FlowField,
+    WakeModelManager,
+    Turbine
+)
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -39,7 +40,7 @@ def test_init():
     assert isinstance(fi.logging, dict)
     for turb in fi.turbine.values():
         assert isinstance(turb, Turbine)
-    assert isinstance(fi.wake, Wake)
+    assert isinstance(fi.wake, WakeModelManager)
     assert isinstance(fi.flow_field, FlowField)
 
 

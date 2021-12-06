@@ -271,6 +271,13 @@ float_attrib = partial(
 )
 update_wrapper(float_attrib, attr.ib)
 
+bool_attrib = partial(
+    attr.ib,
+    converter=bool,
+    on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+    kw_only=True,
+)
+update_wrapper(bool_attrib, attr.ib)
 
 # Avoids constant redefinition of the same attr.ib properties for int model attributes
 int_attrib = partial(

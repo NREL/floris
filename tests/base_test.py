@@ -16,23 +16,13 @@
 import attr
 import pytest
 
-from floris.simulation import BaseClass
-
-
-@attr.s(auto_attribs=True)
-class TestClassNoModelString(BaseClass):
-    x: int = attr.ib(default=1, converter=int)
+from floris.simulation import BaseClass, BaseModel
 
 
 @attr.s(auto_attribs=True)
 class TestClass(BaseClass):
     x: int = attr.ib(default=1, converter=int)
     model_string: str = attr.ib(default="test", converter=str)
-
-
-def test_no_model_string():
-    with pytest.raises(ValueError):
-        TestClassNoModelString()
 
 
 def test_get_model_defaults():

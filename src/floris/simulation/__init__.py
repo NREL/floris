@@ -33,12 +33,12 @@ isort:skip_file
 # that should be included in the simulation package.
 # Since some of these depend on each other, the order
 # that they are listed here does matter.
-from .base_class import BaseClass
+from .base import BaseClass, BaseModel
 from .turbine import Turbine, Ct, power, axial_induction, average_velocity
 from .farm import Farm
 from .grid import Grid, TurbineGrid  # , FlowFieldGrid
 from .flow_field import FlowField
-from .wake import Wake
+from .wake import WakeModelManager
 from .solver import sequential_solver
 from .floris import Floris
 

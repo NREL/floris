@@ -29,7 +29,7 @@ from floris.utilities import (
     attrs_array_converter,
 )
 from floris.simulation import Turbine
-from floris.simulation.base_class import BaseClass
+from floris.simulation import BaseClass
 
 
 NDArrayFloat = npt.NDArray[np.float64]
@@ -75,12 +75,12 @@ def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
 
 
 def generate_turbine_tuple(turbine: Turbine) -> tuple:
-    exclusions = ("power_thrust_table", "model_string")
+    exclusions = ("power_thrust_table")
     return attr.astuple(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
 
 
 def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
-    exclusions = ("power_thrust_table", "model_string")
+    exclusions = ("power_thrust_table")
     mapping = attr.asdict(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
     return list(mapping.keys())
 
@@ -132,7 +132,6 @@ class Farm(BaseClass):
         on_setattr=attr.setters.validate,
         validator=iter_validator(list, str),
     )
-    model_string: str = model_attrib(default="farm")
 
     coordinates: list[Vec3] = attr.ib(init=False)
 

@@ -292,16 +292,31 @@ class SampleInputs:
                 "turbulence_model": None,
             },
             "wake_deflection_parameters": {
+                "gauss": {
+                    "ad": 0.0,
+                    "alpha": 0.58,
+                    "bd": 0.0,
+                    "beta": 0.077,
+                    "dm": 1.0,
+                    "ka": 0.38,
+                    "kb": 0.004
+                },
                 "jimenez": {
                     "ad": 0.0,
                     "bd": 0.0,
                     "kd": 0.05,
-                }
+                },
             },
             "wake_velocity_parameters": {
+                "gauss": {
+                    "alpha": 0.58,
+                    "beta": 0.077,
+                    "ka": 0.38,
+                    "kb": 0.004
+                },
                 "jensen": {
                     "we": 0.05,
-                }
+                },
             },
         }
 
