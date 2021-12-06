@@ -116,19 +116,19 @@ class WakeModelManager(BaseClass):
             dict: All key, vaue pais required for class recreation.
         """
 
-        def create_dict(wake_model):
+        def create_dict(wake_model, model_string):
             if wake_model is None:
                 return {}
             output = attr.asdict(wake_model, filter=attr_floris_filter, value_serializer=attr_serializer)
-            return {wake_model.model_string: output}
+            return {model_string: output}
 
         # TODO: Uncomment these lines once the models are implemented
         output = dict(
             model_strings=self.model_strings,
             # wake_combination_parameters=create_dict(self.combination_model),
-            wake_deflection_parameters=create_dict(self.deflection_model),
+            wake_deflection_parameters=create_dict(self.deflection_model, self.model_strings["deflection_model"]),
             # wake_turbulence_parameters=create_dict(self.turbulence_model),
-            wake_velocity_parameters=create_dict(self.velocity_model),
+            wake_velocity_parameters=create_dict(self.velocity_model, self.model_strings["velocity_model"]),
         )
         return output
 
