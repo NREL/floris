@@ -16,11 +16,11 @@ import attr
 import numpy as np
 
 from floris.utilities import cosd, sind, float_attrib, model_attrib
-from floris.simulation import BaseClass, Farm, FlowField, TurbineGrid
+from floris.simulation import BaseModel, Farm, FlowField, TurbineGrid
 
 
 @attr.s(auto_attribs=True)
-class JimenezVelocityDeflection(BaseClass):
+class JimenezVelocityDeflection(BaseModel):
     """
     Jiménez wake deflection model, dervied from
     :cite:`jdm-jimenez2010application`.

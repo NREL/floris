@@ -17,13 +17,13 @@ import numpy as np
 
 from floris.simulation import TurbineGrid
 from floris.utilities import float_attrib, model_attrib, cosd, sind, tand
-from floris.simulation import BaseClass
+from floris.simulation import BaseModel
 from floris.simulation import Farm
 from floris.simulation import FlowField
 
 
 @attr.s(auto_attribs=True)
-class GaussVelocityDeficit(BaseClass):
+class GaussVelocityDeficit(BaseModel):
 
     alpha: float = float_attrib(default=0.58)
     beta: float = float_attrib(default=0.077)

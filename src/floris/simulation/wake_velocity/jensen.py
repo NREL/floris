@@ -17,11 +17,11 @@ import attr
 import numpy as np
 
 from floris.utilities import float_attrib, model_attrib
-from floris.simulation import BaseClass, Farm, FlowField, TurbineGrid
+from floris.simulation import BaseModel, Farm, FlowField, TurbineGrid
 
 
 @attr.s(auto_attribs=True)
-class JensenVelocityDeficit(BaseClass):
+class JensenVelocityDeficit(BaseModel):
     """
     The Jensen model computes the wake velocity deficit based on the classic
     Jensen/Park model :cite:`jvm-jensen1983note`.

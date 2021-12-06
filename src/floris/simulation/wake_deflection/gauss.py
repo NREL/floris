@@ -15,15 +15,15 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
+from floris.simulation import BaseModel
 from floris.simulation import TurbineGrid
 from floris.simulation import FlowField
 from floris.simulation import Farm
 from floris.utilities import cosd, sind, tand, float_attrib, model_attrib, bool_attrib
-from floris.simulation import BaseClass
 
 
 @attr.s(auto_attribs=True)
-class GaussVelocityDeflection(BaseClass):
+class GaussVelocityDeflection(BaseModel):
     """
     The Gauss deflection model is a blend of the models described in
     :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for
