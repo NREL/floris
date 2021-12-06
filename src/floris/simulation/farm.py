@@ -59,8 +59,8 @@ class FarmController:
             n wind speeds, n turbines).
         """
         if yaw_angles.ndim != 1:
-            raise ValueError("yaw_angles must be set for each turbine at each atmospheric condition.")
-        self.yaw_angles[:, :] = yaw_angles
+            raise ValueError("yaw_angles must be set for each turbine for all atmospheric conditions.")
+        self.yaw_angles[:, :, :] = yaw_angles[None, None, :]
 
 
 def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
