@@ -69,12 +69,12 @@ class GaussVelocityDeflection(BaseModel):
             :filter: docname in docnames
             :keyprefix: gdm-
     """
-    ka: float = float_attrib(default=0.38)
-    kb: float = float_attrib(default=0.004)
-    alpha: float = float_attrib(default=0.58)
-    beta: float = float_attrib(default=0.077)
     ad: float = float_attrib(default=0.0)
     bd: float = float_attrib(default=0.0)
+    alpha: float = float_attrib(default=0.58)
+    beta: float = float_attrib(default=0.077)
+    ka: float = float_attrib(default=0.38)
+    kb: float = float_attrib(default=0.004)
     dm: float = float_attrib(default=1.0)
     eps_gain: float = float_attrib(default=0.2)
     use_secondary_steering: bool = bool_attrib(default=True)

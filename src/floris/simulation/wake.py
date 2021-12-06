@@ -18,42 +18,31 @@ from typing import Any
 import attr
 
 from floris.utilities import model_attrib, attr_serializer, attr_floris_filter
-from floris.simulation.base_class import BaseClass
-from floris.simulation.wake_velocity.curl import CurlVelocityDeficit
-from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
-from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
-
-
-# from .wake_combination.fls import FLS
-# from .wake_combination.max import MAX
-# from .wake_deflection.curl import Curl as CurlDeflection
-# from .wake_deflection.gauss import Gauss as GaussDeflection
-# from .wake_combination.sosfs import SOSFS
-# from .wake_turbulence.direct import Direct as DirectTurbulence
-# from .wake_velocity.multizone import MultiZone
-# from .wake_velocity.turbopark import TurbOPark
-# from .wake_turbulence.ishihara_qian import IshiharaQian as IshiharaQianTurbulence
-# from .wake_turbulence.crespo_hernandez import (
-#     CrespoHernandez as CrespoHernandezTurbulence,
-# )
-# from .wake_velocity.gaussianModels.gauss import Gauss as GaussDeficit
-# from .wake_velocity.base_velocity_deficit import VelocityDeficit
-# from .wake_turbulence.base_wake_turbulence import WakeTurbulence
-# from .wake_velocity.gaussianModels.blondel import Blondel as BlondelDeficit
-# from .wake_combination.base_wake_combination import WakeCombination
-# from .wake_deflection.base_velocity_deflection import VelocityDeflection
-# from .wake_velocity.gaussianModels.gauss_legacy import LegacyGauss as LegacyGaussDeficit
-# from .wake_velocity.gaussianModels.ishihara_qian import (
-#     IshiharaQian as IshiharaQianDeficit,
-# )
+from floris.simulation import BaseClass, BaseModel
+from floris.simulation.wake_deflection import (
+    GaussVelocityDeflection,
+    JimenezVelocityDeflection,
+)
+from floris.simulation.wake_velocity import (
+    # CurlVelocityDeficit,
+    GaussVelocityDeficit,
+    JensenVelocityDeficit
+)
 
 
 MODEL_MAP = {
     # TODO: Need to uncomment these two model types once we have implementations
-    # "wake_combination": {},
-    "wake_deflection": {"jimenez": JimenezVelocityDeflection},
-    # "wake_turbulence": {},
-    "wake_velocity": {"curl": CurlVelocityDeficit, "jensen": JensenVelocityDeficit},
+    # "combination_model": {},
+    "deflection_model": {
+        "jimenez": JimenezVelocityDeflection,
+        "gauss": GaussVelocityDeflection
+    },
+    # "turbulence_model": {},
+    "velocity_model": {
+        # "curl": CurlVelocityDeficit,
+        "gauss": GaussVelocityDeficit,
+        "jensen": JensenVelocityDeficit
+    },
 }
 
 
@@ -65,52 +54,50 @@ class WakeModelManager(BaseClass):
 
     Args:
         wake (:obj:`dict`): The wake's properties input dictionary
-            - velocity_model (str): The name of the velocity model to be
-                instantiated.
-            - turbulence_model (str): The name of the turbulence model to be
-                instantiated.
-            - deflection_model (str): The name of the deflection model to be
-                instantiated.
-            - combination_model (str): The name of the combination model to
-                be instantiated.
+            - velocity_model (str): The name of the velocity model to be instantiated.
+            - turbulence_model (str): The name of the turbulence model to be instantiated.
+            - deflection_model (str): The name of the deflection model to be instantiated.
+            - combination_model (str): The name of the combination model to be instantiated.
     """
 
-    model_strings: dict
+    model_strings: dict = attr.ib(factory=dict)
     wake_combination_parameters: dict = attr.ib(factory=dict)
     wake_deflection_parameters: dict = attr.ib(factory=dict)
     wake_turbulence_parameters: dict = attr.ib(factory=dict)
     wake_velocity_parameters: dict = attr.ib(factory=dict)
 
-    combination_model: Any = attr.ib(init=False)
-    deflection_model: Any = attr.ib(init=False)
-    turbulence_model: Any = attr.ib(init=False)
-    velocity_model: Any = attr.ib(init=False)
-    model_string: str = model_attrib(default="wake")
+    combination_model: BaseModel = attr.ib(init=False)
+    deflection_model: BaseModel = attr.ib(init=False)
+    turbulence_model: BaseModel = attr.ib(init=False)
+    velocity_model: BaseModel = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.model_generator()
 
-    def model_generator(self) -> Any:
-        # models = ("combination", "deflection", "turbulence", "velocity")
-        models = ("deflection", "velocity")  # TODO: Use the above line once all models are implemented
-        wake_models = {}
-        for model_type in models:
-            model_opts = MODEL_MAP[f"wake_{model_type}"]
-            try:
-                model_string = self.model_strings[f"{model_type}_model"]
-            except KeyError as e:
-                raise KeyError(
-                    f"Model: '{model_string}' of type wake {model_type} is invalid. Valid options include: {', '.join(model_opts)} "
-                ) from e
+    @model_strings.validator
+    def validate_model_strings(self, instance: attr.Attribute, value: dict) -> None:
+        required_strings = [
+            "velocity_model",
+            "deflection_model",
+            "combination_model",
+            "turbulence_model"
+        ]
+        # Check that all required strings are given
+        for s in required_strings:
+            if s not in value.keys():
+                raise KeyError(f"Wake: '{s}' not provided in the input but it is required.")
 
-            if model_string is None:
-                wake_models[model_type] = None
-                continue  # TODO: We don't have to create all model types?
-            elif model_string not in model_opts:
-                raise ValueError(
-                    f"Invalid wake {model_type} model: {model_string}. Valid options include: {', '.join(model_opts)}"
-                )
-            model = model_opts[model_string]
+        # Check that no other strings are given
+        for k in value.keys():
+            if k not in required_strings:
+                raise KeyError(f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
+
+    def model_generator(self) -> Any:
+        wake_models = {}
+        for model_type in ("deflection", "velocity"): #, "combination", "turbulence")
+            model_string = self.model_strings[f"{model_type}_model"]
+            model = MODEL_MAP[f"{model_type}_model"][model_string]
+
             model_def = getattr(self, f"wake_{model_type}_parameters")[model_string]
             wake_models[model_type] = model.from_dict(model_def)
 
@@ -147,32 +134,16 @@ class WakeModelManager(BaseClass):
 
     @property
     def deflection_function(self):
-        """
-        Function to calculate the wake deflection. This is dynamically
-        gotten from the currently set model.
-        """
         return self.deflection_model.function
 
     @property
     def velocity_function(self):
-        """
-        Function to calculate the velocity deficit. This is dynamically
-        gotten from the currently set model.
-        """
         return self.velocity_model.function
 
     @property
     def turbulence_function(self):
-        """
-        Function to calculate the turbulence impact. This is dynamically
-        gotten from the currently set model.
-        """
         return self.turbulence_model.function
 
     @property
     def combination_function(self):
-        """
-        Function to apply the calculated wake to the freestream field.
-        This is dynamically gotten from the currently set model.
-        """
         return self.combination_model.function

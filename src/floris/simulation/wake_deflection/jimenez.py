@@ -62,6 +62,7 @@ class JimenezVelocityDeflection(BaseModel):
     def function(
         self,
         i: int,
+        turbulence_intensity: np.ndarray,
         Ct: np.ndarray,
         *,
         x: np.ndarray,

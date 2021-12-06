@@ -76,6 +76,8 @@ class JensenVelocityDeficit(BaseModel):
         i: int,
         deflection_field: np.ndarray,
         turbine_ai: np.ndarray,
+        turbulence_intensity: np.ndarray,
+        Ct: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
