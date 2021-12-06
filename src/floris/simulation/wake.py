@@ -58,9 +58,9 @@ MODEL_MAP = {
 
 
 @attr.s(auto_attribs=True)
-class Wake(BaseClass):
+class WakeModelManager(BaseClass):
     """
-    Wake is a container class for the wake velocity, deflection,
+    WakeModelManager is a container class for the wake velocity, deflection,
     turbulence, and combination models.
 
     Args:

@@ -24,7 +24,7 @@ import floris.logging_manager as logging_manager
 from floris.utilities import FromDictMixin
 from floris.simulation import (
     Farm,
-    Wake,
+    WakeModelManager,
     Turbine,
     FlowField,
     TurbineGrid,
@@ -55,7 +55,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     farm: Farm = attr.ib()
     logging: dict = attr.ib()
     turbine: dict[str, Turbine] = attr.ib(converter=convert_dict_to_turbine)
-    wake: Wake = attr.ib(converter=Wake.from_dict)
+    wake: WakeModelManager = attr.ib(converter=WakeModelManager.from_dict)
     flow_field: FlowField = attr.ib(converter=FlowField.from_dict)
 
     def __attrs_post_init__(self) -> None:
@@ -160,8 +160,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         self.flow_field.initialize_velocity_field(grid)
 
         # <<interface>>
-        # JensenVelocityDeficit.solver(self.farm, self.flow_field)
-        sequential_solver(self.farm, self.flow_field, grid)
+        sequential_solver(self.farm, self.flow_field, grid, self.wake)
 
         grid.finalize()
         self.flow_field.finalize(grid.unsorted_indices)
