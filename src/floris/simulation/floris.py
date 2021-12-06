@@ -194,4 +194,4 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         )
         self.flow_field.initialize_velocity_field(flow_field_grid)
 
-        full_flow_sequential_solver(self.farm, self.flow_field, flow_field_grid, turbine_grid)
+        full_flow_sequential_solver(self.farm, self.flow_field, flow_field_grid, turbine_grid, self.wake)

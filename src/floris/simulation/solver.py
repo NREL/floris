@@ -154,13 +154,10 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
     # these points to the total points is the portion of wake overlap.
     return np.sum(freestream_velocities - wake_velocities > 0.05, axis=(3, 4)) / (y_ngrid * z_ngrid)
 
-def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, grid: FlowFieldGrid, turbine_grid: TurbineGrid) -> None:
-    # Algorithm
-    # Do the calculate for a single wind speed and wind direction with the TurbineGrid
-    # with a single point on the grid. Then, use this result to fill in the full FlowField
+def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, grid: FlowFieldGrid, turbine_grid: TurbineGrid, model_manager: WakeModelManager) -> None:
 
-    deflection_model_args = deflection_model.prepare_function(grid, farm, flow_field)
-    deficit_model_args = velocity_deficit_model.prepare_function(grid, farm, flow_field)
+    deflection_model_args = model_manager.deflection_model.prepare_function(grid, farm, flow_field)
+    deficit_model_args = model_manager.velocity_model.prepare_function(grid, farm, flow_field)
 
     wake_field = np.zeros_like(flow_field.u_initial)
 
@@ -203,43 +200,37 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, grid: FlowFie
         )
         axial_induction_i = axial_induction_i[:, :, :, None, None]
 
+        turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_i = farm.farm_controller.yaw_angles[:, :, i:i+1, None, None]
 
-        if deficit_model == "jensen":
-            deflection_field = deflection_model.function(
-                x_i,
-                yaw_i,
-                ct_i,
-                **deflection_model_args
-            )
-        elif deficit_model == "gauss":
-            deflection_field = deflection_model.function(
-                x_i,
-                y_i,
-                yaw_i,
-                turbine_turbulence_intensity[:, :, i:i+1],
-                ct_i,
-                **deflection_model_args
-            )
+        deflection_field = model_manager.deflection_model.function(
+            x_i,
+            y_i,
+            yaw_i,
+            turbulence_intensity_i,
+            ct_i,
+            **deflection_model_args
+        )
 
-        if deficit_model == "jensen":
-            velocity_deficit = velocity_deficit_model.function(
-                x_i,
-                y_i + deflection_field,
-                z_i,
-                axial_induction_i,
-                **deficit_model_args
-            )
-        elif deficit_model == "gauss":
-            velocity_deficit = velocity_deficit_model.function(
-                x_i,
-                y_i,
-                deflection_field,
-                yaw_i,
-                turbine_turbulence_intensity[:, :, i:i+1],
-                ct_i,
-                **deficit_model_args
-            )
+        turbine_ai = axial_induction(
+            velocities=u,
+            yaw_angle=farm.farm_controller.yaw_angles,
+            fCt=farm.fCt_interp,
+            ix_filter=[i],
+        )
+        turbine_ai = turbine_ai[:, :, :, None, None]
+
+        velocity_deficit = model_manager.velocity_model.function(
+            x_i,
+            y_i,
+            z_i,
+            turbine_ai,
+            deflection_field,
+            yaw_i,
+            turbulence_intensity_i,
+            ct_i,
+            **deficit_model_args
+        )
 
         # Sum of squares combination model to incorporate the current turbine's velocity into the main array
         wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
