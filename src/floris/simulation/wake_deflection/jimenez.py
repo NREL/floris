@@ -15,15 +15,12 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from floris.simulation import Grid
-from floris.simulation import FlowField
-from floris.simulation import Farm
 from floris.utilities import cosd, sind, float_attrib, model_attrib
-from floris.simulation import BaseClass
+from floris.simulation import BaseModel, Farm, FlowField, Grid
 
 
 @attr.s(auto_attribs=True)
-class JimenezVelocityDeflection(BaseClass):
+class JimenezVelocityDeflection(BaseModel):
     """
     Jiménez wake deflection model, dervied from
     :cite:`jdm-jimenez2010application`.
@@ -38,7 +35,6 @@ class JimenezVelocityDeflection(BaseClass):
     kd: float = float_attrib(default=0.05)
     ad: float = float_attrib(default=0.0)
     bd: float = float_attrib(default=0.0)
-    model_string: str = model_attrib(default="jimenez")
 
     def prepare_function(
         self,
@@ -62,7 +58,9 @@ class JimenezVelocityDeflection(BaseClass):
     def function(
         self,
         x_i: np.ndarray,
+        y_i: np.ndarray,
         yaw_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
         ct_i: np.ndarray,
         *,
         x: np.ndarray,

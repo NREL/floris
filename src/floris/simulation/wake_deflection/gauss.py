@@ -15,15 +15,15 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
+from floris.simulation import BaseModel
 from floris.simulation import Grid
-from floris.simulation import FlowField
 from floris.simulation import Farm
+from floris.simulation import FlowField
 from floris.utilities import cosd, sind, tand, float_attrib, model_attrib, bool_attrib
-from floris.simulation import BaseClass
 
 
 @attr.s(auto_attribs=True)
-class GaussVelocityDeflection(BaseClass):
+class GaussVelocityDeflection(BaseModel):
     """
     The Gauss deflection model is a blend of the models described in
     :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for
@@ -69,16 +69,15 @@ class GaussVelocityDeflection(BaseClass):
             :filter: docname in docnames
             :keyprefix: gdm-
     """
-    ka: float = float_attrib(default=0.38)
-    kb: float = float_attrib(default=0.004)
-    alpha: float = float_attrib(default=0.58)
-    beta: float = float_attrib(default=0.077)
     ad: float = float_attrib(default=0.0)
     bd: float = float_attrib(default=0.0)
+    alpha: float = float_attrib(default=0.58)
+    beta: float = float_attrib(default=0.077)
+    ka: float = float_attrib(default=0.38)
+    kb: float = float_attrib(default=0.004)
     dm: float = float_attrib(default=1.0)
     eps_gain: float = float_attrib(default=0.2)
     use_secondary_steering: bool = bool_attrib(default=True)
-    model_string: str = model_attrib(default="gauss")
 
     def prepare_function(
         self,

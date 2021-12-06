@@ -11,21 +11,19 @@
 # the License.
 
 from typing import Any, Dict, List, Union
-from functools import partial
 
 import attr
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-from src.farm import Farm
-from src.grid import TurbineGrid
-from src.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
-from src.base_class import BaseClass
-from src.flow_field import FlowField
+from floris.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
+from floris.simulation import BaseClass
+from floris.simulation import Farm, TurbineGrid
+from floris.simulation import FlowField
 
 
 @attr.s(auto_attribs=True)
-class Curl(BaseClass):
+class CurlVelocityDeficit(BaseClass):
     """
     The Curl model class computes the wake velocity deficit based on the curled
     wake model developed in
@@ -84,12 +82,11 @@ class Curl(BaseClass):
     ti_ai: float = float_attrib(default=0.8)
     ti_downstream: float = float_attrib(default=-0.275)
     requires_resolution: bool = attr.ib(default=True, converter=bool)
-    model_string: str = model_attrib(default="curl")
 
     # TODO: Turbine and coordinates still need to be sorted out
     # TODO: we need to differentiate between x_locations and flow_field.x somehow
     def prepare_function(
-        deflection_field: np.array, grid: TurbineGrid, farm: Farm, flow_field: FlowField
+        deflection_field: np.array, grid: "TurbineGrid", farm: "Farm", flow_field: "FlowField"
     ) -> Dict[str, Any]:
         kwargs = dict(
             deflection_field=deflection_field,
@@ -172,12 +169,8 @@ class Curl(BaseClass):
         dissipation = self.dissipation
 
         # setup x and y grid information
-        x = np.linspace(
-            np.min(x_locations), np.max(x_locations), int(self.model_grid_resolution.x1)
-        )
-        y = np.linspace(
-            np.min(y_locations), np.max(y_locations), int(self.model_grid_resolution.x2)
-        )
+        x = np.linspace(np.min(x_locations), np.max(x_locations), int(self.model_grid_resolution.x1))
+        y = np.linspace(np.min(y_locations), np.max(y_locations), int(self.model_grid_resolution.x2))
 
         # find the x-grid location closest to the current turbine
         idx = np.min(np.where(x >= turbine_coord.x1))
@@ -198,9 +191,7 @@ class Curl(BaseClass):
 
         # add initial velocity deficit at the rotor to the flow field
         uw_initial = -1 * (grid_wind_speed * initial_deficit * turbine.axial_induction)
-        uw[idx, :, :] = gaussian_filter(
-            uw_initial[idx, :, :] * (r1 <= turbine.rotor_diameter / 2), sigma=1
-        )
+        uw[idx, :, :] = gaussian_filter(uw_initial[idx, :, :] * (r1 <= turbine.rotor_diameter / 2), sigma=1)
 
         # enforce the boundary conditions
         uw[idx, 0, :] = 0.0
@@ -231,16 +222,12 @@ class Curl(BaseClass):
 
         # calculate the curled wake effects due to the yaw and tilt
         # of the turbine
-        Gamma_Yaw = (
-            air_density * np.pi * D / 8 * Ct * turbine.average_velocity * sind(yaw)
-        )
+        Gamma_Yaw = air_density * np.pi * D / 8 * Ct * turbine.average_velocity * sind(yaw)
         if turbine.yaw_angle != 0.0:
             YawFlag = 1
         else:
             YawFlag = 0
-        Gamma_Tilt = (
-            air_density * np.pi * D / 8 * Ct * turbine.average_velocity * sind(tilt)
-        )
+        Gamma_Tilt = air_density * np.pi * D / 8 * Ct * turbine.average_velocity * sind(tilt)
         if turbine.tilt_angle != 0.0:
             TiltFlag = 1
         else:
@@ -327,33 +314,27 @@ class Curl(BaseClass):
             W[idx, :, :] += w1 + w2 + w3 + w4
 
         # add wake rotation
-        v5, w5 = self._vortex(
-            ffy[idx, :, :] - turbine_coord.x2,
-            ffz[idx, :, :] - turbine.hub_height,
-            ffx[idx, :, :] - turbine_coord.x1,
-            Gamma_wake_rotation,
-            0.2 * D,
-            Uinf,
-        ) * (
-            np.sqrt(
-                (ffy[idx, :, :] - turbine_coord.x2) ** 2
-                + (ffz[idx, :, :] - turbine.hub_height) ** 2
+        v5, w5 = (
+            self._vortex(
+                ffy[idx, :, :] - turbine_coord.x2,
+                ffz[idx, :, :] - turbine.hub_height,
+                ffx[idx, :, :] - turbine_coord.x1,
+                Gamma_wake_rotation,
+                0.2 * D,
+                Uinf,
             )
-            <= D / 2
+            * (np.sqrt((ffy[idx, :, :] - turbine_coord.x2) ** 2 + (ffz[idx, :, :] - turbine.hub_height) ** 2) <= D / 2)
         )
-        v6, w6 = self._vortex(
-            ffy[idx, :, :] - turbine_coord.x2,
-            ffz[idx, :, :] + turbine.hub_height,
-            ffx[idx, :, :] - turbine_coord.x1,
-            -Gamma_wake_rotation,
-            0.2 * D,
-            Uinf,
-        ) * (
-            np.sqrt(
-                (ffy[idx, :, :] - turbine_coord.x2) ** 2
-                + (ffz[idx, :, :] - turbine.hub_height) ** 2
+        v6, w6 = (
+            self._vortex(
+                ffy[idx, :, :] - turbine_coord.x2,
+                ffz[idx, :, :] + turbine.hub_height,
+                ffx[idx, :, :] - turbine_coord.x1,
+                -Gamma_wake_rotation,
+                0.2 * D,
+                Uinf,
             )
-            <= D / 2
+            * (np.sqrt((ffy[idx, :, :] - turbine_coord.x2) ** 2 + (ffz[idx, :, :] - turbine.hub_height) ** 2) <= D / 2)
         )
         V[idx, :, :] += v5 + v6
         W[idx, :, :] += w5 + w6
@@ -361,30 +342,18 @@ class Curl(BaseClass):
         # decay the vortices as they move downstream
         lmda = 15
         kappa = 0.41
-        z_tmp = np.linspace(
-            np.min(z_locations), np.max(z_locations), int(self.model_grid_resolution.x3)
-        )
+        z_tmp = np.linspace(np.min(z_locations), np.max(z_locations), int(self.model_grid_resolution.x3))
         lm = kappa * z_tmp / (1 + kappa * z_tmp / lmda)
         dudz_initial = np.gradient(U, z_tmp, axis=2)
         nu = lm ** 2 * np.abs(dudz_initial[0, :, :])
 
         for i in range(idx, len(x) - 1):
-            V[i + 1, :, :] = (
-                V[idx, :, :]
-                * eps ** 2
-                / (4 * nu * (ffx[i, :, :] - turbine_coord.x1) / Uinf + eps ** 2)
-            )
-            W[i + 1, :, :] = (
-                W[idx, :, :]
-                * eps ** 2
-                / (4 * nu * (ffx[i, :, :] - turbine_coord.x1) / Uinf + eps ** 2)
-            )
+            V[i + 1, :, :] = V[idx, :, :] * eps ** 2 / (4 * nu * (ffx[i, :, :] - turbine_coord.x1) / Uinf + eps ** 2)
+            W[i + 1, :, :] = W[idx, :, :] * eps ** 2 / (4 * nu * (ffx[i, :, :] - turbine_coord.x1) / Uinf + eps ** 2)
 
         # simple implementation of linear veer, added to the V component
         # of the flow field
-        z = np.linspace(
-            np.min(z_locations), np.max(z_locations), int(self.model_grid_resolution.x3)
-        )
+        z = np.linspace(np.min(z_locations), np.max(z_locations), int(self.model_grid_resolution.x3))
         # z_min = HH
         # b_veer = self.veer_linear
         # m_veer = -b_veer / z_min
@@ -420,12 +389,8 @@ class Curl(BaseClass):
             # compute the change in x
             dx = x[i] - x[i - 1]
 
-            dudy = np.gradient(uw[i - 1, :, :], axis=0) / np.gradient(
-                y_locations[i - 1, :, :], axis=0
-            )
-            dudz = np.gradient(uw[i - 1, :, :], axis=1) / np.gradient(
-                z_locations[i - 1, :, :], axis=1
-            )
+            dudy = np.gradient(uw[i - 1, :, :], axis=0) / np.gradient(y_locations[i - 1, :, :], axis=0)
+            dudz = np.gradient(uw[i - 1, :, :], axis=1) / np.gradient(z_locations[i - 1, :, :], axis=1)
 
             gradU = (
                 np.gradient(np.gradient(uw[i - 1, :, :], axis=0), axis=0)
@@ -448,9 +413,7 @@ class Curl(BaseClass):
 
             # solve the marching problem for u, v, and w
             uw[i, :, :] = uw[i - 1, :, :] + (dx / (U[i - 1, :, :])) * (
-                -V[i - 1, :, :] * dudy
-                - W[i - 1, :, :] * dudz
-                + dissipation * D * nu * ti_local * gradU
+                -V[i - 1, :, :] * dudy - W[i - 1, :, :] * dudz + dissipation * D * nu * ti_local * gradU
             )
             # enforce boundary conditions
             uw[i, :, 0] = np.zeros(len(y))
@@ -462,15 +425,7 @@ class Curl(BaseClass):
 
     def _vortex(self, x, y, z, Gamma, eps, U):
         # compute the vortex velocity
-        v = (
-            (Gamma / (2 * np.pi))
-            * (y / (x ** 2 + y ** 2))
-            * (1 - np.exp(-(x ** 2 + y ** 2) / eps ** 2))
-        )
-        w = (
-            -(Gamma / (2 * np.pi))
-            * (x / (x ** 2 + y ** 2))
-            * (1 - np.exp(-(x ** 2 + y ** 2) / eps ** 2))
-        )
+        v = (Gamma / (2 * np.pi)) * (y / (x ** 2 + y ** 2)) * (1 - np.exp(-(x ** 2 + y ** 2) / eps ** 2))
+        w = -(Gamma / (2 * np.pi)) * (x / (x ** 2 + y ** 2)) * (1 - np.exp(-(x ** 2 + y ** 2) / eps ** 2))
 
         return v, w

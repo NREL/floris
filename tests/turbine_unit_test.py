@@ -18,20 +18,9 @@ import numpy as np
 import pytest
 from scipy.interpolate import interp1d
 
-from floris.simulation import (
-    Ct,
-    Turbine,
-    power,
-    axial_induction,
-    average_velocity,
-)
-from floris.simulation.turbine import (
-    PowerThrustTable,
-    _filter_convert,
-)
-
-from tests.conftest import SampleInputs
-from tests.conftest import WIND_SPEEDS
+from tests.conftest import WIND_SPEEDS, SampleInputs
+from floris.simulation import Ct, Turbine, power, axial_induction, average_velocity
+from floris.simulation.turbine import PowerThrustTable, _filter_convert
 
 
 # size 3 x 4 x 1 x 1
@@ -47,7 +36,7 @@ INDEX_FILTER = [0, 2]
 
 
 def test_power_thrust_table():
-    turbine_data = SampleInputs().turbine
+    turbine_data = SampleInputs().turbine["test_turb"]
     table = PowerThrustTable.from_dict(turbine_data["power_thrust_table"])
 
     # Test data conversion is correct
@@ -67,19 +56,19 @@ def test_power_thrust_table():
 
     # Test for initialization errors
     for el in ("power", "thrust", "wind_speed"):
-        pt_table = SampleInputs().turbine["power_thrust_table"]
+        pt_table = SampleInputs().turbine["test_turb"]["power_thrust_table"]
         pt_table[el] = pt_table[el][:-1]
         with pytest.raises(ValueError):
             PowerThrustTable.from_dict(pt_table)
 
-        pt_table = SampleInputs().turbine["power_thrust_table"]
+        pt_table = SampleInputs().turbine["test_turb"]["power_thrust_table"]
         pt_table[el] = np.array(pt_table[el]).reshape(2, -1)
         with pytest.raises(ValueError):
             PowerThrustTable.from_dict(pt_table)
 
 
 def test_turbine_init():
-    turbine_data = SampleInputs().turbine
+    turbine_data = SampleInputs().turbine["test_turb"]
     turbine = Turbine.from_dict(turbine_data)
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
@@ -101,7 +90,7 @@ def test_turbine_init():
 
 def test_rotor_radius():
 
-    turbine_data = SampleInputs().turbine
+    turbine_data = SampleInputs().turbine["test_turb"]
     turbine = Turbine.from_dict(turbine_data)
 
     # Test that the radius is set correctly from the input file
@@ -117,7 +106,7 @@ def test_rotor_radius():
 
 def test_rotor_area():
 
-    turbine_data = SampleInputs().turbine
+    turbine_data = SampleInputs().turbine["test_turb"]
     turbine = Turbine.from_dict(turbine_data)
 
     # Test that the area is set correctly from the input file
@@ -238,7 +227,7 @@ def test_average_velocity():
 
 def test_ct():
 
-    turbine_data = SampleInputs().turbine
+    turbine_data = SampleInputs().turbine["test_turb"]
     turbine = Turbine.from_dict(turbine_data)
 
     # Single turbine
@@ -270,7 +259,7 @@ def test_ct():
 
 def test_power():
 
-    turbine_data = SampleInputs().turbine
+    turbine_data = SampleInputs().turbine["test_turb"]
     turbine = Turbine.from_dict(turbine_data)
 
     # Single turbine
@@ -305,7 +294,7 @@ def test_power():
 
 def test_axial_induction():
 
-    turbine_data = SampleInputs().turbine
+    turbine_data = SampleInputs().turbine["test_turb"]
     turbine = Turbine.from_dict(turbine_data)
 
     baseline_ai = 0.25116283939089806

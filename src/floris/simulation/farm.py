@@ -12,19 +12,34 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Union
+from typing import Any, Dict, List
 
 import attr
 import numpy as np
 import xarray as xr
 import numpy.typing as npt
 
+from floris.utilities import (
+    Vec3,
+    FromDictMixin,
+    model_attrib,
+    iter_validator,
+    attr_serializer,
+    attr_floris_filter,
+    attrs_array_converter,
+)
 from floris.simulation import Turbine
-from floris.utilities import Vec3, FromDictMixin, iter_validator, attrs_array_converter
+from floris.simulation import BaseClass
 
 
 NDArrayFloat = npt.NDArray[np.float64]
 NDArrayInt = npt.NDArray[np.int_]
+
+
+def _farm_filter(inst: attr.Attribute, value: Any) -> bool:
+    if inst.name in ("wind_directions", "wind_speeds"):
+        return False
+    return attr_floris_filter(inst, value)
 
 
 class FarmController:
@@ -48,23 +63,30 @@ class FarmController:
         self.yaw_angles[:, :] = yaw_angles
 
 
-def create_turbines(mapping: dict[str, dict]) -> dict[str, Turbine]:
-    return {t_id: Turbine.from_dict(config) for t_id, config in mapping.items()}
+def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
+    for t_id, config in mapping.items():
+        if isinstance(config, dict):
+            mapping[t_id] = Turbine.from_dict(config)
+        elif isinstance(config, Turbine):
+            pass
+        else:
+            raise TypeError("The Turbine mapping must either be a dictionary of `Turbine` object!")
+        return mapping
 
 
 def generate_turbine_tuple(turbine: Turbine) -> tuple:
-    exclusions = ("power_thrust_table", "model_string")
+    exclusions = ("power_thrust_table")
     return attr.astuple(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
 
 
 def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
-    exclusions = ("power_thrust_table", "model_string")
+    exclusions = ("power_thrust_table")
     mapping = attr.asdict(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
     return list(mapping.keys())
 
 
 @attr.s(auto_attribs=True)
-class Farm(FromDictMixin):
+class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
     file. The Farm will create a heterogenous set of turbines that compose a windfarm,
     validate the inputs, and then create a vectorized representation of the the turbine
@@ -100,11 +122,11 @@ class Farm(FromDictMixin):
     """
 
     turbine_id: list[str] = attr.ib(validator=iter_validator(list, str))
-    turbine_map: dict[str, dict | Turbine] = attr.ib(converter=create_turbines)
-    wind_directions: list[float] | NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    wind_speeds: list[float] | NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    layout_x: list[float] | NDArrayInt = attr.ib(converter=attrs_array_converter)
-    layout_y: list[float] | NDArrayInt = attr.ib(converter=attrs_array_converter)
+    turbine_map: dict[str, Turbine] = attr.ib(converter=create_turbines)
+    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    layout_x: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    layout_y: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     wtg_id: List[str] = attr.ib(
         factory=list,
         on_setattr=attr.setters.validate,
@@ -118,7 +140,6 @@ class Farm(FromDictMixin):
     pP: NDArrayFloat = attr.ib(init=False)
     pT: NDArrayFloat = attr.ib(init=False)
     generator_efficiency: NDArrayFloat = attr.ib(init=False)
-    # power_thrust_table: np.ndarray = attr.ib(init=False)  # NOTE: Is this only necessary for the creation of the interpolations?
     fCp_interp: NDArrayFloat = attr.ib(init=False)
     fCt_interp: NDArrayFloat = attr.ib(init=False)
     power_interp: NDArrayFloat = attr.ib(init=False)
@@ -163,7 +184,7 @@ class Farm(FromDictMixin):
     @wtg_id.validator
     def check_wtg_id(self, instance: attr.Attribute, value: list | list[str]) -> None:
         if len(value) == 0:
-            self.wtg_id = [f"t{str(i).zfill(4)}" for i in 1 + np.arange(len(self.turbine_id))]
+            self.wtg_id = [f"WTG_{str(i).zfill(4)}" for i in 1 + np.arange(len(self.turbine_id))]
         elif len(value) < len(self.turbine_id):
             raise ValueError("There are too few `wtg_id` values")
         elif len(value) > len(self.turbine_id):
@@ -192,7 +213,7 @@ class Farm(FromDictMixin):
         self.fCp_interp = turbine_array[:, :, :, column_ix["fCp_interp"]]
         self.power_interp = turbine_array[:, :, :, column_ix["power_interp"]]
 
-        self.data_array = xr.DataArray(
+        self.array_data = xr.DataArray(
             turbine_array,
             coords=dict(
                 wind_directions=self.wind_directions,
@@ -228,6 +249,16 @@ class Farm(FromDictMixin):
             return np.argsort(self.layout_y)
         else:
             raise ValueError("`by` must be set to one of 'x' or 'y'!")
+
+    def _asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `Farm` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+        return attr.asdict(self, filter=_farm_filter, value_serializer=attr_serializer)
 
     @property
     def n_turbines(self):

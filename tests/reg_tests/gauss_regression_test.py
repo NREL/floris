@@ -104,15 +104,16 @@ yawed_baseline = np.array(
 
 
 def test_regression_tandem(sample_inputs_fixture):
+    """
+    Tandem turbines
+    """
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
-
-    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.steady_state_atmospheric_condition()
 
-    n_turbines = len(floris.farm.layout_x)
+    n_turbines = floris.farm.n_turbines
     n_wind_speeds = floris.flow_field.n_wind_speeds
     n_wind_directions = floris.flow_field.n_wind_directions
 
@@ -195,12 +196,11 @@ def test_regression_rotation(sample_inputs_fixture):
     In 270, turbines 2 and 3 are waked. In 360, turbines 1 and 3 are waked.
     The test compares turbines 2 and 3 with 1 and 3 from 270 and 360.
     """
-    TURBINE_DIAMETER = sample_inputs_fixture.floris["turbine"]["rotor_diameter"]
+    TURBINE_DIAMETER = sample_inputs_fixture.floris["turbine"]["test_turb"]["rotor_diameter"]
 
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
-    sample_inputs_fixture.floris["farm"]["wind_directions"] = [270.0, 360.0]
-    sample_inputs_fixture.floris["farm"]["wind_speeds"] = [8.0]
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["farm"]["turbine_id"] = ["test_turb"] * 4
     sample_inputs_fixture.floris["farm"]["layout_x"] = [
         0.0,
         0.0,
@@ -213,8 +213,10 @@ def test_regression_rotation(sample_inputs_fixture):
         0.0,
         5 * TURBINE_DIAMETER
     ]
+    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
+    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
 
-    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.steady_state_atmospheric_condition()
 
     velocities = floris.flow_field.u[:, :, :, :, :]
@@ -243,14 +245,14 @@ def test_regression_yaw(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed
     """
-    sample_inputs_fixture.floris["wake"]["properties"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["properties"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris(input_dict=sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.farm.farm_controller.set_yaw_angles(np.array([5.0, 0.0, 0.0]))
     floris.steady_state_atmospheric_condition()
 
-    n_turbines = len(floris.farm.layout_x)
+    n_turbines = floris.farm.n_turbines
     n_wind_speeds = floris.flow_field.n_wind_speeds
     n_wind_directions = floris.flow_field.n_wind_directions
 

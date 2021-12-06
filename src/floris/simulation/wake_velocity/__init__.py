@@ -10,4 +10,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+# See https://floris.readthedocs.io for documentation
+
+
+from floris.simulation.wake_velocity.curl import CurlVelocityDeficit
+from floris.simulation.wake_velocity.gauss import GaussVelocityDeficit
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit

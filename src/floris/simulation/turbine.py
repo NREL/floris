@@ -27,6 +27,8 @@ from floris.utilities import (
     cosd,
     float_attrib,
     model_attrib,
+    attr_serializer,
+    attr_floris_filter,
     attrs_array_converter,
 )
 from floris.simulation import BaseClass
@@ -354,7 +356,6 @@ class Turbine(BaseClass):
         converter=PowerThrustTable.from_dict,
         kw_only=True,
     )
-    model_string: str = model_attrib(default="turbine")
     # ngrid: float = float_attrib()  # TODO: goes here or on the Grid?
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -377,6 +378,16 @@ class Turbine(BaseClass):
     # # initialize to an invalid value until calculated
     # self.air_density = -1
     # self.use_turbulence_correction = False
+
+    def _asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `Turbine` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+        return attr.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
 
     def __attrs_post_init__(self) -> None:
 

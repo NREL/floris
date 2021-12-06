@@ -16,16 +16,12 @@ from typing import Any, Dict
 import attr
 import numpy as np
 
-from floris.simulation import Grid
-from floris.simulation import Turbine
 from floris.utilities import float_attrib, model_attrib
-from floris.simulation import BaseClass
-from floris.simulation import Farm
-from floris.simulation import FlowField
+from floris.simulation import BaseModel, Farm, FlowField, Grid, Turbine
 
 
 @attr.s(auto_attribs=True)
-class JensenVelocityDeficit(BaseClass):
+class JensenVelocityDeficit(BaseModel):
     """
     The Jensen model computes the wake velocity deficit based on the classic
     Jensen/Park model :cite:`jvm-jensen1983note`.
@@ -43,7 +39,6 @@ class JensenVelocityDeficit(BaseClass):
     """
 
     we: float = float_attrib(default=0.05)
-    model_string: str = model_attrib(default="jensen")
 
     def prepare_function(
         self,
@@ -79,6 +74,10 @@ class JensenVelocityDeficit(BaseClass):
         y_i: np.ndarray,
         z_i: np.ndarray,
         axial_induction_i: np.ndarray,
+        deflection_field_i: np.ndarray,
+        yaw_angle_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,

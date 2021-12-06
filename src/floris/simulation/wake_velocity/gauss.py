@@ -17,19 +17,18 @@ import numpy as np
 
 from floris.simulation import Grid
 from floris.utilities import float_attrib, model_attrib, cosd, sind, tand
-from floris.simulation import BaseClass
+from floris.simulation import BaseModel
 from floris.simulation import Farm
 from floris.simulation import FlowField
 
 
 @attr.s(auto_attribs=True)
-class GaussVelocityDeficit(BaseClass):
+class GaussVelocityDeficit(BaseModel):
 
     alpha: float = float_attrib(default=0.58)
     beta: float = float_attrib(default=0.077)
     ka: float = float_attrib(default=0.38)
     kb: float = float_attrib(default=0.004)
-    model_string: str = model_attrib(default="gauss")
 
     def prepare_function(
         self,
@@ -68,6 +67,8 @@ class GaussVelocityDeficit(BaseClass):
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
+        z_i: np.ndarray,
+        axial_induction_i: np.ndarray,
         deflection_field_i: np.ndarray,
         yaw_angle_i: np.ndarray,
         turbulence_intensity_i: np.ndarray,
