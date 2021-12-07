@@ -58,6 +58,14 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         )
         ct_i = ct_i[:, :, :, None, None]
 
+        axial_induction_i = axial_induction(
+            velocities=u,
+            yaw_angle=farm.farm_controller.yaw_angles,
+            fCt=farm.fCt_interp,
+            ix_filter=[i],
+        )
+        axial_induction_i = axial_induction_i[:, :, :, None, None]
+
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_i = farm.farm_controller.yaw_angles[:, :, i:i+1, None, None]
 
@@ -70,19 +78,11 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             **deflection_model_args
         )
 
-        turbine_ai = axial_induction(
-            velocities=u,
-            yaw_angle=farm.farm_controller.yaw_angles,
-            fCt=farm.fCt_interp,
-            ix_filter=[i],
-        )
-        turbine_ai = turbine_ai[:, :, :, None, None]
-
         velocity_deficit = model_manager.velocity_model.function(
             x_i,
             y_i,
             z_i,
-            turbine_ai,
+            axial_induction_i,
             deflection_field,
             yaw_i,
             turbulence_intensity_i,
@@ -98,14 +98,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             grid.x,
             x_i,
             reference_rotor_diameter,
-            turbine_ai
+            axial_induction_i
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
-        # turb_wake_field = flow_field.u_initial - wake_field
-        # area_overlap = calculate_area_overlap(
-        #     turb_wake_field, flow_field.u_initial, 5, 5
-        # )
         area_overlap = np.sum(velocity_deficit * flow_field.u_initial > 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
         area_overlap = area_overlap[:, :, :, None, None]
 
@@ -212,19 +208,11 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, grid: FlowFie
             **deflection_model_args
         )
 
-        turbine_ai = axial_induction(
-            velocities=u,
-            yaw_angle=farm.farm_controller.yaw_angles,
-            fCt=farm.fCt_interp,
-            ix_filter=[i],
-        )
-        turbine_ai = turbine_ai[:, :, :, None, None]
-
         velocity_deficit = model_manager.velocity_model.function(
             x_i,
             y_i,
             z_i,
-            turbine_ai,
+            axial_induction_i,
             deflection_field,
             yaw_i,
             turbulence_intensity_i,
