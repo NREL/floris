@@ -17,7 +17,7 @@ import attr
 import numpy as np
 
 from floris.utilities import float_attrib, model_attrib
-from floris.simulation import BaseModel, Farm, FlowField, TurbineGrid
+from floris.simulation import BaseModel, Farm, FlowField, Grid, Turbine
 
 
 @attr.s(auto_attribs=True)
@@ -42,7 +42,7 @@ class JensenVelocityDeficit(BaseModel):
 
     def prepare_function(
         self,
-        grid: TurbineGrid,
+        grid: Grid,
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
@@ -57,9 +57,7 @@ class JensenVelocityDeficit(BaseModel):
             (
                 flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1
+                *grid.template_grid.shape
             )
         )
         kwargs = dict(
@@ -72,18 +70,21 @@ class JensenVelocityDeficit(BaseModel):
 
     def function(
         self,
-        i: int,
-        deflection_field: np.ndarray,
-        turbine_ai: np.ndarray,
-        turbulence_intensity: np.ndarray,
-        Ct: np.ndarray,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        z_i: np.ndarray,
+        axial_induction_i: np.ndarray,
+        deflection_field_i: np.ndarray,
+        yaw_angle_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        reference_rotor_diameter: float, # (n wd, n ws, n turb)
+        reference_rotor_diameter: float,
     ) -> None:
 
         # u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)
@@ -103,25 +104,22 @@ class JensenVelocityDeficit(BaseModel):
         # y = m * x + b
         boundary_line = self.we * x + reference_rotor_radius
 
-        y_i = np.mean(y[:, :, i:i+1], axis=(3, 4))
-        y_i = y_i[:, :, :, None, None] + deflection_field
-        z_i = np.mean(z[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
-
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
         # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
-        dx = x - x[:, :, i:i+1]
-        c = (reference_rotor_radius / (reference_rotor_radius + self.we * dx)) ** 2
+        dx = x - x_i
+        dy = y - y_i
+        dz = z - z_i
+        c = ( reference_rotor_radius / ( reference_rotor_radius + self.we * dx ) ) ** 2
         # c *= ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.
         # c *= ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         # np.nan_to_num
         # C should be 0 at the current turbine and everywhere in front of it
-        c[x - x[:, :, i:i+1] <= 0.0] = 0.0
-        mask = ((y - y_i) ** 2 + (z - z_i) ** 2) > (boundary_line ** 2)
+        c[dx <= 0.0] = 0.0
+        mask = (dy ** 2 + dz ** 2) > (boundary_line ** 2)
         c[mask] = 0.0
 
-        velocity_deficit = 2 * turbine_ai * c
+        velocity_deficit = 2 * axial_induction_i * c
 
         return velocity_deficit
 

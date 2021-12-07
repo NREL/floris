@@ -63,7 +63,6 @@ WIND_SPEEDS = [
     11.0,
 ]
 N_WIND_SPEEDS = len(WIND_SPEEDS)
-N_TURBINES = 3
 X_COORDS = [
     0.0,
     5 * 126.0,
@@ -79,7 +78,8 @@ Z_COORDS = [
     90.0,
     90.0
 ]
-GRID_RESOLUTION = 2
+N_TURBINES = len(X_COORDS)
+TURBINE_GRID_RESOLUTION = 2
 
 
 @pytest.fixture

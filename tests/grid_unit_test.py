@@ -23,43 +23,41 @@ from tests.conftest import (
     N_TURBINES,
     WIND_SPEEDS,
     N_WIND_SPEEDS,
-    GRID_RESOLUTION,
+    TURBINE_GRID_RESOLUTION,
     WIND_DIRECTIONS,
     N_WIND_DIRECTIONS,
 )
+from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.utilities import Vec3
-from floris.simulation import TurbineGrid  # , FlowFieldGrid
-
 
 # TODO: test the dimension expansion
 
 
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
-    turbine_coordinates = list(zip(X_COORDS, Y_COORDS, Z_COORDS))
-    turbine_coordinates = [Vec3(c) for c in turbine_coordinates]
+    turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
     return TurbineGrid(
         turbine_coordinates=turbine_coordinates,
         reference_turbine_diameter=sample_inputs_fixture.turbine["test_turb"]["rotor_diameter"],
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
-        grid_resolution=GRID_RESOLUTION,
+        grid_resolution=TURBINE_GRID_RESOLUTION
     )
 
 
-# @pytest.fixture
-# def flow_field_grid_fixture(sample_inputs_fixture):
-#     turbine_coordinates = list(zip(X_COORDS, Y_COORDS, Z_COORDS))
-#     turbine_coordinates = [Vec3(c) for c in turbine_coordinates]
-#     return FlowFieldGrid(
-#         turbine_coordinates,
-#         sample_inputs_fixture.turbine["test_turb"]["rotor_diameter"],
-#         sample_inputs_fixture.farm["reference_wind_height"],
-#         Vec3([2,2,2])
-#     )
+@pytest.fixture
+def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
+    turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
+    return FlowFieldGrid(
+        turbine_coordinates=turbine_coordinates,
+        reference_turbine_diameter=sample_inputs_fixture.turbine["test_turb"]["rotor_diameter"],
+        wind_directions=np.array(WIND_DIRECTIONS),
+        wind_speeds=np.array(WIND_SPEEDS),
+        grid_resolution=[3,2,2]
+    )
 
 
-def test_turbine_set_grid(turbine_grid_fixture):
+def test_turbinegrid_set_grid(turbine_grid_fixture):
     expected_x_grid = [[[0.0, 0.0], [0.0, 0.0]], [[630.0, 630.0], [630.0, 630.0]], [[1260.0, 1260.0], [1260.0, 1260.0]]]
     expected_y_grid = [[[-31.5, -31.5], [31.5, 31.5]], [[-31.5, -31.5], [31.5, 31.5]], [[-31.5, -31.5], [31.5, 31.5]]]
     expected_z_grid = [[[58.5, 121.5], [58.5, 121.5]], [[58.5, 121.5], [58.5, 121.5]], [[58.5, 121.5], [58.5, 121.5]]] 
@@ -78,23 +76,45 @@ def test_turbinegrid_dimensions(turbine_grid_fixture):
         N_WIND_DIRECTIONS,
         N_WIND_SPEEDS,
         N_TURBINES,
-        GRID_RESOLUTION,
-        GRID_RESOLUTION,
+        TURBINE_GRID_RESOLUTION,
+        TURBINE_GRID_RESOLUTION
     )
     assert np.shape(turbine_grid_fixture.y) == (
         N_WIND_DIRECTIONS,
         N_WIND_SPEEDS,
         N_TURBINES,
-        GRID_RESOLUTION,
-        GRID_RESOLUTION,
+        TURBINE_GRID_RESOLUTION,
+        TURBINE_GRID_RESOLUTION
     )
     assert np.shape(turbine_grid_fixture.z) == (
         N_WIND_DIRECTIONS,
         N_WIND_SPEEDS,
         N_TURBINES,
-        GRID_RESOLUTION,
-        GRID_RESOLUTION,
+        TURBINE_GRID_RESOLUTION,
+        TURBINE_GRID_RESOLUTION
     )
+
+
+def test_turbinegrid_dynamic_properties(turbine_grid_fixture):
+    assert turbine_grid_fixture.n_turbines == N_TURBINES
+    assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS
+    assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS
+
+    # TODO: @Rob @Chris This breaks n_turbines since the validator is not run. Is this case ok? Do we enforce that turbine_coordinates must be set by =?
+    # turbine_grid_fixture.turbine_coordinates.append(Vec3([100.0, 200.0, 300.0]))
+    # assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
+
+    turbine_grid_fixture.turbine_coordinates = [*turbine_grid_fixture.turbine_coordinates, Vec3([100.0, 200.0, 300.0])]
+    assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
+
+    turbine_grid_fixture.wind_speeds = [*turbine_grid_fixture.wind_speeds, 0.0]
+    assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS + 1
+
+    turbine_grid_fixture.wind_directions = [*turbine_grid_fixture.wind_directions, 0.0]
+    assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS + 1
+
+
+
 
 
 # def test_flow_field_set_bounds(flow_field_grid_fixture):

@@ -100,7 +100,7 @@ def test_regression_tandem(sample_inputs_fixture):
     n_wind_speeds = floris.flow_field.n_wind_speeds
     n_wind_directions = floris.flow_field.n_wind_directions
 
-    velocities = floris.flow_field.u[:, :, :, :, :]
+    velocities = floris.flow_field.u
     yaw_angles = floris.farm.farm_controller.yaw_angles
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 

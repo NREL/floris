@@ -16,9 +16,9 @@ import attr
 import numpy as np
 
 from floris.simulation import BaseModel
-from floris.simulation import TurbineGrid
-from floris.simulation import FlowField
+from floris.simulation import Grid
 from floris.simulation import Farm
+from floris.simulation import FlowField
 from floris.utilities import cosd, sind, tand, float_attrib, model_attrib, bool_attrib
 
 
@@ -81,7 +81,7 @@ class GaussVelocityDeflection(BaseModel):
 
     def prepare_function(
         self,
-        grid: TurbineGrid,
+        grid: Grid,
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
@@ -90,9 +90,7 @@ class GaussVelocityDeflection(BaseModel):
             (
                 flow_field.n_wind_directions,
                 flow_field.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1
+                *grid.template_grid.shape
             )
         )
 
@@ -103,15 +101,16 @@ class GaussVelocityDeflection(BaseModel):
             freestream_velocity=flow_field.u_initial,
             wind_veer=flow_field.wind_veer,
             reference_rotor_diameter=reference_rotor_diameter,
-            yaw_angle=farm.farm_controller.yaw_angles,
         )
         return kwargs
 
     def function(
         self,
-        i: int,
-        turbulence_intensity: np.ndarray,
-        Ct: np.ndarray,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        yaw_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
         *,
         x: np.ndarray,
         y: np.ndarray,
@@ -119,7 +118,6 @@ class GaussVelocityDeflection(BaseModel):
         freestream_velocity: np.ndarray,
         wind_veer: float,
         reference_rotor_diameter: float,
-        yaw_angle: np.ndarray,
     ):
         """
         Calculates the deflection field of the wake. See
@@ -151,43 +149,27 @@ class GaussVelocityDeflection(BaseModel):
         # opposite sign convention in this model
         tilt = 0.0 #turbine.tilt_angle
 
-        yaw = yaw_angle[:, :, i:i+1, None, None]
-
-        # Ct is given for only the current turbine, so broadcast
-        # this to the grid dimesions
-        Ct = Ct[:, :, :, None, None] * np.ones((1,1,1,5,5))
-
-        # Construct arrays for the current turbine's location
-        x_i = np.mean(x[:, :, i:i+1], axis=(3,4))
-        x_i = x_i[:, :, :, None, None]
-        # x_i = x[:, :, i:i+1, :, :]
-        # y_i = y[:, :, i:i+1, :, :]
-        y_i = np.mean(y[:, :, i:i+1], axis=(3,4))
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(z[:, :, i:i+1], axis=(3,4))
-        z_i = z_i[:, :, :, None, None]
-
         # initial velocity deficits
         uR = (
             freestream_velocity
-          * Ct
+          * ct_i
           * cosd(tilt)
-          * cosd(yaw)
-          / (2.0 * (1 - np.sqrt(1 - (Ct * cosd(tilt) * cosd(yaw)))))
+          * cosd(yaw_i)
+          / (2.0 * (1 - np.sqrt(1 - (ct_i * cosd(tilt) * cosd(yaw_i)))))
         )
-        u0 = freestream_velocity * np.sqrt(1 - Ct)
+        u0 = freestream_velocity * np.sqrt(1 - ct_i)
 
         # length of near wake
         x0 = (
             reference_rotor_diameter
-            * (cosd(yaw) * (1 + np.sqrt(1 - Ct * cosd(yaw))))
-            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity + 2 * self.beta * (1 - np.sqrt(1 - Ct))))
+            * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
+            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
             + x_i
         )
 
         # wake expansion parameters
-        ky = self.ka * turbulence_intensity + self.kb
-        kz = self.ka * turbulence_intensity + self.kb
+        ky = self.ka * turbulence_intensity_i + self.kb
+        kz = self.ka * turbulence_intensity_i + self.kb
 
         C0 = 1 - u0 / freestream_velocity
         M0 = C0 * (2 - C0)
@@ -195,15 +177,14 @@ class GaussVelocityDeflection(BaseModel):
 
         # initial Gaussian wake expansion
         sigma_z0 = reference_rotor_diameter * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
-        sigma_y0 = sigma_z0 * cosd(yaw) * cosd(wind_veer)
+        sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
 
         yR = y - y_i
         xR = x_i # yR * tand(yaw) + x_i
-        # print(x_i[0,0])
-        # print(xR[0,0])
+
         # yaw parameters (skew angle and distance from centerline)
         # skew angle in radians
-        theta_c0 = self.dm * (0.3 * np.radians(yaw) / cosd(yaw)) * (1 - np.sqrt(1 - Ct * cosd(yaw)))
+        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i)) * (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
         delta0 = np.tan(theta_c0) * (x0 - x_i)  # initial wake deflection;
         # NOTE: use np.tan here since theta_c0 is radians
 
