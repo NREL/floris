@@ -183,6 +183,7 @@ class Farm(BaseClass):
 
     @wtg_id.validator
     def check_wtg_id(self, instance: attr.Attribute, value: list | list[str]) -> None:
+        # TODO: is this supposed to be len(value) == len(self.turbine_id)? If not, what happens if len(value) == len(self.turbine_id)?
         if len(value) == 0:
             self.wtg_id = [f"WTG_{str(i).zfill(4)}" for i in 1 + np.arange(len(self.turbine_id))]
         elif len(value) < len(self.turbine_id):

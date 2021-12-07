@@ -150,6 +150,7 @@ def power(
 
     n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     p = np.zeros_like(yaw_effective_velocity)
+    # TODO: convert to list comprehension
     for i in range(n_wind_directions):
         for j in range(n_wind_speeds):
             for k in range(n_turbines):
