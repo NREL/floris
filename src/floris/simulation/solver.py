@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
 import numpy as np
+import time
+import sys
 
 from floris.simulation import Farm
 from floris.simulation import TurbineGrid, FlowFieldGrid
@@ -10,6 +12,7 @@ from floris.simulation.wake import WakeModelManager
 
 
 
+# @profile
 def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
@@ -37,6 +40,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         )
     )
     
+    elapsed_time = 0.0
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
         x_i = np.mean(grid.x[:, :, i:i+1], axis=(3, 4))
@@ -48,7 +52,11 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         z_i = np.mean(grid.z[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
 
+        # NOTE: exponential
+        # start = time.time()
         u = flow_field.u_initial - wake_field
+        # end = time.time()
+        # elapsed_time += end - start
 
         ct_i = Ct(
             velocities=u,
@@ -69,6 +77,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_i = farm.farm_controller.yaw_angles[:, :, i:i+1, None, None]
 
+        # NOTE: exponential
         deflection_field = model_manager.deflection_model.function(
             x_i,
             y_i,
@@ -78,6 +87,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             **deflection_model_args
         )
 
+        # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
             x_i,
             y_i,
@@ -120,6 +130,9 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
     flow_field.u = flow_field.u_initial - wake_field
 
+    elapsed_time = sys.getsizeof(flow_field.u_initial.base)
+
+    return elapsed_time
 
 def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
     ti_initial = 0.1

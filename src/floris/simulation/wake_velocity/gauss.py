@@ -65,6 +65,7 @@ class GaussVelocityDeficit(BaseModel):
         )
         return kwargs
 
+    # @profile
     def function(
         self,
         x_i: np.ndarray,
@@ -182,6 +183,7 @@ class GaussVelocityDeficit(BaseModel):
         return velocity_deficit
 
 
+# @profile
 def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     a = cosd(wind_veer) ** 2 / (2 * sigma_y ** 2) + sind(wind_veer) ** 2 / (2 * sigma_z ** 2)
     b = -sind(2 * wind_veer) / (4 * sigma_y ** 2) + sind(2 * wind_veer) / (4 * sigma_z ** 2)

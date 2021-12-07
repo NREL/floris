@@ -17,6 +17,9 @@ from __future__ import annotations
 import json
 import copy
 from pathlib import Path
+import time
+import numpy as np
+import sys
 
 import attr
 import yaml
@@ -147,6 +150,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # self.steady_state_atmospheric_condition()
         pass
 
+    # @profile
     def steady_state_atmospheric_condition(self):
 
         # <<interface>>
@@ -163,10 +167,14 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         self.flow_field.initialize_velocity_field(grid)
 
         # <<interface>>
-        sequential_solver(self.farm, self.flow_field, grid, self.wake)
+        # start = time.time()
+        elapsed_time = sequential_solver(self.farm, self.flow_field, grid, self.wake)
+        # end = time.time()
+        # elapsed_time = end - start
 
         grid.finalize()
         self.flow_field.finalize(grid.unsorted_indices)
+        return elapsed_time
 
     def solve_for_viz(self):
         # Do the calculation with the TurbineGrid for a single wind speed
