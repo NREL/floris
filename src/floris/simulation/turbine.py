@@ -295,9 +295,9 @@ class PowerThrustTable(FromDictMixin):
     def __attrs_post_init__(self) -> None:
         inputs = (self.power, self.thrust, self.wind_speed)
         if any(el.ndim > 1 for el in inputs):
-            raise ValueError("power, thrust, and wind_speed inputs must be 1-D!")
+            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
         if self.power.size != sum(el.size for el in inputs) / 3:
-            raise ValueError("power, thrust, and wind_speed inputs must be the same size!")
+            raise ValueError("power, thrust, and wind_speed inputs must be the same size.")
 
     def deduplicate_by_windspeed(self) -> None:
         """Identifies duplicated wind speed values in the power curve, and filters out

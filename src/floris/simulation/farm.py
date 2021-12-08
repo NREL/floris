@@ -70,7 +70,7 @@ def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
         elif isinstance(config, Turbine):
             pass
         else:
-            raise TypeError("The Turbine mapping must either be a dictionary of `Turbine` object!")
+            raise TypeError("The Turbine mapping must either be a dictionary of `Turbine` object.")
         return mapping
 
 
@@ -249,7 +249,7 @@ class Farm(BaseClass):
         elif by == "y":
             return np.argsort(self.layout_y)
         else:
-            raise ValueError("`by` must be set to one of 'x' or 'y'!")
+            raise ValueError("`by` must be set to one of 'x' or 'y'.")
 
     def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.

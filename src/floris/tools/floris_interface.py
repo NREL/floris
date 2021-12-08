@@ -66,12 +66,12 @@ class FlorisInterface(LoggerBase):
                 self.floris = Floris.from_json(self.configuration)
             else:
                 raise ValueError(
-                    "The Floris `configuration` file inputs must be of type YAML", "(.yml or .yaml) or JSON (.json)!"
+                    "The Floris `configuration` file inputs must be of type YAML", "(.yml or .yaml) or JSON (.json)."
                 )
         elif isinstance(self.configuration, dict):
             self.floris = Floris.from_dict(self.configuration)
         else:
-            raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'!")
+            raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
 
     def calculate_wake(self, yaw_angles=None, no_wake=False, points=None, track_n_upstream_wakes=False):
         """
@@ -1191,7 +1191,7 @@ class FlorisInterface(LoggerBase):
             float: AEP for wind farm.
         """
         if jobs < -1:
-            raise ValueError("Input 'jobs' cannot be negative!")
+            raise ValueError("Input 'jobs' cannot be negative.")
         if jobs == -1:
             jobs = int(np.ceil(cpu_count() * 0.8))
         if jobs > 0:

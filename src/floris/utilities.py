@@ -232,7 +232,7 @@ class FromDictMixin:
 
 def is_default(instance, attribute, value):
     if attribute.default != value:
-        raise ValueError(f"{attribute.name} should never be set manually!")
+        raise ValueError(f"{attribute.name} should never be set manually.")
 
 
 def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:

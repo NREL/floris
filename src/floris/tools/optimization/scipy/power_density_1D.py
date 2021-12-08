@@ -232,7 +232,7 @@ class PowerDensityOptimization1D(Optimization):
 
         opt_vars_norm = self._optimize()
 
-        print("Optimization complete!")
+        print("Optimization complete.")
 
         opt_locs = [
             self._unnorm(valx, self.bndx_min, self.bndx_max)
