@@ -26,7 +26,7 @@ if len(sys.argv) > 1:
     floris = Floris(sys.argv[1])
 else:
     floris = Floris.from_json("examples/example_input.json")
-floris.farm.flow_field.calculate_wake()
+floris.steady_state_atmospheric_condition()
 
 start = time.time()
 
@@ -36,6 +36,6 @@ def run_floris():
     return floris
 
 
-cProfile.run('re.compile("floris.farm.flow_field.calculate_wake()")')
+cProfile.run('re.compile("floris.steady_state_atmospheric_condition()")')
 end = time.time()
 print(start, end, end - start)
