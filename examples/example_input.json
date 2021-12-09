@@ -50,6 +50,8 @@
     "nrel_5mw": {
       "generator_efficiency": 1.0,
       "hub_height": 90.0,
+      "pP": 1.88,
+      "pT": 1.88,
       "power_thrust_table": {
         "power": [
           0.0,
@@ -202,8 +204,6 @@
           25.5
         ]
       },
-      "pP": 1.88,
-      "pT": 1.88,
       "rotor_diameter": 126.0
     }
   },
@@ -215,22 +215,20 @@
       "turbulence_model": null,
       "velocity_model": "gauss"
     },
-    "parameters": {
-      "wake_deflection_parameters": {
-        "gauss": {
-          "dm": 1.0,
-          "eps_gain": 0.2,
-          "use_secondary_steering": true
-        }
-      },
-      "wake_velocity_parameters": {
-        "gauss": {
-          "calculate_VW_velocities": true,
-          "eps_gain": 0.2,
-          "ka": 0.38,
-          "kb": 0.004,
-          "use_yaw_added_recovery": true
-        }
+    "wake_deflection_parameters": {
+      "gauss": {
+        "dm": 1.0,
+        "eps_gain": 0.2,
+        "use_secondary_steering": true
+      }
+    },
+    "wake_velocity_parameters": {
+      "gauss": {
+        "calculate_VW_velocities": true,
+        "eps_gain": 0.2,
+        "ka": 0.38,
+        "kb": 0.004,
+        "use_yaw_added_recovery": true
       }
     }
   }

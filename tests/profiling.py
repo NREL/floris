@@ -22,20 +22,21 @@ from copy import deepcopy
 from floris.simulation import Floris
 
 
-if len(sys.argv) > 1:
-    floris = Floris(sys.argv[1])
-else:
-    floris = Floris.from_json("examples/example_input.json")
-floris.farm.flow_field.calculate_wake()
+# Provide a path to an input file
+# floris = Floris.from_json(sys.argv[1])
 
-start = time.time()
+# Or use a default. If using default, this script must be called from the root dir
+# i.e. cd floris/ && python tests/profiling.py
+floris = Floris.from_json("examples/example_input.json")
 
+floris.steady_state_atmospheric_condition()
 
 def run_floris():
     floris = Floris.from_json("examples/example_input.json")
     return floris
 
-
-cProfile.run('re.compile("floris.farm.flow_field.calculate_wake()")')
+start = time.time()
+cProfile.run('re.compile("floris.steady_state_atmospheric_condition()")')
 end = time.time()
+
 print(start, end, end - start)

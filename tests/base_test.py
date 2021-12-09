@@ -20,20 +20,20 @@ from floris.simulation import BaseClass, BaseModel
 
 
 @attr.s(auto_attribs=True)
-class TestClass(BaseClass):
+class ClassTest(BaseClass):
     x: int = attr.ib(default=1, converter=int)
     model_string: str = attr.ib(default="test", converter=str)
 
 
 def test_get_model_defaults():
-    defaults = TestClass.get_model_defaults()
+    defaults = ClassTest.get_model_defaults()
     assert len(defaults) == 2
     assert defaults["x"] == 1
     assert defaults["model_string"] == "test"
 
 
 def test_get_model_values():
-    cls = TestClass(x=4, model_string="new")
+    cls = ClassTest(x=4, model_string="new")
     values = cls._get_model_dict()
     assert len(values) == 2
     assert values["x"] == 4
