@@ -299,6 +299,8 @@ class PowerThrustTable(FromDictMixin):
         if self.power.size != sum(el.size for el in inputs) / 3:
             raise ValueError("power, thrust, and wind_speed inputs must be the same size!")
 
+        self.deduplicate_by_windspeed()
+
     def deduplicate_by_windspeed(self) -> None:
         """Identifies duplicated wind speed values in the power curve, and filters out
         all instances after the first, and then all corresponding `power` and `thurst`
