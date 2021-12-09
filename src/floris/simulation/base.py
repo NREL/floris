@@ -17,7 +17,7 @@
 Defines the BaseClass parent class for all models to be based upon.
 """
 
-from abc import ABC, abstractmethod, abstractstaticmethod
+from abc import ABC, abstractmethod, abstractproperty, abstractstaticmethod
 from typing import Any, Dict
 
 import attr
@@ -60,6 +60,15 @@ class BaseModel(BaseClass, ABC):
     BaseModel is the generic class for any wake models. It defines the API required to
     create a valid model.
     """
+
+    @property
+    def model_string(self):
+        return self.model_string
+
+    @model_string.setter
+    @abstractmethod
+    def model_string(self, string):
+        raise NotImplementedError("BaseModel.model_string")
 
     @abstractmethod
     def prepare_function() -> None:

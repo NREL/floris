@@ -30,6 +30,8 @@ class GaussVelocityDeficit(BaseModel):
     ka: float = float_attrib(default=0.38)
     kb: float = float_attrib(default=0.004)
 
+    model_string = "gauss"
+
     def prepare_function(
         self,
         grid: Grid,

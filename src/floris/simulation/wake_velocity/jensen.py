@@ -40,6 +40,8 @@ class JensenVelocityDeficit(BaseModel):
 
     we: float = float_attrib(default=0.05)
 
+    model_string = "jensen"
+
     def prepare_function(
         self,
         grid: Grid,
