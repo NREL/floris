@@ -1,5 +1,19 @@
 {
+  "name": "example_floris_input_file",
   "description": "Single turbine with Jensen / Jimenez wake models",
+  "floris_version": "v3.0.0",
+
+  "logging": {
+    "console": {
+      "enable": true,
+      "level": "INFO"
+    },
+    "file": {
+      "enable": false,
+      "level": "INFO"
+    }
+  },
+
   "farm": {
     "layout_x": [
       0.0
@@ -14,7 +28,7 @@
       "WTG-1"
     ]
   },
-  "floris_version": "v3.0.0",
+
   "flow_field": {
     "air_density": 1.225,
     "reference_turbine_diameter": 126.0,
@@ -31,17 +45,7 @@
     ],
     "wind_veer": 0.0
   },
-  "logging": {
-    "console": {
-      "enable": true,
-      "level": "INFO"
-    },
-    "file": {
-      "enable": false,
-      "level": "INFO"
-    }
-  },
-  "name": "example_floris_input_file",
+
   "turbine": {
     "nrel_5mw": {
       "generator_efficiency": 1.0,
@@ -203,6 +207,7 @@
       "rotor_diameter": 126.0
     }
   },
+
   "wake": {
     "model_strings": {
       "combination_model": null,
