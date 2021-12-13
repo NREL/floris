@@ -19,7 +19,6 @@ def test_farm_init_homogenous_turbines():
     wind_speeds = flow_field_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
-    wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
     turbine_id = ["test_turb"] * len(layout_x)
     turbine_map = deepcopy(turbine_data)
 
@@ -32,14 +31,12 @@ def test_farm_init_homogenous_turbines():
         wind_speeds=wind_speeds,
         layout_x=layout_x,
         layout_y=layout_y,
-        wtg_id=wtg_id,
     )
 
     # Check initial values
     assert farm.coordinates == coordinates
     assert isinstance(farm.layout_x, np.ndarray)
     assert isinstance(farm.layout_y, np.ndarray)
-    assert farm.wtg_id == wtg_id
 
     # Check generated values
     assert np.all(farm.rotor_diameter == turbine_data["test_turb"]["rotor_diameter"])
@@ -59,17 +56,6 @@ def test_farm_init_homogenous_turbines():
         len(layout_x),
     )
 
-    # Check generated WTG IDs is the default
-    farm = Farm(
-        turbine_id=turbine_id,
-        turbine_map=turbine_map,
-        wind_directions=wind_directions,
-        wind_speeds=wind_speeds,
-        layout_x=layout_x,
-        layout_y=layout_y,
-    )
-    assert farm.wtg_id == ["WTG_0001", "WTG_0002", "WTG_0003"]
-
     # Check the layout_x validator
     layout_x_fail_too_few = layout_x[:-1]
     with pytest.raises(ValueError):
@@ -80,7 +66,6 @@ def test_farm_init_homogenous_turbines():
             wind_speeds=wind_speeds,
             layout_x=layout_x_fail_too_few,
             layout_y=layout_y,
-            wtg_id=wtg_id,
         )
 
     layout_x_fail_too_many = deepcopy(layout_x)
@@ -157,7 +142,6 @@ def test_make_fail_to_demonstrate_xarray_properties():
     wind_speeds = flow_field_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
-    wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
     turbine_id = ["test_turb"] * len(layout_x)
     turbine_map = deepcopy(turbine_data)
 
@@ -168,13 +152,11 @@ def test_make_fail_to_demonstrate_xarray_properties():
         wind_speeds=wind_speeds,
         layout_x=layout_x,
         layout_y=layout_y,
-        wtg_id=wtg_id,
     )
     print("The array:\n", farm.array_data)
     print("\n----------\n")
     print("Columns:", farm.array_data.turbine_attributes)
     print("\nx coordinates:", farm.array_data.layout_x)  # what an attribute look like (there are layout_x and layout_y)
-    print("\nWTG IDs:", farm.array_data.wtg_id)  # what a coordinate looks like (this one is dim 0)
     assert True
 
 
@@ -191,7 +173,6 @@ def test_turbine_array_rotor_diameter():
     wind_speeds = flow_field_data["wind_speeds"]
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
-    wtg_id = [f"WTG_{str(i).zfill(3)}" for i in range(len(layout_x))]
     turbine_id = ["test_turb"] * len(layout_x)
     turbine_map = deepcopy(turbine_data)
 
@@ -206,7 +187,6 @@ def test_turbine_array_rotor_diameter():
         wind_speeds=wind_speeds,
         layout_x=layout_x,
         layout_y=layout_y,
-        wtg_id=wtg_id,
     )
     assert np.array_equal(
         farm.rotor_diameter,

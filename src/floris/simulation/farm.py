@@ -16,13 +16,10 @@ from typing import Any, Dict, List
 
 import attr
 import numpy as np
-import xarray as xr
 import numpy.typing as npt
 
 from floris.utilities import (
     Vec3,
-    FromDictMixin,
-    model_attrib,
     iter_validator,
     attr_serializer,
     attr_floris_filter,
@@ -97,28 +94,6 @@ class Farm(BaseClass):
     Wake, FlowField) and packages everything into the appropriate data
     type. Farm should also be used as an entry point to probe objects
     for generating output.
-
-    Args:
-        turbine_id (list[str]): The turbine identifiers to map each turbine to one of
-            the turbine classifications in `turbine_map`.
-        turbine_map (dict[str, dict | Turbine]): The dictionary mapping of unique
-            turbines at the wind power plant. Takes either a pre-generated `Turbine`
-            object, or a dictionary that will be used to generate the `Turbine` object.
-        wind_directions (list[float] | NDArrayFloat): The wind directions.
-        wind_speeds (list[float] | NDArrayFloat): The wind speeds.
-        layout_x (list[float] | NDArrayInt): The x-coordinates for the turbines at
-            the wind power plant.
-        layout_y (list[float] | NDArrayInt]): The y-coordinates for the turbines at
-            the wind power plant.
-        wtg (list[str]): The WTG ID values for each turbine. This field acts as metadata
-            only.
-
-    Raises:
-        ValueError: [description]
-        ValueError: [description]
-
-    Returns:
-        [type]: [description]
     """
 
     turbine_id: list[str] = attr.ib(validator=iter_validator(list, str))
@@ -127,11 +102,6 @@ class Farm(BaseClass):
     wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     layout_x: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     layout_y: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    wtg_id: List[str] = attr.ib(
-        factory=list,
-        on_setattr=attr.setters.validate,
-        validator=iter_validator(list, str),
-    )
 
     coordinates: list[Vec3] = attr.ib(init=False)
 
@@ -145,15 +115,6 @@ class Farm(BaseClass):
     power_interp: NDArrayFloat = attr.ib(init=False)
     rotor_radius: NDArrayFloat = attr.ib(init=False)
     rotor_area: NDArrayFloat = attr.ib(init=False)
-    array_data: xr.DataArray = attr.ib(init=False)
-
-    # Pre multi-turbine
-    # i  j  k  l  m
-    # wd ws x  y  z
-
-    # With multiple turbines per floris ez (aka Chris)
-    # i  j  k    l  m  n
-    # wd ws t_ix x  y  z
 
     def __attrs_post_init__(self) -> None:
         self.coordinates = [
@@ -170,9 +131,9 @@ class Farm(BaseClass):
     @layout_x.validator
     def check_x_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
         if len(value) < len(self.turbine_id):
-            raise ValueError("Not enough `layout_x` values to match the `turbine_id`s")
+            raise ValueError("Not enough `layout_x` values to match the `turbine_id`s.")
         if len(value) > len(self.turbine_id):
-            raise ValueError("Too many `layout_x` values to match the `turbine_id`s")
+            raise ValueError("Too many `layout_x` values to match the `turbine_id`s.")
 
     @layout_y.validator
     def check_y_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
@@ -180,16 +141,6 @@ class Farm(BaseClass):
             raise ValueError("Not enough `layout_y` values to match the `turbine_id`s")
         if len(value) > len(self.turbine_id):
             raise ValueError("Too many `layout_y` values to match the `turbine_id`s")
-
-    @wtg_id.validator
-    def check_wtg_id(self, instance: attr.Attribute, value: list | list[str]) -> None:
-        # TODO: is this supposed to be len(value) == len(self.turbine_id)? If not, what happens if len(value) == len(self.turbine_id)?
-        if len(value) == 0:
-            self.wtg_id = [f"WTG_{str(i).zfill(4)}" for i in 1 + np.arange(len(self.turbine_id))]
-        elif len(value) < len(self.turbine_id):
-            raise ValueError("There are too few `wtg_id` values")
-        elif len(value) > len(self.turbine_id):
-            raise ValueError("There are too many `wtg_id` values")
 
     def generate_farm_points(self) -> None:
         # Create an array of turbine values and the column ordering
@@ -214,23 +165,6 @@ class Farm(BaseClass):
         self.fCp_interp = turbine_array[:, :, :, column_ix["fCp_interp"]]
         self.power_interp = turbine_array[:, :, :, column_ix["power_interp"]]
 
-        self.array_data = xr.DataArray(
-            turbine_array,
-            coords=dict(
-                wind_directions=self.wind_directions,
-                wind_speeds=self.wind_speeds,
-                wtg_id=self.wtg_id,
-                turbine_attributes=column_order,
-            ),
-            attrs=dict(layout_x=self.layout_x, layout_y=self.layout_y),
-        )
-
-    def customize_turbine(self) -> None:
-        # TODO: a method to update a turbine property? Is this needed?
-        # DO THE WORK
-        # self.generate_farm_points()
-        pass
-
     def sort_turbines(self, by: str) -> NDArrayInt:
         """Sorts the turbines by the given dimension.
 
@@ -241,9 +175,6 @@ class Farm(BaseClass):
             NDArrayInt: The index order for retrieving data from `data_array` or any
                 other farm object.
         """
-        # TODO: This should live on the Grid since that's where the
-        # rotated coordinates are stored
-
         if by == "x":
             return np.argsort(self.layout_x)
         elif by == "y":

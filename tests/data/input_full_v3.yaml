@@ -18,8 +18,6 @@ farm:
   - 0.0
   turbine_id:
   - nrel_5mw
-  wtg_id:
-  - WTG-1
   
 flow_field:
   air_density: 1.225
