@@ -12,31 +12,42 @@
 
 # See https://floris.readthedocs.io for documentation
 
-
-import re
-import sys
-import time
-import cProfile
-from copy import deepcopy
+# import re
+# import sys
+# import time
+# import cProfile
+# from copy import deepcopy
 
 from floris.simulation import Floris
-
-
-# Provide a path to an input file
-# floris = Floris.from_json(sys.argv[1])
-
-# Or use a default. If using default, this script must be called from the root dir
-# i.e. cd floris/ && python tests/profiling.py
-floris = Floris.from_json("examples/example_input.json")
-
-floris.steady_state_atmospheric_condition()
+from conftest import SampleInputs
 
 def run_floris():
     floris = Floris.from_json("examples/example_input.json")
     return floris
 
-start = time.time()
-cProfile.run('re.compile("floris.steady_state_atmospheric_condition()")')
-end = time.time()
+# if len(sys.argv) > 1:
+#     floris = Floris(sys.argv[1])
+# else:
+#     floris = Floris("example_input.json")
+# floris.farm.flow_field.calculate_wake()
 
-print(start, end, end - start)
+# start = time.time()
+
+# cProfile.run('re.compile("floris.farm.flow_field.calculate_wake()")')
+# end = time.time()
+# print(start, end, end - start)
+
+sample_inputs = SampleInputs()
+floris = Floris(input_dict=sample_inputs.floris)
+
+factor = 100
+TURBINE_DIAMETER = sample_inputs.floris["turbine"]["rotor_diameter"]
+sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * i for i in range(factor)]
+sample_inputs.floris["farm"]["layout_y"] = [0.0 for i in range(factor)]
+
+
+factor = 10
+sample_inputs.floris["farm"]["wind_directions"] = factor * [270.0]
+sample_inputs.floris["farm"]["wind_speeds"] = factor * [8.0]
+floris = Floris(input_dict=sample_inputs.floris)
+floris.steady_state_atmospheric_condition()
