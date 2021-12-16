@@ -1,62 +1,52 @@
 {
-  "type": "floris_input",
-  "name": "floris_input_file_Example",
-  "description": "Example FLORIS Input file",
-  "floris_version": "v2.0.0",
+  "name": "full_input_file",
+  "description": "Single turbine with Jensen / Jimenez wake models specifying all available parameters",
+  "floris_version": "v3.0.0",
+
   "logging": {
     "console": {
-      "enable": true,
-      "level": "INFO"
+      "enable": false,
+      "level": "WARNING"
     },
     "file": {
       "enable": false,
-      "level": "INFO"
+      "level": "WARNING"
     }
   },
+
   "farm": {
-    "type": "farm",
-    "name": "farm_example_2x2",
-    "description": "Example 2x2 Wind Farm",
-    "properties": {
-      "wind_speed": [
-        8.0
-      ],
-      "wind_direction": [
-        270.0
-      ],
-      "turbulence_intensity": [
-        0.06
-      ],
-      "wind_shear": 0.12,
-      "specified_wind_height": 90.0,
-      "wind_veer": 0.0,
-      "air_density": 1.225,
-      "layout_x": [
-        0.0
-      ],
-      "layout_y": [
-        0.0
-      ],
-      "wind_x": [
-        0
-      ],
-      "wind_y": [
-        0
-      ]
-    }
+    "layout_x": [
+      0.0
+    ],
+    "layout_y": [
+      0.0
+    ],
+    "turbine_id": [
+      "nrel_5mw"
+    ]
   },
+
+  "flow_field": {
+    "air_density": 1.225,
+    "reference_turbine_diameter": 126.0,
+    "reference_wind_height": 90.0,
+    "turbulence_intensity": [
+      0.06
+    ],
+    "wind_directions": [
+      270.0
+    ],
+    "wind_shear": 0.12,
+    "wind_speeds": [
+      8.0
+    ],
+    "wind_veer": 0.0
+  },
+
   "turbine": {
-    "type": "turbine",
-    "name": "nrel_5mw",
-    "description": "NREL 5MW",
-    "properties": {
-      "use_points_on_perimeter": false,
-      "rotor_diameter": 126.0,
-      "hub_height": 90.0,
-      "blade_count": 3,
-      "pP": 1.88,
-      "pT": 1.88,
+    "nrel_5mw": {
       "generator_efficiency": 1.0,
+      "hub_height": 90.0,
       "power_thrust_table": {
         "power": [
           0.0,
@@ -209,22 +199,30 @@
           25.5
         ]
       },
-      "blade_pitch": 0.0,
-      "yaw_angle": 0.0,
-      "tilt_angle": 0.0,
-      "TSR": 8.0
+      "pP": 1.88,
+      "pT": 1.88,
+      "rotor_diameter": 126.0
     }
   },
+
   "wake": {
-    "type": "wake",
-    "name": "wake_jensen",
-    "description": "wake",
-    "properties": {
-      "velocity_model": "jensen",
-      "turbulence_model": "crespo_hernandez",
+    "model_strings": {
+      "combination_model": null,
       "deflection_model": "jimenez",
-      "combination_model": "sosfs"
-      
+      "turbulence_model": null,
+      "velocity_model": "jensen"
+    },
+    "wake_deflection_parameters": {
+      "jimenez": {
+        "ad": 0.0,
+        "bd": 0.0,
+        "kd": 0.05
+      }
+    },
+    "wake_velocity_parameters": {
+      "jensen": {
+        "we": 0.05
+      }
+    }
   }
-}
 }
