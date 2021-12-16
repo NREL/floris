@@ -32,76 +32,104 @@ if __name__=="__main__":
     sample_inputs = SampleInputs()
     TURBINE_DIAMETER = sample_inputs.floris["turbine"]["rotor_diameter"]
 
+    # Use Gauss models
+    sample_inputs.floris["wake"]["model_strings"] = {
+        "velocity_model": "gauss",
+        "deflection_model": "gauss",
+        "combination_model": None,
+        "turbulence_model": None,
+    }
 
-    # Time scaling
+    ### Time scaling
 
     # N = 30
-    # simulation_size = np.arange(N)
 
     # wd_calc_time = np.zeros(N)
+    # wd_size = np.zeros(N)
     # wind_direction_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     wind_direction_scaling_inputs.floris["farm"]["wind_directions"] = factor * [270.0]
-    #     wind_direction_scaling_inputs.floris["farm"]["wind_speeds"] = [8.0]
+    #     wind_direction_scaling_inputs.floris["flow_field"]["wind_directions"] = factor * [270.0]
+    #     wind_direction_scaling_inputs.floris["flow_field"]["wind_speeds"] = [8.0]
 
-    #     wd_calc_time[i] = time_profile(wind_direction_scaling_inputs)
+    #     wd_calc_time[i] = time_profile(copy.deepcopy(wind_direction_scaling_inputs))
+    #     wd_size[i] = factor
     #     print("wind direction", i, wd_calc_time[i])
 
 
     # ws_calc_time = np.zeros(N)
+    # ws_size = np.zeros(N)
     # wind_speed_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     wind_speed_scaling_inputs.floris["farm"]["wind_directions"] = [270.0]
-    #     wind_speed_scaling_inputs.floris["farm"]["wind_speeds"] = factor * [8.0]
+    #     wind_speed_scaling_inputs.floris["flow_field"]["wind_directions"] = [270.0]
+    #     wind_speed_scaling_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
 
-    #     ws_calc_time[i] = time_profile(wind_speed_scaling_inputs)
+    #     ws_calc_time[i] = time_profile(copy.deepcopy(wind_speed_scaling_inputs))
+    #     ws_size[i] = factor
     #     print("wind speed", i, ws_calc_time[i])
 
 
     # turb_calc_time = np.zeros(N)
+    # turb_size = np.zeros(N)
     # turbine_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 3
     #     turbine_scaling_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(factor)]
     #     turbine_scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
 
-    #     turb_calc_time[i] = time_profile(turbine_scaling_inputs)
+    #     turb_calc_time[i] = time_profile(copy.deepcopy(turbine_scaling_inputs))
+    #     turb_size[i] = factor
     #     print("n turbine", i, turb_calc_time[i])
 
 
     # internal_quantity = np.zeros(N)
     # scaling_inputs = copy.deepcopy(sample_inputs)
-    # for i in range(N):
-    #     factor = (i+1) * 3
+    # for i in range(5):
+    #     factor = (i+1) * 2
     #     scaling_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(factor)]
     #     scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
-    #     # scaling_inputs.floris["farm"]["wind_directions"] = [270.0]
-    #     # scaling_inputs.floris["farm"]["wind_speeds"] = factor * [8.0]
+    #     factor = (i+1) * 20
+    #     scaling_inputs.floris["flow_field"]["wind_directions"] = factor * [270.0]
+    #     scaling_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
 
-    #     internal_quantity[i] = internal_probe(scaling_inputs)
-        # print("n turbine", i, internal_quantity[i])
+    #     internal_quantity[i] = time_profile(scaling_inputs)
+    #     print("n turbine", i, internal_quantity[i])
 
     # plt.figure()
-    # plt.plot(simulation_size, internal_quantity, 'b+-', label='internal quantity')
-    # plt.plot(simulation_size, wd_calc_time, 'b+-', label='wind direction')
-    # plt.plot(simulation_size, ws_calc_time, 'g+-', label='wind speed')
-    # plt.plot(simulation_size, turb_calc_time, 'r+-', label='n turbine')
+    # plt.plot(wd_size, wd_calc_time, 'b+-', label='wind direction')
+    # plt.plot(ws_size, ws_calc_time, 'g+-', label='wind speed')
+    # plt.plot(turb_size, turb_calc_time, 'r+-', label='n turbine')
+    # # plt.plot(simulation_size, internal_quantity, 'b+-', label='internal quantity')
     # plt.legend(loc="upper left")
     # plt.grid(True)
 
 
-    n_wind_directions = 10 # 72
-    n_wind_speeds = 25
+    ### Timing larger sizes in each dimension
+
+    N = 10
+    n_wind_directions = 40 # 72
+    n_wind_speeds = 40
     n_turbines = 100
-    sample_inputs.floris["farm"]["wind_directions"] = n_wind_directions * [270.0]
-    sample_inputs.floris["farm"]["wind_speeds"] = n_wind_speeds * [8.0]
+    sample_inputs.floris["wake"]["model_strings"] = {
+        # "velocity_model": "jensen",
+        # "deflection_model": "jimenez",
+        "velocity_model": "gauss",
+        "deflection_model": "gauss",
+        "combination_model": None,
+        "turbulence_model": None,
+    }
+    sample_inputs.floris["flow_field"]["wind_directions"] = n_wind_directions * [270.0]
+    sample_inputs.floris["flow_field"]["wind_speeds"] = n_wind_speeds * [8.0]
     sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
     sample_inputs.floris["farm"]["layout_y"] = n_turbines * [0.0]
+    sample_inputs.floris["farm"]["turbine_id"] = n_turbines * ["test_turb"]
 
-    elapsed_time = time_profile(sample_inputs)
-    print(elapsed_time)
+    calc_time = np.zeros(N)
+    for i in range(N):
+        calc_time[i] = time_profile(copy.deepcopy(sample_inputs))
+        print(i, calc_time[i])
+
 
     ### Memory scaling
 
