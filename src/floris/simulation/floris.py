@@ -73,7 +73,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=5,
         )
-        # TODO: where do we pass in grid_resolution? Hardcoded to 5 above.
 
         self.flow_field.initialize_velocity_field(self.grid)
 
@@ -109,8 +108,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             reference_turbine_diameter=self.farm.reference_turbine_diameter,
             wind_directions=self.flow_field.wind_directions,
             wind_speeds=self.flow_field.wind_speeds,
-            grid_resolution=(200, 200, 7),
-            # grid_resolution=(3, 3, 7),
+            grid_resolution=(100, 100, 13),
         )
         self.flow_field.initialize_velocity_field(self.grid)
 
