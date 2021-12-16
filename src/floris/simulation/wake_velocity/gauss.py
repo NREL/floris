@@ -39,27 +39,12 @@ class GaussVelocityDeficit(BaseModel):
         flow_field: FlowField
     ) -> Dict[str, Any]:
 
-        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
-        reference_hub_height = farm.hub_height[0, 0, 0] * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
-
         kwargs = dict(
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            reference_hub_height=reference_hub_height,
-            reference_rotor_diameter=reference_rotor_diameter,
+            reference_hub_height=farm.reference_hub_height,
+            reference_rotor_diameter=farm.reference_turbine_diameter,
             u_initial=flow_field.u_initial,
             wind_veer=flow_field.wind_veer
         )
@@ -109,7 +94,8 @@ class GaussVelocityDeficit(BaseModel):
         xR = x_i
 
         # Start of the far wake
-        x0 = reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
+        x0 = np.ones_like(u_initial)
+        x0 *= reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
         x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) ) )
         x0 += x_i
 

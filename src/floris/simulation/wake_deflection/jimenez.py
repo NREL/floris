@@ -44,16 +44,10 @@ class JimenezVelocityDeflection(BaseModel):
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
-        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
+
         kwargs = dict(
             x=grid.x,
-            reference_rotor_diameter=reference_rotor_diameter,
+            reference_rotor_diameter=farm.reference_turbine_diameter,
         )
         return kwargs
 

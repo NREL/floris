@@ -28,17 +28,9 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
     wake_field = np.zeros_like(flow_field.u_initial)
 
     turbine_turbulence_intensity = 0.1 * np.ones_like(grid.x)
-    ambient_turbulence_intensity = 0.1 * np.ones_like(grid.x)
+    ambient_turbulence_intensity = 0.1
 
-    reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
-        (
-            flow_field.n_wind_directions,
-            flow_field.n_wind_speeds,
-            grid.n_turbines,
-            1,
-            1
-        )
-    )
+    reference_rotor_diameter = farm.reference_turbine_diameter
     
     elapsed_time = 0.0
     # Calculate the velocity deficit sequentially from upstream to downstream turbines

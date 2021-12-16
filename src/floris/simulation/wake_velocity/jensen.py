@@ -55,18 +55,11 @@ class JensenVelocityDeficit(BaseModel):
         do not use this function and instead pass that data directly to
         the model function.
         """
-        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
         kwargs = dict(
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            reference_rotor_diameter=reference_rotor_diameter
+            reference_rotor_diameter=farm.reference_turbine_diameter
         )
         return kwargs
 
