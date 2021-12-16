@@ -39,27 +39,6 @@ def _farm_filter(inst: attr.Attribute, value: Any) -> bool:
     return attr_floris_filter(inst, value)
 
 
-class FarmController:
-    def __init__(self, n_wind_directions: int, n_wind_speeds: int, n_turbines: int) -> None:
-        # TODO: This should hold the yaw settings for each turbine for each wind speed and wind direction
-
-        # Initialize the yaw settings to an empty array
-        self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, n_turbines))
-
-    def set_yaw_angles(self, yaw_angles: NDArrayFloat) -> None:
-        """
-        Set the yaw angles for each wind turbine at each atmospheric
-        condition.
-
-        Args:
-            yaw_angles (NDArrayFloat): Array of yaw angles with dimensions (n wind directions,
-            n wind speeds, n turbines).
-        """
-        if yaw_angles.ndim != 1:
-            raise ValueError("yaw_angles must be set for each turbine for all atmospheric conditions.")
-        self.yaw_angles[:, :, :] = yaw_angles[None, None, :]
-
-
 def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
     for t_id, config in mapping.items():
         if isinstance(config, dict):
@@ -104,6 +83,7 @@ class Farm(BaseClass):
     layout_y: NDArrayFloat = attr.ib(converter=attrs_array_converter)
 
     coordinates: list[Vec3] = attr.ib(init=False)
+    yaw_angles: NDArrayFloat = attr.ib(init=False)
 
     rotor_diameter: NDArrayFloat = attr.ib(init=False)
     hub_height: NDArrayFloat = attr.ib(init=False)
@@ -124,9 +104,8 @@ class Farm(BaseClass):
 
         self.generate_farm_points()
 
-        # TODO: Enable the farm controller
-        # # Turbine control settings indexed by the turbine ID
-        self.farm_controller = FarmController(len(self.wind_directions), len(self.wind_speeds), len(self.layout_x))
+        # Turbine control settings indexed by the turbine ID
+        self.yaw_angles = np.zeros((self.n_wind_directions, self.n_wind_speeds, self.n_turbines))
 
     @layout_x.validator
     def check_x_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
@@ -170,7 +149,6 @@ class Farm(BaseClass):
 
         Args:
             by (str): The dimension to sort by; should be one of x or y.
-
         Returns:
             NDArrayInt: The index order for retrieving data from `data_array` or any
                 other farm object.

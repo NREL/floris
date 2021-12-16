@@ -60,7 +60,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
         ct_i = Ct(
             velocities=u,
-            yaw_angle=farm.farm_controller.yaw_angles,
+            yaw_angle=farm.yaw_angles,
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
@@ -68,14 +68,14 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
         axial_induction_i = axial_induction(
             velocities=u,
-            yaw_angle=farm.farm_controller.yaw_angles,
+            yaw_angle=farm.yaw_angles,
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, :, None, None]
 
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
-        yaw_i = farm.farm_controller.yaw_angles[:, :, i:i+1, None, None]
+        yaw_i = farm.yaw_angles[:, :, i:i+1, None, None]
 
         # NOTE: exponential
         deflection_field = model_manager.deflection_model.function(

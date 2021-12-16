@@ -14,7 +14,7 @@
 
 import numpy as np
 
-from tests.conftest import print_test_values, turbines_to_array, assert_results_arrays
+from tests.conftest import N_TURBINES, N_WIND_DIRECTIONS, N_WIND_SPEEDS, print_test_values, assert_results_arrays
 from floris.simulation import Ct, Floris, power, axial_induction, average_velocity
 
 
@@ -101,7 +101,7 @@ def test_regression_tandem(sample_inputs_fixture):
     n_wind_directions = floris.flow_field.n_wind_directions
 
     velocities = floris.flow_field.u
-    yaw_angles = floris.farm.farm_controller.yaw_angles
+    yaw_angles = floris.farm.yaw_angles
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
@@ -201,7 +201,7 @@ def test_regression_rotation(sample_inputs_fixture):
     floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.steady_state_atmospheric_condition()
 
-    velocities = floris.flow_field.u[:, :, :, :, :]
+    velocities = floris.flow_field.u
 
     farm_avg_velocities = average_velocity(
         velocities,
@@ -231,15 +231,19 @@ def test_regression_yaw(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
-    floris.farm.farm_controller.set_yaw_angles(np.array([5.0, 0.0, 0.0]))
+
+    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
+    yaw_angles[:,:,0] = 5.0
+    floris.farm.yaw_angles = yaw_angles
+
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
     n_wind_speeds = floris.flow_field.n_wind_speeds
     n_wind_directions = floris.flow_field.n_wind_directions
 
-    velocities = floris.flow_field.u[:, :, :, :, :]
-    yaw_angles = floris.farm.farm_controller.yaw_angles
+    velocities = floris.flow_field.u
+    yaw_angles = floris.farm.yaw_angles
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
