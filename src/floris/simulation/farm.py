@@ -140,6 +140,9 @@ class Farm(BaseClass):
     def reference_turbine_diameter(self):
         return self.rotor_diameter
 
+    @property
+    def reference_hub_height(self):
+        return self.hub_height
 
     def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
