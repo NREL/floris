@@ -39,28 +39,6 @@ def _farm_filter(inst: attr.Attribute, value: Any) -> bool:
     return attr_floris_filter(inst, value)
 
 
-def create_turbines(mapping: Dict[str, dict]) -> Dict[str, Turbine]:
-    for t_id, config in mapping.items():
-        if isinstance(config, dict):
-            mapping[t_id] = Turbine.from_dict(config)
-        elif isinstance(config, Turbine):
-            pass
-        else:
-            raise TypeError("The Turbine mapping must either be a dictionary of `Turbine` object.")
-        return mapping
-
-
-def generate_turbine_tuple(turbine: Turbine) -> tuple:
-    exclusions = ("power_thrust_table")
-    return attr.astuple(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
-
-
-def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
-    exclusions = ("power_thrust_table")
-    mapping = attr.asdict(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
-    return list(mapping.keys())
-
-
 @attr.s(auto_attribs=True)
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
@@ -75,12 +53,11 @@ class Farm(BaseClass):
     for generating output.
     """
 
-    turbine_id: list[str] = attr.ib(validator=iter_validator(list, str))
-    turbine_map: dict[str, Turbine] = attr.ib(converter=create_turbines)
-    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    n_wind_directions: int = attr.ib()
+    n_wind_speeds: int = attr.ib()
     layout_x: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     layout_y: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    turbine: Turbine = attr.ib(converter=Turbine.from_dict)
 
     coordinates: list[Vec3] = attr.ib(init=False)
     yaw_angles: NDArrayFloat = attr.ib(init=False)
@@ -93,13 +70,12 @@ class Farm(BaseClass):
     fCp_interp: NDArrayFloat = attr.ib(init=False)
     fCt_interp: NDArrayFloat = attr.ib(init=False)
     power_interp: NDArrayFloat = attr.ib(init=False)
-    rotor_radius: NDArrayFloat = attr.ib(init=False)
-    rotor_area: NDArrayFloat = attr.ib(init=False)
+    # rotor_radius: NDArrayFloat = attr.ib(init=False)
+    # rotor_area: NDArrayFloat = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.coordinates = [
-            Vec3([x, y, self.turbine_map[t_id].hub_height])
-            for x, y, t_id in zip(self.layout_x, self.layout_y, self.turbine_id)
+            Vec3([x, y, self.turbine.hub_height]) for x, y in zip(self.layout_x, self.layout_y)
         ]
 
         self.generate_farm_points()
@@ -107,58 +83,64 @@ class Farm(BaseClass):
         # Turbine control settings indexed by the turbine ID
         self.yaw_angles = np.zeros((self.n_wind_directions, self.n_wind_speeds, self.n_turbines))
 
-    @layout_x.validator
-    def check_x_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
-        if len(value) < len(self.turbine_id):
-            raise ValueError("Not enough `layout_x` values to match the `turbine_id`s.")
-        if len(value) > len(self.turbine_id):
-            raise ValueError("Too many `layout_x` values to match the `turbine_id`s.")
-
-    @layout_y.validator
-    def check_y_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
-        if len(value) < len(self.turbine_id):
-            raise ValueError("Not enough `layout_y` values to match the `turbine_id`s")
-        if len(value) > len(self.turbine_id):
-            raise ValueError("Too many `layout_y` values to match the `turbine_id`s")
-
     def generate_farm_points(self) -> None:
-        # Create an array of turbine values and the column ordering
-        arbitrary_turbine = self.turbine_map[self.turbine_id[0]]
-        column_order = generate_turbine_attribute_order(arbitrary_turbine)
-        turbine_array = np.array([generate_turbine_tuple(self.turbine_map[t_id]) for t_id in self.turbine_id])
-        turbine_array = np.resize(
-            turbine_array, (self.wind_directions.shape[0], self.wind_speeds.shape[0], *turbine_array.shape)
-        )
 
-        # TODO: how to handle multiple data types xarray
-        column_ix = {col: i for i, col in enumerate(column_order)}
-        self.rotor_diameter = turbine_array[:, :, :, column_ix["rotor_diameter"]].astype(float)
-        self.rotor_radius = turbine_array[:, :, :, column_ix["rotor_radius"]].astype(float)
-        self.rotor_area = turbine_array[:, :, :, column_ix["rotor_area"]].astype(float)
-        self.hub_height = turbine_array[:, :, :, column_ix["hub_height"]].astype(float)
-        self.pP = turbine_array[:, :, :, column_ix["pP"]].astype(float)
-        self.pT = turbine_array[:, :, :, column_ix["pT"]].astype(float)
-        self.generator_efficiency = turbine_array[:, :, :, column_ix["generator_efficiency"]].astype(float)
-        self.fCt_interp = turbine_array[:, :, :, column_ix["fCt_interp"]]
-        # TODO: should we have both fCp_interp and power_interp
-        self.fCp_interp = turbine_array[:, :, :, column_ix["fCp_interp"]]
-        self.power_interp = turbine_array[:, :, :, column_ix["power_interp"]]
+        def generate_turbine_tuple(turbine: Turbine) -> tuple:
+            exclusions = ("power_thrust_table")
+            return attr.astuple(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
 
-    def sort_turbines(self, by: str) -> NDArrayInt:
-        """Sorts the turbines by the given dimension.
+        def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
+            exclusions = ("power_thrust_table")
+            mapping = attr.asdict(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
+            return list(mapping.keys())
 
-        Args:
-            by (str): The dimension to sort by; should be one of x or y.
-        Returns:
-            NDArrayInt: The index order for retrieving data from `data_array` or any
-                other farm object.
-        """
-        if by == "x":
-            return np.argsort(self.layout_x)
-        elif by == "y":
-            return np.argsort(self.layout_y)
-        else:
-            raise ValueError("`by` must be set to one of 'x' or 'y'.")
+        # TODO: assumes homogenous turbines; change this for heterogeneous turbines
+
+        # TODO: maybe leave these on the turbine and reference from there?
+        self.rotor_diameter = self.turbine.rotor_diameter
+        self.hub_height = self.turbine.hub_height
+        self.fCt_interp = self.turbine.fCt_interp
+        self.fCp_interp = self.turbine.fCp_interp
+        self.power_interp = self.turbine.power_interp
+        self.pP = self.turbine.pP
+        self.pT = self.turbine.pT
+        self.generator_efficiency = self.turbine.generator_efficiency
+
+        # self.rotor_diameter = [self.turbine_library[self.turbine_id[i]].rotor_diameter for i in range(self.n_turbines)]
+        # self.hub_height = [self.turbine_library[self.turbine_id[i]].hub_height for i in range(self.n_turbines)]
+        # self.fCt_interp = [self.turbine_library[self.turbine_id[i]].fCt_interp for i in range(self.n_turbines)]
+        # self.fCp_interp = [self.turbine_library[self.turbine_id[i]].fCp_interp for i in range(self.n_turbines)]
+        # self.power_interp = [self.turbine_library[self.turbine_id[i]].power_interp for i in range(self.n_turbines)]
+        # self.pP = [self.turbine_library[self.turbine_id[i]].pP for i in range(self.n_turbines)]
+
+        # # Create an array of turbine values and the column ordering
+        # arbitrary_turbine = self.turbine_library[self.turbine_id[0]]
+        # column_order = generate_turbine_attribute_order(arbitrary_turbine)
+
+        # turbine_array = np.array([generate_turbine_tuple(self.turbine_library[t_id]) for t_id in self.turbine_id])
+        # turbine_array = np.resize(turbine_array, (self.n_wind_directions, self.n_wind_speeds, *turbine_array.shape))
+
+        # column_ix = {col: i for i, col in enumerate(column_order)}
+        # self.rotor_diameter = turbine_array[:, :, :, column_ix["rotor_diameter"]].astype(float)
+        # self.rotor_radius = turbine_array[:, :, :, column_ix["rotor_radius"]].astype(float)
+        # self.rotor_area = turbine_array[:, :, :, column_ix["rotor_area"]].astype(float)
+        # self.hub_height = turbine_array[:, :, :, column_ix["hub_height"]].astype(float)
+        # self.pP = turbine_array[:, :, :, column_ix["pP"]].astype(float)
+        # self.pT = turbine_array[:, :, :, column_ix["pT"]].astype(float)
+        # self.generator_efficiency = turbine_array[:, :, :, column_ix["generator_efficiency"]].astype(float)
+        # self.fCt_interp = turbine_array[:, :, :, column_ix["fCt_interp"]]
+        # # TODO: should we have both fCp_interp and power_interp
+        # self.fCp_interp = turbine_array[:, :, :, column_ix["fCp_interp"]]
+        # self.power_interp = turbine_array[:, :, :, column_ix["power_interp"]]
+
+    @property
+    def n_turbines(self):
+        return len(self.layout_x)
+
+    @property
+    def reference_turbine_diameter(self):
+        # return self.rotor_diameter[0, 0, 0]
+        return self.rotor_diameter #[0]
 
     def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
@@ -170,10 +152,45 @@ class Farm(BaseClass):
         """
         return attr.asdict(self, filter=_farm_filter, value_serializer=attr_serializer)
 
-    @property
-    def n_turbines(self):
-        return len(self.layout_x)
 
-    @property
-    def reference_turbine_diameter(self):
-        return self.rotor_diameter[0, 0, 0]
+    # Data validators
+
+    # @layout_x.validator
+    # def check_x_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
+    #     if len(value) < len(self.turbine_id):
+    #         raise ValueError("Not enough `layout_x` values to match the `turbine_id`s.")
+    #     if len(value) > len(self.turbine_id):
+    #         raise ValueError("Too many `layout_x` values to match the `turbine_id`s.")
+
+    # @layout_y.validator
+    # def check_y_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
+    #     if len(value) < len(self.turbine_id):
+    #         raise ValueError("Not enough `layout_y` values to match the `turbine_id`s")
+    #     if len(value) > len(self.turbine_id):
+    #         raise ValueError("Too many `layout_y` values to match the `turbine_id`s")
+
+    # @turbine_id.validator
+    # def check_turbine_id(self, instance: attr.Attribute, value: list[str]) -> None:
+    #     if (
+    #         len(value) != 0 and                # Not provided: use the first turbine definition
+    #         len(value) != 1 and                # Single value: use the given turbine for all
+    #         len(value) != len(self.layout_x)  # Otherwise, must match the number of turbines in the farm
+    #     ):
+    #         raise ValueError(f"Number of turbine ID's do not match the number of turbines defined.")
+
+    # def sort_turbines(self, by: str) -> NDArrayInt:
+    #     """Sorts the turbines by the given dimension.
+
+    #     Args:
+    #         by (str): The dimension to sort by; should be one of x or y.
+
+    #     Returns:
+    #         NDArrayInt: The index order for retrieving data from `data_array` or any
+    #             other farm object.
+    #     """
+    #     if by == "x":
+    #         return np.argsort(self.layout_x)
+    #     elif by == "y":
+    #         return np.argsort(self.layout_y)
+    #     else:
+    #         raise ValueError("`by` must be set to one of 'x' or 'y'.")

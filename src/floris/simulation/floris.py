@@ -38,18 +38,6 @@ from floris.simulation import (
 )
 
 
-def convert_dict_to_turbine(turbine_map: dict[str, dict]) -> dict[str, Turbine]:
-    """Converts the dictionary of turbine input data to a dictionary of `Turbine`s.
-
-    Args:
-        turbine_map (dict[str, dict]): The "turbine" dictionary from the input file/dictionary.
-
-    Returns:
-        dict[str, Turbine]: The dictionary of `Turbine`s.
-    """
-    return {key: Turbine.from_dict(val) for key, val in turbine_map.items()}
-
-
 @attr.s(auto_attribs=True)
 class Floris(logging_manager.LoggerBase, FromDictMixin):
     """
@@ -58,14 +46,20 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     access other objects within the model.
     """
 
-    farm: Farm = attr.ib()
-    logging: dict = attr.ib()
-    turbine: dict[str, Turbine] = attr.ib(converter=convert_dict_to_turbine)
+    farm: dict = attr.ib()
+    turbine: dict = attr.ib()
     wake: WakeModelManager = attr.ib(converter=WakeModelManager.from_dict)
     flow_field: FlowField = attr.ib(converter=FlowField.from_dict)
+    logging: dict = attr.ib()
 
     def __attrs_post_init__(self) -> None:
-        self.create_farm()
+        self.farm = Farm(
+            turbine=self.turbine[list(self.turbine.keys())[0]],
+            n_wind_directions=self.flow_field.n_wind_directions,
+            n_wind_speeds=self.flow_field.n_wind_speeds,
+            layout_x=self.farm["layout_x"],
+            layout_y=self.farm["layout_y"],
+        )
 
         # Configure logging
         logging_manager.configure_console_log(
@@ -137,14 +131,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         output_dict = self._prepare_for_save()
         with open(output_file_path, "w+") as f:
             yaml.dump(output_dict, f, default_flow_style=False)
-
-    def create_farm(self) -> None:
-        if len(self.farm["turbine_id"]) == 0:
-            self.farm["turbine_id"] = [*self.turbine.keys()][0] * len(self.farm["layout_x"])
-        self.farm["turbine_map"] = self.turbine
-        self.farm["wind_speeds"] = self.flow_field.wind_speeds
-        self.farm["wind_directions"] = self.flow_field.wind_directions
-        self.farm = Farm.from_dict(self.farm)
 
     def annual_energy_production(self, wind_rose):
         # self.steady_state_atmospheric_condition()
