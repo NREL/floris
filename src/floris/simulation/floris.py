@@ -38,7 +38,6 @@ from floris.simulation import (
 )
 
 
-@attr.s(auto_attribs=True)
 class Floris(logging_manager.LoggerBase, FromDictMixin):
     """
     Top-level class that describes a Floris model and initializes the
@@ -46,29 +45,27 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     access other objects within the model.
     """
 
-    farm: dict = attr.ib()
-    turbine: dict = attr.ib()
-    wake: WakeModelManager = attr.ib(converter=WakeModelManager.from_dict)
-    flow_field: FlowField = attr.ib(converter=FlowField.from_dict)
-    logging: dict = attr.ib()
+    def __init__(self, input_dict) -> None:
 
-    def __attrs_post_init__(self) -> None:
+        self.flow_field = FlowField.from_dict(input_dict["flow_field"])
+        self.wake = WakeModelManager.from_dict(input_dict["wake"])
+
         self.farm = Farm(
-            turbine=self.turbine,
+            turbine=input_dict["turbine"],
             n_wind_directions=self.flow_field.n_wind_directions,
             n_wind_speeds=self.flow_field.n_wind_speeds,
-            layout_x=self.farm["layout_x"],
-            layout_y=self.farm["layout_y"],
+            layout_x=input_dict["farm"]["layout_x"],
+            layout_y=input_dict["farm"]["layout_y"],
         )
 
         # Configure logging
         logging_manager.configure_console_log(
-            self.logging["console"]["enable"],
-            self.logging["console"]["level"],
+            input_dict["logging"]["console"]["enable"],
+            input_dict["logging"]["console"]["level"],
         )
         logging_manager.configure_file_log(
-            self.logging["file"]["enable"],
-            self.logging["file"]["level"],
+            input_dict["logging"]["file"]["enable"],
+            input_dict["logging"]["file"]["level"],
         )
 
     @classmethod
@@ -85,7 +82,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         input_file_path = Path(input_file_path).resolve()
         with open(input_file_path) as json_file:
             input_dict = json.load(json_file)
-        return Floris.from_dict(input_dict)
+        return Floris(input_dict)
 
     @classmethod
     def from_yaml(cls, input_file_path: str | Path) -> Floris:
@@ -100,13 +97,17 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         """
         input_file_path = Path(input_file_path).resolve()
         input_dict = yaml.load(open(input_file_path, "r"), Loader=yaml.SafeLoader)
-        return Floris.from_dict(input_dict)
+        return Floris(input_dict)
 
     def _prepare_for_save(self) -> dict:
+        logging = {
+            "console": {"enable": True, "level": self.logger.level},
+            "file": {"enable": False, "level": 1},
+        }
         output_dict = dict(
             farm=self.farm._asdict(),
-            logging=self.logging,
-            turbine=self.turbine._asdict(),
+            turbine=self.farm.turbine._asdict(),
+            logging=logging,
             wake=self.wake._asdict(),
             flow_field=self.flow_field._asdict(),
         )
