@@ -3,7 +3,7 @@ from typing import List, Union
 import attr
 import numpy as np
 
-from floris.utilities import Vec3, float_attrib, model_attrib, convert_to_Vec3
+from floris.utilities import Vec3, float_attrib, model_attrib
 from floris.base_class import BaseClass
 
 
@@ -54,7 +54,7 @@ class Curl(BaseClass):
 
     model_grid_resolution: Union[List[float], Vec3] = attr.ib(
         default=[250, 100, 75],
-        converter=convert_to_Vec3,
+        # converter=convert_to_Vec3,
         on_setattr=attr.setters.validate,
         kw_only=True,
     )

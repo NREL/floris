@@ -201,11 +201,6 @@ def wrap_360(x):
     return x
 
 
-def convert_to_Vec3(x: Union[List[float], Vec3]) -> Vec3:
-    if isinstance(x, Vec3):
-        return x
-    return Vec3(x)
-
 
 @attr.s
 class FromDictMixin:

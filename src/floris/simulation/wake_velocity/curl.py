@@ -16,7 +16,7 @@ import attr
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-from floris.utilities import Vec3, sind, float_attrib, model_attrib, convert_to_Vec3
+from floris.utilities import Vec3, sind, float_attrib, model_attrib
 from floris.simulation import BaseClass
 from floris.simulation import Farm, TurbineGrid
 from floris.simulation import FlowField
@@ -70,7 +70,7 @@ class CurlVelocityDeficit(BaseClass):
 
     model_grid_resolution: Union[List[float], Vec3] = attr.ib(
         default=[250, 100, 75],
-        converter=convert_to_Vec3,
+        # converter=convert_to_Vec3,
         on_setattr=attr.setters.convert,
         kw_only=True,
     )
