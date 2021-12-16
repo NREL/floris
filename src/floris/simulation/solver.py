@@ -58,6 +58,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         # end = time.time()
         # elapsed_time += end - start
 
+        # Get the current turbine quantities
         ct_i = Ct(
             velocities=u,
             yaw_angle=farm.yaw_angles,
@@ -77,6 +78,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_i = farm.yaw_angles[:, :, i:i+1, None, None]
 
+        # Model calculations
         # NOTE: exponential
         deflection_field = model_manager.deflection_model.function(
             x_i,

@@ -15,13 +15,7 @@
 from __future__ import annotations
 
 import json
-import copy
 from pathlib import Path
-import time
-import numpy as np
-import sys
-
-import attr
 import yaml
 
 import floris.logging_manager as logging_manager
@@ -29,7 +23,6 @@ from floris.utilities import FromDictMixin
 from floris.simulation import (
     Farm,
     WakeModelManager,
-    Turbine,
     FlowField,
     TurbineGrid,
     FlowFieldGrid,
@@ -67,6 +60,64 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             input_dict["logging"]["file"]["enable"],
             input_dict["logging"]["file"]["level"],
         )
+
+    # @profile
+    def steady_state_atmospheric_condition(self):
+
+        # <<interface>>
+        # Initialize grid and field quanitities
+        self.grid = TurbineGrid(
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=5,
+        )
+        # TODO: where do we pass in grid_resolution? Hardcoded to 5 above.
+
+        self.flow_field.initialize_velocity_field(self.grid)
+
+        # <<interface>>
+        # start = time.time()
+        elapsed_time = sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+        # end = time.time()
+        # elapsed_time = end - start
+
+        self.grid.finalize()
+        self.flow_field.finalize(self.grid.unsorted_indices)
+        return elapsed_time
+
+    def solve_for_viz(self):
+        # Do the calculation with the TurbineGrid for a single wind speed
+        # and wind direction and 1 point on the grid. Then, use the result
+        # to construct the full flow field grid.
+        # This function call should be for a single wind direction and wind speed
+        # since the memory consumption is very large.
+
+        # self.steady_state_atmospheric_condition()
+
+        # turbine_based_floris = copy.deepcopy(self)
+        turbine_grid = TurbineGrid(
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=5,
+        )
+        self.grid = FlowFieldGrid(
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=(200, 200, 7),
+            # grid_resolution=(3, 3, 7),
+        )
+        self.flow_field.initialize_velocity_field(self.grid)
+
+        full_flow_sequential_solver(self.farm, self.flow_field, self.grid, turbine_grid, self.wake)
+
+
+    ## I/O
 
     @classmethod
     def from_json(cls, input_file_path: str | Path) -> Floris:
@@ -132,61 +183,3 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         output_dict = self._prepare_for_save()
         with open(output_file_path, "w+") as f:
             yaml.dump(output_dict, f, default_flow_style=False)
-
-    def annual_energy_production(self, wind_rose):
-        # self.steady_state_atmospheric_condition()
-        pass
-
-    # @profile
-    def steady_state_atmospheric_condition(self):
-
-        # <<interface>>
-        # Initialize grid and field quanitities
-        grid = TurbineGrid(
-            turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.reference_turbine_diameter,
-            wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
-            grid_resolution=5,
-        )
-        # TODO: where do we pass in grid_resolution? Hardcoded to 5 above.
-
-        self.flow_field.initialize_velocity_field(grid)
-
-        # <<interface>>
-        # start = time.time()
-        elapsed_time = sequential_solver(self.farm, self.flow_field, grid, self.wake)
-        # end = time.time()
-        # elapsed_time = end - start
-
-        grid.finalize()
-        self.flow_field.finalize(grid.unsorted_indices)
-        return elapsed_time
-
-    def solve_for_viz(self):
-        # Do the calculation with the TurbineGrid for a single wind speed
-        # and wind direction and 1 point on the grid. Then, use the result
-        # to construct the full flow field grid.
-        # This function call should be for a single wind direction and wind speed
-        # since the memory consumption is very large.
-
-        # self.steady_state_atmospheric_condition()
-
-        # turbine_based_floris = copy.deepcopy(self)
-        turbine_grid = TurbineGrid(
-            turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.reference_turbine_diameter,
-            wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
-            grid_resolution=5,
-        )
-        flow_field_grid = FlowFieldGrid(
-            turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.reference_turbine_diameter,
-            wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
-            grid_resolution=(100, 100, 7),
-        )
-        self.flow_field.initialize_velocity_field(flow_field_grid)
-
-        full_flow_sequential_solver(self.farm, self.flow_field, flow_field_grid, turbine_grid, self.wake)

@@ -20,7 +20,6 @@ import numpy.typing as npt
 
 from floris.utilities import (
     Vec3,
-    iter_validator,
     attr_serializer,
     attr_floris_filter,
     attrs_array_converter,
@@ -139,8 +138,8 @@ class Farm(BaseClass):
 
     @property
     def reference_turbine_diameter(self):
-        # return self.rotor_diameter[0, 0, 0]
-        return self.rotor_diameter #[0]
+        return self.rotor_diameter
+
 
     def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.

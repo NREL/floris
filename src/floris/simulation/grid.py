@@ -93,7 +93,7 @@ class Grid(ABC):
         self.n_wind_speeds = value.size
 
     @wind_directions.validator
-    def wind_directionss_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+    def wind_directions_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
