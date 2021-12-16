@@ -54,7 +54,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
     def __attrs_post_init__(self) -> None:
         self.farm = Farm(
-            turbine=self.turbine[list(self.turbine.keys())[0]],
+            turbine=self.turbine,
             n_wind_directions=self.flow_field.n_wind_directions,
             n_wind_speeds=self.flow_field.n_wind_speeds,
             layout_x=self.farm["layout_x"],
@@ -106,7 +106,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         output_dict = dict(
             farm=self.farm._asdict(),
             logging=self.logging,
-            turbine={key: val._asdict() for key, val in self.turbine.items()},
+            turbine=self.turbine._asdict(),
             wake=self.wake._asdict(),
             flow_field=self.flow_field._asdict(),
         )

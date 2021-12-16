@@ -178,11 +178,10 @@ def test_regression_rotation(sample_inputs_fixture):
     In 270, turbines 2 and 3 are waked. In 360, turbines 1 and 3 are waked.
     The test compares turbines 2 and 3 with 1 and 3 from 270 and 360.
     """
-    TURBINE_DIAMETER = sample_inputs_fixture.floris["turbine"]["test_turb"]["rotor_diameter"]
+    TURBINE_DIAMETER = sample_inputs_fixture.floris["turbine"]["rotor_diameter"]
 
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
-    sample_inputs_fixture.floris["farm"]["turbine_id"] = ["test_turb"] * 4
     sample_inputs_fixture.floris["farm"]["layout_x"] = [
         0.0,
         0.0,
