@@ -36,11 +36,14 @@ Examples:
     'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
 """
 
-from floris.tools import (
+from .floris_interface import FlorisInterface
+from .visualization import * #visualize_cut_plane, visualize_quiver, plot_turbines_with_fi
+
+# from floris.tools import (
     # cut_plane,
     # energy_ratio,
     # energy_ratio_single,
-    floris_interface,
+    # floris_interface,
     # flow_data,
     # interface_utilities,
     # layout_functions,
@@ -51,4 +54,4 @@ from floris.tools import (
     # sowfa_utilities,
     # visualization,
     # wind_rose,
-)
+# )

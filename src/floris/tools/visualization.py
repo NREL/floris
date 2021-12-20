@@ -22,7 +22,13 @@ import numpy as np
 from typing import Union
 
 def plot_turbines(
-    ax, layout_x, layout_y, yaw_angles, D, color=None, wind_direction=270.0
+    ax,
+    layout_x,
+    layout_y,
+    yaw_angles,
+    rotor_diameters,
+    color=None,
+    wind_direction=270.0
 ):
     """
     Plot wind plant layout from turbine locations.
@@ -38,12 +44,12 @@ def plot_turbines(
     """
 
     # Correct for the wind direction
-    yaw_angles = np.array(yaw_angles) - wind_direction - 270
-
+    yaw_angles = np.array(yaw_angles) # - wind_direction - 270
+    
     if color is None:
         color = "k"
-    for x, y, yaw in zip(layout_x, layout_y, yaw_angles):
-        R = D / 2.0
+    for x, y, yaw, d in zip(layout_x, layout_y, yaw_angles, rotor_diameters):
+        R = d / 2.0
         x_0 = x + np.sin(np.deg2rad(yaw)) * R
         x_1 = x - np.sin(np.deg2rad(yaw)) * R
         y_0 = y - np.cos(np.deg2rad(yaw)) * R
@@ -63,19 +69,14 @@ def plot_turbines_with_fi(ax, fi, color=None):
                 FlowData object.
         color (str, optional): Color to plot turbines
     """
-    # Grab D
-    for i, turbine in enumerate(fi.floris.farm.turbines):
-        D = turbine.rotor_diameter
-        break
-
     plot_turbines(
         ax,
         fi.layout_x,
         fi.layout_y,
-        fi.get_yaw_angles(),
-        D,
+        fi.get_yaw_angles()[0,0],
+        fi.floris.farm.rotor_diameter[0,0],
         color=color,
-        wind_direction=fi.floris.farm.wind_map.input_direction,
+        wind_direction=fi.floris.flow_field.wind_directions[0]
     )
 
 
@@ -119,7 +120,12 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
 
 
 def visualize_cut_plane(
-    cut_plane, ax=None, minSpeed=None, maxSpeed=None, cmap="coolwarm", levels=None
+    cut_plane,
+    ax=None,
+    minSpeed=None,
+    maxSpeed=None,
+    cmap="coolwarm",
+    levels=None
 ):
     """
     Generate pseudocolor mesh plot of the cut_plane.
@@ -148,31 +154,20 @@ def visualize_cut_plane(
         maxSpeed = cut_plane.df.u.max()
 
     # Reshape to 2d for plotting
-    x1_mesh = cut_plane.df.x1.values.reshape(
-        cut_plane.resolution[1], cut_plane.resolution[0]
-    )
-    x2_mesh = cut_plane.df.x2.values.reshape(
-        cut_plane.resolution[1], cut_plane.resolution[0]
-    )
-    u_mesh = cut_plane.df.u.values.reshape(
-        cut_plane.resolution[1], cut_plane.resolution[0]
-    )
+    x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+    x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+    u_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
     Zm = np.ma.masked_where(np.isnan(u_mesh), u_mesh)
 
     # Plot the cut-through
-    im = ax.pcolormesh(
-        x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed, shading="nearest"
-    )
+    im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed, shading="nearest")
 
     # Add line contour
-    line_contour_cut_plane(
-        cut_plane, ax=ax, levels=levels, colors="w", linewidths=0.8, alpha=0.3
-    )
+    line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="w", linewidths=0.8, alpha=0.3)
 
     # Make equal axis
     ax.set_aspect("equal")
 
-    # Return im
     return im
 
 
