@@ -104,7 +104,7 @@ class JensenVelocityDeficit(BaseModel):
         # Do we need to do masking here or can it be handled in the solver?
         # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
         dx = x - x_i
-        dy = y - y_i
+        dy = y - y_i - deflection_field_i
         dz = z - z_i
         c = ( reference_rotor_radius / ( reference_rotor_radius + self.we * dx ) ) ** 2
         # c *= ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.
