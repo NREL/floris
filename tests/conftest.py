@@ -251,6 +251,7 @@ class SampleInputs:
                     25.5,
                 ],
             },
+            "TSR": 8.0
         }
 
         self.farm = {

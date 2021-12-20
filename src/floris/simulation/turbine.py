@@ -343,6 +343,7 @@ class Turbine(BaseClass):
     hub_height: float = float_attrib()
     pP: float = float_attrib()
     pT: float = float_attrib()
+    TSR: float = float_attrib()
     generator_efficiency: float = float_attrib()
     power_thrust_table: PowerThrustTable | dict[str, list[float]] = attr.ib(
         converter=PowerThrustTable.from_dict,

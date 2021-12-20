@@ -66,6 +66,7 @@ class Farm(BaseClass):
     pP: NDArrayFloat = attr.ib(init=False)
     pT: NDArrayFloat = attr.ib(init=False)
     generator_efficiency: NDArrayFloat = attr.ib(init=False)
+    TSR: NDArrayFloat = attr.ib(init=False)
     fCp_interp: NDArrayFloat = attr.ib(init=False)
     fCt_interp: NDArrayFloat = attr.ib(init=False)
     power_interp: NDArrayFloat = attr.ib(init=False)
@@ -77,24 +78,7 @@ class Farm(BaseClass):
             Vec3([x, y, self.turbine.hub_height]) for x, y in zip(self.layout_x, self.layout_y)
         ]
 
-        self.generate_farm_points()
-
-        # Turbine control settings indexed by the turbine ID
-        self.yaw_angles = np.zeros((self.n_wind_directions, self.n_wind_speeds, self.n_turbines))
-
-    def generate_farm_points(self) -> None:
-
-        def generate_turbine_tuple(turbine: Turbine) -> tuple:
-            exclusions = ("power_thrust_table")
-            return attr.astuple(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
-
-        def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
-            exclusions = ("power_thrust_table")
-            mapping = attr.asdict(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
-            return list(mapping.keys())
-
         # TODO: assumes homogenous turbines; change this for heterogeneous turbines
-
         # TODO: maybe leave these on the turbine and reference from there?
         self.rotor_diameter = self.turbine.rotor_diameter
         self.hub_height = self.turbine.hub_height
@@ -104,6 +88,21 @@ class Farm(BaseClass):
         self.pP = self.turbine.pP
         self.pT = self.turbine.pT
         self.generator_efficiency = self.turbine.generator_efficiency
+        self.TSR = self.turbine.TSR
+
+        # Turbine control settings indexed by the turbine ID
+        self.yaw_angles = np.zeros((self.n_wind_directions, self.n_wind_speeds, self.n_turbines))
+
+    # def generate_farm_points(self) -> None:
+
+        # def generate_turbine_tuple(turbine: Turbine) -> tuple:
+        #     exclusions = ("power_thrust_table")
+        #     return attr.astuple(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
+
+        # def generate_turbine_attribute_order(turbine: Turbine) -> List[str]:
+        #     exclusions = ("power_thrust_table")
+        #     mapping = attr.asdict(turbine, filter=lambda attribute, value: attribute.name not in exclusions)
+        #     return list(mapping.keys())
 
         # self.rotor_diameter = [self.turbine_library[self.turbine_id[i]].rotor_diameter for i in range(self.n_turbines)]
         # self.hub_height = [self.turbine_library[self.turbine_id[i]].hub_height for i in range(self.n_turbines)]

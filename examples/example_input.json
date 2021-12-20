@@ -206,7 +206,8 @@
         25.5
       ]
     },
-    "rotor_diameter": 126.0
+    "rotor_diameter": 126.0,
+    "TSR": 8.0
   },
 
   "wake": {
