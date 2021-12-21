@@ -254,10 +254,10 @@ class FromDictMixin:
                 The `attr`-defined class.
         """
         # Get all parameters from the input dictionary that map to the class initialization
-        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init is not False}
+        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
 
         # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
-        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init is not False and not a.default]
+        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and not a.default]
         undefined = sorted(set(required_inputs) - set(kwargs))
         if undefined:
             raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
