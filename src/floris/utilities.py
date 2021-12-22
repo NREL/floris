@@ -232,6 +232,7 @@ def rotate_coordinates_rel_west(wind_directions, coordinates):
     z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
     return x_coord_rotated, y_coord_rotated, z_coord_rotated
 
+
 @attr.s
 class FromDictMixin:
     """A Mixin class to allow for kwargs overloading when a data class doesn't
@@ -252,7 +253,15 @@ class FromDictMixin:
             cls
                 The `attr`-defined class.
         """
-        return cls(**{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init is not False})  # type: ignore
+        # Get all parameters from the input dictionary that map to the class initialization
+        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
+
+        # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
+        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and not a.default]
+        undefined = sorted(set(required_inputs) - set(kwargs))
+        if undefined:
+            raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
+        return cls(**kwargs)  # type: ignore
 
 
 def is_default(instance, attribute, value):

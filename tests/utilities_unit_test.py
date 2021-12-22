@@ -36,7 +36,7 @@ from floris.utilities import (
 
 @attr.s(auto_attribs=True)
 class ClassTest(FromDictMixin):
-    x: int = attr.ib(default=1)
+    x: int = attr.ib(converter=int)
     y: float = float_attrib(default=2.1)
     z: List[str] = attr.ib(default=["empty"], validator=iter_validator(list, str))
     model: str = model_attrib(default="test_class")
@@ -91,38 +91,53 @@ def test_wrap_360():
 
 
 def test_FromDictMixin_defaults():
-    inputs = {}
+    inputs = {"x": 1}
     cls = ClassTest.from_dict(inputs)
-    assert cls == ClassTest()
+    defaults = {a.name: a.default for a in ClassTest.__attrs_attrs__ if a.default}
+    assert cls.y == defaults["y"]
+    assert cls.z == defaults["z"]
+    assert cls.model == defaults["model"]
 
 
 def test_FromDictMixin_custom():
     # Test custom inputs
+    inputs = dict(x=3, y=3.2, z=["one", "two"])
+    cls = ClassTest.from_dict(inputs)
+    assert inputs["x"] == cls.x
+    assert inputs["y"] == cls.y
+    assert inputs["z"] == cls.z
+
+    # Test custom inputs and validate that extra parameters are not mapped
     inputs = dict(x=3, y=3.2, z=["one", "two"], arr=[3, 4, 5.5])
     cls = ClassTest.from_dict(inputs)
     assert inputs["x"] == cls.x
     assert inputs["y"] == cls.y
     assert inputs["z"] == cls.z
-    np.testing.assert_array_equal(inputs["arr"], np.array(inputs["arr"]))
+    assert not hasattr(cls, "arr")
+
+    # Test that missing required inputs raises an error
+    inputs = {}
+    with pytest.raises(AttributeError):
+        cls = ClassTest.from_dict(inputs)
 
 
 def test_is_default():
     with pytest.raises(ValueError):
-        ClassTest(model="real deal")
+        ClassTest(x=1, model="real deal")
 
 
 def test_iter_validator():
     # Check wrong member type
     with pytest.raises(TypeError):
-        ClassTest(z=[4.3, 1])
+        ClassTest(x=1, z=[4.3, 1])
 
     # Check mixed member types
     with pytest.raises(TypeError):
-        ClassTest(z=[4.3, "1"])
+        ClassTest(x=1, z=[4.3, "1"])
 
     # Check wrong iterable type
     with pytest.raises(TypeError):
-        ClassTest(z=("a", "b"))
+        ClassTest(x=1, z=("a", "b"))
 
 
 def test_attrs_array_converter():
@@ -141,18 +156,18 @@ def test_attrs_array_converter():
 
 def test_model_attrib():
     with pytest.raises(ValueError):
-        ClassTest(model="real deal")
+        ClassTest(x=1, model="real deal")
 
-    cls = ClassTest()
+    cls = ClassTest(x=1)
     with pytest.raises(attr.exceptions.FrozenAttributeError):
         cls.model = "real deal"
 
 
 def test_float_attrib():
     with pytest.raises(ValueError):
-        ClassTest(y="fail")
+        ClassTest(x=1, y="fail")
 
-    cls = ClassTest(y=1)
+    cls = ClassTest(x=1, y=1)
     assert cls.y == 1.0
 
     cls.y = "1"
