@@ -15,7 +15,7 @@
 
 import pytest
 
-from floris.utilities import convert_to_Vec3, Vec3
+from floris.utilities import Vec3
 
 
 @pytest.fixture
@@ -190,8 +190,3 @@ def test_prime_elements(vec3_fixture):
     assert pytest.approx(-4.0) == x1p
     assert pytest.approx(-4.0) == x2p
     assert pytest.approx(0.0) == x3p
-
-
-def test_Vec3_conversion(vec3_fixture):
-    assert vec3_fixture == convert_to_Vec3(vec3_fixture)
-    assert vec3_fixture == convert_to_Vec3([4, 4, 0])

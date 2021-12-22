@@ -201,10 +201,36 @@ def wrap_360(x):
     return x
 
 
-def convert_to_Vec3(x: Union[List[float], Vec3]) -> Vec3:
-    if isinstance(x, Vec3):
-        return x
-    return Vec3(x)
+def rotate_coordinates_rel_west(wind_directions, coordinates):
+    # Calculate the difference in given wind direction from 270 / West
+    wind_deviation_from_west = -1 * ((wind_directions - 270) % 360 + 360) % 360
+    wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))
+
+    # Construct the arrays storing the turbine locations
+    x_coordinates, y_coordinates, z_coordinates = coordinates.T
+    # x_coordinates = x_coordinates[None, None, :]
+    # y_coordinates = y_coordinates[None, None, :]
+    # z_coordinates = z_coordinates[None, None, :]
+
+    # Find center of rotation - this is the center of box bounding all of the turbines
+    x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
+    y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+
+    # Rotate turbine coordinates about the center
+    x_coord_offset = x_coordinates - x_center_of_rotation
+    y_coord_offset = y_coordinates - y_center_of_rotation
+    x_coord_rotated = (
+        x_coord_offset * cosd(wind_deviation_from_west)
+        - y_coord_offset * sind(wind_deviation_from_west)
+        + x_center_of_rotation
+    )
+    y_coord_rotated = (
+        x_coord_offset * sind(wind_deviation_from_west)
+        + y_coord_offset * cosd(wind_deviation_from_west)
+        + y_center_of_rotation
+    )
+    z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
+    return x_coord_rotated, y_coord_rotated, z_coord_rotated
 
 
 @attr.s
@@ -227,12 +253,20 @@ class FromDictMixin:
             cls
                 The `attr`-defined class.
         """
-        return cls(**{a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init is not False})  # type: ignore
+        # Get all parameters from the input dictionary that map to the class initialization
+        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
+
+        # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
+        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and not a.default]
+        undefined = sorted(set(required_inputs) - set(kwargs))
+        if undefined:
+            raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
+        return cls(**kwargs)  # type: ignore
 
 
 def is_default(instance, attribute, value):
     if attribute.default != value:
-        raise ValueError(f"{attribute.name} should never be set manually!")
+        raise ValueError(f"{attribute.name} should never be set manually.")
 
 
 def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:

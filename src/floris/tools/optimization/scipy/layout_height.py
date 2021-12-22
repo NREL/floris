@@ -274,7 +274,7 @@ class LayoutHeightOptimization(LayoutOptimization):
 
         opt_results_norm = self._optimize()
 
-        print("Optimization complete!")
+        print("Optimization complete.")
 
         opt_locs = [
             [

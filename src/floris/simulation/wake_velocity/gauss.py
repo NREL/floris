@@ -30,6 +30,8 @@ class GaussVelocityDeficit(BaseModel):
     ka: float = float_attrib(default=0.38)
     kb: float = float_attrib(default=0.004)
 
+    model_string = "gauss"
+
     def prepare_function(
         self,
         grid: Grid,
@@ -37,32 +39,18 @@ class GaussVelocityDeficit(BaseModel):
         flow_field: FlowField
     ) -> Dict[str, Any]:
 
-        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
-        reference_hub_height = farm.hub_height[0, 0, 0] * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
-
         kwargs = dict(
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            reference_hub_height=reference_hub_height,
-            reference_rotor_diameter=reference_rotor_diameter,
+            reference_hub_height=farm.reference_hub_height,
+            reference_rotor_diameter=farm.reference_turbine_diameter,
             u_initial=flow_field.u_initial,
             wind_veer=flow_field.wind_veer
         )
         return kwargs
 
+    # @profile
     def function(
         self,
         x_i: np.ndarray,
@@ -106,7 +94,8 @@ class GaussVelocityDeficit(BaseModel):
         xR = x_i
 
         # Start of the far wake
-        x0 = reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
+        x0 = np.ones_like(u_initial)
+        x0 *= reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
         x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) ) )
         x0 += x_i
 
@@ -180,6 +169,7 @@ class GaussVelocityDeficit(BaseModel):
         return velocity_deficit
 
 
+# @profile
 def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     a = cosd(wind_veer) ** 2 / (2 * sigma_y ** 2) + sind(wind_veer) ** 2 / (2 * sigma_z ** 2)
     b = -sind(2 * wind_veer) / (4 * sigma_y ** 2) + sind(2 * wind_veer) / (4 * sigma_z ** 2)

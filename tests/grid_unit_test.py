@@ -38,7 +38,7 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
     return TurbineGrid(
         turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["test_turb"]["rotor_diameter"],
+        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=TURBINE_GRID_RESOLUTION
@@ -50,7 +50,7 @@ def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
     return FlowFieldGrid(
         turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["test_turb"]["rotor_diameter"],
+        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=[3,2,2]

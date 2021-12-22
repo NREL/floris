@@ -131,18 +131,12 @@ def power(
         air_density = np.array(air_density)
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
-    if isinstance(pP, list):
-        pP = np.array(pP)
-    if isinstance(power_interp, list):
-        power_interp = np.array(power_interp)
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         air_density = air_density[:, :, ix_filter]
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
-        pP = pP[:, :, ix_filter]
-        power_interp = power_interp[:, :, ix_filter]
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
@@ -154,7 +148,7 @@ def power(
     for i in range(n_wind_directions):
         for j in range(n_wind_speeds):
             for k in range(n_turbines):
-                interpolator = power_interp[i, j, k]
+                interpolator = power_interp
                 p[i, j, k] = interpolator(yaw_effective_velocity[i, j, k])
 
     return p * air_density
@@ -183,14 +177,11 @@ def Ct(
 
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
-    if isinstance(fCt, list):
-        fCt = np.array(fCt)
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
-        fCt = fCt[:, :, ix_filter]
 
     n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     average_velocities = average_velocity(velocities)
@@ -198,7 +189,7 @@ def Ct(
     for i in range(n_wind_directions):
         for j in range(n_wind_speeds):
             for k in range(n_turbines):
-                _fCt = fCt[i, j, k]
+                _fCt = fCt
                 thrust_coefficient[i, j, k] = _fCt(average_velocities[i, j, k])
 
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
@@ -230,8 +221,6 @@ def axial_induction(
 
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
-    if isinstance(fCt, list):
-        fCt = np.array(fCt)
 
     # Get Ct first before modifying any data
     thrust_coefficient = Ct(velocities, yaw_angle, fCt, ix_filter)
@@ -295,9 +284,9 @@ class PowerThrustTable(FromDictMixin):
     def __attrs_post_init__(self) -> None:
         inputs = (self.power, self.thrust, self.wind_speed)
         if any(el.ndim > 1 for el in inputs):
-            raise ValueError("power, thrust, and wind_speed inputs must be 1-D!")
+            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
         if self.power.size != sum(el.size for el in inputs) / 3:
-            raise ValueError("power, thrust, and wind_speed inputs must be the same size!")
+            raise ValueError("power, thrust, and wind_speed inputs must be the same size.")
 
         self.deduplicate_by_windspeed()
 
@@ -354,6 +343,7 @@ class Turbine(BaseClass):
     hub_height: float = float_attrib()
     pP: float = float_attrib()
     pT: float = float_attrib()
+    TSR: float = float_attrib()
     generator_efficiency: float = float_attrib()
     power_thrust_table: PowerThrustTable | dict[str, list[float]] = attr.ib(
         converter=PowerThrustTable.from_dict,

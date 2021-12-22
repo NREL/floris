@@ -21,9 +21,9 @@ from typing import Iterable
 import attr
 import numpy as np
 import numpy.typing as npt
-from numpy import newaxis as na
 
 from floris.utilities import Vec3, cosd, sind, attrs_array_converter
+from floris.utilities import rotate_coordinates_rel_west
 
 
 NDArrayFloat = npt.NDArray[np.float64]
@@ -72,9 +72,6 @@ class Grid(ABC):
     y: NDArrayFloat = attr.ib(init=False)
     z: NDArrayFloat = attr.ib(init=False)
 
-    template_grid: NDArrayInt = attr.ib(init=False)
-    grid_axes: Iterable = attr.ib(init=False)
-
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
 
@@ -93,7 +90,7 @@ class Grid(ABC):
         self.n_wind_speeds = value.size
 
     @wind_directions.validator
-    def wind_directionss_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+    def wind_directions_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
@@ -108,10 +105,6 @@ class Grid(ABC):
             assert type(value[2]) is int
         else:
             raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
-
-    @abstractmethod
-    def define_template_grid(self) -> None:
-        raise NotImplementedError("Grid.define_template_grid")
 
     @abstractmethod
     def set_grid(self) -> None:
@@ -132,18 +125,7 @@ class TurbineGrid(Grid):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
-        self.define_template_grid()
         self.set_grid()
-
-    def define_template_grid(self):
-        self.template_grid = np.ones(
-            (
-                self.n_turbines,
-                self.grid_resolution,
-                self.grid_resolution
-            )
-        )
-        self.grid_axes = (3, 4)
 
     def set_grid(self) -> None:
         """
@@ -173,33 +155,8 @@ class TurbineGrid(Grid):
         # TODO: Where should we locate the coordinate system? Currently, its at
         # the foot of the turbine where the tower meets the ground.
 
-        # Calculate the difference in given wind direction from 270 / West
-        wind_deviation_from_west = -1 * ((self.wind_directions - 270) % 360 + 360) % 360
-        wind_deviation_from_west = np.reshape(wind_deviation_from_west, (self.n_wind_directions, 1, 1))
-
-        # Construct the arrays storing the turbine locations
-        x_coordinates, y_coordinates, z_coordinates = self.turbine_coordinates_array.T
-        x_coordinates = x_coordinates[None, None, :]
-        y_coordinates = y_coordinates[None, None, :]
-        z_coordinates = z_coordinates[None, None, :]
-
-        # Find center of rotation - this is the center of box bounding all of the turbines
-        x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
-        y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
-
-        # Rotate turbine coordinates about the center
-        x_coord_offset = x_coordinates - x_center_of_rotation
-        y_coord_offset = y_coordinates - y_center_of_rotation
-        x_coord_rotated = (
-            x_coord_offset * cosd(wind_deviation_from_west)
-            - y_coord_offset * sind(wind_deviation_from_west)
-            + x_center_of_rotation
-        )
-        y_coord_rotated = (
-            x_coord_offset * sind(wind_deviation_from_west)
-            + y_coord_offset * cosd(wind_deviation_from_west)
-            + y_center_of_rotation
-        )
+        # These are the rotated coordinates of the wind turbines based on the wind direction
+        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
@@ -224,10 +181,10 @@ class TurbineGrid(Grid):
 
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
-        _x = x_coord_rotated[:, :, :, None, None] * template_grid
+        _x = x[:, :, :, None, None] * template_grid
         # [:, None] on disc_grid below is effectively a transpose of this vector; compare with disc_grid.reshape(1,-1).T
-        _y = y_coord_rotated[:, :, :, None, None] + template_grid * ( disc_grid[:, None] * np.ones((self.grid_resolution, self.grid_resolution)) )
-        _z = z_coordinates[:, :, :, None, None] + template_grid * ( disc_grid * np.ones((self.grid_resolution, self.grid_resolution)) )
+        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[:, None] * np.ones((self.grid_resolution, self.grid_resolution)) )
+        _z = z[:, :, :, None, None] + template_grid * ( disc_grid * np.ones((self.grid_resolution, self.grid_resolution)) )
 
         # Sort the turbines at each wind direction
 
@@ -269,18 +226,7 @@ class FlowFieldGrid(Grid):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
-        self.define_template_grid()
         self.set_grid()
-
-    def define_template_grid(self):
-        self.template_grid = np.ones(
-            (
-                int(self.grid_resolution[0]),
-                int(self.grid_resolution[1]),
-                int(self.grid_resolution[2]),
-            )
-        )
-        self.grid_axes = (2, 3, 4)
 
     def set_grid(self) -> None:
         """
@@ -293,19 +239,22 @@ class FlowFieldGrid(Grid):
         in the x-, y-, and z-directions.
 
         If the Curl model is used, the predefined bounds are always set.
+
+        First, sort the turbines so that we know the bounds in the correct orientation.
+        Then, create the grid based on this wind-from-left orientation
         """
-        # Calculate the difference in given wind direction from 270 / West
-        wind_deviation_from_west = -1 * ((self.wind_directions - 270) % 360 + 360) % 360
-        wind_deviation_from_west = np.reshape(wind_deviation_from_west, (self.n_wind_directions, 1, 1))
+
+        # These are the rotated coordinates of the wind turbines based on the wind direction
+        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
 
         # Construct the arrays storing the grid points
         eps = 0.01
-        xmin = min(self.turbine_coordinates_array[:, 0]) - 2 * self.reference_turbine_diameter
-        xmax = max(self.turbine_coordinates_array[:, 0]) + 10 * self.reference_turbine_diameter
-        ymin = min(self.turbine_coordinates_array[:, 1]) - 2 * self.reference_turbine_diameter
-        ymax = max(self.turbine_coordinates_array[:, 1]) + 2 * self.reference_turbine_diameter
+        xmin = min(x) - 2 * self.reference_turbine_diameter
+        xmax = max(x) + 10 * self.reference_turbine_diameter
+        ymin = min(y) - 2 * self.reference_turbine_diameter
+        ymax = max(y) + 2 * self.reference_turbine_diameter
         zmin = 0 + eps
-        zmax = 6 * max(self.turbine_coordinates_array[:, 2])
+        zmax = 6 * max(z)
 
         x_points, y_points, z_points = np.meshgrid(
             np.linspace(xmin, xmax, int(self.grid_resolution[0])),
@@ -314,31 +263,9 @@ class FlowFieldGrid(Grid):
             indexing="ij"
         )
 
-        x_coordinates = x_points[None, None, :, :, :] + np.zeros(
-            (
-                self.n_wind_directions,
-                self.n_wind_speeds,
-                *self.template_grid.shape
-            )
-        )
-        y_coordinates = y_points[None, None, :, :, :] + np.zeros(
-            (
-                self.n_wind_directions,
-                self.n_wind_speeds,
-                *self.template_grid.shape
-            )
-        )
-        z_coordinates = z_points[None, None, :, :, :] + np.zeros(
-            (
-                self.n_wind_directions,
-                self.n_wind_speeds,
-                *self.template_grid.shape
-            )
-        )
-
-        self.x = x_coordinates
-        self.y = y_coordinates
-        self.z = z_coordinates
+        self.x = x_points[None, None, :, :, :]
+        self.y = y_points[None, None, :, :, :]
+        self.z = z_points[None, None, :, :, :]
 
     def finalize(self):
         pass

@@ -79,6 +79,8 @@ class GaussVelocityDeflection(BaseModel):
     eps_gain: float = float_attrib(default=0.2)
     use_secondary_steering: bool = bool_attrib(default=True)
 
+    model_string = "gauss"
+
     def prepare_function(
         self,
         grid: Grid,
@@ -86,13 +88,7 @@ class GaussVelocityDeflection(BaseModel):
         flow_field: FlowField
     ) -> Dict[str, Any]:
 
-        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
+        reference_rotor_diameter = farm.reference_turbine_diameter
 
         kwargs = dict(
             x=grid.x,
@@ -104,6 +100,7 @@ class GaussVelocityDeflection(BaseModel):
         )
         return kwargs
 
+    # @profile
     def function(
         self,
         x_i: np.ndarray,

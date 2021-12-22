@@ -1,63 +1,52 @@
 {
-  "type": "floris_input",
-  "name": "floris_input_file_Example",
-  "description": "Example FLORIS Input file",
-  "floris_version": "v2.0.0",
+  "name": "full_input_file",
+  "description": "Single turbine with Jensen / Jimenez wake models specifying all available parameters",
+  "floris_version": "v3.0.0",
+
   "logging": {
     "console": {
       "enable": false,
-      "level": "INFO"
+      "level": "WARNING"
     },
     "file": {
       "enable": false,
-      "level": "INFO"
+      "level": "WARNING"
     }
   },
+
   "farm": {
-    "type": "farm",
-    "name": "farm_example_2x2",
-    "description": "Example 2x2 Wind Farm",
-    "properties": {
-      "wind_speed": [
-        8.0
-      ],
-      "wind_direction": [
-        270.0
-      ],
-      "turbulence_intensity": [
-        0.06
-      ],
-      "wind_shear": 0.12,
-      "__comment__": "specified_wind_height of -1 uses the first turbine's hub height; After initialization, specified_wind_height is a free parameter.",
-      "specified_wind_height": -1,
-      "wind_veer": 0.0,
-      "air_density": 1.225,
-      "layout_x": [
-        0.0
-      ],
-      "layout_y": [
-        0.0
-      ],
-      "wind_x": [
-        0
-      ],
-      "wind_y": [
-        0
-      ]
-    }
+    "layout_x": [
+      0.0
+    ],
+    "layout_y": [
+      0.0
+    ],
+    "turbine_id": [
+      "nrel_5mw"
+    ]
   },
+
+  "flow_field": {
+    "air_density": 1.225,
+    "reference_turbine_diameter": 126.0,
+    "reference_wind_height": 90.0,
+    "turbulence_intensity": [
+      0.06
+    ],
+    "wind_directions": [
+      270.0
+    ],
+    "wind_shear": 0.12,
+    "wind_speeds": [
+      8.0
+    ],
+    "wind_veer": 0.0
+  },
+
   "turbine": {
-    "type": "turbine",
-    "name": "nrel_5mw",
-    "description": "NREL 5MW",
-    "properties": {
-      "use_points_on_perimeter": true,
-      "rotor_diameter": 126.0,
-      "hub_height": 90.0,
-      "blade_count": 3,
-      "pP": 1.88,
-      "pT": 1.88,
+    "nrel_5mw": {
       "generator_efficiency": 1.0,
+      "hub_height": 90.0,
       "power_thrust_table": {
         "power": [
           0.0,
@@ -210,45 +199,37 @@
           25.5
         ]
       },
-      "blade_pitch": 0.0,
-      "yaw_angle": 0.0,
-      "tilt_angle": 0.0,
-      "TSR": 8.0
+      "pP": 1.88,
+      "pT": 1.88,
+      "rotor_diameter": 126.0
     }
   },
+
   "wake": {
-    "type": "wake",
-    "name": "wake_default",
-    "description": "wake",
-    "properties": {
-      "velocity_model": "gauss",
-      "turbulence_model": "crespo_hernandez",
+    "model_strings": {
+      "combination_model": null,
       "deflection_model": "gauss",
-      "combination_model": "sosfs",
-      "parameters": {
-        "wake_velocity_parameters": {
-          "gauss": {
-            "ka": 0.38,
-            "kb": 0.004,
-            "calculate_VW_velocities": true,
-            "use_yaw_added_recovery": true
-          }
-        },
-        "wake_deflection_parameters": {
-          "gauss": {
-            "dm": 1.0,
-            "use_secondary_steering":true
-          }
-        },
-        "wake_turbulence_parameters": {
-          "crespo_hernandez": {
-            "initial": 0.5,
-            "constant": 0.9,
-            "ai": 0.75,
-            "downstream": -0.325
-          }
-        }
-    }
+      "turbulence_model": null,
+      "velocity_model": "gauss"
+    },
+    "wake_deflection_parameters": {
+      "gauss": {
+        "ad": 0.0,
+        "alpha": 0.58,
+        "bd": 0.0,
+        "beta": 0.077,
+        "dm": 1.0,
+        "ka": 0.3837,
+        "kb": 0.003678
+      }
+    },
+    "wake_velocity_parameters": {
+      "gauss": {
+        "alpha": 0.58,
+        "beta": 0.077,
+        "ka": 0.3837,
+        "kb": 0.003678
+      }
     }
   }
 }

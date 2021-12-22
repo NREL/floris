@@ -35,9 +35,7 @@ jobs:
         # pytest tests/
         # -rA displays the captured output for all tests after they're run
         # See the docs: https://doc.pytest.org/en/latest/reference/reference.html#command-line-flags
-        pytest -rA tests/  --ignore tests/ignore --ignore tests/reg_tests
-        pytest -rA tests/reg_tests/jensen_jimenez_regression_test.py
-        pytest -rA tests/reg_tests/gauss_regression_test.py
+        pytest -rA tests/ --ignore tests/timing.py --ignore tests/profiling.py
     - name: Generate coverage report
       # Run these tests on unit tests only so that we avoid inflating our code
       # coverage through the regression tests
@@ -45,7 +43,7 @@ jobs:
       run: |
         pip install pytest
         pip install pytest-cov
-        pytest --cov=./ --cov-report=xml tests/  --ignore tests/ignore --ignore tests/reg_tests
+        pytest --cov=./ --cov-report=xml tests/ --ignore tests/reg_tests --ignore tests/timing.py --ignore tests/profiling.py
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:

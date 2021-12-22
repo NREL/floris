@@ -36,25 +36,22 @@ class JimenezVelocityDeflection(BaseModel):
     ad: float = float_attrib(default=0.0)
     bd: float = float_attrib(default=0.0)
 
+    model_string = "jimenez"
+
     def prepare_function(
         self,
         grid: Grid,
         farm: Farm,
         flow_field: FlowField
     ) -> Dict[str, Any]:
-        reference_rotor_diameter = farm.reference_turbine_diameter * np.ones(
-            (
-                flow_field.n_wind_directions,
-                flow_field.n_wind_speeds,
-                *grid.template_grid.shape
-            )
-        )
+
         kwargs = dict(
             x=grid.x,
-            reference_rotor_diameter=reference_rotor_diameter,
+            reference_rotor_diameter=farm.reference_turbine_diameter,
         )
         return kwargs
 
+    # @profile
     def function(
         self,
         x_i: np.ndarray,

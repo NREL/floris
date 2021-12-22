@@ -36,7 +36,7 @@ INDEX_FILTER = [0, 2]
 
 
 def test_power_thrust_table():
-    turbine_data = SampleInputs().turbine["test_turb"]
+    turbine_data = SampleInputs().turbine
     table = PowerThrustTable.from_dict(turbine_data["power_thrust_table"])
 
     # Test data conversion is correct
@@ -56,19 +56,19 @@ def test_power_thrust_table():
 
     # Test for initialization errors
     for el in ("power", "thrust", "wind_speed"):
-        pt_table = SampleInputs().turbine["test_turb"]["power_thrust_table"]
+        pt_table = SampleInputs().turbine["power_thrust_table"]
         pt_table[el] = pt_table[el][:-1]
         with pytest.raises(ValueError):
             PowerThrustTable.from_dict(pt_table)
 
-        pt_table = SampleInputs().turbine["test_turb"]["power_thrust_table"]
+        pt_table = SampleInputs().turbine["power_thrust_table"]
         pt_table[el] = np.array(pt_table[el]).reshape(2, -1)
         with pytest.raises(ValueError):
             PowerThrustTable.from_dict(pt_table)
 
 
 def test_turbine_init():
-    turbine_data = SampleInputs().turbine["test_turb"]
+    turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
@@ -90,7 +90,7 @@ def test_turbine_init():
 
 def test_rotor_radius():
 
-    turbine_data = SampleInputs().turbine["test_turb"]
+    turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
 
     # Test that the radius is set correctly from the input file
@@ -106,7 +106,7 @@ def test_rotor_radius():
 
 def test_rotor_area():
 
-    turbine_data = SampleInputs().turbine["test_turb"]
+    turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
 
     # Test that the area is set correctly from the input file
@@ -186,14 +186,15 @@ def test_average_velocity():
     # Test boolean filter
     ix_filter = [True, False, True, False]
     velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,1,4,3,3)
-        (
-            np.ones(
-                (1, 1, 3, 3)
-            ),  # The first dimension here is the wind direction and second is the wind speed since we are stacking on axis=2
-            2 * np.ones((1, 1, 3, 3)),
-            3 * np.ones((1, 1, 3, 3)),
-            4 * np.ones((1, 1, 3, 3)),
-        ),
+        ( i * np.ones((1, 1, 3, 3)) for i in range(1,5) ),
+        # (
+        #     np.ones(
+        #         (1, 1, 3, 3)
+        #     ),  # The first dimension here is the wind direction and second is the wind speed since we are stacking on axis=2
+        #     2 * np.ones((1, 1, 3, 3)),
+        #     3 * np.ones((1, 1, 3, 3)),
+        #     4 * np.ones((1, 1, 3, 3)),
+        # ),
         axis=2,
     )
     avg = average_velocity(velocities, ix_filter)
@@ -207,15 +208,8 @@ def test_average_velocity():
 
     # Test integer array filter
     # np.arange(1, 5).reshape((-1,1,1)) * np.ones((1, 1, 3, 3))
-    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
-        (
-            np.ones(
-                (1, 1, 3, 3)
-            ),  # The first dimension here is the wind direction and second is the wind speed since we are stacking on axis=2
-            2 * np.ones((1, 1, 3, 3)),
-            3 * np.ones((1, 1, 3, 3)),
-            4 * np.ones((1, 1, 3, 3)),
-        ),
+    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,1,4,3,3)
+        ( i * np.ones((1, 1, 3, 3)) for i in range(1,5) ),
         axis=2,
     )
     avg = average_velocity(velocities, INDEX_FILTER)
@@ -227,7 +221,7 @@ def test_average_velocity():
 
 def test_ct():
 
-    turbine_data = SampleInputs().turbine["test_turb"]
+    turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
 
     # Single turbine
@@ -236,7 +230,7 @@ def test_ct():
     thrust = Ct(
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
-        fCt=np.array([turbine.fCt]).reshape((1, 1, 1)),
+        fCt=turbine.fCt_interp,
     )
 
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
@@ -247,7 +241,7 @@ def test_ct():
     thrusts = Ct(
         velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, 4)),
-        fCt=np.array(4 * [turbine.fCt]).reshape((1, 1, 4)),
+        fCt=turbine.fCt_interp,
         ix_filter=INDEX_FILTER,
     )
     assert len(thrusts[0, 0]) == len(INDEX_FILTER)
@@ -259,7 +253,7 @@ def test_ct():
 
 def test_power():
 
-    turbine_data = SampleInputs().turbine["test_turb"]
+    turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
 
     # Single turbine
@@ -268,8 +262,8 @@ def test_power():
         air_density=1.0 * np.ones((1, 1, 1)),
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
-        pP=turbine.pP * np.ones((1, 1, 1)),
-        power_interp=np.array([turbine.fCp]).reshape((1, 1, 1)),
+        pP=turbine.pP,
+        power_interp=turbine.fCp,
     )
 
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
@@ -281,8 +275,8 @@ def test_power():
         air_density=1.0 * np.ones((1, 1, 4)),
         velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, 4)),
-        pP=turbine.pP * np.ones((1, 1, 4)),
-        power_interp=np.array(4 * [turbine.fCp]).reshape((1, 1, 4)),
+        pP=turbine.pP,
+        power_interp=turbine.fCp,
         ix_filter=INDEX_FILTER,
     )
     assert len(p[0, 0]) == len(INDEX_FILTER)
@@ -294,7 +288,7 @@ def test_power():
 
 def test_axial_induction():
 
-    turbine_data = SampleInputs().turbine["test_turb"]
+    turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
 
     baseline_ai = 0.25116283939089806
@@ -304,7 +298,7 @@ def test_axial_induction():
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
-        fCt=np.array([turbine.fCt]).reshape((1, 1, 1)),
+        fCt=turbine.fCt,
     )
     assert ai == baseline_ai
 
@@ -312,7 +306,7 @@ def test_axial_induction():
     ai = axial_induction(
         velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, 4)),
-        fCt=np.array(4 * [turbine.fCt]).reshape((1, 1, 4)),
+        fCt=turbine.fCt,
         ix_filter=INDEX_FILTER,
     )
 

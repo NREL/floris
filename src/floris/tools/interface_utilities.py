@@ -23,8 +23,11 @@ def show_params(
 ):
 
     if wake_velocity_model:
-        obj = "fi.floris.farm.wake.velocity_model"
-        props = get_props(obj, fi)
+        obj = "fi.floris.wake.velocity_model"
+        # props = get_props(obj, fi)
+        props = fi.floris.wake._asdict()
+        # props = props["wake_velocity_parameters"][fi.floris.wake.velocity_model.model_string]
+        props = fi.floris.wake.velocity_model._get_model_dict()
 
         if verbose:
             print("=".join(["="] * 39))
@@ -32,7 +35,7 @@ def show_params(
             print("=".join(["="] * 19))
         print(
             "Wake Velocity Model Parameters:",
-            fi.floris.farm.wake.velocity_model.model_string,
+            fi.floris.wake.velocity_model.model_string,
             "model",
         )
 
@@ -50,7 +53,7 @@ def show_params(
                 print_prop_docs(obj, fi, props)
 
     if wake_deflection_model:
-        obj = "fi.floris.farm.wake.deflection_model"
+        obj = "fi.floris.wake.deflection_model"
         props = get_props(obj, fi)
 
         if verbose:
@@ -59,7 +62,7 @@ def show_params(
             print("=".join(["="] * 19))
         print(
             "Wake Deflection Model Parameters:",
-            fi.floris.farm.wake.deflection_model.model_string,
+            fi.floris.wake.deflection_model.model_string,
             "model",
         )
 
@@ -78,7 +81,7 @@ def show_params(
                 print_prop_docs(obj, fi, props)
 
     if turbulence_model:
-        obj = "fi.floris.farm.wake.turbulence_model"
+        obj = "fi.floris.wake.turbulence_model"
         props = get_props(obj, fi)
 
         if verbose:
@@ -87,7 +90,7 @@ def show_params(
             print("=".join(["="] * 19))
         print(
             "Wake Turbulence Model Parameters:",
-            fi.floris.farm.wake.turbulence_model.model_string,
+            fi.floris.wake.turbulence_model.model_string,
             "model",
         )
 
@@ -234,10 +237,10 @@ def get_props_subset(params, props):
     return props_subset
 
 
-def get_props(obj, fi):
-    return inspect.getmembers(
-        eval(obj + ".__class__"), lambda obj: isinstance(obj, property)
-    )
+# def get_props(obj, fi):
+#     return inspect.getmembers(
+#         eval(obj + ".__class__"), lambda obj: isinstance(obj, property)
+#     )
 
 
 def get_prop_values(obj, fi, props):
