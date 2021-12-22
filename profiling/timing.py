@@ -107,10 +107,10 @@ if __name__=="__main__":
 
     ### Timing larger sizes in each dimension
 
-    N = 10
-    n_wind_directions = 40 # 72
-    n_wind_speeds = 40
-    n_turbines = 100
+    N = 1
+    n_wind_directions = 2 # 72
+    n_wind_speeds = 1
+    n_turbines = 1
     sample_inputs.floris["wake"]["model_strings"] = {
         # "velocity_model": "jensen",
         # "deflection_model": "jimenez",
@@ -120,7 +120,7 @@ if __name__=="__main__":
         "turbulence_model": None,
     }
     sample_inputs.floris["flow_field"]["wind_directions"] = n_wind_directions * [270.0]
-    sample_inputs.floris["flow_field"]["wind_speeds"] = n_wind_speeds * [8.0]
+    sample_inputs.floris["flow_field"]["wind_speeds"] = n_wind_speeds * [9.0]
     sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
     sample_inputs.floris["farm"]["layout_y"] = n_turbines * [0.0]
     sample_inputs.floris["farm"]["turbine_id"] = n_turbines * ["test_turb"]
@@ -128,7 +128,7 @@ if __name__=="__main__":
     calc_time = np.zeros(N)
     for i in range(N):
         calc_time[i] = time_profile(copy.deepcopy(sample_inputs))
-        print(i, calc_time[i])
+        # print(i, calc_time[i])
 
 
     ### Memory scaling
