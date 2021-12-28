@@ -17,44 +17,14 @@ import numpy as np
 import pytest
 
 from tests.conftest import (
-    X_COORDS,
-    Y_COORDS,
-    Z_COORDS,
     N_TURBINES,
-    WIND_SPEEDS,
     N_WIND_SPEEDS,
     TURBINE_GRID_RESOLUTION,
-    WIND_DIRECTIONS,
     N_WIND_DIRECTIONS,
 )
-from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.utilities import Vec3
 
 # TODO: test the dimension expansion
-
-
-@pytest.fixture
-def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
-    turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
-    return TurbineGrid(
-        turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
-        wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
-        grid_resolution=TURBINE_GRID_RESOLUTION
-    )
-
-
-@pytest.fixture
-def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
-    turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
-    return FlowFieldGrid(
-        turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
-        wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
-        grid_resolution=[3,2,2]
-    )
 
 
 def test_turbinegrid_set_grid(turbine_grid_fixture):

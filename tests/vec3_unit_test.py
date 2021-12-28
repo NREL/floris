@@ -14,14 +14,7 @@
 
 
 import pytest
-
 from floris.utilities import Vec3
-
-
-@pytest.fixture
-def vec3_fixture():
-
-    return Vec3([4, 4, 0])
 
 
 def test_instantiation_with_list():

@@ -1,14 +1,12 @@
 from pathlib import Path
 
 import yaml
-import numpy as np
 
 from floris.simulation import (
     Farm,
     Floris,
     FlowField,
     WakeModelManager,
-    Turbine
 )
 
 

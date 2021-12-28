@@ -17,14 +17,6 @@ import numpy as np
 import pytest
 
 from tests.conftest import N_TURBINES
-from floris.simulation import FlowField
-from tests.grid_unit_test import turbine_grid_fixture
-
-
-@pytest.fixture
-def flow_field_fixture(sample_inputs_fixture):
-    flow_field_dict = sample_inputs_fixture.flow_field
-    return FlowField.from_dict(flow_field_dict)
 
 
 def test_n_wind_speeds(flow_field_fixture):
