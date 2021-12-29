@@ -216,155 +216,306 @@ class GaussVelocityDeflection(BaseModel):
 
         return deflection
 
-    def calculate_effective_yaw_angle(
-        self, x_locations, y_locations, z_locations, turbine, coord, flow_field
-    ):
-        """
-        This method determines the effective yaw angle to be used when
-        secondary steering is enabled. For more details on how the effective
-        yaw angle is calculated, see :cite:`bvd-King2019Controls`.
 
-        Args:
-            x_locations (np.array): Streamwise locations in wake.
-            y_locations (np.array): Spanwise locations in wake.
-            z_locations (np.array): Vertical locations in wake.
-            turbine (:py:class:`floris.simulation.turbine.Turbine`):
-                Turbine object.
-            coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
-                Spatial coordinates of wind turbine.
-            flow_field (:py:class:`floris.simulation.flow_field.FlowField`):
-                Flow field object.
+def gamma(
+    D,
+    velocity,
+    Uinf,
+    Ct,
+):
+    """
+    Vortex circulation strength. Units of XXX TODO
 
-        Raises:
-            ValueError: It appears that 'use_secondary_steering' is set
-                to True and 'calculate_VW_velocities' is set to False.
-                This configuration is not valid. Please set
-                'use_secondary_steering' to True if you wish to use
-                yaw-added recovery.
+    Args:
+        D (float): Rotor diameter of the current turbine
+        velocity (np.array(float)): Velocities at the current turbine
+        Uinf (float): Free-stream velocity
+        Ct (float): Thrust coefficient at the current turbine
 
-        Returns:
-            float: The turbine yaw angle, including any effective yaw if
-            secondary steering is enabled.
-        """
-        if self.use_secondary_steering:
-            if not flow_field.wake.velocity_model.calculate_VW_velocities:
-                err_msg = (
-                    "It appears that 'use_secondary_steering' is set "
-                    + "to True and 'calculate_VW_velocities' is set to False. "
-                    + "This configuration is not valid. Please set "
-                    + "'use_secondary_steering' to True if you wish to use "
-                    + "yaw-added recovery."
-                )
-                self.logger.error(err_msg, stack_info=True)
-                raise ValueError(err_msg)
-            # turbine parameters
-            Ct = turbine.Ct
-            D = turbine.rotor_diameter
-            HH = turbine.hub_height
-            aI = turbine.axial_induction
-            TSR = turbine.tsr
-            V = flow_field.v
-            Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
+    Returns:
+        [type]: [description]
+    """
+    scale = 1.0
+    # NOTE: Ct includes a cosd(yaw)
+    return scale * (np.pi / 8) * D * velocity * Uinf * Ct
 
-            eps = self.eps_gain * D  # Use set value
-            idx = np.where(
-                (np.abs(x_locations - coord.x1) < D / 4)
-                & (np.abs(y_locations - coord.x2) < D / 2)
-            )
 
-            yLocs = y_locations[idx] + 0.01 - coord.x2
+# def calculate_effective_yaw(
+def wake_added_yaw(
+    u_i,
+    v_i,
+    u_initial,
+    delta_x,
+    delta_y,
+    z_i,
+    rotor_diameter,
+    hub_height,
+    yaw_angle,
+    ct_i,
+    tip_speed_ratio,
+    axial_induction_i
+):
+    """
+    what yaw angle would have produced that same average spanwise velocity
 
-            # location of top vortex
-            zT = z_locations[idx] + 0.01 - (HH + D / 2)
-            rT = yLocs ** 2 + zT ** 2
+    These calculations focus around the current turbine. The formulation could
+    remove the dimension for n-turbines, but for consistency with other
+    similar equations it is left. However, the turbine dimension should
+    always have length 1.
+    """
 
-            # location of bottom vortex
-            zB = z_locations[idx] + 0.01 - (HH - D / 2)
-            rB = yLocs ** 2 + zB ** 2
+    # turbine parameters
+    D = rotor_diameter              # scalar
+    HH = hub_height                 # scalar
+    yaw = yaw_angle                 # (wd, ws, 1, 1, 1) for the current turbine
+    Ct = ct_i                       # (wd, ws, 1, 1, 1) for the current turbine
+    TSR = tip_speed_ratio           # scalar
+    aI = axial_induction_i          # (wd, ws, 1, 1, 1) for the current turbine
+    avg_v = np.mean(v_i, axis=(3,4))  # (wd, ws, 1, grid, grid)
+    avg_v = avg_v[:,:,:,None,None]
 
-            # wake rotation vortex
-            zC = z_locations[idx] + 0.01 - (HH)
-            rC = yLocs ** 2 + zC ** 2
+    # flow parameters
+    # Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
+    Uinf = 9.0
 
-            # find wake deflection from CRV
-            min_yaw = -45.0
-            max_yaw = 45.0
-            test_yaw = np.linspace(min_yaw, max_yaw, 91)
-            avg_V = np.mean(V[idx])
+    eps_gain = 0.2
+    eps = eps_gain * D  # Use set value
 
-            # what yaw angle would have produced that same average spanwise velocity
-            vel_top = (
-                (HH + D / 2) / flow_field.reference_wind_height
-            ) ** flow_field.wind_shear
-            vel_bottom = (
-                (HH - D / 2) / flow_field.reference_wind_height
-            ) ** flow_field.wind_shear
-            Gamma_top = (
-                (np.pi / 8) * D * vel_top * Uinf * Ct * sind(test_yaw) * cosd(test_yaw)
-            )
-            Gamma_bottom = (
-                -(np.pi / 8)
-                * D
-                * vel_bottom
-                * Uinf
-                * Ct
-                * sind(test_yaw)
-                * cosd(test_yaw)
-            )
-            Gamma_wake_rotation = (
-                0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine.average_velocity / TSR
-            )
+    vel_top = np.mean(u_i[:,:,:,:,-1] / Uinf, axis=3)
+    vel_top = vel_top[:,:,:,None,None]
+    Gamma_top = sind(yaw) * cosd(yaw) * gamma(
+        D,
+        vel_top,
+        Uinf,
+        Ct,
+    )
 
-            Veff = (
-                np.divide(np.einsum("i,j", Gamma_top, zT), (2 * np.pi * rT))
-                * (1 - np.exp(-rT / (eps ** 2)))
-                + np.einsum("i,j", Gamma_bottom, zB)
-                / (2 * np.pi * rB)
-                * (1 - np.exp(-rB / (eps ** 2)))
-                + (zC * Gamma_wake_rotation)
-                / (2 * np.pi * rC)
-                * (1 - np.exp(-rC / (eps ** 2)))
-            )
+    vel_bottom = np.mean(u_i[:,:,:,:,0] / Uinf, axis=3)
+    vel_bottom = vel_bottom[:,:,:,None,None]
+    Gamma_bottom = -1 * sind(yaw) * cosd(yaw) * gamma(
+        D,
+        vel_bottom,
+        Uinf,
+        Ct,
+    )
 
-            tmp = avg_V - np.mean(Veff, axis=1)
+    turbine_average_velocity = np.cbrt(np.mean(u_i ** 3, axis=(3,4)))
+    turbine_average_velocity = turbine_average_velocity[:,:,:,None,None]
+    Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine_average_velocity / TSR
 
-            # return indices of sorted residuals to find effective yaw angle
-            order = np.argsort(np.abs(tmp))
-            idx_1 = order[0]
-            idx_2 = order[1]
+    ### compute the spanwise and vertical velocities induced by yaw
 
-            # check edge case, if true, assign max yaw value
-            if idx_1 == 90 or idx_2 == 90:
-                yaw_effective = max_yaw
-            # check edge case, if true, assign min yaw value
-            elif idx_1 == 0 or idx_2 == 0:
-                yaw_effective = -min_yaw
-            # for each identified minimum residual, use adjacent points to determine
-            # two equations of line and find the intersection of the two lines to
-            # determine the effective yaw angle to add; the if/else structure is based
-            # on which residual index is larger
-            else:
-                if idx_1 > idx_2:
-                    idx_right = idx_1 + 1  # adjacent point
-                    idx_left = idx_2 - 1  # adjacent point
-                    mR = abs(tmp[idx_right]) - abs(tmp[idx_1])  # slope
-                    mL = abs(tmp[idx_2]) - abs(tmp[idx_left])  # slope
-                    bR = abs(tmp[idx_1]) - mR * float(idx_1)  # intercept
-                    bL = abs(tmp[idx_2]) - mL * float(idx_2)  # intercept
-                else:
-                    idx_right = idx_2 + 1  # adjacent point
-                    idx_left = idx_1 - 1  # adjacent point
-                    mR = abs(tmp[idx_right]) - abs(tmp[idx_2])  # slope
-                    mL = abs(tmp[idx_1]) - abs(tmp[idx_left])  # slope
-                    bR = abs(tmp[idx_2]) - mR * float(idx_2)  # intercept
-                    bL = abs(tmp[idx_1]) - mL * float(idx_1)  # intercept
+    # decay the vortices as they move downstream - using mixing length
+    # lmda = D / 8
+    # kappa = 0.41
+    # lm = kappa * z_i / (1 + kappa * z_i / lmda)
+    # z = np.linspace(np.min(z), np.max(z), np.shape(u_initial)[2])
+    # dudz_initial = np.gradient(u_initial, z, axis=4)
+    # dudz_initial = np.gradient(u_initial, axis=4)
+    # nu = lm ** 2 * np.abs(dudz_initial)
+    # nu = lm ** 2 * np.abs(dudz_initial)
 
-                # find the value at the intersection of the two lines
-                ival = (bR - bL) / (mL - mR)
-                # convert the indice into degrees
-                yaw_effective = ival - max_yaw
+    # decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
+    yLocs = delta_y + 0.01
 
-            return yaw_effective + turbine.yaw_angle
-        else:
-            return turbine.yaw_angle
+    # top vortex
+    # NOTE: this is the top of the grid, not the top of the rotor
+    zT = z_i - (HH + D / 2) + 0.01  # distance from the top of the grid
+    rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
+    core_shape = 1 - np.exp(-rT / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+    v_top = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape # * decay
+    # w_top = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
 
+    # bottom vortex
+    zB = z_i - (HH - D / 2) + 0.01
+    rB = yLocs ** 2 + zB ** 2
+    core_shape = 1 - np.exp(-rB / (eps ** 2))
+    v_bottom = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape # * decay    
+    # w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
+
+    # wake rotation vortex
+    zC = z_i - HH + 0.01
+    rC = yLocs ** 2 + zC ** 2
+    core_shape = 1 - np.exp(-rC / (eps ** 2))
+    v_core = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape # * decay
+    v_core = np.mean(v_core, axis=(3,4))
+    v_core = v_core[:,:,:,None,None]
+    # w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
+
+    if (avg_v == 0.0).all():
+        return np.zeros_like(avg_v)
+
+    """
+    By calculating the circulation strength and applying it to velocities here, we are imposing
+    the vortices from the current turbine onto itself. However, we really just want to take the
+    tranverse velocities in the flow field from the previous turbine to calculate the effective
+    velocity here. I've replaced v_top and v_bottom with vel_top and vel_bottom.
+
+    Also, v_core is the wake rotation vortex on the entire rotor area. That probably does make
+    sense, but I've used the mean v_core here so that the dimensions work out. Maybe it should
+    instead be the full v_core and then use the mean proir to arcsin. Is that equivalent anyway?
+    """
+    # y = np.degrees( 0.5 * np.arcsin( 2 * (avg_v - v_core) / (v_top + v_bottom) ) )
+    y = np.degrees( 0.5 * np.arcsin( 2 * (avg_v - v_core) / (vel_top + vel_bottom) ) )
+    return y
+
+
+def calculate_transverse_velocity(
+    u_i,
+    u_initial,
+    delta_x,
+    delta_y,
+    z,
+    rotor_diameter,
+    hub_height,
+    yaw,
+    ct_i,
+    tsr_i,
+    axial_induction_i
+):
+    """
+    Calculate transverse velocity components for all downstream turbines
+    given the vortices at the current turbine.
+    """
+
+    # turbine parameters
+    D = rotor_diameter
+    HH = hub_height
+    Ct = ct_i
+    TSR = tsr_i
+    aI = axial_induction_i
+
+    # flow parameters
+    # Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
+    Uinf = 9.0
+
+    eps_gain = 0.2
+    eps = eps_gain * D  # Use set value
+
+    vel_top = np.mean(u_i[:,:,:,:,-1] / Uinf, axis=3)
+    vel_top = vel_top[:,:,:,None,None]
+    Gamma_top = sind(yaw) * cosd(yaw) * gamma(
+        D,
+        vel_top,
+        Uinf,
+        Ct,
+    )
+
+    vel_bottom = np.mean(u_i[:,:,:,:,0] / Uinf, axis=3)
+    vel_bottom = vel_bottom[:,:,:,None,None]
+    Gamma_bottom = -1 * sind(yaw) * cosd(yaw) * gamma(
+        D,
+        vel_bottom,
+        Uinf,
+        Ct,
+    )
+
+    turbine_average_velocity = np.cbrt(np.mean(u_i ** 3, axis=(3,4)))
+    turbine_average_velocity = turbine_average_velocity[:,:,:,None,None]
+    Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine_average_velocity / TSR
+
+    ### compute the spanwise and vertical velocities induced by yaw
+
+    # decay the vortices as they move downstream - using mixing length
+    lmda = D / 8
+    kappa = 0.41
+    lm = kappa * z / (1 + kappa * z / lmda)
+    # z = np.linspace(np.min(z), np.max(z), np.shape(u_initial)[2])
+    # dudz_initial = np.gradient(u_initial, z, axis=4)
+    dudz_initial = np.gradient(u_initial, axis=4)
+    # nu = lm ** 2 * np.abs(dudz_initial)
+    nu = lm ** 2 * np.abs(dudz_initial)
+
+    decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
+    yLocs = delta_y + 0.01
+
+    # top vortex
+    zT = z - (HH + D / 2) + 0.01
+    rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
+    core_shape = 1 - np.exp(-rT / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+    V1 = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape * decay
+    W1 = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
+
+    # bottom vortex
+    zB = z - (HH - D / 2) + 0.01
+    rB = yLocs ** 2 + zB ** 2
+    core_shape = 1 - np.exp(-rB / (eps ** 2))
+    V2 = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape * decay
+    W2 = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
+
+    # wake rotation vortex
+    zC = z - HH + 0.01
+    rC = yLocs ** 2 + zC ** 2
+    core_shape = 1 - np.exp(-rC / (eps ** 2))
+    V5 = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape * decay
+    W5 = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
+
+
+    ### Boundary condition - ground mirror vortex
+    yLocs = delta_y + 0.01
+
+    # top vortex - ground
+    zTb = z + (HH + D / 2) + 0.01
+    rTb = yLocs ** 2 + zTb ** 2
+    core_shape = 1 - np.exp(-rTb / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+    V3 = (-1 * Gamma_top * zTb) / (2 * np.pi * rTb) * core_shape * decay
+    W3 = (Gamma_top * -1 * yLocs) / (2 * np.pi * rTb) * core_shape * decay
+
+    # bottom vortex - ground
+    zBb = z + (HH - D / 2) + 0.01
+    rBb = yLocs ** 2 + zBb ** 2
+    V4 = (-1 * Gamma_bottom * zBb) / (2 * np.pi * rBb) * core_shape * decay
+    W4 = (Gamma_bottom * -1 * yLocs) / (2 * np.pi * rBb) * core_shape * decay
+
+    # wake rotation vortex - ground effect
+    zCb = z + HH + 0.01
+    rCb = yLocs ** 2 + zCb ** 2
+    V6 = (-1 * Gamma_wake_rotation * zCb) / (2 * np.pi * rCb) * core_shape * decay
+    W6 = (Gamma_wake_rotation * -1 * yLocs) / (2 * np.pi * rCb) * core_shape * decay
+
+    # total spanwise velocity
+    V = V1 + V2 + V3 + V4 + V5 + V6
+    W = W1 + W2 + W3 + W4 + W5 + W6
+
+    # no spanwise and vertical velocity upstream of the turbine
+    # V[delta_x < -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+    # W[delta_x < -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+    V[delta_x <= 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+    W[delta_x <= 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+
+    # TODO: Why would the say W cannot be negative?
+    W[W < 0] = 0
+
+    return V, W
+
+
+def yaw_added_turbulence_mixing(
+    u_i,
+    I,
+    v,
+    w,
+    turb_v,
+    turb_w
+):
+    average_u_i = np.mean(u_i, axis=(3,4))
+    # average_u_i = average_u_i[:,:,:,None,None]
+    I = np.mean(I, axis=(3,4))
+    # Convert ambient turbulence intensity to TKE (eq 24)
+    k = (average_u_i * I) ** 2 / (2 / 3)
+
+    u_term = np.sqrt(2 * k)
+    v_term = np.mean(v + turb_v, axis=(3,4))
+    # v_term = v_term[:,:,:,None,None]
+    w_term = np.mean(w + turb_w, axis=(3,4))
+    # w_term = w_term[:,:,:,None,None]
+
+    # Compute the new TKE (eq 23)
+    k_total = 0.5 * ( u_term ** 2 + v_term ** 2 + w_term ** 2 )
+
+    # Convert TKE back to TI
+    I_total = np.sqrt( (2 / 3) * k_total ) / average_u_i
+
+    # Remove ambient from total TI leaving only the TI due to mixing
+    I_mixing = I_total - I
+
+    return I_mixing
