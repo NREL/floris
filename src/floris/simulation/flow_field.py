@@ -34,12 +34,12 @@ NDArrayFloat = npt.NDArray[np.float64]
 
 @attr.s(auto_attribs=True)
 class FlowField(FromDictMixin):
+    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
+    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
     wind_veer: float = float_attrib()
     wind_shear: float = float_attrib()
     air_density: float = float_attrib()
     reference_wind_height: int = int_attrib()
-    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
 
     n_wind_speeds: int = attr.ib(init=False)
     n_wind_directions: int = attr.ib(init=False)
