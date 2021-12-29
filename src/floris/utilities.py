@@ -233,6 +233,10 @@ def rotate_coordinates_rel_west(wind_directions, coordinates):
     return x_coord_rotated, y_coord_rotated, z_coord_rotated
 
 
+def pshape(array, label=""):
+    print(label, np.shape(array))
+
+
 @attr.s
 class FromDictMixin:
     """A Mixin class to allow for kwargs overloading when a data class doesn't
