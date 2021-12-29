@@ -9,7 +9,11 @@ from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.simulation import Ct, axial_induction
 from floris.simulation import FlowField
 from floris.simulation.wake import WakeModelManager
-
+from floris.simulation.wake_deflection.gauss import (
+    calculate_transverse_velocity,
+    wake_added_yaw,
+    yaw_added_turbulence_mixing
+)
 
 
 # @profile
@@ -26,6 +30,8 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
     # This is u_wake
     wake_field = np.zeros_like(flow_field.u_initial)
+    v_wake = np.zeros_like(flow_field.v_initial)
+    w_wake = np.zeros_like(flow_field.w_initial)
 
     turbine_turbulence_intensity = 0.1 * np.ones_like(grid.x)
     ambient_turbulence_intensity = 0.1
@@ -35,12 +41,12 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
     elapsed_time = 0.0
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
+
+        # Get the current turbine quantities
         x_i = np.mean(grid.x[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-
         y_i = np.mean(grid.y[:, :, i:i+1], axis=(3, 4))        
         y_i = y_i[:, :, :, None, None]
-
         z_i = np.mean(grid.z[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
 
@@ -57,29 +63,73 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
-        ct_i = ct_i[:, :, :, None, None]
-
+        ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
         axial_induction_i = axial_induction(
             velocities=u,
             yaw_angle=farm.yaw_angles,
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
-        axial_induction_i = axial_induction_i[:, :, :, None, None]
-
+        axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
-        yaw_i = farm.yaw_angles[:, :, i:i+1, None, None]
+        yaw_angle_i = farm.yaw_angles[:, :, i:i+1, None, None]
+        u_i = flow_field.u[:, :, i:i+1]
+        v_i = flow_field.v[:, :, i:i+1]
+
+        if model_manager.enable_secondary_steering:
+            added_yaw = wake_added_yaw(
+                u_i,
+                v_i,
+                flow_field.u_initial,
+                grid.x - x_i,
+                grid.y[:, :, i:i+1] - y_i,
+                z_i,
+                farm.rotor_diameter,
+                farm.hub_height,
+                yaw_angle_i,
+                ct_i,
+                farm.TSR,
+                axial_induction_i
+            )
+            yaw_angle_i += added_yaw
 
         # Model calculations
         # NOTE: exponential
         deflection_field = model_manager.deflection_model.function(
             x_i,
             y_i,
-            yaw_i,
+            yaw_angle_i,
             turbulence_intensity_i,
             ct_i,
             **deflection_model_args
         )
+
+        if model_manager.enable_transverse_velocities:
+            v_wake, w_wake = calculate_transverse_velocity(
+                u_i,
+                flow_field.u_initial,
+                grid.x - x_i,
+                grid.y - y_i,
+                grid.z,
+                farm.rotor_diameter,
+                farm.hub_height,
+                yaw_angle_i,
+                ct_i,
+                farm.TSR,
+                axial_induction_i
+            )
+
+        if model_manager.enable_yaw_added_recovery:
+            I_mixing = yaw_added_turbulence_mixing(
+                u_i,
+                turbine_turbulence_intensity,
+                flow_field.v,
+                flow_field.w,
+                v_wake,
+                w_wake
+            )
+            gch_gain = 2
+            turbine_turbulence_intensity = turbine_turbulence_intensity + gch_gain * I_mixing[:,:,:,None,None]
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
@@ -88,7 +138,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             z_i,
             axial_induction_i,
             deflection_field,
-            yaw_i,
+            yaw_angle_i,
             turbulence_intensity_i,
             ct_i,
             **deficit_model_args

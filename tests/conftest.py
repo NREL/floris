@@ -346,6 +346,9 @@ class SampleInputs:
                     "we": 0.05,
                 },
             },
+            "enable_secondary_steering": False,
+            "enable_yaw_added_recovery": False,
+            "enable_transverse_velocities": False,
         }
 
         self.floris = {
