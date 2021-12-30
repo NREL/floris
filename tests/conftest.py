@@ -356,6 +356,10 @@ class SampleInputs:
             "flow_field": self.flow_field,
             "turbine": self.turbine,
             "wake": self.wake,
+            "solver": {
+                "type": "turbine_grid",
+                "turbine_grid_points": 5,
+            },
             "logging": {
                 "console": {"enable": True, "level": 1},
                 "file": {"enable": False, "level": 1},

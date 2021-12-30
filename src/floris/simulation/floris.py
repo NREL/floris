@@ -51,6 +51,28 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             layout_y=input_dict["farm"]["layout_y"],
         )
 
+        solver_settings = input_dict["solver"]
+        if solver_settings["type"] == "turbine_grid":
+            self.grid = TurbineGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.reference_turbine_diameter,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                grid_resolution=solver_settings["turbine_grid_points"],
+            )
+        elif solver_settings["type"] == "flow_field_grid":
+            self.grid = FlowFieldGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.reference_turbine_diameter,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                grid_resolution=solver_settings["flow_field_grid_points"],
+            )
+        else:
+            raise ValueError(
+                f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {solver_settings['type']}"
+            )
+
         # Configure logging
         logging_manager.configure_console_log(
             input_dict["logging"]["console"]["enable"],
@@ -64,16 +86,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     # @profile
     def steady_state_atmospheric_condition(self):
 
-        # <<interface>>
-        # Initialize grid and field quanitities
-        self.grid = TurbineGrid(
-            turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.reference_turbine_diameter,
-            wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
-            grid_resolution=5,
-        )
-
+        # Initialize field quanitities
         self.flow_field.initialize_velocity_field(self.grid)
 
         # <<interface>>
@@ -103,13 +116,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=5,
         )
-        self.grid = FlowFieldGrid(
-            turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.reference_turbine_diameter,
-            wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
-            grid_resolution=(100, 100, 13),
-        )
+
         self.flow_field.initialize_velocity_field(self.grid)
 
         full_flow_sequential_solver(self.farm, self.flow_field, self.grid, turbine_grid, self.wake)
