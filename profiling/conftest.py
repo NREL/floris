@@ -16,6 +16,7 @@
 import numpy as np
 import pytest
 from floris.simulation import Floris
+from floris.simulation import FlowField
 from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.utilities import Vec3
 
@@ -54,39 +55,47 @@ def print_test_values(average_velocities: list, thrusts: list, powers: list, axi
 
 WIND_DIRECTIONS = [
     270.0,
-    # 270.0,
-    # 360.0,
-    # 293.0,
-    # 315.0,
+    360.0,
+    315.0, #293.0,
+    315.0,
 ]
 N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
 WIND_SPEEDS = [
-    # 8.0,
-    # 9.0,
-    # 9.0,
+    8.0,
     9.0,
-    # 10.0,
-    # 11.0,
+    10.0,
+    11.0,
 ]
 N_WIND_SPEEDS = len(WIND_SPEEDS)
 X_COORDS = [
     0.0,
-    # 5 * 126.0,
-    # 10 * 126.0
+    5 * 126.0,
+    10 * 126.0
 ]
 Y_COORDS = [
     0.0,
-    # 0.0,
-    # 0.0
+    0.0,
+    0.0
 ]
 Z_COORDS = [
     90.0,
-    # 90.0,
-    # 90.0
+    90.0,
+    90.0
 ]
 N_TURBINES = len(X_COORDS)
-TURBINE_GRID_RESOLUTION = 5
+TURBINE_GRID_RESOLUTION = 2
 
+
+## Unit test fixtures
+
+@pytest.fixture
+def vec3_fixture():
+    return Vec3([4, 4, 0])
+
+@pytest.fixture
+def flow_field_fixture(sample_inputs_fixture):
+    flow_field_dict = sample_inputs_fixture.flow_field
+    return FlowField.from_dict(flow_field_dict)
 
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
@@ -99,7 +108,6 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
         grid_resolution=TURBINE_GRID_RESOLUTION
     )
 
-
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
@@ -111,12 +119,10 @@ def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
         grid_resolution=[3,2,2]
     )
 
-
 @pytest.fixture
 def floris_fixture():
     sample_inputs = SampleInputs()
     return Floris(sample_inputs.floris)
-
 
 @pytest.fixture
 def sample_inputs_fixture():
@@ -291,16 +297,8 @@ class SampleInputs:
         }
 
         self.farm = {
-            "layout_x": [
-                0.0,
-                # 5 * self.turbine["rotor_diameter"],
-                # 10 * self.turbine["rotor_diameter"],
-            ],
-            "layout_y": [
-                0.0,
-                # 0.0,
-                # 0.0
-            ],
+            "layout_x": X_COORDS,
+            "layout_y": Y_COORDS
         }
 
         self.flow_field = {
@@ -316,8 +314,8 @@ class SampleInputs:
 
         self.wake = {
             "model_strings": {
-                "velocity_model": "gauss",
-                "deflection_model": "gauss",
+                "velocity_model": "jensen",
+                "deflection_model": "jimenez",
                 "combination_model": None,
                 "turbulence_model": None,
             },
@@ -348,6 +346,9 @@ class SampleInputs:
                     "we": 0.05,
                 },
             },
+            "enable_secondary_steering": False,
+            "enable_yaw_added_recovery": False,
+            "enable_transverse_velocities": False,
         }
 
         self.floris = {
@@ -355,6 +356,10 @@ class SampleInputs:
             "flow_field": self.flow_field,
             "turbine": self.turbine,
             "wake": self.wake,
+            "solver": {
+                "type": "turbine_grid",
+                "turbine_grid_points": 20,
+            },
             "logging": {
                 "console": {"enable": True, "level": 1},
                 "file": {"enable": False, "level": 1},

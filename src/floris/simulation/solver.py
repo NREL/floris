@@ -38,7 +38,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
     reference_rotor_diameter = farm.reference_turbine_diameter
     
-    elapsed_time = 0.0
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
 
@@ -174,9 +173,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
     flow_field.u = flow_field.u_initial - wake_field
 
-    elapsed_time = sys.getsizeof(flow_field.u_initial.base)
-
-    return elapsed_time
 
 def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
     ti_initial = 0.1

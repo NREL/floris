@@ -56,7 +56,7 @@ def print_test_values(average_velocities: list, thrusts: list, powers: list, axi
 WIND_DIRECTIONS = [
     270.0,
     360.0,
-    293.0,
+    315.0, #293.0,
     315.0,
 ]
 N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)

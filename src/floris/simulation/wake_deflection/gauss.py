@@ -88,15 +88,13 @@ class GaussVelocityDeflection(BaseModel):
         flow_field: FlowField
     ) -> Dict[str, Any]:
 
-        reference_rotor_diameter = farm.reference_turbine_diameter
-
         kwargs = dict(
             x=grid.x,
             y=grid.y,
             z=grid.z,
             freestream_velocity=flow_field.u_initial,
             wind_veer=flow_field.wind_veer,
-            reference_rotor_diameter=reference_rotor_diameter,
+            reference_rotor_diameter=farm.reference_turbine_diameter,
         )
         return kwargs
 
@@ -144,6 +142,9 @@ class GaussVelocityDeflection(BaseModel):
         # ==============================================================
 
         # opposite sign convention in this model
+        # TODO: ^^ this comment is for yaw - flip the sign
+
+        # TODO: connect support for tilt
         tilt = 0.0 #turbine.tilt_angle
 
         # initial velocity deficits
@@ -240,8 +241,7 @@ def gamma(
         [type]: [description]
     """
     scale = 1.0
-    # NOTE: Ct includes a cosd(yaw)
-    return scale * (np.pi / 8) * D * velocity * Uinf * Ct
+    return scale * (np.pi / 8) * D * velocity * Uinf * Ct # * cosd(yaw)  <- the cos is included in Ct
 
 
 # def calculate_effective_yaw(
@@ -282,6 +282,7 @@ def wake_added_yaw(
     # Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
     Uinf = 9.0
 
+    # TODO: Allow user input for eps gain
     eps_gain = 0.2
     eps = eps_gain * D  # Use set value
 

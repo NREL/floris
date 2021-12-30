@@ -13,7 +13,6 @@
 # See https://floris.readthedocs.io for documentation
 from __future__ import annotations
 
-import math
 from typing import Union
 from itertools import product
 
