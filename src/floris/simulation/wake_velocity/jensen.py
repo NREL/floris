@@ -59,7 +59,7 @@ class JensenVelocityDeficit(BaseModel):
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            reference_rotor_diameter=farm.reference_turbine_diameter
+            reference_rotor_diameter=farm.rotor_diameter
         )
         return kwargs
 

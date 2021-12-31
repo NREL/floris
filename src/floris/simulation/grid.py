@@ -18,19 +18,19 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Iterable
 
-import attr
+import attrs
+from attrs import define, field
 import numpy as np
-import numpy.typing as npt
 
-from floris.utilities import Vec3, cosd, sind, attrs_array_converter
-from floris.utilities import rotate_coordinates_rel_west
+from floris.utilities import Vec3, rotate_coordinates_rel_west
+from floris.type_dec import  (
+    floris_float_type,
+    floris_array_type,
+    NDArrayFloat,
+    NDArrayInt
+)
 
-
-NDArrayFloat = npt.NDArray[np.float64]
-NDArrayInt = npt.NDArray[np.int_]
-
-
-@attr.s(auto_attribs=True)
+@define
 class Grid(ABC):
     """
     Grid should establish domain bounds based on given criteria,
@@ -56,27 +56,25 @@ class Grid(ABC):
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type
     """
-
-    # TODO: We'll want to consider how this expands to multiple turbine types
-    turbine_coordinates: list[Vec3] = attr.ib(on_setattr=attr.setters.validate)
+    turbine_coordinates: list[Vec3] = field()
     reference_turbine_diameter: float
-    grid_resolution: int | Iterable = attr.ib(on_setattr=attr.setters.validate)
-    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter, on_setattr=(attr.setters.convert, attr.setters.validate))
-    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter, on_setattr=(attr.setters.convert, attr.setters.validate))
+    grid_resolution: int | Iterable = field()
+    wind_directions: NDArrayFloat = field(converter=floris_array_type)
+    wind_speeds: NDArrayFloat = field(converter=floris_array_type)
 
-    n_turbines: int = attr.ib(init=False)
-    n_wind_speeds: int = attr.ib(init=False)
-    n_wind_directions: int = attr.ib(init=False)
-    turbine_coordinates_array: NDArrayFloat = attr.ib(init=False)
-    x: NDArrayFloat = attr.ib(init=False)
-    y: NDArrayFloat = attr.ib(init=False)
-    z: NDArrayFloat = attr.ib(init=False)
+    n_turbines: int = field(init=False)
+    n_wind_speeds: int = field(init=False)
+    n_wind_directions: int = field(init=False)
+    turbine_coordinates_array: NDArrayFloat = field(init=False)
+    x: NDArrayFloat = field(init=False)
+    y: NDArrayFloat = field(init=False)
+    z: NDArrayFloat = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
 
     @turbine_coordinates.validator
-    def check_coordinates(self, instance: attr.Attribute, value: list[Vec3]) -> None:
+    def check_coordinates(self, instance: attrs.Attribute, value: list[Vec3]) -> None:
         """Ensures all elements are `Vec3` objects and keeps the `n_turbines` attribute up to date."""
         types = np.unique([isinstance(c, Vec3) for c in value])
         if not all(types):
@@ -85,17 +83,17 @@ class Grid(ABC):
         self.n_turbines = len(value)
 
     @wind_speeds.validator
-    def wind_speeds_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+    def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_speeds` attribute up to date."""
         self.n_wind_speeds = value.size
 
     @wind_directions.validator
-    def wind_directions_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+    def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
     @grid_resolution.validator
-    def grid_resolution_validator(self, instance: attr.Attribute, value: int | Iterable) -> None:
+    def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
         """Check that grid resolution is given as int or Vec3 with int components."""
         if isinstance(value, int):
             return
@@ -111,7 +109,7 @@ class Grid(ABC):
         raise NotImplementedError("Grid.set_grid")
 
 
-@attr.s(auto_attribs=True)
+@define
 class TurbineGrid(Grid):
     """See `Grid` for more details.
 
@@ -122,6 +120,8 @@ class TurbineGrid(Grid):
         wind_speeds (`list[float]`): The input wind speeds
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
+    sorted_indices: NDArrayInt = field(init=False)
+    unsorted_indices: NDArrayInt = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -207,6 +207,7 @@ class TurbineGrid(Grid):
         self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
 
 
+@define
 class FlowFieldGrid(Grid):
     """
     Args:
@@ -215,14 +216,6 @@ class FlowFieldGrid(Grid):
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
-
-    grid_resolution: Iterable
-    xmin: float = attr.ib(init=False)
-    xmax: float = attr.ib(init=False)
-    ymin: float = attr.ib(init=False)
-    ymax: float = attr.ib(init=False)
-    zmin: float = attr.ib(init=False)
-    zmax: float = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()

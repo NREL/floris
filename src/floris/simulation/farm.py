@@ -11,34 +11,24 @@
 # the License.
 
 from __future__ import annotations
+from typing import Any, Callable
 
-from typing import Any, Dict, List
-
-import attr
+import attrs
+from attrs import define, field
 import numpy as np
-import numpy.typing as npt
 
-from floris.utilities import (
-    Vec3,
+from floris.type_dec import (
     attr_serializer,
     attr_floris_filter,
-    attrs_array_converter,
+    floris_array_type,
+    NDArrayFloat
 )
+from floris.utilities import Vec3
 from floris.simulation import Turbine
 from floris.simulation import BaseClass
 
 
-NDArrayFloat = npt.NDArray[np.float64]
-NDArrayInt = npt.NDArray[np.int_]
-
-
-def _farm_filter(inst: attr.Attribute, value: Any) -> bool:
-    if inst.name in ("wind_directions", "wind_speeds"):
-        return False
-    return attr_floris_filter(inst, value)
-
-
-@attr.s(auto_attribs=True)
+@define
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
     file. The Farm will create a heterogenous set of turbines that compose a windfarm,
@@ -52,46 +42,66 @@ class Farm(BaseClass):
     for generating output.
     """
 
-    n_wind_directions: int = attr.ib()
-    n_wind_speeds: int = attr.ib()
-    layout_x: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    layout_y: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    turbine: Turbine = attr.ib(converter=Turbine.from_dict)
+    layout_x: NDArrayFloat = field(converter=floris_array_type)
+    layout_y: NDArrayFloat = field(converter=floris_array_type)
+    turbine: Turbine = field(converter=Turbine.from_dict)
+    n_wind_directions: int = field(converter=int)
+    n_wind_speeds: int = field(converter=int)
 
-    coordinates: list[Vec3] = attr.ib(init=False)
-    yaw_angles: NDArrayFloat = attr.ib(init=False)
+    coordinates: list[Vec3] = field(init=False)
+    yaw_angles: NDArrayFloat = field(init=False)
+    rotor_diameter: float = field(init=False)
+    hub_height: float = field(init=False)
+    pP: float = field(init=False)
+    pT: float = field(init=False)
+    generator_efficiency: float = field(init=False)
+    TSR: float = field(init=False)
+    fCt_interp: Callable = field(init=False)
+    power_interp: Callable = field(init=False)
 
-    rotor_diameter: NDArrayFloat = attr.ib(init=False)
-    hub_height: NDArrayFloat = attr.ib(init=False)
-    pP: NDArrayFloat = attr.ib(init=False)
-    pT: NDArrayFloat = attr.ib(init=False)
-    generator_efficiency: NDArrayFloat = attr.ib(init=False)
-    TSR: NDArrayFloat = attr.ib(init=False)
-    fCp_interp: NDArrayFloat = attr.ib(init=False)
-    fCt_interp: NDArrayFloat = attr.ib(init=False)
-    power_interp: NDArrayFloat = attr.ib(init=False)
-    # rotor_radius: NDArrayFloat = attr.ib(init=False)
-    # rotor_area: NDArrayFloat = attr.ib(init=False)
+    @layout_x.validator
+    def check_x(self, instance: attrs.Attribute, value: Any) -> None:
+        if len(value) != len(self.layout_y):
+            raise ValueError("layout_x and layout_y must have the same number of entries.")
+
+    @layout_y.validator
+    def check_y(self, instance: attrs.Attribute, value: Any) -> None:
+        if len(value) != len(self.layout_x):
+            raise ValueError("layout_x and layout_y must have the same number of entries.")
 
     def __attrs_post_init__(self) -> None:
-        self.coordinates = [
-            Vec3([x, y, self.turbine.hub_height]) for x, y in zip(self.layout_x, self.layout_y)
-        ]
-
-        # TODO: assumes homogenous turbines; change this for heterogeneous turbines
-        # TODO: maybe leave these on the turbine and reference from there?
         self.rotor_diameter = self.turbine.rotor_diameter
         self.hub_height = self.turbine.hub_height
         self.fCt_interp = self.turbine.fCt_interp
-        self.fCp_interp = self.turbine.fCp_interp
         self.power_interp = self.turbine.power_interp
         self.pP = self.turbine.pP
         self.pT = self.turbine.pT
         self.generator_efficiency = self.turbine.generator_efficiency
         self.TSR = self.turbine.TSR
 
-        # Turbine control settings indexed by the turbine ID
+        self.coordinates = [
+            Vec3([x, y, self.hub_height]) for x, y in zip(self.layout_x, self.layout_y)
+        ]
+
         self.yaw_angles = np.zeros((self.n_wind_directions, self.n_wind_speeds, self.n_turbines))
+
+    @property
+    def n_turbines(self):
+        return len(self.layout_x)
+
+    def _asdict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `Farm` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+        def _farm_filter(inst: attrs.Attribute, value: Any) -> bool:
+            if inst.name in ("wind_directions", "wind_speeds"):
+                return False
+            return attr_floris_filter(inst, value)
+        return attrs.asdict(self, filter=_farm_filter, value_serializer=attr_serializer)
 
     # def generate_farm_points(self) -> None:
 
@@ -130,68 +140,3 @@ class Farm(BaseClass):
         # # TODO: should we have both fCp_interp and power_interp
         # self.fCp_interp = turbine_array[:, :, :, column_ix["fCp_interp"]]
         # self.power_interp = turbine_array[:, :, :, column_ix["power_interp"]]
-
-    @property
-    def n_turbines(self):
-        return len(self.layout_x)
-
-    @property
-    def reference_turbine_diameter(self):
-        return self.rotor_diameter
-
-    @property
-    def reference_hub_height(self):
-        return self.hub_height
-
-    def _asdict(self) -> dict:
-        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
-        This dictionary will contain only `Python` types that can later be converted to their
-        proper `Farm` formats.
-
-        Returns:
-            dict: All key, vaue pais required for class recreation.
-        """
-        return attr.asdict(self, filter=_farm_filter, value_serializer=attr_serializer)
-
-
-    # Data validators
-
-    # @layout_x.validator
-    # def check_x_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
-    #     if len(value) < len(self.turbine_id):
-    #         raise ValueError("Not enough `layout_x` values to match the `turbine_id`s.")
-    #     if len(value) > len(self.turbine_id):
-    #         raise ValueError("Too many `layout_x` values to match the `turbine_id`s.")
-
-    # @layout_y.validator
-    # def check_y_len(self, instance: attr.Attribute, value: list[float] | NDArrayFloat) -> None:
-    #     if len(value) < len(self.turbine_id):
-    #         raise ValueError("Not enough `layout_y` values to match the `turbine_id`s")
-    #     if len(value) > len(self.turbine_id):
-    #         raise ValueError("Too many `layout_y` values to match the `turbine_id`s")
-
-    # @turbine_id.validator
-    # def check_turbine_id(self, instance: attr.Attribute, value: list[str]) -> None:
-    #     if (
-    #         len(value) != 0 and                # Not provided: use the first turbine definition
-    #         len(value) != 1 and                # Single value: use the given turbine for all
-    #         len(value) != len(self.layout_x)  # Otherwise, must match the number of turbines in the farm
-    #     ):
-    #         raise ValueError(f"Number of turbine ID's do not match the number of turbines defined.")
-
-    # def sort_turbines(self, by: str) -> NDArrayInt:
-    #     """Sorts the turbines by the given dimension.
-
-    #     Args:
-    #         by (str): The dimension to sort by; should be one of x or y.
-
-    #     Returns:
-    #         NDArrayInt: The index order for retrieving data from `data_array` or any
-    #             other farm object.
-    #     """
-    #     if by == "x":
-    #         return np.argsort(self.layout_x)
-    #     elif by == "y":
-    #         return np.argsort(self.layout_y)
-    #     else:
-    #         raise ValueError("`by` must be set to one of 'x' or 'y'.")

@@ -19,7 +19,7 @@ from pathlib import Path
 import yaml
 
 import floris.logging_manager as logging_manager
-from floris.utilities import FromDictMixin
+from floris.type_dec import FromDictMixin
 from floris.simulation import (
     Farm,
     WakeModelManager,
@@ -55,7 +55,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         if solver_settings["type"] == "turbine_grid":
             self.grid = TurbineGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.reference_turbine_diameter,
+                reference_turbine_diameter=self.farm.rotor_diameter,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=solver_settings["turbine_grid_points"],
@@ -63,7 +63,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         elif solver_settings["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.reference_turbine_diameter,
+                reference_turbine_diameter=self.farm.rotor_diameter,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=solver_settings["flow_field_grid_points"],
@@ -111,7 +111,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # turbine_based_floris = copy.deepcopy(self)
         turbine_grid = TurbineGrid(
             turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.reference_turbine_diameter,
+            reference_turbine_diameter=self.farm.rotor_diameter,
             wind_directions=self.flow_field.wind_directions,
             wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=5,

@@ -12,12 +12,10 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import attrs
+from attrs import define, field
 
-from typing import Any
-
-import attr
-
-from floris.utilities import model_attrib, attr_serializer, attr_floris_filter
+from floris.type_dec import attr_serializer, attr_floris_filter
 from floris.simulation import BaseClass, BaseModel
 from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
@@ -46,7 +44,7 @@ MODEL_MAP = {
 }
 
 
-@attr.s(auto_attribs=True)
+@define
 class WakeModelManager(BaseClass):
     """
     WakeModelManager is a container class for the wake velocity, deflection,
@@ -59,26 +57,32 @@ class WakeModelManager(BaseClass):
             - deflection_model (str): The name of the deflection model to be instantiated.
             - combination_model (str): The name of the combination model to be instantiated.
     """
-    model_strings: dict = attr.ib(factory=dict)
-    wake_combination_parameters: dict = attr.ib(factory=dict)
-    wake_deflection_parameters: dict = attr.ib(factory=dict)
-    wake_turbulence_parameters: dict = attr.ib(factory=dict)
-    wake_velocity_parameters: dict = attr.ib(factory=dict)
+    model_strings: dict = field(converter=dict)
+    # wake_combination_parameters: dict = field(converter=dict)
+    wake_deflection_parameters: dict = field(converter=dict)
+    # wake_turbulence_parameters: dict = field(converter=dict)
+    wake_velocity_parameters: dict = field(converter=dict)
 
-    enable_secondary_steering: bool = attr.ib(factory=bool)
-    enable_yaw_added_recovery: bool = attr.ib(factory=bool)
-    enable_transverse_velocities: bool = attr.ib(factory=bool)
+    enable_secondary_steering: bool = field(converter=bool)
+    enable_yaw_added_recovery: bool = field(converter=bool)
+    enable_transverse_velocities: bool = field(converter=bool)
 
-    combination_model: BaseModel = attr.ib(init=False)
-    deflection_model: BaseModel = attr.ib(init=False)
-    turbulence_model: BaseModel = attr.ib(init=False)
-    velocity_model: BaseModel = attr.ib(init=False)
+    combination_model: BaseModel = field(init=False)
+    deflection_model: BaseModel = field(init=False)
+    turbulence_model: BaseModel = field(init=False)
+    velocity_model: BaseModel = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        self.model_generator()
+        model = MODEL_MAP["velocity_model"][self.model_strings["velocity_model"]]
+        model_parameters = self.wake_velocity_parameters[self.model_strings["velocity_model"]]
+        self.velocity_model = model.from_dict(model_parameters)
+
+        model = MODEL_MAP["deflection_model"][self.model_strings["deflection_model"]]
+        model_parameters = self.wake_deflection_parameters[self.model_strings["deflection_model"]]
+        self.deflection_model = model.from_dict(model_parameters)
 
     @model_strings.validator
-    def validate_model_strings(self, instance: attr.Attribute, value: dict) -> None:
+    def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:
         required_strings = [
             "velocity_model",
             "deflection_model",
@@ -95,21 +99,6 @@ class WakeModelManager(BaseClass):
             if k not in required_strings:
                 raise KeyError(f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
 
-    def model_generator(self) -> Any:
-        wake_models = {}
-        for model_type in ("deflection", "velocity"): #, "combination", "turbulence")
-            model_string = self.model_strings[f"{model_type}_model"]
-            model = MODEL_MAP[f"{model_type}_model"][model_string]
-
-            model_def = getattr(self, f"wake_{model_type}_parameters")[model_string]
-            wake_models[model_type] = model.from_dict(model_def)
-
-        # TODO: Uncomment the two models once implemented
-        # self.combination_model = wake_models["combination"]
-        self.deflection_model = wake_models["deflection"]
-        # self.turbulence_model = wake_models["turbulence"]
-        self.velocity_model = wake_models["velocity"]
-
     def _asdict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
@@ -122,7 +111,7 @@ class WakeModelManager(BaseClass):
         def create_dict(wake_model, model_string):
             if wake_model is None:
                 return {}
-            output = attr.asdict(wake_model, filter=attr_floris_filter, value_serializer=attr_serializer)
+            output = attrs.asdict(wake_model, filter=attr_floris_filter, value_serializer=attr_serializer)
             return {model_string: output}
 
         # TODO: Uncomment these lines once the models are implemented

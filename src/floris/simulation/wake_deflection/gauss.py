@@ -94,7 +94,7 @@ class GaussVelocityDeflection(BaseModel):
             z=grid.z,
             freestream_velocity=flow_field.u_initial,
             wind_veer=flow_field.wind_veer,
-            reference_rotor_diameter=farm.reference_turbine_diameter,
+            reference_rotor_diameter=farm.rotor_diameter,
         )
         return kwargs
 

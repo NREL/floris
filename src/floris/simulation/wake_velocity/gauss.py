@@ -43,8 +43,8 @@ class GaussVelocityDeficit(BaseModel):
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            reference_hub_height=farm.reference_hub_height,
-            reference_rotor_diameter=farm.reference_turbine_diameter,
+            reference_hub_height=farm.hub_height,
+            reference_rotor_diameter=farm.rotor_diameter,
             u_initial=flow_field.u_initial,
             wind_veer=flow_field.wind_veer
         )

@@ -47,7 +47,7 @@ class JimenezVelocityDeflection(BaseModel):
 
         kwargs = dict(
             x=grid.x,
-            reference_rotor_diameter=farm.reference_turbine_diameter,
+            reference_rotor_diameter=farm.rotor_diameter,
         )
         return kwargs
 

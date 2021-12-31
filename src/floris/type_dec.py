@@ -28,8 +28,8 @@ NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 
 
-def attrs_array_converter(data: list) -> np.ndarray:
-    return np.array(data, dtype=floris_float_type)
+# def attrs_array_converter(data: list) -> np.ndarray:
+#     return np.array(data, dtype=floris_float_type)
 
 
 @define

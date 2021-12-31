@@ -14,59 +14,46 @@
 
 from __future__ import annotations
 
-import attr
+import attrs
+from attrs import define, field, Factory
 import numpy as np
-import numpy.typing as npt
 
-from floris.utilities import (
+from floris.type_dec import (
     FromDictMixin,
-    int_attrib,
-    float_attrib,
+    NDArrayFloat,
     attr_serializer,
     attr_floris_filter,
-    attrs_array_converter,
+    floris_array_type
 )
 from floris.simulation import Grid
 
 
-NDArrayFloat = npt.NDArray[np.float64]
-
-
-@attr.s(auto_attribs=True)
+@define
 class FlowField(FromDictMixin):
-    wind_speeds: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    wind_directions: NDArrayFloat = attr.ib(converter=attrs_array_converter)
-    wind_veer: float = float_attrib()
-    wind_shear: float = float_attrib()
-    air_density: float = float_attrib()
-    reference_wind_height: int = int_attrib()
+    wind_speeds: NDArrayFloat = field(converter=floris_array_type)
+    wind_directions: NDArrayFloat = field(converter=floris_array_type)
+    wind_veer: float = field(converter=float)
+    wind_shear: float = field(converter=float)
+    air_density: float = field(converter=float)
+    reference_wind_height: int = field(converter=int)
 
-    n_wind_speeds: int = attr.ib(init=False)
-    n_wind_directions: int = attr.ib(init=False)
+    n_wind_speeds: int = field(init=False)
+    n_wind_directions: int = field(init=False)
 
-    u_initial: NDArrayFloat = attr.ib(init=False)
-    v_initial: NDArrayFloat = attr.ib(init=False)
-    w_initial: NDArrayFloat = attr.ib(init=False)
-
-    u: NDArrayFloat = attr.ib(init=False)
-    v: NDArrayFloat = attr.ib(init=False)
-    w: NDArrayFloat = attr.ib(init=False)
-
-    def __attrs_post_init__(self) -> None:
-        self.u = np.array([], dtype=float)
-        self.v = np.array([], dtype=float)
-        self.w = np.array([], dtype=float)
-        self.u_initial = np.array([], dtype=float)
-        self.v_initial = np.array([], dtype=float)
-        self.w_initial = np.array([], dtype=float)
+    u_initial: NDArrayFloat = field(init=False)
+    v_initial: NDArrayFloat = field(init=False)
+    w_initial: NDArrayFloat = field(init=False)
+    u: NDArrayFloat = field(init=False)
+    v: NDArrayFloat = field(init=False)
+    w: NDArrayFloat = field(init=False)
 
     @wind_speeds.validator
-    def wind_speeds_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+    def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_speeds` attribute up to date."""
         self.n_wind_speeds = value.size
 
     @wind_directions.validator
-    def wind_directionss_validator(self, instance: attr.Attribute, value: NDArrayFloat) -> None:
+    def wind_directionss_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
@@ -110,4 +97,4 @@ class FlowField(FromDictMixin):
         Returns:
             dict: All key, vaue pais required for class recreation.
         """
-        return attr.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
+        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
