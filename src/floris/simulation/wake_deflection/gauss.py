@@ -524,3 +524,44 @@ def yaw_added_turbulence_mixing(
     I_mixing = I_total - I
 
     return I_mixing
+
+
+# def yaw_added_recovery_correction(
+#     self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord
+# ):
+#         """
+#         This method corrects the U-component velocities when yaw added recovery
+#         is enabled. For more details on how the velocities are changed, see [1].
+#         # TODO add reference to 1
+
+#         Args:
+#             U_local (np.array): U-component velocities across the flow field.
+#             U (np.array): U-component velocity deficits across the flow field.
+#             W (np.array): W-component velocity deficits across the flow field.
+#             x_locations (np.array): Streamwise locations in wake.
+#             y_locations (np.array): Spanwise locations in wake.
+#             turbine (:py:class:`floris.simulation.turbine.Turbine`):
+#                 Turbine object.
+#             turbine_coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
+#                 Spatial coordinates of wind turbine.
+
+#         Returns:
+#             np.array: U-component velocity deficits across the flow field.
+#         """
+#         # compute the velocity without modification
+#         U1 = U_local - U
+
+#         # set dimensions
+#         D = turbine.rotor_diameter
+#         xLocs = x_locations - turbine_coord.x1
+#         ky = self.ka * turbine.turbulence_intensity + self.kb
+#         U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
+#         U_total = U1 + np.nan_to_num(U2)
+
+#         # turn it back into a deficit
+#         U = U_local - U_total
+
+#         # zero out anything before the turbine
+#         U[x_locations < turbine_coord.x1] = 0
+
+#         return U
