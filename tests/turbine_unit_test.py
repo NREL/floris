@@ -44,16 +44,6 @@ def test_power_thrust_table():
     assert isinstance(table.thrust, np.ndarray)
     assert isinstance(table.wind_speed, np.ndarray)
 
-    # Test that the values are immutable
-    with pytest.raises(attr.exceptions.FrozenInstanceError):
-        table.power = np.arange(len(table.power))
-
-    with pytest.raises(attr.exceptions.FrozenInstanceError):
-        table.thrust = np.arange(len(table.thrust))
-
-    with pytest.raises(attr.exceptions.FrozenInstanceError):
-        table.wind_speed = np.arange(len(table.wind_speed))
-
     # Test for initialization errors
     for el in ("power", "thrust", "wind_speed"):
         pt_table = SampleInputs().turbine["power_thrust_table"]
@@ -186,7 +176,7 @@ def test_average_velocity():
     # Test boolean filter
     ix_filter = [True, False, True, False]
     velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,1,4,3,3)
-        ( i * np.ones((1, 1, 3, 3)) for i in range(1,5) ),
+        [i * np.ones((1, 1, 3, 3)) for i in range(1,5)],
         # (
         #     np.ones(
         #         (1, 1, 3, 3)
@@ -209,7 +199,7 @@ def test_average_velocity():
     # Test integer array filter
     # np.arange(1, 5).reshape((-1,1,1)) * np.ones((1, 1, 3, 3))
     velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,1,4,3,3)
-        ( i * np.ones((1, 1, 3, 3)) for i in range(1,5) ),
+        [i * np.ones((1, 1, 3, 3)) for i in range(1,5)],
         axis=2,
     )
     avg = average_velocity(velocities, INDEX_FILTER)
@@ -263,7 +253,7 @@ def test_power():
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         pP=turbine.pP,
-        power_interp=turbine.fCp,
+        power_interp=turbine.fCp_interp,
     )
 
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
@@ -276,7 +266,7 @@ def test_power():
         velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, 4)),
         pP=turbine.pP,
-        power_interp=turbine.fCp,
+        power_interp=turbine.fCp_interp,
         ix_filter=INDEX_FILTER,
     )
     assert len(p[0, 0]) == len(INDEX_FILTER)
@@ -298,7 +288,7 @@ def test_axial_induction():
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
-        fCt=turbine.fCt,
+        fCt=turbine.fCt_interp,
     )
     assert ai == baseline_ai
 
@@ -306,7 +296,7 @@ def test_axial_induction():
     ai = axial_induction(
         velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, 4)),
-        fCt=turbine.fCt,
+        fCt=turbine.fCt_interp,
         ix_filter=INDEX_FILTER,
     )
 
