@@ -1,13 +1,14 @@
 # Requirements list for floris
 
 # simulation
+attrs
+pyyaml
 numpy
-pytest
 scipy
-xarray
 
 # tools
 matplotlib
 
 # utilities
+pytest
 coloredlogs

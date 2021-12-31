@@ -37,14 +37,17 @@ REQUIRES_PYTHON = ">=3.6.0"
 # What packages are required for this module to be executed?
 REQUIRED = [
     # simulation
-    "matplotlib>=3",
-    "numpy>=1.20",
-    "pytest>=4",
-    "scipy>=1.1",
-    "coloredlogs>=10.0",
-    "attr",
-    "xarray",
+    "attrs",
     "pyyaml",
+    "numpy>=1.20",
+    "scipy>=1.1",
+
+    # tools
+    "matplotlib>=3",
+
+    # utilities / testing
+    "coloredlogs>=10.0",
+    "pytest>=4",
 ]
 
 # What packages are optional?
