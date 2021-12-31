@@ -20,12 +20,14 @@ Defines the BaseClass parent class for all models to be based upon.
 from abc import ABC, abstractmethod, abstractproperty, abstractstaticmethod
 from typing import Any, Dict
 
-import attr
-from floris.utilities import FromDictMixin
+import attrs
+from attrs import define
+
+from floris.type_dec import FromDictMixin
 from floris.logging_manager import LoggerBase
 
 
-@attr.s(auto_attribs=True)
+@define
 class BaseClass(LoggerBase, FromDictMixin):
     """
     BaseClass object class. This class does the logging and MixIn class inheritance.
@@ -40,10 +42,10 @@ class BaseClass(LoggerBase, FromDictMixin):
         Dict[str, Any]
             Dictionary of keyword argument: default.
         """
-        return {el.name: el.default for el in attr.fields(cls)}
+        return {el.name: el.default for el in attrs.fields(cls)}
 
     def _get_model_dict(self) -> dict:
-        """Convenience method that wraps the `attr.asdict` method. Returns the object's
+        """Convenience method that wraps the `attrs.asdict` method. Returns the object's
         parameters as a dictionary.
 
         Returns
@@ -51,10 +53,10 @@ class BaseClass(LoggerBase, FromDictMixin):
         dict
             The provided or default, if no input provided, model settings as a dictionary.
         """
-        return attr.asdict(self)
+        return attrs.asdict(self)
 
 
-@attr.s(auto_attribs=True)
+@define
 class BaseModel(BaseClass, ABC):
     """
     BaseModel is the generic class for any wake models. It defines the API required to

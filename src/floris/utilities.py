@@ -14,6 +14,7 @@
 
 from typing import Any, Dict, List, Tuple, Union, Callable
 from functools import partial, update_wrapper
+from floris.type_dec import floris_array_type, NDArrayFloat
 
 import attr
 import numpy as np
@@ -237,37 +238,6 @@ def pshape(array, label=""):
     print(label, np.shape(array))
 
 
-@attr.s
-class FromDictMixin:
-    """A Mixin class to allow for kwargs overloading when a data class doesn't
-    have a specific parameter definied. This allows passing of larger dictionaries
-    to a data class without throwing an error.
-    """
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """Maps a data dictionary to an `attr`-defined class.
-
-        TODO: Add an error to ensure that either none or all the parameters are passed in
-
-        Args:
-            data : dict
-                The data dictionary to be mapped.
-        Returns:
-            cls
-                The `attr`-defined class.
-        """
-        # Get all parameters from the input dictionary that map to the class initialization
-        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
-
-        # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
-        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and not a.default]
-        undefined = sorted(set(required_inputs) - set(kwargs))
-        if undefined:
-            raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
-        return cls(**kwargs)  # type: ignore
-
-
 def is_default(instance, attribute, value):
     if attribute.default != value:
         raise ValueError(f"{attribute.name} should never be set manually.")
@@ -329,20 +299,3 @@ update_wrapper(int_attrib, attr.ib)
 
 model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)  # type: ignore
 update_wrapper(model_attrib, attr.ib)
-
-
-def attr_serializer(inst: type, field: attr.Attribute, value: Any):
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    return value
-
-
-def attr_floris_filter(inst: attr.Attribute, value: Any) -> bool:
-    if inst.init is False:
-        return False
-    if value is None:
-        return False
-    if isinstance(value, np.ndarray):
-        if value.size == 0:
-            return False
-    return True

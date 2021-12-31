@@ -1,0 +1,137 @@
+# Copyright 2021 NREL
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See https://floris.readthedocs.io for documentation
+
+from typing import Any, Dict, List, Tuple, Union, Callable
+from functools import partial, update_wrapper
+
+from attrs import define, Attribute
+import numpy as np
+import numpy.typing as npt
+
+floris_float_type = np.float64
+floris_array_type = np.float64  # This type can be used to create a Numpy array with called with a Python iterable: np.float64([1,2,3]) -> np.array
+
+NDArrayFloat = npt.NDArray[floris_float_type]
+NDArrayInt = npt.NDArray[np.int_]
+NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
+NDArrayObject = npt.NDArray[np.object_]
+
+
+def attrs_array_converter(data: list) -> np.ndarray:
+    return np.array(data, dtype=floris_float_type)
+
+
+@define
+class FromDictMixin:
+    """A Mixin class to allow for kwargs overloading when a data class doesn't
+    have a specific parameter definied. This allows passing of larger dictionaries
+    to a data class without throwing an error.
+    """
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Maps a data dictionary to an `attr`-defined class.
+
+        TODO: Add an error to ensure that either none or all the parameters are passed in
+
+        Args:
+            data : dict
+                The data dictionary to be mapped.
+        Returns:
+            cls
+                The `attr`-defined class.
+        """
+        # Get all parameters from the input dictionary that map to the class initialization
+        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
+
+        # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
+        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and not a.default]
+        undefined = sorted(set(required_inputs) - set(kwargs))
+        if undefined:
+            raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
+        return cls(**kwargs)  # type: ignore
+
+
+def is_default(instance, attribute, value):
+    if attribute.default != value:
+        raise ValueError(f"{attribute.name} should never be set manually.")
+
+
+# def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
+#     """Helper function to generate iterable validators that will reduce the amount of
+#     boilerplate code.
+
+#     Parameters
+#     ----------
+#     iter_type : any iterable
+#         The type of iterable object that should be validated.
+#     item_types : Union[Any, Tuple[Any]]
+#         The type or types of acceptable item types.
+
+#     Returns
+#     -------
+#     Callable
+#         The attr.validators.deep_iterable iterable and instance validator.
+#     """
+#     validator = attr.validators.deep_iterable(
+#         member_validator=attr.validators.instance_of(item_types),
+#         iterable_validator=attr.validators.instance_of(iter_type),
+#     )
+#     return validator
+
+# Avoids constant redefinition of the same attr.ib properties for float model attributes
+# float_attrib = partial(
+#     attr.ib,
+#     converter=float,
+#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+#     kw_only=True,
+# )
+# update_wrapper(float_attrib, attr.ib)
+
+# bool_attrib = partial(
+#     attr.ib,
+#     converter=bool,
+#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+#     kw_only=True,
+# )
+# update_wrapper(bool_attrib, attr.ib)
+
+# # Avoids constant redefinition of the same attr.ib properties for int model attributes
+# int_attrib = partial(
+#     attr.ib,
+#     converter=int,
+#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+#     kw_only=True,
+# )
+# update_wrapper(int_attrib, attr.ib)
+
+
+# model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)  # type: ignore
+# update_wrapper(model_attrib, attr.ib)
+
+
+def attr_serializer(inst: type, field: Attribute, value: Any):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    return value
+
+def attr_floris_filter(inst: Attribute, value: Any) -> bool:
+    if inst.init is False:
+        return False
+    if value is None:
+        return False
+    if isinstance(value, np.ndarray):
+        if value.size == 0:
+            return False
+    return True
