@@ -35,40 +35,6 @@ def test_instantiation_with_list():
         vec3 = Vec3([1, 2])
 
 
-def test_rotation_on_origin(vec3_fixture):
-    """
-    The class should rotate by pi on the 3rd (z) axis at the origin like so:
-        < 1, 2, 3 > becomes < -1, -2, 3 >
-    """
-    vec3_fixture.rotate_on_x3(180)
-    assert pytest.approx(vec3_fixture.x1prime) == -1 * vec3_fixture.x1
-    assert pytest.approx(vec3_fixture.x2prime) == -1 * vec3_fixture.x2
-    assert pytest.approx(vec3_fixture.x3prime) == vec3_fixture.x3
-
-
-def test_rotation_off_origin(vec3_fixture):
-    """
-    A vector rotation by pi on the 3rd (z) axis about a center of rotation
-    located midway between the vector and the origin should result in a vector
-    located at the origin.
-
-    Similarly, a vector rotation by pi on the 3rd (z) axis about a center
-    of rotation located and 1.5x the vector should result in a vector
-    located at 2x the original value.
-    """
-    center_of_rotation = Vec3([vec3_fixture.x1 / 2.0, vec3_fixture.x2 / 2.0, 0.0])
-    vec3_fixture.rotate_on_x3(180, center_of_rotation)
-    assert pytest.approx(vec3_fixture.x1prime) == 0.0
-    assert pytest.approx(vec3_fixture.x2prime) == 0.0
-    assert pytest.approx(vec3_fixture.x3prime) == 0.0
-
-    center_of_rotation = Vec3([1.5 * vec3_fixture.x1, 1.5 * vec3_fixture.x2, 0.0])
-    vec3_fixture.rotate_on_x3(180, center_of_rotation)
-    assert pytest.approx(vec3_fixture.x1prime) == 2 * vec3_fixture.x1
-    assert pytest.approx(vec3_fixture.x2prime) == 2 * vec3_fixture.x2
-    assert pytest.approx(vec3_fixture.x3prime) == 0.0
-
-
 def test_add(vec3_fixture):
     """
     The overloaded operator should accept a scalar value and apply it to
@@ -155,15 +121,6 @@ def test_equality(vec3_fixture):
     assert vec3_fixture != rhs
 
 
-def test_string_formatting():
-    """
-    The class has a default string representation and allows for custom
-    string formatting.
-    """
-    vec3 = Vec3([1, 2, 3])
-    assert str(vec3) == "   1.000    2.000    3.000"
-
-
 def test_elements_property(vec3_fixture):
     """Ensure that the x1, x2, and x3 elements match the expected values.
     """
@@ -171,15 +128,3 @@ def test_elements_property(vec3_fixture):
     assert 4.0 == x1
     assert 4.0 == x2
     assert 0.0 == x3
-
-
-def test_prime_elements(vec3_fixture):
-    """
-    The class should rotate by pi on the 3rd (z) axis at the origin like so:
-        < 1, 2, 3 > becomes < -1, -2, 3 >
-    """
-    vec3_fixture.rotate_on_x3(180)
-    x1p, x2p, x3p = vec3_fixture.prime_elements
-    assert pytest.approx(-4.0) == x1p
-    assert pytest.approx(-4.0) == x2p
-    assert pytest.approx(0.0) == x3p

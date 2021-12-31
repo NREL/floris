@@ -16,83 +16,64 @@ from typing import Any, Dict, List, Tuple, Union, Callable
 from functools import partial, update_wrapper
 from floris.type_dec import floris_array_type, NDArrayFloat
 
+from attrs import define, field
 import attr
 import numpy as np
 
 
+@define
 class Vec3:
-    def __init__(self, components: List[float]):
-        """
-        Contains 3-component vector information. All arithmetic operators are
-        set so that Vec3 objects can operate on and with each other directly.
+    """
+    Contains 3-component vector information. All arithmetic operators are
+    set so that Vec3 objects can operate on and with each other directly.
 
-        Args:
-            components (list(numeric, numeric, numeric), numeric): All three vector
-                components.
-            string_format (str, optional): Format to use in the
-                overloaded __str__ function. Defaults to None.
-        """
+    Args:
+        components (list(numeric, numeric, numeric), numeric): All three vector
+            components.
+        string_format (str, optional): Format to use in the
+            overloaded __str__ function. Defaults to None.
+    """
+    components: NDArrayFloat = field(converter=floris_array_type)
+    # NOTE: this does not convert elements to float if they are given as int. Is this ok?
 
-        # TODO: possibility to store components as np.array or Python list
-        # and use x1, x2, x3 virtual properties. This would simplify the
-        # arithmetic overloading by allowing the use of numpy array
-        # operations. It may add some performance gain, too, but that is
-        # likely negligible.
-
-        if len(components) != 3:
-            raise TypeError("Vec3 requires 3 components, {} given.".format(len(components)))
-
-        self.components = [float(c) for c in components]
-
-    def rotate_on_x3(self, theta, center_of_rotation=None):
-        """
-        Rotates about the `x3` coordinate axis by a given angle
-        and center of rotation. This function sets additional attributes on
-        the rotated Vec3:
-
-            - x1prime
-            - x2prime
-            - x3prime
-
-        Args:
-            theta (float): Angle of rotation in degrees.
-            center_of_rotation (Vec3, optional): Center of rotation.
-                Defaults to Vec3(0.0, 0.0, 0.0).
-        """
-        if center_of_rotation is None:
-            center_of_rotation = Vec3([0.0, 0.0, 0.0])
-        x1offset = self.x1 - center_of_rotation.x1
-        x2offset = self.x2 - center_of_rotation.x2
-        self.x1prime = x1offset * cosd(theta) - x2offset * sind(theta) + center_of_rotation.x1
-        self.x2prime = x2offset * cosd(theta) + x1offset * sind(theta) + center_of_rotation.x2
-        self.x3prime = self.x3
-
-    def __str__(self):
-        return f"{self.x1:8.3f} {self.x2:8.3f} {self.x3:8.3f}"
+    @components.validator
+    def _check_components(self, attribute, value) -> None:        
+        if np.ndim(value) > 1:
+            raise ValueError(f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given.")
+        if np.size(value) != 3:
+            raise ValueError(f"Vec3 must contain exactly 3 components, {np.size(value)} were given.")
 
     def __add__(self, arg):
         if type(arg) is Vec3:
-            return Vec3([self.x1 + arg.x1, self.x2 + arg.x2, self.x3 + arg.x3])
+            return Vec3(self.components + arg.components)
+        elif type(arg) is int or type(arg) is float:
+            return Vec3(self.components + arg)
         else:
-            return Vec3([self.x1 + arg, self.x2 + arg, self.x3 + arg])
+            raise ValueError
 
     def __sub__(self, arg):
         if type(arg) is Vec3:
-            return Vec3([self.x1 - arg.x1, self.x2 - arg.x2, self.x3 - arg.x3])
+            return Vec3(self.components - arg.components)
+        elif type(arg) is int or type(arg) is float:
+            return Vec3(self.components - arg)
         else:
-            return Vec3([self.x1 - arg, self.x2 - arg, self.x3 - arg])
+            raise ValueError
 
     def __mul__(self, arg):
         if type(arg) is Vec3:
-            return Vec3([self.x1 * arg.x1, self.x2 * arg.x2, self.x3 * arg.x3])
+            return Vec3(self.components * arg.components)
+        elif type(arg) is int or type(arg) is float:
+            return Vec3(self.components * arg)
         else:
-            return Vec3([self.x1 * arg, self.x2 * arg, self.x3 * arg])
+            raise ValueError
 
     def __truediv__(self, arg):
         if type(arg) is Vec3:
-            return Vec3([self.x1 / arg.x1, self.x2 / arg.x2, self.x3 / arg.x3])
+            return Vec3(self.components / arg.components)
+        elif type(arg) is int or type(arg) is float:
+            return Vec3(self.components / arg)
         else:
-            return Vec3([self.x1 / arg, self.x2 / arg, self.x3 / arg])
+            raise ValueError
 
     def __eq__(self, arg):
         return False not in np.isclose([self.x1, self.x2, self.x3], [arg.x1, arg.x2, arg.x3])
@@ -126,11 +107,9 @@ class Vec3:
 
     @property
     def elements(self) -> Tuple[float, float, float]:
-        return self.x1, self.x2, self.x3
-
-    @property
-    def prime_elements(self) -> Tuple[float, float, float]:
-        return self.x1prime, self.x2prime, self.x3prime
+        # TODO: replace references to elements with components
+        # and remove this @property
+        return self.components
 
 
 def cosd(angle):
