@@ -101,12 +101,12 @@ class JimenezVelocityDeflection(BaseModel):
 
         # angle of deflection
         xi_init = cosd(yaw_i) * sind(yaw_i) * ct_i / 2.0
-        x_locations = x - x_i
+        delta_x = x - x_i
 
         # yaw displacement
-        A = 15 * (2 * self.kd * x_locations / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
+        A = 15 * (2 * self.kd * delta_x / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
         B = (30 * self.kd / reference_rotor_diameter) * (
-            2 * self.kd * x_locations / reference_rotor_diameter + 1
+            2 * self.kd * delta_x / reference_rotor_diameter + 1
         ) ** 5.0
         C = xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0)
         D = 30 * self.kd
@@ -115,11 +115,7 @@ class JimenezVelocityDeflection(BaseModel):
 
         # corrected yaw displacement with lateral offset
         # This has the same shape as the grid
-        deflection = yYaw_init + self.ad + self.bd * x_locations
 
-        x = np.unique(x_locations)
-        for i in range(len(x)):
-            tmp = np.max(deflection[x_locations == x[i]])
-            deflection[x_locations == x[i]] = tmp
+        deflection = yYaw_init + self.ad + self.bd * delta_x
 
         return deflection
