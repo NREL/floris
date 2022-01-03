@@ -80,10 +80,10 @@ def _filter_convert(
 
 
 def power(
-    air_density: NDArrayFloat,
+    air_density: float,
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
-    pP: NDArrayFloat,
+    pP: float,
     power_interp: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -121,14 +121,11 @@ def power(
     # That said, it adds overhead to convert the floats to 1-D arrays, so I don't
     # recommend just converting all values to arrays
 
-    if isinstance(air_density, list):
-        air_density = np.array(air_density)
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
-        air_density = air_density[:, :, ix_filter]
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
 

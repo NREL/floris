@@ -113,9 +113,7 @@ def test_regression_tandem(sample_inputs_fixture):
         floris.farm.fCt_interp,
     )
     farm_powers = power(
-        np.array(n_turbines * n_wind_speeds * n_wind_directions * [floris.flow_field.air_density]).reshape(
-            (n_wind_directions, n_wind_speeds, n_turbines)
-        ),
+        floris.flow_field.air_density,
         velocities,
         yaw_angles,
         floris.farm.pP,
@@ -254,9 +252,7 @@ def test_regression_yaw(sample_inputs_fixture):
         floris.farm.fCt_interp,
     )
     farm_powers = power(
-        np.array(n_turbines * n_wind_speeds * n_wind_directions * [floris.flow_field.air_density]).reshape(
-            (n_wind_directions, n_wind_speeds, n_turbines)
-        ),
+        floris.flow_field.air_density,
         velocities,
         yaw_angles,
         floris.farm.pP,
