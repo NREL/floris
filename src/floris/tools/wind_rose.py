@@ -24,7 +24,7 @@ import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from pyproj import Proj
+# from pyproj import Proj
 
 import floris.utilities as geo
 
