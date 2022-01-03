@@ -15,7 +15,8 @@
 from typing import Any, Dict, List, Tuple, Union, Callable
 from functools import partial, update_wrapper
 
-from attrs import define, Attribute
+import attrs
+from attrs import define, field, Attribute
 import numpy as np
 import numpy.typing as npt
 
@@ -28,13 +29,14 @@ NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 
 
-# def attrs_array_converter(data: list) -> np.ndarray:
-#     return np.array(data, dtype=floris_float_type)
+def attrs_array_converter(data: list) -> np.ndarray:
+    return np.array(data, dtype=floris_float_type)
 
 
 @define
 class FromDictMixin:
-    """A Mixin class to allow for kwargs overloading when a data class doesn't
+    """
+    A Mixin class to allow for kwargs overloading when a data class doesn't
     have a specific parameter definied. This allows passing of larger dictionaries
     to a data class without throwing an error.
     """
@@ -135,3 +137,28 @@ def attr_floris_filter(inst: Attribute, value: Any) -> bool:
         if value.size == 0:
             return False
     return True
+
+model_attrib = partial(field, on_setattr=attrs.setters.frozen, validator=is_default)  # type: ignore
+update_wrapper(model_attrib, field)
+
+def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
+    """Helper function to generate iterable validators that will reduce the amount of
+    boilerplate code.
+
+    Parameters
+    ----------
+    iter_type : any iterable
+        The type of iterable object that should be validated.
+    item_types : Union[Any, Tuple[Any]]
+        The type or types of acceptable item types.
+
+    Returns
+    -------
+    Callable
+        The attr.validators.deep_iterable iterable and instance validator.
+    """
+    validator = attrs.validators.deep_iterable(
+        member_validator=attrs.validators.instance_of(item_types),
+        iterable_validator=attrs.validators.instance_of(iter_type),
+    )
+    return validator
