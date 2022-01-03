@@ -45,12 +45,17 @@ def assert_results(test: list, baseline: list):
 
 
 def print_test_values(average_velocities: list, thrusts: list, powers: list, axial_inductions: list):
-    for i in range(len(thrusts)):
-        print(
-            "({:.7f}, {:.7f}, {:.7f}, {:.7f}),".format(
-                average_velocities[i], thrusts[i], powers[i], axial_inductions[i]
+    n_wd, n_ws, n_turb = np.shape(average_velocities)
+    i=0
+    for j in range(n_ws):
+        print("[")
+        for k in range(n_turb):
+            print(
+                "    [{:.7f}, {:.7f}, {:.7f}, {:.7f}],".format(
+                    average_velocities[i,j,k], thrusts[i,j,k], powers[i,j,k], axial_inductions[i,j,k]
+                )
             )
-        )
+        print("],")
 
 
 WIND_DIRECTIONS = [
