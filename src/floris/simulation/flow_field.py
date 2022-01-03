@@ -35,6 +35,7 @@ class FlowField(FromDictMixin):
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
+    turbulence_intensity: float = field(converter=float)
     reference_wind_height: int = field(converter=int)
 
     n_wind_speeds: int = field(init=False)

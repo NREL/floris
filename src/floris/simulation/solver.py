@@ -33,8 +33,8 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
     v_wake = np.zeros_like(flow_field.v_initial)
     w_wake = np.zeros_like(flow_field.w_initial)
 
-    turbine_turbulence_intensity = 0.1 * np.ones_like(grid.x)
-    ambient_turbulence_intensity = 0.1
+    turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones_like(grid.x)
+    ambient_turbulence_intensity = flow_field.turbulence_intensity
 
     reference_rotor_diameter = farm.rotor_diameter
     
