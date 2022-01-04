@@ -23,15 +23,15 @@ from floris.type_dec import (
     NDArrayFloat,
     attr_serializer,
     attr_floris_filter,
-    floris_array_type
+    floris_array_converter
 )
 from floris.simulation import Grid
 
 
 @define
 class FlowField(FromDictMixin):
-    wind_speeds: NDArrayFloat = field(converter=floris_array_type)
-    wind_directions: NDArrayFloat = field(converter=floris_array_type)
+    wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
+    wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)

@@ -20,7 +20,7 @@ import numpy as np
 from floris.type_dec import (
     attr_serializer,
     attr_floris_filter,
-    floris_array_type,
+    floris_array_converter,
     NDArrayFloat
 )
 from floris.utilities import Vec3
@@ -42,8 +42,8 @@ class Farm(BaseClass):
     for generating output.
     """
 
-    layout_x: NDArrayFloat = field(converter=floris_array_type)
-    layout_y: NDArrayFloat = field(converter=floris_array_type)
+    layout_x: NDArrayFloat = field(converter=floris_array_converter)
+    layout_y: NDArrayFloat = field(converter=floris_array_converter)
     turbine: Turbine = field(converter=Turbine.from_dict)
     n_wind_directions: int = field(converter=int)
     n_wind_speeds: int = field(converter=int)

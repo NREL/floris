@@ -21,7 +21,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 from floris.type_dec import (
-    floris_array_type,
+    floris_array_converter,
     NDArrayFloat,
     NDArrayFilter,
     NDArrayInt,
@@ -266,9 +266,9 @@ class PowerThrustTable(FromDictMixin):
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
         ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
     """
-    power: NDArrayFloat = field(converter=floris_array_type)
-    thrust: NDArrayFloat = field(converter=floris_array_type)
-    wind_speed: NDArrayFloat = field(converter=floris_array_type)
+    power: NDArrayFloat = field(converter=floris_array_converter)
+    thrust: NDArrayFloat = field(converter=floris_array_converter)
+    wind_speed: NDArrayFloat = field(converter=floris_array_converter)
 
     def __attrs_post_init__(self) -> None:
         # Validate the power, thrust, and wind speed inputs.

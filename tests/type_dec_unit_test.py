@@ -23,7 +23,7 @@ from floris.type_dec import (
     FromDictMixin,
     model_attrib,
     iter_validator,
-    attrs_array_converter
+    floris_array_converter
 )
 
 @define
@@ -37,7 +37,7 @@ class ClassTest(FromDictMixin):
 @define
 class ArrayTestClass(FromDictMixin):
     arr: np.ndarray = field(  # type: ignore
-        default=[1, 2], converter=attrs_array_converter, on_setattr=attrs.setters.convert  # type: ignore
+        default=[1, 2], converter=floris_array_converter, on_setattr=attrs.setters.convert  # type: ignore
     )
 
 

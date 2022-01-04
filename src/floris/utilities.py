@@ -14,7 +14,7 @@
 
 from typing import Any, Dict, List, Tuple, Union, Callable
 from functools import partial, update_wrapper
-from floris.type_dec import floris_array_type, NDArrayFloat
+from floris.type_dec import floris_array_converter, NDArrayFloat
 
 from attrs import define, field
 import attr
@@ -33,7 +33,7 @@ class Vec3:
         string_format (str, optional): Format to use in the
             overloaded __str__ function. Defaults to None.
     """
-    components: NDArrayFloat = field(converter=floris_array_type)
+    components: NDArrayFloat = field(converter=floris_array_converter)
     # NOTE: this does not convert elements to float if they are given as int. Is this ok?
 
     @components.validator

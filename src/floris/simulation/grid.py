@@ -25,7 +25,7 @@ import numpy as np
 from floris.utilities import Vec3, rotate_coordinates_rel_west
 from floris.type_dec import  (
     floris_float_type,
-    floris_array_type,
+    floris_array_converter,
     NDArrayFloat,
     NDArrayInt
 )
@@ -59,8 +59,8 @@ class Grid(ABC):
     turbine_coordinates: list[Vec3] = field()
     reference_turbine_diameter: float
     grid_resolution: int | Iterable = field()
-    wind_directions: NDArrayFloat = field(converter=floris_array_type)
-    wind_speeds: NDArrayFloat = field(converter=floris_array_type)
+    wind_directions: NDArrayFloat = field(converter=floris_array_converter)
+    wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
 
     n_turbines: int = field(init=False)
     n_wind_speeds: int = field(init=False)

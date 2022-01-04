@@ -21,7 +21,6 @@ import numpy as np
 import numpy.typing as npt
 
 floris_float_type = np.float64
-floris_array_type = np.float64  # This type can be used to create a Numpy array with called with a Python iterable: np.float64([1,2,3]) -> np.array
 
 NDArrayFloat = npt.NDArray[floris_float_type]
 NDArrayInt = npt.NDArray[np.int_]
@@ -29,7 +28,7 @@ NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 
 
-def attrs_array_converter(data: list) -> np.ndarray:
+def floris_array_converter(data: list) -> np.ndarray:
     return np.array(data, dtype=floris_float_type)
 
 
