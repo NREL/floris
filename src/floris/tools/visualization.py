@@ -234,6 +234,12 @@ def plot_rotor_values(
         None | tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]: If
         `return_fig_objects` is `False, then `None` is returned`, otherwise the primary
         figure objects are returned for custom editing.
+
+    Example:
+        from floris.tools.visualization import plot_rotor_values
+        plot_rotor_values(floris.flow_field.u, wd_range=range(0,1), ws_range=range(0,1))
+        plot_rotor_values(floris.flow_field.v, wd_range=range(0,1), ws_range=range(0,1))
+        plot_rotor_values(floris.flow_field.w, wd_range=range(0,1), ws_range=range(0,1), show=True)
     """
 
     cmap = plt.cm.get_cmap(name=cmap)
