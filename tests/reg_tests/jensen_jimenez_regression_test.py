@@ -214,10 +214,10 @@ def test_regression_rotation(sample_inputs_fixture):
     t2_360 = farm_avg_velocities[1, 0, 2]  # upstream
     t3_360 = farm_avg_velocities[1, 0, 3]  # waked
 
-    assert np.array_equal(t0_270, t2_360)
-    assert np.array_equal(t1_270, t0_360)
-    assert np.array_equal(t2_270, t3_360)
-    assert np.array_equal(t3_270, t1_360)
+    assert np.allclose(t0_270, t2_360)
+    assert np.allclose(t1_270, t0_360)
+    assert np.allclose(t2_270, t3_360)
+    assert np.allclose(t3_270, t1_360)
 
 
 def test_regression_yaw(sample_inputs_fixture):

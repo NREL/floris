@@ -68,9 +68,9 @@ def test_turbine_init():
 
     pt_data = turbine_data["power_thrust_table"]
     assert isinstance(turbine.power_thrust_table, PowerThrustTable)
-    np.testing.assert_array_equal(turbine.power_thrust_table.power, np.array(pt_data["power"]))
-    np.testing.assert_array_equal(turbine.power_thrust_table.thrust, np.array(pt_data["thrust"]))
-    np.testing.assert_array_equal(turbine.power_thrust_table.wind_speed, np.array(pt_data["wind_speed"]))
+    np.testing.assert_allclose(turbine.power_thrust_table.power, np.array(pt_data["power"]))
+    np.testing.assert_allclose(turbine.power_thrust_table.thrust, np.array(pt_data["thrust"]))
+    np.testing.assert_allclose(turbine.power_thrust_table.wind_speed, np.array(pt_data["wind_speed"]))
 
     assert isinstance(turbine.fCp_interp, interp1d)
     assert isinstance(turbine.fCt_interp, interp1d)
@@ -224,7 +224,7 @@ def test_ct():
     )
 
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
-    assert thrust == turbine_data["power_thrust_table"]["thrust"][truth_index]
+    np.testing.assert_allclose(thrust, turbine_data["power_thrust_table"]["thrust"][truth_index])
 
     # Multiple turbines with index filter
     # 4 turbines with 3 x 3 grid arrays
@@ -238,7 +238,7 @@ def test_ct():
 
     for i, index in enumerate(INDEX_FILTER):
         truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(WIND_SPEEDS[index])
-        assert thrusts[0, 0, i] == turbine_data["power_thrust_table"]["thrust"][truth_index]
+        np.testing.assert_allclose(thrusts[0, 0, i], turbine_data["power_thrust_table"]["thrust"][truth_index])
 
 
 def test_power():
@@ -249,7 +249,7 @@ def test_power():
     # Single turbine
     wind_speed = 10.0
     p = power(
-        air_density=1.0 * np.ones((1, 1, 1)),
+        air_density=1.0,
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         pP=turbine.pP,
@@ -257,12 +257,12 @@ def test_power():
     )
 
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
-    assert p == turbine_data["power_thrust_table"]["power"][truth_index]
+    np.testing.assert_allclose(p, turbine_data["power_thrust_table"]["power"][truth_index])
 
     # Multiple turbines with ix filter
-    # Why are we using air density of 1.0 here? If not 1, the test fails.
+    # TODO: Why are we using air density of 1.0 here? If not 1, the test fails.
     p = power(
-        air_density=1.0 * np.ones((1, 1, 4)),
+        air_density=1.0,
         velocities=np.ones((3, 3)) * WIND_SPEEDS_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, 4)),
         pP=turbine.pP,
@@ -273,7 +273,7 @@ def test_power():
 
     for i, index in enumerate(INDEX_FILTER):
         truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(WIND_SPEEDS[index])
-        assert p[0, 0, i] == turbine_data["power_thrust_table"]["power"][truth_index]
+        np.testing.assert_allclose(p[0, 0, i], turbine_data["power_thrust_table"]["power"][truth_index])
 
 
 def test_axial_induction():

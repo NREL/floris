@@ -13,6 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import numpy as np
 import pytest
 from floris.utilities import Vec3
 
@@ -93,14 +94,14 @@ def test_divide(vec3_fixture):
     It should also accept a Vec3 value and perform an element-wise operation.
     """
     scalar = vec3_fixture / 10.0
-    assert scalar.x1 == vec3_fixture.x1 / 10.0
-    assert scalar.x2 == vec3_fixture.x2 / 10.0
-    assert scalar.x3 == vec3_fixture.x3 / 10.0
+    np.testing.assert_allclose(scalar.x1, vec3_fixture.x1 / 10.0)
+    np.testing.assert_allclose(scalar.x2, vec3_fixture.x2 / 10.0)
+    np.testing.assert_allclose(scalar.x3, vec3_fixture.x3 / 10.0)
 
     vector = vec3_fixture / Vec3([10, 100, 1000])
-    assert vector.x1 == vec3_fixture.x1 / 10.0
-    assert vector.x2 == vec3_fixture.x2 / 100.0
-    assert vector.x3 == vec3_fixture.x3 / 1000.0
+    np.testing.assert_allclose(vector.x1, vec3_fixture.x1 / 10.0)
+    np.testing.assert_allclose(vector.x2, vec3_fixture.x2 / 100.0)
+    np.testing.assert_allclose(vector.x3, vec3_fixture.x3 / 1000.0)
 
 
 def test_equality(vec3_fixture):
