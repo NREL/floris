@@ -8,6 +8,8 @@ scipy
 
 # tools
 matplotlib
+pandas
+scipy
 
 # utilities
 pytest
