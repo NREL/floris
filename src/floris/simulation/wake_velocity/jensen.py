@@ -10,17 +10,18 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-
 from typing import Any, Dict
 
-import attr
+from attrs import define, field
 import numpy as np
 
-from floris.utilities import float_attrib, model_attrib
-from floris.simulation import BaseModel, Farm, FlowField, Grid, Turbine
+from floris.simulation import BaseModel
+from floris.simulation import Farm
+from floris.simulation import FlowField
+from floris.simulation import Grid
 
 
-@attr.s(auto_attribs=True)
+@define
 class JensenVelocityDeficit(BaseModel):
     """
     The Jensen model computes the wake velocity deficit based on the classic
@@ -38,8 +39,7 @@ class JensenVelocityDeficit(BaseModel):
             :keyprefix: jvm-
     """
 
-    we: float = float_attrib(default=0.05)
-
+    we: float = field(converter=float, default=0.05)
     model_string = "jensen"
 
     def prepare_function(

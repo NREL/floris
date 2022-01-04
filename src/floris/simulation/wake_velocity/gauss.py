@@ -12,24 +12,24 @@
 
 from typing import Any, Dict
 
-import attr
+from attrs import define, field
+import numexpr as ne
 import numpy as np
 
-from floris.simulation import Grid
-from floris.utilities import float_attrib, model_attrib, cosd, sind, tand
 from floris.simulation import BaseModel
 from floris.simulation import Farm
 from floris.simulation import FlowField
+from floris.simulation import Grid
+from floris.utilities import cosd, sind, tand
 
 
-@attr.s(auto_attribs=True)
+@define
 class GaussVelocityDeficit(BaseModel):
 
-    alpha: float = float_attrib(default=0.58)
-    beta: float = float_attrib(default=0.077)
-    ka: float = float_attrib(default=0.38)
-    kb: float = float_attrib(default=0.004)
-
+    alpha: float = field(default=0.58)
+    beta: float = field(default=0.077)
+    ka: float = field(default=0.38)
+    kb: float = field(default=0.004)
     model_string = "gauss"
 
     def prepare_function(

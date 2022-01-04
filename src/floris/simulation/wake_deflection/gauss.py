@@ -12,17 +12,17 @@
 
 from typing import Any, Dict
 
-import attr
+from attrs import define, field
 import numpy as np
 
 from floris.simulation import BaseModel
-from floris.simulation import Grid
 from floris.simulation import Farm
 from floris.simulation import FlowField
-from floris.utilities import cosd, sind, tand, float_attrib, model_attrib, bool_attrib
+from floris.simulation import Grid
+from floris.utilities import cosd, sind, tand
 
 
-@attr.s(auto_attribs=True)
+@define
 class GaussVelocityDeflection(BaseModel):
     """
     The Gauss deflection model is a blend of the models described in
@@ -69,16 +69,15 @@ class GaussVelocityDeflection(BaseModel):
             :filter: docname in docnames
             :keyprefix: gdm-
     """
-    ad: float = float_attrib(default=0.0)
-    bd: float = float_attrib(default=0.0)
-    alpha: float = float_attrib(default=0.58)
-    beta: float = float_attrib(default=0.077)
-    ka: float = float_attrib(default=0.38)
-    kb: float = float_attrib(default=0.004)
-    dm: float = float_attrib(default=1.0)
-    eps_gain: float = float_attrib(default=0.2)
-    use_secondary_steering: bool = bool_attrib(default=True)
-
+    ad: float = field(converter=float, default=0.0)
+    bd: float = field(converter=float, default=0.0)
+    alpha: float = field(converter=float, default=0.58)
+    beta: float = field(converter=float, default=0.077)
+    ka: float = field(converter=float, default=0.38)
+    kb: float = field(converter=float, default=0.004)
+    dm: float = field(converter=float, default=1.0)
+    eps_gain: float = field(converter=float, default=0.2)
+    use_secondary_steering: bool = field(converter=bool, default=True)
     model_string = "gauss"
 
     def prepare_function(

@@ -12,14 +12,17 @@
 
 from typing import Any, Dict
 
-import attr
+from attrs import define, field
 import numpy as np
 
-from floris.utilities import cosd, sind, float_attrib, model_attrib
-from floris.simulation import BaseModel, Farm, FlowField, Grid
+from floris.simulation import BaseModel
+from floris.simulation import Farm
+from floris.simulation import FlowField
+from floris.simulation import Grid
+from floris.utilities import cosd, sind
 
 
-@attr.s(auto_attribs=True)
+@define
 class JimenezVelocityDeflection(BaseModel):
     """
     Jiménez wake deflection model, dervied from
@@ -32,10 +35,9 @@ class JimenezVelocityDeflection(BaseModel):
             :keyprefix: jdm-
     """
 
-    kd: float = float_attrib(default=0.05)
-    ad: float = float_attrib(default=0.0)
-    bd: float = float_attrib(default=0.0)
-
+    kd: float = field(default=0.05)
+    ad: float = field(default=0.0)
+    bd: float = field(default=0.0)
     model_string = "jimenez"
 
     def prepare_function(
