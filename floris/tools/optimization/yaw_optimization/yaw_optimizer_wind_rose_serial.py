@@ -107,7 +107,7 @@ class YawOptimizationWindRose:
         self.yaw_opt.reinitialize_flow_field(
             wind_direction=[wd], wind_speed=[ws], turbulence_intensity=[ti]
         )
-        if ((ws >= self.minimum_ws) and (ws <= self.maximum_ws)):
+        if (ws >= self.minimum_ws) and (ws <= self.maximum_ws):
             opt_yaw_angles = self.yaw_opt.optimize()
         else:
             print("   Skipping optimization: outside of wind speed bounds.")
@@ -125,8 +125,7 @@ class YawOptimizationWindRose:
 
         # Calculate baseline power without wake losses
         self.yaw_opt.fi.calculate_wake(
-            yaw_angles=self.yaw_opt.yaw_angles_baseline,
-            no_wake=True,
+            yaw_angles=self.yaw_opt.yaw_angles_baseline, no_wake=True
         )
         power_turbs_base_nowakes = self.yaw_opt.fi.get_turbine_power(
             include_unc=self.yaw_opt.include_unc,
@@ -145,8 +144,7 @@ class YawOptimizationWindRose:
 
         # Calculate optimized power without wake losses
         self.yaw_opt.fi.calculate_wake(
-            yaw_angles=opt_yaw_angles,
-            no_wake=True,
+            yaw_angles=opt_yaw_angles, no_wake=True
         )
         power_turbs_opt_nowakes = self.yaw_opt.fi.get_turbine_power(
             include_unc=self.yaw_opt.include_unc,
@@ -165,13 +163,17 @@ class YawOptimizationWindRose:
                 "power_baseline": [np.sum(power_turbs_base)],
                 "power_baseline_nowakes": [np.sum(power_turbs_base_nowakes)],
                 "power_baseline_weighted": [np.dot(w, power_turbs_base)],
-                "power_baseline_weighted_nowakes": [np.dot(w, power_turbs_base_nowakes)],
+                "power_baseline_weighted_nowakes": [
+                    np.dot(w, power_turbs_base_nowakes)
+                ],
                 "turbine_power_baseline": [power_turbs_base],
                 "turbine_power_baseline_nowakes": [power_turbs_base_nowakes],
                 "power_opt": [np.sum(power_turbs_opt)],
                 "power_opt_nowakes": [np.sum(power_turbs_opt_nowakes)],
                 "power_opt_weighted": [np.dot(w, power_turbs_opt)],
-                "power_opt_weighted_nowakes": [np.dot(w, power_turbs_opt_nowakes)],
+                "power_opt_weighted_nowakes": [
+                    np.dot(w, power_turbs_opt_nowakes)
+                ],
                 "turbine_power_opt": [power_turbs_opt],
                 "turbine_power_opt_nowakes": [power_turbs_opt_nowakes],
                 "yaw_angles": [opt_yaw_angles],
@@ -198,18 +200,38 @@ class YawOptimizationWindRose:
                 included if self.ti_array is not None.
                 - **power_baseline** (*float*) - The total power produced by the
                 wind farm with the baseline yaw offsets (W).
+                - **power_baseline_nowakes** (*float*) - The total power produced
+                by the wind farm with the baseline yaw offsets when the wake losses
+                are assumed to be zero (W).
                 - **power_baseline_weighted** (*float*) - The total power produced
                 by the wind farm with the baseline yaw offsets weighted by the
                 turbine weights specified by the user (W).
+                - **power_baseline_weighted_nowakes** (*float*) - The total power
+                produced by the wind farm with the baseline yaw offsets when the
+                wake losses are assumed to be zero, and weighted by the turbine
+                weights specified by the user (W).
                 - **turbine_power_baseline** (*float*) - The power produced
                 by each turbine in the wind farm with the baseline yaw offsets (W).
-                - **power_opt** (*float*) - The total power produced by the
-                wind farm with optimal yaw offsets (W).
-                - **power_opt_weighted** (*float*) - The total power produced
-                by the wind farm with the optimal yaw offsets weighted by the
-                turbine weights specified by the user (W).
+                - **turbine_power_baseline_nowakes** (*float*) - The power produced
+                by each turbine in the wind farm with the baseline yaw offsets, and
+                when the wake losses are assumed to be zero (W).
+                - **power_opt** (*float*) - The total power produced by the wind
+                farm with optimal yaw offsets (W).
+                - **power_opt_nowakes** (*float*) - The total power produced by the
+                wind farm with optimal yaw offsets when the wake losses are assumed
+                to be zero (W).
+                - **power_opt_weighted** (*float*) - The total power produced by the
+                wind farm with the optimal yaw offsets weighted by the turbine
+                weights specified by the user (W).
+                - **power_opt_weighted_nowakes** (*float*) - The total power
+                produced by the wind farm with the optimal yaw offsets when the
+                wake losses are assumed to be zero, and weighted by the turbine
+                weights specified by the user (W).
                 - **turbine_power_opt** (*float*) - The power produced by each
                 turbine in the wind farm with the optimal yaw offsets (W).
+                - **turbine_power_opt_nowakes** (*float*) - The power produced by
+                each turbine in the wind farm when the wake losses are assumed to
+                be zero, and with the optimal yaw offsets (W).
                 - **yaw_angles** (*list* (*float*)) - A list containing
                 the optimal yaw offsets for maximizing total wind farm power
                 for each wind turbine (deg).
