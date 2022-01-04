@@ -61,6 +61,16 @@ class FromDictMixin:
             raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
         return cls(**kwargs)  # type: ignore
 
+    def as_dict(self) -> dict:
+        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        This dictionary will contain only `Python` types that can later be converted to their
+        proper `Turbine` formats.
+
+        Returns:
+            dict: All key, vaue pais required for class recreation.
+        """
+        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
+
 
 def is_default(instance, attribute, value):
     if attribute.default != value:

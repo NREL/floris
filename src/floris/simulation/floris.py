@@ -19,7 +19,7 @@ from pathlib import Path
 import yaml
 
 import floris.logging_manager as logging_manager
-from floris.type_dec import FromDictMixin, attr_floris_filter, attr_serializer
+from floris.type_dec import FromDictMixin
 from floris.simulation import (
     Farm,
     WakeModelManager,
@@ -29,7 +29,6 @@ from floris.simulation import (
     sequential_solver,
     full_flow_sequential_solver
 )
-import attrs
 from attrs import define, field
 
 
@@ -152,11 +151,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         input_file_path = Path(input_file_path).resolve()
         input_dict = yaml.load(open(input_file_path, "r"), Loader=yaml.SafeLoader)
         return Floris.from_dict(input_dict)
-
-    def as_dict(self) -> dict:
-
-        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
-
 
     def to_json(self, output_file_path: str) -> None:
         """Converts the `Floris` object to an input-ready JSON file at `output_file_path`.

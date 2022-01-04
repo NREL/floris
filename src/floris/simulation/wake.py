@@ -15,7 +15,6 @@
 import attrs
 from attrs import define, field
 
-from floris.type_dec import attr_serializer, attr_floris_filter
 from floris.simulation import BaseClass, BaseModel
 from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
@@ -98,17 +97,6 @@ class WakeModelManager(BaseClass):
         for k in value.keys():
             if k not in required_strings:
                 raise KeyError(f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
-
-    def as_dict(self) -> dict:
-        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
-        This dictionary will contain only `Python` types that can later be converted to their
-        proper `Wake` formats.
-
-        Returns:
-            dict: All key, vaue pais required for class recreation.
-        """
-        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
-
 
     @property
     def deflection_function(self):

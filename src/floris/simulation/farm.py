@@ -18,8 +18,6 @@ from attrs import define, field
 import numpy as np
 
 from floris.type_dec import (
-    attr_serializer,
-    attr_floris_filter,
     floris_array_converter,
     NDArrayFloat
 )
@@ -101,16 +99,6 @@ class Farm(BaseClass):
     @property
     def n_turbines(self):
         return len(self.layout_x)
-
-    def as_dict(self) -> dict:
-        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
-        This dictionary will contain only `Python` types that can later be converted to their
-        proper `Farm` formats.
-
-        Returns:
-            dict: All key, vaue pais required for class recreation.
-        """
-        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
 
     # def generate_farm_points(self) -> None:
 

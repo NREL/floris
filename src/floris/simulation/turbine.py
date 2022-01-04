@@ -27,8 +27,6 @@ from floris.type_dec import (
     NDArrayInt,
     NDArrayObject,
     FromDictMixin,
-    attr_serializer,
-    attr_floris_filter,
 )
 from floris.utilities import cosd
 from floris.simulation import BaseClass
@@ -350,16 +348,6 @@ class Turbine(BaseClass):
     #     self.use_points_on_perimeter = bool(input_dictionary["use_points_on_perimeter"])
     # else:
     #     self.use_points_on_perimeter = False
-
-    def as_dict(self) -> dict:
-        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
-        This dictionary will contain only `Python` types that can later be converted to their
-        proper `Turbine` formats.
-
-        Returns:
-            dict: All key, vaue pais required for class recreation.
-        """
-        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
 
     def __attrs_post_init__(self) -> None:
 

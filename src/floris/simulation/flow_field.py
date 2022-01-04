@@ -15,14 +15,12 @@
 from __future__ import annotations
 
 import attrs
-from attrs import define, field, Factory
+from attrs import define, field
 import numpy as np
 
 from floris.type_dec import (
     FromDictMixin,
     NDArrayFloat,
-    attr_serializer,
-    attr_floris_filter,
     floris_array_converter
 )
 from floris.simulation import Grid
@@ -89,13 +87,3 @@ class FlowField(FromDictMixin):
         self.u = np.take_along_axis(self.u, unsorted_indices, axis=2)
         self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
-
-    def as_dict(self) -> dict:
-        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
-        This dictionary will contain only `Python` types that can later be converted to their
-        proper `FlowField` formats.
-
-        Returns:
-            dict: All key, vaue pais required for class recreation.
-        """
-        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
