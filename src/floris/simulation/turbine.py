@@ -130,16 +130,7 @@ def power(
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
-
-    n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
-    p = np.zeros_like(yaw_effective_velocity)
-    # TODO: convert to list comprehension
-    for i in range(n_wind_directions):
-        for j in range(n_wind_speeds):
-            for k in range(n_turbines):
-                interpolator = power_interp
-                p[i, j, k] = interpolator(yaw_effective_velocity[i, j, k])
-
+    p = power_interp(yaw_effective_velocity)
     return p * air_density
 
 
@@ -168,22 +159,15 @@ def Ct(
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
-    ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
+        ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
 
-    n_wind_directions, n_wind_speeds, n_turbines, *_ = yaw_angle.shape
     average_velocities = average_velocity(velocities)
-    thrust_coefficient = np.zeros_like(average_velocities)
-    for i in range(n_wind_directions):
-        for j in range(n_wind_speeds):
-            for k in range(n_turbines):
-                _fCt = fCt
-                thrust_coefficient[i, j, k] = _fCt(average_velocities[i, j, k])
-
+    thrust_coefficient = fCt(average_velocities)
+    thrust_coefficient = np.clip(thrust_coefficient, 0.0, 1.0)
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
-
     return effective_thrust
 
 

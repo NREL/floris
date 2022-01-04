@@ -76,8 +76,8 @@ class FlowField(FromDictMixin):
         # The result is an array the wind speed and wind direction dimensions on the left side
         # of the shape and the grid.template array on the right
         self.u_initial = (self.wind_speeds[None, :].T * wind_profile_plane.T).T
-        self.v_initial = np.zeros(np.shape(self.u_initial))
-        self.w_initial = np.zeros(np.shape(self.u_initial))
+        self.v_initial = np.zeros(np.shape(self.u_initial), dtype=self.u_initial.dtype)
+        self.w_initial = np.zeros(np.shape(self.u_initial), dtype=self.u_initial.dtype)
 
         self.u = self.u_initial.copy()
         self.v = self.v_initial.copy()
