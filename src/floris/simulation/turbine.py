@@ -351,7 +351,7 @@ class Turbine(BaseClass):
     # else:
     #     self.use_points_on_perimeter = False
 
-    def _asdict(self) -> dict:
+    def as_dict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `Turbine` formats.

@@ -303,7 +303,8 @@ class SampleInputs:
 
         self.farm = {
             "layout_x": X_COORDS,
-            "layout_y": Y_COORDS
+            "layout_y": Y_COORDS,
+            "turbine": self.turbine
         }
 
         self.flow_field = {

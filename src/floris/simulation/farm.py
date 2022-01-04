@@ -28,6 +28,15 @@ from floris.simulation import Turbine
 from floris.simulation import BaseClass
 
 
+def turbine_factory(value: Turbine | dict):
+    if type(value) is Turbine:
+        return value
+    elif type(value) is dict:
+        return Turbine.from_dict(value)
+    else:
+        raise ValueError
+
+
 @define
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
@@ -44,12 +53,13 @@ class Farm(BaseClass):
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
-    turbine: Turbine = field(converter=Turbine.from_dict)
-    n_wind_directions: int = field(converter=int)
-    n_wind_speeds: int = field(converter=int)
+    turbine: Turbine = field(converter=turbine_factory)
+    # n_wind_directions: int = field(converter=int)
+    # n_wind_speeds: int = field(converter=int)
 
-    coordinates: list[Vec3] = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
+    coordinates: list[Vec3] = field(init=False)
+    # yaw_angles: NDArrayFloat = field(init=False)
     rotor_diameter: float = field(init=False)
     hub_height: float = field(init=False)
     pP: float = field(init=False)
@@ -83,13 +93,16 @@ class Farm(BaseClass):
             Vec3([x, y, self.hub_height]) for x, y in zip(self.layout_x, self.layout_y)
         ]
 
-        self.yaw_angles = np.zeros((self.n_wind_directions, self.n_wind_speeds, self.n_turbines))
+        # self.yaw_angles = np.zeros((self.n_wind_directions, self.n_wind_speeds, self.n_turbines))
+
+    def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
+        self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
 
     @property
     def n_turbines(self):
         return len(self.layout_x)
 
-    def _asdict(self) -> dict:
+    def as_dict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `Farm` formats.
@@ -97,11 +110,7 @@ class Farm(BaseClass):
         Returns:
             dict: All key, vaue pais required for class recreation.
         """
-        def _farm_filter(inst: attrs.Attribute, value: Any) -> bool:
-            if inst.name in ("wind_directions", "wind_speeds"):
-                return False
-            return attr_floris_filter(inst, value)
-        return attrs.asdict(self, filter=_farm_filter, value_serializer=attr_serializer)
+        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
 
     # def generate_farm_points(self) -> None:
 

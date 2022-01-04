@@ -33,8 +33,8 @@ def test_farm_init_homogenous_turbines():
     coordinates = [Vec3([x, y, turbine_data["hub_height"]]) for x, y in zip(layout_x, layout_y)]
 
     farm = Farm(
-        n_wind_directions=N_WIND_DIRECTIONS,
-        n_wind_speeds=N_WIND_SPEEDS,
+        # n_wind_directions=N_WIND_DIRECTIONS,
+        # n_wind_speeds=N_WIND_SPEEDS,
         layout_x=layout_x,
         layout_y=layout_y,
         turbine=turbine_data
@@ -51,3 +51,20 @@ def test_farm_init_homogenous_turbines():
     assert np.all(farm.pP == turbine_data["pP"])
     assert np.all(farm.pT == turbine_data["pT"])
     assert np.all(farm.generator_efficiency == turbine_data["generator_efficiency"])
+
+
+def test_asdict(sample_inputs_fixture: SampleInputs):
+    
+    # sample_inputs_fixture.farm["n_wind_directions"] = 1
+    # sample_inputs_fixture.farm["n_wind_speeds"] = 1
+    sample_inputs_fixture.farm["turbine"] = sample_inputs_fixture.turbine
+
+    farm = Farm.from_dict(sample_inputs_fixture.farm)
+    farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    dict1 = farm.as_dict()
+
+    new_farm = farm.from_dict(dict1)
+    new_farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    dict2 = new_farm.as_dict()
+
+    assert dict1 == dict2

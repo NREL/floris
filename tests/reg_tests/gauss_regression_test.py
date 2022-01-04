@@ -242,7 +242,7 @@ def test_regression_tandem(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
@@ -345,7 +345,7 @@ def test_regression_rotation(sample_inputs_fixture):
     sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
     sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
 
-    floris = Floris(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.steady_state_atmospheric_condition()
 
     velocities = floris.flow_field.u[:, :, :, :, :]
@@ -377,7 +377,7 @@ def test_regression_yaw(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
 
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
@@ -442,7 +442,7 @@ def test_regression_gch(sample_inputs_fixture):
 
     ### With GCH off (via conftest), GCH should be same as Gauss
 
-    floris = Floris(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
 
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
@@ -502,7 +502,7 @@ def test_regression_gch(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["enable_secondary_steering"] = True
     sample_inputs_fixture.floris["wake"]["enable_yaw_added_recovery"] = True
 
-    floris = Floris(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
 
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
@@ -570,7 +570,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["enable_secondary_steering"] = False
     sample_inputs_fixture.floris["wake"]["enable_yaw_added_recovery"] = True
 
-    floris = Floris(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
 
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
@@ -637,7 +637,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["enable_secondary_steering"] = True
     sample_inputs_fixture.floris["wake"]["enable_yaw_added_recovery"] = False
 
-    floris = Floris(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
 
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0

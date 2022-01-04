@@ -15,12 +15,6 @@ solver:
   type: turbine_grid
   turbine_grid_points: 5
 
-farm:
-  layout_x:
-  - 0.0
-  layout_y:
-  - 0.0
-
 flow_field:
   air_density: 1.225
   reference_wind_height: 90.0
@@ -32,7 +26,7 @@ flow_field:
   - 8.0
   wind_veer: 0.0
 
-turbine:
+turbine: &t
   generator_efficiency: 1.0
   hub_height: 90.0
   power_thrust_table:
@@ -187,6 +181,13 @@ turbine:
   pT: 1.88
   rotor_diameter: 126.0
   TSR: 8.0
+
+farm:
+  layout_x:
+  - 0.0
+  layout_y:
+  - 0.0
+  turbine: *t
 
 wake:
   model_strings:

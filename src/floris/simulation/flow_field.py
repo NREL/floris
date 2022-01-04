@@ -54,7 +54,7 @@ class FlowField(FromDictMixin):
         self.n_wind_speeds = value.size
 
     @wind_directions.validator
-    def wind_directionss_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
+    def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
@@ -90,7 +90,7 @@ class FlowField(FromDictMixin):
         self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
 
-    def _asdict(self) -> dict:
+    def as_dict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `FlowField` formats.

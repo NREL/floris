@@ -14,8 +14,8 @@
 
 
 import numpy as np
-import pytest
 
+from floris.simulation import FlowField, TurbineGrid
 from tests.conftest import N_TURBINES
 
 
@@ -27,7 +27,7 @@ def test_n_wind_directions(flow_field_fixture):
     assert flow_field_fixture.n_wind_directions > 0
 
 
-def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
+def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture: TurbineGrid):
     flow_field_fixture.wind_shear = 1.0
     flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
 
@@ -53,10 +53,13 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture):
     assert np.array_equal(average, baseline)
 
 
-def test_flow_field_get_quantities():
-    # TODO: Chris
-    # Get the average velocity for turbine # at all wind speeds greater than 8...
-    # average_velocity(
-    #     flow_field_fixture.u[...]
-    # )
-    assert True
+def test_asdict(flow_field_fixture: FlowField, turbine_grid_fixture: TurbineGrid):
+    
+    flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
+    dict1 = flow_field_fixture.as_dict()
+
+    new_ff = FlowField.from_dict(dict1)
+    new_ff.initialize_velocity_field(turbine_grid_fixture)
+    dict2 = new_ff.as_dict()
+
+    assert dict1 == dict2

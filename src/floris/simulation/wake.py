@@ -67,9 +67,9 @@ class WakeModelManager(BaseClass):
     enable_yaw_added_recovery: bool = field(converter=bool)
     enable_transverse_velocities: bool = field(converter=bool)
 
-    combination_model: BaseModel = field(init=False)
+    # combination_model: BaseModel = field(init=False)
     deflection_model: BaseModel = field(init=False)
-    turbulence_model: BaseModel = field(init=False)
+    # turbulence_model: BaseModel = field(init=False)
     velocity_model: BaseModel = field(init=False)
 
     def __attrs_post_init__(self) -> None:
@@ -99,7 +99,7 @@ class WakeModelManager(BaseClass):
             if k not in required_strings:
                 raise KeyError(f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
 
-    def _asdict(self) -> dict:
+    def as_dict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `Wake` formats.
@@ -107,22 +107,8 @@ class WakeModelManager(BaseClass):
         Returns:
             dict: All key, vaue pais required for class recreation.
         """
+        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
 
-        def create_dict(wake_model, model_string):
-            if wake_model is None:
-                return {}
-            output = attrs.asdict(wake_model, filter=attr_floris_filter, value_serializer=attr_serializer)
-            return {model_string: output}
-
-        # TODO: Uncomment these lines once the models are implemented
-        output = dict(
-            model_strings=self.model_strings,
-            # wake_combination_parameters=create_dict(self.combination_model),
-            wake_deflection_parameters=create_dict(self.deflection_model, self.model_strings["deflection_model"]),
-            # wake_turbulence_parameters=create_dict(self.turbulence_model),
-            wake_velocity_parameters=create_dict(self.velocity_model, self.model_strings["velocity_model"]),
-        )
-        return output
 
     @property
     def deflection_function(self):

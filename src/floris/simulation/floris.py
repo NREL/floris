@@ -19,7 +19,7 @@ from pathlib import Path
 import yaml
 
 import floris.logging_manager as logging_manager
-from floris.type_dec import FromDictMixin
+from floris.type_dec import FromDictMixin, attr_floris_filter, attr_serializer
 from floris.simulation import (
     Farm,
     WakeModelManager,
@@ -29,8 +29,11 @@ from floris.simulation import (
     sequential_solver,
     full_flow_sequential_solver
 )
+import attrs
+from attrs import define, field
 
 
+@define
 class Floris(logging_manager.LoggerBase, FromDictMixin):
     """
     Top-level class that describes a Floris model and initializes the
@@ -38,56 +41,51 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     access other objects within the model.
     """
 
-    def __init__(self, input_dict) -> None:
+    logging: dict = field(converter=dict)
+    solver: dict = field(converter=dict)
+    flow_field: FlowField = field(converter=FlowField.from_dict)
+    wake: WakeModelManager = field(converter=WakeModelManager.from_dict)
+    farm: Farm = field(converter=Farm.from_dict)
 
-        self.flow_field = FlowField.from_dict(input_dict["flow_field"])
-        self.wake = WakeModelManager.from_dict(input_dict["wake"])
-
-        self.farm = Farm(
-            turbine=input_dict["turbine"],
-            n_wind_directions=self.flow_field.n_wind_directions,
-            n_wind_speeds=self.flow_field.n_wind_speeds,
-            layout_x=input_dict["farm"]["layout_x"],
-            layout_y=input_dict["farm"]["layout_y"],
-        )
-
-        solver_settings = input_dict["solver"]
-        if solver_settings["type"] == "turbine_grid":
+    def __attrs_post_init__(self) -> None:
+        if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
                 turbine_coordinates=self.farm.coordinates,
                 reference_turbine_diameter=self.farm.rotor_diameter,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
-                grid_resolution=solver_settings["turbine_grid_points"],
+                grid_resolution=self.solver["turbine_grid_points"],
             )
-        elif solver_settings["type"] == "flow_field_grid":
+        elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
                 turbine_coordinates=self.farm.coordinates,
                 reference_turbine_diameter=self.farm.rotor_diameter,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
-                grid_resolution=solver_settings["flow_field_grid_points"],
+                grid_resolution=self.solver["flow_field_grid_points"],
             )
         else:
             raise ValueError(
-                f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {solver_settings['type']}"
+                f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {self.solver['type']}"
             )
-
-        # Configure logging
-        logging_manager.configure_console_log(
-            input_dict["logging"]["console"]["enable"],
-            input_dict["logging"]["console"]["level"],
-        )
-        logging_manager.configure_file_log(
-            input_dict["logging"]["file"]["enable"],
-            input_dict["logging"]["file"]["level"],
-        )
-
-    # @profile
-    def steady_state_atmospheric_condition(self):
 
         # Initialize field quanitities
         self.flow_field.initialize_velocity_field(self.grid)
+        self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
+
+        # Configure logging
+        logging_manager.configure_console_log(
+            self.logging["console"]["enable"],
+            self.logging["console"]["level"],
+        )
+        logging_manager.configure_file_log(
+            self.logging["file"]["enable"],
+            self.logging["file"]["level"],
+        )
+    
+
+    # @profile
+    def steady_state_atmospheric_condition(self):
 
         # <<interface>>
         # start = time.time()
@@ -138,7 +136,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         input_file_path = Path(input_file_path).resolve()
         with open(input_file_path) as json_file:
             input_dict = json.load(json_file)
-        return Floris(input_dict)
+        return Floris.from_dict(input_dict)
 
     @classmethod
     def from_yaml(cls, input_file_path: str | Path) -> Floris:
@@ -153,21 +151,12 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         """
         input_file_path = Path(input_file_path).resolve()
         input_dict = yaml.load(open(input_file_path, "r"), Loader=yaml.SafeLoader)
-        return Floris(input_dict)
+        return Floris.from_dict(input_dict)
 
-    def _prepare_for_save(self) -> dict:
-        logging = {
-            "console": {"enable": True, "level": self.logger.level},
-            "file": {"enable": False, "level": 1},
-        }
-        output_dict = dict(
-            farm=self.farm._asdict(),
-            turbine=self.farm.turbine._asdict(),
-            logging=logging,
-            wake=self.wake._asdict(),
-            flow_field=self.flow_field._asdict(),
-        )
-        return output_dict
+    def as_dict(self) -> dict:
+
+        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
+
 
     def to_json(self, output_file_path: str) -> None:
         """Converts the `Floris` object to an input-ready JSON file at `output_file_path`.

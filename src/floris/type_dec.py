@@ -28,8 +28,6 @@ NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 
 
-def floris_array_converter(data: list) -> np.ndarray:
-    return np.array(data, dtype=floris_float_type)
 
 
 @define
@@ -121,6 +119,11 @@ def is_default(instance, attribute, value):
 # model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)  # type: ignore
 # update_wrapper(model_attrib, attr.ib)
 
+
+### Custom callables for attrs objects and functions
+
+def floris_array_converter(data: list) -> np.ndarray:
+    return np.array(data, dtype=floris_float_type)
 
 def attr_serializer(inst: type, field: Attribute, value: Any):
     if isinstance(value, np.ndarray):

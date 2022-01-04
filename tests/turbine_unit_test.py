@@ -303,3 +303,14 @@ def test_axial_induction():
     assert len(ai[0, 0]) == len(INDEX_FILTER)
     for calc_ai, truth in zip(ai[0, 0], [0.2565471298176996, 0.2565471298176996]):
         pytest.approx(calc_ai, truth)
+
+
+def test_asdict(sample_inputs_fixture: SampleInputs):
+    
+    turbine = Turbine.from_dict(sample_inputs_fixture.turbine)
+    dict1 = turbine.as_dict()
+
+    new_turb = Turbine.from_dict(dict1)
+    dict2 = new_turb.as_dict()
+
+    assert dict1 == dict2
