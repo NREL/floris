@@ -273,9 +273,7 @@ class FlorisInterface(LoggerBase):
             with_resolution (float, optional): Resolution of output flow_field. Defaults
                 to None.
         """
-        reinitialize_farm = False
-        farm = {}
-        flow_field_dict = self.floris.flow_field._asdict()
+        floris_dict = self.floris.as_dict()
 
         if wind_speed is not None:
             flow_field_dict["wind_speeds"] = wind_speed
@@ -300,10 +298,6 @@ class FlorisInterface(LoggerBase):
         if turbulence_kinetic_energy is not None:
             pass  # TODO: not needed until GCH
 
-        self.floris.flow_field = FlowField.from_dict(flow_field_dict)
-        if reinitialize_farm:
-            farm = self.floris.farm._asdict()
-
         x = self.floris.farm.layout_x
         if layout_array is not None:
             x, y = layout_array
@@ -311,33 +305,8 @@ class FlorisInterface(LoggerBase):
             farm = self.floris.farm._asdict()
             farm["layout_x"] = x
             farm["layout_y"] = y
-            reinitialize_farm = True
 
-        turbine_id_check = len(x) != self.floris.farm.n_turbines
-        turbine_id_check &= len(self.floris.farm.turbine_map) > 1
-
-        # Check that turbine_id has bee provided if required
-        if turbine_id is None and turbine_id_check:
-            raise ValueError(
-                "`turbine_id` must be provided if the layout is changing and there are " "multiple turbine types!"
-            )
-
-        # If no value is assigned, then create turbine_id
-        if turbine_id is None and reinitialize_farm:
-            farm["turbine_id"] = [[*self.floris.farm.turbine_map][0]] * len(farm["layout_x"])
-            reinitialize_farm = True
-
-        # Assign the new turbine_id if one is input
-        if turbine_id is not None:
-            if farm == {}:
-                farm = self.floris.farm._asdict()
-            farm["turbine_id"] = turbine_id
-            reinitialize_farm = True
-
-        if reinitialize_farm:
-            farm["wind_directions"] = self.floris.flow_field.wind_directions
-            farm["wind_speeds"] = self.floris.flow_field.wind_speeds
-            self.floris.farm = Farm.from_dict(farm)
+        self.floris = Floris.from_dict(floris_dict)
 
     # TODO: MAYBE????
     # def get_turbine_grid_points(self, turbine_ix: int):
