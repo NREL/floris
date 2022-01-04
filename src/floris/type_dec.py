@@ -12,13 +12,15 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Dict, List, Tuple, Union, Callable
-from functools import partial, update_wrapper
+from typing import Any, Tuple, Union, Callable
 
 import attrs
 from attrs import define, field, Attribute
 import numpy as np
 import numpy.typing as npt
+
+
+### Define general data types used throughout
 
 floris_float_type = np.float64
 
@@ -28,6 +30,25 @@ NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 
 
+### Custom callables for attrs objects and functions
+
+def floris_array_converter(data: list) -> np.ndarray:
+    return np.array(data, dtype=floris_float_type)
+
+def attr_serializer(inst: type, field: Attribute, value: Any):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    return value
+
+def attr_floris_filter(inst: Attribute, value: Any) -> bool:
+    if inst.init is False:
+        return False
+    if value is None:
+        return False
+    if isinstance(value, np.ndarray):
+        if value.size == 0:
+            return False
+    return True
 
 
 @define
@@ -72,10 +93,40 @@ class FromDictMixin:
         return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
 
 
-def is_default(instance, attribute, value):
-    if attribute.default != value:
-        raise ValueError(f"{attribute.name} should never be set manually.")
+# Avoids constant redefinition of the same attr.ib properties for model attributes
 
+# from functools import partial, update_wrapper
+
+# def is_default(instance, attribute, value):
+#     if attribute.default != value:
+#         raise ValueError(f"{attribute.name} should never be set manually.")
+
+# model_attrib = partial(field, on_setattr=attrs.setters.frozen, validator=is_default)  # type: ignore
+# update_wrapper(model_attrib, field)
+
+# float_attrib = partial(
+#     attr.ib,
+#     converter=float,
+#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+#     kw_only=True,
+# )
+# update_wrapper(float_attrib, attr.ib)
+
+# bool_attrib = partial(
+#     attr.ib,
+#     converter=bool,
+#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+#     kw_only=True,
+# )
+# update_wrapper(bool_attrib, attr.ib)
+
+# int_attrib = partial(
+#     attr.ib,
+#     converter=int,
+#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
+#     kw_only=True,
+# )
+# update_wrapper(int_attrib, attr.ib)
 
 # def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
 #     """Helper function to generate iterable validators that will reduce the amount of
@@ -93,84 +144,8 @@ def is_default(instance, attribute, value):
 #     Callable
 #         The attr.validators.deep_iterable iterable and instance validator.
 #     """
-#     validator = attr.validators.deep_iterable(
-#         member_validator=attr.validators.instance_of(item_types),
-#         iterable_validator=attr.validators.instance_of(iter_type),
+#     validator = attrs.validators.deep_iterable(
+#         member_validator=attrs.validators.instance_of(item_types),
+#         iterable_validator=attrs.validators.instance_of(iter_type),
 #     )
 #     return validator
-
-# Avoids constant redefinition of the same attr.ib properties for float model attributes
-# float_attrib = partial(
-#     attr.ib,
-#     converter=float,
-#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
-#     kw_only=True,
-# )
-# update_wrapper(float_attrib, attr.ib)
-
-# bool_attrib = partial(
-#     attr.ib,
-#     converter=bool,
-#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
-#     kw_only=True,
-# )
-# update_wrapper(bool_attrib, attr.ib)
-
-# # Avoids constant redefinition of the same attr.ib properties for int model attributes
-# int_attrib = partial(
-#     attr.ib,
-#     converter=int,
-#     on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
-#     kw_only=True,
-# )
-# update_wrapper(int_attrib, attr.ib)
-
-
-# model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)  # type: ignore
-# update_wrapper(model_attrib, attr.ib)
-
-
-### Custom callables for attrs objects and functions
-
-def floris_array_converter(data: list) -> np.ndarray:
-    return np.array(data, dtype=floris_float_type)
-
-def attr_serializer(inst: type, field: Attribute, value: Any):
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    return value
-
-def attr_floris_filter(inst: Attribute, value: Any) -> bool:
-    if inst.init is False:
-        return False
-    if value is None:
-        return False
-    if isinstance(value, np.ndarray):
-        if value.size == 0:
-            return False
-    return True
-
-model_attrib = partial(field, on_setattr=attrs.setters.frozen, validator=is_default)  # type: ignore
-update_wrapper(model_attrib, field)
-
-def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
-    """Helper function to generate iterable validators that will reduce the amount of
-    boilerplate code.
-
-    Parameters
-    ----------
-    iter_type : any iterable
-        The type of iterable object that should be validated.
-    item_types : Union[Any, Tuple[Any]]
-        The type or types of acceptable item types.
-
-    Returns
-    -------
-    Callable
-        The attr.validators.deep_iterable iterable and instance validator.
-    """
-    validator = attrs.validators.deep_iterable(
-        member_validator=attrs.validators.instance_of(item_types),
-        iterable_validator=attrs.validators.instance_of(iter_type),
-    )
-    return validator

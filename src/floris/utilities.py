@@ -12,13 +12,16 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Dict, List, Tuple, Union, Callable
-from functools import partial, update_wrapper
-from floris.type_dec import floris_array_converter, NDArrayFloat
+from typing import Tuple
 
 from attrs import define, field
-import attr
 import numpy as np
+
+from floris.type_dec import floris_array_converter, NDArrayFloat
+
+
+def pshape(array: np.ndarray, label: str = ""):
+    print(label, np.shape(array))
 
 
 @define
@@ -211,70 +214,3 @@ def rotate_coordinates_rel_west(wind_directions, coordinates):
     )
     z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
     return x_coord_rotated, y_coord_rotated, z_coord_rotated
-
-
-def pshape(array, label=""):
-    print(label, np.shape(array))
-
-
-def is_default(instance, attribute, value):
-    if attribute.default != value:
-        raise ValueError(f"{attribute.name} should never be set manually.")
-
-
-def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
-    """Helper function to generate iterable validators that will reduce the amount of
-    boilerplate code.
-
-    Parameters
-    ----------
-    iter_type : any iterable
-        The type of iterable object that should be validated.
-    item_types : Union[Any, Tuple[Any]]
-        The type or types of acceptable item types.
-
-    Returns
-    -------
-    Callable
-        The attr.validators.deep_iterable iterable and instance validator.
-    """
-    validator = attr.validators.deep_iterable(
-        member_validator=attr.validators.instance_of(item_types),
-        iterable_validator=attr.validators.instance_of(iter_type),
-    )
-    return validator
-
-
-def attrs_array_converter(data: list) -> np.ndarray:
-    return np.array(data)
-
-
-# Avoids constant redefinition of the same attr.ib properties for float model attributes
-float_attrib = partial(
-    attr.ib,
-    converter=float,
-    on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
-    kw_only=True,
-)
-update_wrapper(float_attrib, attr.ib)
-
-bool_attrib = partial(
-    attr.ib,
-    converter=bool,
-    on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
-    kw_only=True,
-)
-update_wrapper(bool_attrib, attr.ib)
-
-# Avoids constant redefinition of the same attr.ib properties for int model attributes
-int_attrib = partial(
-    attr.ib,
-    converter=int,
-    on_setattr=(attr.setters.convert, attr.setters.validate),  # type: ignore
-    kw_only=True,
-)
-update_wrapper(int_attrib, attr.ib)
-
-
-model_attrib = partial(attr.ib, on_setattr=attr.setters.frozen, validator=is_default)  # type: ignore
-update_wrapper(model_attrib, attr.ib)

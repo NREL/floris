@@ -13,10 +13,11 @@
 from typing import Any, Dict, List, Union
 
 import attr
+from attrs import define, field
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-from floris.utilities import Vec3, sind, float_attrib, model_attrib
+from floris.utilities import Vec3, sind
 from floris.simulation import BaseClass
 from floris.simulation import Farm, TurbineGrid
 from floris.simulation import FlowField
@@ -74,14 +75,14 @@ class CurlVelocityDeficit(BaseClass):
         on_setattr=attr.setters.convert,
         kw_only=True,
     )
-    initial_deficit: float = float_attrib(default=2.0)
-    dissipation: float = float_attrib(default=0.06)
-    veer_linear: float = float_attrib(default=0.0)
-    ti_initial: float = float_attrib(default=0.1)
-    ti_constant: float = float_attrib(default=0.73)
-    ti_ai: float = float_attrib(default=0.8)
-    ti_downstream: float = float_attrib(default=-0.275)
-    requires_resolution: bool = attr.ib(default=True, converter=bool)
+    initial_deficit: float = field(converter=float, default=2.0)
+    dissipation: float = field(converter=float, default=0.06)
+    veer_linear: float = field(converter=float, default=0.0)
+    ti_initial: float = field(converter=float, default=0.1)
+    ti_constant: float = field(converter=float, default=0.73)
+    ti_ai: float = field(converter=float, default=0.8)
+    ti_downstream: float = field(converter=float, default=-0.275)
+    requires_resolution: bool = field(converter=bool, default=True)
 
     # TODO: Turbine and coordinates still need to be sorted out
     # TODO: we need to differentiate between x_locations and flow_field.x somehow

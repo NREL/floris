@@ -24,12 +24,7 @@ from floris.utilities import (
     sind,
     tand,
     wrap_180,
-    wrap_360,
-    is_default,
-    float_attrib,
-    model_attrib,
-    iter_validator,
-    attrs_array_converter,
+    wrap_360
 )
 
 def test_cosd():
