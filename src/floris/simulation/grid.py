@@ -173,18 +173,21 @@ class TurbineGrid(Grid):
                 self.n_turbines,
                 self.grid_resolution,
                 self.grid_resolution,
-            )
+            ),
+            dtype=floris_float_type
         )
 
         # Calculate the radial distance from the center of the turbine rotor
-        disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution)
+        disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution, dtype=floris_float_type)
 
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
         _x = x[:, :, :, None, None] * template_grid
+
+        ones_grid = np.ones((self.grid_resolution, self.grid_resolution), dtype=floris_float_type)
         # [:, None] on disc_grid below is effectively a transpose of this vector; compare with disc_grid.reshape(1,-1).T
-        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[:, None] * np.ones((self.grid_resolution, self.grid_resolution)) )
-        _z = z[:, :, :, None, None] + template_grid * ( disc_grid * np.ones((self.grid_resolution, self.grid_resolution)) )
+        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[:, None] * ones_grid )
+        _z = z[:, :, :, None, None] + template_grid * ( disc_grid * ones_grid )
 
         # Sort the turbines at each wind direction
 
