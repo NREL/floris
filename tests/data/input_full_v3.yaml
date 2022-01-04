@@ -11,6 +11,10 @@ logging:
     enable: false
     level: WARNING
 
+solver:
+  type: turbine_grid
+  turbine_grid_points: 5
+
 farm:
   layout_x:
   - 0.0
@@ -19,10 +23,8 @@ farm:
 
 flow_field:
   air_density: 1.225
-  reference_turbine_diameter: 126.0
   reference_wind_height: 90.0
-  turbulence_intensity:
-  - 0.06
+  turbulence_intensity: 0.06
   wind_directions:
   - 270.0
   wind_shear: 0.12
@@ -31,8 +33,6 @@ flow_field:
   wind_veer: 0.0
 
 turbine:
-  blade_count: 3
-  blade_pitch: 0.0
   generator_efficiency: 1.0
   hub_height: 90.0
   power_thrust_table:
@@ -186,9 +186,7 @@ turbine:
   pP: 1.88
   pT: 1.88
   rotor_diameter: 126.0
-  tilt_angle: 0.0
   TSR: 8.0
-  use_points_on_perimeter: false
 
 wake:
   model_strings:
@@ -196,6 +194,11 @@ wake:
     deflection_model: jimenez
     turbulence_model: null
     velocity_model: jensen
+
+  enable_secondary_steering: false
+  enable_yaw_added_recovery: false
+  enable_transverse_velocities: false
+
   wake_deflection_parameters:
     gauss:
       ad: 0.0
@@ -209,28 +212,8 @@ wake:
       ad: 0.0
       bd: 0.0
       kd: 0.05
+
   wake_velocity_parameters:
-    blondel:
-      a_s: 0.179367259
-      b_f1: 1.59
-      b_f2: -23.3114654
-      b_f3: -2.15199155
-      b_s: 0.0118889215
-      c_f: 2.98262872
-      c_s1: 0.0563691592
-      c_s2: 0.13290157
-    curl:
-      ai: 0.8
-      constant: 0.73
-      dissipation: 0.06
-      downstream: -0.275
-      initial: 0.1
-      initial_deficit: 2.0
-      model_grid_resolution:
-      - 250
-      - 100
-      - 75
-      veer_linear: 0.0
     gauss:
       alpha: 0.58
       beta: 0.077
@@ -238,7 +221,3 @@ wake:
       kb: 0.003678
     jensen:
       we: 0.05
-    turbopark:
-      A: 0.6
-      c1: 1.5
-      c2: 0.8

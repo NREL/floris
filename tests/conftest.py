@@ -314,7 +314,6 @@ class SampleInputs:
             "wind_veer": 0.0,
             "air_density": 1.225,
             "reference_wind_height": self.turbine["hub_height"],
-            "reference_turbine_diameter": self.turbine["rotor_diameter"],
         }
 
         self.wake = {

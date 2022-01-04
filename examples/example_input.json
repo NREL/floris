@@ -1,6 +1,6 @@
 {
   "name": "example_floris_input_file",
-  "description": "Single turbine with Jensen / Jimenez wake models",
+  "description": "Single turbine with Gaussian wake models",
   "floris_version": "v3.0.0",
 
   "logging": {
@@ -14,6 +14,11 @@
     }
   },
 
+  "solver": {
+    "type": "turbine_grid",
+    "turbine_grid_points": 5
+  },
+
   "farm": {
     "layout_x": [
       0.0,
@@ -24,21 +29,13 @@
       0.0,
       0.0,
       0.0
-    ],
-    "turbine_id": [
-      "nrel_5mw",
-      "nrel_5mw",
-      "nrel_5mw"
     ]
   },
 
   "flow_field": {
     "air_density": 1.225,
-    "reference_turbine_diameter": 126.0,
     "reference_wind_height": 90.0,
-    "turbulence_intensity": [
-      0.06
-    ],
+    "turbulence_intensity": 0.06,
     "wind_directions": [
       270.0
     ],
@@ -52,8 +49,6 @@
   "turbine": {
     "generator_efficiency": 1.0,
     "hub_height": 90.0,
-    "pP": 1.88,
-    "pT": 1.88,
     "power_thrust_table": {
       "power": [
         0.0,
@@ -206,6 +201,8 @@
         25.5
       ]
     },
+    "pP": 1.88,
+    "pT": 1.88,
     "rotor_diameter": 126.0,
     "TSR": 8.0
   },
@@ -217,20 +214,29 @@
       "turbulence_model": null,
       "velocity_model": "gauss"
     },
+
+    "enable_secondary_steering": false,
+    "enable_yaw_added_recovery": false,
+    "enable_transverse_velocities": false,
+
     "wake_deflection_parameters": {
       "gauss": {
+        "ad": 0.0,
+        "alpha": 0.58,
+        "bd": 0.0,
+        "beta": 0.077,
         "dm": 1.0,
-        "eps_gain": 0.2,
-        "use_secondary_steering": true
+        "ka": 0.38,
+        "kb": 0.004
       }
     },
+
     "wake_velocity_parameters": {
       "gauss": {
-        "calculate_VW_velocities": true,
-        "eps_gain": 0.2,
         "ka": 0.38,
         "kb": 0.004,
-        "use_yaw_added_recovery": true
+        "alpha": 0.58,
+        "beta": 0.077
       }
     }
   }
