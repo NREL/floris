@@ -68,8 +68,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {self.solver['type']}"
             )
 
-        # Initialize field quanitities
-        self.flow_field.initialize_velocity_field(self.grid)
+        # Initialize farm quanitities
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
 
         # Configure logging
@@ -85,6 +84,11 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
     # @profile
     def steady_state_atmospheric_condition(self):
+
+        # Initialize field quanitities; doing this immediately prior to doing
+        # the calculation step allows for manipulating inputs in a script
+        # without changing the data structures
+        self.flow_field.initialize_velocity_field(self.grid)
 
         # <<interface>>
         # start = time.time()
