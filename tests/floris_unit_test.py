@@ -20,6 +20,7 @@ from floris.simulation import (
     Farm,
     Floris,
     FlowField,
+    TurbineGrid,
     WakeModelManager,
 )
 
@@ -52,12 +53,14 @@ def test_init():
     assert isinstance(fi.flow_field, FlowField)
 
 
-def test_asdict():
+def test_asdict(turbine_grid_fixture: TurbineGrid):
 
     floris = Floris.from_dict(DICT_INPUT)
+    floris.flow_field.initialize_velocity_field(turbine_grid_fixture)
     dict1 = floris.as_dict()
 
     new_floris = Floris.from_dict(dict1)
+    new_floris.flow_field.initialize_velocity_field(turbine_grid_fixture)
     dict2 = new_floris.as_dict()
 
     assert dict1 == dict2
