@@ -16,113 +16,100 @@ import numpy as np
 import pytest
 from typing import List
 
-import attrs
 from attrs import define, field
 
 from floris.type_dec import (
     FromDictMixin,
-    model_attrib,
     iter_validator,
-    floris_array_converter
+    floris_array_converter,
 )
 
 @define
-class ClassTest(FromDictMixin):
+class AttrsDemoClass(FromDictMixin):
+    w: int
     x: int = field(converter=int)
     y: float = field(converter=float, default=2.1)
-    z: List[str] = field(default=["empty"], validator=iter_validator(list, str))
-    model: str = model_attrib(default="test_class")
+    z: str = field(converter=str, default="z")
 
-
-@define
-class ArrayTestClass(FromDictMixin):
-    arr: np.ndarray = field(  # type: ignore
-        default=[1, 2], converter=floris_array_converter, on_setattr=attrs.setters.convert  # type: ignore
+    liststr: List[str] = field(
+        default=["qwerty", "asdf"],
+        validator=iter_validator(list, str)
+    )
+    array: np.ndarray = field(
+        default=[1.0, 2.0],
+        converter=floris_array_converter,
+        # validator=iter_validator(np.ndarray, floris_float_type)
     )
 
 
 def test_FromDictMixin_defaults():
-    inputs = {"x": 1}
-    cls = ClassTest.from_dict(inputs)
-    defaults = {a.name: a.default for a in ClassTest.__attrs_attrs__ if a.default}
+    # Test that the defaults set in the class definition are actually used
+    inputs = {"w": 0, "x": 1}
+    cls = AttrsDemoClass.from_dict(inputs)
+    defaults = {a.name: a.default for a in AttrsDemoClass.__attrs_attrs__ if a.default}
     assert cls.y == defaults["y"]
     assert cls.z == defaults["z"]
-    assert cls.model == defaults["model"]
+    np.testing.assert_array_equal(cls.liststr, defaults["liststr"])
+    np.testing.assert_array_equal(cls.array, defaults["array"])
+
+    # Test that defaults can be overwritten
+    inputs = {"w": 0, "x": 1, "y": 4.5}
+    cls = AttrsDemoClass.from_dict(inputs)
+    defaults = {a.name: a.default for a in AttrsDemoClass.__attrs_attrs__ if a.default}
+    assert cls.y != defaults["y"]
 
 
 def test_FromDictMixin_custom():
-    # Test custom inputs
-    inputs = dict(x=3, y=3.2, z=["one", "two"])
-    cls = ClassTest.from_dict(inputs)
-    assert inputs["x"] == cls.x
-    assert inputs["y"] == cls.y
-    assert inputs["z"] == cls.z
 
-    # Test custom inputs and validate that extra parameters are not mapped
-    inputs = dict(x=3, y=3.2, z=["one", "two"], arr=[3, 4, 5.5])
-    cls = ClassTest.from_dict(inputs)
-    assert inputs["x"] == cls.x
-    assert inputs["y"] == cls.y
-    assert inputs["z"] == cls.z
-    assert not hasattr(cls, "arr")
+    inputs = {
+        "w": 0,
+        "x": 1,
+        "y": 2.3,
+        "z": "asdf",
+        "liststr": ["a", "b"],
+        "array": np.array([[1,2,3], [4,5,6]])
+    }
+
+    # Check that custom inputs are accepted
+    cls = AttrsDemoClass.from_dict(inputs)
+
+    # Ensure extraneous inputs are not applied to the class
+    inputs2 = {**inputs, "extra": [3, 4, 5.5]}
+    cls = AttrsDemoClass.from_dict(inputs2)
+    assert not hasattr(cls, "extra")
 
     # Test that missing required inputs raises an error
     inputs = {}
     with pytest.raises(AttributeError):
-        cls = ClassTest.from_dict(inputs)
-
-
-def test_is_default():
-    with pytest.raises(ValueError):
-        ClassTest(x=1, model="real deal")
+        cls = AttrsDemoClass.from_dict(inputs)
 
 
 def test_iter_validator():
+
+    # Check the correct values work
+    _ = AttrsDemoClass(w=0, x=1, liststr=["a", "b"])
+
     # Check wrong member type
     with pytest.raises(TypeError):
-        ClassTest(x=1, z=[4.3, 1])
+        AttrsDemoClass(w=0, x=1, liststr=[4.3, 1])
 
     # Check mixed member types
     with pytest.raises(TypeError):
-        ClassTest(x=1, z=[4.3, "1"])
+        AttrsDemoClass(w=0, x=1, liststr=[4.3, "1"])
 
     # Check wrong iterable type
     with pytest.raises(TypeError):
-        ClassTest(x=1, z=("a", "b"))
+        AttrsDemoClass(w=0, x=1, liststr=("a", "b"))
 
 
 def test_attrs_array_converter():
-    test_list = [[1, 2, 3], [4.5, 6.3, 2.2]]
-    test_arr = np.array(test_list)
-
-    testtol = 1e-6
+    array_input = [[1, 2, 3], [4.5, 6.3, 2.2]]
+    test_array = np.array(array_input)
 
     # Test conversion on initialization
-    cls = ArrayTestClass(arr=test_list)
-    np.testing.assert_allclose(test_arr, cls.arr, atol=testtol)
+    cls = AttrsDemoClass(w=0, x=1, array=array_input)
+    np.testing.assert_allclose(test_array, cls.array)
 
     # Test converstion on reset
-    cls = ArrayTestClass()
-    cls.arr = test_list
-    np.testing.assert_allclose(test_arr, cls.arr, atol=testtol)
-
-
-def test_model_attrib():
-    with pytest.raises(ValueError):
-        ClassTest(x=1, model="real deal")
-
-    cls = ClassTest(x=1)
-    with pytest.raises(attrs.exceptions.FrozenAttributeError):
-        cls.model = "real deal"
-
-
-def test_float_attrib():
-    with pytest.raises(ValueError):
-        ClassTest(x=1, y="fail")
-
-    cls = ClassTest(x=1, y=1)
-    assert cls.y == 1.0
-
-    cls.y = "1"
-    assert isinstance(cls.y, float)
-    assert cls.y == 1.0
+    cls.array = array_input
+    np.testing.assert_allclose(test_array, cls.array)

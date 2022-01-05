@@ -12,10 +12,10 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Tuple, Union, Callable
+from typing import Any, Iterable, Tuple, Union, Callable
 
 import attrs
-from attrs import define, field, Attribute
+from attrs import define, Attribute
 import numpy as np
 import numpy.typing as npt
 
@@ -32,7 +32,8 @@ NDArrayObject = npt.NDArray[np.object_]
 
 ### Custom callables for attrs objects and functions
 
-def floris_array_converter(data: list) -> np.ndarray:
+def floris_array_converter(data: Iterable) -> np.ndarray:
+    t = np.array(data, dtype=floris_float_type)
     return np.array(data, dtype=floris_float_type)
 
 def attr_serializer(inst: type, field: Attribute, value: Any):
@@ -50,6 +51,29 @@ def attr_floris_filter(inst: Attribute, value: Any) -> bool:
             return False
     return True
 
+def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
+    """Helper function to generate iterable validators that will reduce the amount of
+    boilerplate code.
+
+    Parameters
+    ----------
+    iter_type : any iterable
+        The type of iterable object that should be validated.
+    item_types : Union[Any, Tuple[Any]]
+        The type or types of acceptable item types.
+
+    Returns
+    -------
+    Callable
+        The attr.validators.deep_iterable iterable and instance validator.
+    """
+    print("2")
+    print(iter_type, item_types)
+    validator = attrs.validators.deep_iterable(
+        member_validator=attrs.validators.instance_of(item_types),
+        iterable_validator=attrs.validators.instance_of(iter_type),
+    )
+    return validator
 
 @define
 class FromDictMixin:
@@ -128,24 +152,3 @@ class FromDictMixin:
 # )
 # update_wrapper(int_attrib, attr.ib)
 
-# def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
-#     """Helper function to generate iterable validators that will reduce the amount of
-#     boilerplate code.
-
-#     Parameters
-#     ----------
-#     iter_type : any iterable
-#         The type of iterable object that should be validated.
-#     item_types : Union[Any, Tuple[Any]]
-#         The type or types of acceptable item types.
-
-#     Returns
-#     -------
-#     Callable
-#         The attr.validators.deep_iterable iterable and instance validator.
-#     """
-#     validator = attrs.validators.deep_iterable(
-#         member_validator=attrs.validators.instance_of(item_types),
-#         iterable_validator=attrs.validators.instance_of(iter_type),
-#     )
-#     return validator
