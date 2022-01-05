@@ -139,6 +139,13 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         input_file_path = Path(input_file_path).resolve()
         with open(input_file_path) as json_file:
             input_dict = json.load(json_file)
+
+            # TODO: this is a temporary hack to put the turbine definition into the farm.
+            # Long term, we need a strategy for handling this. The YAML file format supports
+            # pointers to other data, for example.
+            input_dict["farm"]["turbine"] = input_dict["turbine"]
+            input_dict.pop("turbine")
+
         return Floris.from_dict(input_dict)
 
     @classmethod

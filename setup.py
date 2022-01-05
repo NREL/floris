@@ -39,6 +39,7 @@ REQUIRED = [
     # simulation
     "attrs",
     "pyyaml",
+    "numexpr",
     "numpy>=1.20",
     "scipy>=1.1",
 

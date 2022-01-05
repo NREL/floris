@@ -49,22 +49,18 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         z_i = np.mean(grid.z[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
 
-        # NOTE: exponential
-        # start = time.time()
-        u = flow_field.u_initial - wake_field
-        # end = time.time()
-        # elapsed_time += end - start
+        u_i = flow_field.u[:, :, i:i+1]
+        v_i = flow_field.v[:, :, i:i+1]
 
-        # Get the current turbine quantities
         ct_i = Ct(
-            velocities=u,
+            velocities=flow_field.u,
             yaw_angle=farm.yaw_angles,
             fCt=farm.fCt_interp,
             ix_filter=[i],
         )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
         axial_induction_i = axial_induction(
-            velocities=u,
+            velocities=flow_field.u,
             yaw_angle=farm.yaw_angles,
             fCt=farm.fCt_interp,
             ix_filter=[i],
@@ -72,8 +68,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_angle_i = farm.yaw_angles[:, :, i:i+1, None, None]
-        u_i = flow_field.u[:, :, i:i+1]
-        v_i = flow_field.v[:, :, i:i+1]
 
         if model_manager.enable_secondary_steering:
             added_yaw = wake_added_yaw(
@@ -171,8 +165,9 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum( np.sqrt( ti_added ** 2 + ambient_turbulence_intensity ** 2 ) , turbine_turbulence_intensity )
 
-    flow_field.u = flow_field.u_initial - wake_field
-
+        flow_field.u = flow_field.u_initial - wake_field
+        flow_field.v += v_wake
+        flow_field.w += w_wake
 
 def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
     ti_initial = 0.1

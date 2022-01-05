@@ -290,7 +290,7 @@ def test_axial_induction():
         yaw_angle=np.zeros((1, 1, 1)),
         fCt=turbine.fCt_interp,
     )
-    assert ai == baseline_ai
+    np.testing.assert_allclose(ai, baseline_ai)
 
     # Multiple turbines with ix filter
     ai = axial_induction(
@@ -301,8 +301,9 @@ def test_axial_induction():
     )
 
     assert len(ai[0, 0]) == len(INDEX_FILTER)
-    for calc_ai, truth in zip(ai[0, 0], [0.2565471298176996, 0.2565471298176996]):
-        pytest.approx(calc_ai, truth)
+
+    truth = [0.2565471298176996, 0.25116283939089806]
+    np.testing.assert_allclose(ai[0,0], truth)
 
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
