@@ -48,7 +48,6 @@ def test_read_dict():
 def test_init():
     fi = Floris.from_dict(DICT_INPUT)
     assert isinstance(fi.farm, Farm)
-    # assert isinstance(fi.logging, dict)
     assert isinstance(fi.wake, WakeModelManager)
     assert isinstance(fi.flow_field, FlowField)
 
@@ -62,11 +61,3 @@ def test_asdict():
     dict2 = new_floris.as_dict()
 
     assert dict1 == dict2
-
-
-def test_annual_energy_production():
-    pass
-
-
-def test_steady_state_atmospheric_condition():
-    pass
