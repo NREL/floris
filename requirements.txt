@@ -3,6 +3,7 @@
 # simulation
 attrs
 pyyaml
+numexpr
 numpy
 scipy
 
