@@ -39,12 +39,12 @@ class FlowField(FromDictMixin):
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
 
-    u_initial: NDArrayFloat = field(init=False)
-    v_initial: NDArrayFloat = field(init=False)
-    w_initial: NDArrayFloat = field(init=False)
-    u: NDArrayFloat = field(init=False)
-    v: NDArrayFloat = field(init=False)
-    w: NDArrayFloat = field(init=False)
+    u_initial: NDArrayFloat = field(init=False, default=np.array([]))
+    v_initial: NDArrayFloat = field(init=False, default=np.array([]))
+    w_initial: NDArrayFloat = field(init=False, default=np.array([]))
+    u: NDArrayFloat = field(init=False, default=np.array([]))
+    v: NDArrayFloat = field(init=False, default=np.array([]))
+    w: NDArrayFloat = field(init=False, default=np.array([]))
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:

@@ -19,6 +19,7 @@ from floris.simulation import BaseModel
 from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
+from floris.simulation import Turbine
 from floris.utilities import cosd, sind, tand
 
 
@@ -83,8 +84,8 @@ class GaussVelocityDeflection(BaseModel):
     def prepare_function(
         self,
         grid: Grid,
-        farm: Farm,
-        flow_field: FlowField
+        flow_field: FlowField,
+        turbine: Turbine
     ) -> Dict[str, Any]:
 
         kwargs = dict(
@@ -93,7 +94,7 @@ class GaussVelocityDeflection(BaseModel):
             z=grid.z,
             freestream_velocity=flow_field.u_initial,
             wind_veer=flow_field.wind_veer,
-            reference_rotor_diameter=farm.rotor_diameter,
+            reference_rotor_diameter=turbine.rotor_diameter,
         )
         return kwargs
 

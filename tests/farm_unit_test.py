@@ -30,40 +30,31 @@ def test_farm_init_homogenous_turbines():
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
 
-    coordinates = [Vec3([x, y, turbine_data["hub_height"]]) for x, y in zip(layout_x, layout_y)]
+    coordinates = np.array([Vec3([x, y, turbine_data["hub_height"]]) for x, y in zip(layout_x, layout_y)])
 
     farm = Farm(
-        # n_wind_directions=N_WIND_DIRECTIONS,
-        # n_wind_speeds=N_WIND_SPEEDS,
         layout_x=layout_x,
         layout_y=layout_y,
-        turbine=turbine_data
     )
+    farm.construct_coordinates(reference_z=90.0)
+    farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
 
     # Check initial values
-    assert farm.coordinates == coordinates
+    np.testing.assert_array_equal(farm.coordinates, coordinates)
     assert isinstance(farm.layout_x, np.ndarray)
     assert isinstance(farm.layout_y, np.ndarray)
 
-    # Check generated values
-    assert np.all(farm.rotor_diameter == turbine_data["rotor_diameter"])
-    assert np.all(farm.hub_height == turbine_data["hub_height"])
-    assert np.all(farm.pP == turbine_data["pP"])
-    assert np.all(farm.pT == turbine_data["pT"])
-    assert np.all(farm.generator_efficiency == turbine_data["generator_efficiency"])
-
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
-    
-    # sample_inputs_fixture.farm["n_wind_directions"] = 1
-    # sample_inputs_fixture.farm["n_wind_speeds"] = 1
     sample_inputs_fixture.farm["turbine"] = sample_inputs_fixture.turbine
 
     farm = Farm.from_dict(sample_inputs_fixture.farm)
+    farm.construct_coordinates(reference_z=90.0)
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
+    new_farm.construct_coordinates(reference_z=90.0)
     new_farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     dict2 = new_farm.as_dict()
 

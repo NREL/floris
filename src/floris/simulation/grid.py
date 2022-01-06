@@ -108,6 +108,10 @@ class Grid(ABC):
     def set_grid(self) -> None:
         raise NotImplementedError("Grid.set_grid")
 
+    @abstractmethod
+    def finalize(self) -> None:
+        raise NotImplementedError("Grid.finalize")
+
 
 @define
 class TurbineGrid(Grid):

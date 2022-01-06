@@ -32,12 +32,12 @@ DICT_INPUT = yaml.load(open(YAML_INPUT, "r"), Loader=yaml.SafeLoader)
 
 
 def test_read_json():
-    fi = Floris.from_json(JSON_INPUT)
+    fi = Floris.from_file(JSON_INPUT)
     assert isinstance(fi, Floris)
 
 
 def test_read_yaml():
-    fi = Floris.from_yaml(YAML_INPUT)
+    fi = Floris.from_file(YAML_INPUT)
     assert isinstance(fi, Floris)
 
 

@@ -24,6 +24,8 @@ from floris.simulation import (
     Farm,
     WakeModelManager,
     FlowField,
+    Turbine,
+    Grid,
     TurbineGrid,
     FlowFieldGrid,
     sequential_solver,
@@ -45,12 +47,20 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     flow_field: FlowField = field(converter=FlowField.from_dict)
     wake: WakeModelManager = field(converter=WakeModelManager.from_dict)
     farm: Farm = field(converter=Farm.from_dict)
+    turbine: Turbine = field(converter=Turbine.from_dict)
+
+    grid: Grid = field(init=False)
 
     def __attrs_post_init__(self) -> None:
+
+        # Initialize farm quanitities that depend on other objects
+        self.farm.construct_coordinates(self.flow_field.reference_wind_height)
+        self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
+
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameter,
+                reference_turbine_diameter=self.turbine.rotor_diameter,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
@@ -58,7 +68,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameter,
+                reference_turbine_diameter=self.turbine.rotor_diameter,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
@@ -67,9 +77,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             raise ValueError(
                 f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {self.solver['type']}"
             )
-
-        # Initialize farm quanitities
-        self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
 
         # Configure logging
         logging_manager.configure_console_log(
@@ -92,7 +99,13 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         # <<interface>>
         # start = time.time()
-        elapsed_time = sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elapsed_time = sequential_solver(
+            self.farm,
+            self.flow_field,
+            self.turbine,
+            self.grid,
+            self.wake
+        )
         # end = time.time()
         # elapsed_time = end - start
 
@@ -112,7 +125,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # turbine_based_floris = copy.deepcopy(self)
         turbine_grid = TurbineGrid(
             turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.rotor_diameter,
+            reference_turbine_diameter=self.turbine.rotor_diameter,
             wind_directions=self.flow_field.wind_directions,
             wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=5,
@@ -120,65 +133,54 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         self.flow_field.initialize_velocity_field(self.grid)
 
-        full_flow_sequential_solver(self.farm, self.flow_field, self.grid, turbine_grid, self.wake)
+        full_flow_sequential_solver(self.farm, self.flow_field, self.turbine, self.grid, turbine_grid, self.wake)
 
 
     ## I/O
 
     @classmethod
-    def from_json(cls, input_file_path: str | Path) -> Floris:
-        """Creates a `Floris` instance from a JSON file.
+    def from_file(cls, input_file_path: str | Path, filetype: str = None) -> Floris:
+        """Creates a `Floris` instance from an input file. Must be filetype
+        JSON or YAML.
 
         Args:
             input_file_path (str): The relative or absolute file path and name to the
-                JSON input file.
+                input file.
+            filetype (str): The type to export: [YAML | JSON]
 
         Returns:
             Floris: The class object instance.
         """
         input_file_path = Path(input_file_path).resolve()
-        with open(input_file_path) as json_file:
-            input_dict = json.load(json_file)
+        if filetype is None:
+            filetype = input_file_path.suffix.strip(".")
 
-            # TODO: this is a temporary hack to put the turbine definition into the farm.
-            # Long term, we need a strategy for handling this. The YAML file format supports
-            # pointers to other data, for example.
-            input_dict["farm"]["turbine"] = input_dict["turbine"]
-            input_dict.pop("turbine")
+        with open(input_file_path) as input_file:
+            if filetype.lower() in ("yml", "yaml"):
+                input_dict = yaml.load(input_file, Loader=yaml.SafeLoader)
+            elif filetype.lower() == "json":
+                input_dict = json.load(input_file)
 
+                # TODO: This is a temporary hack to put the turbine definition into the farm.
+                # Long term, we need a strategy for handling this. The YAML file format supports
+                # pointers to other data, for example.
+                # input_dict["farm"]["turbine"] = input_dict["turbine"]
+                # input_dict.pop("turbine")
+            else:
+                raise ValueError("Supported import filetypes are JSON and YAML")
         return Floris.from_dict(input_dict)
 
-    @classmethod
-    def from_yaml(cls, input_file_path: str | Path) -> Floris:
-        """Creates a `Floris` instance from a YAML file.
+    def to_file(self, output_file_path: str, filetype: str="YAML") -> None:
+        """Converts the `Floris` object to an input-ready JSON or YAML file at `output_file_path`.
 
         Args:
-            input_file_path (str): The relative or absolute file path and name to the
-                YAML input file.
-
-        Returns:
-            Floris: The class object instance
+            output_file_path (str): The full path and filename for where to save the file.
+            filetype (str): The type to export: [YAML | JSON]
         """
-        input_file_path = Path(input_file_path).resolve()
-        input_dict = yaml.load(open(input_file_path, "r"), Loader=yaml.SafeLoader)
-        return Floris.from_dict(input_dict)
-
-    def to_json(self, output_file_path: str) -> None:
-        """Converts the `Floris` object to an input-ready JSON file at `output_file_path`.
-
-        Args:
-            output_file_path (str): The full path and filename for where to save the JSON file.
-        """
-        output_dict = self._prepare_for_save()
         with open(output_file_path, "w+") as f:
-            json.dump(output_dict, f, indent=2, sort_keys=False)
-
-    def to_yaml(self, output_file_path: str) -> None:
-        """Converts the `Floris` object to an input-ready YAML file at `output_file_path`.
-
-        Args:
-            output_file_path (str): The full path and filename for where to save the YAML file.
-        """
-        output_dict = self._prepare_for_save()
-        with open(output_file_path, "w+") as f:
-            yaml.dump(output_dict, f, default_flow_style=False)
+            if filetype.lower() == "yaml":
+                yaml.dump(self.as_dict(), f, default_flow_style=False)
+            elif filetype.lower() == "json":
+                json.dump(self.as_dict(), f, indent=2, sort_keys=False)
+            else:
+                raise ValueError("Supported export filetypes are JSON and YAML")

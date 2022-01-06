@@ -67,8 +67,6 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
     Callable
         The attr.validators.deep_iterable iterable and instance validator.
     """
-    print("2")
-    print(iter_type, item_types)
     validator = attrs.validators.deep_iterable(
         member_validator=attrs.validators.instance_of(item_types),
         iterable_validator=attrs.validators.instance_of(iter_type),
