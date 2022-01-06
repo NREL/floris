@@ -33,8 +33,11 @@ NDArrayObject = npt.NDArray[np.object_]
 ### Custom callables for attrs objects and functions
 
 def floris_array_converter(data: Iterable) -> np.ndarray:
-    t = np.array(data, dtype=floris_float_type)
-    return np.array(data, dtype=floris_float_type)
+    try:
+        a = np.array(data, dtype=floris_float_type)
+    except TypeError as e:
+        raise TypeError(e.args[0] + f". Data given: {data}")
+    return a
 
 def attr_serializer(inst: type, field: Attribute, value: Any):
     if isinstance(value, np.ndarray):
