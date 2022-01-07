@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import copy
-from typing import Any
+from typing import Any, Tuple
 from pathlib import Path
 from itertools import repeat, product
 from multiprocessing import cpu_count
@@ -107,8 +107,8 @@ class FlorisInterface(LoggerBase):
 
     def reinitialize(
         self,
-        wind_speed: list[float] | NDArrayFloat | None = None,
-        wind_direction: list[float] | NDArrayFloat | None = None,
+        wind_speeds: list[float] | NDArrayFloat | None = None,
+        wind_directions: list[float] | NDArrayFloat | None = None,
         # wind_layout: list[float] | NDArrayFloat | None = None,
         wind_shear: float | None = None,
         wind_veer: float | None = None,
@@ -117,8 +117,7 @@ class FlorisInterface(LoggerBase):
         # turbulence_kinetic_energy=None,
         air_density: float | None = None,
         # wake: WakeModelManager = None,
-        layout_x: list[float] | NDArrayFloat | None = None,
-        layout_y: list[float] | NDArrayFloat | None = None,
+        layout: Tuple[list[float], list[float]] | Tuple[NDArrayFloat, NDArrayFloat] | None = None,
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
@@ -132,10 +131,10 @@ class FlorisInterface(LoggerBase):
         # Make the given changes
 
         ## FlowField
-        if wind_speed is not None:
-            flow_field_dict["wind_speeds"] = wind_speed
-        if wind_direction is not None:
-            flow_field_dict["wind_directions"] = wind_direction
+        if wind_speeds is not None:
+            flow_field_dict["wind_speeds"] = wind_speeds
+        if wind_directions is not None:
+            flow_field_dict["wind_directions"] = wind_directions
         if wind_shear is not None:
             flow_field_dict["wind_shear"] = wind_shear
         if wind_veer is not None:
@@ -145,10 +144,9 @@ class FlorisInterface(LoggerBase):
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
 
-        if layout_x is not None:
-            farm_dict["layout_x"] = layout_x
-        if layout_y is not None:
-            farm_dict["layout_y"] = layout_y
+        if layout is not None:
+            farm_dict["layout_x"] = layout[0]
+            farm_dict["layout_y"] = layout[1]
 
         ## Wake
         # if wake is not None:
@@ -359,7 +357,7 @@ class FlorisInterface(LoggerBase):
         # Compute and return the cutplane
         return CutPlane(df)
 
-    def get_y_plane(self, y_loc, x_resolution=200, z_resolution=200, x_bounds=None, z_bounds=None):
+    def get_y_plane(self, y_loc, x_bounds=None, z_bounds=None):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
         object containing the velocity field in a vertical plane cut through
@@ -383,8 +381,6 @@ class FlorisInterface(LoggerBase):
         """
         # Get the points of data in a dataframe
         df = self.get_plane_of_points(
-            x1_resolution=x_resolution,
-            x2_resolution=z_resolution,
             normal_vector="y",
             x3_value=y_loc,
             x1_bounds=x_bounds,
