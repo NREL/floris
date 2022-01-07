@@ -193,7 +193,6 @@ turbine:
   rotor_diameter: 126.0
   TSR: 8.0
 
-
 wake:
   model_strings:
     combination_model: null

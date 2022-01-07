@@ -44,10 +44,10 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
     logging: dict = field(converter=dict)
     solver: dict = field(converter=dict)
-    flow_field: FlowField = field(converter=FlowField.from_dict)
     wake: WakeModelManager = field(converter=WakeModelManager.from_dict)
-    farm: Farm = field(converter=Farm.from_dict)
     turbine: Turbine = field(converter=Turbine.from_dict)
+    farm: Farm = field(converter=Farm.from_dict)
+    flow_field: FlowField = field(converter=FlowField.from_dict)
 
     grid: Grid = field(init=False)
 
@@ -122,18 +122,9 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         # self.steady_state_atmospheric_condition()
 
-        # turbine_based_floris = copy.deepcopy(self)
-        turbine_grid = TurbineGrid(
-            turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.turbine.rotor_diameter,
-            wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
-            grid_resolution=5,
-        )
-
         self.flow_field.initialize_velocity_field(self.grid)
 
-        full_flow_sequential_solver(self.farm, self.flow_field, self.turbine, self.grid, turbine_grid, self.wake)
+        full_flow_sequential_solver(self.farm, self.flow_field, self.turbine, self.grid, self.wake)
 
 
     ## I/O
