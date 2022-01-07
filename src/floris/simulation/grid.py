@@ -249,12 +249,12 @@ class FlowFieldGrid(Grid):
 
         # Construct the arrays storing the grid points
         eps = 0.01
-        xmin = min(x) - 2 * self.reference_turbine_diameter
-        xmax = max(x) + 10 * self.reference_turbine_diameter
-        ymin = min(y) - 2 * self.reference_turbine_diameter
-        ymax = max(y) + 2 * self.reference_turbine_diameter
+        xmin = min(x[0,0]) - 2 * self.reference_turbine_diameter
+        xmax = max(x[0,0]) + 10 * self.reference_turbine_diameter
+        ymin = min(y[0,0]) - 2 * self.reference_turbine_diameter
+        ymax = max(y[0,0]) + 2 * self.reference_turbine_diameter
         zmin = 0 + eps
-        zmax = 6 * max(z)
+        zmax = 6 * max(z[0,0])
 
         x_points, y_points, z_points = np.meshgrid(
             np.linspace(xmin, xmax, int(self.grid_resolution[0])),
