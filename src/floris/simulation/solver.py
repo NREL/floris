@@ -213,7 +213,9 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine, turbine_grid, model_manager)
 
-    # Referring to the quantities from above, calculate the wake in the full grid
+    ### Referring to the quantities from above, calculate the wake in the full grid
+
+    # Use full flow_field here to use the full grid in the wake models
     deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field, turbine)
     deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field, turbine)
 
@@ -222,7 +224,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
     w_wake = np.zeros_like(flow_field.w_initial)
 
     turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones_like(grid.x)
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
+    # ambient_turbulence_intensity = flow_field.turbulence_intensity
     
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -299,6 +301,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
             )
 
         if model_manager.enable_yaw_added_recovery:
+            # TODO: which flow_field to use here?
             I_mixing = yaw_added_turbulence_mixing(
                 u_i,
                 turbine_turbulence_intensity,
