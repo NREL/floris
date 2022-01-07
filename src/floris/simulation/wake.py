@@ -57,14 +57,14 @@ class WakeModelManager(BaseClass):
             - combination_model (str): The name of the combination model to be instantiated.
     """
     model_strings: dict = field(converter=dict)
-    # wake_combination_parameters: dict = field(converter=dict)
-    wake_deflection_parameters: dict = field(converter=dict)
-    # wake_turbulence_parameters: dict = field(converter=dict)
-    wake_velocity_parameters: dict = field(converter=dict)
-
     enable_secondary_steering: bool = field(converter=bool)
     enable_yaw_added_recovery: bool = field(converter=bool)
     enable_transverse_velocities: bool = field(converter=bool)
+
+    # wake_combination_parameters: dict = field(converter=dict)
+    wake_deflection_parameters: dict = field(converter=dict)
+    # wake_turbulence_parameters: dict = field(converter=dict)
+    wake_velocity_parameters: dict = field(converter=dict, default={})
 
     # combination_model: BaseModel = field(init=False)
     deflection_model: BaseModel = field(init=False)
@@ -72,13 +72,20 @@ class WakeModelManager(BaseClass):
     velocity_model: BaseModel = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        model = MODEL_MAP["velocity_model"][self.model_strings["velocity_model"]]
+        model: BaseModel = MODEL_MAP["velocity_model"][self.model_strings["velocity_model"]]
         model_parameters = self.wake_velocity_parameters[self.model_strings["velocity_model"]]
-        self.velocity_model = model.from_dict(model_parameters)
+        if model_parameters is None:
+            # Use model defaults
+            self.velocity_model = model()
+        else:
+            self.velocity_model = model.from_dict(model_parameters)
 
-        model = MODEL_MAP["deflection_model"][self.model_strings["deflection_model"]]
+        model: BaseModel = MODEL_MAP["deflection_model"][self.model_strings["deflection_model"]]
         model_parameters = self.wake_deflection_parameters[self.model_strings["deflection_model"]]
-        self.deflection_model = model.from_dict(model_parameters)
+        if model_parameters is None:
+            self.deflection_model = model()
+        else:
+            self.deflection_model = model.from_dict(model_parameters)
 
     @model_strings.validator
     def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:
