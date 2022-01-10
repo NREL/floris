@@ -431,7 +431,6 @@ def calculate_transverse_velocity(
     # z = np.linspace(np.min(z), np.max(z), np.shape(u_initial)[2])
     # dudz_initial = np.gradient(u_initial, z, axis=4)
     dudz_initial = np.gradient(u_initial, axis=4)
-    # nu = lm ** 2 * np.abs(dudz_initial)
     nu = lm ** 2 * np.abs(dudz_initial)
 
     decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
@@ -460,7 +459,6 @@ def calculate_transverse_velocity(
 
 
     ### Boundary condition - ground mirror vortex
-    yLocs = delta_y + NUM_EPS
 
     # top vortex - ground
     zTb = z + (HH + D / 2) + NUM_EPS
@@ -472,6 +470,7 @@ def calculate_transverse_velocity(
     # bottom vortex - ground
     zBb = z + (HH - D / 2) + NUM_EPS
     rBb = yLocs ** 2 + zBb ** 2
+    core_shape = 1 - np.exp(-rBb / (eps ** 2))
     V4 = (-1 * Gamma_bottom * zBb) / (2 * np.pi * rBb) * core_shape * decay
     W4 = (Gamma_bottom * -1 * yLocs) / (2 * np.pi * rBb) * core_shape * decay
 
@@ -480,6 +479,7 @@ def calculate_transverse_velocity(
     rCb = yLocs ** 2 + zCb ** 2
     V6 = (-1 * Gamma_wake_rotation * zCb) / (2 * np.pi * rCb) * core_shape * decay
     W6 = (Gamma_wake_rotation * -1 * yLocs) / (2 * np.pi * rCb) * core_shape * decay
+    core_shape = 1 - np.exp(-rCb / (eps ** 2))
 
     # total spanwise velocity
     V = V1 + V2 + V3 + V4 + V5 + V6
