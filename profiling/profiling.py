@@ -22,7 +22,7 @@ from floris.simulation import Floris
 from conftest import SampleInputs
 
 def run_floris():
-    floris = Floris.from_json("examples/example_input.json")
+    floris = Floris.from_file("examples/example_input.yaml")
     return floris
 
 if __name__=="__main__":
@@ -38,16 +38,21 @@ if __name__=="__main__":
     # print(start, end, end - start)
 
     sample_inputs = SampleInputs()
-    floris = Floris(input_dict=sample_inputs.floris)
+
+    sample_inputs.floris["wake"]["model_strings"]["velocity_model"] = "gauss"
+    sample_inputs.floris["wake"]["model_strings"]["deflection_model"] = "gauss"
+    sample_inputs.floris["wake"]["enable_secondary_steering"] = True
+    sample_inputs.floris["wake"]["enable_yaw_added_recovery"] = True
+    sample_inputs.floris["wake"]["enable_transverse_velocities"] = True
 
     factor = 100
     TURBINE_DIAMETER = sample_inputs.floris["turbine"]["rotor_diameter"]
     sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * i for i in range(factor)]
     sample_inputs.floris["farm"]["layout_y"] = [0.0 for i in range(factor)]
 
-
     factor = 10
     sample_inputs.floris["farm"]["wind_directions"] = factor * [270.0]
     sample_inputs.floris["farm"]["wind_speeds"] = factor * [8.0]
-    floris = Floris(input_dict=sample_inputs.floris)
+
+    floris = Floris.from_dict(sample_inputs.floris)
     floris.steady_state_atmospheric_condition()
