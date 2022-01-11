@@ -292,7 +292,7 @@ def wake_added_yaw(
     eps = eps_gain * D  # Use set value
 
     vel_top = ((HH + D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
-    Gamma_top = sind(yaw) * cosd(yaw) * gamma(
+    Gamma_top = gamma(
         D,
         vel_top,
         Uinf,
@@ -300,7 +300,7 @@ def wake_added_yaw(
     )
 
     vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
-    Gamma_bottom = -1 * sind(yaw) * cosd(yaw) * gamma(
+    Gamma_bottom = -1 * gamma(
         D,
         vel_bottom,
         Uinf,
