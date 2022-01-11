@@ -276,7 +276,6 @@ def wake_added_yaw(
     TSR = tip_speed_ratio           # scalar
     aI = axial_induction_i          # (wd, ws, 1, 1, 1) for the current turbine
     avg_v = np.mean(v_i, axis=(3,4))  # (wd, ws, 1, grid, grid)
-    avg_v = avg_v[:,:,:,None,None]
 
     # flow parameters
     Uinf = np.mean(u_initial, axis=(2,3,4))
@@ -346,9 +345,13 @@ def wake_added_yaw(
     v_core = np.mean( v_core, axis=(3,4) )
     # w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
 
+    # Cap the effective yaw values between -45 and 45 degrees
+    val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+    val = np.where(val < -1.0, -1.0, val)
+    val = np.where(val > 1.0, 1.0, val)
+    y = np.degrees( 0.5 * np.arcsin( val ) )
 
-    y = np.degrees( 0.5 * np.arcsin( 2 * (avg_v - v_core) / (v_top + v_bottom) ) )
-    return y
+    return y[:,:,:,None,None]
 
 
 def calculate_transverse_velocity(
