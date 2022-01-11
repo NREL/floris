@@ -254,7 +254,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
-        turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
+        turbulence_intensity_i = turbine_turbulence_intensity # [:, :, i:i+1]
         yaw_angle_i = turbine_grid_farm.yaw_angles[:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
@@ -280,7 +280,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
             x_i,
             y_i,
             yaw_angle_i,
-            turbulence_intensity_i,
+            turbine_turbulence_intensity,
             ct_i,
             **deflection_model_args
         )
@@ -321,7 +321,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
             axial_induction_i,
             deflection_field,
             yaw_angle_i,
-            turbulence_intensity_i,
+            turbine_turbulence_intensity,
             ct_i,
             **deficit_model_args
         )
