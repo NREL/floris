@@ -11,7 +11,7 @@
 # the License.
 
 # from __future__ import annotations
-from typing import Any
+from typing import Any, List
 
 import attrs
 from attrs import define, field
@@ -43,7 +43,7 @@ class Farm(BaseClass):
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
 
     yaw_angles: NDArrayFloat = field(init=False)
-    coordinates: list[Vec3] = field(init=False)
+    coordinates: List[Vec3] = field(init=False)
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
