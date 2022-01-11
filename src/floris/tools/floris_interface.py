@@ -94,15 +94,16 @@ class FlorisInterface(LoggerBase):
             track_n_upstream_wakes (bool, optional): When *True*, will keep track of the
                 number of upstream wakes a turbine is experiencing. Defaults to *False*.
         """
-        # if yaw_angles is not None:
-        #     yaw_angles = np.array(yaw_angles)
-        #     self.floris.farm.farm_controller.set_yaw_angles(yaw_angles)
-
         # self.floris.flow_field.calculate_wake(
         #     no_wake=no_wake,
         #     points=points,
         #     track_n_upstream_wakes=track_n_upstream_wakes,
         # )
+
+        # TODO decide where to handle this sign issue
+        if yaw_angles is not None:
+            self.floris.farm.yaw_angles = -1 * yaw_angles
+
         self.floris.steady_state_atmospheric_condition()
 
     def reinitialize(
@@ -167,9 +168,7 @@ class FlorisInterface(LoggerBase):
     def get_plane_of_points(
         self,
         normal_vector="z",
-        x3_value=100,
-        x1_bounds=None,
-        x2_bounds=None,
+        planar_coordinate=None,
     ):
         """
         Calculates velocity values through the
@@ -177,49 +176,14 @@ class FlorisInterface(LoggerBase):
         specified by inputs.
 
         Args:
-            x1_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            x2_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
             normal_vector (string, optional): Vector normal to plane.
                 Defaults to z.
-            x3_value (float, optional): Value of normal vector to slice through.
-                Defaults to 100.
-            x1_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            x2_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
+            planar_coordinate (float, optional): Value of normal vector to slice through. Defaults to None.
+
 
         Returns:
             :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
         """
-        # If x1 and x2 bounds are not provided, use rules of thumb
-        x = self.layout_x
-        y = self.layout_y
-        max_diameter = self.floris.turbine.rotor_diameter
-        hub_height = self.floris.turbine.hub_height
-
-        if normal_vector == "z":  # Rules of thumb for horizontal plane
-            if x1_bounds is None:
-                x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
-
-            if x2_bounds is None:
-                x2_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
-
-        if normal_vector == "x":  # Rules of thumb for cut plane plane
-            if x1_bounds is None:
-                x1_bounds = (min(y) - 2 * max_diameter, max(y) + 2 * max_diameter)
-
-            if x2_bounds is None:
-                x2_bounds = (10, hub_height * 2)
-
-        if normal_vector == "y":  # Rules of thumb for cut plane plane
-            if x1_bounds is None:
-                x1_bounds = (min(x) - 2 * max_diameter, max(x) + 10 * max_diameter)
-
-            if x2_bounds is None:
-                x2_bounds = (10, hub_height * 2)
-
         # Get results vectors
         x_flat = self.floris.grid.x[0, 0].flatten()
         y_flat = self.floris.grid.y[0, 0].flatten()
@@ -264,10 +228,12 @@ class FlorisInterface(LoggerBase):
             )
 
         # Subset to plane
-        # TODO: How to ensure that a plane exists at the hub height?
-        df = df[np.isclose(df.x3, x3_value, atol=0.1, rtol=0.0)]
+        # TODO: Seems sloppy as need more than one plane in the z-direction for GCH
+        if planar_coordinate is not None:
+            df = df[np.isclose(df.x3, planar_coordinate)] # , atol=0.1, rtol=0.0)]
 
         # Drop duplicates
+        # TODO is this still needed now that we setup a grid for just this plane?
         df = df.drop_duplicates()
 
         # Sort values of df to make sure plotting is acceptable
@@ -278,8 +244,13 @@ class FlorisInterface(LoggerBase):
     def get_hor_plane(
         self,
         height=None,
+        x_resolution=200,
+        y_resolution=200,
         x_bounds=None,
         y_bounds=None,
+        wd=None,
+        ws=None,
+        yaw_angles=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -301,96 +272,194 @@ class FlorisInterface(LoggerBase):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
+        #TODO update docstring
+        if wd is None:
+            wd = self.floris.flow_field.wind_directions
+        if ws is None:
+            ws = self.floris.flow_field.wind_speeds
+        self.check_wind_condition_for_viz(wd=wd, ws=ws)
         # If height not provided, use the hub height
         if height is None:
             height = self.floris.turbine.hub_height
             self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
+        solver_settings = {
+            "type": "flow_field_planar_grid",
+            "normal_vector": "z",
+            "planar_coordinate": height,
+            "flow_field_grid_points": [x_resolution, y_resolution],
+            "flow_field_bounds": [x_bounds, y_bounds],
+        }
+        self.reinitialize(
+            wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings
+        )
+
+        # TODO this has to be done here as it seems to be lost with reinitialize
+        if yaw_angles is not None:
+            self.floris.farm.yaw_angles = -1 * yaw_angles
+
+        # Calculate wake
+        self.floris.solve_for_viz()
+
         # Get the points of data in a dataframe
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="z",
-            x3_value=height,
-            x1_bounds=x_bounds,
-            x2_bounds=y_bounds,
+            planar_coordinate=height,
         )
 
         # Compute and return the cutplane
-        hor_plane = CutPlane(df)
+        hor_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
         return hor_plane
 
-    def get_cross_plane(self,
-        x_loc,
+    def get_cross_plane(
+        self,
+        downstream_dist=None,
+        y_resolution=200,
+        z_resolution=200,
         y_bounds=None,
-        z_bounds=None
+        z_bounds=None,
+        wd=None,
+        ws=None,
+        yaw_angles=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
-        object containing the velocity field in a vertical plane cut through
-        the simulation domain perpendicular to the background flow at a
-        specified downstream location.
+        object containing the velocity field in a horizontal plane cut through
+        the simulation domain at a specific height.
 
         Args:
-            x_loc (float): Downstream location of cut plane.
-            y_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            z_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            y_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            z_bounds (tuple, optional): limits of output array (in m).
-                Defaults to None.
-
-        Returns:
-            :py:class:`~.tools.cut_plane.CutPlane`: containing values
-            of y, z, u, v, w
-        """
-        # Get the points of data in a dataframe
-        df = self.get_plane_of_points(
-            # x1_resolution=y_resolution,
-            # x2_resolution=z_resolution,
-            normal_vector="x",
-            x3_value=x_loc,
-            x1_bounds=y_bounds,
-            x2_bounds=z_bounds,
-        )
-
-        # Compute and return the cutplane
-        return CutPlane(df)
-
-    def get_y_plane(self, y_loc, x_bounds=None, z_bounds=None):
-        """
-        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
-        object containing the velocity field in a vertical plane cut through
-        the simulation domain at parallel to the background flow at a specified
-        spanwise location.
-
-        Args:
-            y_loc (float): Spanwise location of cut plane.
+            height (float): Height of cut plane. Defaults to Hub-height.
             x_resolution (float, optional): Output array resolution.
                 Defaults to 200 points.
-            z_resolution (float, optional): Output array resolution.
+            y_resolution (float, optional): Output array resolution.
                 Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            z_bounds (tuple, optional): limits of output array (in m).
+            y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
-            of x, z, u, v, w
+            of x, y, u, v, w
         """
+        # TODO update docstring
+        if wd is None:
+            wd = self.floris.flow_field.wind_directions
+        if ws is None:
+            ws = self.floris.flow_field.wind_speeds
+        self.check_wind_condition_for_viz(wd=wd, ws=ws)
+        # If downstream distance is not provided, use the default
+        if downstream_dist is None:
+            downstream_dist = 5 * 126.0
+
+        solver_settings = {
+            "type": "flow_field_planar_grid",
+            "normal_vector": "x",
+            "planar_coordinate": downstream_dist,
+            "flow_field_grid_points": [y_resolution, z_resolution],
+            "flow_field_bounds": [y_bounds, z_bounds],
+        }
+        self.reinitialize(
+            wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings
+        )
+
+        # TODO this has to be done here as it seems to be lost with reinitialize
+        if yaw_angles is not None:
+            self.floris.farm.yaw_angles = -1 * yaw_angles
+
+        # Calculate wake
+        self.floris.solve_for_viz()
+
         # Get the points of data in a dataframe
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
-            normal_vector="y",
-            x3_value=y_loc,
-            x1_bounds=x_bounds,
-            x2_bounds=z_bounds,
+            normal_vector="x",
+            planar_coordinate=downstream_dist,
         )
 
         # Compute and return the cutplane
-        return CutPlane(df)
+        cross_plane = CutPlane(df)
+        return cross_plane
 
-    def _get_turbine_powers(self) -> NDArrayFloat:
+    def get_y_plane(
+        self,
+        crossstream_dist=None,
+        x_resolution=200,
+        z_resolution=200,
+        x_bounds=None,
+        z_bounds=None,
+        wd=None,
+        ws=None,
+        yaw_angles=None,
+    ):
+        """
+        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
+        object containing the velocity field in a horizontal plane cut through
+        the simulation domain at a specific height.
+
+        Args:
+            height (float): Height of cut plane. Defaults to Hub-height.
+            x_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            y_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            x_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            y_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+
+        Returns:
+            :py:class:`~.tools.cut_plane.CutPlane`: containing values
+            of x, y, u, v, w
+        """
+        #TODO update docstring
+        if wd is None:
+            wd = self.floris.flow_field.wind_directions
+        if ws is None:
+            ws = self.floris.flow_field.wind_speeds
+        self.check_wind_condition_for_viz(wd=wd, ws=ws)
+        # If crossstream distance is not provided, use the default
+        if crossstream_dist is None:
+            crossstream_dist = 0.0
+
+        solver_settings = {
+            "type": "flow_field_planar_grid",
+            "normal_vector": "y",
+            "planar_coordinate": crossstream_dist,
+            "flow_field_grid_points": [x_resolution, z_resolution],
+            "flow_field_bounds": [x_bounds, z_bounds],
+        }
+        self.reinitialize(
+            wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings
+        )
+
+        # TODO this has to be done here as it seems to be lost with reinitialize
+        if yaw_angles is not None:
+            self.floris.farm.yaw_angles = -1 * yaw_angles
+
+        # Calculate wake
+        self.floris.solve_for_viz()
+
+        # Get the points of data in a dataframe
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        df = self.get_plane_of_points(
+            normal_vector="y",
+            planar_coordinate=crossstream_dist,
+        )
+
+        # Compute and return the cutplane
+        y_plane = CutPlane(df)
+        return y_plane
+        
+    def check_wind_condition_for_viz(self, wd=None, ws=None):
+        if len(wd) > 1 or len(wd) < 1:
+            raise ValueError("Wind direction input must be of length 1 for visualization. Current length is {}.".format(len(wd)))
+        
+        if len(ws) > 1 or len(ws) < 1:
+            raise ValueError("Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws)))
+
+    def get_turbine_powers(self) -> NDArrayFloat:
         """Calculates the power at each turbine in the windfarm.
 
         Returns:
@@ -502,22 +571,22 @@ class FlorisInterface(LoggerBase):
             self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
             return mean_farm_power
 
-        turbine_powers = self._get_turbine_powers()
-        for i in range(self.floris.farm.n_turbines):
-            avg_v_i = average_velocity(
-                self.floris.flow_field.u,
-                ix_filter=[i]
-            )
-            power_i = power(
-                air_density=self.floris.flow_field.air_density,
-                velocities=self.floris.flow_field.u,
-                yaw_angle=self.floris.farm.yaw_angles,
-                pP=self.floris.turbine.pP,
-                power_interp=self.floris.turbine.power_interp,
-                ix_filter=[i]
-            )
-            print(i, avg_v_i[0,0,0], power_i[0,0,0])
-        print( "total, MW", np.sum(turbine_powers[0,0]) / 1000000 )
+        turbine_powers = self.get_turbine_powers()
+        # for i in range(self.floris.farm.n_turbines):
+        #     avg_v_i = average_velocity(
+        #         self.floris.flow_field.u,
+        #         ix_filter=[i]
+        #     )
+        #     power_i = power(
+        #         air_density=self.floris.flow_field.air_density,
+        #         velocities=self.floris.flow_field.u,
+        #         yaw_angle=self.floris.farm.yaw_angles,
+        #         pP=self.floris.turbine.pP,
+        #         power_interp=self.floris.turbine.power_interp,
+        #         ix_filter=[i]
+        #     )
+        #     print(i, avg_v_i[0,0,0], power_i[0,0,0])
+        # print( "total, MW", np.sum(turbine_powers[0,0]) / 1000000 )
         return np.sum(turbine_powers, axis=2)
 
     def get_farm_AEP(
@@ -612,67 +681,67 @@ class FlorisInterface(LoggerBase):
         self.calculate_wake(yaw_angles=yaw)
         return self.get_farm_power() * freq * 8760
 
-    def get_farm_AEP_parallel(
-        self,
-        wd: NDArrayFloat | list[float],
-        ws: NDArrayFloat | list[float],
-        freq: NDArrayFloat | list[list[float]],
-        yaw: NDArrayFloat | list[float] | None = None,
-        jobs=-1,
-    ):
-        """
-        Estimate annual energy production (AEP) for distributions of wind
-        speed, wind direction and yaw offset with parallel computations on
-        a single comptuer.
+    # def get_farm_AEP_parallel(
+    #     self,
+    #     wd: NDArrayFloat | list[float],
+    #     ws: NDArrayFloat | list[float],
+    #     freq: NDArrayFloat | list[list[float]],
+    #     yaw: NDArrayFloat | list[float] | None = None,
+    #     jobs=-1,
+    # ):
+    #     """
+    #     Estimate annual energy production (AEP) for distributions of wind
+    #     speed, wind direction and yaw offset with parallel computations on
+    #     a single comptuer.
 
-        # TODO: Update the docstrings and allow for the use of precomputed combinations
-        as well as unique inputs that need to be computed. Same for the other AEPs
+    #     # TODO: Update the docstrings and allow for the use of precomputed combinations
+    #     as well as unique inputs that need to be computed. Same for the other AEPs
 
-        Args:
-            wd (iterable): List or array of wind direction values.
-            ws (iterable): List or array of wind speed values.
-            freq (iterable): Frequencies corresponding to wind direction and wind speed
-                combinations in the wind rose with, shape (N wind directions x N wind speeds).
-            yaw (iterable, optional): List or array of yaw values if wake is steering
-                implemented, with shape (N wind directions). Defaults to None.
-            jobs (int, optional): The number of jobs (cores) to use in the parallel
-                computations.
+    #     Args:
+    #         wd (iterable): List or array of wind direction values.
+    #         ws (iterable): List or array of wind speed values.
+    #         freq (iterable): Frequencies corresponding to wind direction and wind speed
+    #             combinations in the wind rose with, shape (N wind directions x N wind speeds).
+    #         yaw (iterable, optional): List or array of yaw values if wake is steering
+    #             implemented, with shape (N wind directions). Defaults to None.
+    #         jobs (int, optional): The number of jobs (cores) to use in the parallel
+    #             computations.
 
-        Returns:
-            float: AEP for wind farm.
-        """
-        if jobs < -1:
-            raise ValueError("Input 'jobs' cannot be negative.")
-        if jobs == -1:
-            jobs = int(np.ceil(cpu_count() * 0.8))
-        if jobs > 0:
-            jobs = min(jobs, cpu_count())
-        if jobs > len(wd):
-            jobs = len(wd)
+    #     Returns:
+    #         float: AEP for wind farm.
+    #     """
+    #     if jobs < -1:
+    #         raise ValueError("Input 'jobs' cannot be negative.")
+    #     if jobs == -1:
+    #         jobs = int(np.ceil(cpu_count() * 0.8))
+    #     if jobs > 0:
+    #         jobs = min(jobs, cpu_count())
+    #     if jobs > len(wd):
+    #         jobs = len(wd)
 
-        if yaw is None:
-            yaw = [None] * len(wd)
+    #     if yaw is None:
+    #         yaw = [None] * len(wd)
 
-        wd = np.array(wd)
-        ws = np.array(ws)
-        freq = np.array(freq)
+    #     wd = np.array(wd)
+    #     ws = np.array(ws)
+    #     freq = np.array(freq)
 
-        # Make one large list of arguments, then flatten and resort the nested tuples
-        # to the correct ordering of self, wd, ws, freq, yaw
-        global_arguments = list(zip(repeat(self), zip(wd, yaw), ws, freq.flatten()))
-        # OR is this supposed to be all wind speeds for each wind direction?:
-        # global_arguments = list(zip(repeat(self), zip(wd, yaw), repeat(ws), freq))
-        # global_arguments = [(s, n[0], wspd, f, n[1]) for s, n, wspd, f in global_arguments]
-        global_arguments = [(s, n[0][0], n[1], f, n[0][1]) for s, n, f in global_arguments]
+    #     # Make one large list of arguments, then flatten and resort the nested tuples
+    #     # to the correct ordering of self, wd, ws, freq, yaw
+    #     global_arguments = list(zip(repeat(self), zip(wd, yaw), ws, freq.flatten()))
+    #     # OR is this supposed to be all wind speeds for each wind direction?:
+    #     # global_arguments = list(zip(repeat(self), zip(wd, yaw), repeat(ws), freq))
+    #     # global_arguments = [(s, n[0], wspd, f, n[1]) for s, n, wspd, f in global_arguments]
+    #     global_arguments = [(s, n[0][0], n[1], f, n[0][1]) for s, n, f in global_arguments]
 
-        num_cases = wd.size * ws.size
-        chunksize = int(np.ceil(num_cases / jobs))
+    #     num_cases = wd.size * ws.size
+    #     chunksize = int(np.ceil(num_cases / jobs))
 
-        with Pool(jobs) as pool:
-            opt = pool.starmap(global_calc_one_AEP_case, global_arguments, chunksize=chunksize)
-            # add AEP to overall AEP
+    #     with Pool(jobs) as pool:
+    #         opt = pool.starmap(global_calc_one_AEP_case, global_arguments, chunksize=chunksize)
+    #         # add AEP to overall AEP
 
-        return 0.0 + np.sum(opt)
+    #     return 0.0 + np.sum(opt)
 
     def calculate_AEP_wind_limit(self, num_turbines, x_spacing, start_ws, threshold):
         orig_layout_x = self.layout_x
@@ -750,55 +819,55 @@ class FlorisInterface(LoggerBase):
 # def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
 #     return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)
 
-# DEFAULT_UNCERTAINTY = {"std_wd": 4.95, "std_yaw": 1.75, "pmf_res": 1.0, "pdf_cutoff": 0.995}
+DEFAULT_UNCERTAINTY = {"std_wd": 4.95, "std_yaw": 1.75, "pmf_res": 1.0, "pdf_cutoff": 0.995}
 
 
-# def _generate_uncertainty_parameters(unc_options: dict, unc_pmfs: dict) -> dict:
-#     """Generates the uncertainty parameters for `FlorisInterface.get_farm_power` and
-#     `FlorisInterface.get_turbine_power` for more details.
+def _generate_uncertainty_parameters(unc_options: dict, unc_pmfs: dict) -> dict:
+    """Generates the uncertainty parameters for `FlorisInterface.get_farm_power` and
+    `FlorisInterface.get_turbine_power` for more details.
 
-#     Args:
-#         unc_options (dict): See `FlorisInterface.get_farm_power` or `FlorisInterface.get_turbine_power`.
-#         unc_pmfs (dict): See `FlorisInterface.get_farm_power` or `FlorisInterface.get_turbine_power`.
+    Args:
+        unc_options (dict): See `FlorisInterface.get_farm_power` or `FlorisInterface.get_turbine_power`.
+        unc_pmfs (dict): See `FlorisInterface.get_farm_power` or `FlorisInterface.get_turbine_power`.
 
-#     Returns:
-#         dict: [description]
-#     """
-#     if (unc_options is None) & (unc_pmfs is None):
-#         unc_options = DEFAULT_UNCERTAINTY
+    Returns:
+        dict: [description]
+    """
+    if (unc_options is None) & (unc_pmfs is None):
+        unc_options = DEFAULT_UNCERTAINTY
 
-#     if unc_pmfs is not None:
-#         return unc_pmfs
+    if unc_pmfs is not None:
+        return unc_pmfs
 
-#     wd_unc = np.zeros(1)
-#     wd_unc_pmf = np.ones(1)
-#     yaw_unc = np.zeros(1)
-#     yaw_unc_pmf = np.ones(1)
+    wd_unc = np.zeros(1)
+    wd_unc_pmf = np.ones(1)
+    yaw_unc = np.zeros(1)
+    yaw_unc_pmf = np.ones(1)
 
-#     # create normally distributed wd and yaw uncertaitny pmfs if appropriate
-#     if unc_options["std_wd"] > 0:
-#         wd_bnd = int(np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"]))
-#         bound = wd_bnd * unc_options["pmf_res"]
-#         wd_unc = np.linspace(-1 * bound, bound, 2 * wd_bnd + 1)
-#         wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options["std_wd"])
-#         wd_unc_pmf /= np.sum(wd_unc_pmf)  # normalize so sum = 1.0
+    # create normally distributed wd and yaw uncertaitny pmfs if appropriate
+    if unc_options["std_wd"] > 0:
+        wd_bnd = int(np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"]))
+        bound = wd_bnd * unc_options["pmf_res"]
+        wd_unc = np.linspace(-1 * bound, bound, 2 * wd_bnd + 1)
+        wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options["std_wd"])
+        wd_unc_pmf /= np.sum(wd_unc_pmf)  # normalize so sum = 1.0
 
-#     if unc_options["std_yaw"] > 0:
-#         yaw_bnd = int(
-#             np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]) / unc_options["pmf_res"])
-#         )
-#         bound = yaw_bnd * unc_options["pmf_res"]
-#         yaw_unc = np.linspace(-1 * bound, bound, 2 * yaw_bnd + 1)
-#         yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options["std_yaw"])
-#         yaw_unc_pmf /= np.sum(yaw_unc_pmf)  # normalize so sum = 1.0
+    if unc_options["std_yaw"] > 0:
+        yaw_bnd = int(
+            np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]) / unc_options["pmf_res"])
+        )
+        bound = yaw_bnd * unc_options["pmf_res"]
+        yaw_unc = np.linspace(-1 * bound, bound, 2 * yaw_bnd + 1)
+        yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options["std_yaw"])
+        yaw_unc_pmf /= np.sum(yaw_unc_pmf)  # normalize so sum = 1.0
 
-#     unc_pmfs = {
-#         "wd_unc": wd_unc,
-#         "wd_unc_pmf": wd_unc_pmf,
-#         "yaw_unc": yaw_unc,
-#         "yaw_unc_pmf": yaw_unc_pmf,
-#     }
-#     return unc_pmfs
+    unc_pmfs = {
+        "wd_unc": wd_unc,
+        "wd_unc_pmf": wd_unc_pmf,
+        "yaw_unc": yaw_unc,
+        "yaw_unc_pmf": yaw_unc_pmf,
+    }
+    return unc_pmfs
 
 
 # def correct_for_all_combinations(
