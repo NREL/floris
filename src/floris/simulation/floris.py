@@ -28,6 +28,7 @@ from floris.simulation import (
     Grid,
     TurbineGrid,
     FlowFieldGrid,
+    FlowFieldPlanarGrid,
     sequential_solver,
     full_flow_sequential_solver
 )
@@ -72,6 +73,18 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
+            )
+        elif self.solver["type"] == "flow_field_planar_grid":
+            self.grid = FlowFieldPlanarGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.turbine.rotor_diameter,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                normal_vector=self.solver["normal_vector"],
+                planar_coordinate=self.solver["planar_coordinate"],
+                grid_resolution=self.solver["flow_field_grid_points"],
+                x1_bounds=self.solver["flow_field_bounds"][0],
+                x2_bounds=self.solver["flow_field_bounds"][1],
             )
         else:
             raise ValueError(
