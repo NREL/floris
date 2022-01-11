@@ -347,18 +347,7 @@ def wake_added_yaw(
     # w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
 
 
-    """
-    By calculating the circulation strength and applying it to velocities here, we are imposing
-    the vortices from the current turbine onto itself. However, we really just want to take the
-    tranverse velocities in the flow field from the previous turbine to calculate the effective
-    velocity here. I've replaced v_top and v_bottom with vel_top and vel_bottom.
-
-    Also, v_core is the wake rotation vortex on the entire rotor area. That probably does make
-    sense, but I've used the mean v_core here so that the dimensions work out. Maybe it should
-    instead be the full v_core and then use the mean proir to arcsin. Is that equivalent anyway?
-    """
-    # y = np.degrees( 0.5 * np.arcsin( 2 * (avg_v - v_core) / (v_top + v_bottom) ) )
-    y = np.degrees( 0.5 * np.arcsin( 2 * (avg_v - v_core) / (vel_top + vel_bottom) ) )
+    y = np.degrees( 0.5 * np.arcsin( 2 * (avg_v - v_core) / (v_top + v_bottom) ) )
     return y
 
 
