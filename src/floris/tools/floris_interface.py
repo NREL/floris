@@ -379,7 +379,7 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute and return the cutplane
-        cross_plane = CutPlane(df)
+        cross_plane = CutPlane(df, y_resolution, z_resolution)
         return cross_plane
 
     def get_y_plane(
@@ -449,7 +449,7 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute and return the cutplane
-        y_plane = CutPlane(df)
+        y_plane = CutPlane(df, x_resolution, z_resolution)
         return y_plane
         
     def check_wind_condition_for_viz(self, wd=None, ws=None):
