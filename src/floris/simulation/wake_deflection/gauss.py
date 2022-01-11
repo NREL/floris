@@ -326,23 +326,24 @@ def wake_added_yaw(
     zT = z_i - (HH + D / 2) + NUM_EPS  # distance from the top of the grid
     rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
     core_shape = 1 - np.exp(-rT / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
-    v_top = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape # * decay
+    v_top = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape
+    v_top = np.mean( v_top, axis=(3,4) )
     # w_top = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
 
     # bottom vortex
     zB = z_i - (HH - D / 2) + NUM_EPS
     rB = yLocs ** 2 + zB ** 2
     core_shape = 1 - np.exp(-rB / (eps ** 2))
-    v_bottom = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape # * decay    
+    v_bottom = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape
+    v_bottom = np.mean( v_bottom, axis=(3,4) )
     # w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
 
     # wake rotation vortex
     zC = z_i - HH + NUM_EPS
     rC = yLocs ** 2 + zC ** 2
     core_shape = 1 - np.exp(-rC / (eps ** 2))
-    v_core = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape # * decay
-    v_core = np.mean(v_core, axis=(3,4))
-    v_core = v_core[:,:,:,None,None]
+    v_core = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape
+    v_core = np.mean( v_core, axis=(3,4) )
     # w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
 
 
