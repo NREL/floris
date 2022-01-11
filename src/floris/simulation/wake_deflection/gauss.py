@@ -278,11 +278,6 @@ def wake_added_yaw(
     avg_v = np.mean(v_i, axis=(3,4))  # (wd, ws, 1, grid, grid)
     avg_v = avg_v[:,:,:,None,None]
 
-    # If the v-component of velocity is zero, the wake-added yaw angle
-    # is also zero. Actually, it would result in a divide by zero error.
-    if (avg_v == 0.0).all():
-        return np.zeros_like(avg_v)
-
     # flow parameters
     Uinf = np.mean(u_initial, axis=(2,3,4))
     Uinf = Uinf[:,:,None,None,None]
