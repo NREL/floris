@@ -260,6 +260,9 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
         turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field[:, :, i:i+1]
         yaw_angle_i = turbine_grid_farm.yaw_angles[:, :, i:i+1, None, None]
 
+        effective_yaw_i = np.zeros_like(yaw_angle_i)
+        effective_yaw_i += yaw_angle_i
+
         if model_manager.enable_secondary_steering:
             added_yaw = wake_added_yaw(
                 u_i,
@@ -275,14 +278,14 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
                 turbine.TSR,
                 axial_induction_i
             )
-            yaw_angle_i += added_yaw
+            effective_yaw_i += added_yaw
 
         # Model calculations
         # NOTE: exponential
         deflection_field = model_manager.deflection_model.function(
             x_i,
             y_i,
-            yaw_angle_i,
+            effective_yaw_i,
             turbulence_intensity_i,
             ct_i,
             **deflection_model_args
