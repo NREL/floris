@@ -186,7 +186,7 @@ def wrap_360(x):
 
 def rotate_coordinates_rel_west(wind_directions, coordinates):
     # Calculate the difference in given wind direction from 270 / West
-    wind_deviation_from_west = -1 * ((wind_directions - 270) % 360 + 360) % 360
+    wind_deviation_from_west = ((wind_directions - 270) % 360 + 360) % 360
     wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))
 
     # Construct the arrays storing the turbine locations

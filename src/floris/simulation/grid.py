@@ -22,7 +22,7 @@ import attrs
 from attrs import define, field
 import numpy as np
 
-from floris.utilities import Vec3, rotate_coordinates_rel_west
+from floris.utilities import Vec3, rotate_coordinates_rel_west, cosd, sind
 from floris.type_dec import  (
     floris_float_type,
     floris_array_converter,
@@ -94,10 +94,14 @@ class Grid(ABC):
 
     @grid_resolution.validator
     def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
+        # TODO move this to the grid types and off of the base class
         """Check that grid resolution is given as int or Vec3 with int components."""
-        if isinstance(value, int):
+        if isinstance(value, int) and type(self) is TurbineGrid:
             return
-        elif isinstance(value, Iterable):
+        elif isinstance(value, Iterable) and type(self) is FlowFieldPlanarGrid:
+            assert type(value[0]) is int
+            assert type(value[1]) is int
+        elif isinstance(value, Iterable) and type(self) is FlowFieldGrid:
             assert type(value[0]) is int
             assert type(value[1]) is int
             assert type(value[2]) is int
@@ -107,6 +111,10 @@ class Grid(ABC):
     @abstractmethod
     def set_grid(self) -> None:
         raise NotImplementedError("Grid.set_grid")
+
+    @abstractmethod
+    def finalize(self) -> None:
+        raise NotImplementedError("Grid.finalize")
 
 
 @define
@@ -245,12 +253,12 @@ class FlowFieldGrid(Grid):
 
         # Construct the arrays storing the grid points
         eps = 0.01
-        xmin = min(x) - 2 * self.reference_turbine_diameter
-        xmax = max(x) + 10 * self.reference_turbine_diameter
-        ymin = min(y) - 2 * self.reference_turbine_diameter
-        ymax = max(y) + 2 * self.reference_turbine_diameter
+        xmin = min(x[0,0]) - 2 * self.reference_turbine_diameter
+        xmax = max(x[0,0]) + 10 * self.reference_turbine_diameter
+        ymin = min(y[0,0]) - 2 * self.reference_turbine_diameter
+        ymax = max(y[0,0]) + 2 * self.reference_turbine_diameter
         zmin = 0 + eps
-        zmax = 6 * max(z)
+        zmax = 6 * max(z[0,0])
 
         x_points, y_points, z_points = np.meshgrid(
             np.linspace(xmin, xmax, int(self.grid_resolution[0])),
@@ -265,3 +273,147 @@ class FlowFieldGrid(Grid):
 
     def finalize(self):
         pass
+
+
+@define
+class FlowFieldPlanarGrid(Grid):
+    """
+    Args:
+        grid_resolution (`Vec3`): The number of grid points to be created in each direction.
+        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
+        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        grid_resolution (:py:obj:`int`): The number of points on each turbine
+    """
+    normal_vector: str = field()
+    planar_coordinate: float = field()
+    x1_bounds: tuple = field(default=None)
+    x2_bounds: tuple = field(default=None)
+
+    sorted_indices: NDArrayInt = field(init=False)
+    unsorted_indices: NDArrayInt = field(init=False)
+
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
+        self.set_grid()
+
+    def set_grid(self) -> None:
+        """
+        Create a structured grid for the entire flow field domain.
+        resolution: Vec3
+
+        Calculates the domain bounds for the current wake model. The bounds
+        are calculated based on preset extents from the
+        given layout. The bounds consist of the minimum and maximum values
+        in the x-, y-, and z-directions.
+
+        If the Curl model is used, the predefined bounds are always set.
+
+        First, sort the turbines so that we know the bounds in the correct orientation.
+        Then, create the grid based on this wind-from-left orientation
+        """
+        # These are the rotated coordinates of the wind turbines based on the wind direction
+        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+
+        max_diameter = self.reference_turbine_diameter
+
+        if self.normal_vector == "z":  # Rules of thumb for horizontal plane
+            if self.x1_bounds is None:
+                self.x1_bounds = (np.min(x) - 2 * max_diameter, np.max(x) + 10 * max_diameter)
+
+            if self.x2_bounds is None:
+                self.x2_bounds = (np.min(y) - 2 * max_diameter, np.max(y) + 2 * max_diameter)
+
+            # TODO figure out proper z spacing for GCH, currently set to +/- 10.0
+            x_points, y_points, z_points = np.meshgrid(
+                np.linspace(self.x1_bounds[0], self.x1_bounds[1], int(self.grid_resolution[0])),
+                np.linspace(self.x2_bounds[0], self.x2_bounds[1], int(self.grid_resolution[1])),
+                np.array([float(self.planar_coordinate) - 10.0, float(self.planar_coordinate), float(self.planar_coordinate) + 10.0]),
+                indexing="ij"
+            )
+
+            self.x = x_points[None, None, :, :, :]
+            self.y = y_points[None, None, :, :, :]
+            self.z = z_points[None, None, :, :, :]
+
+        elif self.normal_vector == "x":  # Rules of thumb for cross plane
+            if self.x1_bounds is None:
+                self.x1_bounds = (np.min(y) - 2 * max_diameter, np.max(y) + 2 * max_diameter)
+
+            if self.x2_bounds is None:
+                self.x2_bounds = (0.001, 6 * np.max(z))
+
+            x_points, y_points, z_points = np.meshgrid(
+                np.array([float(self.planar_coordinate)]),
+                np.linspace(self.x1_bounds[0], self.x1_bounds[1], int(self.grid_resolution[0])),
+                np.linspace(self.x2_bounds[0], self.x2_bounds[1], int(self.grid_resolution[1])),
+                indexing="ij"
+            )
+
+            self.x = x_points[None, None, :, :, :]
+            self.y = y_points[None, None, :, :, :]
+            self.z = z_points[None, None, :, :, :]
+
+        elif self.normal_vector == "y":  # Rules of thumb for y plane
+            if self.x1_bounds is None:
+                self.x1_bounds = (np.min(x) - 2 * max_diameter, np.max(x) + 10 * max_diameter)
+
+            if self.x2_bounds is None:
+                self.x2_bounds = (0.001, 6 * np.max(z))
+
+            x_points, y_points, z_points = np.meshgrid(
+                np.linspace(self.x1_bounds[0], self.x1_bounds[1], int(self.grid_resolution[0])),
+                np.array([float(self.planar_coordinate)]),
+                np.linspace(self.x2_bounds[0], self.x2_bounds[1], int(self.grid_resolution[1])),
+                indexing="ij"
+            )
+
+            self.x = x_points[None, None, :, :, :]
+            self.y = y_points[None, None, :, :, :]
+            self.z = z_points[None, None, :, :, :]
+
+        # self.sorted_indices = self.x.argsort(axis=2)
+        # self.unsorted_indices = self.sorted_indices.argsort(axis=2)
+
+        # Put the turbines into the final arrays in their sorted order
+        # self.x = np.take_along_axis(self.x, self.sorted_indices, axis=2)
+        # self.y = np.take_along_axis(self.y, self.sorted_indices, axis=2)
+        # self.z = np.take_along_axis(self.z, self.sorted_indices, axis=2)
+
+    def finalize(self):
+        # sorted_indices = self.x.argsort(axis=2)
+        # unsorted_indices = sorted_indices.argsort(axis=2)
+
+        # # print(self.x)
+
+        # x_coordinates, y_coordinates, _ = self.turbine_coordinates_array.T
+        
+        # x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
+        # y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+        # # print(x_center_of_rotation)
+        # # print(y_center_of_rotation)
+        # # lkj
+
+        # self.x = np.take_along_axis(self.x, self.unsorted_indices, axis=2)
+        # self.y = np.take_along_axis(self.y, self.unsorted_indices, axis=2)
+        # self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
+        # # print(self.x)
+
+        # self.x, self.y, self.z = self._rotated_grid(-1 * self.wind_directions, (x_center_of_rotation, y_center_of_rotation))
+        # TODO figure out how to un-rotate grid for plotting after it has been solved
+        pass
+
+    # def _rotated_grid(self, angle, center_of_rotation):
+    #     """
+    #     Rotate the discrete flow field grid.
+    #     """
+    #     angle = ((angle - 270) % 360 + 360) % 360
+    #     # angle = np.reshape(angle, (len(angle), 1, 1))
+    #     xoffset = self.x - center_of_rotation[0]
+    #     yoffset = self.y - center_of_rotation[1]
+    #     rotated_x = (
+    #         xoffset * cosd(angle) - yoffset * sind(angle) + center_of_rotation[0]
+    #     )
+    #     rotated_y = (
+    #         xoffset * sind(angle) + yoffset * cosd(angle) + center_of_rotation[1]
+    #     )
+    #     return rotated_x, rotated_y, self.z

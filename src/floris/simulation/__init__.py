@@ -36,7 +36,7 @@ isort:skip_file
 from .base import BaseClass, BaseModel
 from .turbine import Turbine, Ct, power, axial_induction, average_velocity
 from .farm import Farm
-from .grid import Grid, TurbineGrid, FlowFieldGrid
+from .grid import Grid, TurbineGrid, FlowFieldGrid, FlowFieldPlanarGrid
 from .flow_field import FlowField
 from .wake import WakeModelManager
 from .solver import sequential_solver, full_flow_sequential_solver

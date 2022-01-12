@@ -17,7 +17,7 @@
 Defines the BaseClass parent class for all models to be based upon.
 """
 
-from abc import ABC, abstractmethod, abstractproperty, abstractstaticmethod
+from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 import attrs
@@ -73,7 +73,7 @@ class BaseModel(BaseClass, ABC):
         raise NotImplementedError("BaseModel.model_string")
 
     @abstractmethod
-    def prepare_function() -> None:
+    def prepare_function() -> dict:
         raise NotImplementedError("BaseModel.prepare_function")
 
     @abstractmethod

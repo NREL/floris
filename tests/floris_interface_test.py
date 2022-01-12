@@ -50,10 +50,6 @@ def test_get_flow_data():
     pass
 
 
-def test_get_yaw_angles():
-    pass
-
-
 def test_get_farm_power():
     pass
 
@@ -63,10 +59,6 @@ def test_get_turbine_layout():
 
 
 def test_get_power_curve():
-    pass
-
-
-def test_get_turbine_ct():
     pass
 
 

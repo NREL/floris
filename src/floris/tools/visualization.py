@@ -107,7 +107,7 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
     ax.set_aspect("equal")
 
 
-def visualize_cut_plane(cut_plane, ax=None, minSpeed=None, maxSpeed=None, cmap="coolwarm", levels=None):
+def visualize_cut_plane(cut_plane, ax=None, vel_component='u', minSpeed=None, maxSpeed=None, cmap="coolwarm", levels=None, color_bar=False):
     """
     Generate pseudocolor mesh plot of the cut_plane.
 
@@ -129,22 +129,38 @@ def visualize_cut_plane(cut_plane, ax=None, minSpeed=None, maxSpeed=None, cmap="
 
     if not ax:
         fig, ax = plt.subplots()
-    if minSpeed is None:
-        minSpeed = cut_plane.df.u.min()
-    if maxSpeed is None:
-        maxSpeed = cut_plane.df.u.max()
+    if vel_component is 'u':
+        vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if minSpeed is None:
+            minSpeed = cut_plane.df.u.min()
+        if maxSpeed is None:
+            maxSpeed = cut_plane.df.u.max()
+    elif vel_component is 'v':
+        vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if minSpeed is None:
+            minSpeed = cut_plane.df.v.min()
+        if maxSpeed is None:
+            maxSpeed = cut_plane.df.v.max()
+    elif vel_component is 'w':
+        vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if minSpeed is None:
+            minSpeed = cut_plane.df.w.min()
+        if maxSpeed is None:
+            maxSpeed = cut_plane.df.w.max()
 
     # Reshape to 2d for plotting
     x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
     x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    u_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    Zm = np.ma.masked_where(np.isnan(u_mesh), u_mesh)
+    Zm = np.ma.masked_where(np.isnan(vel_mesh), vel_mesh)
 
     # Plot the cut-through
     im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed, shading="nearest")
 
     # Add line contour
     line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="w", linewidths=0.8, alpha=0.3)
+
+    if color_bar:
+        plt.colorbar(im, ax=ax)
 
     # Make equal axis
     ax.set_aspect("equal")
@@ -234,6 +250,12 @@ def plot_rotor_values(
         None | tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]: If
         `return_fig_objects` is `False, then `None` is returned`, otherwise the primary
         figure objects are returned for custom editing.
+
+    Example:
+        from floris.tools.visualization import plot_rotor_values
+        plot_rotor_values(floris.flow_field.u, wd_range=range(0,1), ws_range=range(0,1))
+        plot_rotor_values(floris.flow_field.v, wd_range=range(0,1), ws_range=range(0,1))
+        plot_rotor_values(floris.flow_field.w, wd_range=range(0,1), ws_range=range(0,1), show=True)
     """
 
     cmap = plt.cm.get_cmap(name=cmap)

@@ -12,7 +12,6 @@
 
 # See https://floris.readthedocs.io for documentation
 
-
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -20,22 +19,38 @@ from floris.tools import FlorisInterface
 from floris.tools.visualization import visualize_cut_plane
 
 
-# Initialize the FLORIS interface fi
-# For basic usage, the florice interface provides a simplified interface to
-# the underlying classes
-fi = FlorisInterface("../example_input.json")
+# Initialize the FLORIS Interface, `fi`.
+# For basic usage, the FLORIS Interface provides a simplified
+# and expressive interface to the simulation routines.
+
+fi = FlorisInterface("../example_input.yaml")
+solver_settings = {
+    "type": "flow_field_grid",
+    "flow_field_grid_points": [200,200,7]
+}
+fi.reinitialize(solver_settings=solver_settings)
 
 yaw_angles = np.zeros((1,1,3))
-yaw_angles[:,:,0] = 25.0
 fi.floris.farm.yaw_angles = yaw_angles
 
-# Calculate wake
+# Do the wake calculation
 fi.floris.solve_for_viz()
 
-# Get horizontal plane at default height (hub-height)
-hor_plane = fi.get_hor_plane()
+# At this point, the flow field data is generated and
+# stored in memory. Now, use the visualization components
+# in `fi` to get slices of the flow field and generate plots.
 
-# Plot and show
+horizontal_plane = fi.get_hor_plane()
+cross_plane = fi.get_cross_plane()
+y_plane = fi.get_y_plane()
+
 fig, ax = plt.subplots()
-visualize_cut_plane(hor_plane, ax=ax)
+visualize_cut_plane(horizontal_plane, ax=ax)
+
+fig, ax = plt.subplots()
+visualize_cut_plane(cross_plane, ax=ax)
+
+fig, ax = plt.subplots()
+visualize_cut_plane(y_plane, ax=ax)
+
 plt.show()

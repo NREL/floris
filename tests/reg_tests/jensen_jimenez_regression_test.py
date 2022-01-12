@@ -110,19 +110,19 @@ def test_regression_tandem(sample_inputs_fixture):
     farm_cts = Ct(
         velocities,
         yaw_angles,
-        floris.farm.fCt_interp,
+        floris.turbine.fCt_interp,
     )
     farm_powers = power(
         floris.flow_field.air_density,
         velocities,
         yaw_angles,
-        floris.farm.pP,
-        floris.farm.power_interp,
+        floris.turbine.pP,
+        floris.turbine.power_interp,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
-        floris.farm.fCt_interp,
+        floris.turbine.fCt_interp,
     )
     for i in range(n_wind_directions):
         for j in range(n_wind_speeds):
@@ -250,19 +250,19 @@ def test_regression_yaw(sample_inputs_fixture):
     farm_cts = Ct(
         velocities,
         yaw_angles,
-        floris.farm.fCt_interp,
+        floris.turbine.fCt_interp,
     )
     farm_powers = power(
         floris.flow_field.air_density,
         velocities,
         yaw_angles,
-        floris.farm.pP,
-        floris.farm.power_interp,
+        floris.turbine.pP,
+        floris.turbine.power_interp,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
-        floris.farm.fCt_interp,
+        floris.turbine.fCt_interp,
     )
     for i in range(n_wind_directions):
         for j in range(n_wind_speeds):

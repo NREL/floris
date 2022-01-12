@@ -19,6 +19,7 @@ from floris.simulation import BaseModel
 from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
+from floris.simulation import Turbine
 from floris.utilities import cosd, sind
 
 
@@ -43,13 +44,13 @@ class JimenezVelocityDeflection(BaseModel):
     def prepare_function(
         self,
         grid: Grid,
-        farm: Farm,
-        flow_field: FlowField
+        flow_field: FlowField,
+        turbine: Turbine
     ) -> Dict[str, Any]:
 
         kwargs = dict(
             x=grid.x,
-            reference_rotor_diameter=farm.rotor_diameter,
+            reference_rotor_diameter=turbine.rotor_diameter,
         )
         return kwargs
 
