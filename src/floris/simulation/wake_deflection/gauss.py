@@ -485,8 +485,9 @@ def calculate_transverse_velocity(
     # no spanwise and vertical velocity upstream of the turbine
     # V[delta_x < -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
     # W[delta_x < -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
-    V[delta_x <= 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
-    W[delta_x <= 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+    # TODO Should this be <= ? Shouldn't be adding V and W on the current turbine?
+    V[delta_x < 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
+    W[delta_x < 0.0] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
 
     # TODO: Why would the say W cannot be negative?
     W[W < 0] = 0
