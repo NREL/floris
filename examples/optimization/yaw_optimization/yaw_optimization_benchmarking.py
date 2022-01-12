@@ -48,7 +48,7 @@ def load_floris(N=2):
 
 if __name__ == "__main__":
     # Specify sqrt of number of turbines to iterate over
-    N_array = np.arange(2, 7, 1, dtype=int)
+    N_array = [2, 3, 4, 5, 6, 7]
 
     # Initialize empty matrices
     timings = np.zeros(len(N_array), dtype=float)
