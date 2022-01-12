@@ -462,20 +462,20 @@ def calculate_transverse_velocity(
     rTb = yLocs ** 2 + zTb ** 2
     core_shape = 1 - np.exp(-rTb / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
     V3 = (-1 * Gamma_top * zTb) / (2 * np.pi * rTb) * core_shape * decay
-    W3 = (Gamma_top * -1 * yLocs) / (2 * np.pi * rTb) * core_shape * decay
+    W3 = (Gamma_top * yLocs) / (2 * np.pi * rTb) * core_shape * decay
 
     # bottom vortex - ground
     zBb = z + (HH - D / 2) + NUM_EPS
     rBb = yLocs ** 2 + zBb ** 2
     core_shape = 1 - np.exp(-rBb / (eps ** 2))
     V4 = (-1 * Gamma_bottom * zBb) / (2 * np.pi * rBb) * core_shape * decay
-    W4 = (Gamma_bottom * -1 * yLocs) / (2 * np.pi * rBb) * core_shape * decay
+    W4 = (Gamma_bottom * yLocs) / (2 * np.pi * rBb) * core_shape * decay
 
     # wake rotation vortex - ground effect
     zCb = z + HH + NUM_EPS
     rCb = yLocs ** 2 + zCb ** 2
     V6 = (-1 * Gamma_wake_rotation * zCb) / (2 * np.pi * rCb) * core_shape * decay
-    W6 = (Gamma_wake_rotation * -1 * yLocs) / (2 * np.pi * rCb) * core_shape * decay
+    W6 = (Gamma_wake_rotation * yLocs) / (2 * np.pi * rCb) * core_shape * decay
     core_shape = 1 - np.exp(-rCb / (eps ** 2))
 
     # total spanwise velocity
