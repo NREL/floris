@@ -298,33 +298,36 @@ def test_regression_rotation(sample_inputs_fixture):
     The result from 270 degrees should match the results from 360 degrees.
 
     Wind from the West (Left)
-      0         1  x->
-     |__________|
-    0|0         2
-     |
-     |
-     |
-    1|1         3
 
-    y
+    ^
     |
-    V
+    y
+
+    1|1         3
+     |
+     |
+     |
+    0|0         2
+     |----------|
+      0         1  x->
+
 
     Wind from the North (Top), rotated
-      0         1  x->
-     |__________|
-    0|2         3
-     |
-     |
-     |
-    1|0         1
 
-    y
+    ^
     |
-    V
+    y
 
-    In 270, turbines 2 and 3 are waked. In 360, turbines 1 and 3 are waked.
-    The test compares turbines 2 and 3 with 1 and 3 from 270 and 360.
+    1|3         2
+     |
+     |
+     |
+    0|1         0
+     |----------|
+      0         1  x->
+
+    In 270, turbines 2 and 3 are waked. In 360, turbines 0 and 2 are waked.
+    The test compares turbines 2 and 3 with 0 and 2 from 270 and 360.
     """
     TURBINE_DIAMETER = sample_inputs_fixture.floris["turbine"]["rotor_diameter"]
 
@@ -348,26 +351,22 @@ def test_regression_rotation(sample_inputs_fixture):
     floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.steady_state_atmospheric_condition()
 
-    velocities = floris.flow_field.u[:, :, :, :, :]
-
-    farm_avg_velocities = average_velocity(
-        velocities,
-    )
+    farm_avg_velocities = average_velocity(floris.flow_field.u)
 
     t0_270 = farm_avg_velocities[0, 0, 0]  # upstream
     t1_270 = farm_avg_velocities[0, 0, 1]  # upstream
     t2_270 = farm_avg_velocities[0, 0, 2]  # waked
     t3_270 = farm_avg_velocities[0, 0, 3]  # waked
 
-    t0_360 = farm_avg_velocities[1, 0, 0]  # upstream
-    t1_360 = farm_avg_velocities[1, 0, 1]  # waked
-    t2_360 = farm_avg_velocities[1, 0, 2]  # upstream
-    t3_360 = farm_avg_velocities[1, 0, 3]  # waked
-    
-    assert np.allclose(t0_270, t2_360)
-    assert np.allclose(t1_270, t0_360)
-    assert np.allclose(t2_270, t3_360)
-    assert np.allclose(t3_270, t1_360)
+    t0_360 = farm_avg_velocities[1, 0, 0]  # waked
+    t1_360 = farm_avg_velocities[1, 0, 1]  # upstream
+    t2_360 = farm_avg_velocities[1, 0, 2]  # waked
+    t3_360 = farm_avg_velocities[1, 0, 3]  # upstream
+
+    assert np.allclose(t0_270, t1_360)
+    assert np.allclose(t1_270, t3_360)
+    assert np.allclose(t2_270, t0_360)
+    assert np.allclose(t3_270, t2_360)
 
 
 def test_regression_yaw(sample_inputs_fixture):
