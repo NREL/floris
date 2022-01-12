@@ -428,9 +428,9 @@ def calculate_transverse_velocity(
     lmda = D / 8
     kappa = 0.41
     lm = kappa * z / (1 + kappa * z / lmda)
-    # z = np.linspace(np.min(z), np.max(z), np.shape(u_initial)[2])
-    # dudz_initial = np.gradient(u_initial, z, axis=4)
-    dudz_initial = np.gradient(u_initial, axis=4)
+    # TODO: get this from the z input?
+    z_basis = np.linspace(np.min(z), np.max(z), np.shape(u_initial)[4])
+    dudz_initial = np.gradient(u_initial, z_basis, axis=4)
     nu = lm ** 2 * np.abs(dudz_initial)
 
     decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
