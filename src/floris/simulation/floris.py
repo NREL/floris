@@ -50,6 +50,12 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     farm: Farm = field(converter=Farm.from_dict)
     flow_field: FlowField = field(converter=FlowField.from_dict)
 
+    # These fields are included to appease the requirement that all inputs must
+    # be mapped to a field in the class. They are not used in FLORIS.
+    name: str  = field(converter=str)
+    description: str = field(converter=str)
+    floris_version: str = field(converter=str)
+
     grid: Grid = field(init=False)
 
     def __attrs_post_init__(self) -> None:

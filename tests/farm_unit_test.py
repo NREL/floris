@@ -46,8 +46,6 @@ def test_farm_init_homogenous_turbines():
 
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
-    sample_inputs_fixture.farm["turbine"] = sample_inputs_fixture.turbine
-
     farm = Farm.from_dict(sample_inputs_fixture.farm)
     farm.construct_coordinates(reference_z=90.0)
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)

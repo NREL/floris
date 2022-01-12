@@ -304,7 +304,6 @@ class SampleInputs:
         self.farm = {
             "layout_x": X_COORDS,
             "layout_y": Y_COORDS,
-            "turbine": self.turbine
         }
 
         self.flow_field = {
@@ -369,4 +368,7 @@ class SampleInputs:
                 "console": {"enable": True, "level": 1},
                 "file": {"enable": False, "level": 1},
             },
+            "name": "conftest",
+            "description": "Inputs used for testing",
+            "floris_version": "v3.0.0",
         }

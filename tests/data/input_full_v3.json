@@ -42,6 +42,49 @@
     "wind_veer": 0.0
   },
 
+  "wake": {
+
+    "model_strings": {
+      "combination_model": null,
+      "deflection_model": "jimenez",
+      "turbulence_model": null,
+      "velocity_model": "jensen"
+    },
+
+    "enable_secondary_steering": false,
+    "enable_yaw_added_recovery": false,
+    "enable_transverse_velocities": false,
+
+    "wake_deflection_parameters": {
+      "gauss": {
+        "ad": 0.0,
+        "alpha": 0.58,
+        "bd": 0.0,
+        "beta": 0.077,
+        "dm": 1.0,
+        "ka": 0.3837,
+        "kb": 0.003678
+      },
+      "jimenez": {
+        "ad": 0.0,
+        "bd": 0.0,
+        "kd": 0.05
+      }
+    },
+
+    "wake_velocity_parameters": {
+      "gauss": {
+        "alpha": 0.58,
+        "beta": 0.077,
+        "ka": 0.3837,
+        "kb": 0.003678
+      },
+      "jensen": {
+        "we": 0.05
+      }
+    }
+  },
+
   "turbine": {
     "generator_efficiency": 1.0,
     "hub_height": 90.0,
@@ -201,48 +244,5 @@
     "pT": 1.88,
     "rotor_diameter": 126.0,
     "TSR": 8.0
-  },
-
-  "wake": {
-
-    "model_strings": {
-      "combination_model": null,
-      "deflection_model": "jimenez",
-      "turbulence_model": null,
-      "velocity_model": "jensen"
-    },
-
-    "enable_secondary_steering": false,
-    "enable_yaw_added_recovery": false,
-    "enable_transverse_velocities": false,
-
-    "wake_deflection_parameters": {
-      "gauss": {
-        "ad": 0.0,
-        "alpha": 0.58,
-        "bd": 0.0,
-        "beta": 0.077,
-        "dm": 1.0,
-        "ka": 0.3837,
-        "kb": 0.003678
-      },
-      "jimenez": {
-        "ad": 0.0,
-        "bd": 0.0,
-        "kd": 0.05
-      }
-    },
-
-    "wake_velocity_parameters": {
-      "gauss": {
-        "alpha": 0.58,
-        "beta": 0.077,
-        "ka": 0.3837,
-        "kb": 0.003678
-      },
-      "jensen": {
-        "we": 0.05
-      }
-    }
   }
 }
