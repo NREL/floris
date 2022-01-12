@@ -184,16 +184,20 @@ def wrap_360(x):
     return x
 
 
+def wind_delta(wind_directions):
+    """
+    This is included as a function in order to facilitate testing.
+    """
+    return ((wind_directions - 270) % 360 + 360) % 360
+
+
 def rotate_coordinates_rel_west(wind_directions, coordinates):
     # Calculate the difference in given wind direction from 270 / West
-    wind_deviation_from_west = ((wind_directions - 270) % 360 + 360) % 360
+    wind_deviation_from_west = wind_delta(wind_directions)
     wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))
 
     # Construct the arrays storing the turbine locations
     x_coordinates, y_coordinates, z_coordinates = coordinates.T
-    # x_coordinates = x_coordinates[None, None, :]
-    # y_coordinates = y_coordinates[None, None, :]
-    # z_coordinates = z_coordinates[None, None, :]
 
     # Find center of rotation - this is the center of box bounding all of the turbines
     x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
