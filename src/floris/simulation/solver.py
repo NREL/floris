@@ -68,6 +68,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_angle_i = farm.yaw_angles[:, :, i:i+1, None, None]
+        turbine_effective_yaw = copy.deepcopy(yaw_angle_i)
 
         if model_manager.enable_secondary_steering:
             added_yaw = wake_added_yaw(
@@ -84,14 +85,14 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
                 turbine.TSR,
                 axial_induction_i
             )
-            yaw_angle_i += added_yaw
+            turbine_effective_yaw += added_yaw
 
         # Model calculations
         # NOTE: exponential
         deflection_field = model_manager.deflection_model.function(
             x_i,
             y_i,
-            yaw_angle_i,
+            turbine_effective_yaw,
             turbulence_intensity_i,
             ct_i,
             **deflection_model_args
