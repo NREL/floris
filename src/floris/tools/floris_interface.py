@@ -66,7 +66,7 @@ class FlorisInterface(LoggerBase):
             self.floris = Floris.from_file(self.configuration)
 
         elif isinstance(self.configuration, dict):
-            return Floris.from_dict(self.configuration)
+            self.floris = Floris.from_dict(self.configuration)
 
         else:
             raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
