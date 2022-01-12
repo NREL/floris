@@ -284,15 +284,14 @@ def wake_added_yaw(
         return np.zeros_like(avg_v)
 
     # flow parameters
-    # Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
-    Uinf = 9.0
+    Uinf = np.mean(u_initial, axis=(2,3,4))
+    Uinf = Uinf[:,:,None,None,None]
 
     # TODO: Allow user input for eps gain
     eps_gain = 0.2
     eps = eps_gain * D  # Use set value
 
-    vel_top = np.mean(u_i[:,:,:,:,-1] / Uinf, axis=3)
-    vel_top = vel_top[:,:,:,None,None]
+    vel_top = ((HH + D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
     Gamma_top = sind(yaw) * cosd(yaw) * gamma(
         D,
         vel_top,
@@ -300,8 +299,7 @@ def wake_added_yaw(
         Ct,
     )
 
-    vel_bottom = np.mean(u_i[:,:,:,:,0] / Uinf, axis=3)
-    vel_bottom = vel_bottom[:,:,:,None,None]
+    vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
     Gamma_bottom = -1 * sind(yaw) * cosd(yaw) * gamma(
         D,
         vel_bottom,
@@ -394,14 +392,14 @@ def calculate_transverse_velocity(
     aI = axial_induction_i
 
     # flow parameters
-    # Uinf = np.mean(flow_field.wind_map.grid_wind_speed)
-    Uinf = 9.0
+    Uinf = np.mean(u_initial, axis=(2,3,4))
+    Uinf = Uinf[:,:,None,None,None]
 
     eps_gain = 0.2
     eps = eps_gain * D  # Use set value
 
-    vel_top = np.mean(u_i[:,:,:,:,-1] / Uinf, axis=3)
-    vel_top = vel_top[:,:,:,None,None]
+    # TODO: wind sheer is hard-coded here but should be connected to the input
+    vel_top = ((HH + D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
     Gamma_top = sind(yaw) * cosd(yaw) * gamma(
         D,
         vel_top,
@@ -409,8 +407,7 @@ def calculate_transverse_velocity(
         Ct,
     )
 
-    vel_bottom = np.mean(u_i[:,:,:,:,0] / Uinf, axis=3)
-    vel_bottom = vel_bottom[:,:,:,None,None]
+    vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
     Gamma_bottom = -1 * sind(yaw) * cosd(yaw) * gamma(
         D,
         vel_bottom,
