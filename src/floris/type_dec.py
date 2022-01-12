@@ -97,7 +97,12 @@ class FromDictMixin:
             cls
                 The `attr`-defined class.
         """
-        # Get all parameters from the input dictionary that map to the class initialization
+        # Check for any inputs that aren't part of the class definition
+        class_attr_names = [a.name for a in cls.__attrs_attrs__]
+        extra_args = [d for d in data if d not in class_attr_names]
+        if len(extra_args):
+            raise AttributeError(f"The initialization for {cls.__name__} was given extraneous inputs: {extra_args}")
+
         kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
 
         # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
@@ -105,7 +110,7 @@ class FromDictMixin:
         undefined = sorted(set(required_inputs) - set(kwargs))
         if undefined:
             raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
-        return cls(**kwargs)  # type: ignore
+        return cls(**kwargs)
 
     def as_dict(self) -> dict:
         """Creates a JSON and YAML friendly dictionary that can be save for future reloading.

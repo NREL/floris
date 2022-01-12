@@ -71,17 +71,17 @@ def test_FromDictMixin_custom():
     }
 
     # Check that custom inputs are accepted
-    cls = AttrsDemoClass.from_dict(inputs)
+    AttrsDemoClass.from_dict(inputs)
 
     # Ensure extraneous inputs are not applied to the class
     inputs2 = {**inputs, "extra": [3, 4, 5.5]}
-    cls = AttrsDemoClass.from_dict(inputs2)
-    assert not hasattr(cls, "extra")
+    with pytest.raises(AttributeError):
+        AttrsDemoClass.from_dict(inputs2)
 
     # Test that missing required inputs raises an error
     inputs = {}
     with pytest.raises(AttributeError):
-        cls = AttrsDemoClass.from_dict(inputs)
+        AttrsDemoClass.from_dict(inputs)
 
 
 def test_iter_validator():
