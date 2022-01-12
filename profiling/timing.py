@@ -9,10 +9,10 @@ from floris.simulation import Floris
 from conftest import SampleInputs
 
 def time_profile(input_dict):
-    floris = Floris(input_dict=input_dict.floris)
-    start = time.time()
+    floris = Floris.from_dict(input_dict.floris)
+    start = time.perf_counter()
     floris.steady_state_atmospheric_condition()
-    end = time.time()
+    end = time.perf_counter()
     return end - start
 
 def internal_probe(input_dict):
@@ -107,10 +107,9 @@ if __name__=="__main__":
 
     ### Timing larger sizes in each dimension
 
-    N = 1
-    n_wind_directions = 2 # 72
-    n_wind_speeds = 1
-    n_turbines = 1
+    n_wind_directions = 72
+    n_wind_speeds = 23
+    n_turbines = 25
     sample_inputs.floris["wake"]["model_strings"] = {
         # "velocity_model": "jensen",
         # "deflection_model": "jimenez",
@@ -119,17 +118,23 @@ if __name__=="__main__":
         "combination_model": None,
         "turbulence_model": None,
     }
+    sample_inputs.floris["wake"]["enable_transverse_velocities"] = False
+    sample_inputs.floris["wake"]["enable_secondary_steering"] = False
+    sample_inputs.floris["wake"]["enable_yaw_added_recovery"] = False
     sample_inputs.floris["flow_field"]["wind_directions"] = n_wind_directions * [270.0]
     sample_inputs.floris["flow_field"]["wind_speeds"] = n_wind_speeds * [9.0]
     sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
     sample_inputs.floris["farm"]["layout_y"] = n_turbines * [0.0]
-    sample_inputs.floris["farm"]["turbine_id"] = n_turbines * ["test_turb"]
 
-    calc_time = np.zeros(N)
+    N = 10
+    times = np.zeros(N)
     for i in range(N):
-        calc_time[i] = time_profile(copy.deepcopy(sample_inputs))
-        # print(i, calc_time[i])
+        print(f"Iteration {i}")
+        times[i] = time_profile(copy.deepcopy(sample_inputs))
+        print(f"    {times[i]}")
 
+    print(f"Total time: {np.sum(times)}")
+    print(f"Average per iteration: { np.sum(times) / N }")
 
     ### Memory scaling
 

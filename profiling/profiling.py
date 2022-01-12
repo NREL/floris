@@ -18,6 +18,7 @@
 # import cProfile
 # from copy import deepcopy
 
+import copy
 from floris.simulation import Floris
 from conftest import SampleInputs
 
@@ -51,8 +52,10 @@ if __name__=="__main__":
     sample_inputs.floris["farm"]["layout_y"] = [0.0 for i in range(factor)]
 
     factor = 10
-    sample_inputs.floris["farm"]["wind_directions"] = factor * [270.0]
-    sample_inputs.floris["farm"]["wind_speeds"] = factor * [8.0]
+    sample_inputs.floris["flow_field"]["wind_directions"] = factor * [270.0]
+    sample_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
 
-    floris = Floris.from_dict(sample_inputs.floris)
-    floris.steady_state_atmospheric_condition()
+    N = 5
+    for i in range(N):
+        floris = Floris.from_dict(copy.deepcopy(sample_inputs.floris))
+        floris.steady_state_atmospheric_condition()
