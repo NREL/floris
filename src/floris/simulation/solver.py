@@ -77,12 +77,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
                 u_i,
                 v_i,
                 flow_field.u_initial,
-                grid.x - x_i,
                 grid.y[:, :, i:i+1] - y_i,
                 grid.z[:, :, i:i+1],
                 turbine.rotor_diameter,
                 turbine.hub_height,
-                yaw_angle_i,
                 ct_i,
                 turbine.TSR,
                 axial_induction_i

@@ -249,12 +249,10 @@ def wake_added_yaw(
     u_i,
     v_i,
     u_initial,
-    delta_x,
     delta_y,
     z_i,
     rotor_diameter,
     hub_height,
-    yaw_angle,
     ct_i,
     tip_speed_ratio,
     axial_induction_i
@@ -271,7 +269,6 @@ def wake_added_yaw(
     # turbine parameters
     D = rotor_diameter              # scalar
     HH = hub_height                 # scalar
-    yaw = yaw_angle                 # (wd, ws, 1, 1, 1) for the current turbine
     Ct = ct_i                       # (wd, ws, 1, 1, 1) for the current turbine
     TSR = tip_speed_ratio           # scalar
     aI = axial_induction_i          # (wd, ws, 1, 1, 1) for the current turbine
@@ -306,16 +303,6 @@ def wake_added_yaw(
     Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine_average_velocity / TSR
 
     ### compute the spanwise and vertical velocities induced by yaw
-
-    # decay the vortices as they move downstream - using mixing length
-    # lmda = D / 8
-    # kappa = 0.41
-    # lm = kappa * z_i / (1 + kappa * z_i / lmda)
-    # z = np.linspace(np.min(z), np.max(z), np.shape(u_initial)[2])
-    # dudz_initial = np.gradient(u_initial, z, axis=4)
-    # dudz_initial = np.gradient(u_initial, axis=4)
-    # nu = lm ** 2 * np.abs(dudz_initial)
-    # nu = lm ** 2 * np.abs(dudz_initial)
 
     # decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
     yLocs = delta_y + NUM_EPS
