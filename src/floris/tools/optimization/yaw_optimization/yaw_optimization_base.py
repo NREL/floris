@@ -30,8 +30,6 @@ class YawOptimization:
     def __init__(
         self,
         fi,
-        wd_array,
-        ws_array,
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
         yaw_angles_baseline=None,
@@ -129,12 +127,14 @@ class YawOptimization:
         # Save turbine object to self
         self.fi = copy.deepcopy(fi)
         self.nturbs = len(self.fi.layout_x)
+        self.nconds = self.fi.floris.flow_field.n_wind_directions
 
-        # Save wind rose information
-        self.wd_array = np.array(wd_array, dtype=float)
-        self.ws_array = np.array(ws_array, dtype=float)
-        if not (self.wd_array.shape == self.ws_array.shape):
-            raise ValueError("Wind direction and speed arrays should be of equal length.")
+        # Check floris options
+        if self.fi.floris.flow_field.n_wind_speeds > 1:
+            raise NotImplementedError(
+                "Optimizer currently does not support more than one wind" +
+                " speed. Please assign FLORIS a single wind speed."
+            )
 
         # Initialize optimizer
         self.reinitialize_opt(
@@ -157,7 +157,7 @@ class YawOptimization:
         """Take a variable, can be either a float, a list equal in
         length to the number of turbines, or an ndarray. It then
         upsamples this value so that it always matches the dimensions
-        (len(self.wd_array), self.nturbs).
+        (self.nconds, self.nturbs).
         """
         # Then process maximum yaw angle
         if isinstance(variable, float):
@@ -167,8 +167,11 @@ class YawOptimization:
         variable = np.array(variable, dtype=float)
         if len(np.shape(variable)) == 1:
             # If one-dimensional array, copy over to all atmos. conditions
-            variable = np.tile(variable, (len(self.wd_array), 1))
-        
+            variable = np.tile(variable, (self.nconds, 1, 1))
+
+        if len(np.shape(variable)) == 2:
+            raise UserWarning("This is an unrecognized shape.")
+
         return variable
         
     def _set_opt_bounds(self, minimum_yaw_angle, maximum_yaw_angle):
@@ -200,11 +203,11 @@ class YawOptimization:
         self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
 
         if self.exclude_downstream_turbines:
-            for iw, wd in enumerate(self.wd_array):
+            for iw, wd in enumerate(self.fi.floris.flow_field.wind_directions):
                 # Remove turbines from turbs_to_opt that are downstream
                 downstream_turbines = derive_downstream_turbines(self.fi, wd)
                 downstream_turbines = np.array(downstream_turbines, dtype=int)
-                self.turbs_to_opt[iw, downstream_turbines] = False
+                self.turbs_to_opt[iw, 0, downstream_turbines] = False
 
         # Set up a template yaw angles array with default solutions. The default
         # solutions are either 0.0 or the allowable yaw angle closest to 0.0 deg.
@@ -213,8 +216,8 @@ class YawOptimization:
         # their appropriate yaw angle.
         yaw_angles_template = self._unpack_variable(0.0)
         for ti in range(self.nturbs):
-            yaw_lb = self.minimum_yaw_angle[:, ti]
-            yaw_ub = self.maximum_yaw_angle[:, ti]
+            yaw_lb = self.minimum_yaw_angle[:, 0, ti]
+            yaw_ub = self.maximum_yaw_angle[:, 0, ti]
 
             # Find bound that is closest to zero
             bounds = np.vstack([yaw_lb, yaw_ub]).T
@@ -223,23 +226,23 @@ class YawOptimization:
 
             # Overwrite all values that are not allowed to be 0.0 with bound value closest to zero
             idx = (yaw_lb > 0.0) | (yaw_ub < 0.0)
-            yaw_angles_template[idx, ti] = yaw_mb[idx]
+            yaw_angles_template[idx, 0, ti] = yaw_mb[idx]
         self.yaw_angles_template = yaw_angles_template
 
-        # Derive reduced initial conditions
-        self.x0_subset = [[] for _ in range(len(self.wd_array))]
-        for ii, x0 in enumerate(self.x0):
-            self.x0_subset[ii] = x0[self.turbs_to_opt[ii, :]]
+        # # Derive reduced initial conditions
+        # self.x0_subset = [[] for _ in range(self.nconds)]
+        # for ii, x0 in enumerate(self.x0):
+        #     self.x0_subset[ii] = x0[self.turbs_to_opt[ii, :]]
 
-        # Derive reduced minimum yaw angles (lower bounds)
-        self.minimum_yaw_angle_subset = [[] for _ in range(len(self.wd_array))]
-        for ii, min_yaw in enumerate(self.minimum_yaw_angle):
-            self.minimum_yaw_angle_subset[ii] = min_yaw[self.turbs_to_opt[ii, :]]
+        # # Derive reduced minimum yaw angles (lower bounds)
+        # self.minimum_yaw_angle_subset = [[] for _ in range(self.nconds)]
+        # for ii, min_yaw in enumerate(self.minimum_yaw_angle):
+        #     self.minimum_yaw_angle_subset[ii] = min_yaw[self.turbs_to_opt[ii, :]]
 
-        # Derive reduced maximum yaw angles (upper bounds)
-        self.maximum_yaw_angle_subset = [[] for _ in range(len(self.wd_array))]
-        for ii, max_yaw in enumerate(self.maximum_yaw_angle):
-            self.maximum_yaw_angle_subset[ii] = max_yaw[self.turbs_to_opt[ii, :]]
+        # # Derive reduced maximum yaw angles (upper bounds)
+        # self.maximum_yaw_angle_subset = [[] for _ in range(self.nconds)]
+        # for ii, max_yaw in enumerate(self.maximum_yaw_angle):
+        #     self.maximum_yaw_angle_subset[ii] = max_yaw[self.turbs_to_opt[ii, :]]
 
     def _normalize_control_variables(self):
         """
@@ -254,7 +257,7 @@ class YawOptimization:
         self.minimum_yaw_angle_norm = [self._norm(y, lb, ub) for y in self.minimum_yaw_angle_subset]
         self.maximum_yaw_angle_norm = [self._norm(y, lb, ub) for y in self.maximum_yaw_angle_subset]
 
-    def _calculate_farm_power(self, yaw_angles=None, wd_array=None, ws_array=None, turbine_weights=None):
+    def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None):
         """
         Calculate the wind farm power production assuming the predefined
         probability distribution (self.unc_options/unc_pmf), with the
@@ -269,9 +272,7 @@ class YawOptimization:
         # Unpack all variables, whichever are defined.
         fi = copy.deepcopy(self.fi)
         if wd_array is None:
-            wd_array = self.wd_array
-        if ws_array is None:
-            ws_array = self.ws_array
+            wd_array = self.fi.floris.flow_field.wind_directions
         if yaw_angles is None:
             yaw_angles = self.yaw_angles_baseline
         if turbine_weights is None:
@@ -282,17 +283,13 @@ class YawOptimization:
 
         # Calculate solutions
         turbine_power = np.zeros((len(wd_array), self.nturbs))
-        for iw in range(len(wd_array)):
-            fi.reinitialize_flow_field(
-                wind_direction=wd_array[iw],
-                wind_speed=ws_array[iw]
-            )
-            fi.calculate_wake(yaw_angles=yaw_angles[iw, :])
-            turbine_power[iw, :] = fi.get_turbine_power()
+        fi.reinitialize(wind_directions=wd_array)
+        fi.calculate_wake(yaw_angles=yaw_angles)
+        turbine_power = fi.get_turbine_powers()
 
         # Multiply with turbine weighing terms
         turbine_power_weighted = np.multiply(turbine_weights, turbine_power)
-        farm_power_weighted = np.sum(turbine_power_weighted, axis=1)
+        farm_power_weighted = np.sum(turbine_power_weighted, axis=2)
         return farm_power_weighted
 
     def _calculate_baseline_farm_power(self):
@@ -435,7 +432,12 @@ class YawOptimization:
                 Defaults to None.
         """
         # Define number of atmospheric conditions
-        N = len(self.wd_array)
+        N = self.nconds
+        if self.fi.floris.flow_field.n_wind_speeds > 1:
+            raise NotImplementedError(
+                "Optimizer currently does not support more than one wind" +
+                " speed. Please assign FLORIS a single wind speed."
+            )
 
         # if cluster_turbines is not None:
         #     self.cluster_turbines = cluster_turbines
@@ -449,9 +451,9 @@ class YawOptimization:
             yaw_angles_baseline = self._unpack_variable(yaw_angles_baseline)
             self.yaw_angles_baseline = yaw_angles_baseline
         else:
-            b = [t.yaw_angle for t in self.fi.floris.farm.turbine_map.turbines]
+            b = self.fi.floris.farm.yaw_angles
             self.yaw_angles_baseline = self._unpack_variable(b)
-            if any(np.abs(b) > 0.0):
+            if np.any(np.abs(b) > 0.0):
                 print(
                     "INFO: Baseline yaw angles were not specified and were derived from the floris object."
                 )
@@ -473,10 +475,10 @@ class YawOptimization:
             if class_initialization:
                 self.x0 = self._unpack_variable(0.0)
                 for ti in range(self.nturbs):
-                    yaw_lb = self.minimum_yaw_angle[:, ti]
-                    yaw_ub = self.maximum_yaw_angle[:, ti]
+                    yaw_lb = self.minimum_yaw_angle[:, 0, ti]
+                    yaw_ub = self.maximum_yaw_angle[:, 0, ti]
                     idx = (yaw_lb > 0.0) | (yaw_ub < 0.0)
-                    self.x0[idx, ti] = (yaw_lb[idx] + yaw_ub[idx]) / 2.0
+                    self.x0[idx, 0, ti] = (yaw_lb[idx] + yaw_ub[idx]) / 2.0
 
         if np.any(self.yaw_angles_baseline < self.minimum_yaw_angle):
             print("INFO: yaw_angles_baseline exceed lower bound constraints.")
