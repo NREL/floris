@@ -503,8 +503,7 @@ def yaw_added_turbulence_mixing(
     turb_v,
     turb_w
 ):
-    average_u_i = np.mean(u_i, axis=(3,4))
-    # average_u_i = average_u_i[:,:,:,None,None]
+    average_u_i = np.cbrt(np.mean(u_i ** 3, axis=(3,4)))
     I = np.mean(I, axis=(3,4))
     # Convert ambient turbulence intensity to TKE (eq 24)
     k = (average_u_i * I) ** 2 / (2 / 3)
