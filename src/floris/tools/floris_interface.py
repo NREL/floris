@@ -102,7 +102,7 @@ class FlorisInterface(LoggerBase):
 
         # TODO decide where to handle this sign issue
         if yaw_angles is not None:
-            self.floris.farm.yaw_angles = -1 * yaw_angles
+            self.floris.farm.yaw_angles = yaw_angles
 
         self.floris.steady_state_atmospheric_condition()
 
