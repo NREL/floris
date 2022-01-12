@@ -77,8 +77,9 @@ class GaussVelocityDeficit(BaseModel):
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
-        # TODO: Difference in yaw sign convention for v3
-        yaw_angle = -1 * yaw_angle_i  # Opposite sign convention in this model
+
+        # Opposite sign convention in this model
+        yaw_angle = -1 * yaw_angle_i
 
         # Initialize the velocity deficit
         uR = u_initial * ct_i / ( 2.0 * (1 - np.sqrt(1 - ct_i) ) )

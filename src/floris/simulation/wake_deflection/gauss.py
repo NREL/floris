@@ -141,8 +141,8 @@ class GaussVelocityDeflection(BaseModel):
         """
         # ==============================================================
 
-        # opposite sign convention in this model
-        # TODO: ^^ this comment is for yaw - flip the sign
+        # Opposite sign convention in this model
+        yaw_i = -1 * yaw_i
 
         # TODO: connect support for tilt
         tilt = 0.0 #turbine.tilt_angle
