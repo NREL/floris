@@ -35,7 +35,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
     v_wake = np.zeros_like(flow_field.v_initial)
     w_wake = np.zeros_like(flow_field.w_initial)
 
-    turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones_like(grid.x)
+    turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
     ambient_turbulence_intensity = flow_field.turbulence_intensity
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
@@ -125,7 +125,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
                 w_wake[:, :, i:i+1],
             )
             gch_gain = 2
-            turbine_turbulence_intensity[:, :, i:i+1, :, :] = turbulence_intensity_i + gch_gain * I_mixing[:,:,:,None,None]
+            turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
