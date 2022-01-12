@@ -116,14 +116,14 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
         if model_manager.enable_yaw_added_recovery:
             I_mixing = yaw_added_turbulence_mixing(
                 u_i,
-                turbine_turbulence_intensity,
-                flow_field.v,
-                flow_field.w,
-                v_wake,
-                w_wake
+                turbulence_intensity_i,
+                v_i,
+                flow_field.w[:, :, i:i+1],
+                v_wake[:, :, i:i+1],
+                w_wake[:, :, i:i+1],
             )
             gch_gain = 2
-            turbine_turbulence_intensity = turbine_turbulence_intensity + gch_gain * I_mixing[:,:,:,None,None]
+            turbine_turbulence_intensity[:, :, i:i+1, :, :] = turbulence_intensity_i + gch_gain * I_mixing[:,:,:,None,None]
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
