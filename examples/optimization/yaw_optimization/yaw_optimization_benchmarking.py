@@ -47,6 +47,9 @@ def load_floris(N=2):
 
 
 if __name__ == "__main__":
+    # Specify current directory
+    root_path = os.path.dirname(os.path.abspath(__file__))
+
     # Specify sqrt of number of turbines to iterate over
     N_array = [2, 3, 4, 5, 6, 7]
 
@@ -67,9 +70,10 @@ if __name__ == "__main__":
             fi=fi,
             minimum_yaw_angle=0.0,  # Allowable yaw angles lower bound
             maximum_yaw_angle=20.0,  # Allowable yaw angles upper bound
+            yaw_angles_baseline=np.zeros((72, 1, len(fi.layout_x))),
             Ny_passes=[5, 4],
             reduce_ngrid=False,
-            exclude_downstream_turbines=True,
+            exclude_downstream_turbines=False,
         )
         df_opt = yaw_opt._optimize()
         t = timerpc() - start_time
@@ -81,11 +85,15 @@ if __name__ == "__main__":
         print("Optimization finished in {:.2f} seconds.".format(t))
         print(" ")
 
+        # Save detailed optimal solutions to a .csv
+        fout = os.path.join(root_path, "df_opt_N{:d}_v30_serialrefine.csv".format(N))
+        df_opt.to_csv(fout)
+
     # Save benchmarking results to a .csv
     df_benchmarking = pd.DataFrame(
         {"N": N_array, "timings": timings, "gains": gains}
     )
     root_path = os.path.dirname(os.path.abspath(__file__))
-    fout = os.path.join(root_path, "benchmarking_results_v3.csv")
-    df_benchmarking.to_csv(fout, index=False)
+    fout = os.path.join(root_path, "benchmarking_results_v30_serialrefine.csv")
+    df_benchmarking.to_csv(fout, index=False, mode="a")  # Append
     print("Benchmarking results saved to {:s}.".format(fout))
