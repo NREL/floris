@@ -98,30 +98,29 @@ class JensenVelocityDeficit(BaseModel):
 
         reference_rotor_radius = reference_rotor_diameter / 2.0
 
+        dx = x - x_i
+        dy = y - y_i - deflection_field_i
+        dz = z - z_i
+
         # y = m * x + b
-        boundary_line = self.we * x + reference_rotor_radius
+        boundary_line = self.we * dx + reference_rotor_radius
 
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
         # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
-        dx = x - x_i
-        dy = y - y_i - deflection_field_i
-        dz = z - z_i
         c = ( reference_rotor_radius / ( reference_rotor_radius + self.we * dx ) ) ** 2
         # c *= ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.
         # c *= ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         # np.nan_to_num
+
         # C should be 0 at the current turbine and everywhere in front of it
-        c[dx <= 0.0] = 0.0
-        mask = (dy ** 2 + dz ** 2) > (boundary_line ** 2)
+        upstream_mask = np.array(dx <= 0.0, dtype=bool)
+        # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
+        boundary_mask = np.array( np.sqrt(dy ** 2 + dz ** 2) > boundary_line, dtype=bool)
+
+        mask = np.logical_or(upstream_mask, boundary_mask)
         c[mask] = 0.0
 
         velocity_deficit = 2 * axial_induction_i * c
 
         return velocity_deficit
-
-        # u[i] = u[i - 1] * (1 - 2 * turbine_ai * c)
-
-        # This combination model is essentially the freestream linear superposition of v2
-        # This is used in the original paper.
-        # flow_field.u[i] = flow_field.u[i-1] * (1 - 2 * turbine_ai * c)
