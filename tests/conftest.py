@@ -309,7 +309,7 @@ class SampleInputs:
         self.flow_field = {
             "wind_speeds": WIND_SPEEDS,
             "wind_directions": WIND_DIRECTIONS,
-            "turbulence_intensity": 0.1,
+            "turbulence_intensity": 0.06,
             "wind_shear": 0.12,
             "wind_veer": 0.0,
             "air_density": 1.225,
