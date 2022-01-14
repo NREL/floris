@@ -130,6 +130,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         self.grid.finalize()
         self.flow_field.finalize(self.grid.unsorted_indices)
+        self.farm.finalize(self.grid.unsorted_indices)
         return elapsed_time
 
     def solve_for_viz(self):

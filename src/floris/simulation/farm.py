@@ -63,6 +63,9 @@ class Farm(BaseClass):
     def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
 
+    def finalize(self, unsorted_indices):
+        self.yaw_angles = np.take_along_axis(self.yaw_angles, unsorted_indices[:,:,:,0,0], axis=2)
+
     @property
     def n_turbines(self):
         return len(self.layout_x)
