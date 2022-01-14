@@ -210,12 +210,12 @@ wake:
       bd: 0.0
       beta: 0.077
       dm: 1.0
-      ka: 0.3837
-      kb: 0.003678
+      ka: 0.38
+      kb: 0.004
 
   wake_velocity_parameters:
     gauss:
       alpha: 0.58
       beta: 0.077
-      ka: 0.3837
-      kb: 0.003678
+      ka: 0.38
+      kb: 0.004
