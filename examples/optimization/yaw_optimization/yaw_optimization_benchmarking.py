@@ -51,7 +51,7 @@ if __name__ == "__main__":
     root_path = os.path.dirname(os.path.abspath(__file__))
 
     # Specify sqrt of number of turbines to iterate over
-    N_array = [2, 3, 4, 5, 6, 7]
+    N_array = [5, 7, 9, 10]
 
     # Initialize empty matrices
     timings = np.zeros(len(N_array), dtype=float)
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             yaw_angles_baseline=np.zeros((72, 1, len(fi.layout_x))),
             Ny_passes=[5, 4],
             reduce_ngrid=False,
-            exclude_downstream_turbines=False,
+            exclude_downstream_turbines=True,
         )
         df_opt = yaw_opt._optimize()
         t = timerpc() - start_time
