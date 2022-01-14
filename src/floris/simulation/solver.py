@@ -190,14 +190,21 @@ def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
     ti_ai = 0.8
     ti_downstream = -0.32
 
+    # Replace zeros and negatives with 1 to prevent nans/infs
+    delta_x = (x - x_i)
+    mask = (delta_x <= 0)
+    antimask = (delta_x > 0)
+    delta_x = delta_x * np.array(delta_x > 0) + np.ones_like(delta_x) * np.array(mask)
+
     # turbulence intensity calculation based on Crespo et. al.
     ti = (
         ti_constant
       * axial_induction ** ti_ai
       * ambient_TI ** ti_initial
-      * ((x - x_i) / rotor_diameter) ** ti_downstream
+      * ((delta_x) / rotor_diameter) ** ti_downstream
     )
-    return ti
+    # Mask the 1 values from above with zeros
+    return ti * np.array(antimask)
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
     """
@@ -482,9 +489,6 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             Ctmp,
             **deficit_model_args
         )
-        # print(turb_u_wake)
-        # # Sum of squares combination model to incorporate the current turbine's velocity into the main array
-        # wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
 
         wake_added_turbulence_intensity = crespo_hernandez(
             ambient_turbulence_intensity,

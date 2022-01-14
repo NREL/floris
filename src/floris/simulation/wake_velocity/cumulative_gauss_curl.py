@@ -93,7 +93,8 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         turbine_ti = turbulence_intensity_i
         turbine_yaw = yaw_i
 
-        turb_avg_vels = np.mean(u_i, axis=(3,4))
+        # TODO Should this be cbrt? This is done to match v2
+        turb_avg_vels = np.cbrt(np.mean(u_i ** 3, axis=(3,4)))
         turb_avg_vels = turb_avg_vels[:,:,:,None,None]
 
         delta_x = x - x_i
@@ -114,18 +115,20 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
 
         y_loc = y # np.mean(y, axis=(3,4))
         # y_loc = y_loc[:,:,:,None,None]
+        y_coord = np.mean(y, axis=(3,4))[:,:,:,None,None]
 
         z_i_loc = np.mean(z_i, axis=(3,4))
         z_i_loc = z_i_loc[:,:,:,None,None]
 
         z_loc = z # np.mean(z, axis=(3,4))
         # z_loc = z_loc[:,:,:,None,None]
+        z_coord = np.mean(z, axis=(3,4))[:,:,:,None,None]
 
         if ii >= 2:
 
             S = sigma_n ** 2 + sigma_i[0:ii-1, :, :, :, :, :] ** 2
-            Y = (y_i_loc - y_loc - deflection_field) ** 2 / (2 * S)
-            Z = (z_i_loc - z_loc) ** 2 / (2 * S)
+            Y = (y_i_loc - y_coord - deflection_field) ** 2 / (2 * S)
+            Z = (z_i_loc - z_coord) ** 2 / (2 * S)
 
             lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2 / S * np.exp(-Y) * np.exp(-Z)
             sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)
