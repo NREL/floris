@@ -159,6 +159,16 @@ class TurbineGrid(Grid):
         #             Defaults to 5.
 
         If the grid conforms to the sequential solver interface, it must be sorted from upstream to downstream
+
+        In a y-z plane on the rotor swept area, the -2 dimension is a column of points and the -1 dimension is the row number.
+        So the following line prints the 0'th column of the the 0'th turbine's grid:
+        print(grid.y[0,0,0,0,:])
+        print(grid.z[0,0,0,0,:])
+        And this line prints a single point
+        print(grid.y[0,0,0,0,0])
+        print(grid.z[0,0,0,0,0])
+        Note that the x coordinates are all the same for the rotor plane.
+
         """
         # TODO: Where should we locate the coordinate system? Currently, its at
         # the foot of the turbine where the tower meets the ground.
