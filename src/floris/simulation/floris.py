@@ -116,6 +116,9 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # without changing the data structures
         self.flow_field.initialize_velocity_field(self.grid)
 
+        # Initialize farm quantities
+        self.farm.initialize(self.grid.sorted_indices)
+
         # <<interface>>
         # start = time.time()
         elapsed_time = sequential_solver(
