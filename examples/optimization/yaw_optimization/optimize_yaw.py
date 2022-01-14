@@ -36,13 +36,10 @@ def load_floris():
     D = fi.floris.grid.reference_turbine_diameter
     # layout_x = [0, 7 * D, 14 * D]
     # layout_y = [0, 0, 0]
-    n_turbines_x = 10 # 5, 7, 9, 10
-    n_turbines_y = 1
-    x_space = 5 * 126.0
-    y_space = 5 * 126.0
-
-    layout_x = [j*x_space for i in range(n_turbines_y) for j in range(n_turbines_x)]
-    layout_y = [i*x_space for i in range(n_turbines_y) for j in range(n_turbines_x)]
+    nturbs = 10
+    x_space = 5 * D
+    layout_x = [i*x_space for i in range(nturbs)]
+    layout_y = [0.0] * len(layout_x)
 
     wd = np.arange(0.0, 360.0, 5.0)
     fi.reinitialize(layout=(layout_x, layout_y))#, wind_directions=wd)
