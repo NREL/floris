@@ -266,12 +266,10 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
                 u_i,
                 v_i,
                 turbine_grid_flow_field.u_initial,
-                turbine_grid.x - x_i,
                 turbine_grid.y[:, :, i:i+1] - y_i,
                 turbine_grid.z[:, :, i:i+1],
                 turbine.rotor_diameter,
                 turbine.hub_height,
-                yaw_angle_i,
                 ct_i,
                 turbine.TSR,
                 axial_induction_i
