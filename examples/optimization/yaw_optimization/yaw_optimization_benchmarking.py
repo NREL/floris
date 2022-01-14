@@ -51,7 +51,7 @@ if __name__ == "__main__":
     root_path = os.path.dirname(os.path.abspath(__file__))
 
     # Specify sqrt of number of turbines to iterate over
-    N_array = [5, 7, 9, 10]
+    N_array = [3, 5, 7, 9, 10]
 
     # Initialize empty matrices
     timings = np.zeros(len(N_array), dtype=float)
@@ -83,10 +83,11 @@ if __name__ == "__main__":
             df_opt["farm_power_baseline"].sum() - 1.0
         )
         print("Optimization finished in {:.2f} seconds.".format(t))
+        fout = os.path.join(root_path, "df_opt_N{:d}_v30_serialrefine.csv".format(N))
+        print("Saving optimization results to {:s}".format(fout))
         print(" ")
 
         # Save detailed optimal solutions to a .csv
-        fout = os.path.join(root_path, "df_opt_N{:d}_v30_serialrefine.csv".format(N))
         df_opt.to_csv(fout)
 
     # Save benchmarking results to a .csv
