@@ -240,6 +240,7 @@ class YawOptimizationScipy(YawOptimization):
         )
 
         # Calculate cost
+        yaw_angles = np.reshape(yaw_angles, (self.fi.floris.flow_field.n_wind_directions, self.fi.floris.flow_field.n_wind_speeds, self.fi.floris.farm.n_turbines))
         self.fi.calculate_wake(yaw_angles=yaw_angles)
         turbine_powers = self.fi.get_turbine_powers(
             # include_unc=self.include_unc,
@@ -280,7 +281,8 @@ class YawOptimizationScipy(YawOptimization):
             self.minimum_yaw_angle,
             self.maximum_yaw_angle,
         )
-        yaw_angles_norm[:,:,self.turbs_to_opt] = yaw_angles_subset_norm
+
+        yaw_angles_norm[self.turbs_to_opt] = yaw_angles_subset_norm
         return self._cost_full_yaw_angle_array(yaw_angles_norm)
 
     def _optimize(self):
@@ -318,7 +320,7 @@ class YawOptimizationScipy(YawOptimization):
             self.minimum_yaw_angle,
             self.maximum_yaw_angle,
         )
-        opt_yaw_angles[0, 0, self.turbs_to_opt] = opt_yaw_angles_subset
+        opt_yaw_angles[self.turbs_to_opt] = opt_yaw_angles_subset
         # opt_yaw_angles = self._verify_solution(yaw_angles_opt=opt_yaw_angles)
         return opt_yaw_angles
 

@@ -14,6 +14,7 @@
 
 
 import os
+import time
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -35,11 +36,16 @@ def load_floris():
     D = fi.floris.grid.reference_turbine_diameter
     # layout_x = [0, 7 * D, 14 * D]
     # layout_y = [0, 0, 0]
-    nturbs = 20
-    x_space = 5 * D
-    layout_x = [i*x_space for i in range(nturbs)]
-    layout_y = [0.0] * len(layout_x)
-    fi.reinitialize(layout=(layout_x, layout_y))
+    n_turbines_x = 10 # 5, 7, 9, 10
+    n_turbines_y = 1
+    x_space = 5 * 126.0
+    y_space = 5 * 126.0
+
+    layout_x = [j*x_space for i in range(n_turbines_y) for j in range(n_turbines_x)]
+    layout_y = [i*x_space for i in range(n_turbines_y) for j in range(n_turbines_x)]
+
+    wd = np.arange(0.0, 360.0, 5.0)
+    fi.reinitialize(layout=(layout_x, layout_y))#, wind_directions=wd)
     return fi
 
 
@@ -92,19 +98,22 @@ if __name__ == "__main__":
             "maxiter": 100,
             "disp": True,
             "iprint": 2,
-            "ftol": 1e-12,
+            "ftol": 1e-4,
             "eps": 0.1,
         },
         exclude_downstream_turbines=False,  # Exclude downstream turbines automatically
     )
+    start = time.perf_counter()
     yaw_angles = yaw_opt.optimize()  # Perform optimization
+    end = time.perf_counter()
     print(yaw_angles)
     print("==========================================")
     print("yaw angles = ")
-    for i in range(len(yaw_angles[0,0,:])):
-        print("Turbine ", i, "=", yaw_angles[0,0,i], " deg")
+    for i in range(len(yaw_angles)):
+        print("Turbine ", i, "=", yaw_angles[i], " deg")
 
     # Assign yaw angles to turbines and calculate wake
+    yaw_angles = np.reshape(yaw_angles, (fi.floris.flow_field.n_wind_directions, fi.floris.flow_field.n_wind_speeds, fi.floris.farm.n_turbines))
     fi.calculate_wake(yaw_angles=yaw_angles)
     power_opt = fi.get_farm_power()
 
@@ -114,9 +123,11 @@ if __name__ == "__main__":
         % (100.0 * (power_opt - power_initial) / power_initial)
     )
     print("==========================================")
+    print(fi.get_turbine_powers())
+    print('Time to optimize: {:.2f} seconds.'.format(end - start))
     # =============================================================================
-    print("Plotting the FLORIS flowfield with yaw...")
-    # =============================================================================
-    fig, ax = plot_hor_slice(fi, yaw_angles=yaw_angles)
-    ax.set_title("Optimal Wake Steering for U = 8 m/s, Wind Direction = 270$^\\circ$")
-    plt.show()
+    # print("Plotting the FLORIS flowfield with yaw...")
+    # # =============================================================================
+    # fig, ax = plot_hor_slice(fi, yaw_angles=yaw_angles)
+    # ax.set_title("Optimal Wake Steering for U = 8 m/s, Wind Direction = 270$^\\circ$")
+    # plt.show()
