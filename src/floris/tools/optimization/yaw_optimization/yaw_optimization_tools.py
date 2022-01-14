@@ -222,7 +222,7 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=F
     # Get farm layout
     x = fi.layout_x
     y = fi.layout_y
-    D = np.array([t.rotor_diameter for t in fi.floris.farm.turbines])
+    D = np.ones_like(x) * fi.floris.turbine.rotor_diameter
     n_turbs = len(x)
 
     # Rotate farm and determine freestream/waked turbines
