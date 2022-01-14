@@ -101,72 +101,80 @@ class GaussVelocityDeficit(BaseModel):
         x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) ) )
         x0 += x_i
 
+        # Initialize the velocity deficit array
+        velocity_deficit = np.zeros_like(u_initial)
+
         # Masks
+        # downstream = np.array(x > xR, dtype=bool)
+        # upstream = np.array(x < x0, dtype=bool)
+        # near_wake_mask = np.logical_and(downstream, upstream)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
         near_wake_mask = np.array(x > xR) * np.array(x < x0)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
         far_wake_mask = np.array(x >= x0)
 
-
         # Compute the velocity deficit in the NEAR WAKE region
+        # ONLY If there are points within the near wake boundary
         # TODO: for the turbinegrid, do we need to do this near wake calculation at all?
         #       same question for any grid with a resolution larger than the near wake region
+        if np.sum(near_wake_mask):
 
-        # Calculate the wake expansion
-        near_wake_ramp_up = (x - xR) / (x0 - xR)  # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
-        near_wake_ramp_down = (x0 - x) / (x0 - xR)  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
-        # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
+            # Calculate the wake expansion
+            near_wake_ramp_up = (x - xR) / (x0 - xR)  # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
+            near_wake_ramp_down = (x0 - x) / (x0 - xR)  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
+            # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
 
-        sigma_y = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
-        sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * reference_rotor_diameter
-        
-        sigma_z = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
-        sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * reference_rotor_diameter
+            sigma_y = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
+            sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * reference_rotor_diameter
+            
+            sigma_z = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
+            sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * reference_rotor_diameter
 
-        r, C = rC(
-            wind_veer,
-            sigma_y,
-            sigma_z,
-            y,
-            y_i,
-            deflection_field_i,
-            z,
-            reference_hub_height,
-            ct_i,
-            yaw_angle,
-            reference_rotor_diameter
-        )
+            r, C = rC(
+                wind_veer,
+                sigma_y,
+                sigma_z,
+                y,
+                y_i,
+                deflection_field_i,
+                z,
+                reference_hub_height,
+                ct_i,
+                yaw_angle,
+                reference_rotor_diameter
+            )
 
-        near_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
-        near_wake_deficit *= near_wake_mask
+            near_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
+            near_wake_deficit *= near_wake_mask
+
+            velocity_deficit += near_wake_deficit
 
 
         # Compute the velocity deficit in the FAR WAKE region
+        if np.sum(far_wake_mask):
 
-        # Wake expansion in the lateral (y) and the vertical (z)
-        ky = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
-        kz = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
-        sigma_y = (ky * (x - x0) + sigma_y0) * far_wake_mask + sigma_y0 * np.array(x < x0)
-        sigma_z = (kz * (x - x0) + sigma_z0) * far_wake_mask + sigma_z0 * np.array(x < x0)
+            # Wake expansion in the lateral (y) and the vertical (z)
+            ky = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
+            kz = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
+            sigma_y = (ky * (x - x0) + sigma_y0) * far_wake_mask + sigma_y0 * np.array(x < x0)
+            sigma_z = (kz * (x - x0) + sigma_z0) * far_wake_mask + sigma_z0 * np.array(x < x0)
 
-        r, C = rC(
-            wind_veer,
-            sigma_y,
-            sigma_z,
-            y,
-            y_i,
-            deflection_field_i,
-            z,
-            reference_hub_height,
-            ct_i,
-            yaw_angle,
-            reference_rotor_diameter
-        )
+            r, C = rC(
+                wind_veer,
+                sigma_y,
+                sigma_z,
+                y,
+                y_i,
+                deflection_field_i,
+                z,
+                reference_hub_height,
+                ct_i,
+                yaw_angle,
+                reference_rotor_diameter
+            )
 
-        far_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
-        far_wake_deficit *= far_wake_mask
+            far_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
+            far_wake_deficit *= far_wake_mask
 
-
-        # Combine the near and far wake regions
-        velocity_deficit = np.sqrt(near_wake_deficit ** 2 + far_wake_deficit ** 2)
+            velocity_deficit += far_wake_deficit
 
         return velocity_deficit
 
