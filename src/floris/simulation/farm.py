@@ -55,13 +55,25 @@ class Farm(BaseClass):
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
+    def initialize(self, sorted_indices):
+        # Sort yaw angles from most upstream to most downstream wind turbine
+        self.yaw_angles = np.take_along_axis(
+            self.yaw_angles,
+            sorted_indices[:, :, :, 0, 0],
+            axis=2,
+        )
+
     def construct_coordinates(self, reference_z: float):
         self.coordinates = np.array(
             [Vec3([x, y, reference_z]) for x, y in zip(self.layout_x, self.layout_y)]
         )
 
     def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
+        # TODO Is this just for initializing yaw angles to zero?
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
+
+    def finalize(self, unsorted_indices):
+        self.yaw_angles = np.take_along_axis(self.yaw_angles, unsorted_indices[:,:,:,0,0], axis=2)
 
     @property
     def n_turbines(self):
