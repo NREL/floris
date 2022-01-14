@@ -24,33 +24,23 @@ from floris.tools.visualization import visualize_cut_plane
 # and expressive interface to the simulation routines.
 
 fi = FlorisInterface("../example_input.yaml")
-solver_settings = {
-    "type": "flow_field_grid",
-    "flow_field_grid_points": [200,200,7]
-}
-fi.reinitialize(solver_settings=solver_settings)
 
+# Yaw the leading turbine 20 degrees
 yaw_angles = np.zeros((1,1,3))
-fi.floris.farm.yaw_angles = yaw_angles
+yaw_angles[:,:,0] = 20.0
 
-# Do the wake calculation
-fi.floris.solve_for_viz()
+# Using the FlorisInterface functions for generating plots,
+# run FLORIS and extract 2D planes of data.
+horizontal_plane = fi.get_hor_plane(yaw_angles=yaw_angles, x_resolution=200, y_resolution=100)
+cross_plane = fi.get_cross_plane(yaw_angles=yaw_angles, y_resolution=100, z_resolution=100)
+y_plane = fi.get_y_plane(yaw_angles=yaw_angles, x_resolution=200, z_resolution=100)
 
-# At this point, the flow field data is generated and
-# stored in memory. Now, use the visualization components
-# in `fi` to get slices of the flow field and generate plots.
+# Create the plots
+fig, ax_list = plt.subplots(3, 1)
+ax_list = ax_list.flatten()
 
-horizontal_plane = fi.get_hor_plane()
-cross_plane = fi.get_cross_plane()
-y_plane = fi.get_y_plane()
-
-fig, ax = plt.subplots()
-visualize_cut_plane(horizontal_plane, ax=ax)
-
-fig, ax = plt.subplots()
-visualize_cut_plane(cross_plane, ax=ax)
-
-fig, ax = plt.subplots()
-visualize_cut_plane(y_plane, ax=ax)
+visualize_cut_plane(horizontal_plane, ax=ax_list[0])
+visualize_cut_plane(y_plane, ax=ax_list[1])
+visualize_cut_plane(cross_plane, ax=ax_list[2])
 
 plt.show()

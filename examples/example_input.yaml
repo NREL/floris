@@ -212,6 +212,10 @@ wake:
       dm: 1.0
       ka: 0.38
       kb: 0.004
+    jimenez:
+      ad: 0.0
+      bd: 0.0
+      kd: 0.05
 
   wake_velocity_parameters:
     gauss:
@@ -219,3 +223,6 @@ wake:
       beta: 0.077
       ka: 0.38
       kb: 0.004
+
+    jensen:
+      we: 0.05
