@@ -517,8 +517,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
 
         flow_field.v += v_wake
         flow_field.w += w_wake
-
-    flow_field.u = flow_field.u_initial - wake_field
+    flow_field.u = turb_inflow_field
 
     flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3,4))
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
