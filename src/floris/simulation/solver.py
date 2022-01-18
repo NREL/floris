@@ -472,7 +472,6 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             y_i,
             z_i,
             u_i,
-            axial_induction_i,
             deflection_field,
             yaw_angle_i,
             turbine_turbulence_intensity,
