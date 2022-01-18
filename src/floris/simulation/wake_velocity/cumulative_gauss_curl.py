@@ -63,7 +63,6 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         y_i: np.ndarray,
         z_i: np.ndarray,
         u_i: np.ndarray,
-        axial_induction_i: np.ndarray,
         deflection_field: np.ndarray,
         yaw_i: np.ndarray,
         turbulence_intensity: np.ndarray,
