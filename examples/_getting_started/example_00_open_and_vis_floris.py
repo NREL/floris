@@ -26,7 +26,7 @@ from floris.tools.visualization import visualize_cut_plane
 fi = FlorisInterface("../example_input.yaml")
 
 # Yaw the leading turbine 20 degrees
-yaw_angles = np.zeros((1,1,3))
+yaw_angles = np.zeros((1, 1, 3))
 yaw_angles[:,:,0] = 20.0
 
 # Using the FlorisInterface functions for generating plots,

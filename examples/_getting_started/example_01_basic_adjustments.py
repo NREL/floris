@@ -48,66 +48,65 @@ def plot_slice_shortcut(fi, ax, title):
 fig, axarr = plt.subplots(3, 3, sharex=True, figsize=(12, 5))
 axarr = axarr.flatten()
 
-# Load the input file as a dictionary so that we can modify it and pass to FlorisInterface
-with open("../example_input.json") as json_file:
-    base_input_dict = json.load(json_file)
 
-fi = FlorisInterface(base_input_dict)
+fi = FlorisInterface("../example_input.yaml")
+solver_settings = {
+    "type": "flow_field_grid",
+    "flow_field_grid_points": [200,100,7]
+}
+fi.reinitialize(solver_settings=solver_settings)
+
 
 # Plot the initial setup
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[0], "Initial")
+horizontal_plane = fi.get_hor_plane()
+visualize_cut_plane(horizontal_plane, ax=axarr[0], minSpeed=4.0, maxSpeed=8.0)
+
 
 # Change the wind speed
-base_input_dict["flow_field"]["wind_speeds"] = [7.5]
-fi = FlorisInterface(base_input_dict)
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[1], "WS=7")
+horizontal_plane = fi.get_hor_plane(ws=[7.0])
+visualize_cut_plane(horizontal_plane, ax=axarr[1], minSpeed=4.0, maxSpeed=8.0)
 
-# Change the wind direction
-base_input_dict["flow_field"]["wind_directions"] = [320.0]
-fi = FlorisInterface(base_input_dict)
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[2], "WD=320.0")
 
-# Change the TI
-base_input_dict["flow_field"]["turbulence_intensity"] = 0.2
-fi = FlorisInterface(base_input_dict)
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[3], "TI=15%")
+# # Change the wind direction
+horizontal_plane = fi.get_hor_plane(wd=[320.0], ws=[8.0])
+visualize_cut_plane(horizontal_plane, ax=axarr[2], minSpeed=4.0, maxSpeed=8.0)
 
-# Change the shear
-base_input_dict["flow_field"]["wind_shear"] = 0.2
-fi = FlorisInterface(base_input_dict)
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[4], "Shear=.2")
 
-# Change the veer
-base_input_dict["flow_field"]["wind_veer"] = 5.0
-fi = FlorisInterface(base_input_dict)
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[5], "Veer=5")
+# # Change the TI
+# fi.reinitialize(turbulence_intensity=0.2)
+# fi.floris.solve_for_viz()
+# plot_slice_shortcut(fi, axarr[3], "TI=15%")
 
-# Change the air density
-base_input_dict["flow_field"]["air_density"] = 1.0
-fi = FlorisInterface(base_input_dict)
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[6], "Air Density=1.0")
+
+# # Change the shear
+# fi.reinitialize(wind_shear=0.2)
+# fi.floris.solve_for_viz()
+# plot_slice_shortcut(fi, axarr[4], "Shear=.2")
+
+
+# # Change the veer
+# fi.reinitialize(wind_veer=5.0)
+# fi.floris.solve_for_viz()
+# plot_slice_shortcut(fi, axarr[5], "Veer=5")
+
 
 # Change the farm layout
-base_input_dict["farm"]["layout_x"] = [0, 1000]
-base_input_dict["farm"]["layout_y"] = [0, 0]
-base_input_dict["farm"]["turbine_id"] = 2 * ["nrel_5mw"]
-fi = FlorisInterface(base_input_dict)
-fi.floris.solve_for_viz()
-plot_slice_shortcut(fi, axarr[7], "Change layout")
-plot_turbines_with_fi(axarr[7], fi)
+N = 3  # Number of turbines per row and per column
+X, Y = np.meshgrid(
+    5.0 * fi.floris.turbine.rotor_diameter * np.arange(0, N, 1),
+    5.0 * fi.floris.turbine.rotor_diameter * np.arange(0, N, 1),
+)
+fi.reinitialize( layout=( X.flatten(), Y.flatten() ) )
+horizontal_plane = fi.get_hor_plane()
+visualize_cut_plane(horizontal_plane, ax=axarr[7], minSpeed=4.0, maxSpeed=8.0)
+# plot_turbines_with_fi(axarr[7], fi)
 
-# Changes the yaw angles
-# fi = FlorisInterface(base_input_dict)
-# fi.floris.farm.farm_controller.set_yaw_angles(np.array([25, 10, 0]))
-# fi.floris.solve_for_viz()
-# plot_slice_shortcut(fi, axarr[8], "Change yaw angles")
+
+# Change the yaw angles
+yaw_angles = np.zeros((1, 1, N*N))
+yaw_angles[:,:,0] = 20.0  # Yaw the leading turbine 20 degrees
+horizontal_plane = fi.get_hor_plane(yaw_angles=yaw_angles)
+visualize_cut_plane(horizontal_plane, ax=axarr[8], minSpeed=4.0, maxSpeed=8.0)
 # plot_turbines_with_fi(axarr[8], fi)
 
 plt.show()
