@@ -120,15 +120,27 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # Initialize farm quantities
         self.farm.initialize(self.grid.sorted_indices)
 
+        vel_model = self.wake.model_strings["velocity_model"]
+
         # <<interface>>
         # start = time.time()
-        elapsed_time = cc_solver(
-            self.farm,
-            self.flow_field,
-            self.turbine,
-            self.grid,
-            self.wake
-        )
+
+        if vel_model=="cc":
+            elapsed_time = cc_solver(
+                self.farm,
+                self.flow_field,
+                self.turbine,
+                self.grid,
+                self.wake
+            )
+        elif vel_model=="gauss":
+            elapsed_time = sequential_solver(
+                self.farm,
+                self.flow_field,
+                self.turbine,
+                self.grid,
+                self.wake
+            )
         # end = time.time()
         # elapsed_time = end - start
 
