@@ -30,7 +30,7 @@ def load_floris():
     # Load the default example floris object
     root_path = os.path.dirname(os.path.abspath(__file__))
     fi = wfct.floris_interface.FlorisInterface(
-        os.path.join(root_path, "..", "..", "example_input.yaml")
+        os.path.join(root_path, "..","inputs", "input_gch.yaml")
     )
 
     # Specify wind farm layout and update in the floris object
