@@ -227,6 +227,7 @@ def gamma(
     velocity,
     Uinf,
     Ct,
+    scale=1.0,
 ):
     """
     Vortex circulation strength. Units of XXX TODO
@@ -240,7 +241,6 @@ def gamma(
     Returns:
         [type]: [description]
     """
-    scale = 1.0
     return scale * (np.pi / 8) * D * velocity * Uinf * Ct # * cosd(yaw)  <- the cos is included in Ct
 
 
@@ -255,7 +255,8 @@ def wake_added_yaw(
     hub_height,
     ct_i,
     tip_speed_ratio,
-    axial_induction_i
+    axial_induction_i,
+    scale=1.0,
 ):
     """
     what yaw angle would have produced that same average spanwise velocity
@@ -288,6 +289,7 @@ def wake_added_yaw(
         vel_top,
         Uinf,
         Ct,
+        scale,
     )
 
     vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
@@ -296,6 +298,7 @@ def wake_added_yaw(
         vel_bottom,
         Uinf,
         Ct,
+        scale,
     )
 
     turbine_average_velocity = np.cbrt(np.mean(u_i ** 3, axis=(3,4)))
@@ -352,7 +355,8 @@ def calculate_transverse_velocity(
     yaw,
     ct_i,
     tsr_i,
-    axial_induction_i
+    axial_induction_i,
+    scale=1.0
 ):
     """
     Calculate transverse velocity components for all downstream turbines
@@ -380,6 +384,7 @@ def calculate_transverse_velocity(
         vel_top,
         Uinf,
         Ct,
+        scale,
     )
 
     vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
@@ -388,6 +393,7 @@ def calculate_transverse_velocity(
         vel_bottom,
         Uinf,
         Ct,
+        scale,
     )
 
     turbine_average_velocity = np.cbrt(np.mean(u_i ** 3, axis=(3,4)))

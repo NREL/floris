@@ -424,7 +424,8 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
                 turbine.hub_height,
                 turb_Cts[:, :, i:i+1],
                 turbine.TSR,
-                axial_induction_i
+                axial_induction_i,
+                scale=2.0,
             )
             effective_yaw_i += added_yaw
 
@@ -451,7 +452,8 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
                 yaw_angle_i,
                 turb_Cts[:, :, i:i+1],
                 turbine.TSR,
-                axial_induction_i
+                axial_induction_i,
+                scale=2.0
             )
 
         if model_manager.enable_yaw_added_recovery:
@@ -463,7 +465,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
                 v_wake[:, :, i:i+1],
                 w_wake[:, :, i:i+1],
             )
-            gch_gain = 2
+            gch_gain = 1.0
             turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
 
         turb_u_wake, Ctmp = model_manager.velocity_model.function(
