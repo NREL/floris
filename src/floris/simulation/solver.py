@@ -192,9 +192,10 @@ def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
 
     # Replace zeros and negatives with 1 to prevent nans/infs
     delta_x = (x - x_i)
-    mask = (delta_x <= 0)
-    antimask = (delta_x > 0)
-    delta_x = delta_x * np.array(delta_x > 0) + np.ones_like(delta_x) * np.array(mask)
+    # TODO: ensure that these fudge factors are needed for different rotations
+    mask = (delta_x <= 0.1)
+    antimask = (delta_x > -0.1)
+    delta_x = delta_x * np.array(delta_x > -0.1) + np.ones_like(delta_x) * np.array(mask)
 
     # turbulence intensity calculation based on Crespo et. al.
     ti = (
@@ -338,9 +339,9 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
         # Sum of squares combination model to incorporate the current turbine's velocity into the main array
         wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
 
-        flow_field.u = flow_field.u_initial - wake_field
         flow_field.v += v_wake
         flow_field.w += w_wake
+    flow_field.u = flow_field.u_initial - velocity_deficit
 
 def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
 
@@ -349,7 +350,6 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
     deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field, turbine)
 
     # This is u_wake
-    wake_field = np.zeros_like(flow_field.u_initial)
     v_wake = np.zeros_like(flow_field.v_initial)
     w_wake = np.zeros_like(flow_field.w_initial)
     turb_u_wake = np.zeros_like(flow_field.u_initial)
@@ -357,8 +357,6 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
 
     turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
     ambient_turbulence_intensity = flow_field.turbulence_intensity
-
-    reference_rotor_diameter = turbine.rotor_diameter
 
     shape = (farm.n_turbines,) + np.shape(flow_field.u_initial)
     Ctmp = np.zeros((shape))
@@ -378,42 +376,37 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
         z_i = np.mean(grid.z[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
 
-        mask1 = np.array(grid.x != x_i)
-        mask2 = np.array(grid.x == x_i)
-        turb_inflow_field = turb_inflow_field * mask1 + (flow_field.u_initial - turb_u_wake) * mask2
+        mask2 = np.array(grid.x < x_i + 0.01) * np.array(grid.x > x_i - 0.01) * np.array(grid.y < y_i + 0.51*126.0) * np.array(grid.y > y_i - 0.51*126.0)
+        # mask2 = np.logical_and(np.logical_and(np.logical_and(grid.x < x_i + 0.01, grid.x > x_i - 0.01), grid.y < y_i + 0.51*126.0), grid.y > y_i - 0.51*126.0)
+        turb_inflow_field = turb_inflow_field * ~mask2 + (flow_field.u_initial - turb_u_wake) * mask2
 
         turb_avg_vels = average_velocity(turb_inflow_field)
         turb_Cts = Ct(
             turb_avg_vels,
             farm.yaw_angles,
             turbine.fCt_interp,
-            ix_filter=[i]
         )
-        turb_Cts = turb_Cts[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)        
+        turb_Cts = turb_Cts[:, :, :, None, None]     
         turb_aIs = axial_induction(
             turb_avg_vels,
             farm.yaw_angles,
             turbine.fCt_interp,
             ix_filter=[i],
         )
+        turb_aIs = turb_aIs[:, :, :, None, None]
 
         u_i = turb_inflow_field[:, :, i:i+1]
         v_i = flow_field.v[:, :, i:i+1]
 
-        # ct_i = Ct(
-        #     velocities=flow_field.u,
-        #     yaw_angle=farm.yaw_angles,
-        #     fCt=turbine.fCt_interp,
-        #     ix_filter=[i],
-        # )
-        # ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
-        # axial_induction_i = axial_induction(
-        #     velocities=flow_field.u,
-        #     yaw_angle=farm.yaw_angles,
-        #     fCt=turbine.fCt_interp,
-        #     ix_filter=[i],
-        # )
-        # axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
+        axial_induction_i = axial_induction(
+            velocities=flow_field.u,
+            yaw_angle=farm.yaw_angles,
+            fCt=turbine.fCt_interp,
+            ix_filter=[i],
+        )
+
+        axial_induction_i = axial_induction_i[:, :, :, None, None]
+
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_angle_i = farm.yaw_angles[:, :, i:i+1, None, None]
 
@@ -429,9 +422,9 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
                 grid.z[:, :, i:i+1],
                 turbine.rotor_diameter,
                 turbine.hub_height,
-                turb_Cts,
+                turb_Cts[:, :, i:i+1],
                 turbine.TSR,
-                turb_aIs
+                axial_induction_i
             )
             effective_yaw_i += added_yaw
 
@@ -442,7 +435,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             y_i,
             effective_yaw_i,
             turbulence_intensity_i,
-            turb_Cts,
+            turb_Cts[:, :, i:i+1],
             **deflection_model_args
         )
 
@@ -456,9 +449,9 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
                 turbine.rotor_diameter,
                 turbine.hub_height,
                 yaw_angle_i,
-                turb_Cts,
+                turb_Cts[:, :, i:i+1],
                 turbine.TSR,
-                turb_aIs
+                axial_induction_i
             )
 
         if model_manager.enable_yaw_added_recovery:
@@ -473,19 +466,18 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             gch_gain = 2
             turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
 
-        turb_u_wake, Ctmp, sigma_i = model_manager.velocity_model.function(
+        turb_u_wake, Ctmp = model_manager.velocity_model.function(
             i,
             x_i,
             y_i,
             z_i,
             u_i,
-            turb_aIs,
+            axial_induction_i,
             deflection_field,
             yaw_angle_i,
-            turbulence_intensity_i,
+            turbine_turbulence_intensity,
             turb_Cts,
             turb_u_wake,
-            sigma_i,
             Ctmp,
             **deficit_model_args
         )
@@ -499,7 +491,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
-        area_overlap = np.sum(flow_field.u_initial - turb_u_wake > 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
+        area_overlap = 1 - np.sum(turb_u_wake <= 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
         area_overlap = area_overlap[:, :, :, None, None]
 
         # Modify wake added turbulence by wake area overlap

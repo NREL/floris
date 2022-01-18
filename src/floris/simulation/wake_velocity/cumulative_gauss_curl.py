@@ -66,10 +66,9 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         axial_induction_i: np.ndarray,
         deflection_field: np.ndarray,
         yaw_i: np.ndarray,
-        turbulence_intensity_i: np.ndarray,
-        ct_i: np.ndarray,
+        turbulence_intensity: np.ndarray,
+        ct: np.ndarray,
         turb_u_wake: np.ndarray,
-        sigma_i: np.ndarray,
         Ctmp: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
@@ -89,8 +88,8 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         # print("sigma_i", sigma_i)
         # print("Ctmp", Ctmp)
 
-        turbine_Ct = ct_i
-        turbine_ti = turbulence_intensity_i
+        turbine_Ct = ct
+        turbine_ti = turbulence_intensity
         turbine_yaw = yaw_i
 
         # TODO Should this be cbrt? This is done to match v2
@@ -101,8 +100,8 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
 
         sigma_n = wake_expansion(
             delta_x,
-            turbine_Ct,
-            turbine_ti,
+            turbine_Ct[:,:,ii:ii+1],
+            turbine_ti[:,:,ii:ii+1],
             turbine_diameter,
             self.a_s,
             self.b_s,
@@ -110,35 +109,65 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
             self.c_s2,
         )
 
+        x_i_loc = np.mean(x_i, axis=(3,4))
+        x_i_loc = x_i_loc[:,:,:,None,None]
+
         y_i_loc = np.mean(y_i, axis=(3,4))
         y_i_loc = y_i_loc[:,:,:,None,None]
-
-        y_loc = y # np.mean(y, axis=(3,4))
-        # y_loc = y_loc[:,:,:,None,None]
-        y_coord = np.mean(y, axis=(3,4))[:,:,:,None,None]
 
         z_i_loc = np.mean(z_i, axis=(3,4))
         z_i_loc = z_i_loc[:,:,:,None,None]
 
+        x_coord = np.mean(x, axis=(3,4))[:,:,:,None,None]
+
+        y_loc = y
+        y_coord = np.mean(y, axis=(3,4))[:,:,:,None,None]
+
         z_loc = z # np.mean(z, axis=(3,4))
-        # z_loc = z_loc[:,:,:,None,None]
         z_coord = np.mean(z, axis=(3,4))[:,:,:,None,None]
 
-        if ii >= 2:
+        sum_lbda = np.zeros_like(u_initial)
 
-            S = sigma_n ** 2 + sigma_i[0:ii-1, :, :, :, :, :] ** 2
-            Y = (y_i_loc - y_coord - deflection_field) ** 2 / (2 * S)
-            Z = (z_i_loc - z_coord) ** 2 / (2 * S)
+        for m in range(0, ii - 1):
+            y_coord_m = y_coord[:,:,m:m+1]
+            z_coord_m = z_coord[:,:,m:m+1]
 
-            lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2 / S * np.exp(-Y) * np.exp(-Z)
-            sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)
-            # print("S", S)
-            # print("Y", Y)
-            # print("Z", Z)
-        else:
-            sum_lbda = 0.0
+            delta_x_m = x - x_coord[:,:,m:m+1]
 
-        sigma_i[ii] = sigma_n
+            sigma_i = wake_expansion(
+                delta_x_m,
+                turbine_Ct[:,:,m:m+1],
+                turbine_ti[:,:,m:m+1],
+                turbine_diameter,
+                self.a_s,
+                self.b_s,
+                self.c_s1,
+                self.c_s2,
+            )
+
+            S_i = sigma_n ** 2 + sigma_i ** 2
+
+            Y_i = (y_i_loc - y_coord_m - deflection_field) ** 2 / (2 * S_i)
+            Z_i = (z_i_loc - z_coord_m) ** 2 / (2 * S_i)
+
+            lbda = 1.0 * sigma_i ** 2 / S_i * np.exp(-Y_i) * np.exp(-Z_i)
+
+            sum_lbda = sum_lbda + lbda * (Ctmp[m] / u_initial)
+
+        # Vectorized version of sum_lbda calc; has issues with y_coord (needs to be
+        # down-selected appropriately. Prelim. timings show vectorized form takes
+        # longer than for loop.)
+        # if ii >= 2:
+        #     S = sigma_n ** 2 + sigma_i[0:ii-1, :, :, :, :, :] ** 2
+        #     Y = (y_i_loc - y_coord - deflection_field) ** 2 / (2 * S)
+        #     Z = (z_i_loc - z_coord) ** 2 / (2 * S)
+
+        #     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2 / S * np.exp(-Y) * np.exp(-Z)
+        #     sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)       
+        # else:
+        #     sum_lbda = 0.0
+
+        # sigma_i[ii] = sigma_n
 
         # blondel
         # super gaussian
@@ -154,13 +183,13 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         C = a1 - np.sqrt(
             a2
             - (
-                (n * turbine_Ct)
+                (n * turbine_Ct[:,:,ii:ii+1])
                 * cosd(turbine_yaw)
                 / (
                     16.0
                     * gamma(2 / n)
-                    * np.sign(sigma_n[0])
-                    * (np.abs(sigma_n[0]) ** (4 / n))
+                    * np.sign(sigma_n)
+                    * (np.abs(sigma_n) ** (4 / n))
                     * (1 - sum_lbda) ** 2
                 )
             )
@@ -174,20 +203,14 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         xR = yR * tand(turbine_yaw) + x_i
 
         # add turbines together
-        # pshape(C, "C")
-        # pshape(r_tilde, "r_tilde")
-        # pshape(n, "n")
-        # pshape(sigma_n[0], "sigma_n[0]")
-        velDef = C * np.exp((-1 * r_tilde ** n) / (2 * sigma_n[0] ** 2))
-        # print(r_tilde)
-        # print(velDef)
+        velDef = C * np.exp((-1 * r_tilde ** n) / (2 * sigma_n ** 2))
 
-        velDef = velDef * np.array(x >= xR)
+        velDef = velDef * np.array(x - xR >= 0.1)
+
         turb_u_wake = turb_u_wake + turb_avg_vels * velDef
         return (
             turb_u_wake,
             Ctmp,
-            sigma_i,
         )
 
 
@@ -214,5 +237,5 @@ def wake_expansion(
     # return sigma_y[na, :, :, :, :, :, :]
     # Do this ^^ in the main function
 
-    return sigma_y[None]
+    return sigma_y
  
