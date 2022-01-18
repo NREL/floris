@@ -45,6 +45,7 @@ REQUIRED = [
 
     # tools
     "matplotlib>=3",
+    "pandas",
 
     # utilities / testing
     "coloredlogs>=10.0",
