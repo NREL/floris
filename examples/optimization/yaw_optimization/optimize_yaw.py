@@ -34,7 +34,7 @@ def load_floris():
     )
 
     # Specify wind farm layout and update in the floris object
-    N = 9  # number of turbines per row and per column
+    N = 5  # number of turbines per row and per column
     X, Y = np.meshgrid(
         5.0 * fi.floris.grid.reference_turbine_diameter * np.arange(0, N, 1),
         5.0 * fi.floris.grid.reference_turbine_diameter * np.arange(0, N, 1),
@@ -122,8 +122,8 @@ if __name__ == "__main__":
         minimum_yaw_angle=0.0,  # Allowable yaw angles lower bound
         maximum_yaw_angle=20.0,  # Allowable yaw angles upper bound
         Ny_passes=[5, 4],
-        reduce_ngrid=False,
         exclude_downstream_turbines=True,
+        exploit_layout_symmetry=True,
     )
 
     df_opt = yaw_opt._optimize()

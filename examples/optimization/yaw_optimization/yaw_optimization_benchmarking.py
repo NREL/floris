@@ -72,7 +72,7 @@ if __name__ == "__main__":
             maximum_yaw_angle=20.0,  # Allowable yaw angles upper bound
             yaw_angles_baseline=np.zeros((72, 1, len(fi.layout_x))),
             Ny_passes=[5, 4],
-            reduce_ngrid=False,
+            exploit_layout_symmetry=True,
             exclude_downstream_turbines=True,
         )
         df_opt = yaw_opt._optimize()
