@@ -1,5 +1,6 @@
-name: example_floris_input_file
-description: Single turbine with Gaussian wake models specifying all available parameters
+
+name: Jensen-Jimenez
+description: Three turbines using Jensen / Jimenez models
 floris_version: v3.0.0
 
 logging:
@@ -10,6 +11,10 @@ logging:
     enable: false
     level: WARNING
 
+solver:
+  type: turbine_grid
+  turbine_grid_points: 3
+
 farm:
   layout_x:
   - 0.0
@@ -19,10 +24,6 @@ farm:
   - 0.0
   - 0.0
   - 0.0
-
-solver:
-  type: turbine_grid
-  turbine_grid_points: 3
 
 flow_field:
   air_density: 1.225
@@ -35,9 +36,56 @@ flow_field:
   - 8.0
   wind_veer: 0.0
 
+wake:
+  model_strings:
+    combination_model: null
+    deflection_model: jimenez
+    turbulence_model: null
+    velocity_model: jensen
+
+  enable_secondary_steering: true
+  enable_yaw_added_recovery: true
+  enable_transverse_velocities: true
+
+  wake_deflection_parameters:
+    gauss:
+      ad: 0.0
+      alpha: 0.58
+      bd: 0.0
+      beta: 0.077
+      dm: 1.0
+      ka: 0.38
+      kb: 0.004
+    jimenez:
+      ad: 0.0
+      bd: 0.0
+      kd: 0.05
+
+  wake_velocity_parameters:
+    cc:
+      a_s: 0.179367259
+      b_s: 0.0118889215
+      c_s1: 0.0563691592
+      c_s2: 0.13290157
+      a_f: 3.11
+      b_f: -0.68
+      c_f: 2.41
+      alpha_mod: 1.0
+    gauss:
+      alpha: 0.58
+      beta: 0.077
+      ka: 0.38
+      kb: 0.004
+    jensen:
+      we: 0.05
+
 turbine:
   generator_efficiency: 1.0
   hub_height: 90.0
+  pP: 1.88
+  pT: 1.88
+  rotor_diameter: 126.0
+  TSR: 8.0
   power_thrust_table:
     power:
       - 0.0
@@ -186,45 +234,3 @@ turbine:
       - 24.5
       - 25.0
       - 25.5
-  pP: 1.88
-  pT: 1.88
-  rotor_diameter: 126.0
-  TSR: 8.0
-
-wake:
-  model_strings:
-    combination_model: null
-    deflection_model: gauss
-    turbulence_model: null
-    velocity_model: cc
-
-  enable_secondary_steering: true
-  enable_yaw_added_recovery: true
-  enable_transverse_velocities: true
-
-  wake_deflection_parameters:
-    gauss:
-      ad: 0.0
-      alpha: 0.58
-      bd: 0.0
-      beta: 0.077
-      dm: 1.0
-      ka: 0.38
-      kb: 0.004
-
-  wake_velocity_parameters:
-    cc:
-      a_s: 0.38
-      b_s: 0.00
-      c_s1: 0.0563691592
-      c_s2: 0.13290157
-      a_f: 3.11
-      b_f: -0.68
-      c_f: 3.0
-      alpha_mod: 1.0
-
-    gauss:
-      alpha: 0.58
-      beta: 0.077
-      ka: 0.38
-      kb: 0.004
