@@ -49,7 +49,7 @@ fig, axarr = plt.subplots(3, 3, sharex=True, figsize=(12, 5))
 axarr = axarr.flatten()
 
 
-fi = FlorisInterface("../example_input.yaml")
+fi = FlorisInterface("inputs/input_gch.yaml")
 solver_settings = {
     "type": "flow_field_grid",
     "flow_field_grid_points": [200,100,7]
