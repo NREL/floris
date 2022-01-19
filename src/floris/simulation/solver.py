@@ -191,11 +191,14 @@ def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
     ti_downstream = -0.32
 
     # Replace zeros and negatives with 1 to prevent nans/infs
-    delta_x = (x - x_i)
+    delta_x = np.array(x - x_i)
+
     # TODO: ensure that these fudge factors are needed for different rotations
-    mask = (delta_x <= 0.1)
-    antimask = (delta_x > -0.1)
-    delta_x = delta_x * np.array(delta_x > -0.1) + np.ones_like(delta_x) * np.array(mask)
+    upstream_mask = np.array(delta_x <= 0.1)
+    downstream_mask = np.array(delta_x > -0.1)
+
+    #        Keep downstream components          Set upstream to 1.0
+    delta_x = delta_x * downstream_mask + np.ones_like(delta_x) * np.array(upstream_mask)
 
     # turbulence intensity calculation based on Crespo et. al.
     ti = (
@@ -205,7 +208,7 @@ def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
       * ((delta_x) / rotor_diameter) ** ti_downstream
     )
     # Mask the 1 values from above with zeros
-    return ti * np.array(antimask)
+    return ti * np.array(downstream_mask)
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
     """
