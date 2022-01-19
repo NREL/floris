@@ -19,7 +19,7 @@ from floris.tools import FlorisInterface
 
 # Read the windrose information file & normalize wind rose frequencies
 # root_path = os.path.dirname(os.path.abspath(__file__))
-fn = "5_wind_rose.csv"
+fn = "inputs/wind_rose.csv"
 df_wr = pd.read_csv(fn)
 df_wr["freq_val"] = df_wr["freq_val"] / df_wr["freq_val"].sum()
 # Derive the wind directions and speeds we need to evaluate in floris

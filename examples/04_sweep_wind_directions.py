@@ -21,10 +21,10 @@ from floris.tools.visualization import visualize_cut_plane
 
 # Example: Sweep Wind Directions
 # -- Utilize the vectorization of wind speeds to compute the power for a two turbine farm at a sweep of wind directions
+# fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_ga
 
 
-# Instantiate FLORIS
-# fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+
 fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
 # Define a two turbine farm

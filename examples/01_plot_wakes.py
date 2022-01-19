@@ -14,27 +14,26 @@
 
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 from floris.tools import FlorisInterface
 from floris.tools.visualization import visualize_cut_plane
 
+"""
+
+"""
 
 # Initialize the FLORIS Interface, `fi`.
 # For basic usage, the FLORIS Interface provides a simplified
 # and expressive interface to the simulation routines.
 
-fi = FlorisInterface("inputs/gch.yaml")
-
-# Yaw the leading turbine 20 degrees
-yaw_angles = np.zeros((1, 1, 3))
-yaw_angles[:,:,0] = 20.0
+fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
 # Using the FlorisInterface functions for generating plots,
 # run FLORIS and extract 2D planes of data.
-horizontal_plane = fi.get_hor_plane(yaw_angles=yaw_angles, x_resolution=200, y_resolution=100)
-cross_plane = fi.get_cross_plane(yaw_angles=yaw_angles, y_resolution=100, z_resolution=100)
-y_plane = fi.get_y_plane(yaw_angles=yaw_angles, x_resolution=200, z_resolution=100)
+horizontal_plane = fi.get_hor_plane(x_resolution=200, y_resolution=100)
+cross_plane = fi.get_cross_plane(y_resolution=100, z_resolution=100)
+y_plane = fi.get_y_plane(x_resolution=200, z_resolution=100)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1)
