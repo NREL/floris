@@ -19,12 +19,22 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
-# Example: Simple AEP
-# -- Utilize the vectorization to compute a matrix of wind speed and directions
-# -- For simplicity assume all equaly likely
+"""
+06_sweep_wind_conditions
 
+This example demonstrates vectorization of wind speed and wind direction.  
+When the intialize function is passed an array of wind speeds and an
+array of wind directions it automatically expands the vectors to compute
+the result of all combinations.
 
-# Instantiate FLORIS
+This calculation is performed for a single-row 5 turbine farm.  In addition 
+to plotting the powers of the individual turbines, an energy by turbine
+calculation is made and plotted by summing over the wind speed and wind direction
+axes of the power matrix returned by get_turbine_powers()
+
+"""
+
+# Instantiate FLORIS using either the GCH or CC model
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
 # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
@@ -41,9 +51,9 @@ ws_array = np.arange(6, 9, 1.)
 wd_array = np.arange(250,295,1.)
 fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
 
+# Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimesions are
 # wd/ws/turbine
-# So need to define appropriately
 num_wd = len(wd_array)
 num_ws = len(ws_array)
 num_turbine = len(layout_x)
@@ -69,7 +79,7 @@ for ws_idx, ws in enumerate(ws_array):
 ax.set_xlabel('Wind Direction (deg)')
 
 
-# Sum across wind speeds and directions
+# Sum across wind speeds and directions to show energy produced by turbine as bar plot
 energy_by_turbine = np.sum(turbine_powers, axis=(0,1)) # Sum over wind direction (0-axis) and wind speed (1-axis)
 fig, ax = plt.subplots()
 ax.bar(['T%d' % t for t in range(num_turbine)],energy_by_turbine)

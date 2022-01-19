@@ -13,25 +13,31 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import os
 from time import perf_counter as timerpc
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-import floris.tools as wfct
+from floris.tools import FlorisInterface
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
     YawOptimizationSR,
 )
 
+"""
+This example demonstrates how to perform a yaw optimization and evaluate the performance over a full wind rose.
+
+The beginning of the file contains the definition of several functions used in the main part of the script.
+
+Within the main part of the script, we first load the wind rose information. We then initialize our Floris Interface
+object. We determine the baseline AEP using the wind rose information, and then perform the yaw optimization over 72
+wind directions with 1 wind speed per direction. The optimal yaw angles are then used to determine yaw angles across
+all the wind speeds included in the wind rose. Lastly, the final AEP is calculated and analysis of the results are
+shown in several plots.
+"""
 
 def load_floris():
     # Load the default example floris object
-    root_path = os.path.dirname(os.path.abspath(__file__))
-    fi = wfct.floris_interface.FlorisInterface(
-        os.path.join(root_path, "inputs", "gch.yaml")
-    )
+    fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+    # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
     N = 5  # number of turbines per row and per column
@@ -45,12 +51,11 @@ def load_floris():
 
 
 def load_windrose():
-    root_path = os.path.dirname(os.path.abspath(__file__))
-    fn = os.path.join(root_path, "wind_rose.csv")
+    fn = "inputs/wind_rose.csv"
     df = pd.read_csv(fn)
-    # df = df[(df["ws"] > 3)].reset_index(drop=True)  # Reduce size
     df = df[(df["ws"] < 22)].reset_index(drop=True)  # Reduce size
-    df["freq_val"] = df["freq_val"] / df["freq_val"].sum()
+    df["freq_val"] = df["freq_val"] / df["freq_val"].sum() # Normalize wind rose frequencies
+
     return df
 
 
@@ -64,6 +69,7 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     if not "yaw_000" in df_windrose.columns:
         df_windrose[yaw_cols] = 0.0  # Add zeros
 
+    # Derive the wind directions and speeds we need to evaluate in FLORIS
     wd_array = np.array(df_windrose["wd"].unique(), dtype=float)
     ws_array = np.array(df_windrose["ws"].unique(), dtype=float)
     yaw_angles = np.array(df_windrose[yaw_cols], dtype=float)
@@ -74,6 +80,7 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     interpolant = NearestNDInterpolator(df_windrose[["wd", "ws"]], yaw_angles)
     yaw_angles_floris = interpolant(X, Y)
 
+    # Calculate FLORIS for every WD and WS combination and get the farm power
     fi.calculate_wake(yaw_angles_floris)
     farm_power_array = fi.get_farm_power()
 
@@ -87,6 +94,7 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     
     # Calculate AEP in GWh
     aep = np.dot(df_windrose["freq_val"], df_windrose[column_name]) * 365 * 24 / 1e9
+
     return aep
 
 
@@ -130,8 +138,7 @@ if __name__ == "__main__":
     end_time = timerpc()
     t_tot = end_time - start_time
     t_fi = yaw_opt.time_spent_in_floris
-    # print("SERIAL REFINE: Time spent for optimization: {:.2f} s.".format(t_tot))
-    # print("SERIAL REFINE: Time spent in FLORIS computations: {:.2f} s ({:.1f} %)".format(t_fi, 100.0 * t_fi / t_tot))
+
     print("Optimization finished in {:.2f} seconds.".format(t_tot))
     print(" ")
     print(df_opt)
@@ -154,13 +161,9 @@ if __name__ == "__main__":
         elif wind_speed < 6.0:
             yaw_opt = yaw_opt_full * (6.0 - wind_speed) / 2.0  # Linear ramp up
         elif wind_speed > 12.0:
-            yaw_opt = (
-                yaw_opt_full * (14.0 - wind_speed) / 2.0
-            )  # Linear ramp down
+            yaw_opt = yaw_opt_full * (14.0 - wind_speed) / 2.0  # Linear ramp down
         else:
-            yaw_opt = (
-                yaw_opt_full
-            )  # Apply full offsets between 6.0 and 12.0 m/s
+            yaw_opt = yaw_opt_full  # Apply full offsets between 6.0 and 12.0 m/s
 
         # Save to collective array
         yaw_angles_wind_rose[ii, :] = yaw_opt

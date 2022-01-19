@@ -139,19 +139,19 @@ def visualize_cut_plane(
 
     if not ax:
         fig, ax = plt.subplots()
-    if vel_component is 'u':
+    if vel_component=='u':
         vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if minSpeed is None:
             minSpeed = cut_plane.df.u.min()
         if maxSpeed is None:
             maxSpeed = cut_plane.df.u.max()
-    elif vel_component is 'v':
+    elif vel_component=='v':
         vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if minSpeed is None:
             minSpeed = cut_plane.df.v.min()
         if maxSpeed is None:
             maxSpeed = cut_plane.df.v.max()
-    elif vel_component is 'w':
+    elif vel_component=='w':
         vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if minSpeed is None:
             minSpeed = cut_plane.df.w.min()

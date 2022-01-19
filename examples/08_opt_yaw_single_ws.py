@@ -1,45 +1,49 @@
 # Copyright 2022 NREL
+
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
 # the License at http://www.apache.org/licenses/LICENSE-2.0
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+
 # See https://floris.readthedocs.io for documentation
 
-import pandas as pd
 import numpy as np
-import floris.tools as wfct
 import matplotlib.pyplot as plt
+from floris.tools import FlorisInterface
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
     YawOptimizationSR,
 )
 
-# Example: Find optimal yaw angles for 1 wind-speed across directions for a 3 turbine farm
-# -- Uses the SerialRefine method for determining optimal yaw angles
+"""
+This example demonstrates how to perform a yaw optimization for multiple wind directions and 1 wind speed.
+
+First, we initialize our Floris Interface, and then generate a 3 turbine wind farm. Next, we create the yaw optimization object `yaw_opt` and perform the optimization using the SerialRefine method. Finally, we plot the results.
+"""
 
 # Load the default example floris object
-fi = wfct.FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-# fi = wfct.FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
-
-# Reinitialize as a 3-turbine farm with range of WDs
+# Reinitialize as a 3-turbine farm with range of WDs and 1 WS
+D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
-    layout=[[0.0, 632.0, 1264.0], [0.0, 0.0, 0.0]],
+    layout=[[0.0, 5 * D, 10 * D], [0.0, 0.0, 0.0]],
     wind_directions=np.arange(0.0, 360.0, 3.0), 
     wind_speeds=[8.0],
 )
 
-# Initialize optimizer object and run optimization
-# Using the Serial-Refine method
+# Initialize optimizer object and run optimization using the Serial-Refine method
 yaw_opt = YawOptimizationSR(fi)#, exploit_layout_symmetry=False)
 df_opt = yaw_opt._optimize()
+
 print("Optimization results:")
 print(df_opt)
 
-# Plot the results
 # Split out the turbine results
 for t in range(3):
     df_opt['t%d' % t] = df_opt.yaw_angles_opt.apply(lambda x: x[t])

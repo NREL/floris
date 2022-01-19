@@ -19,11 +19,20 @@ import numpy as np
 from floris.tools import FlorisInterface
 from floris.tools.visualization import visualize_cut_plane
 
-# Example: Sweep Wind Speeds
-# -- Utilize the vectorization of wind speeds to compute the power for a two turbine farm at a sweep of wind speeds
+"""
+05_sweep_wind_speeds
+
+This example demonstrates vectorization of wind speed.  
+A vector of wind speeds is passed to the intialize function 
+and the powers of the two simulated turbines is computed for all
+wind speeds in one call
+
+The power of both turbines for each wind speed is then plotted
+
+"""
 
 
-# Instantiate FLORIS
+# Instantiate FLORIS using either the GCH or CC model
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
 # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
@@ -33,14 +42,13 @@ layout_x = np.array([0, D*6])
 layout_y = [0, 0]
 fi.reinitialize(layout = [layout_x, layout_y])
 
-
 # Sweep wind speeds but keep wind direction fixed
 ws_array = np.arange(5,25,0.5)
 fi.reinitialize(wind_speeds=ws_array)
 
+# Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimesions are
 # wd/ws/turbine
-# So need to define appropriately
 num_wd = 1
 num_ws = len(ws_array)
 num_turbine = len(layout_x)

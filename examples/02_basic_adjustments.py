@@ -17,35 +17,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools import visualize_cut_plane, plot_turbines_with_fi
-
+from floris.tools import visualize_cut_plane #, plot_turbines_with_fi
 
 """
-This example reviews two essential functions of the FLORIS interface
-reinitialize_flow_field and calculate_wake
-
-reinitialize_flow_field is used to change the layout and inflow of the farm
-while calculate_wake computed the wake velocities, deflections and combinations
-
-Both functions provide a simpler interface to the underlying functions in the FLORIS class
-
-Using them ensures that necessary recalcuations occur with changing certain variables
-
-Note that it is typically necessary to call calculate_wake after reinitialize_flow_field,
-but the two functions are seperated so that calculate_wake can be called repeatedly,
-for example when optimizing yaw angles
+This example makes changes to the given input file through the script.
+First, we plot simulation from the input file as given. Then, we make a series
+of changes and generate plots from those simulations.
 """
 
-
-
-# Define a plot
+# Create the plotting objects using matplotlib
 fig, axarr = plt.subplots(2, 3, figsize=(12, 5))
 axarr = axarr.flatten()
 
 MIN_WS = 1.0
 MAX_WS = 8.0
 
+# Initialize FLORIS with the given input file via FlorisInterface
 fi = FlorisInterface("inputs/gch.yaml")
+
+# Configure this simulation for visualization using the full flow field grid
 solver_settings = {
     "type": "flow_field_grid",
     "flow_field_grid_points": [200,100,7]
@@ -53,9 +43,10 @@ solver_settings = {
 fi.reinitialize(solver_settings=solver_settings)
 
 
-# Plot the initial setup
+# Plot a horizatonal slice of the initial configuration
 horizontal_plane = fi.get_hor_plane()
 visualize_cut_plane(horizontal_plane, ax=axarr[0], title="Initial setup", minSpeed=MIN_WS, maxSpeed=MAX_WS)
+
 
 # Change the wind speed
 horizontal_plane = fi.get_hor_plane(ws=[7.0])
@@ -80,15 +71,15 @@ visualize_cut_plane(horizontal_plane, ax=axarr[3], title="3x3 Farm", minSpeed=MI
 # plot_turbines_with_fi(axarr[7], fi)
 
 
-# Change the yaw angles
+# Change the yaw angles and configure the plot differently
 yaw_angles = np.zeros((1, 1, N * N))
 
-# First row
+## First row
 yaw_angles[:,:,0] = 30.0
 yaw_angles[:,:,1] = -30.0
 yaw_angles[:,:,2] = 30.0
 
-# Second row
+## Second row
 yaw_angles[:,:,3] = -30.0
 yaw_angles[:,:,4] = 30.0
 yaw_angles[:,:,5] = -30.0
@@ -98,7 +89,7 @@ visualize_cut_plane(horizontal_plane, ax=axarr[4], title="Yawesome art", cmap="P
 # plot_turbines_with_fi(axarr[8], fi)
 
 
-# Plot the cross-plane
+# Plot the cross-plane of the 3x3 configuration
 cross_plane = fi.get_cross_plane(yaw_angles=yaw_angles, downstream_dist=610.0)
 visualize_cut_plane(cross_plane, ax=axarr[5], title="Cross section at 610 m", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 axarr[5].invert_xaxis()

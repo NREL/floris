@@ -20,21 +20,23 @@ from floris.tools import FlorisInterface
 from floris.tools import visualize_cut_plane
 
 """
-
+This example visually compares different models included in FLORIS.
+We run the same simulation for each model and plot a horizontal slice
+with and without yawed turbines for comparison.
 """
 
-# Initialize the FLORIS interface for 3 different models
+# Initialize FLORIS for 3 different models via FlorisInterface
 fi_jensen = FlorisInterface("inputs/jensen.yaml")
 fi_gch = FlorisInterface("inputs/gch.yaml")
 fi_cc = FlorisInterface("inputs/cc.yaml")
 
+# Create the plotting objects using matplotlib
 fig, axarr = plt.subplots(2, 2, figsize=(16, 4))
 
-# Iterate over the fi-objects plotting a horizontal slice of the flow fields
+# Iterate over the model-objects and create a plot of the flow fields
 # for each model and configuration.
 MIN_WS = 2.0
 MAX_WS = 8.0
-# for idx, (fi, name) in enumerate(zip([fi_jensen, fi_gch, fi_cc], ["Jensen", "Gaussian", "Cumulative"])):
 for idx, (fi, name) in enumerate(zip([fi_jensen, fi_gch], ["Jensen", "Gaussian"])):
 
     # Aligned
@@ -52,5 +54,4 @@ for idx, (fi, name) in enumerate(zip([fi_jensen, fi_gch], ["Jensen", "Gaussian"]
     visualize_cut_plane(horizontal_plane, ax=ax, minSpeed=MIN_WS, maxSpeed=MAX_WS)
     axarr[1, 0].set_ylabel("Yawed")
 
-# Show the figure
 plt.show()

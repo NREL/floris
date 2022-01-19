@@ -19,13 +19,22 @@ import numpy as np
 from floris.tools import FlorisInterface
 from floris.tools.visualization import visualize_cut_plane
 
-# Example: Sweep Wind Directions
-# -- Utilize the vectorization of wind speeds to compute the power for a two turbine farm at a sweep of wind directions
-# fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_ga
 
+"""
+04_sweep_wind_directions
 
+This example demonstrates vectorization of wind direction.  
+A vector of wind directions is passed to the intialize function 
+and the powers of the two simulated turbines is computed for all
+wind directions in one call
 
-fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+The power of both turbines for each wind direction is then plotted
+
+"""
+
+# Instantiate FLORIS using either the GCH or CC model
+fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
 # Define a two turbine farm
 D = 126.
@@ -33,17 +42,16 @@ layout_x = np.array([0, D*6])
 layout_y = [0, 0]
 fi.reinitialize(layout = [layout_x, layout_y])
 
-
 # Sweep wind speeds but keep wind direction fixed
 wd_array = np.arange(250,291,1.)
 fi.reinitialize(wind_directions=wd_array)
 
+# Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimesions are
 # wd/ws/turbine
-# So need to define appropriately
-num_wd = len(wd_array)
-num_ws = 1
-num_turbine = len(layout_x)
+num_wd = len(wd_array) # Number of wind directions
+num_ws = 1 # Number of wind speeds
+num_turbine = len(layout_x) #  Number of turbines
 yaw_angles = np.zeros((num_wd, num_ws, num_turbine)) 
 
 # Calculate
