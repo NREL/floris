@@ -20,6 +20,7 @@ from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
 )
+from floris.simulation.wake_combination import FLS, MAX, SOSFS
 from floris.simulation.wake_turbulence.crespo_hernandez import CrespoHernandez
 from floris.simulation.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,
@@ -29,8 +30,11 @@ from floris.simulation.wake_velocity import (
 
 
 MODEL_MAP = {
-    # TODO: Need to uncomment these two model types once we have implementations
-    # "combination_model": {},
+    "combination_model": {
+        "fls": FLS,
+        "max": MAX,
+        "sosfs": SOSFS
+    },
     "deflection_model": {
         "jimenez": JimenezVelocityDeflection,
         "gauss": GaussVelocityDeflection
@@ -64,12 +68,11 @@ class WakeModelManager(BaseClass):
     enable_yaw_added_recovery: bool = field(converter=bool)
     enable_transverse_velocities: bool = field(converter=bool)
 
-    # wake_combination_parameters: dict = field(converter=dict)
     wake_deflection_parameters: dict = field(converter=dict)
     wake_turbulence_parameters: dict = field(converter=dict)
     wake_velocity_parameters: dict = field(converter=dict, default={})
 
-    # combination_model: BaseModel = field(init=False)
+    combination_model: BaseModel = field(init=False)
     deflection_model: BaseModel = field(init=False)
     turbulence_model: BaseModel = field(init=False)
     velocity_model: BaseModel = field(init=False)
@@ -96,6 +99,9 @@ class WakeModelManager(BaseClass):
             self.turbulence_model = model()
         else:
             self.turbulence_model = model.from_dict(model_parameters)
+
+        model: BaseModel = MODEL_MAP["combination_model"][self.model_strings["combination_model"]]
+        self.combination_model = model()
 
     @model_strings.validator
     def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:

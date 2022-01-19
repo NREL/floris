@@ -10,20 +10,25 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from .base_wake_combination import WakeCombination
+from attrs import define
+import numpy as np
+
+from floris.simulation import BaseModel
 
 
-class FLS(WakeCombination):
+@define
+class FLS(BaseModel):
     """
     FLS uses freestream linear superposition to apply the wake velocity
     deficits to the freestream flow field.
     """
 
-    def __init__(self):
-        super().__init__()
-        self.model_string = "fls"
+    model_string = "fls"
 
-    def function(self, u_field, u_wake):
+    def prepare_function(self) -> dict:
+        pass
+
+    def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
         """
         Combines the base flow field with the velocity deficits
         using freestream linear superpostion. In other words, the wake
@@ -37,4 +42,4 @@ class FLS(WakeCombination):
             np.array: The resulting flow field after applying the wake to the
                 base.
         """
-        return u_field + u_wake
+        return wake_field + velocity_field

@@ -320,8 +320,8 @@ class SampleInputs:
             "model_strings": {
                 "velocity_model": "jensen",
                 "deflection_model": "jimenez",
-                "combination_model": None,
-                "turbulence_model": None,
+                "combination_model": "sosfs",
+                "turbulence_model": "crespo_hernandez",
             },
             "wake_deflection_parameters": {
                 "gauss": {
@@ -352,6 +352,14 @@ class SampleInputs:
                 "cc": {
                     
                 }
+            },
+            "wake_turbulence_parameters": {
+                "crespo_hernandez": {
+                    "initial": 0.1,
+                    "constant": 0.5,
+                    "ai": 0.8,
+                    "downstream": -0.32
+                },
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,

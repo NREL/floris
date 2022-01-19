@@ -29,6 +29,21 @@ from floris.simulation.wake_deflection.gauss import (
 )
 
 
+def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
+    """
+    compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
+    """
+    # Count all of the rotor points with a negligible difference from freestream
+    # count = np.sum(freestream_velocities - wake_velocities <= 0.05, axis=(3, 4))
+    # return (y_ngrid * z_ngrid - count) / (y_ngrid * z_ngrid)
+    # return 1 - count / (y_ngrid * z_ngrid)
+
+    # Find the points on the rotor grids with a difference from freestream of greater
+    # than some tolerance. These are all the points in the wake. The ratio of
+    # these points to the total points is the portion of wake overlap.
+    return np.sum(freestream_velocities - wake_velocities > 0.05, axis=(3, 4)) / (y_ngrid * z_ngrid)
+
+
 # @profile
 def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
@@ -149,8 +164,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
             **deficit_model_args
         )
 
-        # Sum of squares combination model to incorporate the current turbine's velocity into the main array
-        wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
+        wake_field = model_manager.combination_model.function(
+            wake_field,
+            velocity_deficit * flow_field.u_initial
+        )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
             ambient_turbulence_intensity,
@@ -184,45 +201,6 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
     flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3,4))
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
 
-def crespo_hernandez(ambient_TI, x, x_i, rotor_diameter, axial_induction):
-    ti_initial = 0.1
-    ti_constant = 0.5
-    ti_ai = 0.8
-    ti_downstream = -0.32
-
-    # Replace zeros and negatives with 1 to prevent nans/infs
-    delta_x = np.array(x - x_i)
-
-    # TODO: ensure that these fudge factors are needed for different rotations
-    upstream_mask = np.array(delta_x <= 0.1)
-    downstream_mask = np.array(delta_x > -0.1)
-
-    #        Keep downstream components          Set upstream to 1.0
-    delta_x = delta_x * downstream_mask + np.ones_like(delta_x) * np.array(upstream_mask)
-
-    # turbulence intensity calculation based on Crespo et. al.
-    ti = (
-        ti_constant
-      * axial_induction ** ti_ai
-      * ambient_TI ** ti_initial
-      * ((delta_x) / rotor_diameter) ** ti_downstream
-    )
-    # Mask the 1 values from above with zeros
-    return ti * np.array(downstream_mask)
-
-def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
-    """
-    compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake
-    """
-    # Count all of the rotor points with a negligible difference from freestream
-    # count = np.sum(freestream_velocities - wake_velocities <= 0.05, axis=(3, 4))
-    # return (y_ngrid * z_ngrid - count) / (y_ngrid * z_ngrid)
-    # return 1 - count / (y_ngrid * z_ngrid)
-
-    # Find the points on the rotor grids with a difference from freestream of greater
-    # than some tolerance. These are all the points in the wake. The ratio of
-    # these points to the total points is the portion of wake overlap.
-    return np.sum(freestream_velocities - wake_velocities > 0.05, axis=(3, 4)) / (y_ngrid * z_ngrid)
 
 def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
 
@@ -337,12 +315,15 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
             **deficit_model_args
         )
 
-        # Sum of squares combination model to incorporate the current turbine's velocity into the main array
-        wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
+        wake_field = model_manager.combination_model.function(
+            wake_field,
+            velocity_deficit * flow_field.u_initial
+        )
 
         flow_field.u = flow_field.u_initial - wake_field
         flow_field.v += v_wake
         flow_field.w += w_wake
+
 
 def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
 

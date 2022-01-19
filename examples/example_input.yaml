@@ -194,9 +194,9 @@ turbine:
 
 wake:
   model_strings:
-    combination_model: null
+    combination_model: sosfs
     deflection_model: gauss
-    turbulence_model: null
+    turbulence_model: crespo_hernandez
     velocity_model: cc
 
   enable_secondary_steering: true
