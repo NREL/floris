@@ -114,7 +114,7 @@ class FlorisInterface(LoggerBase):
         wind_shear: float | None = None,
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
-        # turbulence_intensity=None,
+        turbulence_intensity: float | None = None,
         # turbulence_kinetic_energy=None,
         air_density: float | None = None,
         # wake: WakeModelManager = None,
@@ -142,6 +142,8 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["wind_veer"] = wind_veer
         if reference_wind_height is not None:
             flow_field_dict["reference_wind_height"] = reference_wind_height
+        if turbulence_intensity is not None:
+            flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
 

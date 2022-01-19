@@ -30,6 +30,7 @@ from floris.simulation import (
     FlowFieldGrid,
     FlowFieldPlanarGrid,
     sequential_solver,
+    cc_solver,
     full_flow_sequential_solver
 )
 from attrs import define, field
@@ -119,15 +120,27 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # Initialize farm quantities
         self.farm.initialize(self.grid.sorted_indices)
 
+        vel_model = self.wake.model_strings["velocity_model"]
+
         # <<interface>>
         # start = time.time()
-        elapsed_time = sequential_solver(
-            self.farm,
-            self.flow_field,
-            self.turbine,
-            self.grid,
-            self.wake
-        )
+
+        if vel_model=="cc":
+            elapsed_time = cc_solver(
+                self.farm,
+                self.flow_field,
+                self.turbine,
+                self.grid,
+                self.wake
+            )
+        else:
+            elapsed_time = sequential_solver(
+                self.farm,
+                self.flow_field,
+                self.turbine,
+                self.grid,
+                self.wake
+            )
         # end = time.time()
         # elapsed_time = end - start
 

@@ -107,26 +107,31 @@ if __name__=="__main__":
 
     ### Timing larger sizes in each dimension
 
-    n_wind_directions = 72
-    n_wind_speeds = 23
-    n_turbines = 25
+    n_wind_directions = 1
+    n_wind_speeds = 1
+    n_turbines = 3
     sample_inputs.floris["wake"]["model_strings"] = {
         # "velocity_model": "jensen",
         # "deflection_model": "jimenez",
-        "velocity_model": "gauss",
+        "velocity_model": "cc",
         "deflection_model": "gauss",
         "combination_model": None,
         "turbulence_model": None,
     }
-    sample_inputs.floris["wake"]["enable_transverse_velocities"] = False
-    sample_inputs.floris["wake"]["enable_secondary_steering"] = False
-    sample_inputs.floris["wake"]["enable_yaw_added_recovery"] = False
+    sample_inputs.floris["solver"] = {
+        "type": "turbine_grid",
+        "turbine_grid_points": 5
+    }
+
+    # sample_inputs.floris["wake"]["enable_transverse_velocities"] = False
+    # sample_inputs.floris["wake"]["enable_secondary_steering"] = False
+    # sample_inputs.floris["wake"]["enable_yaw_added_recovery"] = False
     sample_inputs.floris["flow_field"]["wind_directions"] = n_wind_directions * [270.0]
-    sample_inputs.floris["flow_field"]["wind_speeds"] = n_wind_speeds * [9.0]
+    sample_inputs.floris["flow_field"]["wind_speeds"] = n_wind_speeds * [8.0]
     sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
     sample_inputs.floris["farm"]["layout_y"] = n_turbines * [0.0]
 
-    N = 10
+    N = 1
     times = np.zeros(N)
     for i in range(N):
         print(f"Iteration {i}")

@@ -21,7 +21,7 @@ from floris.simulation.wake_deflection import (
     JimenezVelocityDeflection,
 )
 from floris.simulation.wake_velocity import (
-    # CurlVelocityDeficit,
+    CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit
 )
@@ -36,7 +36,7 @@ MODEL_MAP = {
     },
     # "turbulence_model": {},
     "velocity_model": {
-        # "curl": CurlVelocityDeficit,
+        "cc": CumulativeGaussCurlVelocityDeficit,
         "gauss": GaussVelocityDeficit,
         "jensen": JensenVelocityDeficit
     },

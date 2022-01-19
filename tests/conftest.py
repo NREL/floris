@@ -349,6 +349,9 @@ class SampleInputs:
                 "jensen": {
                     "we": 0.05,
                 },
+                "cc": {
+                    
+                }
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,
