@@ -1,6 +1,6 @@
 
-name: test_input
-description: Single turbine for testing
+name: Jensen-Jimenez
+description: Three turbines using Jensen / Jimenez models
 floris_version: v3.0.0
 
 logging:
@@ -18,7 +18,11 @@ solver:
 farm:
   layout_x:
   - 0.0
+  - 630.0
+  - 1260.0
   layout_y:
+  - 0.0
+  - 0.0
   - 0.0
 
 flow_field:
@@ -35,9 +39,9 @@ flow_field:
 wake:
   model_strings:
     combination_model: sosfs
-    deflection_model: gauss
+    deflection_model: jimenez
     turbulence_model: crespo_hernandez
-    velocity_model: cc
+    velocity_model: jensen
 
   enable_secondary_steering: true
   enable_yaw_added_recovery: true
@@ -77,10 +81,10 @@ wake:
 
   wake_turbulence_parameters:
     crespo_hernandez:
-      initial: 0.01
-      constant: 0.9
-      ai: 0.83
-      downstream: -0.25
+      initial: 0.1
+      constant: 0.5
+      ai: 0.8
+      downstream: -0.32
 
 turbine:
   generator_efficiency: 1.0

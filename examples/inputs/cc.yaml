@@ -1,6 +1,6 @@
 
-name: test_input
-description: Single turbine for testing
+name: CC
+description: Three turbines using Cumulative Gauss Curl model
 floris_version: v3.0.0
 
 logging:
@@ -18,7 +18,11 @@ solver:
 farm:
   layout_x:
   - 0.0
+  - 630.0
+  - 1260.0
   layout_y:
+  - 0.0
+  - 0.0
   - 0.0
 
 flow_field:

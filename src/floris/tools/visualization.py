@@ -107,7 +107,17 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
     ax.set_aspect("equal")
 
 
-def visualize_cut_plane(cut_plane, ax=None, vel_component='u', minSpeed=None, maxSpeed=None, cmap="coolwarm", levels=None, color_bar=False):
+def visualize_cut_plane(
+    cut_plane,
+    ax=None,
+    vel_component='u',
+    minSpeed=None,
+    maxSpeed=None,
+    cmap="coolwarm",
+    levels=None,
+    color_bar=False,
+    title=""
+):
     """
     Generate pseudocolor mesh plot of the cut_plane.
 
@@ -129,19 +139,19 @@ def visualize_cut_plane(cut_plane, ax=None, vel_component='u', minSpeed=None, ma
 
     if not ax:
         fig, ax = plt.subplots()
-    if vel_component is 'u':
+    if vel_component=='u':
         vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if minSpeed is None:
             minSpeed = cut_plane.df.u.min()
         if maxSpeed is None:
             maxSpeed = cut_plane.df.u.max()
-    elif vel_component is 'v':
+    elif vel_component=='v':
         vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if minSpeed is None:
             minSpeed = cut_plane.df.v.min()
         if maxSpeed is None:
             maxSpeed = cut_plane.df.v.max()
-    elif vel_component is 'w':
+    elif vel_component=='w':
         vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if minSpeed is None:
             minSpeed = cut_plane.df.w.min()
@@ -161,6 +171,9 @@ def visualize_cut_plane(cut_plane, ax=None, vel_component='u', minSpeed=None, ma
 
     if color_bar:
         plt.colorbar(im, ax=ax)
+
+    # Set the title
+    ax.set_title(title)
 
     # Make equal axis
     ax.set_aspect("equal")

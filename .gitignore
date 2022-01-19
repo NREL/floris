@@ -9,6 +9,9 @@ dist
 build
 _build
 
+#pip meta data
+pip-wheel-metadata
+
 # macOS files
 .DS_Store
 
