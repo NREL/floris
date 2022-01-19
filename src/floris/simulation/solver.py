@@ -340,9 +340,9 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
         # Sum of squares combination model to incorporate the current turbine's velocity into the main array
         wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
 
+        flow_field.u = flow_field.u_initial - wake_field
         flow_field.v += v_wake
         flow_field.w += w_wake
-    flow_field.u = flow_field.u_initial - velocity_deficit
 
 def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
 
