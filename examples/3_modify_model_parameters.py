@@ -15,16 +15,18 @@
 
 import matplotlib.pyplot as plt
 
-import floris.tools as wfct
+from floris.tools import FlorisInterface
 
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface("../example_input.json")
+fi = FlorisInterface("../example_input.json")
 
 # Show the current model parameters
 print("All the model parameters and their current values:\n")
 fi.show_model_parameters()
 print("\n")
+
+###### Assumes all parameters are @propertys
 
 # Show the current model parameters with docstring info
 print("All the model parameters, their current values, and docstrings:\n")

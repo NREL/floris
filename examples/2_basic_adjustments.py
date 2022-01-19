@@ -37,19 +37,16 @@ but the two functions are seperated so that calculate_wake can be called repeate
 for example when optimizing yaw angles
 """
 
-# Declare a short-cut visualization function for brevity in this example
-def plot_slice_shortcut(fi, ax, title):
-    # Get horizontal plane at default height (hub-height)
-    hor_plane = fi.get_hor_plane()
-    visualize_cut_plane(hor_plane, ax=ax, minSpeed=4.0, maxSpeed=8.0)
 
 
 # Define a plot
-fig, axarr = plt.subplots(3, 3, sharex=True, figsize=(12, 5))
+fig, axarr = plt.subplots(2, 3, figsize=(12, 5))
 axarr = axarr.flatten()
 
+MIN_WS = 1.0
+MAX_WS = 8.0
 
-fi = FlorisInterface("inputs/input_gch.yaml")
+fi = FlorisInterface("inputs/gch.yaml")
 solver_settings = {
     "type": "flow_field_grid",
     "flow_field_grid_points": [200,100,7]
@@ -59,35 +56,17 @@ fi.reinitialize(solver_settings=solver_settings)
 
 # Plot the initial setup
 horizontal_plane = fi.get_hor_plane()
-visualize_cut_plane(horizontal_plane, ax=axarr[0], minSpeed=4.0, maxSpeed=8.0)
-
+visualize_cut_plane(horizontal_plane, ax=axarr[0], title="Initial setup", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 
 # Change the wind speed
 horizontal_plane = fi.get_hor_plane(ws=[7.0])
-visualize_cut_plane(horizontal_plane, ax=axarr[1], minSpeed=4.0, maxSpeed=8.0)
+visualize_cut_plane(horizontal_plane, ax=axarr[1], title="Wind speed at 7 m/s", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 
 
-# # Change the wind direction
-horizontal_plane = fi.get_hor_plane(wd=[320.0], ws=[8.0])
-visualize_cut_plane(horizontal_plane, ax=axarr[2], minSpeed=4.0, maxSpeed=8.0)
-
-
-# # Change the TI
-# fi.reinitialize(turbulence_intensity=0.2)
-# fi.floris.solve_for_viz()
-# plot_slice_shortcut(fi, axarr[3], "TI=15%")
-
-
-# # Change the shear
-# fi.reinitialize(wind_shear=0.2)
-# fi.floris.solve_for_viz()
-# plot_slice_shortcut(fi, axarr[4], "Shear=.2")
-
-
-# # Change the veer
-# fi.reinitialize(wind_veer=5.0)
-# fi.floris.solve_for_viz()
-# plot_slice_shortcut(fi, axarr[5], "Veer=5")
+# Change the wind shear, reset the wind speed, and plot a vertical slice
+fi.reinitialize( wind_shear=0.2, wind_speeds=[8.0] )
+y_plane = fi.get_y_plane()
+visualize_cut_plane(y_plane, ax=axarr[2], title="Wind shear at 0.2", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 
 
 # Change the farm layout
@@ -98,15 +77,38 @@ X, Y = np.meshgrid(
 )
 fi.reinitialize( layout=( X.flatten(), Y.flatten() ) )
 horizontal_plane = fi.get_hor_plane()
-visualize_cut_plane(horizontal_plane, ax=axarr[7], minSpeed=4.0, maxSpeed=8.0)
+visualize_cut_plane(horizontal_plane, ax=axarr[3], title="3x3 Farm", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 # plot_turbines_with_fi(axarr[7], fi)
 
 
 # Change the yaw angles
-yaw_angles = np.zeros((1, 1, N*N))
-yaw_angles[:,:,0] = 20.0  # Yaw the leading turbine 20 degrees
+yaw_angles = np.zeros((1, 1, N * N))
+
+# First row
+yaw_angles[:,:,0] = 30.0
+yaw_angles[:,:,1] = -30.0
+yaw_angles[:,:,2] = 30.0
+
+# Second row
+yaw_angles[:,:,3] = -30.0
+yaw_angles[:,:,4] = 30.0
+yaw_angles[:,:,5] = -30.0
+
 horizontal_plane = fi.get_hor_plane(yaw_angles=yaw_angles)
-visualize_cut_plane(horizontal_plane, ax=axarr[8], minSpeed=4.0, maxSpeed=8.0)
+visualize_cut_plane(horizontal_plane, ax=axarr[4], title="Yawesome art", cmap="PuOr", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 # plot_turbines_with_fi(axarr[8], fi)
 
+
+# Plot the cross-plane
+cross_plane = fi.get_cross_plane(yaw_angles=yaw_angles, downstream_dist=610.0)
+visualize_cut_plane(cross_plane, ax=axarr[5], title="Cross section at 610 m", minSpeed=MIN_WS, maxSpeed=MAX_WS)
+axarr[5].invert_xaxis()
+
+
 plt.show()
+
+
+# # Change the veer
+# fi.reinitialize(wind_veer=5.0)
+# fi.floris.solve_for_viz()
+# plot_slice_shortcut(fi, axarr[5], "Veer=5")

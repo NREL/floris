@@ -227,13 +227,11 @@ wake:
       b_f: -0.68
       c_f: 2.41
       alpha_mod: 1.0
-
     gauss:
       alpha: 0.58
       beta: 0.077
       ka: 0.38
       kb: 0.004
-
     jensen:
       we: 0.05
 

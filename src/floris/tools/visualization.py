@@ -107,7 +107,17 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
     ax.set_aspect("equal")
 
 
-def visualize_cut_plane(cut_plane, ax=None, vel_component='u', minSpeed=None, maxSpeed=None, cmap="coolwarm", levels=None, color_bar=False):
+def visualize_cut_plane(
+    cut_plane,
+    ax=None,
+    vel_component='u',
+    minSpeed=None,
+    maxSpeed=None,
+    cmap="coolwarm",
+    levels=None,
+    color_bar=False,
+    title=""
+):
     """
     Generate pseudocolor mesh plot of the cut_plane.
 
@@ -161,6 +171,9 @@ def visualize_cut_plane(cut_plane, ax=None, vel_component='u', minSpeed=None, ma
 
     if color_bar:
         plt.colorbar(im, ax=ax)
+
+    # Set the title
+    ax.set_title(title)
 
     # Make equal axis
     ax.set_aspect("equal")

@@ -23,7 +23,7 @@ from floris.tools.visualization import visualize_cut_plane
 # For basic usage, the FLORIS Interface provides a simplified
 # and expressive interface to the simulation routines.
 
-fi = FlorisInterface("inputs/input_gch.yaml")
+fi = FlorisInterface("inputs/gch.yaml")
 
 # Yaw the leading turbine 20 degrees
 yaw_angles = np.zeros((1, 1, 3))
