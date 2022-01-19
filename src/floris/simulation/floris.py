@@ -133,7 +133,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 self.grid,
                 self.wake
             )
-        elif vel_model=="gauss":
+        else:
             elapsed_time = sequential_solver(
                 self.farm,
                 self.flow_field,
