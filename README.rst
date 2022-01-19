@@ -1,132 +1,91 @@
-FLORIS Wake Modeling Utility
-----------------------------
+FLORIS Wake Modeling and Wind Farm Controls Software
+----------------------------------------------------
 
-**Further documentation is available at http://floris.readthedocs.io/.**
+FLORIS is a controls-focused wind farm simulation software incorporating
+steady-state engineering wake models into a performance focused Python
+framework. It has been in active development at NREL since 2013 and the latest
+release is `FLORIS v2.4 <https://github.com/NREL/floris/releases/tag/v2.4>`_
+in July 2021. The ``v3`` branch of the repository
+contains an architectural redesign of the software to enable improved
+performance in AEP calculation and controls optimization.
 
-For technical questions regarding FLORIS usage please first search for or post
-your questions to
-`stackoverflow <https://stackoverflow.com/questions/tagged/floris>`_ using
-the **floris** tag. Alternatively, email the NREL FLORIS team at
-`NREL.Floris@nrel.gov <mailto:floris@nrel.gov>`.
+We are actively seeking beta testers for the new framework. If you are interested
+in using FLORIS to conduct studies of a wind farm or extending FLORIS to include
+your own wake model, please get in touch! Register for beta testing at https://forms.office.com/g/AmpAkJVvja
+and join the conversations at `GitHub Discussions <https://github.com/NREL/floris/discussions/categories/v3-design-discussion>`_.
 
-.. image:: https://github.com/nrel/floris/workflows/Automated%20tests%20%26%20code%20coverage/badge.svg
-  :target: https://github.com/nrel/floris/actions
-.. image:: https://codecov.io/gh/nrel/floris/branch/develop/graph/badge.svg
-  :target: https://codecov.io/gh/nrel/floris
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/psf/black
+For more context and background on previous work in FLORIS, see the
+documentation at http://floris.readthedocs.io/.
 
-Background and Objectives
-=========================
-This FLORIS framework is designed to provide a computationally efficient,
-controls-oriented modeling tool of the steady-state wake characteristics in
-a wind farm. The wake models implemented in this version of FLORIS are:
-
-- Jensen model for velocity deficit
-- Jimenez model for wake deflection
-- Gauss model for wake deflection and velocity deficit
-- Multi zone model for wake deflection and velocity deficit
-- Curl  model for wake deflection and velocity deficit
-- TurbOPark model for wake velocity deficit
-
-More information on all of these models can be found in the
-`theory <https://floris.readthedocs.io/en/develop/source/theory.html>`_
-section of the online documentation.
-
-A couple of publications with practical information on using floris as a
-modeling and simulation tool for controls research are
-
-1. Annoni, J., Fleming, P., Scholbrock, A., Roadman, J., Dana, S., Adcock, C.,
-   Porté-Agel, F, Raach, S., Haizmann, F., and Schlipf, D.: `Analysis of
-   control-oriented wake modeling tools using lidar field results <https://www.wind-energ-sci.net/3/819/2018/>`__,
-   in: Wind Energy Science, vol. 3, pp. 819-831, Copernicus Publications,
-   2018.
-
-Citation
-========
-
-.. image:: https://zenodo.org/badge/178914781.svg
-  :target: https://zenodo.org/badge/latestdoi/178914781
-
-If FLORIS played a role in your research, please cite it. This software can be
-cited as:
-
-   FLORIS. Version 2.3.0 (2021). Available at https://github.com/NREL/floris.
-
-For LaTeX users:
-
-.. code-block:: latex
-
-    @misc{FLORIS_2021,
-    author = {NREL},
-    title = {{FLORIS. Version 2.3.0},
-    year = {2021},
-    publisher = {GitHub},
-    journal = {GitHub repository},
-    url = {https://github.com/NREL/floris}
-    }
-
-.. _installation:
 
 Installation
 ============
-For full installation instructions, see
-https://floris.readthedocs.io/en/latest/source/installation.html.
-
-Users who want to run FLORIS without downloading the full source code
-can install with `pip` or `conda`, as shown below.
-
-.. code-block:: bash
-
-    # Using pip...
-    pip install floris         # Latest version
-    pip install floris==1.1.0  # Specified version number
-
-    # Using conda...
-    conda install floris        # Latest version
-    conda install floris=1.1.0  # Specified version number
-
-
-To download the source code and use the local code, download the project
-and add it to your Python path:
+Beta testers should install FLORIS v3 by downloading the source code
+from GitHub with ``git`` and using ``pip`` to locally install it.
+It is recommended to use a Python virtual environment such as `conda <https://docs.conda.io/en/latest/miniconda.html>`_
+in order to maintain a clean and sandboxed environment. The following
+commands in a terminal or shell will download and install **FLORIS v3.0rc1**.
 
 .. code-block:: bash
 
-    # Download the source code.
-    git clone https://github.com/NREL/floris.git
+    # Download the source code from the `v3.0rc1` tag
+    git clone -b v3.0rc1 https://github.com/NREL/floris.git
+
+    # If using conda, be sure to activate your environment prior to installing
+    # conda activate <env name>
 
     # Install into your Python environment
     pip install -e floris
 
-
-Finally, users who will be contributing code to the project should align
-their environment with the linting and formatting tools used by the
-FLORIS development team. This is enabled in the `setup.py` script and
-can be activated with these commands:
-
-.. code-block:: bash
-
-    git clone https://github.com/NREL/floris.git -b develop
-    cd floris
-    pip install -e '.[develop]'
-    pre-commit install
-
-
-After any form of installation, the environment should be tested.
-Within a Python shell or a Python script, this code should
-display information:
+Upon success, the installation can be verified by opening a Python interpreter
+and importing FLORIS:
 
 .. code-block:: python
 
-    import floris
-    print( help( floris ) )
-    print( dir( floris ) )
-    print( help( floris.simulation ) )
+    >>> import floris
+    >>> help(floris)
+
+    Help on package floris:
+
+    NAME
+        floris - # Copyright 2021 NREL
+
+    PACKAGE CONTENTS
+        logging_manager
+        simulation (package)
+        tools (package)
+        type_dec
+        utilities
+
+    DATA
+        ROOT = PosixPath('/Users/rmudafor/Development/floris')
+        VERSION = '3.0rc1'
+        version_file = <_io.TextIOWrapper name='/Users/rmudafor/Development/fl...
+
+    VERSION
+        3.0rc1
+
+    FILE
+        ~/floris/src/floris/__init__.py
+
+
+It is important to regularly check for new updates and releases as new
+features, improvements, and bug fixes will be issued on an ongoing basis.
+
+
+Getting Started
+===============
+
+A series of examples is included in the `examples/ <https://github.com/NREL/floris/tree/v3.0rc1/examples>`_
+directory. These are ordered from simplest to most complex. They demonstrate various
+use cases of FLORIS, and generally provide a good starting point for building a more
+complex simulation.
+
 
 License
 =======
 
-Copyright 2021 NREL
+Copyright 2022 NREL
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
