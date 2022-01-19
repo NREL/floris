@@ -105,10 +105,9 @@ class GaussVelocityDeficit(BaseModel):
         velocity_deficit = np.zeros_like(u_initial)
 
         # Masks
-        # downstream = np.array(x > xR, dtype=bool)
-        # upstream = np.array(x < x0, dtype=bool)
-        # near_wake_mask = np.logical_and(downstream, upstream)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
-        near_wake_mask = np.array(x > xR) * np.array(x < x0)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
+        # When we have only an inequality, the current turbine may be applied its own wake in cases where numerical precision
+        # cause in incorrect comparison. We've applied a small bump to avoid this. "0.1" is arbitrary but it is a small, non zero value.
+        near_wake_mask = np.array(x > xR + 0.1) * np.array(x < x0)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
         far_wake_mask = np.array(x >= x0)
 
         # Compute the velocity deficit in the NEAR WAKE region
