@@ -20,6 +20,7 @@ from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
 )
+from floris.simulation.wake_turbulence.crespo_hernandez import CrespoHernandez
 from floris.simulation.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
@@ -34,7 +35,9 @@ MODEL_MAP = {
         "jimenez": JimenezVelocityDeflection,
         "gauss": GaussVelocityDeflection
     },
-    # "turbulence_model": {},
+    "turbulence_model": {
+        "crespo_hernandez": CrespoHernandez
+    },
     "velocity_model": {
         "cc": CumulativeGaussCurlVelocityDeficit,
         "gauss": GaussVelocityDeficit,
@@ -63,12 +66,12 @@ class WakeModelManager(BaseClass):
 
     # wake_combination_parameters: dict = field(converter=dict)
     wake_deflection_parameters: dict = field(converter=dict)
-    # wake_turbulence_parameters: dict = field(converter=dict)
+    wake_turbulence_parameters: dict = field(converter=dict)
     wake_velocity_parameters: dict = field(converter=dict, default={})
 
     # combination_model: BaseModel = field(init=False)
     deflection_model: BaseModel = field(init=False)
-    # turbulence_model: BaseModel = field(init=False)
+    turbulence_model: BaseModel = field(init=False)
     velocity_model: BaseModel = field(init=False)
 
     def __attrs_post_init__(self) -> None:
@@ -86,6 +89,13 @@ class WakeModelManager(BaseClass):
             self.deflection_model = model()
         else:
             self.deflection_model = model.from_dict(model_parameters)
+
+        model: BaseModel = MODEL_MAP["turbulence_model"][self.model_strings["turbulence_model"]]
+        model_parameters = self.wake_turbulence_parameters[self.model_strings["turbulence_model"]]
+        if model_parameters is None:
+            self.turbulence_model = model()
+        else:
+            self.turbulence_model = model.from_dict(model_parameters)
 
     @model_strings.validator
     def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:

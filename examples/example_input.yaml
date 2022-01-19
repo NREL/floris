@@ -236,3 +236,10 @@ wake:
 
     jensen:
       we: 0.05
+
+  wake_turbulence_parameters:
+    crespo_hernandez:
+      initial: 0.01
+      constant: 0.9
+      ai: 0.83
+      downstream: -0.25

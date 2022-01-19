@@ -152,7 +152,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
         # Sum of squares combination model to incorporate the current turbine's velocity into the main array
         wake_field = np.sqrt( wake_field ** 2 + (velocity_deficit * flow_field.u_initial) ** 2 )
 
-        wake_added_turbulence_intensity = crespo_hernandez(
+        wake_added_turbulence_intensity = model_manager.turbulence_model.function(
             ambient_turbulence_intensity,
             grid.x,
             x_i,
@@ -484,7 +484,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             **deficit_model_args
         )
 
-        wake_added_turbulence_intensity = crespo_hernandez(
+        wake_added_turbulence_intensity = model_manager.turbulence_model.function(
             ambient_turbulence_intensity,
             grid.x,
             x_i,
