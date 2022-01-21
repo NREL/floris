@@ -87,8 +87,8 @@ can install with `pip` or `conda`, as shown below.
     pip install floris==1.1.0  # Specified version number
 
     # Using conda...
-    conda install floris        # Latest version
-    conda install floris=1.1.0  # Specified version number
+    conda install -c conda-forge floris        # Latest version
+    conda install -c conda-forge floris=1.1.0  # Specified version number
 
 
 To download the source code and use the local code, download the project
