@@ -20,8 +20,8 @@ version, specify that as shown below.
     pip install floris==1.1.0  # Specified version number
 
     # Using conda...
-    conda install floris        # Latest version
-    conda install floris=1.1.0  # Specified version number
+    conda install -c conda-forge floris        # Latest version
+    conda install -c conda-forge floris=1.1.0  # Specified version number
 
 
 After installation, the FLORIS package can by imported in a Python
