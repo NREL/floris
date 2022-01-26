@@ -107,15 +107,35 @@ class YawOptimizationSR(YawOptimization):
             turbines_ordered_array.append(turbines_ordered)
         self.turbines_ordered_array_subset = turbines_ordered_array
 
+
     def _calc_powers_with_memory(self, yaw_angles_subset, use_memory=True):
-        # Initialize empty matrix
+        # Define current optimal solutions and floris wind directions locally
+        yaw_angles_opt_subset = self._yaw_angles_opt_subset
+        farm_power_opt_subset = self._farm_power_opt_subset
+        wd_array_subset = self.fi_subset.floris.flow_field.wind_directions
+        turbine_weights_subset = self._turbine_weights_subset
+
+        # Reformat yaw_angles_subset, if necessary
+        eval_multiple_passes = (len(np.shape(yaw_angles_subset)) == 4)
+        if eval_multiple_passes:
+            # Four-dimensional; format everything into three-dimensional
+            Ny = yaw_angles_subset.shape[0]  # Number of passes
+            yaw_angles_subset = np.vstack(
+                [yaw_angles_subset[iii, :, :, :] for iii in range(Ny)]
+            )
+            yaw_angles_opt_subset = np.tile(yaw_angles_opt_subset, (Ny, 1, 1))
+            farm_power_opt_subset = np.tile(farm_power_opt_subset, (Ny, 1))
+            wd_array_subset = np.tile(wd_array_subset, Ny)
+            turbine_weights_subset = np.tile(turbine_weights_subset, (Ny, 1, 1))
+
+        # Initialize empty matrix for floris farm power outputs
         farm_powers = np.zeros((yaw_angles_subset.shape[0], yaw_angles_subset.shape[1]))
 
         # Find indices of yaw angles that we previously already evaluated, and
         # prevent redoing the same calculations
         if use_memory:
-            idx = (np.abs(self._yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).flatten()
-            farm_powers[idx, 0] = self._farm_power_opt_subset[idx, 0]
+            idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).flatten()
+            farm_powers[idx, 0] = farm_power_opt_subset[idx, 0]
             # print("Skipping {:d}/{:d} calculations: already in memory.".format(np.sum(idx), len(idx)))
         else:
             idx = np.array([False] * yaw_angles_subset.shape[0], dtype=bool)
@@ -123,13 +143,16 @@ class YawOptimizationSR(YawOptimization):
         if not np.all(idx):
             # Now calculate farm powers for conditions we haven't yet evaluated previously
             start_time = timerpc()
-            wd_array_subset = self.fi_subset.floris.flow_field.wind_directions
             farm_powers[~idx] = self._calculate_farm_power(
                 wd_array=wd_array_subset[~idx],
-                turbine_weights=self._turbine_weights_subset[~idx, :, :],
+                turbine_weights=turbine_weights_subset[~idx, :, :],
                 yaw_angles=yaw_angles_subset[~idx, :, :],
             )
             self.time_spent_in_floris += (timerpc() - start_time)
+
+        # Finally format solutions back to original format, if necessary
+        if eval_multiple_passes:
+            farm_powers = np.reshape(farm_powers, (Ny, -1, 1))
 
         return farm_powers
 
@@ -195,9 +218,7 @@ class YawOptimizationSR(YawOptimization):
     def _process_evaluation_grid(self):
         # Evaluate the farm AEPs for the grid of possible yaw angles
         evaluation_grid = self._yaw_evaluation_grid
-        farm_powers = np.zeros_like(evaluation_grid)[:, :, :, 0]
-        for iii in range(evaluation_grid.shape[0]):
-            farm_powers[iii, :, :] = self._calc_powers_with_memory(evaluation_grid[iii, :, :, :])
+        farm_powers = self._calc_powers_with_memory(evaluation_grid)
         return farm_powers
 
     def _optimize(self): 
