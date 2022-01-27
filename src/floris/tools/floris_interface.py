@@ -26,6 +26,7 @@ import pandas as pd
 import numpy.typing as npt
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from scipy.interpolate import LinearNDInterpolator
 from numpy.lib.arraysetops import unique
 
 from floris.utilities import Vec3
@@ -59,7 +60,7 @@ class FlorisInterface(LoggerBase):
                 - **logging**: See `floris.simulation.floris.Floris` for more details.
     """
 
-    def __init__(self, configuration: dict | str | Path):
+    def __init__(self, configuration: dict | str | Path, het_map=None):
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
@@ -70,6 +71,12 @@ class FlorisInterface(LoggerBase):
 
         else:
             raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
+
+        # Store the heterogeneous map for use after reinitailization
+        self.het_map = het_map
+        # Assign the heterogeneous map to the flow field
+        # Needed for a direct call to fi.calculate_wake without fi.reinitialize
+        self.floris.flow_field.het_map = het_map
 
     def calculate_wake(
         self,
@@ -166,6 +173,8 @@ class FlorisInterface(LoggerBase):
 
         # Create a new instance of floris and attach to self
         self.floris = Floris.from_dict(floris_dict)
+        # Re-assign the hetergeneous inflow map to flow field
+        self.floris.flow_field.het_map = self.het_map
 
     def get_plane_of_points(
         self,
@@ -816,6 +825,14 @@ class FlorisInterface(LoggerBase):
             return xcoords, ycoords
 
 
+
+def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
+    if z is not None:
+        # Compute the 3-dimensional interpolants for each wind diretion
+        return [LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=1.0) for speed_up in speed_ups]
+    else:
+        # Compute the 2-dimensional interpolants for each wind diretion
+        return [LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=1.0) for speed_up in speed_ups]
 
 
 # def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
