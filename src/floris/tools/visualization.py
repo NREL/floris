@@ -170,7 +170,8 @@ def visualize_cut_plane(
     line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="w", linewidths=0.8, alpha=0.3)
 
     if color_bar:
-        plt.colorbar(im, ax=ax)
+        cbar = plt.colorbar(im, ax=ax)
+        cbar.set_label('m/s')
 
     # Set the title
     ax.set_title(title)
