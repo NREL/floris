@@ -1,46 +1,41 @@
-Contributing to FLORIS
-----------------------
+# Contributing to FLORIS
 
 FLORIS is a community model, and we are excited for community contributions!
 There are a variety of ways in which you can contribute beyond writing code.
 This document provides a high-level overview of how you can get involved.
 
 
-Asking Questions
-~~~~~~~~~~~~~~~~
+## Asking Questions
 
 Have a question? Rather than opening an issue directly, please ask questions
-or post comments in `Q&A Discussions <https://github.com/NREL/floris/discussions/categories/q-a>`_.
+or post comments in [Q&A Discussions](https://github.com/NREL/floris/discussions/categories/q-a).
 The NREL team or other members of the community will assist. Your well-worded
 question will serve as a resource to others searching for help.
 
 
-Providing Feedback
-~~~~~~~~~~~~~~~~~~
+## Providing Feedback
 
 Your comments and feedback are very welcome. Please post to
-`General Discussions <https://github.com/NREL/floris/discussions/categories/general>`_
+[General Discussions](https://github.com/NREL/floris/discussions/categories/general)
 with lots of information and detail. It is beneficial to consider
 how someone else will understand your comments in order to make
 them most effective.
 
 
-Reporting Issues
-~~~~~~~~~~~~~~~~
+## Reporting Issues
 
 Have you identified a reproducible problem in FLORIS?
 Have a feature request? We want to hear about it! Here's how you can make
 reporting your issue as effective as possible.
 
-Look For an Existing Issue
-==========================
+### Look For an Existing Issue
 
 Before you create a new issue, please do a search in
-`open issues <https://github.com/microsoft/vscode/issues>`_` to see if
+[open issues](https://github.com/microsoft/vscode/issues) to see if
 the issue or feature request has already been filed.
 
 If you find your issue already exists, make relevant comments and add your
-`reaction <https://github.com/blog/2119-add-reactions-to-pull-requests-issues-and-comments>`_.
+[reaction](https://github.com/blog/2119-add-reactions-to-pull-requests-issues-and-comments).
 Use a reaction in place of a "+1" comment:
 
 - 👍 - upvote
@@ -49,8 +44,7 @@ Use a reaction in place of a "+1" comment:
 If you cannot find an existing issue that describes your bug or feature,
 create a new issue using the guidelines below.
 
-Writing Good Bug Reports and Feature Requests
-=============================================
+### Writing Good Bug Reports and Feature Requests
 
 File a single issue per problem and feature request. Do not enumerate
 multiple bugs or feature requests in the same issue.
@@ -64,8 +58,7 @@ be successful at reproducing the issue and finding a fix.
 Please follow the issue template guidelines to include relevant information
 that will help in diagnosing the problem.
 
-Final Checklist
-===============
+### Final Checklist
 
 Please remember to do the following:
 
@@ -76,13 +69,12 @@ Please remember to do the following:
 - [ ] Simplify your code around the issue to better isolate the problem
 
 
-Contributing Fixes
-~~~~~~~~~~~~~~~~~~
+## Contributing Fixes
 
 If you are interested in writing code to fix an issue or
 submit a new feature, let us know in
-`Ideas Discussions <https://github.com/NREL/floris/discussions/categories/ideas>`_!
+[Ideas Discussions](https://github.com/NREL/floris/discussions/categories/ideas)!
 
 We rely heavily on git and GitHub, so be sure to review the
 contributing guidelines in the
-`online documentation <https://floris.readthedocs.io/en/main/source/developers.html>`_.
+[online documentation](https://floris.readthedocs.io/en/main/source/developers.html).
