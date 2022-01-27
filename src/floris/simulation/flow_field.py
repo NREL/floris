@@ -46,14 +46,14 @@ class FlowField(FromDictMixin):
     v: NDArrayFloat = field(init=False, default=np.array([]))
     w: NDArrayFloat = field(init=False, default=np.array([]))
     speed_ups: NDArrayFloat = field(init=False, default=np.array([]))
-    het_map: list = field(init=False, default=[])
+    het_map: list = field(init=False, default=None)
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
 
     def __attrs_post_init__(self) -> None:
         # If no hetergeneous inflow defined, then set all speeds ups to 1.0
         if np.size(self.speed_ups) == 0:
-            self.speed_ups = np.ones_like(self.wind_directions)
+            self.speed_ups = np.ones_like(self.wind_directions)[:, None, None, None, None]
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
