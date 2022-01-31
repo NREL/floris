@@ -39,7 +39,7 @@ fi.reinitialize(
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
 yaw_opt = YawOptimizationSR(fi)#, exploit_layout_symmetry=False)
-df_opt = yaw_opt._optimize()
+df_opt = yaw_opt.optimize()
 
 print("Optimization results:")
 print(df_opt)

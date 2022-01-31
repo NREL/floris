@@ -88,12 +88,6 @@ class YawOptimizationSR(YawOptimization):
         # For each wind direction, determine the order of turbines
         self._get_turbine_orders()
 
-        # Initialize optimum yaw angles and cost function as baseline values
-        self._yaw_angles_opt_subset = copy.deepcopy(self._yaw_angles_baseline_subset)
-        self._farm_power_opt_subset = copy.deepcopy(self._farm_power_baseline_subset)
-        self._yaw_lbs = copy.deepcopy(self._minimum_yaw_angle_subset)
-        self._yaw_ubs = copy.deepcopy(self._maximum_yaw_angle_subset)
-
     def _get_turbine_orders(self):
         layout_x = self.fi.layout_x
         layout_y = self.fi.layout_y
@@ -200,7 +194,7 @@ class YawOptimizationSR(YawOptimization):
             farm_powers[iii, :, :] = self._calc_powers_with_memory(evaluation_grid[iii, :, :, :])
         return farm_powers
 
-    def _optimize(self): 
+    def optimize(self): 
         """
         Find the yaw angles that maximize the power production for every wind direction,
         wind speed and turbulence intensity.

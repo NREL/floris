@@ -210,6 +210,12 @@ class YawOptimization:
         self._initialize()
         self._calculate_baseline_farm_power()
 
+        # Initialize optimal yaw angles and cost function as baseline values
+        self._yaw_angles_opt_subset = copy.deepcopy(self._yaw_angles_baseline_subset)
+        self._farm_power_opt_subset = copy.deepcopy(self._farm_power_baseline_subset)
+        self._yaw_lbs = copy.deepcopy(self._minimum_yaw_angle_subset)
+        self._yaw_ubs = copy.deepcopy(self._maximum_yaw_angle_subset)
+
     # Private methods
 
     def _initialize(self):
