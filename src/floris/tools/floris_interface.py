@@ -37,6 +37,7 @@ from floris.tools.cut_plane import get_plane_from_flow_data
 from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
 from floris.tools.interface_utilities import get_params, set_params, show_params
 from floris.tools.cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
+from floris.utilities import wrap_360
 
 # from .visualization import visualize_cut_plane
 # from .layout_functions import visualize_layout, build_turbine_loc
@@ -553,25 +554,80 @@ class FlorisInterface(LoggerBase):
         if include_unc:
             unc_pmfs = _generate_uncertainty_parameters(unc_options, unc_pmfs)
 
-            # TODO: The original form of this is:
-            # self.floris.farm.wind_map.input_direction[0], but it's unclear why we're
-            # capping at just the first wind direction. Should this behavior be kept?
-            # I'm unsure as to how the first wind direction is the original, so it could
-            # just be a naming thing that's throwing me off....
-            wd_orig = self.floris.flow_field.wind_directions
+            # Save nominal settings to self
+            wd_array_nominal = self.floris.flow_field.wind_directions
+            ws_array_nominal = self.floris.flow_field.wind_speeds
+            yaw_angles_nominal = self.floris.farm.yaw_angles
+            num_wd = len(wd_array_nominal)
+            num_ws = len(ws_array_nominal)
+            num_wd_unc = len(unc_pmfs["wd_unc"])
+            num_yaw_unc = len(unc_pmfs["yaw_unc"])
+            num_turbines = self.floris.farm.n_turbines
+    
+            # Expand wind direction and yaw angle array into the direction
+            # of uncertainty over the ambient wind direction.
+            wd_array_probablistic = np.vstack(
+                [np.expand_dims(wd_array_nominal, axis=0) + dy
+                for dy in unc_pmfs["wd_unc"]]
+            )
+            yaw_angles_probablistic = np.vstack(
+                [np.expand_dims(yaw_angles_nominal, axis=0) - dy
+                for dy in unc_pmfs["wd_unc"]]
+            )
 
-            yaw_angles = self.floris.farm.yaw_angles()
-            self.reinitialize(wind_direction=wd_orig + unc_pmfs["wd_unc"])
-            power_at_yaw = [
-                self.get_farm_power_for_yaw_angle(yaw_angles + delta_yaw, no_wake=no_wake)
-                for delta_yaw in unc_pmfs["yaw_unc"]
-            ]
-            mean_farm_power = unc_pmfs["wd_unc_pmf"] * unc_pmfs["yaw_unc_pmf"] * np.array(power_at_yaw)
+            # Now futher expand wind direction and yaw angle array into
+            # the direction of uncertainty of the turbine yaw angles.
+            wd_array_probablistic = np.vstack(
+                [np.expand_dims(wd_array_probablistic, axis=0)
+                for _ in unc_pmfs["yaw_unc"]]
+            )
+            yaw_angles_probablistic = np.vstack(
+                [np.expand_dims(yaw_angles_probablistic, axis=0) + dy
+                for dy in unc_pmfs["yaw_unc"]]
+            )
+
+            # Format into conventional floris format by reshaping
+            wd_array_probablistic = np.reshape(wd_array_probablistic, -1)
+            yaw_angles_probablistic = np.reshape(
+                yaw_angles_probablistic, (-1, num_ws, num_turbines)
+            )
+
+            # Wrap wind direction array around 360 deg
+            wd_array_probablistic = wrap_360(wd_array_probablistic)
+
+            # Find minimal set of solutions to evaluate
+            wd_exp = np.tile(wd_array_probablistic, (1, num_ws, 1)).T
+            x_exp = np.append(yaw_angles_probablistic, wd_exp, axis=2)
+            _, id_unq, id_unq_rev = np.unique(x_exp, axis=0, return_index=True, return_inverse=True)
+            wd_array_probablistic = wd_array_probablistic[id_unq]
+            yaw_angles_probablistic = yaw_angles_probablistic[id_unq, :, :]
+
+            # Calculate solutions for minimal set
+            self.reinitialize(wind_directions=wd_array_probablistic)
+            self.calculate_wake(yaw_angles=yaw_angles_probablistic)
+            power_probablistic = self.get_farm_power()
+
+            # Reshape solutions back to full set
+            power_probablistic = power_probablistic[id_unq_rev, :]
+            power_probablistic = np.reshape(
+                power_probablistic, 
+                (num_yaw_unc, num_wd_unc, num_wd, num_ws)
+            )
+
+            # Calculate probability weighing terms
+            wd_weighing = np.tile(unc_pmfs["wd_unc_pmf"], (num_yaw_unc, 1)).T
+            wd_weighing = np.tile(wd_weighing, (num_ws, num_wd, 1, 1)).T
+            yaw_weighing = np.tile(unc_pmfs["yaw_unc_pmf"], (num_wd_unc, 1))
+            yaw_weighing = np.tile(yaw_weighing, (num_ws, num_wd, 1, 1)).T
+            W = np.multiply(wd_weighing, yaw_weighing)
+
+            # Now apply probability distribution weighing
+            farm_power = np.sum(W * power_probablistic, axis=(0, 1))
 
             # reinitialize with original values
-            self.reinitialize(wind_direction=wd_orig)
-            self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
-            return mean_farm_power
+            self.reinitialize(wind_directions=wd_array_nominal)
+            self.calculate_wake(yaw_angles=yaw_angles_nominal)
+            return farm_power
 
         turbine_powers = self.get_turbine_powers()
         # for i in range(self.floris.farm.n_turbines):
