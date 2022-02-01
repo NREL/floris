@@ -26,7 +26,7 @@ import pandas as pd
 import numpy.typing as npt
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-from scipy.interpolate import LinearNDInterpolator
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from numpy.lib.arraysetops import unique
 
 from floris.utilities import Vec3
@@ -829,11 +829,18 @@ class FlorisInterface(LoggerBase):
 def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     if z is not None:
         # Compute the 3-dimensional interpolants for each wind diretion
-        return [LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=1.0) for speed_up in speed_ups]
+        # Linear interpolation is used for points within the user-defined area of values,
+        # while a nearest-neighbor interpolant is used for points outside that region
+        in_region = [LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=np.nan) for speed_up in speed_ups]
+        out_region = [NearestNDInterpolator(list(zip(x, y, z)), speed_up) for speed_up in speed_ups]
     else:
         # Compute the 2-dimensional interpolants for each wind diretion
-        return [LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=1.0) for speed_up in speed_ups]
+        # Linear interpolation is used for points within the user-defined area of values,
+        # while a nearest-neighbor interpolant is used for points outside that region
+        in_region = [LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=np.nan) for speed_up in speed_ups]
+        out_region = [NearestNDInterpolator(list(zip(x, y)), speed_up) for speed_up in speed_ups]
 
+    return [in_region, out_region]
 
 # def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
 #     return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)
