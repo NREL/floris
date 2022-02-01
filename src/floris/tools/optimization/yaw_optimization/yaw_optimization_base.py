@@ -16,7 +16,7 @@
 import copy
 
 import numpy as np
-
+import pandas as pd
 
 from ....utilities import wrap_360
 
@@ -289,6 +289,7 @@ class YawOptimization:
                 downstream_turbines = derive_downstream_turbines(self.fi, wd)
                 downstream_turbines = np.array(downstream_turbines, dtype=int)
                 self.turbs_to_opt[iw, 0, downstream_turbines] = False
+                turbs_to_opt_subset = copy.deepcopy(self.turbs_to_opt)  # Update
 
         # Reduce optimization problem through layout symmetry
         if (self.exploit_layout_symmetry) & (self._sym_df is not None):
@@ -345,9 +346,10 @@ class YawOptimization:
         """
         lb = np.min(self._minimum_yaw_angle_subset)
         ub = np.max(self._maximum_yaw_angle_subset)
-        self._x0_subset_norm = [self._norm(x0, lb, ub) for x0 in self._x0_subset]
-        self._minimum_yaw_angle_subset_norm = [self._norm(y, lb, ub) for y in self._minimum_yaw_angle_subset]
-        self._maximum_yaw_angle_subset_norm = [self._norm(y, lb, ub) for y in self._maximum_yaw_angle_subset]
+        self._normalization_length = (ub - lb)
+        self._x0_subset_norm = self._x0_subset / self._normalization_length
+        self._minimum_yaw_angle_subset_norm = self._minimum_yaw_angle_subset / self._normalization_length
+        self._maximum_yaw_angle_subset_norm = self._maximum_yaw_angle_subset / self._normalization_length
 
     def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None):
         """
@@ -497,10 +499,32 @@ class YawOptimization:
 
         return full_array
 
-    def _finalize(self):
+    def _finalize(self, farm_power_opt_subset=None, yaw_angles_opt_subset=None):
+        # Process final solutions
+        if farm_power_opt_subset is None:
+            farm_power_opt_subset = self._farm_power_opt_subset
+        if yaw_angles_opt_subset is None:
+            yaw_angles_opt_subset = self._yaw_angles_opt_subset
+
         # Finalization step for optimization: undo reduction step
-        self.farm_power_opt = self._unreduce_variable(self._farm_power_opt_subset)
-        self.yaw_angles_opt = self._unreduce_variable(self._yaw_angles_opt_subset)
+        self.farm_power_opt = self._unreduce_variable(farm_power_opt_subset)
+        self.yaw_angles_opt = self._unreduce_variable(yaw_angles_opt_subset)
+
+        # Produce output table
+        ti = np.min(self.fi.floris.flow_field.turbulence_intensity)
+        df_list = []
+        for ii, wind_speed in enumerate(self.fi.floris.flow_field.wind_speeds):
+            df_list.append(pd.DataFrame({
+                "wind_direction": self.fi.floris.flow_field.wind_directions,
+                "wind_speed": np.ones(self.nconds) * wind_speed,
+                "turbulence_intensity": np.ones(self.nconds) * ti,
+                "yaw_angles_opt": [yaw_angles for yaw_angles in self.yaw_angles_opt[:, ii, :]],
+                "farm_power_opt": self.farm_power_opt[:, ii],
+                "farm_power_baseline": self.farm_power_baseline[:, ii],
+            }))
+        df_opt = pd.concat(df_list, axis=0)
+
+        return df_opt
 
     # def _cluster_turbines(self):
     #     """

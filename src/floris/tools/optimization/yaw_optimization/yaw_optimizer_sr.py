@@ -246,19 +246,5 @@ class YawOptimizationSR(YawOptimization):
                 # self._print_uplift()
 
         # Finalize optimization, i.e., retrieve full solutions
-        self._finalize()
-
-        # Produce output table
-        ti = np.min(self.fi.floris.flow_field.turbulence_intensity)
-        df_list = []
-        for ii, wind_speed in enumerate(self.fi.floris.flow_field.wind_speeds):
-            df_list.append(pd.DataFrame({
-                "wind_direction": self.fi.floris.flow_field.wind_directions,
-                "wind_speed": np.ones(self.nconds) * wind_speed,
-                "turbulence_intensity": np.ones(self.nconds) * ti,
-                "yaw_angles_opt": [yaw_angles for yaw_angles in self.yaw_angles_opt[:, ii, :]],
-                "farm_power_opt": self.farm_power_opt[:, ii],
-                "farm_power_baseline": self.farm_power_baseline[:, ii],
-            }))
-        df_opt = pd.concat(df_list, axis=0)
+        df_opt = self._finalize()
         return df_opt
