@@ -40,9 +40,7 @@ class YawOptimizationScipy(YawOptimization):
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=True,
         # reduce_ngrid=False,
-        # cluster_turbines=False,
-        # cluster_wake_slope=0.30,
-        # verify_convergence=True,
+        verify_convergence=False,
     ):
         """
         Instantiate YawOptimizationScipy object with a FlorisInterface object
@@ -69,6 +67,7 @@ class YawOptimizationScipy(YawOptimization):
             calc_baseline_power=True,
             exclude_downstream_turbines=exclude_downstream_turbines,
             exploit_layout_symmetry=exploit_layout_symmetry,
+            verify_convergence=verify_convergence,
         )
 
         self.opt_method = opt_method

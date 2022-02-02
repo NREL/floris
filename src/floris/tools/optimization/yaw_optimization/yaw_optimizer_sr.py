@@ -36,9 +36,7 @@ class YawOptimizationSR(YawOptimization):
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=True,
         # reduce_ngrid=False,
-        # cluster_turbines=False,
-        # cluster_wake_slope=0.30,
-        # verify_convergence=True,
+        verify_convergence=False,
     ):
         """
         Instantiate YawOptimizationSR object with a FlorisInterface object
@@ -56,9 +54,7 @@ class YawOptimizationSR(YawOptimization):
             calc_baseline_power=True,
             exclude_downstream_turbines=exclude_downstream_turbines,
             exploit_layout_symmetry=exploit_layout_symmetry,
-            # cluster_turbines=cluster_turbines,
-            # cluster_wake_slope=cluster_wake_slope,
-            # verify_convergence=verify_convergence,
+            verify_convergence=verify_convergence,
         )
 
         # Start a timer for FLORIS computations
