@@ -1,0 +1,27 @@
+
+title: "FLORIS"
+remote_theme: pmarsceill/just-the-docs
+# theme: "just-the-docs"  # uncomment this to build locally
+color_scheme: "light"
+search_enabled: true
+
+aux_links:
+  "FLORIS on GitHub":
+    - "//github.com/NREL/floris"
+aux_links_new_tab: true
+
+collections:
+  tutorials:
+    permalink: "/:collection/:path/"
+    output: true
+  devdocs:
+    permalink: "/:collection/:path/"
+    output: true
+
+
+just_the_docs:
+  collections:
+    tutorials:
+      name: User Guide
+    devdocs:
+      name: Developer Guide
