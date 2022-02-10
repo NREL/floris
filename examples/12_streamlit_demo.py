@@ -78,12 +78,12 @@ fig, axarr = plt.subplots(2,2)
 for wd_idx, wind_direction in enumerate([270., wind_direction_user]):
 
     # Grab two different wake models
-    # Not positive why this is necessary
+    # Not positive why this is necessary 
+    # If you move this above the loop so it only happens once, there is an error
     fi_jensen = FlorisInterface("inputs/jensen.yaml")
     fi_gch = FlorisInterface("inputs/gch.yaml")
     fi_cc = FlorisInterface("inputs/cc.yaml")
     
-
     # Configure model
     fi_jensen.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=0.05 )
     fi_gch.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=0.06 )
@@ -121,24 +121,3 @@ for wd_idx, wind_direction in enumerate([270., wind_direction_user]):
 
 # Show the figure
 st.write(fig)
-
-# # Using the FlorisInterface functions for generating plots, run FLORIS
-# # and extract 2D planes of data.
-# 
-
-
-
-# # Visualize cut plane
-# 
-# 
-# 
-# # horizontal_plane_cc = fi_cc.get_hor_plane(x_resolution=100, y_resolution=100)
-
-# # # Create the plots
-# # fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
-# # ax_list = ax_list.flatten()
-# # visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
-# # visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
-# # visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
-
-# # plt.show()
