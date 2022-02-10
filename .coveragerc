@@ -1,0 +1,10 @@
+# Coverage.py configuration file
+# https://coverage.readthedocs.io/en/latest/config.html
+
+[run]
+branch = True
+source = 
+    src/*
+omit =
+    setup.py
+    tests/*
