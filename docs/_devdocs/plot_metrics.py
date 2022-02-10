@@ -45,56 +45,33 @@ data = [
 
 df = pd.DataFrame(data=data, columns=columns)
 
-fig = plt.figure()
-plt.plot(df["date"], df["jensen"], color=COLORS[0], marker='o', label='Jensen / Jimenez')
-plt.plot(df["date"], df["gauss"], color=COLORS[1], marker='o', label='Gauss')
-plt.plot(df["date"], df["gch"], color=COLORS[2], marker='o', label='GCH')
-plt.plot(df["date"], df["cc"], color=COLORS[3], marker='o', label='Cumulative-Curl')
+labels = list(df["commit_hash_8char"])
 
-plt.title("5x5 Wind Farm Timing Test")
-plt.xlabel("Commit date")
-plt.ylabel("Time to solution (s)")
-plt.ylim(0.0, 2.0)
-plt.grid()
-plt.legend(loc="lower left")
-# plt.show()
+fig, ax = plt.subplots()
+
+points = ax.plot(df["date"], df["jensen"], color=COLORS[0], marker='o', label='Jensen / Jimenez')
+tooltip = mpld3.plugins.PointLabelTooltip(points[0], labels) # voffset=10, hoffset=10, css=css)
+mpld3.plugins.connect(fig, tooltip)
+
+points = ax.plot(df["date"], df["gauss"], color=COLORS[1], marker='o', label='Gauss')
+tooltip = mpld3.plugins.PointLabelTooltip(points[0], labels) # voffset=10, hoffset=10, css=css)
+mpld3.plugins.connect(fig, tooltip)
+
+points = ax.plot(df["date"], df["gch"], color=COLORS[2], marker='o', label='GCH')
+tooltip = mpld3.plugins.PointLabelTooltip(points[0], labels) # voffset=10, hoffset=10, css=css)
+mpld3.plugins.connect(fig, tooltip)
+
+points = ax.plot(df["date"], df["cc"], color=COLORS[3], marker='o', label='Cumulative-Curl')
+tooltip = mpld3.plugins.PointLabelTooltip(points[0], labels) # voffset=10, hoffset=10, css=css)
+mpld3.plugins.connect(fig, tooltip)
+
+ax.legend(loc="lower left")
+ax.grid(True, alpha=0.3)
+ax.set_ylim(0.0, 2.0)
+ax.set_xlabel("Commit date")
+ax.set_ylabel("Time to solution (s)")
+ax.set_title("5x5 Wind Farm Timing Test", size=20)
+
 print(mpld3.fig_to_html(fig, figid="timing"))
-
-
-
-
-
-# <div id="1"></div>
-# <script>
-# function mpld3_load_lib(url, callback){
-#   var s = document.createElement('script');
-#   s.src = url;
-#   s.async = true;
-#   s.onreadystatechange = s.onload = callback;
-#   s.onerror = function(){console.warn("failed to load library " + url);};
-#   document.getElementsByTagName("head")[0].appendChild(s);
-# }
-
-# if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
-#    !function(mpld3){
-       
-#        mpld3.draw_figure("1", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [18988.95, 19012.05], "ylim": [0.37986125000000004, 1.31144575], "xdomain": [[2021, 11, 27, 22, 48, 0, 0.0], [2022, 0, 20, 1, 12, 0, 0.0]], "ydomain": [0.37986125000000004, 1.31144575], "xscale": "date", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 6, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 7, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el683574752862896", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el683574832514160", "color": "#0000FF", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el683574832514160pts", "facecolor": "#0000FF", "edgecolor": "#0000FF", "edgewidth": 1.0, "alpha": 1, "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]}], "texts": [], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[18990.0, 1.269101], [18995.0, 0.68672], [18996.0, 0.433525], [18998.0, 0.446517], [19002.0, 0.422206], [19003.0, 0.433348], [19004.0, 0.433827], [19005.0, 0.440752], [19006.0, 0.449687], [19006.0, 0.437149], [19010.0, 0.489827], [19011.0, 0.529105]]}, "id": "el683574752662640", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
-#    }(mpld3);
-# }else if(typeof define === "function" && define.amd){
-#    require.config({paths: {d3: "https://d3js.org/d3.v5"}});
-#    require(["d3"], function(d3){
-#       window.d3 = d3;
-#       mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
-         
-#          mpld3.draw_figure("1", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [18988.95, 19012.05], "ylim": [0.37986125000000004, 1.31144575], "xdomain": [[2021, 11, 27, 22, 48, 0, 0.0], [2022, 0, 20, 1, 12, 0, 0.0]], "ydomain": [0.37986125000000004, 1.31144575], "xscale": "date", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 6, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 7, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el683574752862896", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el683574832514160", "color": "#0000FF", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el683574832514160pts", "facecolor": "#0000FF", "edgecolor": "#0000FF", "edgewidth": 1.0, "alpha": 1, "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]}], "texts": [], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[18990.0, 1.269101], [18995.0, 0.68672], [18996.0, 0.433525], [18998.0, 0.446517], [19002.0, 0.422206], [19003.0, 0.433348], [19004.0, 0.433827], [19005.0, 0.440752], [19006.0, 0.449687], [19006.0, 0.437149], [19010.0, 0.489827], [19011.0, 0.529105]]}, "id": "el683574752662640", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
-#       });
-#     });
-# }else{
-#     mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
-#          mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
-                 
-#                  mpld3.draw_figure("1", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [18988.95, 19012.05], "ylim": [0.37986125000000004, 1.31144575], "xdomain": [[2021, 11, 27, 22, 48, 0, 0.0], [2022, 0, 20, 1, 12, 0, 0.0]], "ydomain": [0.37986125000000004, 1.31144575], "xscale": "date", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 6, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 7, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el683574752862896", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el683574832514160", "color": "#0000FF", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el683574832514160pts", "facecolor": "#0000FF", "edgecolor": "#0000FF", "edgewidth": 1.0, "alpha": 1, "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]}], "texts": [], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[18990.0, 1.269101], [18995.0, 0.68672], [18996.0, 0.433525], [18998.0, 0.446517], [19002.0, 0.422206], [19003.0, 0.433348], [19004.0, 0.433827], [19005.0, 0.440752], [19006.0, 0.449687], [19006.0, 0.437149], [19010.0, 0.489827], [19011.0, 0.529105]]}, "id": "el683574752662640", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
-#             });
-#          });
-# }
-# </script>
+# mpld3.show()
+# plt.show()
