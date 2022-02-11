@@ -18,12 +18,8 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
-# from floris.tools.visualization import visualize_cut_plane
-
 """
-00_getting_started
-
-This initial example creates a FLORIS instance 
+This example creates a FLORIS instance
 1) Makes a two-turbine layout
 2) Demonstrates single ws/wd simulations
 3) Demonstrates mulitple ws/wd simulations
@@ -64,8 +60,8 @@ print('===========')
 
 # Make a small plot
 fig, ax = plt.subplots()
-ax.plot(wind_speeds,turbine_powers[:,:,0].flatten(), color='k',label='Turbine 0' )
-ax.plot(wind_speeds,turbine_powers[:,:,1].flatten(), color='r',label='Turbine 1' )
+ax.plot(wind_speeds, turbine_powers[:,:,0].flatten(), color='k', marker='o', label='Turbine 0' )
+ax.plot(wind_speeds, turbine_powers[:,:,1].flatten(), color='r', marker='o', label='Turbine 1' )
 ax.grid()
 ax.legend()
 ax.set_ylabel('Power (kW)')
