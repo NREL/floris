@@ -694,11 +694,18 @@ def test_regression_secondary_steering(sample_inputs_fixture):
 def test_regression_small_grid_rotation(sample_inputs_fixture):
     """
     Where wake models are masked based on the x-location of a turbine, numerical precision
-    can cause masking to fail unexpectedly. Specifically,
+    can cause masking to fail unexpectedly. For example, in the configuration here one of
+    the turbines has these delta x values;
 
+    [[4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]]
 
-    This test ensures that at least in this particular configuration the masking
-    correctly filters grid points.
+    and therefore the masking statement is False when it should be True. This causes the current
+    turbine to be affected by its own wake. This test requires that at least in this particular
+    configuration the masking correctly filters grid points.
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
