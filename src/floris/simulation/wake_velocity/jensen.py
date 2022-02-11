@@ -114,7 +114,7 @@ class JensenVelocityDeficit(BaseModel):
         # np.nan_to_num
 
         # C should be 0 at the current turbine and everywhere in front of it
-        upstream_mask = np.array(dx <= 0.0, dtype=bool)
+        upstream_mask = np.array(dx <= 0.1, dtype=bool)
         # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
         boundary_mask = np.array( np.sqrt(dy ** 2 + dz ** 2) > boundary_line, dtype=bool)
 
