@@ -77,7 +77,10 @@ ax.set_xlabel("Commit date")
 ax.set_ylabel("Time to solution (s)")
 ax.set_title("5x5 Wind Farm Timing Test", size=20)
 
-# print(mpld3.fig_to_html(fig, figid="timing"))
+with open('timing.html', 'w') as f:
+    plot_html = mpld3.fig_to_html(fig, figid="timing")
+    f.write(plot_html)
+
 # mpld3.show()
 # plt.show()
 
@@ -98,6 +101,9 @@ ax.set_xlabel("Commit date")
 ax.set_ylabel("Test coverage as a percentage of Python code")
 ax.set_title("Code Coverage", size=20)
 
-print(mpld3.fig_to_html(fig, figid="coverage"))
+with open('codecoverage.html', 'w') as f:
+    plot_html = mpld3.fig_to_html(fig, figid="coverage")
+    f.write(plot_html)
+
 # mpld3.show()
 # plt.show()
