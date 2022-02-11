@@ -1,5 +1,5 @@
 ---
 layout: default
-title: Model development
+title: Model Development
 nav_order: 3
 ---
