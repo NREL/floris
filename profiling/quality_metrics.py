@@ -34,7 +34,7 @@ X_COORDS, Y_COORDS = np.meshgrid(
 X_COORDS = X_COORDS.flatten()
 Y_COORDS = Y_COORDS.flatten()
 
-N_ITERATIONS = 10
+N_ITERATIONS = 20
 
 def time_profile(input_dict):
 
@@ -94,7 +94,6 @@ def memory_profile(input_dict):
             floris.steady_state_atmospheric_condition()
 
     print("Size of one data array:", 64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000), "MB")
-
 
 
 def test_mem_jensen_jimenez(sample_inputs_fixture):
