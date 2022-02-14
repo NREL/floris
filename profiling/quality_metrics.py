@@ -115,6 +115,7 @@ if __name__=="__main__":
     print("### Memory profiling")
     test_mem_jensen_jimenez(sample_inputs)
     
+    
     print()
     print("### Performance profiling")
     print(test_time_jensen_jimenez(sample_inputs))
