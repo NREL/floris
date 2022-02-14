@@ -93,7 +93,7 @@ def memory_profile(input_dict):
             floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
             floris.steady_state_atmospheric_condition()
 
-    print(64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000))
+    print("Size of one data array:", 64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000), "MB")
 
 
 
