@@ -1,4 +1,4 @@
-name: Code Quality Reporting
+name: Code Quality Check
 
 on: [push, pull_request]
 
