@@ -26,16 +26,15 @@ N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
 WIND_SPEEDS = np.arange(8.0, 12.0, 0.2)
 N_WIND_SPEEDS = len(WIND_SPEEDS)
 
-N_TURBINES = 10
+N_TURBINES = 3
 X_COORDS, Y_COORDS = np.meshgrid(
     5.0 * 126.0 * np.arange(0, N_TURBINES, 1),
     5.0 * 126.0 * np.arange(0, N_TURBINES, 1),
 )
 X_COORDS = X_COORDS.flatten()
 Y_COORDS = Y_COORDS.flatten()
-Z_COORDS = np.ones((9)) * 90.0
 
-N_ITERATIONS = 10
+N_ITERATIONS = 20
 
 def time_profile(input_dict):
 
@@ -94,8 +93,7 @@ def memory_profile(input_dict):
             floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
             floris.steady_state_atmospheric_condition()
 
-    print(64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000))
-
+    print("Size of one data array:", 64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000), "MB")
 
 
 def test_mem_jensen_jimenez(sample_inputs_fixture):
@@ -107,10 +105,20 @@ def test_mem_jensen_jimenez(sample_inputs_fixture):
 if __name__=="__main__":
     from conftest import SampleInputs
     sample_inputs = SampleInputs()
+
     sample_inputs.floris["farm"]["layout_x"] = X_COORDS
     sample_inputs.floris["farm"]["layout_y"] = Y_COORDS
+    sample_inputs.floris["flow_field"]["wind_directions"] = WIND_DIRECTIONS
+    sample_inputs.floris["flow_field"]["wind_speeds"] = WIND_SPEEDS
+
+    print()
+    print("### Memory profiling")
     test_mem_jensen_jimenez(sample_inputs)
-    # print(test_time_jensen_jimenez(SampleInputs()))
-    # print(test_time_gauss(SampleInputs()))
-    # print(test_time_gch(SampleInputs()))
-    # print(test_time_cumulative(SampleInputs()))
+    
+    
+    print()
+    print("### Performance profiling")
+    print(test_time_jensen_jimenez(sample_inputs))
+    print(test_time_gauss(sample_inputs))
+    print(test_time_gch(sample_inputs))
+    print(test_time_cumulative(sample_inputs))
