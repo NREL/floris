@@ -32,10 +32,6 @@ from floris.tools.visualization import visualize_cut_plane
 # streamlit run 12_streamlit_demo.py
 # """
 
-# I think this example shows some interesting things
-# 1) Something is odd with the Jensen model
-# 2) Doing reinitialize in a loop without redoing the interface gives an error (try it!)
-# 3) CC can't be visualized
 
 # Parameters
 wind_speed = 8.0
@@ -44,80 +40,114 @@ wind_speed = 8.0
 # Set to wide
 st.set_page_config(layout="wide")
 
-#Streamlit inputs
-wind_direction_user = st.sidebar.slider("Wind Direction", 240., 300., 285., step=1.)
+# Parameters
+D = 126. # Assume for convenience
+floris_model_list = ['jensen','gch','cc']
+color_dict = {
+    'jensen':'k',
+    'gch':'b',
+    'cc':'r'
+}
+
+# Streamlit inputs
+n_turbine_per_row = st.sidebar.slider("Turbines per row", 1, 8, 2, step=1)
+n_row = st.sidebar.slider("Number of rows", 1, 8,1, step=1)
 spacing = st.sidebar.slider("Turbine spacing (D)", 3., 10., 6., step=0.5)
-N = st.sidebar.slider("Turbines per row", 4, 8, 5, step=1)
+wind_direction = st.sidebar.slider("Wind Direction", 240., 300., 270., step=1.)
+wind_speed = st.sidebar.slider("Wind Speed", 4., 15., 8., step=0.25)
+turbulence_intensity = st.sidebar.slider("Turbulence Intensity", 0.01, 0.25, 0.06, step=0.01)
+floris_models = st.sidebar.multiselect("FLORIS Models", floris_model_list, floris_model_list)
+# floris_models_viz = st.sidebar.multiselect("FLORIS Models for Visualization", floris_model_list, floris_model_list)
+desc_yaw = st.sidebar.checkbox("Descending yaw pattern?",value=False)
+front_turbine_yaw = st.sidebar.slider("Upstream yaw angle", -30., 30., 20., step=0.5)
+
+# Define the layout
+X = []
+Y = []
+
+for x_idx in range(n_turbine_per_row):
+    for y_idx in range(n_row):
+        X.append(D * spacing * x_idx)
+        Y.append(D * spacing * y_idx)
+        
+turbine_labels = ['T%02d' % i for i in range(len(X))]
+
+# Set up the yaw angle values
+yaw_angles_base = np.zeros([1,1,len(X)])
+
+yaw_angles_yaw = np.zeros([1,1,len(X)])
+if not desc_yaw:
+    yaw_angles_yaw[:n_row] = front_turbine_yaw
+else:
+    yaw_angles_yaw[:n_row] = front_turbine_yaw
 
 
 
-# Get number of turbines and make 0 yaw angle matrix
-num_turbine = N**3
-yaw_angles = np.zeros((1, 1, num_turbine)) # 1 wd/ 1ws/ N*N turbines
+# Get a few quanitities
+num_models = len(floris_models)
 
-# Grab two different wake models
-fi_gch = FlorisInterface("inputs/gch.yaml")
+# Determine which models to plot given cant plot cc right now
+floris_models_viz = [m for m in floris_models if not 'cc' in m]
+num_models_to_viz = len(floris_models_viz)
 
+# Set up the visualization plot
+fig_viz, axarr_viz = plt.subplots(num_models_to_viz,2)
 
-# Define layout
-X, Y = np.meshgrid(
-    spacing * fi_gch.floris.turbine.rotor_diameter * np.arange(0, N, 1),
-    spacing * fi_gch.floris.turbine.rotor_diameter * np.arange(0, N, 1),
-)
-X = X.flatten()
-Y = Y.flatten()
+# Set up the turbine power plot
+fig_turb_pow, ax_turb_pow = plt.subplots()
 
-
-# Title
-st.title('FLORIS Model Comparison')
-
-# Create the main analysis image
-fig, axarr = plt.subplots(2,2)
-
-# Calculate for alligned case and user requested direction
-for wd_idx, wind_direction in enumerate([270., wind_direction_user]):
-
-    # Grab two different wake models
-    # Not positive why this is necessary 
-    # If you move this above the loop so it only happens once, there is an error
-    fi_jensen = FlorisInterface("inputs/jensen.yaml")
-    fi_gch = FlorisInterface("inputs/gch.yaml")
-    fi_cc = FlorisInterface("inputs/cc.yaml")
+# Now complete all these plots in a loop
+for fm in floris_models:
     
-    # Configure model
-    fi_jensen.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=0.05 )
-    fi_gch.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=0.06 )
-    fi_cc.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=0.1)
+    # Analyze the base case==================================================
+    print('Loading: ',fm)
+    fi = FlorisInterface("inputs/%s.yaml" % fm)
 
-    # Calculate wake
-    fi_jensen.calculate_wake(yaw_angles=yaw_angles)
-    fi_gch.calculate_wake(yaw_angles=yaw_angles)
-    fi_cc.calculate_wake(yaw_angles=yaw_angles)
+    # Set the layout, wind direction and wind speed
+    fi.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=turbulence_intensity )
 
-    # Get turbine powers
-    turbine_powers_jensen = fi_jensen.get_turbine_powers()
-    turbine_powers_gch = fi_gch.get_turbine_powers()
-    turbine_powers_cc = fi_cc.get_turbine_powers()
+    
+    fi.calculate_wake(yaw_angles=yaw_angles_base)
+    turbine_powers = fi.get_turbine_powers() / 1000.
+    ax_turb_pow.plot(turbine_labels,turbine_powers.flatten(),color=color_dict[fm],ls='-',marker='s',label='%s - baseline' % fm)
+    ax_turb_pow.grid(True)
+    ax_turb_pow.legend()
+    ax_turb_pow.set_xlabel('Turbine')
+    ax_turb_pow.set_ylabel('Power (kW)')
 
-    # Put the turbine powers in descending order
-    turbine_powers_jensen = np.sort(turbine_powers_jensen.flatten())[::-1]/1000.
-    turbine_powers_gch = np.sort(turbine_powers_gch.flatten())[::-1]/1000.
-    turbine_powers_cc = np.sort(turbine_powers_cc.flatten())[::-1]/1000.
+    # If in viz list also visualize
+    if fm in floris_models_viz:
+        ax_idx = floris_models_viz.index(fm)
+        ax = axarr_viz[ax_idx, 0]
 
-    # Show the (GCH) Horizontal plane
-    horizontal_plane_gch = fi_gch.get_hor_plane(x_resolution=100, y_resolution=100)
-    ax = axarr[0,wd_idx]
-    visualize_cut_plane(horizontal_plane_gch, ax=ax, title="Wind Direction = %.1f" % wind_direction)
+        horizontal_plane_gch = fi.get_hor_plane(x_resolution=100, y_resolution=100)
+        visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - baseline' % fm)
 
-    # Compare the power production
-    ax = axarr[1,wd_idx]
-    ax.plot(turbine_powers_jensen,color='k',label='Jensen')
-    ax.plot(turbine_powers_gch,color='b',label='GCH')
-    ax.plot(turbine_powers_cc,ls='--',color='r',label='CC')
-    ax.grid(True)
-    ax.legend()
-    ax.set_ylabel('Power (kW)')
-    ax.set_xlabel('Turbine (sorted)')
+    # Analyze the yawed case==================================================
+    print('Loading: ',fm)
+    fi = FlorisInterface("inputs/%s.yaml" % fm)
 
-# Show the figure
-st.write(fig)
+    # Set the layout, wind direction and wind speed
+    fi.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=turbulence_intensity )
+
+    
+    fi.calculate_wake(yaw_angles=yaw_angles_yaw)
+    turbine_powers = fi.get_turbine_powers() / 1000.
+    ax_turb_pow.plot(turbine_labels,turbine_powers.flatten(),color=color_dict[fm],ls='--',marker='o',label='%s - yawed' % fm)
+    ax_turb_pow.grid(True)
+    ax_turb_pow.legend()
+    ax_turb_pow.set_xlabel('Turbine')
+    ax_turb_pow.set_ylabel('Power (kW)')
+
+    # If in viz list also visualize
+    if fm in floris_models_viz:
+        ax_idx = floris_models_viz.index(fm)
+        ax = axarr_viz[ax_idx, 1]
+
+        horizontal_plane_gch = fi.get_hor_plane(x_resolution=100, y_resolution=100)
+        visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - yawed' % fm)
+
+st.header("Visualizations")        
+st.write(fig_viz)
+st.header("Power Comparison")
+st.write(fig_turb_pow)
