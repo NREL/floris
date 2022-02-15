@@ -72,7 +72,7 @@ mpld3.plugins.connect(fig, tooltip)
 
 ax.legend(loc="lower left")
 ax.grid(True, alpha=0.3)
-ax.set_ylim(0.0, 2.0)
+ax.set_ylim(0.0, 2.5)
 ax.set_xlabel("Commit date")
 ax.set_ylabel("Time to solution (s)")
 ax.set_title("5x5 Wind Farm Timing Test", size=20)
