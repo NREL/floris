@@ -45,15 +45,9 @@ class FlowField(FromDictMixin):
     u: NDArrayFloat = field(init=False, default=np.array([]))
     v: NDArrayFloat = field(init=False, default=np.array([]))
     w: NDArrayFloat = field(init=False, default=np.array([]))
-    speed_ups: NDArrayFloat = field(init=False, default=np.array([]))
     het_map: list = field(init=False, default=None)
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
-
-    def __attrs_post_init__(self) -> None:
-        # If no hetergeneous inflow defined, then set all speeds ups to 1.0
-        if np.size(self.speed_ups) == 0:
-            self.speed_ups = np.ones_like(self.wind_directions)[:, None, None, None, None]
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
@@ -78,13 +72,17 @@ class FlowField(FromDictMixin):
         # wind profile.
         wind_profile_plane = (grid.z / self.reference_wind_height) ** self.wind_shear
 
-        # If heterogeneous flow data is provided by the user, the spped up values at the defined
+        # If no hetergeneous inflow defined, then set all speeds ups to 1.0
+        if self.het_map is None:
+            speed_ups = 1.0
+
+        # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
-        if self.het_map is not None:
+        else:
             if len(self.het_map[0][0].points[0]) == 2:
-                self.speed_ups = self.calculate_speed_ups(self.het_map, grid.x, grid.y)
+                speed_ups = self.calculate_speed_ups(self.het_map, grid.x, grid.y)
             elif len(self.het_map[0][0].points[0]) == 3:
-                self.speed_ups = self.calculate_speed_ups(self.het_map, grid.x, grid.y, grid.z)
+                speed_ups = self.calculate_speed_ups(self.het_map, grid.x, grid.y, grid.z)
 
         # Create the sheer-law wind profile
         # This array is of shape (# wind directions, # wind speeds, grid.template_array)
@@ -92,7 +90,7 @@ class FlowField(FromDictMixin):
         # here to do broadcasting from left to right (transposed), and then transpose back.
         # The result is an array the wind speed and wind direction dimensions on the left side
         # of the shape and the grid.template array on the right
-        self.u_initial = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * self.speed_ups
+        self.u_initial = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * speed_ups
         self.v_initial = np.zeros(np.shape(self.u_initial), dtype=self.u_initial.dtype)
         self.w_initial = np.zeros(np.shape(self.u_initial), dtype=self.u_initial.dtype)
 
