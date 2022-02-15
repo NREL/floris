@@ -1,0 +1,29 @@
+name: Code Quality Check
+
+on: [push, pull_request]
+
+jobs:
+
+  code-qa-validation:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.9]
+        os: [ubuntu-latest]
+      fail-fast: False
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install project
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+    - name: Run the code quality script
+      run: |
+        cd profiling
+        python quality_metrics.py

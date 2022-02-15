@@ -16,6 +16,7 @@
 import copy
 import numpy as np
 import time
+import warnings
 
 from floris.simulation import Floris
 from linux_perf import perf
@@ -26,33 +27,37 @@ N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
 WIND_SPEEDS = np.arange(8.0, 12.0, 0.2)
 N_WIND_SPEEDS = len(WIND_SPEEDS)
 
-N_TURBINES = 10
+N_TURBINES = 3
 X_COORDS, Y_COORDS = np.meshgrid(
     5.0 * 126.0 * np.arange(0, N_TURBINES, 1),
     5.0 * 126.0 * np.arange(0, N_TURBINES, 1),
 )
 X_COORDS = X_COORDS.flatten()
 Y_COORDS = Y_COORDS.flatten()
-Z_COORDS = np.ones((9)) * 90.0
 
-N_ITERATIONS = 10
+N_ITERATIONS = 20
+
+
+def run_floris(input_dict):
+    try:
+        start = time.perf_counter()
+        floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
+        floris.steady_state_atmospheric_condition()
+        end = time.perf_counter()
+        return end - start
+    except KeyError as e:
+        # Catch the errors when an invalid wake model was given because the model was not yet implemented
+        return -1.0
+
 
 def time_profile(input_dict):
 
     # Run once to initialize Python and memory
-    floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
-    floris.steady_state_atmospheric_condition()
+    run_floris(input_dict)
 
     times = np.zeros(N_ITERATIONS)
     for i in range(N_ITERATIONS):
-        start = time.perf_counter()
-
-        floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
-        floris.steady_state_atmospheric_condition()
-
-        end = time.perf_counter()
-
-        times[i] = end - start
+        times[i] = run_floris(input_dict)
 
     return np.sum(times) / N_ITERATIONS
 
@@ -94,8 +99,7 @@ def memory_profile(input_dict):
             floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
             floris.steady_state_atmospheric_condition()
 
-    print(64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000))
-
+    print("Size of one data array:", 64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000), "MB")
 
 
 def test_mem_jensen_jimenez(sample_inputs_fixture):
@@ -105,12 +109,25 @@ def test_mem_jensen_jimenez(sample_inputs_fixture):
     
 
 if __name__=="__main__":
+    warnings.filterwarnings('ignore')
+
     from conftest import SampleInputs
     sample_inputs = SampleInputs()
+
     sample_inputs.floris["farm"]["layout_x"] = X_COORDS
     sample_inputs.floris["farm"]["layout_y"] = Y_COORDS
+    sample_inputs.floris["flow_field"]["wind_directions"] = WIND_DIRECTIONS
+    sample_inputs.floris["flow_field"]["wind_speeds"] = WIND_SPEEDS
+
+    print()
+    print("### Memory profiling")
     test_mem_jensen_jimenez(sample_inputs)
-    # print(test_time_jensen_jimenez(SampleInputs()))
-    # print(test_time_gauss(SampleInputs()))
-    # print(test_time_gch(SampleInputs()))
-    # print(test_time_cumulative(SampleInputs()))
+    
+    print()
+    print("### Performance profiling")
+    time_jensen = test_time_jensen_jimenez(sample_inputs)
+    time_gauss = test_time_gauss(sample_inputs)
+    time_gch = test_time_gch(sample_inputs)
+    time_cc = test_time_cumulative(sample_inputs)
+
+    print("{:.4f} {:.4f} {:.4f} {:.4f}".format(time_jensen, time_gauss, time_gch, time_cc))
