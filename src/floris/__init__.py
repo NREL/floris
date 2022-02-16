@@ -14,7 +14,5 @@
 
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent.parent
-with open(ROOT / "VERSION") as version_file:
-    VERSION = version_file.read().strip()
-__version__ = VERSION
+with open(Path(__file__).parent.parent / "VERSION") as _version_file:
+    __version__ = _version_file.read().strip()
