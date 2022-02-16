@@ -13,6 +13,7 @@
 from typing import Any, Dict
 
 from attrs import define, field
+import numexpr as ne
 import numpy as np
 
 from floris.simulation import BaseModel
@@ -104,13 +105,13 @@ class JimenezVelocityDeflection(BaseModel):
 
         # angle of deflection
         xi_init = cosd(yaw_i) * sind(yaw_i) * ct_i / 2.0
+
+        """
         delta_x = x - x_i
 
         # yaw displacement
         A = 15 * (2 * self.kd * delta_x / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / reference_rotor_diameter) * (
-            2 * self.kd * delta_x / reference_rotor_diameter + 1
-        ) ** 5.0
+        B = (30 * self.kd / reference_rotor_diameter) * ( 2 * self.kd * delta_x / reference_rotor_diameter + 1 ) ** 5.0
         C = xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
@@ -120,5 +121,20 @@ class JimenezVelocityDeflection(BaseModel):
         # This has the same shape as the grid
 
         deflection = yYaw_init + self.ad + self.bd * delta_x
+        """
+
+        # Numexpr - do not change below without corresponding changes above.
+        kd = self.kd
+        ad = self.ad
+        bd = self.bd
+
+        delta_x = ne.evaluate("x - x_i")
+        A = ne.evaluate("15 * (2 * kd * delta_x / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0")
+        B = ne.evaluate("(30 * kd / reference_rotor_diameter) * ( 2 * kd * delta_x / reference_rotor_diameter + 1 ) ** 5.0")
+        C = ne.evaluate("xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0)")
+        D = ne.evaluate("30 * kd")
+
+        yYaw_init = ne.evaluate("(xi_init * A / B) - (C / D)")
+        deflection = ne.evaluate("yYaw_init + ad + bd * delta_x")
 
         return deflection
