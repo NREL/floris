@@ -239,13 +239,15 @@ def reverse_cut_plane_x_axis_in_plot(ax):
 
 def plot_rotor_values(
     values: np.ndarray,
-    wd_range = None,
-    ws_range = None,
-    t_range = None,
+    wd_index: int,
+    ws_index: int,
+    n_rows: int,
+    n_cols: int,
+    t_range: range | None = None,
     cmap: str = "coolwarm",
     return_fig_objects: bool = False,
     save_path: Union[str, None] = None,
-    show = False
+    show: bool = False
 ) -> Union[None, tuple[plt.figure, plt.axes]]:
     """Plots the gridded turbine rotor values. This is intended to be used for
     understanding the differences between two sets of values, so each subplot can be
@@ -273,36 +275,24 @@ def plot_rotor_values(
 
     cmap = plt.cm.get_cmap(name=cmap)
 
-    if wd_range is None:
-        wd_range = range(values.shape[0])
-    if ws_range is None:
-        ws_range = range(values.shape[1])
     if t_range is None:
         t_range = range(values.shape[2])
 
-    n_wd = len(wd_range)
-    n_ws = len(ws_range)
-    n_turb = len(t_range)
-
-    ncols = n_turb
-    nrows = n_wd * n_ws
-
     fig = plt.figure()
-    axes = fig.subplots(nrows, ncols)
+    axes = fig.subplots(n_rows, n_cols)
 
-    indices = list(product(wd_range, ws_range, t_range))
-    titles = np.array([f"[{i},{j},{k}]" for i, j, k in indices])
-    titles = titles.reshape(n_wd, n_ws, n_turb)
+    indices = t_range
+    titles = np.array([f"T{i}" for i in indices])
 
-    for ax, t, (i, j, k) in zip(axes.flatten(), titles.flatten(), indices):
+    for ax, t, i in zip(axes.flatten(), titles, indices):
 
-        vmin = np.min(values[i, j])
-        vmax = np.max(values[i, j])
+        vmin = np.min(values[wd_index, ws_index])
+        vmax = np.max(values[wd_index, ws_index])
 
-        bounds = np.linspace(vmin, vmax, 61)
+        bounds = np.linspace(vmin, vmax, 31)
         norm = mplcolors.BoundaryNorm(bounds, cmap.N)
 
-        ax.imshow(values[i, j, k].T, cmap=cmap, norm=norm, origin="lower")
+        ax.imshow(values[wd_index, ws_index, i].T, cmap=cmap, norm=norm, origin="lower")
 
         ax.set_xticks([])
         ax.set_yticks([])
