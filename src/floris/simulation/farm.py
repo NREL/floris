@@ -16,12 +16,13 @@ from typing import Any, List
 import attrs
 from attrs import define, field
 import numpy as np
+import os.path
 
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat
 )
-from floris.utilities import Vec3
+from floris.utilities import Vec3, load_yaml
 from floris.simulation import BaseClass
 from floris.simulation import Turbine
 
@@ -58,6 +59,26 @@ class Farm(BaseClass):
     def check_y(self, instance: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
+
+    @turbine_type.validator
+    def check_turbine_type(self, instance: attrs.Attribute, value: Any) -> None:
+        if len(value) != len(self.layout_x):
+            raise ValueError("turbine_type must have the same number of entries as layout_x/layout_y.")
+
+    @turbine_definitions.validator
+    def check_turbine_definitions(self, instance: attrs.Attribute, value: Any) -> None:
+        for val in value:
+            # print(len(value[val]))
+            # print(value[val][0])
+            if len(value[val]) == 1:
+                # print(value[val].keys())
+                if "turbine_type" not in value[val].keys():
+                    raise ValueError("turbine_type property is required to use the turbine definition library. Please check your turbine_definitions input for '{}'.".format(val))
+                file_dir = os.path.dirname(os.path.abspath(__file__))
+                fname = os.path.join(file_dir, "../../../examples/inputs/turbine_definitions/" + value[val]["turbine_type"] + ".yaml")
+                if not os.path.isfile(fname):
+                    raise ValueError("User-selected turbine definition does not exist in pre-defined turbine library.")
+                self.turbine_definitions[val] = load_yaml(fname)
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
