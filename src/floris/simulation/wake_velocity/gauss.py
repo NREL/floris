@@ -37,15 +37,12 @@ class GaussVelocityDeficit(BaseModel):
         self,
         grid: Grid,
         flow_field: FlowField,
-        turbine: Turbine
     ) -> Dict[str, Any]:
 
         kwargs = dict(
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            reference_hub_height=turbine.hub_height,
-            reference_rotor_diameter=turbine.rotor_diameter,
             u_initial=flow_field.u_initial,
             wind_veer=flow_field.wind_veer
         )
@@ -62,14 +59,14 @@ class GaussVelocityDeficit(BaseModel):
         yaw_angle_i: np.ndarray,
         turbulence_intensity_i: np.ndarray,
         ct_i: np.ndarray,
+        hub_height_i: float,
+        rotor_diameter_i: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        reference_hub_height: float,
-        reference_rotor_diameter: np.ndarray,
         u_initial: np.ndarray,
         wind_veer: float
     ) -> None:
@@ -86,7 +83,7 @@ class GaussVelocityDeficit(BaseModel):
         u0 = u_initial * np.sqrt(1 - ct_i)
 
         # Initial lateral bounds
-        sigma_z0 = reference_rotor_diameter * 0.5 * np.sqrt(uR / (u_initial + u0))
+        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
         sigma_y0 = sigma_z0 * cosd(yaw_angle) * cosd(wind_veer)
 
 
@@ -97,7 +94,7 @@ class GaussVelocityDeficit(BaseModel):
 
         # Start of the far wake
         x0 = np.ones_like(u_initial)
-        x0 *= reference_rotor_diameter * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
+        x0 *= rotor_diameter_i * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
         x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) ) )
         x0 += x_i
 
@@ -121,11 +118,11 @@ class GaussVelocityDeficit(BaseModel):
             near_wake_ramp_down = (x0 - x) / (x0 - xR)  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
             # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
 
-            sigma_y = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
-            sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * reference_rotor_diameter
+            sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
+            sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * rotor_diameter_i
             
-            sigma_z = near_wake_ramp_down * 0.501 * reference_rotor_diameter * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
-            sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * reference_rotor_diameter
+            sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
+            sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * rotor_diameter_i
 
             r, C = rC(
                 wind_veer,
@@ -135,10 +132,10 @@ class GaussVelocityDeficit(BaseModel):
                 y_i,
                 deflection_field_i,
                 z,
-                reference_hub_height,
+                hub_height_i,
                 ct_i,
                 yaw_angle,
-                reference_rotor_diameter
+                rotor_diameter_i
             )
 
             near_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
@@ -164,10 +161,10 @@ class GaussVelocityDeficit(BaseModel):
                 y_i,
                 deflection_field_i,
                 z,
-                reference_hub_height,
+                hub_height_i,
                 ct_i,
                 yaw_angle,
-                reference_rotor_diameter
+                rotor_diameter_i
             )
 
             far_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))

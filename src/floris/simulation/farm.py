@@ -23,6 +23,7 @@ from floris.type_dec import (
 )
 from floris.utilities import Vec3
 from floris.simulation import BaseClass
+from floris.simulation import Turbine
 
 
 @define
@@ -41,9 +42,12 @@ class Farm(BaseClass):
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
+    turbine_type: List = field()
+    turbine_definitions: dict = field()
 
     yaw_angles: NDArrayFloat = field(init=False)
     coordinates: List[Vec3] = field(init=False)
+    hub_heights: NDArrayFloat = field(init=False)
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
@@ -63,9 +67,55 @@ class Farm(BaseClass):
             axis=2,
         )
 
+    def construct_hub_heights(self):
+        self.hub_heights = np.array([self.turbine_definitions[turb_type]['hub_height'] for turb_type in self.turbine_type])
+
+    def construct_rotor_diameters(self):
+        self.rotor_diameters = np.array([self.turbine_definitions[turb_type]['rotor_diameter'] for turb_type in self.turbine_type])#[None, None, :, None, None]
+
+    def construct_turbine_TSRs(self):
+        self.TSRs = np.array([self.turbine_definitions[turb_type]['TSR'] for turb_type in self.turbine_type])
+
+    def construc_turbine_pPs(self):
+        self.pPs = np.array([self.turbine_definitions[turb_type]['pP'] for turb_type in self.turbine_type])
+
+    def construct_turbine_map(self):
+        self.turbine_map = [Turbine.from_dict(self.turbine_definitions[turb_type]) for turb_type in self.turbine_type]
+
+    def construct_turbine_fCts(self):
+        self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
+
+    def construct_turbine_fCps(self):
+        self.turbine_fCps = [turb.fCp_interp for turb in self.turbine_map]
+
+    def construct_turbine_power_interps(self):
+        self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
+
     def construct_coordinates(self, reference_z: float):
         self.coordinates = np.array(
-            [Vec3([x, y, reference_z]) for x, y in zip(self.layout_x, self.layout_y)]
+            [Vec3([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)]
+        )
+
+    def expand_farm_properties(self, n_wind_directions: int, n_wind_speeds: int, sorted_coord_indices):
+        template_shape = np.ones_like(sorted_coord_indices)
+        self.hub_heights = np.take_along_axis(self.hub_heights * template_shape, sorted_coord_indices, axis=2)
+        self.rotor_diameters = np.take_along_axis(self.rotor_diameters * template_shape, sorted_coord_indices, axis=2)
+        self.TSRs = np.take_along_axis(self.TSRs * template_shape, sorted_coord_indices, axis=2)
+        self.pPs = np.take_along_axis(self.pPs * template_shape, sorted_coord_indices, axis=2)
+        self.turbine_fCts = np.take_along_axis(
+            np.reshape(self.turbine_fCts * n_wind_directions * n_wind_speeds, np.shape(sorted_coord_indices)),
+            sorted_coord_indices,
+            axis=2
+        )
+        self.turbine_fCps = np.take_along_axis(
+            np.reshape(self.turbine_fCps * n_wind_directions * n_wind_speeds, np.shape(sorted_coord_indices)),
+            sorted_coord_indices,
+            axis=2
+        )
+        self.turbine_power_interps = np.take_along_axis(
+            np.reshape(self.turbine_power_interps * n_wind_directions * n_wind_speeds, np.shape(sorted_coord_indices)),
+            sorted_coord_indices,
+            axis=2
         )
 
     def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
@@ -74,6 +124,13 @@ class Farm(BaseClass):
 
     def finalize(self, unsorted_indices):
         self.yaw_angles = np.take_along_axis(self.yaw_angles, unsorted_indices[:,:,:,0,0], axis=2)
+        self.hub_heights = np.take_along_axis(self.hub_heights , unsorted_indices[:,:,:,0,0], axis=2)
+        self.rotor_diameters = np.take_along_axis(self.rotor_diameters, unsorted_indices[:,:,:,0,0], axis=2)
+        self.TSRs = np.take_along_axis(self.TSRs, unsorted_indices[:,:,:,0,0], axis=2)
+        self.pPs = np.take_along_axis(self.pPs, unsorted_indices[:,:,:,0,0], axis=2)
+        self.turbine_fCts = np.take_along_axis(self.turbine_fCts, unsorted_indices[:,:,:,0,0], axis=2)
+        self.turbine_fCps = np.take_along_axis(self.turbine_fCps, unsorted_indices[:,:,:,0,0], axis=2)
+        self.turbine_power_interps = np.take_along_axis(self.turbine_power_interps, unsorted_indices[:,:,:,0,0], axis=2)
 
     @property
     def n_turbines(self):

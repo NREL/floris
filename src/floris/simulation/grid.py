@@ -129,6 +129,7 @@ class TurbineGrid(Grid):
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
     sorted_indices: NDArrayInt = field(init=False)
+    sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
 
     def __attrs_post_init__(self) -> None:
@@ -196,16 +197,20 @@ class TurbineGrid(Grid):
         )
 
         # Calculate the radial distance from the center of the turbine rotor
-        disc_grid = np.linspace(-1 * disc_area_radius, disc_area_radius, self.grid_resolution, dtype=floris_float_type)
-
+        disc_grid = np.linspace(
+            -1 * disc_area_radius,
+            disc_area_radius,
+            self.grid_resolution,
+            dtype=floris_float_type,
+            axis=1
+        )
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
         _x = x[:, :, :, None, None] * template_grid
 
-        ones_grid = np.ones((self.grid_resolution, self.grid_resolution), dtype=floris_float_type)
-        # [:, None] on disc_grid below is effectively a transpose of this vector; compare with disc_grid.reshape(1,-1).T
-        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[:, None] * ones_grid )
-        _z = z[:, :, :, None, None] + template_grid * ( disc_grid * ones_grid )
+        ones_grid = np.ones((self.n_turbines, self.grid_resolution, self.grid_resolution), dtype=floris_float_type)
+        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[None, None, :, :, None])
+        _z = z[:, :, :, None, None] + template_grid * ( disc_grid[:, None, :] * ones_grid )
 
         # Sort the turbines at each wind direction
 
@@ -213,6 +218,7 @@ class TurbineGrid(Grid):
         # to sort the turbines from upstream to downstream for all wind directions.
         # Also, store the indices to sort them back for when the calculation finishes.
         self.sorted_indices = _x.argsort(axis=2)
+        self.sorted_coord_indices = x.argsort(axis=2)
         self.unsorted_indices = self.sorted_indices.argsort(axis=2)
 
         # Put the turbines into the final arrays in their sorted order
@@ -324,7 +330,7 @@ class FlowFieldPlanarGrid(Grid):
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
 
-        max_diameter = self.reference_turbine_diameter
+        max_diameter = np.max(self.reference_turbine_diameter)
 
         if self.normal_vector == "z":  # Rules of thumb for horizontal plane
             if self.x1_bounds is None:

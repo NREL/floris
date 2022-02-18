@@ -85,7 +85,6 @@ class GaussVelocityDeflection(BaseModel):
         self,
         grid: Grid,
         flow_field: FlowField,
-        turbine: Turbine
     ) -> Dict[str, Any]:
 
         kwargs = dict(
@@ -94,7 +93,6 @@ class GaussVelocityDeflection(BaseModel):
             z=grid.z,
             freestream_velocity=flow_field.u_initial,
             wind_veer=flow_field.wind_veer,
-            reference_rotor_diameter=turbine.rotor_diameter,
         )
         return kwargs
 
@@ -106,13 +104,13 @@ class GaussVelocityDeflection(BaseModel):
         yaw_i: np.ndarray,
         turbulence_intensity_i: np.ndarray,
         ct_i: np.ndarray,
+        rotor_diameter_i: float,
         *,
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
         freestream_velocity: np.ndarray,
         wind_veer: float,
-        reference_rotor_diameter: float,
     ):
         """
         Calculates the deflection field of the wake. See
@@ -159,7 +157,7 @@ class GaussVelocityDeflection(BaseModel):
 
         # length of near wake
         x0 = (
-            reference_rotor_diameter
+            rotor_diameter_i
             * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
             / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
             + x_i
@@ -174,7 +172,7 @@ class GaussVelocityDeflection(BaseModel):
         E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
 
         # initial Gaussian wake expansion
-        sigma_z0 = reference_rotor_diameter * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
+        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
         sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
 
         yR = y - y_i
