@@ -331,6 +331,7 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(
             solver_settings=current_solver_settings
         )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake()
 
         return horizontal_plane
@@ -413,6 +414,7 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(
             solver_settings=current_solver_settings
         )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake()
 
         return cross_plane
@@ -494,6 +496,7 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(
             solver_settings=current_solver_settings
         )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake()
 
         return y_plane

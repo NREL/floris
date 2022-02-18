@@ -50,7 +50,8 @@ solver_settings = {
 # with the new configuration
 fi.reinitialize(solver_settings=solver_settings)
 
-# Run the wake calculation
+# Run the wake calculation to get the turbine-turbine interfactions
+# on the turbine grids
 fi.calculate_wake()
 
 # Plot the values at each rotor
@@ -69,7 +70,6 @@ y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100)
 cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100)
 
 fi.calculate_wake()
-print(fi.get_turbine_powers())
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
