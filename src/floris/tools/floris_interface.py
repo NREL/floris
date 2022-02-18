@@ -119,6 +119,7 @@ class FlorisInterface(LoggerBase):
         air_density: float | None = None,
         # wake: WakeModelManager = None,
         layout: Tuple[list[float], list[float]] | Tuple[NDArrayFloat, NDArrayFloat] | None = None,
+        turbine_type: list | None = None,
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
@@ -146,10 +147,11 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
-
         if layout is not None:
             farm_dict["layout_x"] = layout[0]
             farm_dict["layout_y"] = layout[1]
+        if turbine_type is not None:
+            farm_dict["turbine_type"] = turbine_type
 
         ## Wake
         # if wake is not None:
