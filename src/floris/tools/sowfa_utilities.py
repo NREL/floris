@@ -206,7 +206,7 @@ class SowfaInterface(LoggerBase):
 
         return " "
 
-    def get_hor_plane(
+    def calculate_horizontal_plane(
         self, height, x_resolution=200, y_resolution=200, x_bounds=None, y_bounds=None
     ):
         """

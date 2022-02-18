@@ -299,7 +299,8 @@ def plot_rotor_values(
         ax.set_yticks([])
         ax.set_title(t)
 
-    cbar_ax = fig.add_axes([0.05, 0.125, 0.03, 0.75])
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.83, 0.25, 0.03, 0.5])
     cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax)
 
     if save_path:
