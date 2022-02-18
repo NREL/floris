@@ -69,8 +69,6 @@ horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=
 y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100)
 cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100)
 
-fi.calculate_wake()
-
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
