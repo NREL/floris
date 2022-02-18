@@ -291,7 +291,7 @@ def plot_rotor_values(
         vmax = np.max(values[wd_index, ws_index])
 
         bounds = np.linspace(vmin, vmax, 31)
-        norm = mplcolors.BoundaryNorm(bounds, cmap.N)
+        norm = mplcolors.Normalize(vmin, vmax)
 
         ax.imshow(values[wd_index, ws_index, i].T, cmap=cmap, norm=norm, origin="lower")
 

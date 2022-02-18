@@ -38,12 +38,12 @@ fi = FlorisInterface("inputs/gch.yaml")
 # placed on each rotor plane with 9 points in a 3x3 layout. This can
 # be plotted to show the wind conditions that each turbine is experiencing.
 # However, 9 points is very coarse for visualization so let's first
-# increase the rotor grid to 20x20 points.
+# increase the rotor grid to 10x10 points.
 
 # Create a solver settings dictionary with the new number of points
 solver_settings = {
   "type": "turbine_grid",
-  "turbine_grid_points": 20
+  "turbine_grid_points": 10
 }
 
 # Since we already have a FlorisInterface (fi), simply reinitialize it
@@ -64,9 +64,12 @@ plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_co
 # flow field.
 
 # Using the FlorisInterface functions, get 2D slices.
-horizontal_plane = fi.get_hor_plane(x_resolution=200, y_resolution=100)
-y_plane = fi.get_y_plane(x_resolution=200, z_resolution=100)
-cross_plane = fi.get_cross_plane(y_resolution=100, z_resolution=100)
+horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100)
+y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100)
+cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100)
+
+fi.calculate_wake()
+print(fi.get_turbine_powers())
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
