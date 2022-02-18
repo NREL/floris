@@ -206,7 +206,7 @@ class SowfaInterface(LoggerBase):
 
         return " "
 
-    def get_hor_plane(
+    def calculate_horizontal_plane(
         self, height, x_resolution=200, y_resolution=200, x_bounds=None, y_bounds=None
     ):
         """
@@ -235,7 +235,7 @@ class SowfaInterface(LoggerBase):
         # Compute and return the cutplane
         return CutPlane(df)
 
-    def get_cross_plane(
+    def calculate_cross_plane(
         self, x_loc, x_resolution=200, y_resolution=200, x_bounds=None, y_bounds=None
     ):
         """
@@ -262,7 +262,7 @@ class SowfaInterface(LoggerBase):
         # Compute and return the cutplane
         return CutPlane(df)
 
-    def get_y_plane(
+    def calculate_y_plane(
         self, y_loc, x_resolution=200, y_resolution=200, x_bounds=None, y_bounds=None
     ):
         """

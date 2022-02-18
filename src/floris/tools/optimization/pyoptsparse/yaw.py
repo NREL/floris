@@ -195,11 +195,11 @@ class Yaw:
         self.fi.calculate_wake(yaw_angles=yaw)
 
         # Initialize the horizontal cut
-        hor_plane = self.fi.get_hor_plane(x_resolution=400, y_resolution=100)
+        horizontal_plane = self.fi.calculate_horizontal_plane(x_resolution=400, y_resolution=100)
 
         # Plot and show
         fig, ax = plt.subplots()
-        visualize_cut_plane(hor_plane, ax=ax)
+        visualize_cut_plane(horizontal_plane, ax=ax)
         ax.set_title(
             "Optimal Yaw Offsets for U = "
             + str(self.wspd[0])

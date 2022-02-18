@@ -291,7 +291,7 @@ def plot_rotor_values(
         vmax = np.max(values[wd_index, ws_index])
 
         bounds = np.linspace(vmin, vmax, 31)
-        norm = mplcolors.BoundaryNorm(bounds, cmap.N)
+        norm = mplcolors.Normalize(vmin, vmax)
 
         ax.imshow(values[wd_index, ws_index, i].T, cmap=cmap, norm=norm, origin="lower")
 
@@ -299,7 +299,8 @@ def plot_rotor_values(
         ax.set_yticks([])
         ax.set_title(t)
 
-    cbar_ax = fig.add_axes([0.05, 0.125, 0.03, 0.75])
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.83, 0.25, 0.03, 0.5])
     cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax)
 
     if save_path:
