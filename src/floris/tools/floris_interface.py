@@ -453,11 +453,11 @@ class FlorisInterface(LoggerBase):
         # Compute and return the cutplane
         y_plane = CutPlane(df, x_resolution, z_resolution)
         return y_plane
-        
+
     def check_wind_condition_for_viz(self, wd=None, ws=None):
         if len(wd) > 1 or len(wd) < 1:
             raise ValueError("Wind direction input must be of length 1 for visualization. Current length is {}.".format(len(wd)))
-        
+
         if len(ws) > 1 or len(ws) < 1:
             raise ValueError("Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws)))
 
@@ -471,10 +471,32 @@ class FlorisInterface(LoggerBase):
             air_density=self.floris.flow_field.air_density,
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
-            pP=self.floris.turbine.pP,
-            power_interp=self.floris.turbine.power_interp,
+            pP=self.floris.farm.pPs,
+            power_interp=self.floris.farm.turbine_power_interps,
         )
         return turbine_powers
+
+    def get_turbine_Cts(self) -> NDArrayFloat:
+        turbine_Cts = Ct(
+            velocities=self.floris.flow_field.u,
+            yaw_angle=self.floris.farm.yaw_angles,
+            fCt=self.floris.farm.turbine_fCts,
+        )
+        return turbine_Cts
+
+    def get_turbine_ais(self) -> NDArrayFloat:
+        turbine_ais = axial_induction(
+            velocities=self.floris.flow_field.u,
+            yaw_angle=self.floris.farm.yaw_angles,
+            fCt=self.floris.farm.turbine_fCts,
+        )
+        return turbine_ais
+
+    def get_turbine_average_velocities(self) -> NDArrayFloat:
+        turbine_avg_vels = average_velocity(
+            velocities=self.floris.flow_field.u,
+        )
+        return turbine_avg_vels
 
     def get_farm_power(
         self,
