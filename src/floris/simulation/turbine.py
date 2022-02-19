@@ -83,6 +83,7 @@ def power(
     yaw_angle: NDArrayFloat,
     pP: float,
     power_interp: NDArrayObject,
+    turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
@@ -127,18 +128,16 @@ def power(
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         pP = pP[:, :, ix_filter]
-        power_interp = power_interp[:, :, ix_filter]
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
 
-    shape = np.shape(power_interp)
-    p = np.empty(shape)
-    for i in range(shape[0]):
-        for j in range(shape[1]):
-            for k in range(shape[2]):
-                p[i,j,k] = power_interp[i,j,k](yaw_effective_velocity[i,j,k])
+    turb_types = np.unique(turbine_type_map)
+    p = np.zeros(np.shape(yaw_effective_velocity))
+    power_interp = dict(power_interp)
+    for turb_type in turb_types:
+        p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
 
     return p * air_density
 
@@ -147,6 +146,7 @@ def Ct(
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     fCt: NDArrayObject,
+    turbine_type_map: NDArrayObject,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
 
@@ -172,15 +172,14 @@ def Ct(
         ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
-        fCt = fCt[:, :, ix_filter]
+        turbine_type_map = turbine_type_map[:, :, ix_filter]
 
     average_velocities = average_velocity(velocities)
-    shape = np.shape(average_velocities)
-    thrust_coefficient = np.empty(shape)
-    for i in range(shape[0]):
-        for j in range(shape[1]):
-            for k in range(shape[2]):
-                thrust_coefficient[i,j,k] = fCt[i,j,k](average_velocities[i,j,k])
+    turb_types = np.unique(turbine_type_map)
+    thrust_coefficient = np.zeros(np.shape(average_velocities))
+    fCt = dict(fCt)
+    for turb_type in turb_types:
+        thrust_coefficient += fCt[turb_type](average_velocities) * np.array(turbine_type_map == turb_type)
     thrust_coefficient = np.clip(thrust_coefficient, 0.0, 1.0)
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
     return effective_thrust
@@ -189,7 +188,8 @@ def Ct(
 def axial_induction(
     velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
-    fCt: NDArrayObject,  # (wind directions, wind speeds, turbines)
+    fCt: NDArrayObject,  # (turbines)
+    turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
@@ -212,7 +212,7 @@ def axial_induction(
         yaw_angle = np.array(yaw_angle)
 
     # Get Ct first before modifying any data
-    thrust_coefficient = Ct(velocities, yaw_angle, fCt, ix_filter)
+    thrust_coefficient = Ct(velocities, yaw_angle, fCt, turbine_type_map, ix_filter)
 
     # Then, process the input arguments as needed for this function
     ix_filter = _filter_convert(ix_filter, yaw_angle)

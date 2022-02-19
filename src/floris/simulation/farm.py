@@ -101,16 +101,16 @@ class Farm(BaseClass):
         self.pPs = np.array([self.turbine_definitions[turb_type]['pP'] for turb_type in self.turbine_type])
 
     def construct_turbine_map(self):
-        self.turbine_map = [Turbine.from_dict(self.turbine_definitions[turb_type]) for turb_type in self.turbine_type]
+        self.turbine_map = [Turbine.from_dict(self.turbine_definitions[turb_type]) for turb_type in np.unique(self.turbine_type)]
 
     def construct_turbine_fCts(self):
-        self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
+        self.turbine_fCts = [(turb.turbine_type, turb.fCt_interp) for turb in self.turbine_map]
 
     def construct_turbine_fCps(self):
-        self.turbine_fCps = [turb.fCp_interp for turb in self.turbine_map]
+        self.turbine_fCps = [(turb.turbine_type, turb.fCp_interp) for turb in self.turbine_map]
 
     def construct_turbine_power_interps(self):
-        self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
+        self.turbine_power_interps = [(turb.turbine_type, turb.power_interp) for turb in self.turbine_map]
 
     def construct_coordinates(self, reference_z: float):
         self.coordinates = np.array(
@@ -123,18 +123,8 @@ class Farm(BaseClass):
         self.rotor_diameters = np.take_along_axis(self.rotor_diameters * template_shape, sorted_coord_indices, axis=2)
         self.TSRs = np.take_along_axis(self.TSRs * template_shape, sorted_coord_indices, axis=2)
         self.pPs = np.take_along_axis(self.pPs * template_shape, sorted_coord_indices, axis=2)
-        self.turbine_fCts = np.take_along_axis(
-            np.reshape(self.turbine_fCts * n_wind_directions * n_wind_speeds, np.shape(sorted_coord_indices)),
-            sorted_coord_indices,
-            axis=2
-        )
-        self.turbine_fCps = np.take_along_axis(
-            np.reshape(self.turbine_fCps * n_wind_directions * n_wind_speeds, np.shape(sorted_coord_indices)),
-            sorted_coord_indices,
-            axis=2
-        )
-        self.turbine_power_interps = np.take_along_axis(
-            np.reshape(self.turbine_power_interps * n_wind_directions * n_wind_speeds, np.shape(sorted_coord_indices)),
+        self.turbine_type_map = np.take_along_axis(
+            np.reshape(self.turbine_type * n_wind_directions, np.shape(sorted_coord_indices)),
             sorted_coord_indices,
             axis=2
         )
@@ -149,9 +139,7 @@ class Farm(BaseClass):
         self.rotor_diameters = np.take_along_axis(self.rotor_diameters, unsorted_indices[:,:,:,0,0], axis=2)
         self.TSRs = np.take_along_axis(self.TSRs, unsorted_indices[:,:,:,0,0], axis=2)
         self.pPs = np.take_along_axis(self.pPs, unsorted_indices[:,:,:,0,0], axis=2)
-        self.turbine_fCts = np.take_along_axis(self.turbine_fCts, unsorted_indices[:,:,:,0,0], axis=2)
-        self.turbine_fCps = np.take_along_axis(self.turbine_fCps, unsorted_indices[:,:,:,0,0], axis=2)
-        self.turbine_power_interps = np.take_along_axis(self.turbine_power_interps, unsorted_indices[:,:,:,0,0], axis=2)
+        self.turbine_type_map = np.take_along_axis(self.turbine_type_map, unsorted_indices[:,:,:,0,0], axis=2)
 
     @property
     def n_turbines(self):

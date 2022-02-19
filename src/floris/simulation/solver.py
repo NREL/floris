@@ -82,6 +82,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             velocities=flow_field.u,
             yaw_angle=farm.yaw_angles,
             fCt=farm.turbine_fCts,
+            turbine_type_map=farm.turbine_type_map,
             ix_filter=[i],
         )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
@@ -89,6 +90,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             velocities=flow_field.u,
             yaw_angle=farm.yaw_angles,
             fCt=farm.turbine_fCts,
+            turbine_type_map=farm.turbine_type_map,
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
@@ -267,6 +269,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
             velocities=turbine_grid_flow_field.u,
             yaw_angle=turbine_grid_farm.yaw_angles,
             fCt=turbine_grid_farm.turbine_fCts,
+            turbine_type_map=turbine_grid_farm.turbine_type_map,
             ix_filter=[i],
         )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
@@ -274,6 +277,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
             velocities=turbine_grid_flow_field.u,
             yaw_angle=turbine_grid_farm.yaw_angles,
             fCt=turbine_grid_farm.turbine_fCts,
+            turbine_type_map=turbine_grid_farm.turbine_type_map,
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
@@ -395,6 +399,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             turb_avg_vels,
             farm.yaw_angles,
             turbine.fCt_interp,
+            turbine_type_map=farm.turbine_type_map,
         )
         turb_Cts = turb_Cts[:, :, :, None, None]     
         turb_aIs = axial_induction(

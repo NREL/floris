@@ -475,6 +475,7 @@ class FlorisInterface(LoggerBase):
             yaw_angle=self.floris.farm.yaw_angles,
             pP=self.floris.farm.pPs,
             power_interp=self.floris.farm.turbine_power_interps,
+            turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_powers
 
@@ -483,6 +484,7 @@ class FlorisInterface(LoggerBase):
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             fCt=self.floris.farm.turbine_fCts,
+            turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_Cts
 
@@ -491,6 +493,7 @@ class FlorisInterface(LoggerBase):
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             fCt=self.floris.farm.turbine_fCts,
+            turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_ais
 
