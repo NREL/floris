@@ -252,7 +252,7 @@ class FlorisInterface(LoggerBase):
 
         return df
 
-    def get_hor_plane(
+    def calculate_horizontal_plane(
         self,
         height=None,
         x_resolution=200,
@@ -294,6 +294,11 @@ class FlorisInterface(LoggerBase):
             height = self.floris.turbine.hub_height
             self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
+
+        # Store the turbine grid points for reinitialization
+        current_solver_settings = copy.deepcopy(self.floris.solver)
+
+        # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
             "normal_vector": "z",
@@ -319,11 +324,19 @@ class FlorisInterface(LoggerBase):
             planar_coordinate=height,
         )
 
-        # Compute and return the cutplane
-        hor_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
-        return hor_plane
+        # Compute the cutplane
+        horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
 
-    def get_cross_plane(
+        # Reset the fi object back to the turbine grid configuration
+        self.reinitialize(
+            solver_settings=current_solver_settings
+        )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.calculate_wake()
+
+        return horizontal_plane
+
+    def calculate_cross_plane(
         self,
         downstream_dist=None,
         y_resolution=200,
@@ -364,6 +377,11 @@ class FlorisInterface(LoggerBase):
         if downstream_dist is None:
             downstream_dist = 5 * 126.0
 
+
+        # Store the turbine grid points for reinitialization
+        current_solver_settings = copy.deepcopy(self.floris.solver)
+
+        # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
             "normal_vector": "x",
@@ -389,11 +407,19 @@ class FlorisInterface(LoggerBase):
             planar_coordinate=downstream_dist,
         )
 
-        # Compute and return the cutplane
+        # Compute the cutplane
         cross_plane = CutPlane(df, y_resolution, z_resolution)
+
+        # Reset the fi object back to the turbine grid configuration
+        self.reinitialize(
+            solver_settings=current_solver_settings
+        )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.calculate_wake()
+
         return cross_plane
 
-    def get_y_plane(
+    def calculate_y_plane(
         self,
         crossstream_dist=None,
         x_resolution=200,
@@ -434,6 +460,10 @@ class FlorisInterface(LoggerBase):
         if crossstream_dist is None:
             crossstream_dist = 0.0
 
+        # Store the turbine grid points for reinitialization
+        current_solver_settings = copy.deepcopy(self.floris.solver)
+
+        # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
             "normal_vector": "y",
@@ -459,8 +489,16 @@ class FlorisInterface(LoggerBase):
             planar_coordinate=crossstream_dist,
         )
 
-        # Compute and return the cutplane
+        # Compute the cutplane
         y_plane = CutPlane(df, x_resolution, z_resolution)
+
+        # Reset the fi object back to the turbine grid configuration
+        self.reinitialize(
+            solver_settings=current_solver_settings
+        )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.calculate_wake()
+
         return y_plane
         
     def check_wind_condition_for_viz(self, wd=None, ws=None):
