@@ -55,9 +55,9 @@ fi_2d.reinitialize(wind_shear=0.0)
 
 # Using the FlorisInterface functions for generating plots, run FLORIS
 # and extract 2D planes of data.
-horizontal_plane_2d = fi_2d.get_hor_plane(x_resolution=200, y_resolution=100)
-y_plane_2d = fi_2d.get_y_plane(x_resolution=200, z_resolution=100)
-cross_plane_2d = fi_2d.get_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=500.0)
+horizontal_plane_2d = fi_2d.calculate_horizontal_plane(x_resolution=200, y_resolution=100)
+y_plane_2d = fi_2d.calculate_y_plane(x_resolution=200, z_resolution=100)
+cross_plane_2d = fi_2d.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=500.0)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
@@ -90,9 +90,9 @@ fi_3d.reinitialize(wind_shear=0.0)
 
 # Using the FlorisInterface functions for generating plots, run FLORIS
 # and extract 2D planes of data.
-horizontal_plane_3d = fi_3d.get_hor_plane(x_resolution=200, y_resolution=100)
-y_plane_3d = fi_3d.get_y_plane(x_resolution=200, z_resolution=100)
-cross_plane_3d = fi_3d.get_cross_plane(y_resolution=100, z_resolution=100)
+horizontal_plane_3d = fi_3d.calculate_horizontal_plane(x_resolution=200, y_resolution=100)
+y_plane_3d = fi_3d.calculate_y_plane(x_resolution=200, z_resolution=100)
+cross_plane_3d = fi_3d.calculate_cross_plane(y_resolution=100, z_resolution=100)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))

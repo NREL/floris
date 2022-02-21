@@ -23,6 +23,8 @@ This example creates a FLORIS instance
 1) Makes a two-turbine layout
 2) Demonstrates single ws/wd simulations
 3) Demonstrates mulitple ws/wd simulations
+
+Main concept is introduce FLORIS and illustrate essential structure of most-used FLORIS calls
 """
 
 # Initialize FLORIS with the given input file via FlorisInterface.
@@ -33,6 +35,9 @@ fi = FlorisInterface("inputs/gch.yaml")
 # Convert to a simple two turbine layout
 fi.reinitialize( layout=( [0, 500.], [0., 0.] ) )
 
+# Single wind speed and wind direction
+print('\n============================= Single Wind Direction and Wind Speed =============================')
+
 # Get the turbine powers assuming 1 wind speed and 1 wind direction
 fi.reinitialize(wind_directions=[270.], wind_speeds=[8.0])
 
@@ -42,29 +47,46 @@ fi.calculate_wake(yaw_angles=yaw_angles)
 
 # Get the turbine powers
 turbine_powers = fi.get_turbine_powers()/1000.
-print('===========')
 print('The turbine power matrix should be of dimensions 1 WD X 1 WS X 2 Turbines')
 print(turbine_powers)
-print('===========')
+print("Shape: ",turbine_powers.shape)
 
-# Now apply 3 wind speeds
+# Single wind speed and wind direction
+print('\n============================= Single Wind Direction and Multiple Wind Speeds =============================')
+
+
 wind_speeds = np.array([8.0, 9.0, 10.0])
-fi.reinitialize( wind_speeds=wind_speeds)
+fi.reinitialize(wind_speeds=wind_speeds)
 yaw_angles = np.zeros([1,3,2]) # 1 wind direction, 3 wind speeds, 2 turbines
 fi.calculate_wake(yaw_angles=yaw_angles)
 turbine_powers = fi.get_turbine_powers()/1000.
-print('===========')
 print('The turbine power matrix should be of dimensions 1 WD X 3 WS X 2 Turbines')
 print(turbine_powers)
-print('===========')
+print("Shape: ",turbine_powers.shape)
 
-# Make a small plot
-fig, ax = plt.subplots()
-ax.plot(wind_speeds, turbine_powers[:,:,0].flatten(), color='k', marker='o', label='Turbine 0' )
-ax.plot(wind_speeds, turbine_powers[:,:,1].flatten(), color='r', marker='o', label='Turbine 1' )
-ax.grid()
-ax.legend()
-ax.set_ylabel('Power (kW)')
-ax.set_xlabel('Wind Speed (m/s)')
-plt.show()
+# Single wind speed and wind direction
+print('\n============================= Multiple Wind Directions and Multiple Wind Speeds =============================')
+
+wind_directions = np.array([260., 270., 280.])
+wind_speeds = np.array([8.0, 9.0, 10.0])
+fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
+yaw_angles = np.zeros([1,3,2]) # 1 wind direction, 3 wind speeds, 2 turbines
+fi.calculate_wake(yaw_angles=yaw_angles)
+turbine_powers = fi.get_turbine_powers()/1000.
+print('The turbine power matrix should be of dimensions 3 WD X 3 WS X 2 Turbines')
+print(turbine_powers)
+print("Shape: ",turbine_powers.shape)
+
+
+
+
+# # Make a small plot
+# fig, ax = plt.subplots()
+# ax.plot(wind_speeds, turbine_powers[:,:,0].flatten(), color='k', marker='o', label='Turbine 0' )
+# ax.plot(wind_speeds, turbine_powers[:,:,1].flatten(), color='r', marker='o', label='Turbine 1' )
+# ax.grid()
+# ax.legend()
+# ax.set_ylabel('Power (kW)')
+# ax.set_xlabel('Wind Speed (m/s)')
+# plt.show()
 

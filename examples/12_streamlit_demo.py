@@ -16,6 +16,8 @@
 import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
+import pandas as pd
+# import seaborn as sns
 
 from floris.tools import FlorisInterface
 from floris.tools.visualization import visualize_cut_plane
@@ -77,9 +79,11 @@ yaw_angles_base = np.zeros([1,1,len(X)])
 
 yaw_angles_yaw = np.zeros([1,1,len(X)])
 if not desc_yaw:
-    yaw_angles_yaw[:n_row] = front_turbine_yaw
+    yaw_angles_yaw[:,:,:n_row] = front_turbine_yaw
 else:
-    yaw_angles_yaw[:n_row] = front_turbine_yaw
+    decreasing_pattern = np.linspace(front_turbine_yaw,0,n_turbine_per_row)
+    for i in range(n_turbine_per_row):
+        yaw_angles_yaw[:,:,i*n_row:(i+1)*n_row] = decreasing_pattern[i]
 
 
 
@@ -95,6 +99,9 @@ fig_viz, axarr_viz = plt.subplots(num_models_to_viz,2)
 
 # Set up the turbine power plot
 fig_turb_pow, ax_turb_pow = plt.subplots()
+
+# Set up a list to save the farm power results
+farm_power_results = []
 
 # Now complete all these plots in a loop
 for fm in floris_models:
@@ -115,12 +122,15 @@ for fm in floris_models:
     ax_turb_pow.set_xlabel('Turbine')
     ax_turb_pow.set_ylabel('Power (kW)')
 
+    # Save the farm power
+    farm_power_results.append((fm,'base',np.sum(turbine_powers)))
+
     # If in viz list also visualize
     if fm in floris_models_viz:
         ax_idx = floris_models_viz.index(fm)
         ax = axarr_viz[ax_idx, 0]
 
-        horizontal_plane_gch = fi.get_hor_plane(x_resolution=100, y_resolution=100)
+        horizontal_plane_gch = fi.calculate_horizontal_plane(x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_base)
         visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - baseline' % fm)
 
     # Analyze the yawed case==================================================
@@ -139,15 +149,28 @@ for fm in floris_models:
     ax_turb_pow.set_xlabel('Turbine')
     ax_turb_pow.set_ylabel('Power (kW)')
 
+    # Save the farm power
+    farm_power_results.append((fm,'yawed',np.sum(turbine_powers)))
+
     # If in viz list also visualize
     if fm in floris_models_viz:
         ax_idx = floris_models_viz.index(fm)
         ax = axarr_viz[ax_idx, 1]
 
-        horizontal_plane_gch = fi.get_hor_plane(x_resolution=100, y_resolution=100)
+        horizontal_plane_gch = fi.calculate_horizontal_plane(x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_yaw)
         visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - yawed' % fm)
 
 st.header("Visualizations")        
 st.write(fig_viz)
 st.header("Power Comparison")
 st.write(fig_turb_pow)
+
+# print(farm_power_results)
+
+# # Show the farm results
+# df_farm = pd.DataFrame.from_records(farm_power_results, columns = ['model','yaw','power']).set_index(['yaw','model']).unstack()
+# df_farm.columns = [c[1] for c in df_farm.columns]
+# fig, ax = plt.subplots()
+# df_farm.plot.bar(ax=ax,color=color_dict,rot=90)
+# st.write(fig)
+# print(df_farm)

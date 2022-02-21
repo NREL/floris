@@ -64,6 +64,9 @@ plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_co
 # running the simulation, and generating plots of 2D slices of the
 # flow field.
 
+# Note this visualization grid created within the calculate_horizontal_plane function will be reset
+# to what existed previously at the end of the function
+
 # Using the FlorisInterface functions, get 2D slices.
 horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100)
 y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100)

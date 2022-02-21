@@ -41,7 +41,7 @@ for idx, (fi, name) in enumerate(zip([fi_jensen, fi_gch], ["Jensen", "Gaussian"]
 
     # Aligned
     ax = axarr[0, idx]
-    horizontal_plane = fi.get_hor_plane()
+    horizontal_plane = fi.calculate_horizontal_plane()
     visualize_cut_plane(horizontal_plane, ax=ax, minSpeed=MIN_WS, maxSpeed=MAX_WS)
     ax.set_title(name)
     axarr[0, 0].set_ylabel("Aligned")
@@ -50,7 +50,7 @@ for idx, (fi, name) in enumerate(zip([fi_jensen, fi_gch], ["Jensen", "Gaussian"]
     yaw_angles = np.zeros_like(fi.floris.farm.yaw_angles)
     yaw_angles[:,:,0] = 25.0
     ax = axarr[1, idx]
-    horizontal_plane = fi.get_hor_plane(yaw_angles=yaw_angles)
+    horizontal_plane = fi.calculate_horizontal_plane(yaw_angles=yaw_angles)
     visualize_cut_plane(horizontal_plane, ax=ax, minSpeed=MIN_WS, maxSpeed=MAX_WS)
     axarr[1, 0].set_ylabel("Yawed")
 
