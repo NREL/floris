@@ -929,36 +929,6 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
         "enable_secondary_steering": wdp["use_secondary_steering"],
         "enable_yaw_added_recovery": wvp["use_yaw_added_recovery"],
         "enable_transverse_velocities": wvp["calculate_VW_velocities"],
-        "wake_deflection_parameters": {
-            "gauss": {
-                "ad": 0.0,
-                "alpha": 0.58,
-                "bd": 0.0,
-                "beta": 0.077,
-                "dm": 1.0,
-                "ka": 0.38,
-                "kb": 0.004,
-            },
-            "jimenez": {
-
-            },
-        },
-        "wake_velocity_parameters": {
-            "cc": {
-            },
-            "gauss": {
-                "alpha": 0.58,
-                "beta": 0.077,
-                "ka": 0.38,
-                "kb": 0.004,
-            },
-            "jensen": {
-            },
-        },
-        "wake_turbulence_parameters" : {
-            "crespo_hernandez": {
-            },
-        },
     }
 
     # Copy over wake velocity parameters and remove unnecessary parameters
