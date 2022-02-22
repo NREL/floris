@@ -880,7 +880,7 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
     dict_out = dict()  # Output dictionary
     dict_out["name"] = dict_legacy["name"] + " (auto-converted to v3)"
     dict_out["description"] = dict_legacy["description"]
-    dict_out["floris_version"] = dict_legacy["floris_version"] + " (legacy)"
+    dict_out["floris_version"] = "v3.0 (converted from legacy format v2)"
     dict_out["logging"] = dict_legacy["logging"]
 
     dict_out["solver"] = {
@@ -1020,16 +1020,7 @@ class FlorisInterface_legacy_v24(FlorisInterface):
                 configuration = json.load(legacy_dict_file)
 
         configuration = _convert_v24_dictionary_to_v3(configuration)
-        self.floris = Floris.from_dict(configuration)
-
-        # Assign configuration to self
-        self.configuration = configuration
-
-        # Store the heterogeneous map for use after reinitailization
-        self.het_map = het_map
-        # Assign the heterogeneous map to the flow field
-        # Needed for a direct call to fi.calculate_wake without fi.reinitialize
-        self.floris.flow_field.het_map = het_map
+        super().__init__(configuration, het_map=het_map)  # Initialize full class
 
 
 def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
