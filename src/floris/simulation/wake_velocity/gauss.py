@@ -205,7 +205,6 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
 
     ## Numexpr
     wind_veer = np.deg2rad(wind_veer)
-    yaw = np.deg2rad(yaw)
     a = ne.evaluate("cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
