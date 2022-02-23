@@ -110,13 +110,13 @@ class JensenVelocityDeficit(BaseModel):
         # Calculate the wake velocity deficit ratios
         # Do we need to do masking here or can it be handled in the solver?
         # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i
-        c = ( reference_rotor_radius / ( reference_rotor_radius + self.we * dx ) ) ** 2
+        c = ( reference_rotor_radius / ( reference_rotor_radius + self.we * dx + self.NUM_EPS ) ) ** 2
         # c *= ~(np.array(x - x[:, :, i:i+1] <= 0.0))  # using this causes nan's in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.
         # c *= ~(((y - y_center) ** 2 + (z - z_center) ** 2) > (boundary_line ** 2))
         # np.nan_to_num
 
         # C should be 0 at the current turbine and everywhere in front of it
-        downstream_mask = np.array(dx > 0.0, dtype=int)
+        downstream_mask = np.array(dx > 0.0 + self.NUM_EPS, dtype=int)
         # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
         boundary_mask = np.array( np.sqrt(dy ** 2 + dz ** 2) < boundary_line, dtype=int)
 
@@ -132,14 +132,15 @@ class JensenVelocityDeficit(BaseModel):
         dz = ne.evaluate("z - z_i")
 
         we = self.we
+        NUM_EPS = JensenVelocityDeficit.NUM_EPS
 
         # y = m * x + b
         boundary_line = ne.evaluate("we * dx + reference_rotor_radius")
 
-        c = ne.evaluate("( reference_rotor_radius / ( reference_rotor_radius + we * dx ) ) ** 2")
+        c = ne.evaluate("( reference_rotor_radius / ( reference_rotor_radius + we * dx + NUM_EPS ) ) ** 2")
 
         # C should be 0 at the current turbine and everywhere in front of it
-        downstream_mask = ne.evaluate("dx > 0.1")
+        downstream_mask = ne.evaluate("dx > 0 + NUM_EPS")
 
         # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
         boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < boundary_line")
