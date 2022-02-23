@@ -164,13 +164,3 @@ st.header("Visualizations")
 st.write(fig_viz)
 st.header("Power Comparison")
 st.write(fig_turb_pow)
-
-# print(farm_power_results)
-
-# # Show the farm results
-# df_farm = pd.DataFrame.from_records(farm_power_results, columns = ['model','yaw','power']).set_index(['yaw','model']).unstack()
-# df_farm.columns = [c[1] for c in df_farm.columns]
-# fig, ax = plt.subplots()
-# df_farm.plot.bar(ax=ax,color=color_dict,rot=90)
-# st.write(fig)
-# print(df_farm)
