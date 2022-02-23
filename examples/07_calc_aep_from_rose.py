@@ -12,6 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
+
 import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
@@ -29,11 +30,19 @@ is converted to AEP and reported out.
 # Read the windrose information file & normalize wind rose frequencies
 fn = "inputs/wind_rose.csv"
 df_wr = pd.read_csv(fn)
+
+# Normalize the frequencies
 df_wr["freq_val"] = df_wr["freq_val"] / df_wr["freq_val"].sum()
 
+# Split the wind rose into wind speeds above (df_wr_op)
+# and below cut-in (df_wr_below_cut_in) as below cut-in winds are 0 power and
+# 0 ambient wind speed generates warnings and nans in some of the wake models
+df_wr_below_cut_in = df_wr[df_wr.ws < 3.0]
+df_wr_op = df_wr[df_wr.ws >= 3.0]
+
 # Derive the wind directions and speeds we need to evaluate in FLORIS
-wd_array = np.array(df_wr["wd"].unique(), dtype=float)
-ws_array = np.array(df_wr["ws"].unique(), dtype=float)
+wd_array = np.array(df_wr_op["wd"].unique(), dtype=float)
+ws_array = np.array(df_wr_op["ws"].unique(), dtype=float)
 
 # Load the default example FLORIS object
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
@@ -54,13 +63,22 @@ fi.calculate_wake()
 farm_power_array = fi.get_farm_power()
 
 # Now map the FLORIS solutions to the wind rose dataframe
-X, Y = np.meshgrid(wd_array, ws_array, indexing='ij')
+wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing='ij')
 interpolant = NearestNDInterpolator(
-    np.vstack([X.flatten(), Y.flatten()]).T, 
+    np.vstack([wd_grid.flatten(), ws_grid.flatten()]).T, 
     farm_power_array.flatten()
 )
-df_wr["farm_power"] = interpolant(df_wr[["wd", "ws"]])
-df_wr["farm_power"] = df_wr["farm_power"].fillna(0.0)
+
+# Use an interpolant to map the results back to the wind rose dataframe
+# Technically this could be done directly but an interpolant is safer
+# in the event the wind rose is irregular and/or ordered differently
+# than floris
+df_wr_op["farm_power"] = interpolant(df_wr_op[["wd", "ws"]])
+df_wr_op["farm_power"] = df_wr_op["farm_power"].fillna(0.0)
+
+# Recombine with the below cut-in data
+df_wr_below_cut_in["farm_power"] = 0.
+df_wr = df_wr_below_cut_in.append(df_wr_op).sort_values(["wd","ws"])
 
 print("Farm solutions:")
 print(df_wr)
