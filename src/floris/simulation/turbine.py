@@ -166,7 +166,7 @@ def Ct(
 
     average_velocities = average_velocity(velocities)
     thrust_coefficient = fCt(average_velocities)
-    thrust_coefficient = np.clip(thrust_coefficient, 0.0, 1.0)
+    thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
     return effective_thrust
 
