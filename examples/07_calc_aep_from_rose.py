@@ -32,13 +32,13 @@ fn = "inputs/wind_rose.csv"
 df_wr = pd.read_csv(fn)
 
 # Normalize the frequencies
-df_wr["freq_val"] = df_wr["freq_val"] / df_wr["freq_val"].sum()
+df_wr["freq_val"] = df_wr["freq_val"].copy() / df_wr["freq_val"].sum()
 
 # Split the wind rose into wind speeds above (df_wr_op)
 # and below cut-in (df_wr_below_cut_in) as below cut-in winds are 0 power and
 # 0 ambient wind speed generates warnings and nans in some of the wake models
-df_wr_below_cut_in = df_wr[df_wr.ws < 3.0]
-df_wr_op = df_wr[df_wr.ws >= 3.0]
+df_wr_below_cut_in = df_wr[df_wr.ws < 3.0].copy()
+df_wr_op = df_wr[df_wr.ws >= 3.0].copy()
 
 # Derive the wind directions and speeds we need to evaluate in FLORIS
 wd_array = np.array(df_wr_op["wd"].unique(), dtype=float)
@@ -74,16 +74,12 @@ interpolant = NearestNDInterpolator(
 # in the event the wind rose is irregular and/or ordered differently
 # than floris
 df_wr_op["farm_power"] = interpolant(df_wr_op[["wd", "ws"]])
-df_wr_op["farm_power"] = df_wr_op["farm_power"].fillna(0.0)
 
 # Recombine with the below cut-in data
 df_wr_below_cut_in["farm_power"] = 0.
 df_wr = df_wr_below_cut_in.append(df_wr_op).sort_values(["wd","ws"])
 
-print("Farm solutions:")
-print(df_wr)
-
 # Finally, calculate AEP in GWh
 aep = np.dot(df_wr["freq_val"], df_wr["farm_power"]) * 365 * 24
 
-print("Farm AEP: {:.2f} GWh".format(aep / 1.0e9))
+print("Farm AEP: {:.3f} GWh".format(aep / 1.0e9))
