@@ -35,13 +35,6 @@ MAX_WS = 8.0
 # Initialize FLORIS with the given input file via FlorisInterface
 fi = FlorisInterface("inputs/gch.yaml")
 
-# # Configure this simulation for visualization using the full flow field grid
-# solver_settings = {
-#     "type": "flow_field_grid",
-#     "flow_field_grid_points": [200,100,7]
-# }
-# fi.reinitialize(solver_settings=solver_settings)
-
 
 # Plot a horizatonal slice of the initial configuration
 horizontal_plane = fi.calculate_horizontal_plane()
@@ -68,7 +61,6 @@ X, Y = np.meshgrid(
 fi.reinitialize( layout=( X.flatten(), Y.flatten() ) )
 horizontal_plane = fi.calculate_horizontal_plane()
 visualize_cut_plane(horizontal_plane, ax=axarr[3], title="3x3 Farm", minSpeed=MIN_WS, maxSpeed=MAX_WS)
-# plot_turbines_with_fi(axarr[7], fi)
 
 
 # Change the yaw angles and configure the plot differently
@@ -96,9 +88,3 @@ axarr[5].invert_xaxis()
 
 
 plt.show()
-
-
-# # Change the veer
-# fi.reinitialize(wind_veer=5.0)
-# fi.floris.solve_for_viz()
-# plot_slice_shortcut(fi, axarr[5], "Veer=5")
