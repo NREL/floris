@@ -35,7 +35,6 @@ class YawOptimizationSR(YawOptimization):
         turbine_weights=None,
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=True,
-        # reduce_ngrid=False,
         verify_convergence=False,
     ):
         """
@@ -104,17 +103,17 @@ class YawOptimizationSR(YawOptimization):
         # Find indices of yaw angles that we previously already evaluated, and
         # prevent redoing the same calculations
         if use_memory:
-            idx = (np.abs(self._yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).flatten()
-            farm_powers[idx, 0] = self._farm_power_opt_subset[idx, 0]
+            idx = (np.abs(self._yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
+            farm_powers[idx, :] = self._farm_power_opt_subset[idx, :]
             # print("Skipping {:d}/{:d} calculations: already in memory.".format(np.sum(idx), len(idx)))
         else:
-            idx = np.array([False] * yaw_angles_subset.shape[0], dtype=bool)
+            idx = np.zeros(yaw_angles_subset.shape[0], dtype=bool)
 
         if not np.all(idx):
             # Now calculate farm powers for conditions we haven't yet evaluated previously
             start_time = timerpc()
             wd_array_subset = self.fi_subset.floris.flow_field.wind_directions
-            farm_powers[~idx] = self._calculate_farm_power(
+            farm_powers[~idx, :] = self._calculate_farm_power(
                 wd_array=wd_array_subset[~idx],
                 turbine_weights=self._turbine_weights_subset[~idx, :, :],
                 yaw_angles=yaw_angles_subset[~idx, :, :],
@@ -147,25 +146,31 @@ class YawOptimizationSR(YawOptimization):
         evaluation_grid = np.tile(self._yaw_angles_opt_subset, (Ny, 1, 1, 1))
 
         # Get a list of the turbines in order of x and sort front to back
-        for iw in range(self._nconds_subset):
+        for iw in range(self._nwinddirections_subset):
             turbid = self.turbines_ordered_array_subset[iw][turbine_depth]  # Turbine to manipulate
 
-            # Check if this turbine needs to be optimized. If not, continue
-            if not self._turbs_to_opt_subset[iw, 0, turbid]:
-                continue
+            # # Check if this turbine needs to be optimized. If not, continue
+            # if not self._turbs_to_opt_subset[iw, 0, turbid]:
+            #     continue
 
             # # Remove turbines that need not be optimized
             # turbines_ordered = [ti for ti in turbines_ordered if ti in self.turbs_to_opt]
 
             # Grab yaw bounds from self
-            yaw_lb = self._yaw_lbs[iw, 0, turbid]
-            yaw_ub = self._yaw_ubs[iw, 0, turbid]
+            yaw_lb = self._yaw_lbs[iw, :, turbid]
+            yaw_ub = self._yaw_ubs[iw, :, turbid]
 
             # Saturate to allowable yaw limits
-            if yaw_lb < self.minimum_yaw_angle[iw, 0, turbid]:
-                yaw_lb = self.minimum_yaw_angle[iw, 0, turbid]
-            if yaw_ub > self.maximum_yaw_angle[iw, 0, turbid]:
-                yaw_ub = self.maximum_yaw_angle[iw, 0, turbid]
+            yaw_lb = np.clip(
+                yaw_lb,
+                self.minimum_yaw_angle[iw, :, turbid],
+                self.maximum_yaw_angle[iw, :, turbid]
+            )
+            yaw_ub = np.clip(
+                yaw_ub,
+                self.minimum_yaw_angle[iw, :, turbid],
+                self.maximum_yaw_angle[iw, :, turbid]
+            )
 
             if pass_depth == 0:
                 # Evaluate all possible coordinates
@@ -176,8 +181,7 @@ class YawOptimizationSR(YawOptimization):
                 ids = [*list(range(0, c)), *list(range(c + 1, Ny + 1))]
                 yaw_angles_subset = np.linspace(yaw_lb, yaw_ub, Ny + 1)[ids]
 
-            for iii in range(Ny):
-                evaluation_grid[iii, iw, 0, turbid] = yaw_angles_subset[iii]
+            evaluation_grid[:, iw, :, turbid] = yaw_angles_subset
 
         self._yaw_evaluation_grid = evaluation_grid
         return evaluation_grid

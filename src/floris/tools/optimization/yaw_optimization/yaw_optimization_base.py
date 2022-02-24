@@ -119,14 +119,13 @@ class YawOptimization:
         # Save turbine object to self
         self.fi = copy.deepcopy(fi)
         self.nturbs = len(self.fi.layout_x)
-        self.nconds = self.fi.floris.flow_field.n_wind_directions
 
-        # Check floris options
-        if self.fi.floris.flow_field.n_wind_speeds > 1:
-            raise NotImplementedError(
-                "Optimizer currently does not support more than one wind" +
-                " speed. Please assign FLORIS a single wind speed."
-            )
+        # # Check floris options
+        # if self.fi.floris.flow_field.n_wind_speeds > 1:
+        #     raise NotImplementedError(
+        #         "Optimizer currently does not support more than one wind" +
+        #         " speed. Please assign FLORIS a single wind speed."
+        #     )
 
         # Initialize optimizer
         self.verify_convergence = verify_convergence
@@ -212,10 +211,8 @@ class YawOptimization:
         """
         # Deal with full vs. subset dimensions
         nturbs = self.nturbs
-        nconds = self.nconds
         if subset:
             nturbs = np.shape(self._x0_subset.shape[2])
-            nconds = self._nconds_subset
 
         # Then process maximum yaw angle
         if isinstance(variable, float):
@@ -225,10 +222,17 @@ class YawOptimization:
         variable = np.array(variable, dtype=float)
         if len(np.shape(variable)) == 1:
             # If one-dimensional array, copy over to all atmos. conditions
-            variable = np.tile(variable, (nconds, 1, 1))
+            variable = np.tile(
+                variable,
+                (
+                    self.fi.floris.flow_field.n_wind_directions,
+                    self.fi.floris.flow_field.n_wind_speeds,
+                    1
+                )
+            )
 
         if len(np.shape(variable)) == 2:
-            raise UserWarning("This is an unrecognized shape.")
+            raise UserWarning("Variable input must have shape (n_wind_directions, n_wind_speeds, nturbs)")
 
         return variable
 
@@ -248,7 +252,7 @@ class YawOptimization:
 
         # Initialize subset variables as full set
         self.fi_subset = copy.deepcopy(self.fi)
-        nconds_subset = copy.deepcopy(self.nconds)
+        nwinddirections_subset = copy.deepcopy(self.fi.floris.flow_field.n_wind_directions)
         minimum_yaw_angle_subset = copy.deepcopy(self.minimum_yaw_angle)
         maximum_yaw_angle_subset = copy.deepcopy(self.maximum_yaw_angle)
         x0_subset = copy.deepcopy(self.x0)
@@ -275,7 +279,7 @@ class YawOptimization:
 
             # Reduce control variables
             red_map = self._sym_mapping_reduce
-            nconds_subset = len(wind_direction_subset)
+            nwinddirections_subset = len(wind_direction_subset)
             minimum_yaw_angle_subset = minimum_yaw_angle_subset[red_map, :, :]
             maximum_yaw_angle_subset = maximum_yaw_angle_subset[red_map, :, :]
             x0_subset = x0_subset[red_map, :, :]
@@ -289,21 +293,23 @@ class YawOptimization:
         # This solution addresses both downstream turbines, minimizing their abs.
         # yaw offset, and additionally fixing equality-constrained turbines to
         # their appropriate yaw angle.
-        for ti in range(self.nturbs):
-            yaw_lb = minimum_yaw_angle_subset[:, 0, ti]
-            yaw_ub = maximum_yaw_angle_subset[:, 0, ti]
-
-            # Find bound that is closest to zero
-            bounds = np.vstack([yaw_lb, yaw_ub]).T
-            arg = np.argmin(np.abs(bounds), axis=1)  # Value closest to zero
-            yaw_mb = np.array([bounds[ii, argmin] for ii, argmin in enumerate(arg)], dtype=float)  # Bound value closest to 0
-
+        idx = (minimum_yaw_angle_subset > 0.0) | (maximum_yaw_angle_subset < 0.0)
+        if np.any(idx):
+            # Find bounds closest to 0.0 deg
+            combined_bounds = np.concatenate(
+                (
+                    np.expand_dims(minimum_yaw_angle_subset, axis=3),
+                    np.expand_dims(maximum_yaw_angle_subset, axis=3)
+                ),
+                axis=3
+            )
             # Overwrite all values that are not allowed to be 0.0 with bound value closest to zero
-            idx = (yaw_lb > 0.0) | (yaw_ub < 0.0)
-            yaw_angles_template_subset[idx, 0, ti] = yaw_mb[idx]
+            ids_closest = np.expand_dims(np.argmin(np.abs(combined_bounds), axis=3), axis=3)
+            yaw_mb = np.squeeze(np.take_along_axis(combined_bounds, ids_closest, axis=3))
+            yaw_angles_template_subset[idx] = yaw_mb[idx]
 
         # Save all subset variables to self
-        self._nconds_subset = nconds_subset
+        self._nwinddirections_subset = nwinddirections_subset
         self._minimum_yaw_angle_subset = minimum_yaw_angle_subset
         self._maximum_yaw_angle_subset = maximum_yaw_angle_subset
         self._x0_subset = x0_subset
@@ -500,7 +506,7 @@ class YawOptimization:
         for ii, wind_speed in enumerate(self.fi.floris.flow_field.wind_speeds):
             df_list.append(pd.DataFrame({
                 "wind_direction": self.fi.floris.flow_field.wind_directions,
-                "wind_speed": np.ones(self.nconds) * wind_speed,
+                "wind_speed": self.fi.floris.flow_field.wind_speeds,
                 "turbulence_intensity": np.ones(self.nconds) * ti,
                 "yaw_angles_opt": [yaw_angles for yaw_angles in self.yaw_angles_opt[:, ii, :]],
                 "farm_power_opt": self.farm_power_opt[:, ii],
