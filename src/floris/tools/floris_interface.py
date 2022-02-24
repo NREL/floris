@@ -26,6 +26,7 @@ import pandas as pd
 import numpy.typing as npt
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from numpy.lib.arraysetops import unique
 
 from floris.utilities import Vec3
@@ -59,7 +60,7 @@ class FlorisInterface(LoggerBase):
                 - **logging**: See `floris.simulation.floris.Floris` for more details.
     """
 
-    def __init__(self, configuration: dict | str | Path):
+    def __init__(self, configuration: dict | str | Path, het_map=None):
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
@@ -70,6 +71,12 @@ class FlorisInterface(LoggerBase):
 
         else:
             raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
+
+        # Store the heterogeneous map for use after reinitailization
+        self.het_map = het_map
+        # Assign the heterogeneous map to the flow field
+        # Needed for a direct call to fi.calculate_wake without fi.reinitialize
+        self.floris.flow_field.het_map = het_map
 
     def calculate_wake(
         self,
@@ -168,6 +175,8 @@ class FlorisInterface(LoggerBase):
 
         # Create a new instance of floris and attach to self
         self.floris = Floris.from_dict(floris_dict)
+        # Re-assign the hetergeneous inflow map to flow field
+        self.floris.flow_field.het_map = self.het_map
 
     def get_plane_of_points(
         self,
@@ -245,7 +254,7 @@ class FlorisInterface(LoggerBase):
 
         return df
 
-    def get_hor_plane(
+    def calculate_horizontal_plane(
         self,
         height=None,
         x_resolution=200,
@@ -287,6 +296,11 @@ class FlorisInterface(LoggerBase):
             height = self.floris.farm.hub_heights[0][0][0]
             self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
+
+        # Store the turbine grid points for reinitialization
+        current_solver_settings = copy.deepcopy(self.floris.solver)
+
+        # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
             "normal_vector": "z",
@@ -312,11 +326,19 @@ class FlorisInterface(LoggerBase):
             planar_coordinate=height,
         )
 
-        # Compute and return the cutplane
-        hor_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
-        return hor_plane
+        # Compute the cutplane
+        horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
 
-    def get_cross_plane(
+        # Reset the fi object back to the turbine grid configuration
+        self.reinitialize(
+            solver_settings=current_solver_settings
+        )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.calculate_wake()
+
+        return horizontal_plane
+
+    def calculate_cross_plane(
         self,
         downstream_dist=None,
         y_resolution=200,
@@ -357,6 +379,11 @@ class FlorisInterface(LoggerBase):
         if downstream_dist is None:
             downstream_dist = 5 * 126.0
 
+
+        # Store the turbine grid points for reinitialization
+        current_solver_settings = copy.deepcopy(self.floris.solver)
+
+        # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
             "normal_vector": "x",
@@ -382,11 +409,19 @@ class FlorisInterface(LoggerBase):
             planar_coordinate=downstream_dist,
         )
 
-        # Compute and return the cutplane
+        # Compute the cutplane
         cross_plane = CutPlane(df, y_resolution, z_resolution)
+
+        # Reset the fi object back to the turbine grid configuration
+        self.reinitialize(
+            solver_settings=current_solver_settings
+        )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.calculate_wake()
+
         return cross_plane
 
-    def get_y_plane(
+    def calculate_y_plane(
         self,
         crossstream_dist=None,
         x_resolution=200,
@@ -427,6 +462,10 @@ class FlorisInterface(LoggerBase):
         if crossstream_dist is None:
             crossstream_dist = 0.0
 
+        # Store the turbine grid points for reinitialization
+        current_solver_settings = copy.deepcopy(self.floris.solver)
+
+        # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
             "normal_vector": "y",
@@ -452,8 +491,16 @@ class FlorisInterface(LoggerBase):
             planar_coordinate=crossstream_dist,
         )
 
-        # Compute and return the cutplane
+        # Compute the cutplane
         y_plane = CutPlane(df, x_resolution, z_resolution)
+
+        # Reset the fi object back to the turbine grid configuration
+        self.reinitialize(
+            solver_settings=current_solver_settings
+        )
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.calculate_wake()
+
         return y_plane
 
     def check_wind_condition_for_viz(self, wd=None, ws=None):
@@ -844,6 +891,21 @@ class FlorisInterface(LoggerBase):
 
 
 
+def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
+    if z is not None:
+        # Compute the 3-dimensional interpolants for each wind diretion
+        # Linear interpolation is used for points within the user-defined area of values,
+        # while a nearest-neighbor interpolant is used for points outside that region
+        in_region = [LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=np.nan) for speed_up in speed_ups]
+        out_region = [NearestNDInterpolator(list(zip(x, y, z)), speed_up) for speed_up in speed_ups]
+    else:
+        # Compute the 2-dimensional interpolants for each wind diretion
+        # Linear interpolation is used for points within the user-defined area of values,
+        # while a nearest-neighbor interpolant is used for points outside that region
+        in_region = [LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=np.nan) for speed_up in speed_ups]
+        out_region = [NearestNDInterpolator(list(zip(x, y)), speed_up) for speed_up in speed_ups]
+
+    return [in_region, out_region]
 
 # def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
 #     return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)

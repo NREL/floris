@@ -218,8 +218,6 @@ class GaussVelocityDeflection(BaseModel):
 
 ## GCH components
 
-NUM_EPS = 0.001  # This is a numerical epsilon to prevent divide by zeros
-
 def gamma(
     D,
     velocity,
@@ -306,11 +304,11 @@ def wake_added_yaw(
     ### compute the spanwise and vertical velocities induced by yaw
 
     # decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
-    yLocs = delta_y + NUM_EPS
+    yLocs = delta_y + BaseModel.NUM_EPS
 
     # top vortex
     # NOTE: this is the top of the grid, not the top of the rotor
-    zT = z_i - (HH + D / 2) + NUM_EPS  # distance from the top of the grid
+    zT = z_i - (HH + D / 2) + BaseModel.NUM_EPS  # distance from the top of the grid
     rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
     core_shape = 1 - np.exp(-rT / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
     v_top = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape
@@ -318,7 +316,7 @@ def wake_added_yaw(
     # w_top = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
 
     # bottom vortex
-    zB = z_i - (HH - D / 2) + NUM_EPS
+    zB = z_i - (HH - D / 2) + BaseModel.NUM_EPS
     rB = yLocs ** 2 + zB ** 2
     core_shape = 1 - np.exp(-rB / (eps ** 2))
     v_bottom = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape
@@ -326,7 +324,7 @@ def wake_added_yaw(
     # w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
 
     # wake rotation vortex
-    zC = z_i - HH + NUM_EPS
+    zC = z_i - HH + BaseModel.NUM_EPS
     rC = yLocs ** 2 + zC ** 2
     core_shape = 1 - np.exp(-rC / (eps ** 2))
     v_core = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape
@@ -410,24 +408,24 @@ def calculate_transverse_velocity(
     nu = lm ** 2 * np.abs(dudz_initial)
 
     decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
-    yLocs = delta_y + NUM_EPS
+    yLocs = delta_y + BaseModel.NUM_EPS
 
     # top vortex
-    zT = z - (HH + D / 2) + NUM_EPS
+    zT = z - (HH + D / 2) + BaseModel.NUM_EPS
     rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
     core_shape = 1 - np.exp(-rT / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
     V1 = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape * decay
     W1 = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
 
     # bottom vortex
-    zB = z - (HH - D / 2) + NUM_EPS
+    zB = z - (HH - D / 2) + BaseModel.NUM_EPS
     rB = yLocs ** 2 + zB ** 2
     core_shape = 1 - np.exp(-rB / (eps ** 2))
     V2 = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape * decay
     W2 = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
 
     # wake rotation vortex
-    zC = z - HH + NUM_EPS
+    zC = z - HH + BaseModel.NUM_EPS
     rC = yLocs ** 2 + zC ** 2
     core_shape = 1 - np.exp(-rC / (eps ** 2))
     V5 = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape * decay
@@ -437,21 +435,21 @@ def calculate_transverse_velocity(
     ### Boundary condition - ground mirror vortex
 
     # top vortex - ground
-    zTb = z + (HH + D / 2) + NUM_EPS
+    zTb = z + (HH + D / 2) + BaseModel.NUM_EPS
     rTb = yLocs ** 2 + zTb ** 2
     core_shape = 1 - np.exp(-rTb / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
     V3 = (-1 * Gamma_top * zTb) / (2 * np.pi * rTb) * core_shape * decay
     W3 = (Gamma_top * yLocs) / (2 * np.pi * rTb) * core_shape * decay
 
     # bottom vortex - ground
-    zBb = z + (HH - D / 2) + NUM_EPS
+    zBb = z + (HH - D / 2) + BaseModel.NUM_EPS
     rBb = yLocs ** 2 + zBb ** 2
     core_shape = 1 - np.exp(-rBb / (eps ** 2))
     V4 = (-1 * Gamma_bottom * zBb) / (2 * np.pi * rBb) * core_shape * decay
     W4 = (Gamma_bottom * yLocs) / (2 * np.pi * rBb) * core_shape * decay
 
     # wake rotation vortex - ground effect
-    zCb = z + HH + NUM_EPS
+    zCb = z + HH + BaseModel.NUM_EPS
     rCb = yLocs ** 2 + zCb ** 2
     core_shape = 1 - np.exp(-rCb / (eps ** 2))
     V6 = (-1 * Gamma_wake_rotation * zCb) / (2 * np.pi * rCb) * core_shape * decay

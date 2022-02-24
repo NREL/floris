@@ -179,16 +179,15 @@ class GaussVelocityDeficit(BaseModel):
 def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
 
     ## original
-    #     a = cosd(wind_veer) ** 2 / (2 * sigma_y ** 2) + sind(wind_veer) ** 2 / (2 * sigma_z ** 2)
-    #     b = -sind(2 * wind_veer) / (4 * sigma_y ** 2) + sind(2 * wind_veer) / (4 * sigma_z ** 2)
-    #     c = sind(wind_veer) ** 2 / (2 * sigma_y ** 2) + cosd(wind_veer) ** 2 / (2 * sigma_z ** 2)
-    #     r = (
-    #         a * (y - y_i - delta) ** 2
-    #         - 2 * b * (y - y_i - delta) * (z - HH)
-    #         + c * (z - HH) ** 2
-    #     )
-    #     C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0) )
-    ##
+    # a = cosd(wind_veer) ** 2 / (2 * sigma_y ** 2) + sind(wind_veer) ** 2 / (2 * sigma_z ** 2)
+    # b = -sind(2 * wind_veer) / (4 * sigma_y ** 2) + sind(2 * wind_veer) / (4 * sigma_z ** 2)
+    # c = sind(wind_veer) ** 2 / (2 * sigma_y ** 2) + cosd(wind_veer) ** 2 / (2 * sigma_z ** 2)
+    # r = (
+    #     a * (y - y_i - delta) ** 2
+    #     - 2 * b * (y - y_i - delta) * (z - HH)
+    #     + c * (z - HH) ** 2
+    # )
+    # C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0) )
 
     ## Precalculate some parts
     # twox_sigmay_2 = 2 * sigma_y ** 2
@@ -203,15 +202,12 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
 
     ## Numexpr
     wind_veer = np.deg2rad(wind_veer)
-    yaw = np.deg2rad(yaw)
     a = ne.evaluate("cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
-    C = ne.evaluate("1 - sqrt( 1 - ( Ct * cos(yaw) / ( 8.0 * sigma_y * sigma_z / (D ** 2) ) ) )")
-    # C = np.clip(C, 0.0, 1.0)
-    # C = ne.evaluate("1 - sqrt(C)")
-    # C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0) )
+    d = np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0)
+    C = ne.evaluate("1 - sqrt(d)")
     return r, C
 
 def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):

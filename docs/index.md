@@ -35,11 +35,11 @@ Beta testers should install FLORIS v3 by downloading the source code
 from GitHub with ``git`` and using ``pip`` to locally install it.
 It is recommended to use a Python virtual environment such as [conda](https://docs.conda.io/en/latest/miniconda.html)
 in order to maintain a clean and sandboxed environment. The following
-commands in a terminal or shell will download and install **FLORIS v3.0rc1**.
+commands in a terminal or shell will download and install **FLORIS v3.0rc2**.
 
 ```bash
-    # Download the source code from the `v3.0rc1` tag
-    git clone -b v3.0rc1 https://github.com/NREL/floris.git
+    # Download the source code from the `v3.0rc2` tag
+    git clone -b v3.0rc2 https://github.com/NREL/floris.git
 
     # If using conda, be sure to activate your environment prior to installing
     # conda activate <env name>
@@ -69,11 +69,11 @@ and importing FLORIS:
 
     DATA
         ROOT = PosixPath('/Users/rmudafor/Development/floris')
-        VERSION = '3.0rc1'
+        VERSION = '3.0rc2'
         version_file = <_io.TextIOWrapper name='/Users/rmudafor/Development/fl...
 
     VERSION
-        3.0rc1
+        3.0rc2
 
     FILE
         ~/floris/src/floris/__init__.py
@@ -85,7 +85,7 @@ features, improvements, and bug fixes will be issued on an ongoing basis.
 
 ## Getting Started
 
-A series of examples is included in the [examples/](https://github.com/NREL/floris/tree/v3.0rc1/examples)
+A series of examples is included in the [examples/](https://github.com/NREL/floris/tree/v3.0rc2/examples)
 directory. These are ordered from simplest to most complex. They demonstrate various
 use cases of FLORIS, and generally provide a good starting point for building a more
 complex simulation.

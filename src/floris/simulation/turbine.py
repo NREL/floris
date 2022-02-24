@@ -180,7 +180,7 @@ def Ct(
     fCt = dict(fCt)
     for turb_type in turb_types:
         thrust_coefficient += fCt[turb_type](average_velocities) * np.array(turbine_type_map == turb_type)
-    thrust_coefficient = np.clip(thrust_coefficient, 0.0, 1.0)
+    thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
     return effective_thrust
 
