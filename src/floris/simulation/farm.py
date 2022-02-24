@@ -17,6 +17,7 @@ import attrs
 from attrs import define, field
 import numpy as np
 import os.path
+import copy
 
 from floris.type_dec import (
     floris_array_converter,
@@ -44,8 +45,8 @@ class Farm(BaseClass):
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
     turbine_type: List = field()
-    turbine_definitions: dict = field()
 
+    turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
     coordinates: List[Vec3] = field(init=False)
     hub_heights: NDArrayFloat = field(init=False)
@@ -63,22 +64,19 @@ class Farm(BaseClass):
     @turbine_type.validator
     def check_turbine_type(self, instance: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
-            raise ValueError("turbine_type must have the same number of entries as layout_x/layout_y.")
+            if len(value) == 1:
+                value = self.turbine_type * len(self.layout_x)
+            else:
+                raise ValueError("turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value.")
 
-    @turbine_definitions.validator
-    def check_turbine_definitions(self, instance: attrs.Attribute, value: Any) -> None:
-        for val in value:
-            # print(len(value[val]))
-            # print(value[val][0])
-            if len(value[val]) == 1:
-                # print(value[val].keys())
-                if "turbine_type" not in value[val].keys():
-                    raise ValueError("turbine_type property is required to use the turbine definition library. Please check your turbine_definitions input for '{}'.".format(val))
+        self.turbine_definitions = copy.deepcopy(value)
+        for i, val in enumerate(value):
+            if type(val) is str:
                 file_dir = os.path.dirname(os.path.abspath(__file__))
-                fname = os.path.join(file_dir, "../../../examples/inputs/turbine_definitions/" + value[val]["turbine_type"] + ".yaml")
+                fname = os.path.join(file_dir, "../../../examples/inputs/turbine_definitions/" + val + ".yaml")
                 if not os.path.isfile(fname):
-                    raise ValueError("User-selected turbine definition does not exist in pre-defined turbine library.")
-                self.turbine_definitions[val] = load_yaml(fname)
+                    raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
+                self.turbine_definitions[i] = load_yaml(fname)
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
@@ -89,19 +87,19 @@ class Farm(BaseClass):
         )
 
     def construct_hub_heights(self):
-        self.hub_heights = np.array([self.turbine_definitions[turb_type]['hub_height'] for turb_type in self.turbine_type])
+        self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
 
     def construct_rotor_diameters(self):
-        self.rotor_diameters = np.array([self.turbine_definitions[turb_type]['rotor_diameter'] for turb_type in self.turbine_type])#[None, None, :, None, None]
+        self.rotor_diameters = np.array([turb['rotor_diameter'] for turb in self.turbine_definitions])
 
     def construct_turbine_TSRs(self):
-        self.TSRs = np.array([self.turbine_definitions[turb_type]['TSR'] for turb_type in self.turbine_type])
+        self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])
 
     def construc_turbine_pPs(self):
-        self.pPs = np.array([self.turbine_definitions[turb_type]['pP'] for turb_type in self.turbine_type])
+        self.pPs = np.array([turb['pP'] for turb in self.turbine_definitions])
 
     def construct_turbine_map(self):
-        self.turbine_map = [Turbine.from_dict(self.turbine_definitions[turb_type]) for turb_type in np.unique(self.turbine_type)]
+        self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = [(turb.turbine_type, turb.fCt_interp) for turb in self.turbine_map]
@@ -112,7 +110,7 @@ class Farm(BaseClass):
     def construct_turbine_power_interps(self):
         self.turbine_power_interps = [(turb.turbine_type, turb.power_interp) for turb in self.turbine_map]
 
-    def construct_coordinates(self, reference_z: float):
+    def construct_coordinates(self):
         self.coordinates = np.array(
             [Vec3([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)]
         )
@@ -123,8 +121,9 @@ class Farm(BaseClass):
         self.rotor_diameters = np.take_along_axis(self.rotor_diameters * template_shape, sorted_coord_indices, axis=2)
         self.TSRs = np.take_along_axis(self.TSRs * template_shape, sorted_coord_indices, axis=2)
         self.pPs = np.take_along_axis(self.pPs * template_shape, sorted_coord_indices, axis=2)
+        self.turbine_type_names = [turb["turbine_type"] for turb in self.turbine_definitions]
         self.turbine_type_map = np.take_along_axis(
-            np.reshape(self.turbine_type * n_wind_directions, np.shape(sorted_coord_indices)),
+            np.reshape(self.turbine_type_names * n_wind_directions, np.shape(sorted_coord_indices)),
             sorted_coord_indices,
             axis=2
         )
