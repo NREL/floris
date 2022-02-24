@@ -295,8 +295,8 @@ class FlorisInterface(LoggerBase):
             self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
 
-        # Store the turbine grid points for reinitialization
-        current_solver_settings = copy.deepcopy(self.floris.solver)
+        # Store the current state for reinitialization
+        floris_dict = self.floris.as_dict()
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -328,9 +328,9 @@ class FlorisInterface(LoggerBase):
         horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
 
         # Reset the fi object back to the turbine grid configuration
-        self.reinitialize(
-            solver_settings=current_solver_settings
-        )
+        self.floris = Floris.from_dict(floris_dict)
+        self.floris.flow_field.het_map = self.het_map
+
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake()
 
