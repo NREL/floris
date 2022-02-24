@@ -13,6 +13,7 @@
 from typing import Any, Dict
 
 from attrs import define, field
+import numexpr as ne
 import numpy as np
 
 from floris.simulation import BaseModel
@@ -98,6 +99,7 @@ class JensenVelocityDeficit(BaseModel):
 
         reference_rotor_radius = reference_rotor_diameter / 2.0
 
+        """
         dx = x - x_i
         dy = y - y_i - deflection_field_i
         dz = z - z_i
@@ -114,13 +116,38 @@ class JensenVelocityDeficit(BaseModel):
         # np.nan_to_num
 
         # C should be 0 at the current turbine and everywhere in front of it
-        upstream_mask = np.array(dx <= 0.0, dtype=bool)
+        downstream_mask = np.array(dx > 0.0, dtype=int)
         # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
-        boundary_mask = np.array( np.sqrt(dy ** 2 + dz ** 2) > boundary_line, dtype=bool)
+        boundary_mask = np.array( np.sqrt(dy ** 2 + dz ** 2) < boundary_line, dtype=int)
 
-        mask = np.logical_or(upstream_mask, boundary_mask)
-        c[mask] = 0.0
+        mask = np.logical_and(downstream_mask, boundary_mask)
+        c[~mask] = 0.0
 
         velocity_deficit = 2 * axial_induction_i * c
+        """
+
+        # Numexpr - do not change below without corresponding changes above.
+        dx = ne.evaluate("x - x_i")
+        dy = ne.evaluate("y - y_i - deflection_field_i")
+        dz = ne.evaluate("z - z_i")
+
+        we = self.we
+
+        # y = m * x + b
+        boundary_line = ne.evaluate("we * dx + reference_rotor_radius")
+
+        c = ne.evaluate("( reference_rotor_radius / ( reference_rotor_radius + we * dx ) ) ** 2")
+
+        # C should be 0 at the current turbine and everywhere in front of it
+        downstream_mask = ne.evaluate("dx > 0.1")
+
+        # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
+        boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < boundary_line")
+        
+        mask = np.logical_and(downstream_mask, boundary_mask)
+        c[~mask] = 0.0
+        # c = ne.evaluate("c * downstream_mask * boundary_mask")
+
+        velocity_deficit = ne.evaluate("2 * axial_induction_i * c")
 
         return velocity_deficit

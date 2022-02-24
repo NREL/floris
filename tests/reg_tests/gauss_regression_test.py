@@ -689,3 +689,57 @@ def test_regression_secondary_steering(sample_inputs_fixture):
         )
 
     assert_results_arrays(test_results[0], secondary_steering_baseline)
+
+
+def test_regression_small_grid_rotation(sample_inputs_fixture):
+    """
+    Where wake models are masked based on the x-location of a turbine, numerical precision
+    can cause masking to fail unexpectedly. For example, in the configuration here one of
+    the turbines has these delta x values;
+
+    [[4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]
+     [4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13 4.54747351e-13]]
+
+    and therefore the masking statement is False when it should be True. This causes the current
+    turbine to be affected by its own wake. This test requires that at least in this particular
+    configuration the masking correctly filters grid points.
+    """
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    X, Y = np.meshgrid(
+        6.0 * 126.0 * np.arange(0, 5, 1),
+        6.0 * 126.0 * np.arange(0, 5, 1)
+    )
+    X = X.flatten()
+    Y = Y.flatten()
+
+    sample_inputs_fixture.floris["farm"]["layout_x"] = X
+    sample_inputs_fixture.floris["farm"]["layout_y"] = Y
+
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris.steady_state_atmospheric_condition()
+
+    # farm_avg_velocities = average_velocity(floris.flow_field.u)
+    velocities = floris.flow_field.u
+    yaw_angles = floris.farm.yaw_angles
+
+    farm_powers = power(
+        floris.flow_field.air_density,
+        velocities,
+        yaw_angles,
+        floris.turbine.pP,
+        floris.turbine.power_interp,
+    )
+
+    # A "column" is oriented parallel to the wind direction
+    # Columns 1 - 4 should have the same power profile
+    # Column 5 leading turbine is completely unwaked
+    # and the rest of the turbines have a partial wake from their immediate upstream turbine
+    assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,5:10])
+    assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,10:15])
+    assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,15:20])
+    assert np.allclose(farm_powers[2,0,20], farm_powers[2,0,0])
+    assert np.allclose(farm_powers[2,0,21], farm_powers[2,0,21:25])
