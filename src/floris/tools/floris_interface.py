@@ -284,7 +284,7 @@ class FlorisInterface(LoggerBase):
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
         # If height not provided, use the hub height
         if height is None:
-            height = self.floris.farm.hub_heights[0]
+            height = self.floris.farm.hub_heights[0][0][0]
             self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
         solver_settings = {
