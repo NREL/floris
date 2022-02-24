@@ -503,11 +503,12 @@ class YawOptimization:
         # Produce output table
         ti = np.min(self.fi.floris.flow_field.turbulence_intensity)
         df_list = []
+        num_wind_directions = len(self.fi.floris.flow_field.wind_directions)
         for ii, wind_speed in enumerate(self.fi.floris.flow_field.wind_speeds):
             df_list.append(pd.DataFrame({
                 "wind_direction": self.fi.floris.flow_field.wind_directions,
-                "wind_speed": self.fi.floris.flow_field.wind_speeds,
-                "turbulence_intensity": np.ones(self.nconds) * ti,
+                "wind_speed": wind_speed * np.ones(num_wind_directions),
+                "turbulence_intensity": ti * np.ones(num_wind_directions),
                 "yaw_angles_opt": [yaw_angles for yaw_angles in self.yaw_angles_opt[:, ii, :]],
                 "farm_power_opt": self.farm_power_opt[:, ii],
                 "farm_power_baseline": self.farm_power_baseline[:, ii],
