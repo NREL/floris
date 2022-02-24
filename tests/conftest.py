@@ -142,6 +142,7 @@ class SampleInputs:
 
     def __init__(self):
         self.turbine = {
+            "turbine_type": "nrel_5mw",
             "rotor_diameter": 126.0,
             "hub_height": 90.0,
             "pP": 1.88,
@@ -305,6 +306,7 @@ class SampleInputs:
         self.farm = {
             "layout_x": X_COORDS,
             "layout_y": Y_COORDS,
+            "turbine_type": [self.turbine]
         }
 
         self.flow_field = {
@@ -370,7 +372,6 @@ class SampleInputs:
         self.floris = {
             "farm": self.farm,
             "flow_field": self.flow_field,
-            "turbine": self.turbine,
             "wake": self.wake,
             "solver": {
                 "type": "turbine_grid",
