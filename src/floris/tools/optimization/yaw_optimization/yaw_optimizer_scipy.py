@@ -39,7 +39,6 @@ class YawOptimizationScipy(YawOptimization):
         turbine_weights=None,
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=True,
-        # reduce_ngrid=False,
         verify_convergence=False,
     ):
         """
@@ -84,53 +83,57 @@ class YawOptimizationScipy(YawOptimization):
             opt_yaw_angles (np.array): Optimal yaw angles in degrees. This
             array is equal in length to the number of turbines in the farm.
         """
-        # Loop through every WD individually
+        # Loop through every WD and WS individually
         wd_array = self.fi_subset.floris.flow_field.wind_directions
-        for nwdi, wd in enumerate(wd_array):
+        ws_array = self.fi_subset.floris.flow_field.wind_speeds
+        for nwsi, ws in enumerate(ws_array):
+        
+            self.fi_subset.reinitialize(wind_speeds=[ws])
 
-            # Find turbines to optimize
-            turbs_to_opt = self._turbs_to_opt_subset[nwdi, 0, :]
-            if not any(turbs_to_opt):
-                continue  # Nothing to do here: no turbines to optimize
+            for nwdi, wd in enumerate(wd_array):
+                # Find turbines to optimize
+                turbs_to_opt = self._turbs_to_opt_subset[nwdi, nwsi, :]
+                if not any(turbs_to_opt):
+                    continue  # Nothing to do here: no turbines to optimize
 
-            # Extract current optimization problem variables (normalized)
-            yaw_lb = self._minimum_yaw_angle_subset_norm[nwdi, 0, turbs_to_opt]
-            yaw_ub = self._maximum_yaw_angle_subset_norm[nwdi, 0, turbs_to_opt]
-            bnds = [(a, b) for a, b in zip(yaw_lb, yaw_ub)]
-            x0 = self._x0_subset_norm[nwdi, 0, turbs_to_opt]
+                # Extract current optimization problem variables (normalized)
+                yaw_lb = self._minimum_yaw_angle_subset_norm[nwdi, nwsi, turbs_to_opt]
+                yaw_ub = self._maximum_yaw_angle_subset_norm[nwdi, nwsi, turbs_to_opt]
+                bnds = [(a, b) for a, b in zip(yaw_lb, yaw_ub)]
+                x0 = self._x0_subset_norm[nwdi, nwsi, turbs_to_opt]
 
-            J0 = self._farm_power_baseline_subset[nwdi, 0]
-            yaw_template = self._yaw_angles_template_subset[nwdi, 0, :]
-            turbine_weights = self._turbine_weights_subset[nwdi, 0, :]
-            yaw_template = np.tile(yaw_template, (1, 1, 1))
-            turbine_weights = np.tile(turbine_weights, (1, 1, 1))
+                J0 = self._farm_power_baseline_subset[nwdi, nwsi]
+                yaw_template = self._yaw_angles_template_subset[nwdi, nwsi, :]
+                turbine_weights = self._turbine_weights_subset[nwdi, nwsi, :]
+                yaw_template = np.tile(yaw_template, (1, 1, 1))
+                turbine_weights = np.tile(turbine_weights, (1, 1, 1))
 
-            # Define cost function
-            def cost(x):
-                x_full = np.array(yaw_template, copy=True)
-                x_full[0, 0, turbs_to_opt] = x * self._normalization_length
-                return (
-                    - 1.0 * self._calculate_farm_power(
-                        yaw_angles=x_full,
-                        wd_array=[wd],
-                        turbine_weights=turbine_weights
-                    )[0, 0] / J0
+                # Define cost function
+                def cost(x):
+                    x_full = np.array(yaw_template, copy=True)
+                    x_full[0, 0, turbs_to_opt] = x * self._normalization_length
+                    return (
+                        - 1.0 * self._calculate_farm_power(
+                            yaw_angles=x_full,
+                            wd_array=[wd],
+                            turbine_weights=turbine_weights
+                        )[0, 0] / J0
+                    )
+
+                # Perform optimization
+                residual_plant = minimize(
+                    fun=cost,
+                    x0=x0,
+                    bounds=bnds,
+                    method=self.opt_method,
+                    options=self.opt_options,
                 )
 
-            # Perform optimization
-            residual_plant = minimize(
-                fun=cost,
-                x0=x0,
-                bounds=bnds,
-                method=self.opt_method,
-                options=self.opt_options,
-            )
-
-            # Undo normalization/masks and save results to self
-            self._farm_power_opt_subset[nwdi, 0] = -residual_plant.fun * J0
-            self._yaw_angles_opt_subset[nwdi, 0, turbs_to_opt] = (
-                residual_plant.x * self._normalization_length
-            )
+                # Undo normalization/masks and save results to self
+                self._farm_power_opt_subset[nwdi, nwsi] = -residual_plant.fun * J0
+                self._yaw_angles_opt_subset[nwdi, nwsi, turbs_to_opt] = (
+                    residual_plant.x * self._normalization_length
+                )
 
         # Finalize optimization, i.e., retrieve full solutions
         df_opt = self._finalize()
