@@ -15,12 +15,17 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from shapely.geometry import Polygon, Point, LineString
+from scipy.spatial.distance import cdist
 
 
 class Layout:
-    def __init__(self, fi, boundaries, wdir=None, wspd=None, wfreq=None):
+    def __init__(self, fi, boundaries):
         self.fi = fi
         self.boundaries = boundaries
+
+        self.boundary_polygon = Polygon(self.boundaries)
+        self.boundary_line = LineString(self.boundaries)
 
         self.xmin = np.min([tup[0] for tup in boundaries])
         self.xmax = np.max([tup[0] for tup in boundaries])
@@ -31,18 +36,10 @@ class Layout:
 
         self.min_dist = 2 * self.rotor_diameter
 
-        if wdir is not None:
-            self.wdir = wdir
-        else:
-            self.wdir = self.fi.floris.farm.flow_field.wind_direction
-        if wspd is not None:
-            self.wspd = wspd
-        else:
-            self.wspd = self.fi.floris.farm.flow_field.wind_speed
-        if wfreq is not None:
-            self.wfreq = wfreq
-        else:
-            self.wfreq = 1.0
+        self.wdir = self.fi.floris.flow_field.wind_directions
+        self.wspd = self.fi.floris.flow_field.wind_speeds
+        self.initial_power = np.sum(self.fi.get_farm_power())
+        print('initial_power: ', self.initial_power)
 
     def __str__(self):
         return "layout"
@@ -59,13 +56,17 @@ class Layout:
         self.parse_opt_vars(varDict)
 
         # Update turbine map with turbince locations
-        self.fi.reinitialize_flow_field(layout_array=[self.x, self.y])
+        self.fi.reinitialize(layout=[self.x, self.y])
+        self.fi.calculate_wake()
 
         # Compute the objective function
         funcs = {}
         funcs["obj"] = (
-            -1 * self.fi.get_farm_AEP(self.wdir, self.wspd, self.wfreq) * 1e-9
+            -1 * np.sum(self.fi.get_farm_power()) / self.initial_power
         )
+        print('x: ', self.x)
+        print('y: ', self.y)
+        print('val of obj: ', -1 * np.sum(self.fi.get_farm_power()) / self.initial_power)
 
         # Compute constraints, if any are defined for the optimization
         funcs = self.compute_cons(funcs)
@@ -99,7 +100,7 @@ class Layout:
 
     def add_con_group(self, optProb):
         optProb.addConGroup("boundary_con", self.nturbs, lower=0.0)
-        optProb.addConGroup("spacing_con", self.nturbs, lower=self.min_dist)
+        optProb.addConGroup("spacing_con", 1, lower=self.min_dist)
 
         return optProb
 
@@ -113,85 +114,40 @@ class Layout:
     # User-defined methods
     ###########################################################################
 
-    def space_constraint(self):
-        dist = [
-            np.min(
-                [
-                    np.sqrt((self.x[i] - self.x[j]) ** 2 + (self.y[i] - self.y[j]) ** 2)
-                    for j in range(self.nturbs)
-                    if i != j
-                ]
-            )
-            for i in range(self.nturbs)
-        ]
-
-        return dist
+    def space_constraint(self, rho=500):
+        x = self.x
+        y = self.y
+                
+        # Sped up distance calc here using vectorization
+        locs = np.vstack((x, y)).T
+        distances = cdist(locs, locs)
+        arange = np.arange(distances.shape[0])
+        distances[arange, arange] = 1e10
+        dist = np.min(distances, axis=0)
+                
+        g = 1 - np.array(dist) / self.min_dist
+        
+        # Following code copied from OpenMDAO KSComp().
+        # Constraint is satisfied when KS_constraint <= 0
+        g_max = np.max(np.atleast_2d(g), axis=-1)[:, np.newaxis]
+        g_diff = g - g_max
+        exponents = np.exp(rho * g_diff)
+        summation = np.sum(exponents, axis=-1)[:, np.newaxis]
+        KS_constraint = g_max + 1.0 / rho * np.log(summation)
+        
+        print('space_constraint: ', KS_constraint[0][0])
+        return KS_constraint[0][0]
 
     def distance_from_boundaries(self):
-        dist_out = []
+        boundary_con = np.zeros(self.nturbs)
+        for i in range(self.nturbs):
+            loc = Point(self.x[i], self.y[i])
+            boundary_con[i] = loc.distance(self.boundary_line)
+            if self.boundary_polygon.contains(loc)==False:
+                boundary_con[i] *= -1.0
 
-        for k in range(self.nturbs):
-            dist = []
-            in_poly = self.point_inside_polygon(self.x[k], self.y[k], self.boundaries)
-
-            for i in range(len(self.boundaries)):
-                self.boundaries = np.array(self.boundaries)
-                p1 = self.boundaries[i]
-                if i == len(self.boundaries) - 1:
-                    p2 = self.boundaries[0]
-                else:
-                    p2 = self.boundaries[i + 1]
-
-                px = p2[0] - p1[0]
-                py = p2[1] - p1[1]
-                norm = px * px + py * py
-
-                u = (
-                    (self.x[k] - self.boundaries[i][0]) * px
-                    + (self.y[k] - self.boundaries[i][1]) * py
-                ) / float(norm)
-
-                if u <= 0:
-                    xx = p1[0]
-                    yy = p1[1]
-                elif u >= 1:
-                    xx = p2[0]
-                    yy = p2[1]
-                else:
-                    xx = p1[0] + u * px
-                    yy = p1[1] + u * py
-
-                dx = self.x[k] - xx
-                dy = self.y[k] - yy
-                dist.append(np.sqrt(dx * dx + dy * dy))
-
-            dist = np.array(dist)
-            if in_poly:
-                dist_out.append(np.min(dist))
-            else:
-                dist_out.append(-np.min(dist))
-
-        dist_out = np.array(dist_out)
-
-        return dist_out
-
-    def point_inside_polygon(self, x, y, poly):
-        n = len(poly)
-        inside = False
-
-        p1x, p1y = poly[0]
-        for i in range(n + 1):
-            p2x, p2y = poly[i % n]
-            if y > min(p1y, p2y):
-                if y <= max(p1y, p2y):
-                    if x <= max(p1x, p2x):
-                        if p1y != p2y:
-                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
-                        if p1x == p2x or x <= xinters:
-                            inside = not inside
-            p1x, p1y = p2x, p2y
-
-        return inside
+        print('boundary_con: ', boundary_con)
+        return boundary_con
 
     def plot_layout_opt_results(self, sol):
         """
@@ -242,9 +198,10 @@ class Layout:
         Returns:
             nturbs (int): The number of turbines in the FLORIS object.
         """
-        self._nturbs = len(self.fi.floris.farm.turbines)
+        self._nturbs = self.fi.floris.farm.n_turbines
         return self._nturbs
 
     @property
     def rotor_diameter(self):
-        return self.fi.floris.farm.turbine_map.turbines[0].rotor_diameter
+        # return self.fi.floris.farm.turbine_map.turbines[0].rotor_diameter
+        return 126.0
