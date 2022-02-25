@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import yaml
-from ..utilities import load_yaml
+from floris.utilities import load_yaml
 
 import floris.logging_manager as logging_manager
 from floris.type_dec import FromDictMixin

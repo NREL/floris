@@ -154,6 +154,8 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
+
+        ## Farm
         if layout is not None:
             farm_dict["layout_x"] = layout[0]
             farm_dict["layout_y"] = layout[1]

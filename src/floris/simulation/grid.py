@@ -128,6 +128,7 @@ class TurbineGrid(Grid):
         wind_speeds (`list[float]`): The input wind speeds
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
+    # TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
@@ -195,7 +196,6 @@ class TurbineGrid(Grid):
             ),
             dtype=floris_float_type
         )
-
         # Calculate the radial distance from the center of the turbine rotor
         disc_grid = np.linspace(
             -1 * disc_area_radius,

@@ -106,9 +106,14 @@ def flow_field_fixture(sample_inputs_fixture):
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
+
+    # TODO: The TurbineGrid requires that the rotor diameters be 1d but the Farm constructs them as 3d
+    #   Can we make this consistent?
+
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_TURBINES) )
     return TurbineGrid(
         turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
+        reference_turbine_diameter=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=TURBINE_GRID_RESOLUTION
@@ -117,9 +122,10 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
     return FlowFieldGrid(
         turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
+        reference_turbine_diameter=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=[3,2,2]
