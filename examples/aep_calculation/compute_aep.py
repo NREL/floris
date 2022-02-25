@@ -16,14 +16,11 @@
 import os
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 import floris.tools as wfct
-import floris.tools.cut_plane as cp
 import floris.tools.wind_rose as rose
 import floris.tools.power_rose as pr
-import floris.tools.visualization as vis
 from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRose
 
 

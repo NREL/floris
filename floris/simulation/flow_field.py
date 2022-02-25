@@ -100,8 +100,16 @@ class FlowField:
             pt = turbine.rloc * turbine.rotor_radius
 
             xt = [coord.x1 for coord in self.turbine_map.coords]
-            yt = np.linspace(x2 - pt, x2 + pt, ngrid,)
-            zt = np.linspace(x3 - pt, x3 + pt, ngrid,)
+            yt = np.linspace(
+                x2 - pt,
+                x2 + pt,
+                ngrid,
+            )
+            zt = np.linspace(
+                x3 - pt,
+                x3 + pt,
+                ngrid,
+            )
 
             x_grid[i] = xt[i]
             y_grid[i] = yt
@@ -528,9 +536,9 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
     def calculate_wake(self, no_wake=False, points=None, track_n_upstream_wakes=False):
@@ -566,9 +574,9 @@ class FlowField:
 
         # reinitialize the turbines
         for i, turbine in enumerate(self.turbine_map.turbines):
-            turbine.current_turbulence_intensity = self.wind_map.turbine_turbulence_intensity[
-                i
-            ]
+            turbine.current_turbulence_intensity = (
+                self.wind_map.turbine_turbulence_intensity[i]
+            )
             turbine.reset_velocities()
 
         # define the center of rotation with reference to 270 deg as center of
@@ -635,19 +643,20 @@ class FlowField:
                 u_wake, coord, self, rotated_x, rotated_y, rotated_z
             )
 
-            # get the wake deflection field
-            deflection = self._compute_turbine_wake_deflection(
-                rotated_x, rotated_y, rotated_z, turbine, coord, self
-            )
+            if not no_wake:
+                # get the wake deflection field
+                deflection = self._compute_turbine_wake_deflection(
+                    rotated_x, rotated_y, rotated_z, turbine, coord, self
+                )
 
-            # get the velocity deficit accounting for the deflection
-            (
-                turb_u_wake,
-                turb_v_wake,
-                turb_w_wake,
-            ) = self._compute_turbine_velocity_deficit(
-                rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
-            )
+                # get the velocity deficit accounting for the deflection
+                (
+                    turb_u_wake,
+                    turb_v_wake,
+                    turb_w_wake,
+                ) = self._compute_turbine_velocity_deficit(
+                    rotated_x, rotated_y, rotated_z, turbine, coord, deflection, self
+                )
 
             ###########
             # include turbulence model for the gaussian wake model from
@@ -655,7 +664,7 @@ class FlowField:
             if (
                 "crespo_hernandez" == self.wake.turbulence_model.model_string
                 or self.wake.turbulence_model.model_string == "ishihara_qian"
-            ):
+            ) and not no_wake:
                 # compute area overlap of wake on other turbines and update
                 # downstream turbine turbulence intensities
                 for coord_ti, turbine_ti in sorted_map:

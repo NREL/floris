@@ -40,7 +40,9 @@ class PowerRose:
     loaded.
     """
 
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         """
         Instantiate a PowerRose object. No explicit arguments required, and an
         additional method will need to be called to populate the PowerRose
@@ -362,7 +364,9 @@ class PowerRose:
                 "r",
             )
             ax.axhline(
-                100.0 * (df.energy_opt.mean() - df.energy_baseline.mean()),
+                100.0
+                * (df.energy_opt.mean() - df.energy_baseline.mean())
+                / df.energy_baseline.mean(),
                 df.energy_baseline.mean(),
                 color="r",
                 ls="--",

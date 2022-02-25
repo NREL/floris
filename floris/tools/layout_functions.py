@@ -20,10 +20,10 @@ import math
 
 import numpy as np
 import pandas as pd
-
 import matplotlib.pyplot as plt
-from floris.utilities import wrap_360
 from scipy.spatial.distance import pdist, squareform
+
+from floris.utilities import wrap_360
 
 
 # All functions assume a dataframe with index turbine, and columns x and y

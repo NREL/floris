@@ -42,7 +42,7 @@ fi = wfct.floris_interface.FlorisInterface("../example_input.json")
 def plot_slice_shortcut(fi, ax, title):
     # Get horizontal plane at default height (hub-height)
     hor_plane = fi.get_hor_plane()
-    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax, minSpeed=4.0, maxSpeed=8.0)
+    wfct.visualization.visualize_cut_plane(hor_plane, ax=ax, minSpeed=4.0, maxSpeed=8.0，title=title)
 
 
 # Define a plot
