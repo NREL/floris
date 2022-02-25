@@ -32,7 +32,8 @@ from floris.simulation import (
     FlowFieldPlanarGrid,
     sequential_solver,
     cc_solver,
-    full_flow_sequential_solver
+    full_flow_sequential_solver,
+    full_flow_cc_solver
 )
 from attrs import define, field
 
@@ -167,11 +168,14 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # This function call should be for a single wind direction and wind speed
         # since the memory consumption is very large.
 
-        # self.steady_state_atmospheric_condition()
-
         self.flow_field.initialize_velocity_field(self.grid)
 
-        full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+        vel_model = self.wake.model_strings["velocity_model"]
+
+        if vel_model=="cc":
+            full_flow_cc_solver(self.farm, self.flow_field, self.turbine, self.grid, self.wake)
+        else:
+            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
 
     ## I/O
