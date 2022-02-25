@@ -35,10 +35,7 @@ class YawOptimizationSR(YawOptimization):
         turbine_weights=None,
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=True,
-        # reduce_ngrid=False,
-        # cluster_turbines=False,
-        # cluster_wake_slope=0.30,
-        # verify_convergence=True,
+        verify_convergence=False,
     ):
         """
         Instantiate YawOptimizationSR object with a FlorisInterface object
@@ -56,9 +53,7 @@ class YawOptimizationSR(YawOptimization):
             calc_baseline_power=True,
             exclude_downstream_turbines=exclude_downstream_turbines,
             exploit_layout_symmetry=exploit_layout_symmetry,
-            # cluster_turbines=cluster_turbines,
-            # cluster_wake_slope=cluster_wake_slope,
-            # verify_convergence=verify_convergence,
+            verify_convergence=verify_convergence,
         )
 
         # Start a timer for FLORIS computations
@@ -88,12 +83,6 @@ class YawOptimizationSR(YawOptimization):
         # For each wind direction, determine the order of turbines
         self._get_turbine_orders()
 
-        # Initialize optimum yaw angles and cost function as baseline values
-        self._yaw_angles_opt_subset = copy.deepcopy(self._yaw_angles_baseline_subset)
-        self._farm_power_opt_subset = copy.deepcopy(self._farm_power_baseline_subset)
-        self._yaw_lbs = copy.deepcopy(self._minimum_yaw_angle_subset)
-        self._yaw_ubs = copy.deepcopy(self._maximum_yaw_angle_subset)
-
     def _get_turbine_orders(self):
         layout_x = self.fi.layout_x
         layout_y = self.fi.layout_y
@@ -105,7 +94,7 @@ class YawOptimizationSR(YawOptimization):
             )
             turbines_ordered = np.argsort(layout_x_rot)
             turbines_ordered_array.append(turbines_ordered)
-        self.turbines_ordered_array_subset = turbines_ordered_array
+        self.turbines_ordered_array_subset = np.vstack(turbines_ordered_array)
 
 
     def _calc_powers_with_memory(self, yaw_angles_subset, use_memory=True):
@@ -134,16 +123,16 @@ class YawOptimizationSR(YawOptimization):
         # Find indices of yaw angles that we previously already evaluated, and
         # prevent redoing the same calculations
         if use_memory:
-            idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).flatten()
-            farm_powers[idx, 0] = farm_power_opt_subset[idx, 0]
+            idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
+            farm_powers[idx, :] = farm_power_opt_subset[idx, :]
             # print("Skipping {:d}/{:d} calculations: already in memory.".format(np.sum(idx), len(idx)))
         else:
-            idx = np.array([False] * yaw_angles_subset.shape[0], dtype=bool)
+            idx = np.zeros(yaw_angles_subset.shape[0], dtype=bool)
 
         if not np.all(idx):
             # Now calculate farm powers for conditions we haven't yet evaluated previously
             start_time = timerpc()
-            farm_powers[~idx] = self._calculate_farm_power(
+            farm_powers[~idx, :] = self._calculate_farm_power(
                 wd_array=wd_array_subset[~idx],
                 turbine_weights=turbine_weights_subset[~idx, :, :],
                 yaw_angles=yaw_angles_subset[~idx, :, :],
@@ -152,20 +141,16 @@ class YawOptimizationSR(YawOptimization):
 
         # Finally format solutions back to original format, if necessary
         if eval_multiple_passes:
-            farm_powers = np.reshape(farm_powers, (Ny, -1, 1))
+            farm_powers = np.reshape(
+                farm_powers,
+                (
+                    Ny,
+                    self.fi_subset.floris.flow_field.n_wind_directions,
+                    self.fi_subset.floris.flow_field.n_wind_speeds
+                )
+            )
 
         return farm_powers
-
-    # def _print_uplift(self):
-    #     pow_opt = self._farm_power_opt
-    #     pow_bl = self.farm_power_baseline
-    #     print("Windrose farm power uplift = {:.2f} %".format(100 * (np.sum(pow_opt) / np.sum(pow_bl) - 1)))
-    #     print("Farm power uplift per direction:")
-    #     E = 100.0 * (pow_opt / pow_bl - 1)
-    #     wd_array = self.fi.floris.flow_field.wind_directions
-    #     ws = self.fi.floris.flow_field.wind_speeds[0]
-    #     for iw in range(self.nconds):
-    #         print("  WD: {:.1f} deg, WS: {:.1f} m/s -- uplift: {:.3f} %".format(wd_array[iw], ws, E[iw]))
 
     def _generate_evaluation_grid(self, pass_depth, turbine_depth):
         """
@@ -180,25 +165,31 @@ class YawOptimizationSR(YawOptimization):
         evaluation_grid = np.tile(self._yaw_angles_opt_subset, (Ny, 1, 1, 1))
 
         # Get a list of the turbines in order of x and sort front to back
-        for iw in range(self._nconds_subset):
-            turbid = self.turbines_ordered_array_subset[iw][turbine_depth]  # Turbine to manipulate
+        for iw in range(self._nwinddirections_subset):
+            turbid = self.turbines_ordered_array_subset[iw, turbine_depth]  # Turbine to manipulate
 
-            # Check if this turbine needs to be optimized. If not, continue
-            if not self._turbs_to_opt_subset[iw, 0, turbid]:
-                continue
+            # # Check if this turbine needs to be optimized. If not, continue
+            # if not self._turbs_to_opt_subset[iw, 0, turbid]:
+            #     continue
 
             # # Remove turbines that need not be optimized
             # turbines_ordered = [ti for ti in turbines_ordered if ti in self.turbs_to_opt]
 
             # Grab yaw bounds from self
-            yaw_lb = self._yaw_lbs[iw, 0, turbid]
-            yaw_ub = self._yaw_ubs[iw, 0, turbid]
+            yaw_lb = self._yaw_lbs[iw, :, turbid]
+            yaw_ub = self._yaw_ubs[iw, :, turbid]
 
             # Saturate to allowable yaw limits
-            if yaw_lb < self.minimum_yaw_angle[iw, 0, turbid]:
-                yaw_lb = self.minimum_yaw_angle[iw, 0, turbid]
-            if yaw_ub > self.maximum_yaw_angle[iw, 0, turbid]:
-                yaw_ub = self.maximum_yaw_angle[iw, 0, turbid]
+            yaw_lb = np.clip(
+                yaw_lb,
+                self.minimum_yaw_angle[iw, :, turbid],
+                self.maximum_yaw_angle[iw, :, turbid]
+            )
+            yaw_ub = np.clip(
+                yaw_ub,
+                self.minimum_yaw_angle[iw, :, turbid],
+                self.maximum_yaw_angle[iw, :, turbid]
+            )
 
             if pass_depth == 0:
                 # Evaluate all possible coordinates
@@ -209,8 +200,7 @@ class YawOptimizationSR(YawOptimization):
                 ids = [*list(range(0, c)), *list(range(c + 1, Ny + 1))]
                 yaw_angles_subset = np.linspace(yaw_lb, yaw_ub, Ny + 1)[ids]
 
-            for iii in range(Ny):
-                evaluation_grid[iii, iw, 0, turbid] = yaw_angles_subset[iii]
+            evaluation_grid[:, iw, :, turbid] = yaw_angles_subset
 
         self._yaw_evaluation_grid = evaluation_grid
         return evaluation_grid
@@ -221,7 +211,7 @@ class YawOptimizationSR(YawOptimization):
         farm_powers = self._calc_powers_with_memory(evaluation_grid)
         return farm_powers
 
-    def _optimize(self): 
+    def optimize(self): 
         """
         Find the yaw angles that maximize the power production for every wind direction,
         wind speed and turbulence intensity.
@@ -240,52 +230,57 @@ class YawOptimizationSR(YawOptimization):
 
                 # Evaluate grid of yaw angles, get farm powers and find optimal solutions
                 farm_powers = self._process_evaluation_grid()
-                args_opt = np.argmax(farm_powers, axis=0)
 
-                # Update current optimal solution
-                for iw in range(self._nconds_subset):
-                    # Get id of the turbine of which we manipulated the yaw angle
-                    turbid = self.turbines_ordered_array_subset[iw][turbine_depth]
-                    arg_opt = args_opt[iw]  # For this farm, arg_opt increases power the most
+                # Find optimal solutions in new evaluation grid
+                args_opt = np.expand_dims(np.argmax(farm_powers, axis=0), axis=0)
+                farm_powers_opt_new = np.squeeze(
+                    np.take_along_axis(farm_powers, args_opt, axis=0),
+                    axis=0,
+                )
+                yaw_angles_opt_new = np.squeeze(
+                    np.take_along_axis(
+                        evaluation_grid,
+                        np.expand_dims(args_opt, axis=3), 
+                        axis=0
+                    ),
+                    axis=0
+                )
 
-                    # Check if farm power increased compared to previous iteration
-                    pow_opt = farm_powers[arg_opt, iw]
-                    pow_prev_iteration = self._farm_power_opt_subset[iw]
-                    if pow_opt > pow_prev_iteration:
-                        xopt = evaluation_grid[arg_opt, iw, 0, turbid]
-                        self._yaw_angles_opt_subset[iw, 0, turbid] = xopt  # Update optimal yaw angle
-                        self._farm_power_opt_subset[iw, 0] = pow_opt  # Update optimal power
-                    else:
-                        # print("Power did not increase compared to previous evaluation")
-                        xopt = self._yaw_angles_opt_subset[iw, 0, turbid]
+                farm_powers_opt_prev = self._farm_power_opt_subset
+                yaw_angles_opt_prev = self._yaw_angles_opt_subset
 
-                    # Update bounds for next iteration to close proximity of optimal solution
-                    dx = evaluation_grid[1, iw, 0, turbid] - evaluation_grid[0, iw, 0, turbid]
-                    lb_next = xopt - 0.50 * dx
-                    ub_next = xopt + 0.50 * dx
-                    if lb_next < self.minimum_yaw_angle[iw, 0, turbid]:
-                        lb_next = self.minimum_yaw_angle[iw, 0, turbid]
-                    if ub_next > self.maximum_yaw_angle[iw, 0, turbid]:
-                        ub_next = self.maximum_yaw_angle[iw, 0, turbid]
-                    self._yaw_lbs[iw, 0, turbid] = lb_next
-                    self._yaw_ubs[iw, 0, turbid] = ub_next
-                
-                # self._print_uplift()
+                # Now update optimal farm powers if better than previous
+                ids_better = (farm_powers_opt_new > farm_powers_opt_prev)
+                farm_power_opt = farm_powers_opt_prev
+                farm_power_opt[ids_better] = farm_powers_opt_new[ids_better]
+
+                # Now update optimal yaw angles if better than previous
+                turbs_sorted = self.turbines_ordered_array_subset
+                turbids = turbs_sorted[np.where(ids_better)[0], turbine_depth]
+                ids = (*np.where(ids_better), turbids)
+                yaw_angles_opt = yaw_angles_opt_prev
+                yaw_angles_opt[ids] = yaw_angles_opt_new[ids]
+
+                # Update bounds for next iteration to close proximity of optimal solution
+                dx = (
+                    evaluation_grid[1, :, :, :] -
+                    evaluation_grid[0, :, :, :]
+                )[ids]
+                self._yaw_lbs[ids] = np.clip(
+                    yaw_angles_opt[ids] - 0.50 * dx,
+                    self._minimum_yaw_angle_subset[ids],
+                    self._maximum_yaw_angle_subset[ids]
+                )
+                self._yaw_ubs[ids] = np.clip(
+                    yaw_angles_opt[ids] + 0.50 * dx,
+                    self._minimum_yaw_angle_subset[ids],
+                    self._maximum_yaw_angle_subset[ids]
+                )
+
+                # Save results to self
+                self._farm_power_opt_subset = farm_power_opt
+                self._yaw_angles_opt_subset = yaw_angles_opt
 
         # Finalize optimization, i.e., retrieve full solutions
-        self._finalize()
-
-        # Produce output table
-        ti = np.min(self.fi.floris.flow_field.turbulence_intensity)
-        df_list = []
-        for ii, wind_speed in enumerate(self.fi.floris.flow_field.wind_speeds):
-            df_list.append(pd.DataFrame({
-                "wind_direction": self.fi.floris.flow_field.wind_directions,
-                "wind_speed": np.ones(self.nconds) * wind_speed,
-                "turbulence_intensity": np.ones(self.nconds) * ti,
-                "yaw_angles_opt": [yaw_angles for yaw_angles in self.yaw_angles_opt[:, ii, :]],
-                "farm_power_opt": self.farm_power_opt[:, ii],
-                "farm_power_baseline": self.farm_power_baseline[:, ii],
-            }))
-        df_opt = pd.concat(df_list, axis=0)
+        df_opt = self._finalize()
         return df_opt
