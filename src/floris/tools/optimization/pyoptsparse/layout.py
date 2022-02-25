@@ -18,11 +18,17 @@ import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, Point, LineString
 from scipy.spatial.distance import cdist
 
+def _norm(val, x1, x2):
+        return (val - x1) / (x2 - x1)
+
+def _unnorm(val, x1, x2):
+    return np.array(val) * (x2 - x1) + x1
 
 class Layout:
-    def __init__(self, fi, boundaries):
+    def __init__(self, fi, boundaries, freq):
         self.fi = fi
         self.boundaries = boundaries
+        self.freq = freq
 
         self.boundary_polygon = Polygon(self.boundaries)
         self.boundary_line = LineString(self.boundaries)
@@ -31,15 +37,14 @@ class Layout:
         self.xmax = np.max([tup[0] for tup in boundaries])
         self.ymin = np.min([tup[1] for tup in boundaries])
         self.ymax = np.max([tup[1] for tup in boundaries])
-        self.x0 = self.fi.layout_x
-        self.y0 = self.fi.layout_y
+        self.x0 = _norm(self.fi.layout_x, self.xmin, self.xmax)
+        self.y0 = _norm(self.fi.layout_y, self.ymin, self.ymax)
 
         self.min_dist = 2 * self.rotor_diameter
 
         self.wdir = self.fi.floris.flow_field.wind_directions
         self.wspd = self.fi.floris.flow_field.wind_speeds
-        self.initial_power = np.sum(self.fi.get_farm_power())
-        print('initial_power: ', self.initial_power)
+        self.initial_AEP = np.sum(self.fi.get_farm_power() * self.freq)
 
     def __str__(self):
         return "layout"
@@ -62,11 +67,8 @@ class Layout:
         # Compute the objective function
         funcs = {}
         funcs["obj"] = (
-            -1 * np.sum(self.fi.get_farm_power()) / self.initial_power
+            -1 * np.sum(self.fi.get_farm_power() * self.freq) / self.initial_AEP
         )
-        print('x: ', self.x)
-        print('y: ', self.y)
-        print('val of obj: ', -1 * np.sum(self.fi.get_farm_power()) / self.initial_power)
 
         # Compute constraints, if any are defined for the optimization
         funcs = self.compute_cons(funcs)
@@ -81,26 +83,26 @@ class Layout:
     #     return funcsSens, fail
 
     def parse_opt_vars(self, varDict):
-        self.x = varDict["x"]
-        self.y = varDict["y"]
+        self.x = _unnorm(varDict["x"], self.xmin, self.xmax)
+        self.y = _unnorm(varDict["y"], self.ymin, self.ymax)
 
     def parse_sol_vars(self, sol):
-        self.x = list(sol.getDVs().values())[0]
-        self.y = list(sol.getDVs().values())[1]
+        self.x = list(_unnorm(sol.getDVs()["x"], self.xmin, self.xmax))[0]
+        self.y = list(_unnorm(sol.getDVs()["y"], self.ymin, self.ymax))[1]
 
     def add_var_group(self, optProb):
         optProb.addVarGroup(
-            "x", self.nturbs, type="c", lower=self.xmin, upper=self.xmax, value=self.x0
+            "x", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.x0
         )
         optProb.addVarGroup(
-            "y", self.nturbs, type="c", lower=self.ymin, upper=self.ymax, value=self.y0
+            "y", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.y0
         )
 
         return optProb
 
     def add_con_group(self, optProb):
         optProb.addConGroup("boundary_con", self.nturbs, lower=0.0)
-        optProb.addConGroup("spacing_con", 1, lower=self.min_dist)
+        optProb.addConGroup("spacing_con", 1, upper=0.0)
 
         return optProb
 
@@ -117,16 +119,16 @@ class Layout:
     def space_constraint(self, rho=500):
         x = self.x
         y = self.y
-                
+
         # Sped up distance calc here using vectorization
         locs = np.vstack((x, y)).T
         distances = cdist(locs, locs)
         arange = np.arange(distances.shape[0])
         distances[arange, arange] = 1e10
         dist = np.min(distances, axis=0)
-                
+
         g = 1 - np.array(dist) / self.min_dist
-        
+
         # Following code copied from OpenMDAO KSComp().
         # Constraint is satisfied when KS_constraint <= 0
         g_max = np.max(np.atleast_2d(g), axis=-1)[:, np.newaxis]
@@ -134,8 +136,7 @@ class Layout:
         exponents = np.exp(rho * g_diff)
         summation = np.sum(exponents, axis=-1)[:, np.newaxis]
         KS_constraint = g_max + 1.0 / rho * np.log(summation)
-        
-        print('space_constraint: ', KS_constraint[0][0])
+
         return KS_constraint[0][0]
 
     def distance_from_boundaries(self):
@@ -143,22 +144,23 @@ class Layout:
         for i in range(self.nturbs):
             loc = Point(self.x[i], self.y[i])
             boundary_con[i] = loc.distance(self.boundary_line)
-            if self.boundary_polygon.contains(loc)==False:
+            if self.boundary_polygon.contains(loc)==True:
                 boundary_con[i] *= -1.0
 
-        print('boundary_con: ', boundary_con)
         return boundary_con
 
     def plot_layout_opt_results(self, sol):
         """
         Method to plot the old and new locations of the layout opitimization.
         """
-        locsx = sol.getDVs()["x"]
-        locsy = sol.getDVs()["y"]
+        locsx = _unnorm(sol.getDVs()["x"], self.xmin, self.xmax)
+        locsy = _unnorm(sol.getDVs()["y"], self.ymin, self.ymax)
+        x0 = _unnorm(self.x0, self.xmin, self.xmax)
+        y0 = _unnorm(self.y0, self.ymin, self.ymax)
 
         plt.figure(figsize=(9, 6))
         fontsize = 16
-        plt.plot(self.x0, self.y0, "ob")
+        plt.plot(x0, y0, "ob")
         plt.plot(locsx, locsy, "or")
         # plt.title('Layout Optimization Results', fontsize=fontsize)
         plt.xlabel("x (m)", fontsize=fontsize)
