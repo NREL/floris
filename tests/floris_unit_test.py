@@ -31,11 +31,6 @@ JSON_INPUT = TEST_DATA / "input_full_v3.json"
 DICT_INPUT = yaml.load(open(YAML_INPUT, "r"), Loader=yaml.SafeLoader)
 
 
-def test_read_json():
-    fi = Floris.from_file(JSON_INPUT)
-    assert isinstance(fi, Floris)
-
-
 def test_read_yaml():
     fi = Floris.from_file(YAML_INPUT)
     assert isinstance(fi, Floris)

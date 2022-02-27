@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import yaml
+from floris.utilities import load_yaml
 
 import floris.logging_manager as logging_manager
 from floris.type_dec import FromDictMixin
@@ -48,7 +49,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     logging: dict = field(converter=dict)
     solver: dict = field(converter=dict)
     wake: WakeModelManager = field(converter=WakeModelManager.from_dict)
-    turbine: Turbine = field(converter=Turbine.from_dict)
     farm: Farm = field(converter=Farm.from_dict)
     flow_field: FlowField = field(converter=FlowField.from_dict)
 
@@ -63,13 +63,21 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     def __attrs_post_init__(self) -> None:
 
         # Initialize farm quanitities that depend on other objects
-        self.farm.construct_coordinates(self.flow_field.reference_wind_height)
+        self.farm.construct_turbine_map()
+        self.farm.construct_turbine_fCts()
+        self.farm.construct_turbine_fCps()
+        self.farm.construct_turbine_power_interps()
+        self.farm.construct_hub_heights()
+        self.farm.construct_rotor_diameters()
+        self.farm.construct_turbine_TSRs()
+        self.farm.construc_turbine_pPs()
+        self.farm.construct_coordinates()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.turbine.rotor_diameter,
+                reference_turbine_diameter=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
@@ -77,7 +85,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.turbine.rotor_diameter,
+                reference_turbine_diameter=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
@@ -85,7 +93,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         elif self.solver["type"] == "flow_field_planar_grid":
             self.grid = FlowFieldPlanarGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.turbine.rotor_diameter,
+                reference_turbine_diameter=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 normal_vector=self.solver["normal_vector"],
@@ -97,6 +105,11 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         else:
             raise ValueError(
                 f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {self.solver['type']}"
+            )
+
+        if type(self.grid) == TurbineGrid:
+            self.farm.expand_farm_properties(
+                self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds, self.grid.sorted_coord_indices
             )
 
         # Configure logging
@@ -130,7 +143,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             elapsed_time = cc_solver(
                 self.farm,
                 self.flow_field,
-                self.turbine,
                 self.grid,
                 self.wake
             )
@@ -138,7 +150,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             elapsed_time = sequential_solver(
                 self.farm,
                 self.flow_field,
-                self.turbine,
                 self.grid,
                 self.wake
             )
@@ -164,7 +175,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         if vel_model=="cc":
             full_flow_cc_solver(self.farm, self.flow_field, self.turbine, self.grid, self.wake)
         else:
-            full_flow_sequential_solver(self.farm, self.flow_field, self.turbine, self.grid, self.wake)
+            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
 
     ## I/O
@@ -188,7 +199,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         with open(input_file_path) as input_file:
             if filetype.lower() in ("yml", "yaml"):
-                input_dict = yaml.load(input_file, Loader=yaml.SafeLoader)
+                input_dict = load_yaml(input_file_path)
             elif filetype.lower() == "json":
                 input_dict = json.load(input_file)
 

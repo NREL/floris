@@ -128,6 +128,7 @@ if __name__=="__main__":
     time_jensen = test_time_jensen_jimenez(sample_inputs)
     time_gauss = test_time_gauss(sample_inputs)
     time_gch = test_time_gch(sample_inputs)
-    time_cc = test_time_cumulative(sample_inputs)
+    # TODO: reenable this after the cc model is fixed with multiturbine
+    # time_cc = test_time_cumulative(sample_inputs)
 
-    print("{:.4f} {:.4f} {:.4f} {:.4f}".format(time_jensen, time_gauss, time_gch, time_cc))
+    print("{:.4f} {:.4f} {:.4f} {:.4f}".format(time_jensen, time_gauss, time_gch)) #, time_cc))

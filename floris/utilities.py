@@ -16,6 +16,8 @@ from typing import Tuple
 
 from attrs import define, field
 import numpy as np
+import yaml
+import os
 
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
@@ -218,3 +220,28 @@ def rotate_coordinates_rel_west(wind_directions, coordinates):
     )
     z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
     return x_coord_rotated, y_coord_rotated, z_coord_rotated
+
+
+class Loader(yaml.SafeLoader):
+
+    def __init__(self, stream):
+
+        self._root = os.path.split(stream.name)[0]
+
+        super().__init__(stream)
+
+    def include(self, node):
+
+        filename = os.path.join(self._root, self.construct_scalar(node))
+
+        with open(filename, 'r') as f:
+            return yaml.load(f, self.__class__)
+
+
+Loader.add_constructor('!include', Loader.include)
+
+def load_yaml(filename, loader=Loader):
+    if isinstance(filename, dict):
+        return filename  # filename already yaml dict
+    with open(filename) as fid:
+        return yaml.load(fid, loader)

@@ -44,14 +44,12 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         self,
         grid: Grid,
         flow_field: FlowField,
-        turbine: Turbine
     ) -> Dict[str, Any]:
 
         kwargs = dict(
             x=grid.x,
             y=grid.y,
             z=grid.z,
-            turbine_diameter=turbine.rotor_diameter,
             u_initial=flow_field.u_initial,
         )
         return kwargs
@@ -67,6 +65,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         yaw_i: np.ndarray,
         turbulence_intensity: np.ndarray,
         ct: np.ndarray,
+        turbine_diameter: np.ndarray,
         turb_u_wake: np.ndarray,
         Ctmp: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
@@ -75,7 +74,6 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        turbine_diameter: np.ndarray,
         u_initial: np.ndarray,
     ) -> None:
 
@@ -101,7 +99,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
             delta_x,
             turbine_Ct[:,:,ii:ii+1],
             turbine_ti[:,:,ii:ii+1],
-            turbine_diameter,
+            turbine_diameter[:,:,ii:ii+1],
             self.a_s,
             self.b_s,
             self.c_s1,
@@ -137,7 +135,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
                 delta_x_m,
                 turbine_Ct[:,:,m:m+1],
                 turbine_ti[:,:,m:m+1],
-                turbine_diameter,
+                turbine_diameter[:,:,m:m+1],
                 self.a_s,
                 self.b_s,
                 self.c_s1,
@@ -171,8 +169,8 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         # blondel
         # super gaussian
         # b_f = self.b_f1 * np.exp(self.b_f2 * TI) + self.b_f3
-        x_tilde = np.abs(delta_x) / turbine_diameter
-        r_tilde = np.sqrt((y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2) / turbine_diameter
+        x_tilde = np.abs(delta_x) / turbine_diameter[:,:,ii:ii+1]
+        r_tilde = np.sqrt((y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2) / turbine_diameter[:,:,ii:ii+1]
 
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
         a1 = 2 ** (2 / n - 1)
