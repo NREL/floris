@@ -55,8 +55,8 @@ visualize_cut_plane(y_plane, ax=axarr[2], title="Wind shear at 0.2", minSpeed=MI
 # Change the farm layout
 N = 3  # Number of turbines per row and per column
 X, Y = np.meshgrid(
-    5.0 * fi.floris.turbine.rotor_diameter * np.arange(0, N, 1),
-    5.0 * fi.floris.turbine.rotor_diameter * np.arange(0, N, 1),
+    5.0 * fi.floris.farm.rotor_diameters[0] * np.arange(0, N, 1),
+    5.0 * fi.floris.farm.rotor_diameters[0] * np.arange(0, N, 1),
 )
 fi.reinitialize( layout=( X.flatten(), Y.flatten() ) )
 horizontal_plane = fi.calculate_horizontal_plane()
