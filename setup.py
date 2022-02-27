@@ -56,7 +56,7 @@ EXTRAS = {
 }
 
 ROOT = Path(__file__).parent
-with open(ROOT / "VERSION") as version_file:
+with open(ROOT / "src" / "floris" / "VERSION") as version_file:
     VERSION = version_file.read().strip()
 
 setup(
