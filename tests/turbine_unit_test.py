@@ -248,6 +248,7 @@ def test_ct():
 
 def test_power():
     N_TURBINES = 4
+    AIR_DENSITY = 1.225
 
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
@@ -257,7 +258,7 @@ def test_power():
     # Single turbine
     wind_speed = 10.0
     p = power(
-        air_density=1.0,
+        air_density=AIR_DENSITY,
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         pP=turbine.pP * np.ones((1, 1, 1)),
@@ -269,9 +270,8 @@ def test_power():
     np.testing.assert_allclose(p, turbine_data["power_thrust_table"]["power"][truth_index])
 
     # Multiple turbines with ix filter
-    # TODO: Why are we using air density of 1.0 here? If not 1, the test fails.
     p = power(
-        air_density=1.0,
+        air_density=AIR_DENSITY,
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, N_TURBINES)),
         pP=turbine.pP * np.ones((3, 4, N_TURBINES)),
