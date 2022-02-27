@@ -65,7 +65,7 @@ and importing FLORIS:
         3.0rc2
 
     FILE
-        ~/floris/src/floris/__init__.py
+        ~/floris/floris/__init__.py
 ```
 
 It is important to regularly check for new updates and releases as new
