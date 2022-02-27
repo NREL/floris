@@ -64,7 +64,7 @@ setup(
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
-    package_data={'floris': ['VERSION']},
+    package_data={'floris': ['VERSION', 'turbine_library/*.yaml']},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,

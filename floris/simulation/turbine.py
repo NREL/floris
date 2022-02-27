@@ -143,7 +143,6 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        print(np.shape(np.array(turbine_type_map == turb_type)))
         p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
 
     return p * air_density

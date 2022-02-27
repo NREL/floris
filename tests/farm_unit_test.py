@@ -35,8 +35,12 @@ def test_farm_init_homogenous_turbines():
     farm = Farm(
         layout_x=layout_x,
         layout_y=layout_y,
-        turbine_type=[turbine_data["turbine_type"]]
+        turbine_type=[turbine_data]
     )
+    # TODO: these all pass on mac and fail on linux
+    # turbine_type=[turbine_data]
+    # turbine_type=[turbine_data["turbine_type"]]
+
     farm.construct_hub_heights()
     farm.construct_coordinates()
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
