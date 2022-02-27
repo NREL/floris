@@ -13,13 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
-
-import io
-import os
 from pathlib import Path
-
 from setuptools import setup, find_packages
 
 
@@ -69,8 +63,9 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    package_dir={"": "src"},
     packages=find_packages(where="src"),
+    package_dir={'floris': 'src/floris'},
+    package_data={'floris': ['VERSION']},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
