@@ -169,6 +169,9 @@ def visualize_cut_plane(
     # Add line contour
     line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="w", linewidths=0.8, alpha=0.3)
 
+    if cut_plane.normal_vector == "x":
+        ax.invert_xaxis()
+
     if color_bar:
         cbar = plt.colorbar(im, ax=ax)
         cbar.set_label('m/s')
@@ -249,7 +252,7 @@ def plot_rotor_values(
     return_fig_objects: bool = False,
     save_path: Union[str, None] = None,
     show: bool = False
-) -> Union[None, tuple[plt.figure, plt.axes]]:
+) -> Union[None, tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]]:
     """Plots the gridded turbine rotor values. This is intended to be used for
     understanding the differences between two sets of values, so each subplot can be
     used for inspection of what values are differing, and under what conditions.
@@ -294,6 +297,7 @@ def plot_rotor_values(
         norm = mplcolors.Normalize(vmin, vmax)
 
         ax.imshow(values[wd_index, ws_index, i].T, cmap=cmap, norm=norm, origin="lower")
+        ax.invert_xaxis()
 
         ax.set_xticks([])
         ax.set_yticks([])

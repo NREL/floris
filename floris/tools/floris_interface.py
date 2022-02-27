@@ -329,7 +329,7 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute the cutplane
-        horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
+        horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1], "z")
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
@@ -409,7 +409,7 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute the cutplane
-        cross_plane = CutPlane(df, y_resolution, z_resolution)
+        cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
@@ -488,7 +488,7 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute the cutplane
-        y_plane = CutPlane(df, x_resolution, z_resolution)
+        y_plane = CutPlane(df, x_resolution, z_resolution, "y")
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)

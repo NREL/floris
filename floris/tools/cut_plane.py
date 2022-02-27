@@ -105,7 +105,7 @@ class CutPlane:
     FLORIS simulation, or other such as SOWFA result.
     """
 
-    def __init__(self, df, x1_resolution, x2_resolution):
+    def __init__(self, df, x1_resolution, x2_resolution, normal_vector):
         """
         Initialize CutPlane object, storing the DataFrame and resolution.
 
@@ -114,6 +114,7 @@ class CutPlane:
                 columns x1, x2, u, v, w.
         """
         self.df = df
+        self.normal_vector = normal_vector
         self.resolution = (x1_resolution, x2_resolution)
 
 
