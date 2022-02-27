@@ -50,7 +50,7 @@ EXTRAS = {
 }
 
 ROOT = Path(__file__).parent
-with open(ROOT / "src" / "floris" / "VERSION") as version_file:
+with open(ROOT / "floris" / "VERSION") as version_file:
     VERSION = version_file.read().strip()
 
 setup(
@@ -63,8 +63,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(where="src"),
-    package_dir={'floris': 'src/floris'},
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     package_data={'floris': ['VERSION']},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
