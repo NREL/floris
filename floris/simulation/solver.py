@@ -45,7 +45,7 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
 
 
 # @profile
-def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
+def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
     # For the current turbine, we are calculating the deficit that it adds to downstream turbines.
@@ -53,8 +53,8 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
     # Move on to the next turbine.
 
     # <<interface>>
-    deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field, turbine)
-    deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field, turbine)
+    deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
+    deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
 
     # This is u_wake
     wake_field = np.zeros_like(flow_field.u_initial)
@@ -81,19 +81,24 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
         ct_i = Ct(
             velocities=flow_field.u,
             yaw_angle=farm.yaw_angles,
-            fCt=turbine.fCt_interp,
+            fCt=farm.turbine_fCts,
+            turbine_type_map=farm.turbine_type_map,
             ix_filter=[i],
         )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
         axial_induction_i = axial_induction(
             velocities=flow_field.u,
             yaw_angle=farm.yaw_angles,
-            fCt=turbine.fCt_interp,
+            fCt=farm.turbine_fCts,
+            turbine_type_map=farm.turbine_type_map,
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_angle_i = farm.yaw_angles[:, :, i:i+1, None, None]
+        hub_height_i = farm.hub_heights[: ,:, i:i+1, None, None]
+        rotor_diameter_i = farm.rotor_diameters[: ,:, i:i+1, None, None]
+        TSR_i = farm.TSRs[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -105,10 +110,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
                 flow_field.u_initial,
                 grid.y[:, :, i:i+1] - y_i,
                 grid.z[:, :, i:i+1],
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 ct_i,
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i
             )
             effective_yaw_i += added_yaw
@@ -121,6 +126,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
             effective_yaw_i,
             turbulence_intensity_i,
             ct_i,
+            rotor_diameter_i,
             **deflection_model_args
         )
 
@@ -131,11 +137,11 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
                 grid.x - x_i,
                 grid.y - y_i,
                 grid.z,
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 yaw_angle_i,
                 ct_i,
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i
             )
 
@@ -161,6 +167,8 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
             yaw_angle_i,
             turbulence_intensity_i,
             ct_i,
+            hub_height_i,
+            rotor_diameter_i,
             **deficit_model_args
         )
 
@@ -173,7 +181,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
             ambient_turbulence_intensity,
             grid.x,
             x_i,
-            turbine.rotor_diameter,
+            rotor_diameter_i,
             axial_induction_i
         )
 
@@ -182,12 +190,12 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
         area_overlap = area_overlap[:, :, :, None, None]
 
         # Modify wake added turbulence by wake area overlap
-        downstream_influence_length = 15 * turbine.rotor_diameter
+        downstream_influence_length = 15 * rotor_diameter_i
         ti_added = (
             area_overlap
             * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
             * np.array(grid.x > x_i)
-            * np.array(np.abs(y_i - grid.y) < 2 * turbine.rotor_diameter)
+            * np.array(np.abs(y_i - grid.y) < 2 * rotor_diameter_i)
             * np.array(grid.x <= downstream_influence_length + x_i)
         )
 
@@ -202,26 +210,42 @@ def sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid:
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
 
 
-def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
+def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
 
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
+
+    turbine_grid_farm.construct_turbine_map()
+    turbine_grid_farm.construct_turbine_fCts()
+    turbine_grid_farm.construct_turbine_fCps()
+    turbine_grid_farm.construct_turbine_power_interps()
+    turbine_grid_farm.construct_hub_heights()
+    turbine_grid_farm.construct_rotor_diameters()
+    turbine_grid_farm.construct_turbine_TSRs()
+    turbine_grid_farm.construc_turbine_pPs()
+    turbine_grid_farm.construct_coordinates()
+    turbine_grid_farm.set_yaw_angles(turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds)
+
+
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
-        reference_turbine_diameter=turbine.rotor_diameter,
+        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=5,
     )
+    turbine_grid_farm.expand_farm_properties(
+        turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices
+    )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine, turbine_grid, model_manager)
+    sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
     # Use full flow_field here to use the full grid in the wake models
-    deflection_model_args = model_manager.deflection_model.prepare_function(flow_field_grid, flow_field, turbine)
-    deficit_model_args = model_manager.velocity_model.prepare_function(flow_field_grid, flow_field, turbine)
+    deflection_model_args = model_manager.deflection_model.prepare_function(flow_field_grid, flow_field)
+    deficit_model_args = model_manager.velocity_model.prepare_function(flow_field_grid, flow_field)
 
     wake_field = np.zeros_like(flow_field.u_initial)
     v_wake = np.zeros_like(flow_field.v_initial)
@@ -244,19 +268,24 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
         ct_i = Ct(
             velocities=turbine_grid_flow_field.u,
             yaw_angle=turbine_grid_farm.yaw_angles,
-            fCt=turbine.fCt_interp,
+            fCt=turbine_grid_farm.turbine_fCts,
+            turbine_type_map=turbine_grid_farm.turbine_type_map,
             ix_filter=[i],
         )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u,
             yaw_angle=turbine_grid_farm.yaw_angles,
-            fCt=turbine.fCt_interp,
+            fCt=turbine_grid_farm.turbine_fCts,
+            turbine_type_map=turbine_grid_farm.turbine_type_map,
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field[:, :, i:i+1]
         yaw_angle_i = turbine_grid_farm.yaw_angles[:, :, i:i+1, None, None]
+        hub_height_i = turbine_grid_farm.hub_heights[: ,:, i:i+1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters[: ,:, i:i+1, None, None]
+        TSR_i = turbine_grid_farm.TSRs[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -268,10 +297,10 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
                 turbine_grid_flow_field.u_initial,
                 turbine_grid.y[:, :, i:i+1] - y_i,
                 turbine_grid.z[:, :, i:i+1],
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 ct_i,
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i
             )
             effective_yaw_i += added_yaw
@@ -284,6 +313,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
             effective_yaw_i,
             turbulence_intensity_i,
             ct_i,
+            rotor_diameter_i,
             **deflection_model_args
         )
 
@@ -294,11 +324,11 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
                 flow_field_grid.x - x_i,
                 flow_field_grid.y - y_i,
                 flow_field_grid.z,
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 yaw_angle_i,
                 ct_i,
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i
             )
 
@@ -312,6 +342,8 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
             yaw_angle_i,
             turbulence_intensity_i,
             ct_i,
+            hub_height_i,
+            rotor_diameter_i,
             **deficit_model_args
         )
 
@@ -325,11 +357,11 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, turbine: Turb
         flow_field.w += w_wake
 
 
-def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
+def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
 
     # <<interface>>
-    deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field, turbine)
-    deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field, turbine)
+    deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
+    deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
 
     # This is u_wake
     v_wake = np.zeros_like(flow_field.v_initial)
@@ -366,13 +398,15 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
         turb_Cts = Ct(
             turb_avg_vels,
             farm.yaw_angles,
-            turbine.fCt_interp,
+            farm.turbine_fCts,
+            turbine_type_map=farm.turbine_type_map,
         )
         turb_Cts = turb_Cts[:, :, :, None, None]     
         turb_aIs = axial_induction(
             turb_avg_vels,
             farm.yaw_angles,
-            turbine.fCt_interp,
+            farm.turbine_fCts,
+            turbine_type_map=farm.turbine_type_map,
             ix_filter=[i],
         )
         turb_aIs = turb_aIs[:, :, :, None, None]
@@ -383,7 +417,8 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
         axial_induction_i = axial_induction(
             velocities=flow_field.u,
             yaw_angle=farm.yaw_angles,
-            fCt=turbine.fCt_interp,
+            fCt=farm.turbine_fCts,
+            turbine_type_map=farm.turbine_type_map,
             ix_filter=[i],
         )
 
@@ -391,6 +426,9 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
 
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_angle_i = farm.yaw_angles[:, :, i:i+1, None, None]
+        hub_height_i = farm.hub_heights[: ,:, i:i+1, None, None]
+        rotor_diameter_i = farm.rotor_diameters[: ,:, i:i+1, None, None]
+        TSR_i = farm.TSRs[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -402,10 +440,10 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
                 flow_field.u_initial,
                 grid.y[:, :, i:i+1] - y_i,
                 grid.z[:, :, i:i+1],
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 turb_Cts[:, :, i:i+1],
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i,
                 scale=2.0,
             )
@@ -419,6 +457,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             effective_yaw_i,
             turbulence_intensity_i,
             turb_Cts[:, :, i:i+1],
+            rotor_diameter_i,
             **deflection_model_args
         )
 
@@ -429,11 +468,11 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
                 grid.x - x_i,
                 grid.y - y_i,
                 grid.z,
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 yaw_angle_i,
                 turb_Cts[:, :, i:i+1],
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i,
                 scale=2.0
             )
@@ -460,6 +499,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             yaw_angle_i,
             turbine_turbulence_intensity,
             turb_Cts,
+            farm.rotor_diameters,
             turb_u_wake,
             Ctmp,
             **deficit_model_args
@@ -469,7 +509,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
             ambient_turbulence_intensity,
             grid.x,
             x_i,
-            turbine.rotor_diameter,
+            rotor_diameter_i,
             turb_aIs
         )
 
@@ -478,12 +518,12 @@ def cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, grid: Turbine
         area_overlap = area_overlap[:, :, :, None, None]
 
         # Modify wake added turbulence by wake area overlap
-        downstream_influence_length = 15 * turbine.rotor_diameter
+        downstream_influence_length = 15 * rotor_diameter_i
         ti_added = (
             area_overlap
             * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
             * np.array(grid.x > x_i)
-            * np.array(np.abs(y_i - grid.y) < 2 * turbine.rotor_diameter)
+            * np.array(np.abs(y_i - grid.y) < 2 * rotor_diameter_i)
             * np.array(grid.x <= downstream_influence_length + x_i)
         )
 

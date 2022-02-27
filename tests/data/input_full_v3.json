@@ -25,6 +25,12 @@
     ],
     "layout_y": [
       0.0
+    ],
+    "turbine_type": [
+      "nrel_5MW"
+    ],
+    "turbine_definitions": [
+      "!include nrel_5MW.yaml"
     ]
   },
 

@@ -126,6 +126,7 @@ class FlorisInterface(LoggerBase):
         air_density: float | None = None,
         # wake: WakeModelManager = None,
         layout: Tuple[list[float], list[float]] | Tuple[NDArrayFloat, NDArrayFloat] | None = None,
+        turbine_type: list | None = None,
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
@@ -154,9 +155,12 @@ class FlorisInterface(LoggerBase):
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
 
+        ## Farm
         if layout is not None:
             farm_dict["layout_x"] = layout[0]
             farm_dict["layout_y"] = layout[1]
+        if turbine_type is not None:
+            farm_dict["turbine_type"] = turbine_type
 
         ## Wake
         # if wake is not None:
@@ -292,7 +296,7 @@ class FlorisInterface(LoggerBase):
 
         # If height not provided, use the hub height
         if height is None:
-            height = self.floris.turbine.hub_height
+            height = self.floris.farm.hub_heights[0][0][0]
             self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
         # Store the current state for reinitialization
@@ -501,11 +505,11 @@ class FlorisInterface(LoggerBase):
         self.calculate_wake()
 
         return y_plane
-        
+
     def check_wind_condition_for_viz(self, wd=None, ws=None):
         if len(wd) > 1 or len(wd) < 1:
             raise ValueError("Wind direction input must be of length 1 for visualization. Current length is {}.".format(len(wd)))
-        
+
         if len(ws) > 1 or len(ws) < 1:
             raise ValueError("Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws)))
 
@@ -519,10 +523,35 @@ class FlorisInterface(LoggerBase):
             air_density=self.floris.flow_field.air_density,
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
-            pP=self.floris.turbine.pP,
-            power_interp=self.floris.turbine.power_interp,
+            pP=self.floris.farm.pPs,
+            power_interp=self.floris.farm.turbine_power_interps,
+            turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_powers
+
+    def get_turbine_Cts(self) -> NDArrayFloat:
+        turbine_Cts = Ct(
+            velocities=self.floris.flow_field.u,
+            yaw_angle=self.floris.farm.yaw_angles,
+            fCt=self.floris.farm.turbine_fCts,
+            turbine_type_map=self.floris.farm.turbine_type_map,
+        )
+        return turbine_Cts
+
+    def get_turbine_ais(self) -> NDArrayFloat:
+        turbine_ais = axial_induction(
+            velocities=self.floris.flow_field.u,
+            yaw_angle=self.floris.farm.yaw_angles,
+            fCt=self.floris.farm.turbine_fCts,
+            turbine_type_map=self.floris.farm.turbine_type_map,
+        )
+        return turbine_ais
+
+    def get_turbine_average_velocities(self) -> NDArrayFloat:
+        turbine_avg_vels = average_velocity(
+            velocities=self.floris.flow_field.u,
+        )
+        return turbine_avg_vels
 
     def get_farm_power(
         self,

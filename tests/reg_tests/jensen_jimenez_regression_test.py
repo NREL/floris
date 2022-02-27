@@ -111,19 +111,22 @@ def test_regression_tandem(sample_inputs_fixture):
     farm_cts = Ct(
         velocities,
         yaw_angles,
-        floris.turbine.fCt_interp,
+        floris.farm.turbine_fCts,
+        floris.farm.turbine_type_map,
     )
     farm_powers = power(
         floris.flow_field.air_density,
         velocities,
         yaw_angles,
-        floris.turbine.pP,
-        floris.turbine.power_interp,
+        floris.farm.pPs,
+        floris.farm.turbine_power_interps,
+        floris.farm.turbine_type_map,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
-        floris.turbine.fCt_interp,
+        floris.farm.turbine_fCts,
+        floris.farm.turbine_type_map,
     )
     for i in range(n_wind_directions):
         for j in range(n_wind_speeds):
@@ -181,7 +184,7 @@ def test_regression_rotation(sample_inputs_fixture):
     In 270, turbines 2 and 3 are waked. In 360, turbines 0 and 2 are waked.
     The test compares turbines 2 and 3 with 0 and 2 from 270 and 360.
     """
-    TURBINE_DIAMETER = sample_inputs_fixture.floris["turbine"]["rotor_diameter"]
+    TURBINE_DIAMETER = 126.0
 
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
@@ -250,19 +253,22 @@ def test_regression_yaw(sample_inputs_fixture):
     farm_cts = Ct(
         velocities,
         yaw_angles,
-        floris.turbine.fCt_interp,
+        floris.farm.turbine_fCts,
+        floris.farm.turbine_type_map,
     )
     farm_powers = power(
         floris.flow_field.air_density,
         velocities,
         yaw_angles,
-        floris.turbine.pP,
-        floris.turbine.power_interp,
+        floris.farm.pPs,
+        floris.farm.turbine_power_interps,
+        floris.farm.turbine_type_map,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
-        floris.turbine.fCt_interp,
+        floris.farm.turbine_fCts,
+        floris.farm.turbine_type_map,
     )
     for i in range(n_wind_directions):
         for j in range(n_wind_speeds):
@@ -322,8 +328,9 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
         floris.flow_field.air_density,
         velocities,
         yaw_angles,
-        floris.turbine.pP,
-        floris.turbine.power_interp,
+        floris.farm.pPs,
+        floris.farm.turbine_power_interps,
+        floris.farm.turbine_type_map,
     )
 
     # A "column" is oriented parallel to the wind direction

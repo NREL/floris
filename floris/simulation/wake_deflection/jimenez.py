@@ -46,12 +46,10 @@ class JimenezVelocityDeflection(BaseModel):
         self,
         grid: Grid,
         flow_field: FlowField,
-        turbine: Turbine
     ) -> Dict[str, Any]:
 
         kwargs = dict(
             x=grid.x,
-            reference_rotor_diameter=turbine.rotor_diameter,
         )
         return kwargs
 
@@ -63,9 +61,9 @@ class JimenezVelocityDeflection(BaseModel):
         yaw_i: np.ndarray,
         turbulence_intensity_i: np.ndarray,
         ct_i: np.ndarray,
+        rotor_diameter_i: np.ndarray,
         *,
         x: np.ndarray,
-        reference_rotor_diameter: np.ndarray,
     ):
         """
         Calcualtes the deflection field of the wake in relation to the yaw of
@@ -110,9 +108,9 @@ class JimenezVelocityDeflection(BaseModel):
         delta_x = x - x_i
 
         # yaw displacement
-        A = 15 * (2 * self.kd * delta_x / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / reference_rotor_diameter) * ( 2 * self.kd * delta_x / reference_rotor_diameter + 1 ) ** 5.0
-        C = xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0)
+        A = 15 * (2 * self.kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0
+        B = (30 * self.kd / rotor_diameter_i) * ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0
+        C = xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
         yYaw_init = (xi_init * A / B) - (C / D)
@@ -129,9 +127,9 @@ class JimenezVelocityDeflection(BaseModel):
         bd = self.bd
 
         delta_x = ne.evaluate("x - x_i")
-        A = ne.evaluate("15 * (2 * kd * delta_x / reference_rotor_diameter + 1) ** 4.0 + xi_init ** 2.0")
-        B = ne.evaluate("(30 * kd / reference_rotor_diameter) * ( 2 * kd * delta_x / reference_rotor_diameter + 1 ) ** 5.0")
-        C = ne.evaluate("xi_init * reference_rotor_diameter * (15 + xi_init ** 2.0)")
+        A = ne.evaluate("15 * (2 * kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0")
+        B = ne.evaluate("(30 * kd / rotor_diameter_i) * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0")
+        C = ne.evaluate("xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)")
         D = ne.evaluate("30 * kd")
 
         yYaw_init = ne.evaluate("(xi_init * A / B) - (C / D)")

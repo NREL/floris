@@ -13,13 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
-
-import io
-import os
 from pathlib import Path
-
 from setuptools import setup, find_packages
 
 
@@ -56,7 +50,7 @@ EXTRAS = {
 }
 
 ROOT = Path(__file__).parent
-with open(ROOT / "VERSION") as version_file:
+with open(ROOT / "floris" / "VERSION") as version_file:
     VERSION = version_file.read().strip()
 
 setup(
@@ -69,8 +63,8 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    package_data={'floris': ['VERSION', 'turbine_library/*.yaml']},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
