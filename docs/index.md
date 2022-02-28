@@ -29,7 +29,7 @@ documentation at http://floris.readthedocs.io/.
 
 ## Installation
 
-> :exclamation: **It is highly recommended that you install FLORIS V3 into a new clean virtual environment**. Installing into the existing V2 environment has been seen to cause conflicts.  Further, if you wish to use pyoptsparse with FLORIS, it is recommended to install pyoptsparse into your environment prior to FLORIS
+>  **It is highly recommended that you install FLORIS V3 into a new clean virtual environment**. Installing into the existing V2 environment has been seen to cause conflicts.  Further, if you wish to use pyoptsparse with FLORIS, it is recommended to install pyoptsparse into your environment prior to FLORIS
 
 FLORIS can be installed by downloading the source code or via the PyPI
 package manager with `pip`.
