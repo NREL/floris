@@ -24,6 +24,8 @@ pip-wheel-metadata
 examples/cp_ct_cq_lut.p
 _site/
 .jekyll-cache/
+examples/hist.hist
+examples/SLSQP.out
 
 # Log files
 *.log
