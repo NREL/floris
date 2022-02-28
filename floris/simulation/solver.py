@@ -225,7 +225,6 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construc_turbine_pPs()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.set_yaw_angles(turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds)
 
 
     turbine_grid = TurbineGrid(
@@ -233,12 +232,13 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
         reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
-        grid_resolution=5,
+        grid_resolution=3,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
+    turbine_grid_farm.initialize(turbine_grid.sorted_indices)
     sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
@@ -552,7 +552,6 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construc_turbine_pPs()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.set_yaw_angles(turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
@@ -565,6 +564,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
         turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
+    turbine_grid_farm.initialize(turbine_grid.sorted_indices)
     cc_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
