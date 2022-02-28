@@ -48,7 +48,7 @@ visualize_cut_plane(horizontal_plane, ax=axarr[1], title="Wind speed at 7 m/s", 
 
 # Change the wind shear, reset the wind speed, and plot a vertical slice
 fi.reinitialize( wind_shear=0.2, wind_speeds=[8.0] )
-y_plane = fi.calculate_y_plane()
+y_plane = fi.calculate_y_plane(crossstream_dist=0.0)
 visualize_cut_plane(y_plane, ax=axarr[2], title="Wind shear at 0.2", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 
 
