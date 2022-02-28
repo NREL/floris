@@ -31,7 +31,7 @@ we are plotting three slices of the resulting flow field:
 # Initialize FLORIS with the given input file via FlorisInterface.
 # For basic usage, FlorisInterface provides a simplified and expressive
 # entry point to the simulation routines.
-fi = FlorisInterface("inputs/cc.yaml")
+fi = FlorisInterface("inputs/gch.yaml")
 
 # FLORIS supports multiple types of grids for capturing wind speed
 # information. The current input file is configured with a square grid
