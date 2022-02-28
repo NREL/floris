@@ -499,7 +499,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
             yaw_angle_i,
             turbine_turbulence_intensity,
             turb_Cts,
-            farm.rotor_diameters,
+            farm.rotor_diameters[:, :, :, None, None],
             turb_u_wake,
             Ctmp,
             **deficit_model_args
@@ -676,7 +676,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
             yaw_angle_i,
             turbine_grid_flow_field.turbulence_intensity_field,
             turb_Cts,
-            turbine_grid_farm.rotor_diameters,
+            turbine_grid_farm.rotor_diameters[:, :, :, None, None],
             turb_u_wake,
             Ctmp,
             **deficit_model_args
