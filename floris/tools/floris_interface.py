@@ -258,7 +258,7 @@ class FlorisInterface(LoggerBase):
 
     def calculate_horizontal_plane(
         self,
-        height=None,
+        height,
         x_resolution=200,
         y_resolution=200,
         x_bounds=None,
@@ -293,8 +293,6 @@ class FlorisInterface(LoggerBase):
         if ws is None:
             ws = self.floris.flow_field.wind_speeds
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
-
-        # If height not provided, use the hub height
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
@@ -339,7 +337,7 @@ class FlorisInterface(LoggerBase):
 
     def calculate_cross_plane(
         self,
-        downstream_dist=None,
+        downstream_dist,
         y_resolution=200,
         z_resolution=200,
         y_bounds=None,
@@ -419,7 +417,7 @@ class FlorisInterface(LoggerBase):
 
     def calculate_y_plane(
         self,
-        crossstream_dist=None,
+        crossstream_dist,
         x_resolution=200,
         z_resolution=200,
         x_bounds=None,
@@ -454,10 +452,6 @@ class FlorisInterface(LoggerBase):
         if ws is None:
             ws = self.floris.flow_field.wind_speeds
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
-
-        # If crossstream distance is not provided, use the default
-        if crossstream_dist is None:
-            crossstream_dist = 0.0
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()

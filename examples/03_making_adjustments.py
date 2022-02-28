@@ -48,7 +48,7 @@ visualize_cut_plane(horizontal_plane, ax=axarr[1], title="Wind speed at 7 m/s", 
 
 # Change the wind shear, reset the wind speed, and plot a vertical slice
 fi.reinitialize( wind_shear=0.2, wind_speeds=[8.0] )
-y_plane = fi.calculate_y_plane()
+y_plane = fi.calculate_y_plane(crossstream_dist=0.0)
 visualize_cut_plane(y_plane, ax=axarr[2], title="Wind shear at 0.2", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 
 
@@ -61,7 +61,6 @@ X, Y = np.meshgrid(
 fi.reinitialize( layout=( X.flatten(), Y.flatten() ) )
 horizontal_plane = fi.calculate_horizontal_plane(height=90.0)
 visualize_cut_plane(horizontal_plane, ax=axarr[3], title="3x3 Farm", minSpeed=MIN_WS, maxSpeed=MAX_WS)
-# plot_turbines_with_fi(axarr[7], fi)
 
 
 # Change the yaw angles and configure the plot differently
@@ -89,9 +88,3 @@ axarr[5].invert_xaxis()
 
 
 plt.show()
-
-
-# # Change the veer
-# fi.reinitialize(wind_veer=5.0)
-# fi.floris.solve_for_viz()
-# plot_slice_shortcut(fi, axarr[5], "Veer=5")

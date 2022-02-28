@@ -33,30 +33,6 @@ we are plotting three slices of the resulting flow field:
 # entry point to the simulation routines.
 fi = FlorisInterface("inputs/gch.yaml")
 
-# FLORIS supports multiple types of grids for capturing wind speed
-# information. The current input file is configured with a square grid
-# placed on each rotor plane with 9 points in a 3x3 layout. This can
-# be plotted to show the wind conditions that each turbine is experiencing.
-# However, 9 points is very coarse for visualization so let's first
-# increase the rotor grid to 10x10 points.
-
-# Create a solver settings dictionary with the new number of points
-solver_settings = {
-  "type": "turbine_grid",
-  "turbine_grid_points": 10
-}
-
-# Since we already have a FlorisInterface (fi), simply reinitialize it
-# with the new configuration
-fi.reinitialize(solver_settings=solver_settings)
-
-# Run the wake calculation to get the turbine-turbine interfactions
-# on the turbine grids
-fi.calculate_wake()
-
-# Plot the values at each rotor
-plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=3)
-
 # The rotor plots show what is happening at each turbine, but we do not
 # see what is happening between each turbine. For this, we use a
 # grid that has points regularly distributed throughout the fluid domain.
@@ -64,10 +40,14 @@ plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_co
 # running the simulation, and generating plots of 2D slices of the
 # flow field.
 
+# Note this visualization grid created within the calculate_horizontal_plane function will be reset
+# to what existed previously at the end of the function
+
 # Using the FlorisInterface functions, get 2D slices.
 horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height=90.0)
 y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=630.0)
 cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=630.0)
+
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
@@ -75,5 +55,38 @@ ax_list = ax_list.flatten()
 visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
 visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
 visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
+
+# FLORIS further includes visualization methods for visualing the rotor plane of each
+# Turbine in the simulation
+
+# Run the wake calculation to get the turbine-turbine interfactions
+# on the turbine grids
+fi.calculate_wake()
+
+# Plot the values at each rotor
+fig, axes, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=3, return_fig_objects=True)
+fig.suptitle("Rotor Plane Visualization, Original Resolution")
+
+# FLORIS supports multiple types of grids for capturing wind speed
+# information. The current input file is configured with a square grid
+# placed on each rotor plane with 9 points in a 3x3 layout. For visualization,
+# this resolution can be increased.  Note this operation, unlike the 
+# calc_x_plane above operations does not automatically reset the grid to
+# the initial status as definied by the input file
+
+# Increase the resolution of points on each turbien plane
+solver_settings = {
+  "type": "turbine_grid",
+  "turbine_grid_points": 10
+}
+fi.reinitialize(solver_settings=solver_settings)
+
+# Run the wake calculation to get the turbine-turbine interfactions
+# on the turbine grids
+fi.calculate_wake()
+
+# Plot the values at each rotor
+fig, axes, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=3, return_fig_objects=True)
+fig.suptitle("Rotor Plane Visualization, 10x10 Resolution")
 
 plt.show()

@@ -28,9 +28,6 @@ farm:
   - nrel_5MW
   - nrel_5MW
   - iea_10MW
-  turbine_definitions:
-    nrel_5MW: !include turbine_definitions/nrel_5MW.yaml
-    iea_10MW: !include turbine_definitions/iea_10MW.yaml
 
 flow_field:
   air_density: 1.225
