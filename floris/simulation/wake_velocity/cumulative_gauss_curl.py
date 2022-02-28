@@ -37,7 +37,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
     b_f: float = field(default=-0.68)
     c_f: float = field(default=2.41)
     alpha_mod: float = field(default=1.0)
-    
+
     model_string = "cumulative_gauss_curl"
 
     def prepare_function(
@@ -76,14 +76,6 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         z: np.ndarray,
         u_initial: np.ndarray,
     ) -> None:
-
-        # print("u_i", u_i)
-        # print("yaw_i", yaw_i)
-        # print("turbulence_intensity_i", turbulence_intensity_i)
-        # print("ct_i", ct_i)
-        # print("turb_u_wake", turb_u_wake)
-        # print("sigma_i", sigma_i)
-        # print("Ctmp", Ctmp)
 
         turbine_Ct = ct
         turbine_ti = turbulence_intensity
@@ -126,10 +118,16 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         sum_lbda = np.zeros_like(u_initial)
 
         for m in range(0, ii - 1):
+            x_coord_m = x_coord[:,:,m:m+1]
             y_coord_m = y_coord[:,:,m:m+1]
             z_coord_m = z_coord[:,:,m:m+1]
 
-            delta_x_m = x - x_coord[:,:,m:m+1]
+            # For computing crossplanes, we don't need to compute downstream
+            # turbines from out crossplane position.
+            if x_coord[:,:,m:m+1].size == 0:
+                break
+
+            delta_x_m = x - x_coord_m
 
             sigma_i = wake_expansion(
                 delta_x_m,
