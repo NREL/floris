@@ -359,7 +359,14 @@ class SampleInputs:
                     "we": 0.05,
                 },
                 "cc": {
-                    
+                    'a_s': 0.179367259,
+                    'b_s': 0.0118889215,
+                    'c_s1': 0.0563691592,
+                    'c_s2': 0.13290157,
+                    'a_f': 3.11,
+                    'b_f': -0.68,
+                    'c_f': 2.41,
+                    'alpha_mod': 1.0
                 }
             },
             "wake_turbulence_parameters": {
