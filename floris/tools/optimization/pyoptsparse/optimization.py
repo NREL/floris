@@ -82,15 +82,18 @@ class Optimization(LoggerBase):
         if optOptions is not None:
             self.optOptions = optOptions
         else:
-            self.optOptions = {"Major feasibility tolerance": 1e-1}
+            if self.solver == "SNOPT":
+                self.optOptions = {"Major optimality tolerance": 1e-7}
+            else:
+                self.optOptions = {}
 
-        exec("self.opt = pyoptsparse." + self.solver + "(optOptions=self.optOptions)")
+        exec("self.opt = pyoptsparse." + self.solver + "(options=self.optOptions)")
 
     def _optimize(self):
         if hasattr(self.model, "_sens"):
             self.sol = self.opt(self.optProb, sens=self.model._sens)
         else:
-            self.sol = self.opt(self.optProb, sens="FDR")
+            self.sol = self.opt(self.optProb, sens="CDR", storeHistory='hist.hist')
 
     # Public methods
 
