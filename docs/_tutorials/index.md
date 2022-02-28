@@ -3,7 +3,6 @@ layout: default
 title: Overview
 nav_order: 1
 ---
-
 <html>
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14590,18 +14589,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </ul>
 <p>Users of FLORIS will develop a Python script with the following sequence of steps:</p>
 <ul>
-<li><ol>
 <li>preprocess</li>
-</ol>
-</li>
-<li><ol>
 <li>calculation</li>
-</ol>
-</li>
-<li><ol>
 <li>postprocess</li>
-</ol>
-</li>
 </ul>
 <p>Generally, users will only interact with <code>floris.tools</code> and most often through the <code>FlorisInterface</code> class. Additionally, <code>floris.tools</code> contains functionality for comparing results, creating visualizations, and developing optimization cases.</p>
 <p><strong>NOTE <code>floris.tools</code> is under active design and development. The API's will change and additional functionality from FLORIS v2 will be included in upcoming releases.</strong></p>
@@ -15077,38 +15067,14 @@ Turbine powers for all turbines at all wind conditions
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Start-to-finish">Start to finish<a class="anchor-link" href="#Start-to-finish">&#182;</a></h2><p>Let's put it all together. The following code does the following:</p>
 <ul>
-<li><ol>
 <li>Load an input file</li>
-</ol>
-</li>
-<li><ol>
 <li>Modify the inputs with a more complex wind turbine layout</li>
-</ol>
-</li>
-<li><ol>
 <li>Change the wind speeds and wind directions</li>
-</ol>
-</li>
-<li><ol>
 <li>Execute the simulation</li>
-</ol>
-</li>
-<li><ol>
 <li>Get the total farm power</li>
-</ol>
-</li>
-<li><ol>
 <li>Add yaw settings for some turbines</li>
-</ol>
-</li>
-<li><ol>
 <li>Execute the simulation</li>
-</ol>
-</li>
-<li><ol>
 <li>Get the total farm power and compare to without yaw control</li>
-</ol>
-</li>
 </ul>
 
 </div>
