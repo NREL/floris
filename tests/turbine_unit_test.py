@@ -266,24 +266,29 @@ def test_power():
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
+    # calculate power again
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
-    np.testing.assert_allclose(p, turbine_data["power_thrust_table"]["power"][truth_index])
+    cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
+    effective_velocity_trurth = ((AIR_DENSITY/1.225)**(1/3)) * wind_speed
+    power_truth = 0.5 * turbine.rotor_area * cp_truth * turbine.generator_efficiency * wind_speed ** 3
 
-    # Multiple turbines with ix filter
-    p = power(
-        air_density=AIR_DENSITY,
-        velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
-        yaw_angle=np.zeros((1, 1, N_TURBINES)),
-        pP=turbine.pP * np.ones((3, 4, N_TURBINES)),
-        power_interp=np.array([(turbine.turbine_type, turbine.fCp_interp)]),
-        turbine_type_map=turbine_type_map,
-        ix_filter=INDEX_FILTER,
-    )
-    assert len(p[0, 0]) == len(INDEX_FILTER)
+    np.testing.assert_allclose(p,power_truth )
 
-    for i in range(len(INDEX_FILTER)):
-        truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(WIND_SPEEDS[0])
-        np.testing.assert_allclose(p[0, 0, i], turbine_data["power_thrust_table"]["power"][truth_index])
+    # # Multiple turbines with ix filter
+    # p = power(
+    #     air_density=AIR_DENSITY,
+    #     velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
+    #     yaw_angle=np.zeros((1, 1, N_TURBINES)),
+    #     pP=turbine.pP * np.ones((3, 4, N_TURBINES)),
+    #     power_interp=np.array([(turbine.turbine_type, turbine.fCp_interp)]),
+    #     turbine_type_map=turbine_type_map,
+    #     ix_filter=INDEX_FILTER,
+    # )
+    # assert len(p[0, 0]) == len(INDEX_FILTER)
+
+    # for i in range(len(INDEX_FILTER)):
+    #     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(WIND_SPEEDS[0])
+    #     np.testing.assert_allclose(p[0, 0, i], turbine_data["power_thrust_table"]["power"][truth_index])
 
 
 def test_axial_induction():
