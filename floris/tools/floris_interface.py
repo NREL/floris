@@ -295,9 +295,6 @@ class FlorisInterface(LoggerBase):
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # If height not provided, use the hub height
-        if height is None:
-            height = self.floris.farm.hub_heights[0][0][0]
-            self.logger.info("Default to hub height = %.1f for horizontal plane." % height)
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
@@ -378,9 +375,6 @@ class FlorisInterface(LoggerBase):
             ws = self.floris.flow_field.wind_speeds
 
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
-        # If downstream distance is not provided, use the default
-        if downstream_dist is None:
-            downstream_dist = 5 * 126.0
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()

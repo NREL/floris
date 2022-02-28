@@ -4,14 +4,13 @@ FLORIS is a controls-focused wind farm simulation software incorporating
 steady-state engineering wake models into a performance-focused Python
 framework. It has been in active development at NREL since 2013 and the latest
 release is [FLORIS v2.4](https://github.com/NREL/floris/releases/tag/v2.4)
-in July 2021. The ``v3`` branch of the repository
+in July 2021. The new ``v3`` version of the repository
 contains an architectural redesign of the software to enable improved
 performance in AEP calculation and controls optimization.
 
 We are actively seeking beta testers for the new framework. If you are interested
 in using FLORIS to conduct studies of a wind farm or extending FLORIS to include
-your own wake model, please get in touch! Register for beta testing by completing
-this form: https://forms.office.com/g/AmpAkJVvja and join the conversations at
+your own wake model, please get in touch! Join the conversations at
 [GitHub Discussions](https://github.com/NREL/floris/discussions/categories/v3-design-discussion).
 
 For more context and background on previous work in FLORIS, see the
@@ -20,24 +19,39 @@ documentation at http://floris.readthedocs.io/.
 
 ## Installation
 
-Beta testers should install FLORIS v3 by downloading the source code
-from GitHub with ``git`` and using ``pip`` to locally install it.
+> :exclamation: **It is highly recommended that you install FLORIS V3 into a new clean virtual environment**. Installing into the existing V2 environment has been seen to cause conflicts.  Further, if you wish to use pyoptsparse with FLORIS, it is recommended to install pyoptsparse into your environment prior to FLORIS
+
+FLORIS can be installed by downloading the source code or via the PyPI
+package manager with `pip`.
+
+The simplest method is with `pip` by using this command:
+
+```bash
+pip install floris
+```
+
+Developers and anyone who intends to inspect the source code, 
+install FLORIS by downloading the git repository
+from GitHub with ``git`` and use ``pip`` to locally install it.
 It is recommended to use a Python virtual environment such as [conda](https://docs.conda.io/en/latest/miniconda.html)
 in order to maintain a clean and sandboxed environment. The following
 commands in a terminal or shell will download and install **FLORIS v3.0rc2**.
 
 ```bash
-    # Download the source code from the `v3.0rc2` tag
-    git clone -b v3.0rc2 https://github.com/NREL/floris.git
+    # Download the source code from the `main` branch
+    git clone -b main https://github.com/NREL/floris.git
 
     # If using conda, be sure to activate your environment prior to installing
     # conda activate <env name>
+    
+    # If you would like to use pyoptspare, recommend installing before FLORIS
+    conda install -c conda-forge pyoptsparse
 
     # Install into your Python environment
     pip install -e floris
 ```
 
-Upon success, the installation can be verified by opening a Python interpreter
+With both methods, the installation can be verified by opening a Python interpreter
 and importing FLORIS:
 
 ```python
@@ -58,11 +72,11 @@ and importing FLORIS:
 
     DATA
         ROOT = PosixPath('/Users/rmudafor/Development/floris')
-        VERSION = '3.0rc2'
+        VERSION = '3.0'
         version_file = <_io.TextIOWrapper name='/Users/rmudafor/Development/fl...
 
     VERSION
-        3.0rc2
+        3.0
 
     FILE
         ~/floris/floris/__init__.py

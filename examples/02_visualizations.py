@@ -44,9 +44,9 @@ fi = FlorisInterface("inputs/gch.yaml")
 # to what existed previously at the end of the function
 
 # Using the FlorisInterface functions, get 2D slices.
-horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100)
-y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100)
-cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100)
+horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height=90.0)
+y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=630.0)
+cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=630.0)
 
 
 # Create the plots
