@@ -1,5 +1,6 @@
 ---
 layout: default
-title: Quick Start
+title: Examples
 nav_order: 2
 ---
+
