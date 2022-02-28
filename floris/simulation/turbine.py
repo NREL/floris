@@ -134,7 +134,7 @@ def power(
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
-    yaw_effective_velocity = average_velocity(velocities) * cosd(yaw_angle) ** pW
+    yaw_effective_velocity = ((air_density/1.225)**(1/3)) * average_velocity(velocities) * cosd(yaw_angle) ** pW
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     p = np.zeros(np.shape(yaw_effective_velocity))
@@ -145,7 +145,7 @@ def power(
         # type to the main thrust coefficient array
         p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
 
-    return p * air_density
+    return p * 1.225
 
 
 def Ct(
