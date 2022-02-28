@@ -173,7 +173,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         vel_model = self.wake.model_strings["velocity_model"]
 
         if vel_model=="cc":
-            full_flow_cc_solver(self.farm, self.flow_field, self.turbine, self.grid, self.wake)
+            full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
