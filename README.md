@@ -20,15 +20,25 @@ documentation at http://floris.readthedocs.io/.
 
 ## Installation
 
-Beta testers should install FLORIS v3 by downloading the source code
-from GitHub with ``git`` and using ``pip`` to locally install it.
+FLORIS can be installed by downloading the source code or via the PyPI
+package manager with `pip`.
+
+The simplest method is with `pip` by using this command:
+
+```bash
+pip install floris
+```
+
+Developers and anyone who intends to inspect the source code, 
+install FLORIS by downloading the git repository
+from GitHub with ``git`` and use ``pip`` to locally install it.
 It is recommended to use a Python virtual environment such as [conda](https://docs.conda.io/en/latest/miniconda.html)
 in order to maintain a clean and sandboxed environment. The following
 commands in a terminal or shell will download and install **FLORIS v3.0rc2**.
 
 ```bash
-    # Download the source code from the `v3.0rc2` tag
-    git clone -b v3.0rc2 https://github.com/NREL/floris.git
+    # Download the source code from the `main` branch
+    git clone -b main https://github.com/NREL/floris.git
 
     # If using conda, be sure to activate your environment prior to installing
     # conda activate <env name>
@@ -37,7 +47,7 @@ commands in a terminal or shell will download and install **FLORIS v3.0rc2**.
     pip install -e floris
 ```
 
-Upon success, the installation can be verified by opening a Python interpreter
+With both methods, the installation can be verified by opening a Python interpreter
 and importing FLORIS:
 
 ```python
@@ -58,11 +68,11 @@ and importing FLORIS:
 
     DATA
         ROOT = PosixPath('/Users/rmudafor/Development/floris')
-        VERSION = '3.0rc2'
+        VERSION = '3.0'
         version_file = <_io.TextIOWrapper name='/Users/rmudafor/Development/fl...
 
     VERSION
-        3.0rc2
+        3.0
 
     FILE
         ~/floris/floris/__init__.py
