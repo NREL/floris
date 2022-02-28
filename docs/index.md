@@ -45,7 +45,7 @@ install FLORIS by downloading the git repository
 from GitHub with ``git`` and use ``pip`` to locally install it.
 It is recommended to use a Python virtual environment such as [conda](https://docs.conda.io/en/latest/miniconda.html)
 in order to maintain a clean and sandboxed environment. The following
-commands in a terminal or shell will download and install **FLORIS v3.0rc2**.
+commands in a terminal or shell will download and install **FLORIS v3.0**.
 
 ```bash
     # Download the source code from the `main` branch
@@ -98,7 +98,7 @@ features, improvements, and bug fixes will be issued on an ongoing basis.
 
 ## Getting Started
 
-A series of examples is included in the [examples/](https://github.com/NREL/floris/tree/v3.0rc2/examples)
+A series of examples is included in the [examples/](https://github.com/NREL/floris/tree/main/examples)
 directory. These are ordered from simplest to most complex. They demonstrate various
 use cases of FLORIS, and generally provide a good starting point for building a more
 complex simulation.
