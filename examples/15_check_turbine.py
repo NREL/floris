@@ -38,7 +38,7 @@ fi.reinitialize(layout=[[0],[0]])
 fi.reinitialize(wind_speeds=ws_array)
 
 # Get a list of available turbine models
-turbines = os.listdir('inputs/turbine_definitions')
+turbines = os.listdir('../floris/turbine_library')
 turbines = [t.strip('.yaml') for t in turbines]
 
 # For each turbine model available plot the basic info
@@ -46,8 +46,6 @@ for t in turbines:
 
     # Set t as the turbine
     fi.reinitialize(turbine_type=[t])
-
-
 
     # Create a figure
     fig, axarr = plt.subplots(1,2,figsize=(10,5))

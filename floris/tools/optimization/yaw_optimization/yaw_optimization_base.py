@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 
 from ....utilities import wrap_360
+from floris.tools import FlorisInterface
 
 from .yaw_optimization_tools import (
     derive_downstream_turbines,
@@ -117,7 +118,7 @@ class YawOptimization:
         """
 
         # Save turbine object to self
-        self.fi = copy.deepcopy(fi)
+        self.fi = FlorisInterface(fi.floris.as_dict())
         self.nturbs = len(self.fi.layout_x)
 
         # # Check floris options
@@ -251,7 +252,7 @@ class YawOptimization:
         self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
 
         # Initialize subset variables as full set
-        self.fi_subset = copy.deepcopy(self.fi)
+        self.fi_subset = FlorisInterface(self.fi.floris.as_dict())
         nwinddirections_subset = copy.deepcopy(self.fi.floris.flow_field.n_wind_directions)
         minimum_yaw_angle_subset = copy.deepcopy(self.minimum_yaw_angle)
         maximum_yaw_angle_subset = copy.deepcopy(self.maximum_yaw_angle)

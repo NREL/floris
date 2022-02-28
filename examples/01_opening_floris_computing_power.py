@@ -76,17 +76,3 @@ turbine_powers = fi.get_turbine_powers()/1000.
 print('The turbine power matrix should be of dimensions 3 WD X 3 WS X 2 Turbines')
 print(turbine_powers)
 print("Shape: ",turbine_powers.shape)
-
-
-
-
-# # Make a small plot
-# fig, ax = plt.subplots()
-# ax.plot(wind_speeds, turbine_powers[:,:,0].flatten(), color='k', marker='o', label='Turbine 0' )
-# ax.plot(wind_speeds, turbine_powers[:,:,1].flatten(), color='r', marker='o', label='Turbine 1' )
-# ax.grid()
-# ax.legend()
-# ax.set_ylabel('Power (kW)')
-# ax.set_xlabel('Wind Speed (m/s)')
-# plt.show()
-

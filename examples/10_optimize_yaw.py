@@ -42,8 +42,8 @@ def load_floris():
     # Specify wind farm layout and update in the floris object
     N = 5  # number of turbines per row and per column
     X, Y = np.meshgrid(
-        5.0 * fi.floris.grid.reference_turbine_diameter * np.arange(0, N, 1),
-        5.0 * fi.floris.grid.reference_turbine_diameter * np.arange(0, N, 1),
+        5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
+        5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
     )
     fi.reinitialize(layout=(X.flatten(), Y.flatten()))
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         exploit_layout_symmetry=True,
     )
 
-    df_opt = yaw_opt._optimize()
+    df_opt = yaw_opt.optimize()
     end_time = timerpc()
     t_tot = end_time - start_time
     t_fi = yaw_opt.time_spent_in_floris

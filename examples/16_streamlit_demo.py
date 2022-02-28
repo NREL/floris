@@ -31,7 +31,7 @@ from floris.tools.visualization import visualize_cut_plane
 # (with your FLORIS environment enabled)
 # pip install streamlit
 
-# streamlit run 12_streamlit_demo.py
+# streamlit run 16_streamlit_demo.py
 # """
 
 
@@ -130,7 +130,7 @@ for fm in floris_models:
         ax_idx = floris_models_viz.index(fm)
         ax = axarr_viz[ax_idx, 0]
 
-        horizontal_plane_gch = fi.calculate_horizontal_plane(x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_base)
+        horizontal_plane_gch = fi.calculate_horizontal_plane(x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_base, height=90.0)
         visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - baseline' % fm)
 
     # Analyze the yawed case==================================================
@@ -140,7 +140,6 @@ for fm in floris_models:
     # Set the layout, wind direction and wind speed
     fi.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=turbulence_intensity )
 
-    
     fi.calculate_wake(yaw_angles=yaw_angles_yaw)
     turbine_powers = fi.get_turbine_powers() / 1000.
     ax_turb_pow.plot(turbine_labels,turbine_powers.flatten(),color=color_dict[fm],ls='--',marker='o',label='%s - yawed' % fm)
@@ -157,10 +156,10 @@ for fm in floris_models:
         ax_idx = floris_models_viz.index(fm)
         ax = axarr_viz[ax_idx, 1]
 
-        horizontal_plane_gch = fi.calculate_horizontal_plane(x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_yaw)
+        horizontal_plane_gch = fi.calculate_horizontal_plane(x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_yaw, height=90.0)
         visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - yawed' % fm)
 
-st.header("Visualizations")        
+st.header("Visualizations")
 st.write(fig_viz)
 st.header("Power Comparison")
 st.write(fig_turb_pow)
