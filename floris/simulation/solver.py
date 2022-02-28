@@ -538,26 +538,40 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
 
 
-def full_flow_cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
-
+def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
+
+    turbine_grid_farm.construct_turbine_map()
+    turbine_grid_farm.construct_turbine_fCts()
+    turbine_grid_farm.construct_turbine_fCps()
+    turbine_grid_farm.construct_turbine_power_interps()
+    turbine_grid_farm.construct_hub_heights()
+    turbine_grid_farm.construct_rotor_diameters()
+    turbine_grid_farm.construct_turbine_TSRs()
+    turbine_grid_farm.construc_turbine_pPs()
+    turbine_grid_farm.construct_coordinates()
+    turbine_grid_farm.set_yaw_angles(turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds)
+
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
-        reference_turbine_diameter=turbine.rotor_diameter,
+        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
     )
+    turbine_grid_farm.expand_farm_properties(
+        turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices
+    )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    cc_solver(turbine_grid_farm, turbine_grid_flow_field, turbine, turbine_grid, model_manager)
+    cc_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
     # Use full flow_field here to use the full grid in the wake models
-    deflection_model_args = model_manager.deflection_model.prepare_function(flow_field_grid, flow_field, turbine)
-    deficit_model_args = model_manager.velocity_model.prepare_function(flow_field_grid, flow_field, turbine)
+    deflection_model_args = model_manager.deflection_model.prepare_function(flow_field_grid, flow_field)
+    deficit_model_args = model_manager.velocity_model.prepare_function(flow_field_grid, flow_field)
 
     v_wake = np.zeros_like(flow_field.v_initial)
     w_wake = np.zeros_like(flow_field.w_initial)
@@ -584,20 +598,25 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flo
         turb_Cts = Ct(
             velocities=turb_avg_vels,
             yaw_angle=turbine_grid_farm.yaw_angles,
-            fCt=turbine.fCt_interp,
+            fCt=turbine_grid_farm.turbine_fCts,
+            turbine_type_map=turbine_grid_farm.turbine_type_map,
         )
         turb_Cts = turb_Cts[:, :, :, None, None]
 
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u,
             yaw_angle=turbine_grid_farm.yaw_angles,
-            fCt=turbine.fCt_interp,
+            fCt=turbine_grid_farm.turbine_fCts,
+            turbine_type_map=turbine_grid_farm.turbine_type_map,
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, :, None, None]
 
         turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field[:, :, i:i+1]
         yaw_angle_i = turbine_grid_farm.yaw_angles[:, :, i:i+1, None, None]
+        hub_height_i = turbine_grid_farm.hub_heights[: ,:, i:i+1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters[: ,:, i:i+1, None, None]
+        TSR_i = turbine_grid_farm.TSRs[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -609,10 +628,10 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flo
                 turbine_grid_flow_field.u_initial,
                 turbine_grid.y[:, :, i:i+1] - y_i,
                 turbine_grid.z[:, :, i:i+1],
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 turb_Cts[:, :, i:i+1],
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i,
                 scale=2.0
             )
@@ -626,6 +645,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flo
             effective_yaw_i,
             turbulence_intensity_i,
             turb_Cts[:, :, i:i+1],
+            rotor_diameter_i,
             **deflection_model_args
         )
 
@@ -636,11 +656,11 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flo
                 flow_field_grid.x - x_i,
                 flow_field_grid.y - y_i,
                 flow_field_grid.z,
-                turbine.rotor_diameter,
-                turbine.hub_height,
+                rotor_diameter_i,
+                hub_height_i,
                 yaw_angle_i,
                 turb_Cts[:, :, i:i+1],
-                turbine.TSR,
+                TSR_i,
                 axial_induction_i,
                 scale=2.0
             )
@@ -656,6 +676,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, turbine: Turbine, flo
             yaw_angle_i,
             turbine_grid_flow_field.turbulence_intensity_field,
             turb_Cts,
+            turbine_grid_farm.rotor_diameters,
             turb_u_wake,
             Ctmp,
             **deficit_model_args

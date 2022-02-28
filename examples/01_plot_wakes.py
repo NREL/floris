@@ -31,7 +31,7 @@ we are plotting three slices of the resulting flow field:
 # Initialize FLORIS with the given input file via FlorisInterface.
 # For basic usage, FlorisInterface provides a simplified and expressive
 # entry point to the simulation routines.
-fi = FlorisInterface("inputs/gch.yaml")
+fi = FlorisInterface("inputs/cc.yaml")
 
 # FLORIS supports multiple types of grids for capturing wind speed
 # information. The current input file is configured with a square grid
@@ -65,9 +65,9 @@ plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_co
 # flow field.
 
 # Using the FlorisInterface functions, get 2D slices.
-horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100)
-y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100)
-cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100)
+horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height=90.0)
+y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=630.0)
+cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=630.0)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
