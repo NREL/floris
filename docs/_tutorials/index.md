@@ -13931,8 +13931,7 @@ nav_order: 1
     }
   }
   </style>
-  
- <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
+  <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
@@ -15299,4 +15298,3 @@ jp-needs-light-background
 
 
 </html>
-
