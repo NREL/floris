@@ -267,12 +267,12 @@ def test_power():
     )
 
     # calculate power again
-    truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
-    cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
     effective_velocity_trurth = ((AIR_DENSITY/1.225)**(1/3)) * wind_speed
-    power_truth = 0.5 * turbine.rotor_area * cp_truth * turbine.generator_efficiency * wind_speed ** 3
-
-    np.testing.assert_allclose(p,power_truth )
+    truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(effective_velocity_trurth)
+    cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
+    power_truth = 0.5 * turbine.rotor_area * cp_truth * turbine.generator_efficiency * effective_velocity_trurth ** 3
+    print(effective_velocity_trurth, cp_truth, power_truth)
+    np.testing.assert_allclose(p,cp_truth,power_truth )
 
     # # Multiple turbines with ix filter
     # p = power(
