@@ -291,8 +291,9 @@ def test_power():
         truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(effective_velocity_trurth)
         cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
         power_truth = 0.5 * turbine.rotor_area * cp_truth * turbine.generator_efficiency * effective_velocity_trurth ** 3
+        print(i,WIND_SPEEDS, effective_velocity_trurth, cp_truth, p[0, 0, i], power_truth)
         np.testing.assert_allclose(p[0, 0, i], power_truth)
-        print(i, effective_velocity_trurth, cp_truth, p[0, 0, i], power_truth)
+        
 
 
 def test_axial_induction():
