@@ -1,7 +1,29 @@
-[tool.black]
-target-version=["py37", "py38", "py39"]
-line-length=120
+[build-system]
+requires = ["setuptools >= 40.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
+
+[coverage.run]
+# Coverage.py configuration file
+# https://coverage.readthedocs.io/en/latest/config.html
+branch = true
+source = "floris/*"
+omit = [
+    "setup.py",
+    "tests/*"
+]
+
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+filterwarnings = [
+    "ignore::DeprecationWarning:pandas.*:"
+]
+
+
+[tool.black]
+target-version = ["py37", "py38", "py39"]
+line-length = 120
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -16,3 +38,29 @@ exclude = '''
   | dist
 )/
 '''
+
+
+[tool.isort]
+multi_line_output = 3
+ensure_newline_before_comments = true
+sections = [
+    "FUTURE",
+    "STDLIB",
+    "THIRDPARTY",
+    "FIRSTPARTY",
+    "LOCALFOLDER"
+]
+known_third_party = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "attr"
+]
+known_first_party = ["floris"]
+combine_as_imports = true
+force_grid_wrap = 0
+include_trailing_comma = true
+use_parentheses = true
+length_sort = true
+lines_after_imports = 2
+line_length = 88

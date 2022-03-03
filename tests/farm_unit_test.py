@@ -35,8 +35,14 @@ def test_farm_init_homogenous_turbines():
     farm = Farm(
         layout_x=layout_x,
         layout_y=layout_y,
+        turbine_type=[turbine_data]
     )
-    farm.construct_coordinates(reference_z=90.0)
+    # TODO: these all pass on mac and fail on linux
+    # turbine_type=[turbine_data]
+    # turbine_type=[turbine_data["turbine_type"]]
+
+    farm.construct_hub_heights()
+    farm.construct_coordinates()
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
 
     # Check initial values
@@ -47,12 +53,14 @@ def test_farm_init_homogenous_turbines():
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
     farm = Farm.from_dict(sample_inputs_fixture.farm)
-    farm.construct_coordinates(reference_z=90.0)
+    farm.construct_hub_heights()
+    farm.construct_coordinates()
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
-    new_farm.construct_coordinates(reference_z=90.0)
+    new_farm.construct_hub_heights()
+    new_farm.construct_coordinates()
     new_farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     dict2 = new_farm.as_dict()
 

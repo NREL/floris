@@ -36,10 +36,11 @@ fi.reinitialize(
     wind_directions=np.arange(0.0, 360.0, 3.0), 
     wind_speeds=[8.0],
 )
+print(fi.floris.farm.rotor_diameters)
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
 yaw_opt = YawOptimizationSR(fi)#, exploit_layout_symmetry=False)
-df_opt = yaw_opt._optimize()
+df_opt = yaw_opt.optimize()
 
 print("Optimization results:")
 print(df_opt)

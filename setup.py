@@ -13,16 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
-# This setup file was taken from https://github.com/kennethreitz/setup.py
-# accessed on April 3, 2019.
-
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
-
-import io
-import os
 from pathlib import Path
-
 from setuptools import setup, find_packages
 
 
@@ -32,7 +23,7 @@ DESCRIPTION = "A controls-oriented engineering wake model."
 URL = "https://github.com/NREL/FLORIS"
 EMAIL = "rafael.mudafort@nrel.gov"
 AUTHOR = "NREL National Wind Technology Center"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.8.0"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -48,54 +39,32 @@ REQUIRED = [
     "pandas",
     "shapely",
 
-    # utilities / testing
+    # utilities
     "coloredlogs>=10.0",
-    "pytest>=4",
 ]
 
 # What packages are optional?
 EXTRAS = {
     "docs": {"readthedocs-sphinx-ext", "Sphinx", "sphinxcontrib-napoleon"},
-    "develop": {"pre-commit", "black", "isort", "flake8", "flake8-docstrings"},
+    "develop": {"pytest", "coverage[toml]", "pre-commit", "black", "isort"},
 }
 
-# The rest you shouldn't have to touch too much :)
-# ------------------------------------------------
-# Except, perhaps the License and Trove Classifiers!
-# If you do change the License, remember to change the Trove Classifier for that!
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-# Import the README and use it as the long-description.
-# Note: this will only work if 'README.md' is present in your MANIFEST.in file!
-try:
-    with io.open(os.path.join(here, "README.rst"), encoding="utf-8") as f:
-        long_description = "\n" + f.read()
-except FileNotFoundError:
-    long_description = DESCRIPTION
-
-# Load the package's VERSION module
 ROOT = Path(__file__).parent
-with open(ROOT / "VERSION") as version_file:
+with open(ROOT / "floris" / "VERSION") as version_file:
     VERSION = version_file.read().strip()
 
 setup(
     name=NAME,
     version=VERSION,
     description=DESCRIPTION,
-    long_description=long_description,
+    long_description=DESCRIPTION,
     long_description_content_type="text/markdown",
     author=AUTHOR,
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    package_dir={"": "src"},
-    packages=find_packages(where="src", exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
-    # If your package is a single module, use this instead of 'packages':
-    # py_modules=['mypackage'],
-    # entry_points={
-    #     'console_scripts': ['mycli=mymodule:cli'],
-    # },
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    package_data={'floris': ['VERSION', 'turbine_library/*.yaml']},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
@@ -106,8 +75,10 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
-        "Programming Language :: Python :: Implementation :: PyPy",
+        "Programming Language :: Python :: Implementation :: PyPy"
     ],
 )

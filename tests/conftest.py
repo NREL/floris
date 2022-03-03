@@ -61,7 +61,7 @@ def print_test_values(average_velocities: list, thrusts: list, powers: list, axi
 WIND_DIRECTIONS = [
     270.0,
     360.0,
-    315.0, #293.0,
+    285.0,
     315.0,
 ]
 N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
@@ -88,6 +88,7 @@ Z_COORDS = [
     90.0
 ]
 N_TURBINES = len(X_COORDS)
+ROTOR_DIAMETER = 126.0
 TURBINE_GRID_RESOLUTION = 2
 
 
@@ -105,9 +106,14 @@ def flow_field_fixture(sample_inputs_fixture):
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
+
+    # TODO: The TurbineGrid requires that the rotor diameters be 1d but the Farm constructs them as 3d
+    #   Can we make this consistent?
+
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_TURBINES) )
     return TurbineGrid(
         turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
+        reference_turbine_diameter=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=TURBINE_GRID_RESOLUTION
@@ -116,9 +122,10 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
     return FlowFieldGrid(
         turbine_coordinates=turbine_coordinates,
-        reference_turbine_diameter=sample_inputs_fixture.turbine["rotor_diameter"],
+        reference_turbine_diameter=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=[3,2,2]
@@ -141,6 +148,7 @@ class SampleInputs:
 
     def __init__(self):
         self.turbine = {
+            "turbine_type": "nrel_5mw",
             "rotor_diameter": 126.0,
             "hub_height": 90.0,
             "pP": 1.88,
@@ -148,54 +156,54 @@ class SampleInputs:
             "generator_efficiency": 1.0,
             "power_thrust_table": {
                 "power": [
-                    0.0,
-                    0.0,
-                    0.1780851,
-                    0.28907459,
-                    0.34902166,
-                    0.3847278,
-                    0.40605878,
-                    0.4202279,
-                    0.42882274,
-                    0.43387274,
-                    0.43622267,
-                    0.43684468,
-                    0.43657497,
-                    0.43651053,
-                    0.4365612,
-                    0.43651728,
-                    0.43590309,
-                    0.43467276,
-                    0.43322955,
-                    0.43003137,
-                    0.37655587,
-                    0.33328466,
-                    0.29700574,
-                    0.26420779,
-                    0.23839379,
-                    0.21459275,
-                    0.19382354,
-                    0.1756635,
-                    0.15970926,
-                    0.14561785,
-                    0.13287856,
-                    0.12130194,
-                    0.11219941,
-                    0.10311631,
-                    0.09545392,
-                    0.08813781,
-                    0.08186763,
-                    0.07585005,
-                    0.07071926,
-                    0.06557558,
-                    0.06148104,
-                    0.05755207,
-                    0.05413366,
-                    0.05097969,
-                    0.04806545,
-                    0.04536883,
-                    0.04287006,
-                    0.04055141,
+                    0.000000,
+                    0.000000,
+                    0.178085,
+                    0.289075,
+                    0.349022,
+                    0.384728,
+                    0.406059,
+                    0.420228,
+                    0.428823,
+                    0.433873,
+                    0.436223,
+                    0.436845,
+                    0.436575,
+                    0.436511,
+                    0.436561,
+                    0.436517,
+                    0.435903,
+                    0.434673,
+                    0.433230,
+                    0.430466,
+                    0.378869,
+                    0.335199,
+                    0.297991,
+                    0.266092,
+                    0.238588,
+                    0.214748,
+                    0.193981,
+                    0.175808,
+                    0.159835,
+                    0.145741,
+                    0.133256,
+                    0.122157,
+                    0.112257,
+                    0.103399,
+                    0.095449,
+                    0.088294,
+                    0.081836,
+                    0.075993,
+                    0.070692,
+                    0.065875,
+                    0.061484,
+                    0.057476,
+                    0.053809,
+                    0.050447,
+                    0.047358,
+                    0.044518,
+                    0.041900,
+                    0.039483,
                 ],
                 "thrust": [
                     1.19187945,
@@ -304,6 +312,7 @@ class SampleInputs:
         self.farm = {
             "layout_x": X_COORDS,
             "layout_y": Y_COORDS,
+            "turbine_type": [self.turbine]
         }
 
         self.flow_field = {
@@ -350,7 +359,14 @@ class SampleInputs:
                     "we": 0.05,
                 },
                 "cc": {
-                    
+                    'a_s': 0.179367259,
+                    'b_s': 0.0118889215,
+                    'c_s1': 0.0563691592,
+                    'c_s2': 0.13290157,
+                    'a_f': 3.11,
+                    'b_f': -0.68,
+                    'c_f': 2.41,
+                    'alpha_mod': 1.0
                 }
             },
             "wake_turbulence_parameters": {
@@ -369,7 +385,6 @@ class SampleInputs:
         self.floris = {
             "farm": self.farm,
             "flow_field": self.flow_field,
-            "turbine": self.turbine,
             "wake": self.wake,
             "solver": {
                 "type": "turbine_grid",
