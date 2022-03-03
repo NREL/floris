@@ -17,19 +17,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
 
 
 """
-04_sweep_wind_directions
-
-This example demonstrates vectorization of wind direction.  
-A vector of wind directions is passed to the intialize function 
-and the powers of the two simulated turbines is computed for all
-wind directions in one call
-
-The power of both turbines for each wind direction is then plotted
-
+<needs to be written>
 """
 
 # Instantiate FLORIS using either the GCH or CC model
@@ -37,7 +28,7 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
 # Define a two turbine farm
-D = 126.
+D = 126.0
 layout_x = np.array([0, D*6, D*12])
 layout_y = [0, 0, 0]
 fi.reinitialize(layout=[layout_x, layout_y])
