@@ -502,12 +502,77 @@ class FlorisInterface(LoggerBase):
         if len(ws) > 1 or len(ws) < 1:
             raise ValueError("Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws)))
 
-    def get_turbine_powers(self) -> NDArrayFloat:
+    def get_turbine_powers(self, include_unc=False, unc_pmfs=None, unc_options=None) -> NDArrayFloat:
         """Calculates the power at each turbine in the windfarm.
 
         Returns:
             NDArrayFloat: [description]
         """
+
+        if include_unc:
+            # If we must include uncertainty, then expand the dimensionality
+            # of the problem along the wind direction and/or yaw angle
+            # direction. We make use of the vectorization of FLORIS to
+            # evaluate all conditions in a single call, rather than in
+            # loops. Therefore, the effective number of wind conditions and
+            # yaw angle combinations we evaluate expands.
+            unc_pmfs = _generate_uncertainty_parameters(unc_options, unc_pmfs)
+
+            # We first save the nominal settings, since we will be overwriting
+            # the floris wind conditions and yaw angles to include all
+            # probablistic conditions.
+            wd_array_nominal = self.floris.flow_field.wind_directions
+            ws_array_nominal = self.floris.flow_field.wind_speeds
+            yaw_angles_nominal = self.floris.farm.yaw_angles
+            num_wd = len(wd_array_nominal)
+            num_ws = len(ws_array_nominal)
+            num_wd_unc = len(unc_pmfs["wd_unc"])
+            num_yaw_unc = len(unc_pmfs["yaw_unc"])
+            num_turbines = self.floris.farm.n_turbines
+    
+            # Expand wind direction and yaw angle array into the direction
+            # of uncertainty over the ambient wind direction.
+            wd_array_probablistic = np.vstack(
+                [np.expand_dims(wd_array_nominal, axis=0) + dy
+                for dy in unc_pmfs["wd_unc"]]
+            )
+            yaw_angles_probablistic = np.vstack(
+                [np.expand_dims(yaw_angles_nominal, axis=0) - dy
+                for dy in unc_pmfs["wd_unc"]]
+            )
+
+            # Now futher expand wind direction and yaw angle array into
+            # the direction of uncertainty of the turbine yaw angles.
+            wd_array_probablistic = np.vstack(
+                [np.expand_dims(wd_array_probablistic, axis=0)
+                for _ in unc_pmfs["yaw_unc"]]
+            )
+            yaw_angles_probablistic = np.vstack(
+                [np.expand_dims(yaw_angles_probablistic, axis=0) + dy
+                for dy in unc_pmfs["yaw_unc"]]
+            )
+
+            # Format into conventional floris format by reshaping
+            wd_array_probablistic = np.reshape(wd_array_probablistic, -1)
+            yaw_angles_probablistic = np.reshape(
+                yaw_angles_probablistic, (-1, num_ws, num_turbines)
+            )
+
+            # Wrap wind direction array around 360 deg
+            wd_array_probablistic = wrap_360(wd_array_probablistic)
+
+            # Find minimal set of solutions to evaluate
+            wd_exp = np.tile(wd_array_probablistic, (1, num_ws, 1)).T
+            x_exp = np.append(yaw_angles_probablistic, wd_exp, axis=2)
+            _, id_unq, id_unq_rev = np.unique(x_exp, axis=0, return_index=True, return_inverse=True)
+            wd_array_probablistic = wd_array_probablistic[id_unq]
+            yaw_angles_probablistic = yaw_angles_probablistic[id_unq, :, :]
+
+            # Calculate solutions for minimal probablistic set
+            self.reinitialize(wind_directions=wd_array_probablistic)
+            self.calculate_wake(yaw_angles=yaw_angles_probablistic)
+
+        # Retrieve all power productions using the nominal call
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
             velocities=self.floris.flow_field.u,
@@ -516,6 +581,41 @@ class FlorisInterface(LoggerBase):
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
+
+        if include_unc:
+            # Reshape solutions back to full set
+            power_probablistic = turbine_powers[id_unq_rev, :]
+            power_probablistic = np.reshape(
+                power_probablistic, 
+                (num_yaw_unc, num_wd_unc, num_wd, num_ws, num_turbines)
+            )
+
+            # Calculate probability weighing terms
+            wd_weighing = np.tile(unc_pmfs["wd_unc_pmf"], (num_yaw_unc, 1)).T
+            wd_weighing = np.tile(wd_weighing, (num_ws, num_wd, 1, 1)).T
+            yaw_weighing = np.tile(unc_pmfs["yaw_unc_pmf"], (num_wd_unc, 1))
+            yaw_weighing = np.tile(yaw_weighing, (num_ws, num_wd, 1, 1)).T
+
+            # Now copy over to each turbine
+            wd_weighing = np.repeat(
+                np.expand_dims(wd_weighing, axis=4),
+                num_turbines,
+                axis=4
+            )
+            yaw_weighing = np.repeat(
+                np.expand_dims(yaw_weighing, axis=4),
+                num_turbines,
+                axis=4
+            )
+            W = np.multiply(wd_weighing, yaw_weighing)
+
+            # Now apply probability distribution weighing
+            turbine_powers = np.sum(W * power_probablistic, axis=(0, 1))
+
+            # reinitialize with original values
+            self.reinitialize(wind_directions=wd_array_nominal)
+            self.calculate_wake(yaw_angles=yaw_angles_nominal)
+    
         return turbine_powers
 
     def get_turbine_Cts(self) -> NDArrayFloat:
@@ -616,85 +716,11 @@ class FlorisInterface(LoggerBase):
         # for turbine in self.floris.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
 
-        if include_unc:
-            unc_pmfs = _generate_uncertainty_parameters(unc_options, unc_pmfs)
-
-            # Save nominal settings to self
-            wd_array_nominal = self.floris.flow_field.wind_directions
-            ws_array_nominal = self.floris.flow_field.wind_speeds
-            yaw_angles_nominal = self.floris.farm.yaw_angles
-            num_wd = len(wd_array_nominal)
-            num_ws = len(ws_array_nominal)
-            num_wd_unc = len(unc_pmfs["wd_unc"])
-            num_yaw_unc = len(unc_pmfs["yaw_unc"])
-            num_turbines = self.floris.farm.n_turbines
-    
-            # Expand wind direction and yaw angle array into the direction
-            # of uncertainty over the ambient wind direction.
-            wd_array_probablistic = np.vstack(
-                [np.expand_dims(wd_array_nominal, axis=0) + dy
-                for dy in unc_pmfs["wd_unc"]]
-            )
-            yaw_angles_probablistic = np.vstack(
-                [np.expand_dims(yaw_angles_nominal, axis=0) - dy
-                for dy in unc_pmfs["wd_unc"]]
-            )
-
-            # Now futher expand wind direction and yaw angle array into
-            # the direction of uncertainty of the turbine yaw angles.
-            wd_array_probablistic = np.vstack(
-                [np.expand_dims(wd_array_probablistic, axis=0)
-                for _ in unc_pmfs["yaw_unc"]]
-            )
-            yaw_angles_probablistic = np.vstack(
-                [np.expand_dims(yaw_angles_probablistic, axis=0) + dy
-                for dy in unc_pmfs["yaw_unc"]]
-            )
-
-            # Format into conventional floris format by reshaping
-            wd_array_probablistic = np.reshape(wd_array_probablistic, -1)
-            yaw_angles_probablistic = np.reshape(
-                yaw_angles_probablistic, (-1, num_ws, num_turbines)
-            )
-
-            # Wrap wind direction array around 360 deg
-            wd_array_probablistic = wrap_360(wd_array_probablistic)
-
-            # Find minimal set of solutions to evaluate
-            wd_exp = np.tile(wd_array_probablistic, (1, num_ws, 1)).T
-            x_exp = np.append(yaw_angles_probablistic, wd_exp, axis=2)
-            _, id_unq, id_unq_rev = np.unique(x_exp, axis=0, return_index=True, return_inverse=True)
-            wd_array_probablistic = wd_array_probablistic[id_unq]
-            yaw_angles_probablistic = yaw_angles_probablistic[id_unq, :, :]
-
-            # Calculate solutions for minimal set
-            self.reinitialize(wind_directions=wd_array_probablistic)
-            self.calculate_wake(yaw_angles=yaw_angles_probablistic)
-            power_probablistic = self.get_farm_power()
-
-            # Reshape solutions back to full set
-            power_probablistic = power_probablistic[id_unq_rev, :]
-            power_probablistic = np.reshape(
-                power_probablistic, 
-                (num_yaw_unc, num_wd_unc, num_wd, num_ws)
-            )
-
-            # Calculate probability weighing terms
-            wd_weighing = np.tile(unc_pmfs["wd_unc_pmf"], (num_yaw_unc, 1)).T
-            wd_weighing = np.tile(wd_weighing, (num_ws, num_wd, 1, 1)).T
-            yaw_weighing = np.tile(unc_pmfs["yaw_unc_pmf"], (num_wd_unc, 1))
-            yaw_weighing = np.tile(yaw_weighing, (num_ws, num_wd, 1, 1)).T
-            W = np.multiply(wd_weighing, yaw_weighing)
-
-            # Now apply probability distribution weighing
-            farm_power = np.sum(W * power_probablistic, axis=(0, 1))
-
-            # reinitialize with original values
-            self.reinitialize(wind_directions=wd_array_nominal)
-            self.calculate_wake(yaw_angles=yaw_angles_nominal)
-            return farm_power
-
-        turbine_powers = self.get_turbine_powers()
+        turbine_powers = self.get_turbine_powers(
+            include_unc=include_unc,
+            unc_pmfs=unc_pmfs,
+            unc_options=unc_options
+        )
         # for i in range(self.floris.farm.n_turbines):
         #     avg_v_i = average_velocity(
         #         self.floris.flow_field.u,
