@@ -656,6 +656,54 @@ class FlorisInterface(LoggerBase):
         # print( "total, MW", np.sum(turbine_powers[0,0]) / 1000000 )
         return np.sum(turbine_powers, axis=2)
 
+    def get_farm_AEP_from_rose(
+        self,
+        df_wr_in
+    ) -> float:
+
+        # Make a local copy
+        df_wr = df_wr_in.copy()
+
+        # Normalize the frequencies
+        df_wr["freq_val"] = df_wr["freq_val"].copy() / df_wr["freq_val"].sum()
+
+        # FOLLOWING normalization, drop 0 m/s
+        df_wr = df_wr[df_wr.ws>0]
+
+        # TODO: Drop below cut-in speeds (should be easy, may need to consider max speed given speed up map or something)
+        # TODO: Perhaps skip conditions where all turbines above rated (more challenging, must also consider yawing)
+
+        # Derive the wind directions and speeds we need to evaluate in FLORIS
+        wd_array = np.array(df_wr["wd"].unique(), dtype=float)
+        ws_array = np.array(df_wr["ws"].unique(), dtype=float)
+
+        # Initialize to these wind speeds
+        self.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
+
+        # Calculate FLORIS for every WD and WS combination  
+        self.calculate_wake()      
+
+        # Return the farm power from the above calculation
+        farm_power_array = self.get_farm_power()
+
+        # Now map the FLORIS solutions to the wind rose dataframe
+        wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing='ij')
+        interpolant = NearestNDInterpolator(
+            np.vstack([wd_grid.flatten(), ws_grid.flatten()]).T, 
+            farm_power_array.flatten()
+        )
+
+        # Use an interpolant to map the results back to the wind rose dataframe
+        # Technically this could be done directly but an interpolant is safer
+        # in the event the wind rose is irregular and/or ordered differently
+        # than floris
+        df_wr["farm_power"] = interpolant(df_wr[["wd", "ws"]])
+
+        # Finally, calculate AEP in GWh
+        aep = np.dot(df_wr["freq_val"], df_wr["farm_power"]) * 365 * 24
+
+        return aep
+
     def get_farm_AEP(
         self,
         wd: NDArrayFloat | list[float],
