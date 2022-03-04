@@ -665,6 +665,7 @@ class FlorisInterface(LoggerBase):
         limit_ws: bool = False,
         ws_limit_tol: float = 0.001,
         ws_cutout: float = 30.0,
+        calc_wake_repetitions = 1
     ) -> float:
         """
         Estimate annual energy production (AEP) for distributions of wind speed, wind
@@ -738,7 +739,8 @@ class FlorisInterface(LoggerBase):
         #     yaw = yaw[:, ix_ws_filter]
 
         # self.reinitialize(wind_direction=wd_unique, wind_speed=ws_unique, wind_rose_probability=freq)
-        self.calculate_wake()
+        for i in range(calc_wake_repetitions):
+            self.calculate_wake()
         farm_power = self.get_farm_power()  # TODO: Do we need to specify an axis since this is a sum?
         AEP = farm_power * freq * 8760
         return np.sum(AEP)
