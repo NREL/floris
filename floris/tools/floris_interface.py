@@ -658,7 +658,8 @@ class FlorisInterface(LoggerBase):
 
     def get_farm_AEP_from_rose(
         self,
-        df_wr_in
+        df_wr_in,
+        no_wake=False
     ) -> float:
 
         # Make a local copy
@@ -684,7 +685,13 @@ class FlorisInterface(LoggerBase):
         self.calculate_wake()      
 
         # Return the farm power from the above calculation
-        farm_power_array = self.get_farm_power()
+        if not no_wake:
+            farm_power_array = self.get_farm_power()
+        else:
+            # use the max power from freestream
+            turbine_powers = self.get_turbine_powers()
+            num_turbines = turbine_powers.shape[2]
+            farm_power_array = np.max(turbine_powers,2) * num_turbines
 
         # Now map the FLORIS solutions to the wind rose dataframe
         wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing='ij')
