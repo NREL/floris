@@ -152,6 +152,7 @@ def test_regression_tandem(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
@@ -261,6 +262,7 @@ def test_regression_rotation(sample_inputs_fixture):
     sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     farm_avg_velocities = average_velocity(floris.flow_field.u)
@@ -294,6 +296,7 @@ def test_regression_yaw(sample_inputs_fixture):
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
 
+    floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
@@ -365,6 +368,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
     
+    floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
@@ -435,6 +439,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
     
+    floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
@@ -516,6 +521,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     sample_inputs_fixture.floris["farm"]["layout_y"] = Y
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     # farm_avg_velocities = average_velocity(floris.flow_field.u)

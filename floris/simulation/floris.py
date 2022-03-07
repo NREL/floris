@@ -121,10 +121,10 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
             self.logging["file"]["enable"],
             self.logging["file"]["level"],
         )
-    
 
     # @profile
-    def steady_state_atmospheric_condition(self):
+    def initialize_domain(self):
+        """Initialize solution space prior to wake calculations"""
 
         # Initialize field quanitities; doing this immediately prior to doing
         # the calculation step allows for manipulating inputs in a script
@@ -133,6 +133,11 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         # Initialize farm quantities
         self.farm.initialize(self.grid.sorted_indices)
+
+
+    def steady_state_atmospheric_condition(self):
+        """Perform the steady-state wind farm wake calculations. Note that
+        initialize_domain() is required to be called before this function."""
 
         vel_model = self.wake.model_strings["velocity_model"]
 

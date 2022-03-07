@@ -81,7 +81,7 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
-        # no_wake: bool = False,
+        no_wake: bool = False,
         # points: NDArrayFloat | list[float] | None = None,
         # track_n_upstream_wakes: bool = False,
     ) -> None:
@@ -111,7 +111,12 @@ class FlorisInterface(LoggerBase):
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
 
-        self.floris.steady_state_atmospheric_condition()
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        if not no_wake:
+            # Perform the wake calculations
+            self.floris.steady_state_atmospheric_condition()
 
     def reinitialize(
         self,
