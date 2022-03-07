@@ -111,7 +111,12 @@ class FlorisInterface(LoggerBase):
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
 
-        self.floris.steady_state_atmospheric_condition(no_wake=no_wake)
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        if not no_wake:
+            # Perform the wake calculations
+            self.floris.steady_state_atmospheric_condition()
 
     def reinitialize(
         self,
