@@ -124,7 +124,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     
 
     # @profile
-    def steady_state_atmospheric_condition(self):
+    def steady_state_atmospheric_condition(self, no_wake=False):
 
         # Initialize field quanitities; doing this immediately prior to doing
         # the calculation step allows for manipulating inputs in a script
@@ -139,7 +139,10 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # <<interface>>
         # start = time.time()
 
-        if vel_model=="cc":
+        if no_wake:
+            # Skip wake calculations
+            elapsed_time = 0.0
+        elif vel_model=="cc":
             elapsed_time = cc_solver(
                 self.farm,
                 self.flow_field,
