@@ -74,7 +74,9 @@ class Farm(BaseClass):
         for i, val in enumerate(value):
             if type(val) is str:
                 _floris_dir = Path(__file__).parent.parent
-                fname = _floris_dir / "turbine_library" / f"{val}.yaml"
+                fname = os.path.join(_floris_dir,
+                                     "turbine_library",
+                                     "{}.yaml".format(val))
                 if not os.path.isfile(fname):
                     raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
                 self.turbine_definitions[i] = load_yaml(fname)
