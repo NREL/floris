@@ -271,6 +271,7 @@ class FlorisInterface(LoggerBase):
         wd=None,
         ws=None,
         yaw_angles=None,
+        north_up=False,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -287,6 +288,7 @@ class FlorisInterface(LoggerBase):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
+            north_up (bool): if True, plots will have the same orientation.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
@@ -327,6 +329,22 @@ class FlorisInterface(LoggerBase):
             normal_vector="z",
             planar_coordinate=height,
         )
+
+        # If fixed orientation
+        if north_up:
+
+            # Get points
+            points = df[["x1", "x2"]].to_numpy()
+
+            # Compute rotation matrix
+            rad = np.deg2rad(wd - 270.0)
+            rotation_matrix = np.array([[np.cos(rad), np.sin(rad)],
+                                        [-np.sin(rad), np.cos(rad)]])
+
+            # Rotate points
+            points = np.dot(points, rotation_matrix.T)
+            points = np.squeeze(points, axis=1)
+            df[["x1", "x2"]] = points
 
         # Compute the cutplane
         horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
