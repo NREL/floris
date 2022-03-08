@@ -661,23 +661,55 @@ class FlorisInterface(LoggerBase):
         # print( "total, MW", np.sum(turbine_powers[0,0]) / 1000000 )
         return np.sum(turbine_powers, axis=2)
 
-    def get_farm_AEP_from_rose(
+    def get_farm_AEP(
         self,
         df_wr_in,
-        no_wake=False
+        no_wake=False,
+        cut_in=None,
+        cut_out=None,
+        yaw_angles = None
     ) -> float:
+        """
+        Estimate annual energy production (AEP) for distributions of wind speed, wind
+        direction, wind rose probability, and yaw offset. The input dataframe, with
+        columns wd, ws, and freq_val provides the wd/ws combinations to run and their
+        relavent frequencies in the freq_val column.
 
+        Args:
+            df_wr_in ( :py:class:`pandas.DataFrame`: containing values of wd, ws, freq_val): 
+                Input wind rose, with the frequency of each wd/ws combination held in the 
+                freq_val column.  Note it is important that the table cover all wind speeds,
+                not just those to be calculated
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the
+                wake to the flow field. Defaults to *False*.
+            cut_in (float, optional): Wind speed below which power output is 0 for entire farm
+                Defaults to None.  
+            cut_out (float, optional): Wind speed above which power output is 0 for entire farm
+                Defaults to None
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+
+        Returns:
+            float: AEP for wind farm.
+        """
         # Make a local copy
         df_wr = df_wr_in.copy()
 
-        # Normalize the frequencies
+        #TODO: Decide if better to assume user will specify this as they want
+        # Normalize the frequencies over all provides wind speeds
         df_wr["freq_val"] = df_wr["freq_val"].copy() / df_wr["freq_val"].sum()
 
         # FOLLOWING normalization, drop 0 m/s
         df_wr = df_wr[df_wr.ws>0]
 
-        # TODO: Drop below cut-in speeds (should be easy, may need to consider max speed given speed up map or something)
-        # TODO: Perhaps skip conditions where all turbines above rated (more challenging, must also consider yawing)
+        #TODO: Inclusive?
+        if cut_in is not None:
+            df_wr = df_wr[df_wr.ws>=cut_in]
+
+        #TODO: Inclusive?
+        if cut_out is not None:
+            df_wr = df_wr[df_wr.ws<=cut_out]    
 
         # Derive the wind directions and speeds we need to evaluate in FLORIS
         wd_array = np.array(df_wr["wd"].unique(), dtype=float)
@@ -687,16 +719,10 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
 
         # Calculate FLORIS for every WD and WS combination  
-        self.calculate_wake()      
+        self.calculate_wake(no_wake=no_wake, yaw_angles=yaw_angles)    
 
         # Return the farm power from the above calculation
-        if not no_wake:
-            farm_power_array = self.get_farm_power()
-        else:
-            # use the max power from freestream
-            turbine_powers = self.get_turbine_powers()
-            num_turbines = turbine_powers.shape[2]
-            farm_power_array = np.max(turbine_powers,2) * num_turbines
+        farm_power_array = self.get_farm_power()
 
         # Now map the FLORIS solutions to the wind rose dataframe
         wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing='ij')
@@ -715,93 +741,6 @@ class FlorisInterface(LoggerBase):
         aep = np.dot(df_wr["freq_val"], df_wr["farm_power"]) * 365 * 24
 
         return aep
-
-    def get_farm_AEP(
-        self,
-        wd: NDArrayFloat | list[float],
-        ws: NDArrayFloat | list[float],
-        freq: NDArrayFloat | list[list[float]],
-        yaw: NDArrayFloat | list[float] | None = None,
-        limit_ws: bool = False,
-        ws_limit_tol: float = 0.001,
-        ws_cutout: float = 30.0,
-    ) -> float:
-        """
-        Estimate annual energy production (AEP) for distributions of wind speed, wind
-        direction, wind rose probability, and yaw offset. This can be computed for
-        pre-determined wind direction and wind speed combinations, as was the case in
-        FLORIS v2, or additionally, the unique wind directions, wind speeds, and their
-        probabilities can be input.
-
-        Args:
-            wd (NDArrayFloat | list[float]): List or array of wind direction values.
-                Either a unique list of wind directions can be used or the wind
-                directions corresponding to a pre-computed set of combinations
-                should be used.
-            ws (NDArrayFloat | list[float]): List or array of wind speed values.
-                Either a unique list of wind speeds can be used or the wind speeds
-                corresponding to a pre-computed set of combinations should be used.
-            freq (NDArrayFloat | list[list[float]]): Frequencies corresponding to either
-                the pre-computed combinations of wind directions and wind speeds or the
-                full wind rose with dimensions (N wind directions x N wind speeds).
-            yaw (NDArrayFloat | list[float] | None, optional): List or array of yaw
-                values if wake is steering implemented that correspond with the number
-                of wind directions. Defaults to None.
-            limit_ws (bool, optional): When *True*, detect wind speed when power
-                reaches it's maximum value for a given wind direction. For all
-                higher wind speeds, use last calculated value when below cut
-                out. Defaults to False.
-            ws_limit_tol (float, optional): Tolerance fraction for determining
-                wind speed where power stops changing. If limit_ws is *True*,
-                assume power remains constant up to cut out for wind speeds
-                above the point where power changes less than ws_limit_tol of
-                the previous power. Defaults to 0.001.
-            ws_cutout (float, optional): Cut out wind speed (m/s). If limit_ws
-                is *True*, assume power is zero for wind speeds greater than or
-                equal to ws_cutout. Defaults to 30.0
-
-        Returns:
-            float: AEP for wind farm.
-        """
-
-        # # Convert the required inputs to arrays
-        # wd = np.array(wd)
-        # ws = np.array(ws)
-        # freq = np.array(freq)
-
-        # # Determine if the direction and speed inputs provided are a set of pre-determined
-        # # combinations, and compute the full combination set if so, where the value
-        # # in freq will be set to 0 if a combination was not in the original set to ensure
-        # # it's not counted.
-        # wd_unique = wd.unique()
-        # ws_unique = ws.unique()
-        # if np.array_equal(wd_unique, sorted(wd)) and np.array_equal(ws_unique, sorted(ws)):
-        #     # Reshape the frequency input if required, and leave the unique inputs as-is
-        #     if freq.shape != (wd_unique.size, ws_unique.size):
-        #         freq = freq.reshape((wd_unique.size, ws_unique.size))
-        # else:
-        #     # Compute all the combinations
-        #     wd_unique, ws_unique, freq, yaw = correct_for_all_combinations(wd, ws, freq, yaw)
-
-        # # If the yaw input is still None, then create a None array as inputs
-        # if yaw is None:
-        #     N = wd_unique.size * ws_unique.size
-        #     yaw = np.array([None] * N).reshape(wd_unique.size, ws_unique.size)
-        # else:
-        #     yaw = np.array(yaw)
-
-        # filter out wind speeds beyond the cutoff, if necessary
-        # if limit_ws:
-        #     ix_ws_filter = ws_unique >= ws_cutout
-        #     ws_unique = ws_unique[ix_ws_filter]
-        #     freq = freq[:, ix_ws_filter]
-        #     yaw = yaw[:, ix_ws_filter]
-
-        # self.reinitialize(wind_direction=wd_unique, wind_speed=ws_unique, wind_rose_probability=freq)
-        self.calculate_wake()
-        farm_power = self.get_farm_power()  # TODO: Do we need to specify an axis since this is a sum?
-        AEP = farm_power * freq * 8760
-        return np.sum(AEP)
 
     def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
         self.reinitialize(wind_direction=[wd], wind_speed=[ws])
