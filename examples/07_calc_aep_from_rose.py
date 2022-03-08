@@ -28,13 +28,20 @@ generated, and then the turbine wakes and powers are calculated across all the w
 is converted to AEP and reported out.
 """
 
-# Read the windrose information file & normalize wind rose frequencies
+# Read the windrose information file & normalize frequencies to sum to 1.0
 fn = "inputs/wind_rose.csv"
 df_wr = pd.read_csv(fn)
-
-# Normalize the frequencies to sum to 1.0
 df_wr["freq_val"] = df_wr["freq_val"].copy() / df_wr["freq_val"].sum()
 print(df_wr.head())
+
+# Derive the wind directions and speeds we need to evaluate in FLORIS
+wd_array = np.array(df_wr["wd"].unique(), dtype=float)
+ws_array = np.array(df_wr["ws"].unique(), dtype=float)
+
+# Format the frequency array into (n_wind_directions, n_wind_speeds) shape
+wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing="ij")
+freq_interp = NearestNDInterpolator(df_wr[["wd", "ws"]], df_wr["freq_val"])
+freq = freq_interp(wd_grid, ws_grid)
 
 # Load the default example FLORIS object
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
@@ -43,18 +50,20 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 # Assume a three-turbine wind farm with 5D spacing
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
-    layout=[[0.0, 5* D, 10 * D], [0.0, 0.0, 0.0]]
+    layout=[[0.0, 5* D, 10 * D], [0.0, 0.0, 0.0]],
+    wind_directions=wd_array,
+    wind_speeds=ws_array,
 )
 
 # Compute the AEP
-aep = fi.get_farm_AEP(df_wr)
+aep = fi.get_farm_AEP(freq=freq, cut_in_wind_speed=0.001)
 print("Farm AEP: {:.3f} GWh".format(aep / 1.0e9))
 
-# Compute the AEP again while specifying cut in and cut out 
-# (No change expected for this definition)
-aep_with_cut_in_out = fi.get_farm_AEP(df_wr,cut_in=3., cut_out=25.)
-print("Farm AEP (with cut in and cut out specified): {:.3f} GWh".format(aep_with_cut_in_out / 1.0e9))
+# # Compute the AEP again while specifying cut in and cut out 
+# # (No change expected for this definition)
+# aep_with_cut_in_out = fi.get_farm_AEP(df_wr,cut_in=3., cut_out=25.)
+# print("Farm AEP (with cut in and cut out specified): {:.3f} GWh".format(aep_with_cut_in_out / 1.0e9))
 
 # Compute the AEP with no wakes
-aep_no_wake = fi.get_farm_AEP(df_wr, no_wake=True)
+aep_no_wake = fi.get_farm_AEP(freq, no_wake=True)
 print("Farm AEP (Without Wakes): {:.3f} GWh".format(aep_no_wake / 1.0e9))

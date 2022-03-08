@@ -663,11 +663,11 @@ class FlorisInterface(LoggerBase):
 
     def get_farm_AEP(
         self,
-        df_wr_in,
+        freq,
         no_wake=False,
-        cut_in=None,
-        cut_out=None,
-        yaw_angles = None
+        cut_in_wind_speed=None,
+        cut_out_wind_speed=None,
+        yaw_angles=None
     ) -> float:
         """
         Estimate annual energy production (AEP) for distributions of wind speed, wind
@@ -693,52 +693,95 @@ class FlorisInterface(LoggerBase):
         Returns:
             float: AEP for wind farm.
         """
-        # Make a local copy
-        df_wr = df_wr_in.copy()
 
-        #TODO: Decide if better to assume user will specify this as they want
-        # Normalize the frequencies over all provides wind speeds
-        df_wr["freq_val"] = df_wr["freq_val"].copy() / df_wr["freq_val"].sum()
+        # Verify dimensions of the variable "freq"
+        if not (
+            (np.shape(freq)[0] == self.floris.flow_field.n_wind_directions)
+            & (np.shape(freq)[1] == self.floris.flow_field.n_wind_speeds)
+            & (len(np.shape(freq)) == 2)
+        ):
+            raise UserWarning(
+                "'freq' should be a two-dimensional array with dimensions"
+                + " (n_wind_directions, n_wind_speeds)."
+            )
 
-        # FOLLOWING normalization, drop 0 m/s
-        df_wr = df_wr[df_wr.ws>0]
+        # Check if frequency vector sums to 1.0. If not, raise a warning
+        if np.abs(np.sum(freq) - 1.0) > 0.001:
+            self.logger.warning(
+                "WARNING: The frequency array provided to get_farm_AEP() "
+                + "does not sum to 1.0. "
+            )
 
-        #TODO: Inclusive?
-        if cut_in is not None:
-            df_wr = df_wr[df_wr.ws>=cut_in]
+        if no_wake:
+            # Overwrite cut-in wind speed to skip all wake calculations
+            cut_in_wind_speed = (
+                np.max(self.floris.flow_field.wind_speeds) + 0.01
+            )
 
-        #TODO: Inclusive?
-        if cut_out is not None:
-            df_wr = df_wr[df_wr.ws<=cut_out]    
+        # Automatically derive cut-in wind speed, if necessary
+        if cut_in_wind_speed is None:
+            unique_wind_speeds = np.unique(
+                np.hstack(
+                    [t["power_thrust_table"]["wind_speed"] for
+                        t in self.floris.farm.turbine_definitions]
+                )
+            )
+            # Append with value slightly below first value
+            if unique_wind_speeds[0] > 0.01:
+                unique_wind_speeds = np.hstack(
+                    [unique_wind_speeds[0] - 0.01, unique_wind_speeds]
+                )
 
-        # Derive the wind directions and speeds we need to evaluate in FLORIS
-        wd_array = np.array(df_wr["wd"].unique(), dtype=float)
-        ws_array = np.array(df_wr["ws"].unique(), dtype=float)
+            cut_in_wind_speed = 1.0e-6  # Start with small value
+            for ws in unique_wind_speeds:
+                turbine_powers = [
+                    f[1](ws) for f in self.floris.farm.turbine_power_interps
+                ]
+                if np.all(np.array(turbine_powers, dtype=float) < 1.0e-9):
+                    cut_in_wind_speed = ws
+                else:
+                    break  # Stop looping: found our cut-in wind speed
 
-        # Initialize to these wind speeds
-        self.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
-
-        # Calculate FLORIS for every WD and WS combination  
-        self.calculate_wake(no_wake=no_wake, yaw_angles=yaw_angles)    
-
-        # Return the farm power from the above calculation
-        farm_power_array = self.get_farm_power()
-
-        # Now map the FLORIS solutions to the wind rose dataframe
-        wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing='ij')
-        interpolant = NearestNDInterpolator(
-            np.vstack([wd_grid.flatten(), ws_grid.flatten()]).T, 
-            farm_power_array.flatten()
+        # Copy wind speed array and initialize empty solution space
+        wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
+        farm_power = np.zeros(
+            (self.floris.flow_field.n_wind_directions, len(wind_speeds))
         )
 
-        # Use an interpolant to map the results back to the wind rose dataframe
-        # Technically this could be done directly but an interpolant is safer
-        # in the event the wind rose is irregular and/or ordered differently
-        # than floris
-        df_wr["farm_power"] = interpolant(df_wr[["wd", "ws"]])
+        # Specify which wind speeds to evaluate with/without wake
+        no_wake_subset = (wind_speeds < cut_in_wind_speed)
+        if cut_out_wind_speed is not None:
+            no_wake_subset = no_wake_wind_speeds | (
+                wind_speeds > cut_out_wind_speed
+            )
+
+        # Calculate solutions of the no_wake subset
+        if np.any(no_wake_subset):
+            wind_speeds_subset = wind_speeds[no_wake_subset]
+            if yaw_angles is None:
+                yaw_angles_subset = None
+            else:
+                yaw_angles_subset = yaw_angles[:, no_wake_subset]
+            self.reinitialize(wind_speeds=wind_speeds_subset)
+            self.calculate_wake(yaw_angles=yaw_angles_subset, no_wake=True)
+            farm_power[:, no_wake_subset] = self.get_farm_power()
+
+        # Now perform the same calculations for the no_wake=False subset
+        if not np.all(no_wake_subset):
+            wind_speeds_subset = wind_speeds[~no_wake_subset]
+            if yaw_angles is None:
+                yaw_angles_subset = None
+            else:
+                yaw_angles_subset = yaw_angles[:, ~no_wake_subset]
+            self.reinitialize(wind_speeds=wind_speeds_subset)
+            self.calculate_wake(yaw_angles=yaw_angles_subset, no_wake=False)
+            farm_power[:, ~no_wake_subset] = self.get_farm_power()
 
         # Finally, calculate AEP in GWh
-        aep = np.dot(df_wr["freq_val"], df_wr["farm_power"]) * 365 * 24
+        aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
+
+        # Reset the FLORIS object to the full wind speed array
+        self.reinitialize(wind_speeds=wind_speeds)
 
         return aep
 
