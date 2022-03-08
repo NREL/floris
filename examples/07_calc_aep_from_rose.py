@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
 from floris.tools import FlorisInterface
+import matplotlib.pyplot as plt
 
 """
 This example demonstrates how to calculate the Annual Energy Production (AEP) of a wind farm using wind rose
@@ -31,18 +32,9 @@ is converted to AEP and reported out.
 fn = "inputs/wind_rose.csv"
 df_wr = pd.read_csv(fn)
 
-# Normalize the frequencies
+# Normalize the frequencies to sum to 1.0
 df_wr["freq_val"] = df_wr["freq_val"].copy() / df_wr["freq_val"].sum()
-
-# Split the wind rose into wind speeds above (df_wr_op)
-# and below cut-in (df_wr_below_cut_in) as below cut-in winds are 0 power and
-# 0 ambient wind speed generates warnings and nans in some of the wake models
-df_wr_below_cut_in = df_wr[df_wr.ws < 3.0].copy()
-df_wr_op = df_wr[df_wr.ws >= 3.0].copy()
-
-# Derive the wind directions and speeds we need to evaluate in FLORIS
-wd_array = np.array(df_wr_op["wd"].unique(), dtype=float)
-ws_array = np.array(df_wr_op["ws"].unique(), dtype=float)
+print(df_wr.head())
 
 # Load the default example FLORIS object
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
@@ -51,35 +43,18 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 # Assume a three-turbine wind farm with 5D spacing
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
-    layout=[[0.0, 5* D, 10 * D], [0.0, 0.0, 0.0]],
-    wind_directions=wd_array,
-    wind_speeds=ws_array,
+    layout=[[0.0, 5* D, 10 * D], [0.0, 0.0, 0.0]]
 )
 
-# Calculate FLORIS for every WD and WS combination
-fi.calculate_wake()
-
-# Return the farm power from the above calculation
-farm_power_array = fi.get_farm_power()
-
-# Now map the FLORIS solutions to the wind rose dataframe
-wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing='ij')
-interpolant = NearestNDInterpolator(
-    np.vstack([wd_grid.flatten(), ws_grid.flatten()]).T, 
-    farm_power_array.flatten()
-)
-
-# Use an interpolant to map the results back to the wind rose dataframe
-# Technically this could be done directly but an interpolant is safer
-# in the event the wind rose is irregular and/or ordered differently
-# than floris
-df_wr_op["farm_power"] = interpolant(df_wr_op[["wd", "ws"]])
-
-# Recombine with the below cut-in data
-df_wr_below_cut_in["farm_power"] = 0.
-df_wr = df_wr_below_cut_in.append(df_wr_op).sort_values(["wd","ws"])
-
-# Finally, calculate AEP in GWh
-aep = np.dot(df_wr["freq_val"], df_wr["farm_power"]) * 365 * 24
-
+# Compute the AEP
+aep = fi.get_farm_AEP(df_wr)
 print("Farm AEP: {:.3f} GWh".format(aep / 1.0e9))
+
+# Compute the AEP again while specifying cut in and cut out 
+# (No change expected for this definition)
+aep_with_cut_in_out = fi.get_farm_AEP(df_wr,cut_in=3., cut_out=25.)
+print("Farm AEP (with cut in and cut out specified): {:.3f} GWh".format(aep_with_cut_in_out / 1.0e9))
+
+# Compute the AEP with no wakes
+aep_no_wake = fi.get_farm_AEP(df_wr, no_wake=True)
+print("Farm AEP (Without Wakes): {:.3f} GWh".format(aep_no_wake / 1.0e9))
