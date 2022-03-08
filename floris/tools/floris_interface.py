@@ -751,7 +751,7 @@ class FlorisInterface(LoggerBase):
         # Specify which wind speeds to evaluate with/without wake
         no_wake_subset = (wind_speeds < cut_in_wind_speed)
         if cut_out_wind_speed is not None:
-            no_wake_subset = no_wake_wind_speeds | (
+            no_wake_subset = no_wake_subset | (
                 wind_speeds > cut_out_wind_speed
             )
 
@@ -785,10 +785,10 @@ class FlorisInterface(LoggerBase):
 
         return aep
 
-    def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
-        self.reinitialize(wind_direction=[wd], wind_speed=[ws])
-        self.calculate_wake(yaw_angles=yaw)
-        return self.get_farm_power() * freq * 8760
+    # def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
+    #     self.reinitialize(wind_direction=[wd], wind_speed=[ws])
+    #     self.calculate_wake(yaw_angles=yaw)
+    #     return self.get_farm_power() * freq * 8760
 
     # def get_farm_AEP_parallel(
     #     self,
