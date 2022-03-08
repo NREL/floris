@@ -34,8 +34,6 @@ if __name__ == "__main__":
         # Get horizontal plane
         hor_plane = fi.calculate_horizontal_plane(
             height=90.0,
-            # x_bounds=[250.0, 1750.0],
-            # y_bounds=[-250.0, 250.0],
             yaw_angles=None,
             north_up=True,
         )
