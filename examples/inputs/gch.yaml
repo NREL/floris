@@ -5,7 +5,7 @@ floris_version: v3.0.0
 
 logging:
   console:
-    enable: false
+    enable: true
     level: WARNING
   file:
     enable: false
