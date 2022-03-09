@@ -24,7 +24,7 @@ from floris.tools import visualize_cut_plane #, plot_turbines_with_fi
 For each turbine in the turbine library, make a small figure showing that its power curve and power loss to yaw are reasonable and 
 reasonably smooth
 """
-ws_array = np.arange(0,30,0.2)
+ws_array = np.arange(0.1,30,0.2)
 yaw_angles = np.linspace(-30,30,60)
 wind_speed_to_test_yaw = 11
 
