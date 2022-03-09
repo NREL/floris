@@ -7,6 +7,7 @@ rotor_diameter: 126.0
 TSR: 8.0
 power_thrust_table:
   power:
+    - 0.0
     - 0.000000
     - 0.000000
     - 0.178085
@@ -60,6 +61,7 @@ power_thrust_table:
   thrust:
     - 0.0
     - 0.0
+    - 0.0
     - 0.99
     - 0.99
     - 0.97373036
@@ -109,6 +111,7 @@ power_thrust_table:
     - 0.0
     - 0.0
   wind_speed:
+    - 0.0 
     - 2.0
     - 2.5
     - 3.0
