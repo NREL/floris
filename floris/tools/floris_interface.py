@@ -663,188 +663,95 @@ class FlorisInterface(LoggerBase):
 
     def get_farm_AEP(
         self,
-        wd: NDArrayFloat | list[float],
-        ws: NDArrayFloat | list[float],
-        freq: NDArrayFloat | list[list[float]],
-        yaw: NDArrayFloat | list[float] | None = None,
-        limit_ws: bool = False,
-        ws_limit_tol: float = 0.001,
-        ws_cutout: float = 30.0,
+        freq,
+        cut_in_wind_speed=0.001,
+        cut_out_wind_speed=None,
+        yaw_angles=None,
+        no_wake=False,
     ) -> float:
         """
         Estimate annual energy production (AEP) for distributions of wind speed, wind
-        direction, wind rose probability, and yaw offset. This can be computed for
-        pre-determined wind direction and wind speed combinations, as was the case in
-        FLORIS v2, or additionally, the unique wind directions, wind speeds, and their
-        probabilities can be input.
+        direction, frequency of occurrence, and yaw offset.
 
         Args:
-            wd (NDArrayFloat | list[float]): List or array of wind direction values.
-                Either a unique list of wind directions can be used or the wind
-                directions corresponding to a pre-computed set of combinations
-                should be used.
-            ws (NDArrayFloat | list[float]): List or array of wind speed values.
-                Either a unique list of wind speeds can be used or the wind speeds
-                corresponding to a pre-computed set of combinations should be used.
-            freq (NDArrayFloat | list[list[float]]): Frequencies corresponding to either
-                the pre-computed combinations of wind directions and wind speeds or the
-                full wind rose with dimensions (N wind directions x N wind speeds).
-            yaw (NDArrayFloat | list[float] | None, optional): List or array of yaw
-                values if wake is steering implemented that correspond with the number
-                of wind directions. Defaults to None.
-            limit_ws (bool, optional): When *True*, detect wind speed when power
-                reaches it's maximum value for a given wind direction. For all
-                higher wind speeds, use last calculated value when below cut
-                out. Defaults to False.
-            ws_limit_tol (float, optional): Tolerance fraction for determining
-                wind speed where power stops changing. If limit_ws is *True*,
-                assume power remains constant up to cut out for wind speeds
-                above the point where power changes less than ws_limit_tol of
-                the previous power. Defaults to 0.001.
-            ws_cutout (float, optional): Cut out wind speed (m/s). If limit_ws
-                is *True*, assume power is zero for wind speeds greater than or
-                equal to ws_cutout. Defaults to 30.0
+            freq (NDArrayFloat): NumPy array with shape (n_wind_directions,
+                n_wind_speeds) with the frequencies of each wind direction and
+                wind speed combination. These frequencies should typically sum
+                up to 1.0 and are used to weigh the wind farm power for every
+                condition in calculating the wind farm's AEP.
+            cut_in_wind_speed (float, optional): Wind speed in m/s below which
+                any calculations are ignored and the wind farm is known to 
+                produce 0.0 W of power. Note that to prevent problems with the
+                wake models at negative / zero wind speeds, this variable must
+                always have a positive value. Defaults to 0.001 [m/s].
+            cut_out_wind_speed (float, optional): Wind speed above which the
+                wind farm is known to produce 0.0 W of power. If None is
+                specified, will assume that the wind farm does not cut out
+                at high wind speeds. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional):
+                The relative turbine yaw angles in degrees. If None is
+                specified, will assume that the turbine yaw angles are all
+                zero degrees for all conditions. Defaults to None.
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the wake to
+                the flow field. This can be useful when quantifying the loss
+                in AEP due to wakes. Defaults to *False*.
 
         Returns:
-            float: AEP for wind farm.
+            float: 
+                The Annual Energy Production (AEP) for the wind farm in
+                watt-hours.
         """
 
-        # # Convert the required inputs to arrays
-        # wd = np.array(wd)
-        # ws = np.array(ws)
-        # freq = np.array(freq)
+        # Verify dimensions of the variable "freq"
+        if not (
+            (np.shape(freq)[0] == self.floris.flow_field.n_wind_directions)
+            & (np.shape(freq)[1] == self.floris.flow_field.n_wind_speeds)
+            & (len(np.shape(freq)) == 2)
+        ):
+            raise UserWarning(
+                "'freq' should be a two-dimensional array with dimensions"
+                + " (n_wind_directions, n_wind_speeds)."
+            )
 
-        # # Determine if the direction and speed inputs provided are a set of pre-determined
-        # # combinations, and compute the full combination set if so, where the value
-        # # in freq will be set to 0 if a combination was not in the original set to ensure
-        # # it's not counted.
-        # wd_unique = wd.unique()
-        # ws_unique = ws.unique()
-        # if np.array_equal(wd_unique, sorted(wd)) and np.array_equal(ws_unique, sorted(ws)):
-        #     # Reshape the frequency input if required, and leave the unique inputs as-is
-        #     if freq.shape != (wd_unique.size, ws_unique.size):
-        #         freq = freq.reshape((wd_unique.size, ws_unique.size))
-        # else:
-        #     # Compute all the combinations
-        #     wd_unique, ws_unique, freq, yaw = correct_for_all_combinations(wd, ws, freq, yaw)
+        # Check if frequency vector sums to 1.0. If not, raise a warning
+        if np.abs(np.sum(freq) - 1.0) > 0.001:
+            self.logger.warning(
+                "WARNING: The frequency array provided to get_farm_AEP() "
+                + "does not sum to 1.0. "
+            )
 
-        # # If the yaw input is still None, then create a None array as inputs
-        # if yaw is None:
-        #     N = wd_unique.size * ws_unique.size
-        #     yaw = np.array([None] * N).reshape(wd_unique.size, ws_unique.size)
-        # else:
-        #     yaw = np.array(yaw)
-
-        # filter out wind speeds beyond the cutoff, if necessary
-        # if limit_ws:
-        #     ix_ws_filter = ws_unique >= ws_cutout
-        #     ws_unique = ws_unique[ix_ws_filter]
-        #     freq = freq[:, ix_ws_filter]
-        #     yaw = yaw[:, ix_ws_filter]
-
-        # self.reinitialize(wind_direction=wd_unique, wind_speed=ws_unique, wind_rose_probability=freq)
-        self.calculate_wake()
-        farm_power = self.get_farm_power()  # TODO: Do we need to specify an axis since this is a sum?
-        AEP = farm_power * freq * 8760
-        return np.sum(AEP)
-
-    def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
-        self.reinitialize(wind_direction=[wd], wind_speed=[ws])
-        self.calculate_wake(yaw_angles=yaw)
-        return self.get_farm_power() * freq * 8760
-
-    # def get_farm_AEP_parallel(
-    #     self,
-    #     wd: NDArrayFloat | list[float],
-    #     ws: NDArrayFloat | list[float],
-    #     freq: NDArrayFloat | list[list[float]],
-    #     yaw: NDArrayFloat | list[float] | None = None,
-    #     jobs=-1,
-    # ):
-    #     """
-    #     Estimate annual energy production (AEP) for distributions of wind
-    #     speed, wind direction and yaw offset with parallel computations on
-    #     a single comptuer.
-
-    #     # TODO: Update the docstrings and allow for the use of precomputed combinations
-    #     as well as unique inputs that need to be computed. Same for the other AEPs
-
-    #     Args:
-    #         wd (iterable): List or array of wind direction values.
-    #         ws (iterable): List or array of wind speed values.
-    #         freq (iterable): Frequencies corresponding to wind direction and wind speed
-    #             combinations in the wind rose with, shape (N wind directions x N wind speeds).
-    #         yaw (iterable, optional): List or array of yaw values if wake is steering
-    #             implemented, with shape (N wind directions). Defaults to None.
-    #         jobs (int, optional): The number of jobs (cores) to use in the parallel
-    #             computations.
-
-    #     Returns:
-    #         float: AEP for wind farm.
-    #     """
-    #     if jobs < -1:
-    #         raise ValueError("Input 'jobs' cannot be negative.")
-    #     if jobs == -1:
-    #         jobs = int(np.ceil(cpu_count() * 0.8))
-    #     if jobs > 0:
-    #         jobs = min(jobs, cpu_count())
-    #     if jobs > len(wd):
-    #         jobs = len(wd)
-
-    #     if yaw is None:
-    #         yaw = [None] * len(wd)
-
-    #     wd = np.array(wd)
-    #     ws = np.array(ws)
-    #     freq = np.array(freq)
-
-    #     # Make one large list of arguments, then flatten and resort the nested tuples
-    #     # to the correct ordering of self, wd, ws, freq, yaw
-    #     global_arguments = list(zip(repeat(self), zip(wd, yaw), ws, freq.flatten()))
-    #     # OR is this supposed to be all wind speeds for each wind direction?:
-    #     # global_arguments = list(zip(repeat(self), zip(wd, yaw), repeat(ws), freq))
-    #     # global_arguments = [(s, n[0], wspd, f, n[1]) for s, n, wspd, f in global_arguments]
-    #     global_arguments = [(s, n[0][0], n[1], f, n[0][1]) for s, n, f in global_arguments]
-
-    #     num_cases = wd.size * ws.size
-    #     chunksize = int(np.ceil(num_cases / jobs))
-
-    #     with Pool(jobs) as pool:
-    #         opt = pool.starmap(global_calc_one_AEP_case, global_arguments, chunksize=chunksize)
-    #         # add AEP to overall AEP
-
-    #     return 0.0 + np.sum(opt)
-
-    def calculate_AEP_wind_limit(self, num_turbines, x_spacing, start_ws, threshold):
-        orig_layout_x = self.layout_x
-        orig_layout_y = self.layout_y
-        D = self.floris.farm.turbines[0].rotor_diameter
-
-        self.reinitialize(
-            layout_array=(
-                [i * x_spacing * D for i in range(num_turbines)],
-                [0.0] * num_turbines,
-            ),
-            wind_speed=start_ws,
+        # Copy the full wind speed array from the floris object and initialize
+        # the the farm_power variable as an empty array.
+        wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
+        farm_power = np.zeros(
+            (self.floris.flow_field.n_wind_directions, len(wind_speeds))
         )
-        self.calculate_wake()
 
-        prev_power = 1.0
-        cur_power = self.get_farm_power()
-        ws = start_ws
+        # Determine which wind speeds we must evaluate in floris
+        conditions_to_evaluate = (wind_speeds >= cut_in_wind_speed)
+        if cut_out_wind_speed is not None:
+            conditions_to_evaluate = conditions_to_evaluate & (
+                wind_speeds < cut_out_wind_speed
+            )
 
-        while np.abs(prev_power - cur_power) / prev_power > threshold:
-            prev_power = cur_power
-            ws += 0.2
-            self.reinitialize(wind_speed=ws)
-            self.calculate_wake()
-            cur_power = self.get_farm_power()
-        ws += 1.0
+        # Evaluate the conditions in floris
+        if np.any(conditions_to_evaluate):
+            wind_speeds_subset = wind_speeds[conditions_to_evaluate]
+            yaw_angles_subset = None
+            if yaw_angles is not None:
+                yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
+            self.reinitialize(wind_speeds=wind_speeds_subset)
+            self.calculate_wake(yaw_angles=yaw_angles_subset, no_wake=no_wake)
+            farm_power[:, conditions_to_evaluate] = self.get_farm_power()
 
-        self.reinitialize(layout_array=(orig_layout_x, orig_layout_y), wind_speed=ws)
-        self.calculate_wake()
-        self.max_power = self.get_farm_power()
-        self.ws_limit = ws
+        # Finally, calculate AEP in GWh
+        aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
+
+        # Reset the FLORIS object to the full wind speed array
+        self.reinitialize(wind_speeds=wind_speeds)
+
+        return aep
 
     @property
     def layout_x(self):
