@@ -50,7 +50,7 @@ EXTRAS = {
 }
 
 ROOT = Path(__file__).parent
-with open(ROOT / "floris" / "VERSION") as version_file:
+with open(ROOT / "floris" / "version.py") as version_file:
     VERSION = version_file.read().strip()
 
 setup(
@@ -64,7 +64,7 @@ setup(
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
-    package_data={'floris': ['VERSION', 'turbine_library/*.yaml']},
+    package_data={'floris': ['turbine_library/*.yaml']},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,

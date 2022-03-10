@@ -101,7 +101,7 @@ class Layout:
         return optProb
 
     def add_con_group(self, optProb):
-        optProb.addConGroup("boundary_con", self.nturbs, lower=0.0)
+        optProb.addConGroup("boundary_con", self.nturbs, upper=0.0)
         optProb.addConGroup("spacing_con", 1, upper=0.0)
 
         return optProb
@@ -205,5 +205,4 @@ class Layout:
 
     @property
     def rotor_diameter(self):
-        # return self.fi.floris.farm.turbine_map.turbines[0].rotor_diameter
-        return 126.0
+        return self.fi.floris.farm.rotor_diameters[0][0][0]
