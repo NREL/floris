@@ -12,7 +12,6 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import copy
 import numpy as np
 from scipy.stats import norm
 
@@ -23,9 +22,15 @@ from floris.utilities import wrap_360
 class UncertaintyInterface(LoggerBase):
 
     def __init__(self, fi, unc_options=None, unc_pmfs=None):
-        """_summary_
+        """A wrapper around the nominal floris_interface class that adds
+        uncertainty to the floris evaluations. One can specify a probability
+        distribution function (pdf) for the ambient wind direction, and for
+        the turbine yaw angles. Unless the exact pdf is specified manually
+        using the option 'unc_pmfs', a Gaussian distribution function will be
+        assumed.
 
         Args:
+            fi (FlorisInterface): The FlorisInterface object.
             unc_options (dictionary, optional): A dictionary containing values
                 used to create normally-distributed, zero-mean probability mass
                 functions describing the distribution of wind direction and yaw
@@ -67,6 +72,7 @@ class UncertaintyInterface(LoggerBase):
         """
 
         if (unc_options is None) & (unc_pmfs is None):
+            # Default options:
             unc_options = {
                 "std_wd": 3.0,  # Standard deviation for inflow wind direction (deg)
                 "std_yaw": 0.0,  # Standard deviation in turbine yaw angle (deg)
@@ -78,9 +84,12 @@ class UncertaintyInterface(LoggerBase):
         self.fi = fi
         self.reinitialize_uncertainty(unc_options=unc_options, unc_pmfs=unc_pmfs)
 
-    def _generate_pdfs_from_unc_options(self):
-        """Generates the uncertainty parameters for `FlorisInterface.get_farm_power` and
-        `FlorisInterface.get_turbine_power` for more details.
+    # Private methods
+
+    def _generate_pdfs_from_dict(self):
+        """Generates the uncertainty probability distributions from a
+        dictionary only describing the wd_std and yaw_std, and discretization
+        resolution.
         """
 
         wd_unc = np.zeros(1)
@@ -116,33 +125,26 @@ class UncertaintyInterface(LoggerBase):
         # Save to self
         self.unc_pmfs = unc_pmfs
 
-    def _reset_floris_properties_to_nominal(self):
-        self.fi = copy.deepcopy(self._fi_nominal)
-        # self.fi.reinitialize(
-        #     wind_directions=wd_array_nominal,
-        #     wind_speeds=ws_array_nominal,
-        # )
-        # self.fi.calculate_wake(yaw_angles=yaw_angles_nominal)
-
-    def reinitialize_uncertainty(self, unc_options=None, unc_pmfs=None):
-        # Check inputs
-        if ((unc_options is not None) and (unc_pmfs is not None)):
-            self.logger.error(
-                "Must specify either 'unc_options' or 'unc_pmfs', not both."
-            )
-
-        # Assign uncertainty probability distributions
-        if unc_options is not None:
-            self.unc_options = unc_options
-            self._generate_pdfs_from_unc_options()
-        else:
-            self.unc_pmfs = unc_pmfs
-
-    def _reassign_yaw_angles(self, yaw_angles=None):
-        if yaw_angles is not None:
-            self.fi.floris.farm.yaw_angles = yaw_angles
-
     def _expand_wind_directions_and_yaw_angles(self):
+        """Expands the nominal wind directions and yaw angles to the full set
+        of conditions that need to be evaluated for the probablistic
+        calculation of the floris solutions. This produces the np.NDArrays
+        "wd_array_probablistic" and "yaw_angles_probablistic", with shapes:
+            (
+                num_yaw_angle_pdf_points_to_evaluate,
+                num_wind_direction_pdf_points_to_evaluate,
+                num_nominal_wind_directions,
+            )
+            and
+            (
+                num_yaw_angle_pdf_points_to_evaluate,
+                num_wind_direction_pdf_points_to_evaluate,
+                num_nominal_wind_directions,
+                num_turbines
+            ),
+            respectively.
+        """
+
         # First initialize unc_pmfs from self
         unc_pmfs = self.unc_pmfs
 
@@ -177,13 +179,139 @@ class UncertaintyInterface(LoggerBase):
         self.wd_array_probablistic = wd_array_probablistic
         self.yaw_angles_probablistic = yaw_angles_probablistic
 
+
+    def _reassign_yaw_angles(self, yaw_angles=None):
+        # Overwrite the yaw angles in the FlorisInterface object
+        if yaw_angles is not None:
+            self.fi.floris.farm.yaw_angles = yaw_angles
+
+    # Public methods
+
+    def reinitialize_uncertainty(self, unc_options=None, unc_pmfs=None):
+        """Reinitialize the wind direction and yaw angle probability
+        distributions used in evaluating FLORIS. Must either specify
+        'unc_options', in which case distributions are calculated assuming
+        a Gaussian distribution, or `unc_pmfs` must be specified directly
+        assigning the probability distribution functions.
+
+        Args:
+            unc_options (dictionary, optional): A dictionary containing values
+                used to create normally-distributed, zero-mean probability mass
+                functions describing the distribution of wind direction and yaw
+                position deviations when wind direction and/or yaw position
+                uncertainty is included. This argument is only used when
+                **unc_pmfs** is None and contains the following key-value pairs:
+
+                -   **std_wd** (*float*): A float containing the standard
+                    deviation of the wind direction deviations from the
+                    original wind direction.
+                -   **std_yaw** (*float*): A float containing the standard
+                    deviation of the yaw angle deviations from the original yaw
+                    angles.
+                -   **pmf_res** (*float*): A float containing the resolution in
+                    degrees of the wind direction and yaw angle PMFs.
+                -   **pdf_cutoff** (*float*): A float containing the cumulative
+                    distribution function value at which the tails of the
+                    PMFs are truncated.
+
+                Defaults to None.
+
+            unc_pmfs (dictionary, optional): A dictionary containing optional
+                probability mass functions describing the distribution of wind
+                direction and yaw position deviations when wind direction and/or
+                yaw position uncertainty is included in the power calculations.
+                Contains the following key-value pairs:
+
+                -   **wd_unc** (*np.array*): Wind direction deviations from the
+                    original wind direction.
+                -   **wd_unc_pmf** (*np.array*): Probability of each wind
+                    direction deviation in **wd_unc** occuring.
+                -   **yaw_unc** (*np.array*): Yaw angle deviations from the
+                    original yaw angles.
+                -   **yaw_unc_pmf** (*np.array*): Probability of each yaw angle
+                    deviation in **yaw_unc** occuring.
+
+                Defaults to None.
+        """
+
+        # Check inputs
+        if ((unc_options is not None) and (unc_pmfs is not None)):
+            self.logger.error(
+                "Must specify either 'unc_options' or 'unc_pmfs', not both."
+            )
+
+        # Assign uncertainty probability distributions
+        if unc_options is not None:
+            self.unc_options = unc_options
+            self._generate_pdfs_from_dict()
+        
+        if unc_pmfs is not None:
+            self.unc_pmfs = unc_pmfs
+
+    def reinitialize(
+        self,
+        wind_speeds: list[float] | NDArrayFloat | None = None,
+        wind_directions: list[float] | NDArrayFloat | None = None,
+        wind_shear: float | None = None,
+        wind_veer: float | None = None,
+        reference_wind_height: float | None = None,
+        turbulence_intensity: float | None = None,
+        air_density: float | None = None,
+        layout: Tuple[list[float], list[float]] | Tuple[NDArrayFloat, NDArrayFloat] | None = None,
+        turbine_type: list | None = None,
+        solver_settings: dict | None = None
+    )
+        """Pass to the FlorisInterface reinitialize function. To allow users
+        to directly replace a FlorisInterface object with this
+        UncertaintyInterface object, this function is required."""
+
+        # Just passes arguments to the floris object
+        self.fi.reinitialize(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions,
+            wind_shear=wind_shear,
+            wind_veer=wind_veer,
+            reference_wind_height=reference_wind_height,
+            turbulence_intensity=turbulence_intensity,
+            air_density=air_density,
+            layout=layout,
+            turbine_type=turbine_type,
+            solver_settings=solver_settings,
+        )
+
     def calculate_wake(self, yaw_angles=None):
+        """Replaces the 'calculate_wake' function in the FlorisInterface
+        object. Fundamentally, this function only overwrites the nominal
+        yaw angles in the FlorisInterface object. The actual wake calculations
+        are performed once 'get_turbine_powers' or 'get_farm_powers' is
+        called. However, to allow users to directly replace a FlorisInterface
+        object with this UncertaintyInterface object, this function is
+        required.
+
+        Args:
+            yaw_angles: NDArrayFloat | list[float] | None = None,
+        """
         self._reassign_yaw_angles(yaw_angles)
 
     def get_turbine_powers(self, no_wake=False):
-        # To include uncertainty we expand the dimensionality
-        # of the problem along the wind direction and/or yaw angle
-        # direction. We make use of the vectorization of FLORIS to
+        """Calculates the probability-weighted power production of each
+        turbine in the wind farm.
+
+        Args:
+            no_wake (bool, optional): disable the wakes in the flow model.
+            This can be useful to determine the (probablistic) power
+            production of the farm in the artificial scenario where there
+            would never be any wake losses. Defaults to False.
+
+        Returns:
+            NDArrayFloat: Power production of all turbines in the wind farm.
+            This array has the shape (num_wind_directions, num_wind_speeds,
+            num_turbines).
+        """
+
+        # To include uncertainty, we expand the dimensionality
+        # of the problem along the wind direction pdf and/or yaw angle
+        # pdf. We make use of the vectorization of FLORIS to
         # evaluate all conditions in a single call, rather than in
         # loops. Therefore, the effective number of wind conditions and
         # yaw angle combinations we evaluate expands.
@@ -191,6 +319,7 @@ class UncertaintyInterface(LoggerBase):
         self._expand_wind_directions_and_yaw_angles()
 
         # Get dimensions of nominal conditions
+        wd_array_nominal = self.fi.floris.flow_field.wind_directions
         num_wd = self.fi.floris.flow_field.n_wind_directions
         num_ws = self.fi.floris.flow_field.n_wind_speeds
         num_wd_unc = len(unc_pmfs["wd_unc"])
@@ -227,7 +356,7 @@ class UncertaintyInterface(LoggerBase):
 
         # Retrieve all power productions using the nominal call
         turbine_powers = self.fi.get_turbine_powers()
-        self._reset_floris_properties_to_nominal()  # Reset to nominal values
+        self.fi.reinitialize(wind_directions=wd_array_nominal)
 
         # Reshape solutions back to full set
         power_probablistic = turbine_powers[id_unq_rev, :]
@@ -259,5 +388,19 @@ class UncertaintyInterface(LoggerBase):
         return np.sum(W * power_probablistic, axis=(0, 1))
 
     def get_farm_power(self, no_wake=False):
+        """Calculates the probability-weighted power production of the
+        collective of all turbines in the farm, for each wind direction
+        and wind speed specified.
+
+        Args:
+            no_wake (bool, optional): disable the wakes in the flow model.
+            This can be useful to determine the (probablistic) power
+            production of the farm in the artificial scenario where there
+            would never be any wake losses. Defaults to False.
+
+        Returns:
+            NDArrayFloat: Expectation of power production of the wind farm.
+            This array has the shape (num_wind_directions, num_wind_speeds).
+        """
         turbine_powers = self.get_turbine_powers(no_wake=no_wake)
         return np.sum(turbine_powers, axis=2)
