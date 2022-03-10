@@ -42,8 +42,6 @@ from floris.tools.cut_plane import CutPlane, change_resolution, get_plane_from_f
 # from .visualization import visualize_cut_plane
 # from .layout_functions import visualize_layout, build_turbine_loc
 
-import warnings
-
 
 class FlorisInterface(LoggerBase):
     """
