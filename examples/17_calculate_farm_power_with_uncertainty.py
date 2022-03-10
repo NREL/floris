@@ -16,7 +16,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisInterface, UncertaintyInterface
 
 
 """
@@ -49,7 +49,7 @@ yaw_angles = np.zeros((num_wd, num_ws, num_turbine))
 fi.calculate_wake(yaw_angles=yaw_angles)
 
 # Calculate the nominal wind farm power production
-farm_powers_nom = fi.get_farm_power(include_unc=False) / 1e3
+farm_powers_nom = fi.get_farm_power() / 1e3
 
 # Calculate the wind farm power with uncertainty on the wind direction
 unc_options = {
@@ -58,10 +58,9 @@ unc_options = {
     "pmf_res": 1.0,  # Resolution over which to calculate angles (deg)
     "pdf_cutoff": 0.995,  # Probability density function cut-off (-)
 }
-farm_powers_unc = fi.get_farm_power(
-    include_unc=True,
-    unc_options=unc_options
-) / 1e3
+fi_unc = UncertaintyInterface(fi)
+fi_unc.calculate_wake()
+farm_powers_unc = fi_unc.get_farm_power() / 1e3
 
 # Plot results
 fig, ax = plt.subplots()
