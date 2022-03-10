@@ -250,17 +250,17 @@ class UncertaintyInterface(LoggerBase):
 
     def reinitialize(
         self,
-        wind_speeds: list[float] | NDArrayFloat | None = None,
-        wind_directions: list[float] | NDArrayFloat | None = None,
-        wind_shear: float | None = None,
-        wind_veer: float | None = None,
-        reference_wind_height: float | None = None,
-        turbulence_intensity: float | None = None,
-        air_density: float | None = None,
-        layout: Tuple[list[float], list[float]] | Tuple[NDArrayFloat, NDArrayFloat] | None = None,
-        turbine_type: list | None = None,
-        solver_settings: dict | None = None
-    )
+        wind_speeds=None,
+        wind_directions=None,
+        wind_shear=None,
+        wind_veer=None,
+        reference_wind_height=None,
+        turbulence_intensity=None,
+        air_density=None,
+        layout=None,
+        turbine_type=None,
+        solver_settings=None,
+    ):
         """Pass to the FlorisInterface reinitialize function. To allow users
         to directly replace a FlorisInterface object with this
         UncertaintyInterface object, this function is required."""
@@ -404,3 +404,8 @@ class UncertaintyInterface(LoggerBase):
         """
         turbine_powers = self.get_turbine_powers(no_wake=no_wake)
         return np.sum(turbine_powers, axis=2)
+
+    @property
+    def floris(self):
+        """getter function for the floris object in FlorisInterface"""
+        return self.fi.floris
