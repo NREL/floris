@@ -16,13 +16,14 @@ import copy
 import numpy as np
 from scipy.stats import norm
 
+from floris.tools import FlorisInterface
 from floris.logging_manager import LoggerBase
 from floris.utilities import wrap_360
 
 
 class UncertaintyInterface(LoggerBase):
 
-    def __init__(self, fi, unc_options=None, unc_pmfs=None):
+    def __init__(self, configuration, het_map=None, unc_options=None, unc_pmfs=None):
         """A wrapper around the nominal floris_interface class that adds
         uncertainty to the floris evaluations. One can specify a probability
         distribution function (pdf) for the ambient wind direction, and for
@@ -31,45 +32,51 @@ class UncertaintyInterface(LoggerBase):
         assumed.
 
         Args:
-            fi (FlorisInterface): The FlorisInterface object.
-            unc_options (dictionary, optional): A dictionary containing values
-                used to create normally-distributed, zero-mean probability mass
-                functions describing the distribution of wind direction and yaw
-                position deviations when wind direction and/or yaw position
-                uncertainty is included. This argument is only used when
-                **unc_pmfs** is None and contains the following key-value pairs:
+        configuration (:py:obj:`dict`): The Floris configuration dictarionary, JSON file,
+            or YAML file. The configuration should have the following inputs specified.
+                - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
+                - **farm**: See `floris.simulation.farm.Farm` for more details.
+                - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
+                - **wake**: See `floris.simulation.wake.WakeManager` for more details.
+                - **logging**: See `floris.simulation.floris.Floris` for more details.
+        unc_options (dictionary, optional): A dictionary containing values
+            used to create normally-distributed, zero-mean probability mass
+            functions describing the distribution of wind direction and yaw
+            position deviations when wind direction and/or yaw position
+            uncertainty is included. This argument is only used when
+            **unc_pmfs** is None and contains the following key-value pairs:
 
-                -   **std_wd** (*float*): A float containing the standard
-                    deviation of the wind direction deviations from the
-                    original wind direction.
-                -   **std_yaw** (*float*): A float containing the standard
-                    deviation of the yaw angle deviations from the original yaw
-                    angles.
-                -   **pmf_res** (*float*): A float containing the resolution in
-                    degrees of the wind direction and yaw angle PMFs.
-                -   **pdf_cutoff** (*float*): A float containing the cumulative
-                    distribution function value at which the tails of the
-                    PMFs are truncated.
+            -   **std_wd** (*float*): A float containing the standard
+                deviation of the wind direction deviations from the
+                original wind direction.
+            -   **std_yaw** (*float*): A float containing the standard
+                deviation of the yaw angle deviations from the original yaw
+                angles.
+            -   **pmf_res** (*float*): A float containing the resolution in
+                degrees of the wind direction and yaw angle PMFs.
+            -   **pdf_cutoff** (*float*): A float containing the cumulative
+                distribution function value at which the tails of the
+                PMFs are truncated.
 
-                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw':
-                1.75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-            unc_pmfs (dictionary, optional): A dictionary containing optional
-                probability mass functions describing the distribution of wind
-                direction and yaw position deviations when wind direction and/or
-                yaw position uncertainty is included in the power calculations.
-                Contains the following key-value pairs:
+            Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw':
+            1.75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
+        unc_pmfs (dictionary, optional): A dictionary containing optional
+            probability mass functions describing the distribution of wind
+            direction and yaw position deviations when wind direction and/or
+            yaw position uncertainty is included in the power calculations.
+            Contains the following key-value pairs:
 
-                -   **wd_unc** (*np.array*): Wind direction deviations from the
-                    original wind direction.
-                -   **wd_unc_pmf** (*np.array*): Probability of each wind
-                    direction deviation in **wd_unc** occuring.
-                -   **yaw_unc** (*np.array*): Yaw angle deviations from the
-                    original yaw angles.
-                -   **yaw_unc_pmf** (*np.array*): Probability of each yaw angle
-                    deviation in **yaw_unc** occuring.
+            -   **wd_unc** (*np.array*): Wind direction deviations from the
+                original wind direction.
+            -   **wd_unc_pmf** (*np.array*): Probability of each wind
+                direction deviation in **wd_unc** occuring.
+            -   **yaw_unc** (*np.array*): Yaw angle deviations from the
+                original yaw angles.
+            -   **yaw_unc_pmf** (*np.array*): Probability of each yaw angle
+                deviation in **yaw_unc** occuring.
 
-                Defaults to None, in which case default PMFs are calculated
-                using values provided in **unc_options**.
+            Defaults to None, in which case default PMFs are calculated
+            using values provided in **unc_options**.
         """
 
         if (unc_options is None) & (unc_pmfs is None):
@@ -81,8 +88,8 @@ class UncertaintyInterface(LoggerBase):
                 "pdf_cutoff": 0.995,  # Probability density function cut-off (-)
             }
 
-        # Save floris object to self and initialize uncertainty pdfs
-        self.fi = fi
+        # Initialize floris object and uncertainty pdfs
+        self.fi = FlorisInterface(configuration, het_map=het_map)
         self.reinitialize_uncertainty(unc_options=unc_options, unc_pmfs=unc_pmfs)
 
     # Private methods
