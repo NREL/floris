@@ -12,6 +12,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import copy
 import numpy as np
 from scipy.stats import norm
 
@@ -186,6 +187,13 @@ class UncertaintyInterface(LoggerBase):
             self.fi.floris.farm.yaw_angles = yaw_angles
 
     # Public methods
+
+    def copy(self):
+        """Create an independent copy of the current UncertaintyInterface
+        object"""
+        fi_unc_copy = copy.deepcopy(self)
+        fi_unc_copy.fi = self.fi.copy()
+        return fi_unc_copy
 
     def reinitialize_uncertainty(self, unc_options=None, unc_pmfs=None):
         """Reinitialize the wind direction and yaw angle probability
@@ -405,7 +413,15 @@ class UncertaintyInterface(LoggerBase):
         turbine_powers = self.get_turbine_powers(no_wake=no_wake)
         return np.sum(turbine_powers, axis=2)
 
+    # Define getter functions that just pass information from FlorisInterface
     @property
     def floris(self):
-        """getter function for the floris object in FlorisInterface"""
         return self.fi.floris
+
+    @property
+    def layout_x(self):
+        return self.fi.layout_x
+
+    @property
+    def layout_y(self):
+        return self.fi.layout_y

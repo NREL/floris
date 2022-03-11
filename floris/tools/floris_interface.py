@@ -79,6 +79,10 @@ class FlorisInterface(LoggerBase):
         # Needed for a direct call to fi.calculate_wake without fi.reinitialize
         self.floris.flow_field.het_map = het_map
 
+    def copy(self):
+        """Create an independent copy of the current FlorisInterface object"""
+        return FlorisInterface(self.floris.as_dict())
+
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
