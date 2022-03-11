@@ -11,21 +11,29 @@ FLORIS is a command-line program written in Python. There are two primary packag
 - `floris.simulation`: simulation framework including wake model definitions
 - `floris.tools`: utilities for pre and post processing as well as driving the simulation
 
+<!-- TODO add chart  -->
+
 Users of FLORIS will develop a Python script with the following sequence of steps:
 
-- preprocess
-- calculation
-- postprocess
+1. Load inputs and preprocess data
+2. Run the wind farm wake simulation
+3. Extract data and postprocess results
 
-Generally, users will only interact with `floris.tools` and most often through the `FlorisInterface` class. Additionally, `floris.tools` contains functionality for comparing results, creating visualizations, and developing optimization cases. 
+Generally, users will only interact with `floris.tools` and most often through
+the `FlorisInterface` class. Additionally, `floris.tools` contains functionality
+for comparing results, creating visualizations, and developing optimization cases. 
 
 **NOTE `floris.tools` is under active design and development. The API's will change and additional functionality from FLORIS v2 will be included in upcoming releases.**
 
-This notebook steps through the basic ideas and operations of FLORIS while showing realistic uses and expected behavior.
+This notebook steps through the basic ideas and operations of FLORIS while showing
+realistic uses and expected behavior.
 
 ## Initialize FlorisInterface
 
-The `FlorisInterface` provides functionality to build a wind farm representation and drive the simulation. This object is created (instantiated) by passing the path to a FLORIS input file. Once this object is created, it can immediately be used to inspect the data.
+The `FlorisInterface` provides functionality to build a wind farm representation and drive
+the simulation. This object is created (instantiated) by passing the path to a FLORIS input
+file as the only argument. After this object is created, it can immediately be used to
+inspect the data.
 
 ```python
 import numpy as np
@@ -47,15 +55,18 @@ for _x, _y in zip(x, y):
 
 ## Build the model
 
-At this point, FLORIS has been initialized with the data defined in the input file. However, it is often simpler to define a basic configuration in the input file as a starting point and then make modifications in the Python script.
-This allows for generating data algorithmically or loading data from a data file. Modifications to the wind farm representation are handled through the `FlorisInterface.reinitialize()` function with keyword arguments. Another way to
-think of this function is that it changes the value of inputs specified in the input file.
+At this point, FLORIS has been initialized with the data defined in the input file.
+However, it is often simpler to define a basic configuration in the input file as
+a starting point and then make modifications in the Python script. This allows for
+generating data algorithmically or loading data from a data file. Modifications to
+the wind farm representation are handled through the `FlorisInterface.reinitialize()`
+function with keyword arguments. Another way to think of this function is that it
+changes the value of inputs specified in the input file.
 
-Let's change the location of turbines in the wind farm.
+Let's change the location of turbines in the wind farm. The code below changes the
+initial 3x1 layout to a 2x2 rectangular layout.
 
 ```python
-# Design a wind farm with turbines in a 2x2 pattern
-# Units are in meters
 x_2x2 = [0, 0, 800, 800]
 y_2x2 = [0, 400, 0, 400]
 fi.reinitialize( layout=(x_2x2, y_2x2) )
@@ -73,8 +84,10 @@ for _x, _y in zip(x, y):
      800.0,    0.0
      800.0,  400.0
 
-Additionally, we can change the wind speeds and wind directions. These are given as lists of wind speeds and wind directions that will be
-expanded so that a wake calculation will happen for every wind direction with each speed.
+Additionally, we can change the wind speeds and wind directions.
+These are lists of wind speeds and wind directions that will be
+combined so that a wake calculation will happen for every wind
+direction with each speed.
 
 Notice that we can give `FlorisInterface.reinitialize()` multiple keyword arguments at once.
 
@@ -89,21 +102,29 @@ fi.reinitialize( wind_directions=[270.0, 280.0], wind_speeds=[8.0] )
 fi.reinitialize( wind_directions=[270.0, 280.0], wind_speeds=[8.0, 9.0] )
 ```
 
-`FlorisInterface.reinitialize()` creates all of the basic data structures required for the simulation but it does not do any aerodynamic calculations.
-The low level data structures have a complex shape that enables faster computations. Specifically, most data is structured as a many-dimensional Numpy array
-with the following dimensions:
-
-- 0: wind directions
-- 1: wind speeds
-- 2: turbines
-- 3: grid-1
-- 4: grid-2
-
-For example, we can see the overall shape of the data structure for the grid point x-coordinates for the all turbines and get the x-coordinates of grid points for the
-third turbine in the first wind direction and first wind speed. We can also plot all the grid points in space to get an idea of the overall form of our grid.
+`FlorisInterface.reinitialize()` creates all of the basic data structures required
+for the simulation but it does not do any aerodynamic calculations. The low level
+data structures have a complex shape that enables faster computations. Specifically,
+most data is structured as a many-dimensional Numpy array with the following dimensions:
 
 ```python
+np.array(
+    (
+        wind directions,
+        wind speeds,
+        turbines,
+        grid-1,
+        grid-2
+    )
+)
+```
 
+For example, we can see the shape of the data structure for the grid point x-coordinates
+for the all turbines and get the x-coordinates of grid points for the third turbine in
+the first wind direction and first wind speed. We can also plot all the grid points in
+space to get an idea of the overall form of our grid.
+
+```python
 print("Dimensions of grid x-components")
 print( np.shape(fi.floris.grid.x) )
 
@@ -140,8 +161,10 @@ ax.set_zlim([0, 150])
 
 ## Execute wake calculation
 
-Running the wake calculation is a one-liner. This will calculate the velocities at each turbine given the wake of other turbines for every wind speed and wind direction combination.
-Since we have not explicitly specified yaw control settings, all turbines are aligned with the inflow.
+Running the wake calculation is a one-liner. This will calculate the velocities
+at each turbine given the wake of other turbines for every wind speed and wind
+direction combination. Since we have not explicitly specified yaw control settings,
+all turbines are aligned with the inflow.
 
 ```python
 fi.calculate_wake()
@@ -149,7 +172,10 @@ fi.calculate_wake()
 
 ## Get turbine power
 
-At this point, the simulation has completed and we can use the `FlorisInterface` to extract useful information such as the power produced at each turbine. Remember that we have configured the simulation with two wind directions, two wind speeds, and four turbines.
+At this point, the simulation has completed and we can use the `FlorisInterface` to
+extract useful information such as the power produced at each turbine. Remember that
+we have configured the simulation with two wind directions, two wind speeds, and four
+turbines.
 
 ```python
 powers = fi.get_turbine_powers() / 1000.0  # calculated in Watts, so convert to kW
@@ -157,18 +183,18 @@ powers = fi.get_turbine_powers() / 1000.0  # calculated in Watts, so convert to 
 print("Dimensions of `powers`")
 print( np.shape(powers) )
 
-print()
+N_TURBINES = fi.floris.farm.n_turbines
 
+print()
 print("Turbine powers for 8 m/s")
 for i in range(2):
     print(f"Wind direction {i}")
-    print(powers[i, 0, :])
+    for j in range(N_TURBINES):
+        print(f"  Turbine {j} - {powers[i, 0, j]:.2f} kW")
+    print()
 
-
-print()
 print("Turbine powers for all turbines at all wind conditions")
 print(powers)
-
 ```
 
     Dimensions of `powers`
@@ -176,9 +202,16 @@ print(powers)
     
     Turbine powers for 8 m/s
     Wind direction 0
-    [1691.32664838 1691.32664838  592.6531181   592.97842923]
+      Turbine 0 - 1691.33 kW
+      Turbine 1 - 1691.33 kW
+      Turbine 2 - 592.65 kW
+      Turbine 3 - 592.98 kW
+    
     Wind direction 1
-    [1691.32664838 1691.32664838 1631.06744171 1629.75543674]
+      Turbine 0 - 1691.33 kW
+      Turbine 1 - 1691.33 kW
+      Turbine 2 - 1631.07 kW
+      Turbine 3 - 1629.76 kW
     
     Turbine powers for all turbines at all wind conditions
     [[[1691.32664838 1691.32664838  592.6531181   592.97842923]
@@ -190,36 +223,38 @@ print(powers)
 ## Applying yaw angles
 
 Yaw angles are applied to turbines through the `FlorisInterface.calculate_wake` function.
-
-**Note that `yaw_angles` is a array** -- You must provide yaw angles in a array with dimensions equal to:
+In order to fit into the vectorized framework, the yaw settings must be represented as
+a `Numpy.array` with  dimensions equal to:
 - 0: number of wind directions
 - 1: number of wind speeds
 - 2: number of turbines
 
-**Unlike data set in `FlorisInterface.reinitialize()`, yaw angles are not stored in memory and must be given again in successive calls to `FlorisInterface.calculate_wake`.**
+**Unlike the data configured in `FlorisInterface.reinitialize()`, yaw angles are not retained**
+**in memory and must be provided each time `FlorisInterface.calculate_wake` is used.**
 **If no yaw angles are given, all turbines will be aligned with the inflow.**
 
+It is typically easiest to start with an array of 0's and modify individual
+turbine yaw settings, as shown below.
+
 ```python
-# Array of zero yaw angles
 yaw_angles = np.zeros( (2, 2, 4) )
+print("Yaw angle array initialized with 0's")
 print(yaw_angles)
+
+print("First turbine yawed 25 degrees for every atmospheric condition")
+yaw_angles[:, :, 0] = 25
+print(yaw_angles)
+
+fi.calculate_wake( yaw_angles=yaw_angles )
 ```
 
+    Yaw angle array initialized with 0's
     [[[0. 0. 0. 0.]
       [0. 0. 0. 0.]]
     
      [[0. 0. 0. 0.]
       [0. 0. 0. 0.]]]
-
-```python
-# Yaw turbine 0 by +25 degrees
-yaw_angles = np.zeros( (2, 2, 4) )
-yaw_angles[:, :, 0] = 25
-
-fi.calculate_wake( yaw_angles=yaw_angles )
-print(yaw_angles)
-```
-
+    First turbine yawed 25 degrees for every atmospheric condition
     [[[25.  0.  0.  0.]
       [25.  0.  0.  0.]]
     
@@ -228,24 +263,27 @@ print(yaw_angles)
 
 ## Start to finish
 
-Let's put it all together. The following code does the following:
-- Load an input file
-- Modify the inputs with a more complex wind turbine layout
-- Change the wind speeds and wind directions
-- Execute the simulation
-- Get the total farm power
-- Add yaw settings for some turbines
-- Execute the simulation
-- Get the total farm power and compare to without yaw control
+Let's put it all together. The code below outlines these steps:
+1. Load an input file
+2. Modify the inputs with a more complex wind turbine layout and additional atmospheric conditions
+3. Calculate the velocities at each turbine for all atmospheric conditions
+4. Get the total farm power
+5. Develop the yaw control settings
+6. Calculate the velocities at each turbine for all atmospheric conditions with the new yaw settings
+7. Get the total farm power
+8. Compare farm power with and without wake steering
 
 ```python
+# 1. Load an input file
 fi = FlorisInterface("inputs/gch.yaml")
 
-# Construct the model
+fi.floris.solver
+
+# 2. Modify the inputs with a more complex wind turbine layout
 D = 126.0  # Design the layout based on turbine diameter
 x = [0, 0,  6 * D, 6 * D]
 y = [0, 3 * D, 0, 3 * D]
-wind_directions = [270.0, 265.0]
+wind_directions = [270.0, 280.0]
 wind_speeds = [8.0]
 
 # Pass the new data to FlorisInterface
@@ -255,78 +293,88 @@ fi.reinitialize(
     wind_speeds=wind_speeds
 )
 
-# Calculate the velocities at each turbine for all atmospheric conditions with no yaw control settings
+# 3. Calculate the velocities at each turbine for all atmospheric conditions
+# All turbines have 0 degrees yaw
 fi.calculate_wake()
 
-# Get the farm power
-turbine_powers = fi.get_turbine_powers() / 1000.0
-farm_power_baseline = np.sum(turbine_powers, 2)
+# 4. Get the total farm power
+turbine_powers = fi.get_turbine_powers() / 1000.0  # Given in W, so convert to kW
+farm_power_baseline = np.sum(turbine_powers, 2)  # Sum over the third dimension
 
-# Develop the yaw control settings
+# 5. Develop the yaw control settings
 yaw_angles = np.zeros( (2, 1, 4) )  # Construct the yaw array with dimensions for two wind directions, one wind speed, and four turbines
 yaw_angles[0, :, 0] = 25            # At 270 degrees, yaw the first turbine 25 degrees
-yaw_angles[0, :, 1] = 25           # At 270 degrees, yaw the second turbine 25 degrees
-yaw_angles[1, :, 0] = -25            # At 265 degrees, yaw the first turbine -25 degrees
-yaw_angles[1, :, 1] = -25            # At 265 degrees, yaw the second turbine -25 degrees
+yaw_angles[0, :, 1] = 25            # At 270 degrees, yaw the second turbine 25 degrees
+yaw_angles[1, :, 0] = 10           # At 265 degrees, yaw the first turbine -25 degrees
+yaw_angles[1, :, 1] = 10           # At 265 degrees, yaw the second turbine -25 degrees
 
-# Calculate the velocities at each turbine for all atmospheric conditions given the yaw control settings
+# 6. Calculate the velocities at each turbine for all atmospheric conditions with the new yaw settings
 fi.calculate_wake( yaw_angles=yaw_angles )
 
-# Get the farm power
+# 7. Get the total farm power
 turbine_powers = fi.get_turbine_powers() / 1000.0
 farm_power_yaw = np.sum(turbine_powers, 2)
 
-# Compare power difference with yaw
+# 8. Compare farm power with and without wake steering
 difference = 100 * (farm_power_yaw - farm_power_baseline) / farm_power_baseline
 print("Power % difference with yaw")
 print(f"    270 degrees: {difference[0, 0]:4.2f}%")
-print(f"    265 degrees: {difference[1, 0]:4.2f}%")
+print(f"    280 degrees: {difference[1, 0]:4.2f}%")
 ```
 
     Power % difference with yaw
         270 degrees: 7.39%
-        265 degrees: 7.17%
+        280 degrees: 0.11%
 
 ## Visualization
 
-While comparing turbine and farm powers is meaningful, a picture is worth at least 1000 Watts, and the `FlorisInterface` provides powerful routines for visualization.
+While comparing turbine and farm powers is meaningful, a picture is worth at least
+1000 Watts, and the `FlorisInterface` provides powerful routines for visualization.
 
 **NOTE `floris.tools` is under active design and development. The API's will change and additional functionality from FLORIS v2 will be included in upcoming releases.**
 
-The visualization functions require that the user select a single atmospheric condition to plot. However, the internal data structures still have the same shape but the wind speed and wind direction
-dimensions have a size of 1. This means that the yaw angle array used for plotting must have the same shape as before but a single atmospheric condition must be selected.
+The visualization functions require that the user select a single atmospheric condition
+to plot. The internal data structures still have the same shape but the wind speed and
+wind direction dimensions have a size of 1. This means that the yaw angle array used
+for plotting must have the same shape as above but a single atmospheric condition must
+be selected.
 
-Let's create a horizontal slice of each atmospheric condition from above with and without yaw settings included. Notice that although we are plotting the conditions for two different wind directions,
-the farm is rotated so that the wind is coming from the left (west) in both cases.
+Let's create a horizontal slice of each atmospheric condition from above with and without
+yaw settings included. Notice that although we are plotting the conditions for two
+different wind directions, the farm is rotated so that the wind is coming from the
+left (West) in both cases.
 
 ```python
 from floris.tools.visualization import visualize_cut_plane
 
 fig, axarr = plt.subplots(2, 2, figsize=(15,8))
 
-horizontal_plane = fi.calculate_horizontal_plane( wd=[270] , height=90.0 )
+horizontal_plane = fi.calculate_horizontal_plane( wd=[wind_directions[0]], height=90.0 )
 visualize_cut_plane(horizontal_plane, ax=axarr[0,0], title="270 - Aligned")
 
-horizontal_plane = fi.calculate_horizontal_plane( wd=[270], yaw_angles=yaw_angles[0:1,0:1] , height=90.0 )
+horizontal_plane = fi.calculate_horizontal_plane( wd=[wind_directions[0]], yaw_angles=yaw_angles[0:1,0:1] , height=90.0 )
 visualize_cut_plane(horizontal_plane, ax=axarr[0,1], title="270 - Yawed")
 
-horizontal_plane = fi.calculate_horizontal_plane( wd=[265] , height=90.0 )
-visualize_cut_plane(horizontal_plane, ax=axarr[1,0], title="265 - Aligned")
+horizontal_plane = fi.calculate_horizontal_plane( wd=[wind_directions[1]], height=90.0 )
+visualize_cut_plane(horizontal_plane, ax=axarr[1,0], title="280 - Aligned")
 
-horizontal_plane = fi.calculate_horizontal_plane( wd=[265], yaw_angles=yaw_angles[1:2,0:1] , height=90.0 )
-visualize_cut_plane(horizontal_plane, ax=axarr[1,1], title="265 - Yawed")
+horizontal_plane = fi.calculate_horizontal_plane( wd=[wind_directions[1]], yaw_angles=yaw_angles[1:2,0:1] , height=90.0 )
+visualize_cut_plane(horizontal_plane, ax=axarr[1,1], title="280 - Yawed")
 ```
 
 
 
 
-    <matplotlib.collections.QuadMesh at 0x1391be410>
+    <matplotlib.collections.QuadMesh at 0x141c79780>
 
 
 
-![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_19_1.png){: .center-image }
+![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_18_1.png){: .center-image }
 
-We can also create a visualization of the streamwise inflow velocities on the turbine rotor grid points located on the rotor plane.
+We can also plot the streamwise inflow velocities on the turbine rotor
+grid points located on the rotor plane. The `plot_rotor_values` function
+simply plots any data given as the first argument, so in this case
+`fi.floris.flow_field.u` contains the yawed calculation from above.
 
 ```python
 from floris.tools.visualization import plot_rotor_values
@@ -335,19 +383,19 @@ fig, _, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0
 fig.suptitle("Wind direction 270")
 
 fig, _, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=1, ws_index=0, n_rows=1, n_cols=4, return_fig_objects=True)
-fig.suptitle("Wind direction 265")
+fig.suptitle("Wind direction 280")
 ```
 
 
 
 
-    Text(0.5, 0.98, 'Wind direction 265')
+    Text(0.5, 0.98, 'Wind direction 280')
 
 
 
-![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_21_1.png){: .center-image }
+![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_20_1.png){: .center-image }
 
-![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_21_2.png){: .center-image }
+![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_20_2.png){: .center-image }
 
 ## On Grid Points
 
@@ -357,10 +405,10 @@ In a typical simulation, these are all located on a regular grid on each turbine
 The parameter `turbine_grid_points` specifies the number of rows and columns which define the turbine grid.
 In the example inputs, this value is 3 meaning there are 3 x 3 = 9 total grid points for each turbine.
 Wake steering codes currently require greater values greater than 1 in order to compute gradients.
-However, it is likely that a single grid point (1 x 1) is suitable for non wind farm control applications,
-although retuning of some parameters could be warranted.
+However, a single grid point (1 x 1) may be suitable for non wind farm control applications,
+but retuning of some parameters might be required.
 
-We can visualize the locations of the grid points in the current example using pyplot
+We can visualize the locations of the grid points in the current example using `matplotlib.pyplot`.
 
 ```python
 # Get the grid points
@@ -369,7 +417,8 @@ ys = fi.floris.grid.y
 zs = fi.floris.grid.z
 
 # Consider the shape
-print('xs has shape: ', xs.shape, ' of 2 wd x 2 ws x 4 turbines x 3 x 3 grid points')
+print(f"shape of xs: {xs.shape}")
+print("  2 wd x 2 ws x 4 turbines x 3 x 3 grid points")
 
 # Lets plot just one wd/ws conditions
 xs = xs[1, 0, :, :, :]
@@ -382,7 +431,8 @@ ax.scatter(xs, ys, zs, marker=".")
 ax.set_zlim([0, 150])
 ```
 
-    xs has shape:  (2, 1, 4, 3, 3)  of 2 wd x 2 ws x 4 turbines x 3 x 3 grid points
+    shape of xs: (2, 1, 4, 3, 3)
+      2 wd x 2 ws x 4 turbines x 3 x 3 grid points
 
 
 
@@ -391,34 +441,28 @@ ax.set_zlim([0, 150])
 
 
 
-![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_24_2.png){: .center-image }
+![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_23_2.png){: .center-image }
 
 # Advanced Usage and Concepts
 
 ## Calculating AEP
 
-Calculating AEP in FLORIS V3 takes advantage of the new vectorized framework to substantially reduce the computation time with respect to V2.4.
-
-In these examples we demonstrate a simplied AEP calculation for a 25-turbine farm using several different modeling options.
-
-We will make a simplifying assumption that every wind speed and direction is equally likely.
-
-```python
-wind_directions = np.arange(0., 360., 5.)
-wind_speeds = np.arange(5., 25., 1.)
-
-num_wind_directions = len(wind_directions)
-num_wind_speeds = len(wind_speeds)
-num_bins = num_wind_directions * num_wind_speeds
-print('Calculating AEP for %d wind direction and speed combinations...' % num_bins)
-```
-
-    Calculating AEP for 1440 wind direction and speed combinations...
+Calculating AEP in FLORIS v3 leverages the vectorized framework to
+substantially reduce the computation time with respect to v2.4.
+Here, we demonstrate a simple AEP calculation for a 25-turbine farm
+using several different modeling options. We make the assumption
+that every wind speed and direction is equally likely.
 
 ```python
+wind_directions = np.arange(0.0, 360.0, 5.0)
+wind_speeds = np.arange(5.0, 25.0, 1.0)
+
+num_bins = len(wind_directions) * len(wind_speeds)
+print(f"Calculating AEP for {num_bins} wind direction and speed combinations...")
+
 # Set up a square 25 turbine layout
 N = 5  # Number of turbines per row and per column
-D = 126. 
+D = 126.0
 
 X, Y = np.meshgrid(
     7.0 * D * np.arange(0, N, 1),
@@ -426,25 +470,21 @@ X, Y = np.meshgrid(
 )
 X = X.flatten()
 Y = Y.flatten()
-num_turbine = len(X)
-print("Number of turbines = %d" % num_turbine)
-```
+print(f"Number of turbines = {len(X)}")
 
-    Number of turbines = 25
-
-```python
 # Define several models
 fi_jensen = FlorisInterface("inputs/jensen.yaml")
 fi_gch = FlorisInterface("inputs/gch.yaml")
 fi_cc = FlorisInterface("inputs/cc.yaml")
-```
 
-```python
 # Assign the layouts, wind speeds and directions
 fi_jensen.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
 fi_gch.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
 fi_cc.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
 ```
+
+    Calculating AEP for 1440 wind direction and speed combinations...
+    Number of turbines = 25
 
 Calculate the AEP and use the jupyter time command to show computation time:
 
@@ -454,8 +494,8 @@ fi_jensen.calculate_wake()
 jensen_aep = fi_jensen.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
 ```
 
-    CPU times: user 3.66 s, sys: 1.51 s, total: 5.18 s
-    Wall time: 4.31 s
+    CPU times: user 3.12 s, sys: 1.39 s, total: 4.51 s
+    Wall time: 3.76 s
 
 ```python
 %%time
@@ -463,8 +503,8 @@ fi_gch.calculate_wake()
 gch_aep = fi_gch.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
 ```
 
-    CPU times: user 5.9 s, sys: 2.46 s, total: 8.35 s
-    Wall time: 7.24 s
+    CPU times: user 5.62 s, sys: 2.64 s, total: 8.25 s
+    Wall time: 7.21 s
 
 ```python
 %%time
@@ -472,8 +512,8 @@ fi_cc.calculate_wake()
 cc_aep = fi_cc.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
 ```
 
-    CPU times: user 8.66 s, sys: 3.83 s, total: 12.5 s
-    Wall time: 12.5 s
+    CPU times: user 7.87 s, sys: 3.07 s, total: 10.9 s
+    Wall time: 10.9 s
 
 ```python
 # Show the results
@@ -533,8 +573,8 @@ df_opt = yaw_opt.optimize()
     [Serial Refine] Processing pass=1, turbine_depth=4 (78.6 %)
     [Serial Refine] Processing pass=1, turbine_depth=5 (85.7 %)
     [Serial Refine] Processing pass=1, turbine_depth=6 (92.9 %)
-    CPU times: user 2.42 s, sys: 235 ms, total: 2.66 s
-    Wall time: 2.28 s
+    CPU times: user 2.24 s, sys: 214 ms, total: 2.46 s
+    Wall time: 2.09 s
 
 In the results, T0 is the upstream turbine when wind direction is 270, while T6 is upstream at 90 deg
 
@@ -557,4 +597,4 @@ axarr[-1].set_xlabel('Wind Direction (Deg)')
 
 
 
-![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_43_1.png){: .center-image }
+![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_39_1.png){: .center-image }
