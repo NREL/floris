@@ -11,9 +11,9 @@ is highly encouraged. If you are interested in using FLORIS to conduct studies
 of a wind farm or extending FLORIS to include your own wake model, please join
 the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/categories/v3-design-discussion)!
 
-This documentation is new since FLORIS v3, and it is a work in progress.
-For context and background on previous work in FLORIS, see the legacy
-documentation at http://floris.readthedocs.io/.
+Since FLORIS v3, the documentation is migrating to https://nrel.github.io/floris,
+but this is a work in progress. For context and background on previous work in
+FLORIS, see the legacy documentation at http://floris.readthedocs.io/.
 
 ---
 
