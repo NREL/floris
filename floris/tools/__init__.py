@@ -36,7 +36,8 @@ Examples:
     'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
 """
 
-from .floris_interface import FlorisInterface, FlorisInterface_legacy_v24
+from .floris_interface import FlorisInterface
+from .floris_interface_legacy_reader import FlorisInterfaceLegacyV2
 from .visualization import visualize_cut_plane, visualize_quiver, plot_turbines_with_fi, plot_rotor_values
 from .wind_rose import WindRose
 
