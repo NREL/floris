@@ -25,17 +25,16 @@ from floris.tools import FlorisInterface, UncertaintyInterface
 
 # Instantiate FLORIS using either the GCH or CC model
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+fi_unc = UncertaintyInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
 # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
 # Define a two turbine farm
 D = 126.0
 layout_x = np.array([0, D*6, D*12])
 layout_y = [0, 0, 0]
-fi.reinitialize(layout=[layout_x, layout_y])
-
-# Sweep wind speeds but keep wind direction fixed
 wd_array = np.arange(0.0, 360.0, 1.0)
-fi.reinitialize(wind_directions=wd_array)
+fi.reinitialize(layout=[layout_x, layout_y], wind_directions=wd_array)
+fi_unc.reinitialize(layout=[layout_x, layout_y], wind_directions=wd_array)
 
 # Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimesions are
@@ -52,14 +51,7 @@ fi.calculate_wake(yaw_angles=yaw_angles)
 farm_powers_nom = fi.get_farm_power() / 1e3
 
 # Calculate the wind farm power with uncertainty on the wind direction
-unc_options = {
-    "std_wd": 3.0,  # Standard deviation for inflow wind direction (deg)
-    "std_yaw": 0.0,  # Standard deviation in turbine yaw angle (deg)
-    "pmf_res": 1.0,  # Resolution over which to calculate angles (deg)
-    "pdf_cutoff": 0.995,  # Probability density function cut-off (-)
-}
-fi_unc = UncertaintyInterface(fi)
-fi_unc.calculate_wake()
+fi_unc.calculate_wake(yaw_angles=yaw_angles)
 farm_powers_unc = fi_unc.get_farm_power() / 1e3
 
 # Plot results
