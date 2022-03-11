@@ -23,7 +23,14 @@ from floris.utilities import wrap_360
 
 class UncertaintyInterface(LoggerBase):
 
-    def __init__(self, configuration, het_map=None, unc_options=None, unc_pmfs=None):
+    def __init__(
+        self,
+        configuration,
+        het_map=None,
+        unc_options=None,
+        unc_pmfs=None,
+        fix_yaw_in_relative_frame=True
+    ):
         """A wrapper around the nominal floris_interface class that adds
         uncertainty to the floris evaluations. One can specify a probability
         distribution function (pdf) for the ambient wind direction, and for
@@ -94,7 +101,12 @@ class UncertaintyInterface(LoggerBase):
             self.fi = configuration
         else:
             self.fi = FlorisInterface(configuration, het_map=het_map)
-        self.reinitialize_uncertainty(unc_options=unc_options, unc_pmfs=unc_pmfs)
+
+        self.reinitialize_uncertainty(
+            unc_options=unc_options,
+            unc_pmfs=unc_pmfs,
+            fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
+        )
 
     # Private methods
 
@@ -172,10 +184,31 @@ class UncertaintyInterface(LoggerBase):
             [np.expand_dims(wd_array_nominal, axis=0) + dy
             for dy in unc_pmfs["wd_unc"]]
         )
-        yaw_angles_probablistic = np.vstack(
-            [np.expand_dims(yaw_angles_nominal, axis=0) - dy
-            for dy in unc_pmfs["wd_unc"]]
-        )
+
+        if self.fix_yaw_in_relative_frame:
+            # The relative yaw angle is fixed and always has the nominal
+            # value (e.g., 0 deg) when evaluating uncertainty. Evaluating
+            # wind direction uncertainty like this would essentially come
+            # down to a Gaussian smoothing of FLORIS solutions over the
+            # wind directions. This can also be really fast, since it would
+            # not require any additional calculations compared to the
+            # non-uncertainty FLORIS evaluation.
+            yaw_angles_probablistic = np.vstack(
+                [np.expand_dims(yaw_angles_nominal, axis=0)
+                for _ in unc_pmfs["wd_unc"]]
+            )
+        else:
+            # Fix yaw angles in the absolute (compass) reference frame,
+            # meaning that for each probablistic wind direction evaluation,
+            # our probablistic (relative) yaw angle evaluated goes into
+            # the opposite direction. For example, a probablistic wind
+            # direction 3 deg above the nominal value means that we evaluate
+            # it with a relative yaw angle that is 3 deg below its nominal
+            # value.
+            yaw_angles_probablistic = np.vstack(
+                [np.expand_dims(yaw_angles_nominal, axis=0) - dy
+                for dy in unc_pmfs["wd_unc"]]
+            )
 
         # Now futher expand wind direction and yaw angle array into
         # the direction of uncertainty of the turbine yaw angles.
@@ -206,7 +239,12 @@ class UncertaintyInterface(LoggerBase):
         fi_unc_copy.fi = self.fi.copy()
         return fi_unc_copy
 
-    def reinitialize_uncertainty(self, unc_options=None, unc_pmfs=None):
+    def reinitialize_uncertainty(
+        self,
+        unc_options=None,
+        unc_pmfs=None,
+        fix_yaw_in_relative_frame=None
+    ):
         """Reinitialize the wind direction and yaw angle probability
         distributions used in evaluating FLORIS. Must either specify
         'unc_options', in which case distributions are calculated assuming
@@ -266,6 +304,9 @@ class UncertaintyInterface(LoggerBase):
         
         if unc_pmfs is not None:
             self.unc_pmfs = unc_pmfs
+        
+        if fix_yaw_in_relative_frame is not None:
+            self.fix_yaw_in_relative_frame = bool(fix_yaw_in_relative_frame)
 
     def reinitialize(
         self,
