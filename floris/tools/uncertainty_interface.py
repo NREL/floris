@@ -29,14 +29,13 @@ class UncertaintyInterface(LoggerBase):
         het_map=None,
         unc_options=None,
         unc_pmfs=None,
-        fix_yaw_in_relative_frame=True
+        fix_yaw_in_relative_frame=False,
     ):
         """A wrapper around the nominal floris_interface class that adds
         uncertainty to the floris evaluations. One can specify a probability
-        distribution function (pdf) for the ambient wind direction, and for
-        the turbine yaw angles. Unless the exact pdf is specified manually
-        using the option 'unc_pmfs', a Gaussian distribution function will be
-        assumed.
+        distribution function (pdf) for the ambient wind direction. Unless
+        the exact pdf is specified manually using the option 'unc_pmfs', a
+        Gaussian probability distribution function will be assumed.
 
         Args:
         configuration (:py:obj:`dict` or FlorisInterface object): The Floris
@@ -49,49 +48,60 @@ class UncertaintyInterface(LoggerBase):
                 - **logging**: See `floris.simulation.floris.Floris` for more details.
         unc_options (dictionary, optional): A dictionary containing values
             used to create normally-distributed, zero-mean probability mass
-            functions describing the distribution of wind direction and yaw
-            position deviations when wind direction and/or yaw position
-            uncertainty is included. This argument is only used when
-            **unc_pmfs** is None and contains the following key-value pairs:
-
+            functions describing the distribution of wind direction deviations.
+            This argument is only used when **unc_pmfs** is None and contain
+            the following key-value pairs:
             -   **std_wd** (*float*): A float containing the standard
                 deviation of the wind direction deviations from the
                 original wind direction.
-            -   **std_yaw** (*float*): A float containing the standard
-                deviation of the yaw angle deviations from the original yaw
-                angles.
             -   **pmf_res** (*float*): A float containing the resolution in
                 degrees of the wind direction and yaw angle PMFs.
             -   **pdf_cutoff** (*float*): A float containing the cumulative
                 distribution function value at which the tails of the
                 PMFs are truncated.
-
-            Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw':
-            1.75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
+            Defaults to None. Initializes to {'std_wd': 4.95, 'pmf_res': 1.0,
+            'pdf_cutoff': 0.995}.
         unc_pmfs (dictionary, optional): A dictionary containing optional
             probability mass functions describing the distribution of wind
-            direction and yaw position deviations when wind direction and/or
-            yaw position uncertainty is included in the power calculations.
-            Contains the following key-value pairs:
-
+            direction deviations. Contains the following key-value pairs:
             -   **wd_unc** (*np.array*): Wind direction deviations from the
                 original wind direction.
             -   **wd_unc_pmf** (*np.array*): Probability of each wind
                 direction deviation in **wd_unc** occuring.
-            -   **yaw_unc** (*np.array*): Yaw angle deviations from the
-                original yaw angles.
-            -   **yaw_unc_pmf** (*np.array*): Probability of each yaw angle
-                deviation in **yaw_unc** occuring.
-
             Defaults to None, in which case default PMFs are calculated
             using values provided in **unc_options**.
+        fix_yaw_in_relative_frame (bool, optional): When set to True, the
+            relative yaw angle of all turbines is fixed and always has the
+            nominal value (e.g., 0 deg) when evaluating uncertainty in the
+            wind direction. Evaluating  wind direction uncertainty like this
+            will essentially come down to a Gaussian smoothing of FLORIS
+            solutions over the wind directions. This calculation can therefore
+            be really fast, since it does not require additional calculations
+            compared to a non-uncertainty FLORIS evaluation. 
+            When fix_yaw_in_relative_frame=False, the yaw angles are fixed in
+            the absolute (compass) reference frame, meaning that for each
+            probablistic wind direction evaluation, our probablistic (relative)
+            yaw angle evaluated goes into the opposite direction. For example,
+            a probablistic wind direction 3 deg above the nominal value means
+            that we evaluate it with a relative yaw angle that is 3 deg below
+            its nominal value. This requires additional computations compared
+            to a non- uncertainty evaluation.
+            Typically, fix_yaw_in_relative_frame=True is used when comparing
+            FLORIS to historical data, in which a single measurement usually
+            represents a 10-minute average, and thus is often a mix of various
+            true wind directions. The inherent assumption then is that the turbine
+            perfectly tracks the wind direction changes within those 10 minutes.
+            Then, fix_yaw_in_relative_frame=False is typically used for robust
+            yaw angle optimization, in which we take into account that the turbine
+            often does not perfectly know the true wind direction, and that a
+            turbine often does not perfectly achieve its desired yaw angle offset.
+            Defaults to fix_yaw_in_relative_frame=False.
         """
 
         if (unc_options is None) & (unc_pmfs is None):
             # Default options:
             unc_options = {
                 "std_wd": 3.0,  # Standard deviation for inflow wind direction (deg)
-                "std_yaw": 0.0,  # Standard deviation in turbine yaw angle (deg)
                 "pmf_res": 1.0,  # Resolution over which to calculate angles (deg)
                 "pdf_cutoff": 0.995,  # Probability density function cut-off (-)
             }
@@ -118,8 +128,6 @@ class UncertaintyInterface(LoggerBase):
 
         wd_unc = np.zeros(1)
         wd_unc_pmf = np.ones(1)
-        yaw_unc = np.zeros(1)
-        yaw_unc_pmf = np.ones(1)
 
         # create normally distributed wd and yaw uncertaitny pmfs if appropriate
         unc_options = self.unc_options
@@ -130,20 +138,9 @@ class UncertaintyInterface(LoggerBase):
             wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options["std_wd"])
             wd_unc_pmf /= np.sum(wd_unc_pmf)  # normalize so sum = 1.0
 
-        if unc_options["std_yaw"] > 0:
-            yaw_bnd = int(
-                np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]) / unc_options["pmf_res"])
-            )
-            bound = yaw_bnd * unc_options["pmf_res"]
-            yaw_unc = np.linspace(-1 * bound, bound, 2 * yaw_bnd + 1)
-            yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options["std_yaw"])
-            yaw_unc_pmf /= np.sum(yaw_unc_pmf)  # normalize so sum = 1.0
-
         unc_pmfs = {
             "wd_unc": wd_unc,
             "wd_unc_pmf": wd_unc_pmf,
-            "yaw_unc": yaw_unc,
-            "yaw_unc_pmf": yaw_unc_pmf,
         }
 
         # Save to self
@@ -155,15 +152,14 @@ class UncertaintyInterface(LoggerBase):
         calculation of the floris solutions. This produces the np.NDArrays
         "wd_array_probablistic" and "yaw_angles_probablistic", with shapes:
             (
-                num_yaw_angle_pdf_points_to_evaluate,
                 num_wind_direction_pdf_points_to_evaluate,
                 num_nominal_wind_directions,
             )
             and
             (
-                num_yaw_angle_pdf_points_to_evaluate,
                 num_wind_direction_pdf_points_to_evaluate,
                 num_nominal_wind_directions,
+                num_nominal_wind_speeds,
                 num_turbines
             ),
             respectively.
@@ -210,20 +206,8 @@ class UncertaintyInterface(LoggerBase):
                 for dy in unc_pmfs["wd_unc"]]
             )
 
-        # Now futher expand wind direction and yaw angle array into
-        # the direction of uncertainty of the turbine yaw angles.
-        wd_array_probablistic = np.vstack(
-            [np.expand_dims(wd_array_probablistic, axis=0)
-            for _ in unc_pmfs["yaw_unc"]]
-        )
-        yaw_angles_probablistic = np.vstack(
-            [np.expand_dims(yaw_angles_probablistic, axis=0) + dy
-            for dy in unc_pmfs["yaw_unc"]]
-        )
-
         self.wd_array_probablistic = wd_array_probablistic
         self.yaw_angles_probablistic = yaw_angles_probablistic
-
 
     def _reassign_yaw_angles(self, yaw_angles=None):
         # Overwrite the yaw angles in the FlorisInterface object
@@ -289,6 +273,34 @@ class UncertaintyInterface(LoggerBase):
                     deviation in **yaw_unc** occuring.
 
                 Defaults to None.
+
+            fix_yaw_in_relative_frame (bool, optional): When set to True, the
+                relative yaw angle of all turbines is fixed and always has the
+                nominal value (e.g., 0 deg) when evaluating uncertainty in the
+                wind direction. Evaluating  wind direction uncertainty like this
+                will essentially come down to a Gaussian smoothing of FLORIS
+                solutions over the wind directions. This calculation can therefore
+                be really fast, since it does not require additional calculations
+                compared to a non-uncertainty FLORIS evaluation. 
+                When fix_yaw_in_relative_frame=False, the yaw angles are fixed in
+                the absolute (compass) reference frame, meaning that for each
+                probablistic wind direction evaluation, our probablistic (relative)
+                yaw angle evaluated goes into the opposite direction. For example,
+                a probablistic wind direction 3 deg above the nominal value means
+                that we evaluate it with a relative yaw angle that is 3 deg below
+                its nominal value. This requires additional computations compared
+                to a non- uncertainty evaluation.
+                Typically, fix_yaw_in_relative_frame=True is used when comparing
+                FLORIS to historical data, in which a single measurement usually
+                represents a 10-minute average, and thus is often a mix of various
+                true wind directions. The inherent assumption then is that the turbine
+                perfectly tracks the wind direction changes within those 10 minutes.
+                Then, fix_yaw_in_relative_frame=False is typically used for robust
+                yaw angle optimization, in which we take into account that the turbine
+                often does not perfectly know the true wind direction, and that a
+                turbine often does not perfectly achieve its desired yaw angle offset.
+                Defaults to fix_yaw_in_relative_frame=False.
+                
         """
 
         # Check inputs
@@ -383,7 +395,6 @@ class UncertaintyInterface(LoggerBase):
         num_wd = self.fi.floris.flow_field.n_wind_directions
         num_ws = self.fi.floris.flow_field.n_wind_speeds
         num_wd_unc = len(unc_pmfs["wd_unc"])
-        num_yaw_unc = len(unc_pmfs["yaw_unc"])
         num_turbines = self.fi.floris.farm.n_turbines
 
         # Format into conventional floris format by reshaping
@@ -397,9 +408,8 @@ class UncertaintyInterface(LoggerBase):
 
         # Find minimal set of solutions to evaluate
         wd_exp = np.tile(wd_array_probablistic, (1, num_ws, 1)).T
-        x_exp = np.append(yaw_angles_probablistic, wd_exp, axis=2)
         _, id_unq, id_unq_rev = np.unique(
-            x_exp,
+            np.append(yaw_angles_probablistic, wd_exp, axis=2),
             axis=0,
             return_index=True,
             return_inverse=True
@@ -422,30 +432,16 @@ class UncertaintyInterface(LoggerBase):
         power_probablistic = turbine_powers[id_unq_rev, :]
         power_probablistic = np.reshape(
             power_probablistic, 
-            (num_yaw_unc, num_wd_unc, num_wd, num_ws, num_turbines)
+            (num_wd_unc, num_wd, num_ws, num_turbines)
         )
 
         # Calculate probability weighing terms
-        wd_weighing = np.tile(unc_pmfs["wd_unc_pmf"], (num_yaw_unc, 1)).T
-        wd_weighing = np.tile(wd_weighing, (num_ws, num_wd, 1, 1)).T
-        yaw_weighing = np.tile(unc_pmfs["yaw_unc_pmf"], (num_wd_unc, 1))
-        yaw_weighing = np.tile(yaw_weighing, (num_ws, num_wd, 1, 1)).T
-
-        # Now copy over to each turbine
-        wd_weighing = np.repeat(
-            np.expand_dims(wd_weighing, axis=4),
-            num_turbines,
-            axis=4
-        )
-        yaw_weighing = np.repeat(
-            np.expand_dims(yaw_weighing, axis=4),
-            num_turbines,
-            axis=4
-        )
-        W = np.multiply(wd_weighing, yaw_weighing)
+        wd_weighing = (
+            np.expand_dims(unc_pmfs["wd_unc_pmf"], axis=(1, 2, 3))
+        ).repeat(num_wd, 1).repeat(num_ws, 2).repeat(num_turbines, 3)
 
         # Now apply probability distribution weighing to get turbine powers
-        return np.sum(W * power_probablistic, axis=(0, 1))
+        return np.sum(wd_weighing * power_probablistic, axis=0)
 
     def get_farm_power(self, no_wake=False):
         """Calculates the probability-weighted power production of the
