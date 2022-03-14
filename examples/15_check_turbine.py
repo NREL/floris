@@ -24,7 +24,7 @@ from floris.tools import visualize_cut_plane #, plot_turbines_with_fi
 For each turbine in the turbine library, make a small figure showing that its power curve and power loss to yaw are reasonable and 
 reasonably smooth
 """
-ws_array = np.arange(0,30,0.2)
+ws_array = np.arange(0.1,30,0.2)
 yaw_angles = np.linspace(-30,30,60)
 wind_speed_to_test_yaw = 11
 
@@ -50,6 +50,9 @@ for t in turbines:
     # Set t as the turbine
     fi.reinitialize(turbine_type=[t])
 
+    # Since we are changing the turbine type, make a matching change to the reference wind height
+    fi.assign_hub_height_to_ref_height()
+
     # Plot cp and ct onto the fig_cp_ct plot
     axarr_cp_ct[0].plot(fi.floris.farm.turbine_map[0].power_thrust_table.wind_speed, fi.floris.farm.turbine_map[0].power_thrust_table.power,label=t )
     axarr_cp_ct[0].grid(True)
@@ -65,7 +68,7 @@ for t in turbines:
     fig, axarr = plt.subplots(1,2,figsize=(10,5))
 
     # Try a few density
-    for density in [1.1,1.225,1.3]:
+    for density in [1.15,1.225,1.3]:
         
         fi.reinitialize(air_density=density)
 
@@ -74,7 +77,10 @@ for t in turbines:
         fi.reinitialize(wind_speeds=ws_array)
         fi.calculate_wake()
         turbine_powers = fi.get_turbine_powers().flatten() / 1e3
-        ax.plot(ws_array,turbine_powers,label='Air Density = %.3f' % density)
+        if density == 1.225:
+            ax.plot(ws_array,turbine_powers,label='Air Density = %.3f' % density, lw=2, color='k')
+        else:
+            ax.plot(ws_array,turbine_powers,label='Air Density = %.3f' % density, lw=1)
         ax.grid(True)
         ax.legend()
         ax.set_xlabel('Wind Speed (m/s)')
@@ -89,7 +95,11 @@ for t in turbines:
             fi.calculate_wake(yaw_angles=np.array([[[yaw]]]))
             turbine_powers = fi.get_turbine_powers().flatten() / 1e3
             yaw_result.append(turbine_powers[0])
-        ax.plot(yaw_angles,yaw_result,label='Air Density = %.3f' % density)
+        if density == 1.225:
+            ax.plot(yaw_angles,yaw_result,label='Air Density = %.3f' % density, lw=2, color='k')
+        else:
+            ax.plot(yaw_angles,yaw_result,label='Air Density = %.3f' % density, lw=1)
+        # ax.plot(yaw_angles,yaw_result,label='Air Density = %.3f' % density)
         ax.grid(True)
         ax.legend()
         ax.set_xlabel('Yaw Error (deg)')

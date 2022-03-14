@@ -78,6 +78,25 @@ class FlorisInterface(LoggerBase):
         # Needed for a direct call to fi.calculate_wake without fi.reinitialize
         self.floris.flow_field.het_map = het_map
 
+        # If ref height is -1, assign the hub height
+        if self.floris.flow_field.reference_wind_height == -1:
+            self.assign_hub_height_to_ref_height()
+
+        # Make a check on reference height and provide a helpful warning
+        unique_heights = np.unique(self.floris.farm.hub_heights)
+        if ((len(unique_heights) == 1) and (self.floris.flow_field.reference_wind_height!=unique_heights[0])):
+            err_msg = 'The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height.'
+            self.logger.warning(err_msg, stack_info=True)
+
+    def assign_hub_height_to_ref_height(self):
+
+        # Confirm can do this operation
+        unique_heights = np.unique(self.floris.farm.hub_heights)
+        if (len(unique_heights) > 1):
+            raise ValueError("To assign hub heights to reference height, can not have more than one specified height. Current length is {}.".format(len(unique_heights)))
+
+        self.floris.flow_field.reference_wind_height = unique_heights[0]
+
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
