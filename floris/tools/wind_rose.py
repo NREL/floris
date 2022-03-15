@@ -634,6 +634,22 @@ class WindRose:
         self.internal_resample_wind_direction(wd=wd)
 
         return self.df
+    
+    def read_wind_rose_csv(
+        self,
+        filename
+    ):
+
+        #Read in the csv
+        self.df = pd.read_csv(filename)
+
+        # Renormalize the frequency column
+        self.df["freq_val"] = self.df["freq_val"] / self.df["freq_val"].sum()
+
+        # Call the resample function in order to set all the internal variables
+        self.internal_resample_wind_speed(ws=self.df.ws.unique())
+        self.internal_resample_wind_direction(wd=self.df.wd.unique())
+
 
     def make_wind_rose_from_user_dist(
         self,
