@@ -128,6 +128,9 @@ class FlorisInterface(LoggerBase):
 
         # TODO decide where to handle this sign issue
         if yaw_angles is not None:
+            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
+                # TODO: Implement wake steering for the TurbOPark model
+                raise NotImplementedError("Wake steering is not implemented yet for the TurbOPark model.")
             self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space

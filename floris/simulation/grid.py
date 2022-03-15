@@ -197,13 +197,16 @@ class TurbineGrid(Grid):
             dtype=floris_float_type
         )
         # Calculate the radial distance from the center of the turbine rotor
-        disc_grid = np.linspace(
-            -1 * disc_area_radius,
-            disc_area_radius,
-            self.grid_resolution,
-            dtype=floris_float_type,
-            axis=1
-        )
+        if self.grid_resolution == 1:
+            disc_grid = np.zeros((np.shape(disc_area_radius)[0], 1 ))
+        else:
+            disc_grid = np.linspace(
+                -1 * disc_area_radius,
+                disc_area_radius,
+                self.grid_resolution,
+                dtype=floris_float_type,
+                axis=1
+            )
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
         _x = x[:, :, :, None, None] * template_grid

@@ -16,3 +16,4 @@
 from floris.simulation.wake_velocity.cumulative_gauss_curl import CumulativeGaussCurlVelocityDeficit
 from floris.simulation.wake_velocity.gauss import GaussVelocityDeficit
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
+from floris.simulation.wake_velocity.turbopark import TurbOParkVelocityDeficit

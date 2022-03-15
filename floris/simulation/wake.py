@@ -25,7 +25,8 @@ from floris.simulation.wake_turbulence.crespo_hernandez import CrespoHernandez
 from floris.simulation.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
-    JensenVelocityDeficit
+    JensenVelocityDeficit,
+    TurbOParkVelocityDeficit,
 )
 
 
@@ -45,7 +46,8 @@ MODEL_MAP = {
     "velocity_model": {
         "cc": CumulativeGaussCurlVelocityDeficit,
         "gauss": GaussVelocityDeficit,
-        "jensen": JensenVelocityDeficit
+        "jensen": JensenVelocityDeficit,
+        "turbopark": TurbOParkVelocityDeficit
     },
 }
 
