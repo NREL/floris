@@ -1,0 +1,63 @@
+# Copyright 2021 NREL
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+from typing import Any, Dict
+
+from attrs import define
+import numpy as np
+
+from floris.simulation import BaseModel
+from floris.simulation import FlowField
+from floris.simulation import Grid
+
+
+@define
+class NoneVelocityDeflection(BaseModel):
+    """
+    The None deflection model is a placeholder code that simple ignores any
+    deflection and just returns an empty array of zeroes.
+    """
+    model_string = "none"
+
+    def prepare_function(
+        self,
+        grid: Grid,
+        flow_field: FlowField,
+    ) -> Dict[str, Any]:
+
+        kwargs = dict(
+            x=grid.x,
+            y=grid.y,
+            z=grid.z,
+            freestream_velocity=flow_field.u_initial,
+            wind_veer=flow_field.wind_veer,
+        )
+        return kwargs
+
+    # @profile
+    def function(
+        self,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        yaw_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
+        rotor_diameter_i: float,
+        *,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        freestream_velocity: np.ndarray,
+        wind_veer: float,
+    ):
+        """Skip all deflection calculations and returns empty array."""
+        return np.zeros_like(freestream_velocity)
