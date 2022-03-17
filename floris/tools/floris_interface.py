@@ -320,6 +320,7 @@ class FlorisInterface(LoggerBase):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -355,7 +356,7 @@ class FlorisInterface(LoggerBase):
         self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake()
+        self.calculate_wake(yaw_angles=current_yaw_angles)
 
         return horizontal_plane
 
@@ -395,11 +396,11 @@ class FlorisInterface(LoggerBase):
             wd = self.floris.flow_field.wind_directions
         if ws is None:
             ws = self.floris.flow_field.wind_speeds
-
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -435,7 +436,7 @@ class FlorisInterface(LoggerBase):
         self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake()
+        self.calculate_wake(yaw_angles=current_yaw_angles)
 
         return cross_plane
 
@@ -479,6 +480,7 @@ class FlorisInterface(LoggerBase):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -514,7 +516,7 @@ class FlorisInterface(LoggerBase):
         self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake()
+        self.calculate_wake(yaw_angles=current_yaw_angles)
 
         return y_plane
 
