@@ -213,7 +213,7 @@ class YawOptimization:
             nturbs = np.shape(self._x0_subset.shape[2])
 
         # Then process maximum yaw angle
-        if isinstance(variable, float):
+        if isinstance(variable, (int, float)):
             # If single value, copy over to all turbines
             variable = np.tile(variable, (nturbs))
 
