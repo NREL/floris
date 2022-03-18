@@ -20,13 +20,18 @@ from floris.tools import FlorisInterface, UncertaintyInterface
 
 
 """
-<needs to be written>
+This example demonstrates how one can create an "UncertaintyInterface" object,
+which adds uncertainty on the inflow wind direction on the FlorisInterface
+class. The UncertaintyInterface class is interacted with in the exact same
+manner as the FlorisInterface class is. This example demonstrates how the
+wind farm power production is calculated with and without uncertainty.
+Other use cases of UncertaintyInterface are, e.g., comparing FLORIS to
+historical SCADA data and robust optimization.
 """
 
 # Instantiate FLORIS using either the GCH or CC model
-fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-fi_unc = UncertaintyInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fi = FlorisInterface("inputs/gch.yaml") # GCH model
+fi_unc = UncertaintyInterface("inputs/gch.yaml") # Add uncertainty with default settings
 
 # Define a two turbine farm
 D = 126.0
