@@ -5,7 +5,7 @@ floris_version: v3.0.0
 
 logging:
   console:
-    enable: false
+    enable: true
     level: WARNING
   file:
     enable: false
@@ -29,7 +29,7 @@ farm:
 
 flow_field:
   air_density: 1.225
-  reference_wind_height: 90.0
+  reference_wind_height: -1 # -1 is code for use the hub height
   turbulence_intensity: 0.06
   wind_directions:
   - 270.0
