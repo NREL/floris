@@ -38,7 +38,6 @@ from floris.tools.cut_plane import get_plane_from_flow_data
 from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
 from floris.tools.interface_utilities import get_params, set_params, show_params
 from floris.tools.cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
-from floris.utilities import wrap_360
 
 # from .visualization import visualize_cut_plane
 # from .layout_functions import visualize_layout, build_turbine_loc
@@ -538,7 +537,6 @@ class FlorisInterface(LoggerBase):
         Returns:
             NDArrayFloat: [description]
         """
-
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
             velocities=self.floris.flow_field.u,
@@ -546,7 +544,7 @@ class FlorisInterface(LoggerBase):
             pP=self.floris.farm.pPs,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
-        )    
+        )
         return turbine_powers
 
     def get_turbine_Cts(self) -> NDArrayFloat:
