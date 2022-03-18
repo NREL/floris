@@ -19,9 +19,6 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from ....utilities import wrap_360
-from floris.tools import FlorisInterface
-
 from .yaw_optimization_tools import (
     derive_downstream_turbines,
     find_layout_symmetry,
@@ -119,7 +116,7 @@ class YawOptimization:
         """
 
         # Save turbine object to self
-        self.fi = FlorisInterface(fi.floris.as_dict())
+        self.fi = fi.copy()
         self.nturbs = len(self.fi.layout_x)
 
         # # Check floris options
@@ -217,7 +214,7 @@ class YawOptimization:
             nturbs = np.shape(self._x0_subset.shape[2])
 
         # Then process maximum yaw angle
-        if isinstance(variable, float):
+        if isinstance(variable, (int, float)):
             # If single value, copy over to all turbines
             variable = np.tile(variable, (nturbs))
 
@@ -253,7 +250,7 @@ class YawOptimization:
         self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
 
         # Initialize subset variables as full set
-        self.fi_subset = FlorisInterface(self.fi.floris.as_dict())
+        self.fi_subset = self.fi.copy()
         nwinddirections_subset = copy.deepcopy(self.fi.floris.flow_field.n_wind_directions)
         minimum_yaw_angle_subset = copy.deepcopy(self.minimum_yaw_angle)
         maximum_yaw_angle_subset = copy.deepcopy(self.maximum_yaw_angle)
