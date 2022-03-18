@@ -60,4 +60,11 @@ class NoneVelocityDeflection(BaseModel):
         wind_veer: float,
     ):
         """Skip all deflection calculations and returns empty array."""
+        self.logger.info(
+            "The wake deflection model is set to 'none'. Deflection modeling disabled."
+        )
+        if np.any(np.abs(yaw_i) > 1.0):
+            self.logger.warning(
+                "The deflection model is disabled yet not all (effective) yaw angles are zero."
+            )
         return np.zeros_like(freestream_velocity)
