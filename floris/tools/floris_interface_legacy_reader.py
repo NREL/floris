@@ -14,7 +14,9 @@
 
 from __future__ import annotations
 
+import os
 import copy
+import json
 from pathlib import Path
 
 from floris.tools import FlorisInterface
@@ -30,25 +32,31 @@ class FlorisInterfaceLegacyV2(FlorisInterface):
 
     After successfully loading the v3.0 Floris object, you can export the
     input file using: fi.floris.to_file("converted_input_file_v3.yaml").
+    An example of such a use case is demonstrated at the end of this file.
 
     If you would like to manually convert the input dictionary without first
     loading it in FLORIS, or if somehow the code fails to automatically
     convert the input file to v3, you should follow the following steps:
       1. Load the legacy v2.4 input floris JSON file as a dictionary
       2. Pass the v2.4 dictionary to `_convert_v24_dictionary_to_v3(...)`.
-         That will return a v3.0-compatible input dictionary.
+         That will return a v3.0-compatible input dictionary and a turbine
+         dictionary.
       3. Save the converted configuration file to a YAML or JSON file.
 
       For example:
 
         import json, yaml
-        from floris.tools.floris_interface import _convert_v24_dictionary_to_v3
+        from floris.tools.floris_interface_legacy_reader import (
+            _convert_v24_dictionary_to_v3
+        )
 
         with open(<path_to_legacy_v24_input_file.json>) as legacy_dict_file:
             configuration_v2 = json.load(legacy_dict_file)
-        configuration_v3 = _convert_v24_dictionary_to_v3(configuration_v2)
-        with open(r'converted_configuration_file_v3.yaml', 'w') as file:
-            yaml.dump(configuration_v3, file)
+        fi_dict, turb_dict = _convert_v24_dictionary_to_v3(configuration_v2)
+        with open(r'fi_input_file_v3.yaml', 'w') as file:
+            yaml.dump(fi_dict, file)
+        with open(r'turbine_input_file_v3.yaml', 'w') as file:
+            yaml.dump(turb_dict, file)
 
     Args:
         configuration (:py:obj:`dict`): The legacy v2.4 Floris configuration
@@ -62,7 +70,6 @@ class FlorisInterfaceLegacyV2(FlorisInterface):
 
         print("Importing and converting legacy floris v2.4 input file...")
         if isinstance(configuration, (str, Path)):
-            import json
             with open(configuration) as legacy_dict_file:
                 configuration = json.load(legacy_dict_file)
 
@@ -85,6 +92,8 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
 
     Returns:
         dict_floris (dict): Converted dictionary containing the floris input
+        settings in v3.0-compatible format.
+        dict_turbine (dict): A converted dictionary containing the turbine
         settings in v3.0-compatible format.
     """
     # Simple entries that can just be copied over
@@ -182,3 +191,26 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
     }
 
     return dict_floris, dict_turbine
+
+
+if __name__ == "__main__":
+    """
+    When this file is ran as a script, it'll convert a legacy FLORIS v2.4
+    legacy input file (.json) to a v3.0-compatible input file (.yaml).
+    Please specify your input and output paths accordingly, and it will
+    produce the necessary file.
+    """
+
+    # Specify paths
+    legacy_json_path = "inputs/legacy_example_input.json"
+    floris_yaml_output_path = "converted_out/floris_input_file.yaml"
+
+    # Load legacy input .json file into V3 object
+    fi = FlorisInterfaceLegacyV2(legacy_json_path)
+
+    # Create output directory and save converted input file
+    fout = os.path.abspath(floris_yaml_output_path)
+    os.makedirs(os.path.dirname(fout), exist_ok=True)
+    fi.floris.to_file(fout)
+
+    print("Converted file saved to: {:s}".format(fout))
