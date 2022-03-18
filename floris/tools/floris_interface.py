@@ -910,60 +910,6 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
 
     return [in_region, out_region]
 
-# def global_calc_one_AEP_case(FlorisInterface, wd, ws, freq, yaw=None):
-#     return FlorisInterface._calc_one_AEP_case(wd, ws, freq, yaw)
-
-DEFAULT_UNCERTAINTY = {"std_wd": 4.95, "std_yaw": 1.75, "pmf_res": 1.0, "pdf_cutoff": 0.995}
-
-
-def _generate_uncertainty_parameters(unc_options: dict, unc_pmfs: dict) -> dict:
-    """Generates the uncertainty parameters for `FlorisInterface.get_farm_power` and
-    `FlorisInterface.get_turbine_power` for more details.
-
-    Args:
-        unc_options (dict): See `FlorisInterface.get_farm_power` or `FlorisInterface.get_turbine_power`.
-        unc_pmfs (dict): See `FlorisInterface.get_farm_power` or `FlorisInterface.get_turbine_power`.
-
-    Returns:
-        dict: [description]
-    """
-    if (unc_options is None) & (unc_pmfs is None):
-        unc_options = DEFAULT_UNCERTAINTY
-
-    if unc_pmfs is not None:
-        return unc_pmfs
-
-    wd_unc = np.zeros(1)
-    wd_unc_pmf = np.ones(1)
-    yaw_unc = np.zeros(1)
-    yaw_unc_pmf = np.ones(1)
-
-    # create normally distributed wd and yaw uncertaitny pmfs if appropriate
-    if unc_options["std_wd"] > 0:
-        wd_bnd = int(np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"]))
-        bound = wd_bnd * unc_options["pmf_res"]
-        wd_unc = np.linspace(-1 * bound, bound, 2 * wd_bnd + 1)
-        wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options["std_wd"])
-        wd_unc_pmf /= np.sum(wd_unc_pmf)  # normalize so sum = 1.0
-
-    if unc_options["std_yaw"] > 0:
-        yaw_bnd = int(
-            np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_yaw"]) / unc_options["pmf_res"])
-        )
-        bound = yaw_bnd * unc_options["pmf_res"]
-        yaw_unc = np.linspace(-1 * bound, bound, 2 * yaw_bnd + 1)
-        yaw_unc_pmf = norm.pdf(yaw_unc, scale=unc_options["std_yaw"])
-        yaw_unc_pmf /= np.sum(yaw_unc_pmf)  # normalize so sum = 1.0
-
-    unc_pmfs = {
-        "wd_unc": wd_unc,
-        "wd_unc_pmf": wd_unc_pmf,
-        "yaw_unc": yaw_unc,
-        "yaw_unc_pmf": yaw_unc_pmf,
-    }
-    return unc_pmfs
-
-
 # def correct_for_all_combinations(
 #     wd: NDArrayFloat,
 #     ws: NDArrayFloat,
