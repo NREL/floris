@@ -99,6 +99,9 @@ class Farm(BaseClass):
     def construc_turbine_pPs(self):
         self.pPs = np.array([turb['pP'] for turb in self.turbine_definitions])
 
+    def construc_turbine_ref_density_cp_cts(self):
+        self.ref_density_cp_cts = np.array([turb['ref_density_cp_ct'] for turb in self.turbine_definitions])
+
     def construct_turbine_map(self):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
