@@ -23,7 +23,7 @@ class SOSFS(BaseModel):
     wake velocity deficits to the base flow field.
     """
 
-    model_string = "crespo_hernandez"
+    model_string = "sosfs"
 
     def prepare_function(self) -> dict:
         pass
