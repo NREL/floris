@@ -63,8 +63,11 @@ class NoneVelocityDeflection(BaseModel):
         self.logger.info(
             "The wake deflection model is set to 'none'. Deflection modeling disabled."
         )
-        if np.any(np.abs(yaw_i) > 1.0):
-            self.logger.warning(
-                "The deflection model is disabled yet not all (effective) yaw angles are zero."
+        if np.any(np.abs(yaw_i) > 0.001):
+            raise ValueError(
+                "The deflection model is disabled yet not all effective yaw angles are zero. " +
+                "To resolve this error, please ensure secondary steering is disabled in your " +
+                "input file and ensure no nonzero yaw angles are passed to the floris object."
             )
+
         return np.zeros_like(freestream_velocity)
