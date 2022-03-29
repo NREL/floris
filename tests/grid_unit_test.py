@@ -36,27 +36,27 @@ def test_turbinegrid_set_grid(turbine_grid_fixture):
     # then, search for any elements that are true and negate the results
     # if an element is zero, the not will return true
     # if an element is non-zero, the not will return false
-    assert not np.any(turbine_grid_fixture.x[0, 0] - expected_x_grid)
-    assert not np.any(turbine_grid_fixture.y[0, 0] - expected_y_grid)
-    assert not np.any(turbine_grid_fixture.z[0, 0] - expected_z_grid)
+    assert not np.any(turbine_grid_fixture.x_sorted[0, 0] - expected_x_grid)
+    assert not np.any(turbine_grid_fixture.y_sorted[0, 0] - expected_y_grid)
+    assert not np.any(turbine_grid_fixture.z_sorted[0, 0] - expected_z_grid)
 
 
 def test_turbinegrid_dimensions(turbine_grid_fixture):
-    assert np.shape(turbine_grid_fixture.x) == (
+    assert np.shape(turbine_grid_fixture.x_sorted) == (
         N_WIND_DIRECTIONS,
         N_WIND_SPEEDS,
         N_TURBINES,
         TURBINE_GRID_RESOLUTION,
         TURBINE_GRID_RESOLUTION
     )
-    assert np.shape(turbine_grid_fixture.y) == (
+    assert np.shape(turbine_grid_fixture.y_sorted) == (
         N_WIND_DIRECTIONS,
         N_WIND_SPEEDS,
         N_TURBINES,
         TURBINE_GRID_RESOLUTION,
         TURBINE_GRID_RESOLUTION
     )
-    assert np.shape(turbine_grid_fixture.z) == (
+    assert np.shape(turbine_grid_fixture.z_sorted) == (
         N_WIND_DIRECTIONS,
         N_WIND_SPEEDS,
         N_TURBINES,
