@@ -857,7 +857,7 @@ def split_num_tasks_to_wd_and_ws(n_wind_speeds, n_wind_directions, num_tasks):
         n_ws_splits = 1
         n_wd_splits = np.min([n_wind_directions, num_tasks])
     else:
-        n_wd_splits = int(np.floor(num_tasks / n_wind_directions))
+        n_wd_splits = int(np.floor(n_wind_directions / num_tasks))
         n_wd_splits = np.clip(n_wd_splits, 1, num_tasks)
         n_ws_splits = int(np.floor(num_tasks / n_wd_splits))
         
