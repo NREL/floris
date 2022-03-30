@@ -89,8 +89,8 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
-        # points: NDArrayFloat | list[float] | None = None,
-        # track_n_upstream_wakes: bool = False,
+        num_tasks: int = 1,
+        use_mpi: bool = False,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -99,17 +99,7 @@ class FlorisInterface(LoggerBase):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
-            points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
-                coordinates at which the flow field velocity is to be recorded. Defaults
-                to None.
-            track_n_upstream_wakes (bool, optional): When *True*, will keep track of the
-                number of upstream wakes a turbine is experiencing. Defaults to *False*.
         """
-        # self.floris.flow_field.calculate_wake(
-        #     no_wake=no_wake,
-        #     points=points,
-        #     track_n_upstream_wakes=track_n_upstream_wakes,
-        # )
 
         # TODO decide where to handle this sign issue
         if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
@@ -121,8 +111,91 @@ class FlorisInterface(LoggerBase):
         # Initialize solution space
         self.floris.initialize_domain()
 
-        # Perform the wake calculations
-        self.floris.steady_state_atmospheric_condition()
+        if num_tasks <= 1:
+            # Perform the wake calculations; not parallelized
+            self.floris.steady_state_atmospheric_condition()
+            return
+
+        # Calculate solutions in parallel
+
+        # Load appropriate parallelization library
+        if use_mpi:
+            from mpi4py.futures import MPIPoolExecutor as pool_executor
+        else:
+            from multiprocessing import Pool as pool_executor
+
+        # Save nominal yaw angles
+        yaw_angles = np.array(self.floris.farm.yaw_angles, copy=True)
+
+        # Decide how to best split the condition space            
+        n_ws_splits, n_wd_splits = split_num_tasks_to_wd_and_ws(
+            self.floris.flow_field.n_wind_speeds,
+            self.floris.flow_field.n_wind_directions,
+            num_tasks
+        )
+        num_tasks_effective = n_wd_splits * n_ws_splits
+        wd_array_nominal = self.floris.flow_field.wind_directions
+        ws_array_nominal = self.floris.flow_field.wind_speeds
+
+        # Split the wind speed and wind direction arrays
+        ws_array_splits = np.array_split(
+            np.arange(len(ws_array_nominal)),
+            n_ws_splits,
+        )
+        wd_array_splits = np.array_split(
+            np.arange(len(wd_array_nominal)), 
+            n_wd_splits,
+        )
+
+        # Construct list of inputs
+        multiargs = []
+        fi_tmp = self.copy()
+        for ws_split in ws_array_splits:
+            for wd_split in wd_array_splits:
+                # Overwrite subset of atmospheric conditions
+                fi_tmp.reinitialize(
+                    wind_directions=wd_array_nominal[wd_split],
+                    wind_speeds=ws_array_nominal[ws_split]
+                )
+                # Retrieve yaw angle subset
+                yaw_angles_subset = (
+                    yaw_angles.take(wd_split, axis=0).take(ws_split, axis=1)
+                )
+                multiargs.append((fi_tmp.floris.as_dict(), yaw_angles_subset))
+
+        # Perform parallel processing of all subsets
+        with pool_executor(processes=num_tasks_effective) as pool:
+            out_array = pool.starmap(_calculate_wake_subset, multiargs)
+
+        # Now merge all solutions
+        # grid_subsets = [f[0] for f in out_array]
+        flow_field_subsets = [f[1] for f in out_array]
+        # farm_subsets = [f[2] for f in out_array]
+
+        def merge_subsets(field, subset):
+            return np.concatenate(  # Merges wind speeds
+                [  
+                    np.concatenate(  # Merges wind directions
+                        [
+                            eval("f.{:s}".format(field)) for f in
+                            subset[wii*n_wd_splits:(wii+1)*n_wd_splits]
+                        ],
+                        axis=0
+                    )
+                    for wii in range(n_ws_splits)
+                ],
+                axis=1
+            )
+
+        # Update global floris flow_field properties with subset solutions
+        self.floris.flow_field.u_initial = merge_subsets("u_initial", flow_field_subsets)
+        self.floris.flow_field.v_initial = merge_subsets("v_initial", flow_field_subsets)
+        self.floris.flow_field.w_initial = merge_subsets("w_initial", flow_field_subsets)
+        self.floris.flow_field.u = merge_subsets("u", flow_field_subsets)
+        self.floris.flow_field.v = merge_subsets("v", flow_field_subsets)
+        self.floris.flow_field.w = merge_subsets("w", flow_field_subsets)
+        self.floris.flow_field.turbulence_intensity_field = merge_subsets("turbulence_intensity_field", flow_field_subsets)
+
 
     def calculate_no_wake(
         self,
@@ -772,15 +845,30 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
 
     return [in_region, out_region]
 
+def split_num_tasks_to_wd_and_ws(n_wind_speeds, n_wind_directions, num_tasks):
+    # Split the condition (wind directions/speeds) up for parallelization
+    if num_tasks > (n_wind_directions * n_wind_speeds):
+        n_ws_splits = n_wind_speeds
+        n_wd_splits = n_wind_directions
+    elif n_wind_directions <= 1:
+        n_ws_splits  = np.min([n_wind_speeds, num_tasks])
+        n_wd_splits = 1
+    elif n_wind_speeds <= 1:
+        n_ws_splits = 1
+        n_wd_splits = np.min([n_wind_directions, num_tasks])
+    else:
+        n_wd_splits = int(np.floor(num_tasks / n_wind_directions))
+        n_wd_splits = np.clip(n_wd_splits, 1, num_tasks)
+        n_ws_splits = int(np.floor(num_tasks / n_wd_splits))
+        
+    n_ws_splits = np.clip(n_ws_splits, 1, num_tasks)
+    n_wd_splits = np.clip(n_wd_splits, 1, num_tasks)
+    return n_ws_splits, n_wd_splits
 
 
-
-    ## Functionality removed in v3
-
-    def set_rotor_diameter(self, rotor_diameter):
-        """
-        This function has been replaced and no longer works correctly, assigning an error
-        """
-        raise Exception(
-            "FlorinInterface.set_rotor_diameter has been removed in favor of FlorinInterface.change_turbine. See examples/change_turbine/."
-        )
+def _calculate_wake_subset(fi_dict, yaw_angles):
+    fi = FlorisInterface(fi_dict)
+    fi.floris.farm.yaw_angles = yaw_angles
+    fi.floris.initialize_domain()  # Initialize solution space
+    fi.floris.steady_state_atmospheric_condition()  # Perform the wake calculations
+    return (fi.floris.grid, fi.floris.flow_field, fi.floris.farm)
