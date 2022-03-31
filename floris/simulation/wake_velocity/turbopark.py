@@ -14,6 +14,7 @@ from typing import Any, Dict
 
 from attrs import define, field
 import numpy as np
+from pathlib import Path
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
 import scipy.io
@@ -37,6 +38,14 @@ class TurbOParkVelocityDeficit(BaseModel):
     overlap_gauss_interp: RegularGridInterpolator = field(init=False)
     model_string = "turbopark"
 
+    def __attrs_post_init__(self) -> None:
+        lookup_table_matlab_file = Path(__file__).parent / "turbopark_lookup_table.mat"
+        lookup_table_file = scipy.io.loadmat(lookup_table_matlab_file)
+        dist = lookup_table_file['overlap_lookup_table'][0][0][0][0]
+        radius_down = lookup_table_file['overlap_lookup_table'][0][0][1][0]
+        overlap_gauss = lookup_table_file['overlap_lookup_table'][0][0][2]
+        self.overlap_gauss_interp = RegularGridInterpolator((dist, radius_down), overlap_gauss, method='linear', bounds_error=False)
+
     def prepare_function(
         self,
         grid: Grid,
@@ -49,14 +58,6 @@ class TurbOParkVelocityDeficit(BaseModel):
             z=grid.z,
             u_initial=flow_field.u_initial,
         )
-
-        file_name = os.path.dirname(os.path.realpath(__file__)) + '/turbopark_lookup_table.mat'
-        mat = scipy.io.loadmat(file_name)
-        dist = mat['overlap_lookup_table'][0][0][0][0]
-        radius_down = mat['overlap_lookup_table'][0][0][1][0]
-        overlap_gauss = mat['overlap_lookup_table'][0][0][2]
-
-        self.overlap_gauss_interp = RegularGridInterpolator((dist, radius_down), overlap_gauss, method='linear', bounds_error=False)
         return kwargs
 
     # @profile
