@@ -199,7 +199,10 @@ class TurbineGrid(Grid):
             ),
             dtype=floris_float_type
         )
-        # Calculate the radial distance from the center of the turbine rotor
+        # Calculate the radial distance from the center of the turbine rotor.
+        # If a grid resolution of 1 is selected, create a disc_grid of zeros, as
+        # np.linspace would just return the starting value of -1 * disc_area_radius
+        # which would place the point below the center of the rotor.
         if self.grid_resolution == 1:
             disc_grid = np.zeros((np.shape(disc_area_radius)[0], 1 ))
         else:
