@@ -39,7 +39,7 @@ from .farm import Farm
 from .grid import Grid, TurbineGrid, FlowFieldGrid, FlowFieldPlanarGrid
 from .flow_field import FlowField
 from .wake import WakeModelManager
-from .solver import sequential_solver, full_flow_sequential_solver, cc_solver, full_flow_cc_solver
+from .solver import sequential_solver, full_flow_sequential_solver, cc_solver, full_flow_cc_solver, turbopark_solver, full_flow_turbopark_solver
 from .floris import Floris
 
 
