@@ -66,9 +66,12 @@ class Grid(ABC):
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
     turbine_coordinates_array: NDArrayFloat = field(init=False)
-    x: NDArrayFloat = field(init=False)
-    y: NDArrayFloat = field(init=False)
-    z: NDArrayFloat = field(init=False)
+    x: NDArrayFloat = field(init=False, default=[])
+    y: NDArrayFloat = field(init=False, default=[])
+    z: NDArrayFloat = field(init=False, default=[])
+    x_sorted: NDArrayFloat = field(init=False)
+    y_sorted: NDArrayFloat = field(init=False)
+    z_sorted: NDArrayFloat = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
@@ -164,11 +167,11 @@ class TurbineGrid(Grid):
 
         In a y-z plane on the rotor swept area, the -2 dimension is a column of points and the -1 dimension is the row number.
         So the following line prints the 0'th column of the the 0'th turbine's grid:
-        print(grid.y[0,0,0,0,:])
-        print(grid.z[0,0,0,0,:])
+        print(grid.y_sorted[0,0,0,0,:])
+        print(grid.z_sorted[0,0,0,0,:])
         And this line prints a single point
-        print(grid.y[0,0,0,0,0])
-        print(grid.z[0,0,0,0,0])
+        print(grid.y_sorted[0,0,0,0,0])
+        print(grid.z_sorted[0,0,0,0,0])
         Note that the x coordinates are all the same for the rotor plane.
 
         """
@@ -225,16 +228,16 @@ class TurbineGrid(Grid):
         self.unsorted_indices = self.sorted_indices.argsort(axis=2)
 
         # Put the turbines into the final arrays in their sorted order
-        self.x = np.take_along_axis(_x, self.sorted_indices, axis=2)
-        self.y = np.take_along_axis(_y, self.sorted_indices, axis=2)
-        self.z = np.take_along_axis(_z, self.sorted_indices, axis=2)
+        self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=2)
+        self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=2)
+        self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=2)
 
     def finalize(self):
         # Replace the turbines in their unsorted order so that
         # we can report values in a sane way.
-        self.x = np.take_along_axis(self.x, self.unsorted_indices, axis=2)
-        self.y = np.take_along_axis(self.y, self.unsorted_indices, axis=2)
-        self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
+        self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=2)
+        self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=2)
+        self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
 
 
 @define
@@ -286,9 +289,9 @@ class FlowFieldGrid(Grid):
             indexing="ij"
         )
 
-        self.x = x_points[None, None, :, :, :]
-        self.y = y_points[None, None, :, :, :]
-        self.z = z_points[None, None, :, :, :]
+        self.x_sorted = x_points[None, None, :, :, :]
+        self.y_sorted = y_points[None, None, :, :, :]
+        self.z_sorted = z_points[None, None, :, :, :]
 
     def finalize(self):
         pass
@@ -350,9 +353,9 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x = x_points[None, None, :, :, :]
-            self.y = y_points[None, None, :, :, :]
-            self.z = z_points[None, None, :, :, :]
+            self.x_sorted = x_points[None, None, :, :, :]
+            self.y_sorted = y_points[None, None, :, :, :]
+            self.z_sorted = z_points[None, None, :, :, :]
 
         elif self.normal_vector == "x":  # Rules of thumb for cross plane
             if self.x1_bounds is None:
@@ -368,9 +371,9 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x = x_points[None, None, :, :, :]
-            self.y = y_points[None, None, :, :, :]
-            self.z = z_points[None, None, :, :, :]
+            self.x_sorted = x_points[None, None, :, :, :]
+            self.y_sorted = y_points[None, None, :, :, :]
+            self.z_sorted = z_points[None, None, :, :, :]
 
         elif self.normal_vector == "y":  # Rules of thumb for y plane
             if self.x1_bounds is None:
@@ -386,9 +389,9 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x = x_points[None, None, :, :, :]
-            self.y = y_points[None, None, :, :, :]
-            self.z = z_points[None, None, :, :, :]
+            self.x_sorted = x_points[None, None, :, :, :]
+            self.y_sorted = y_points[None, None, :, :, :]
+            self.z_sorted = z_points[None, None, :, :, :]
 
         # self.sorted_indices = self.x.argsort(axis=2)
         # self.unsorted_indices = self.sorted_indices.argsort(axis=2)

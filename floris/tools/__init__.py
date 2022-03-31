@@ -31,19 +31,19 @@ Examples:
     >>> dir(floris.tools)
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
-    'energy_ratio', 'floris_interface', 'flow_data',
+    'floris_interface', 'flow_data',
     'layout_functions', 'optimization', 'plotting', 'power_rose',
     'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
 """
 
-from .floris_interface import FlorisInterface, FlorisInterface_legacy_v24
+from .floris_interface import FlorisInterface
+from .floris_interface_legacy_reader import FlorisInterfaceLegacyV2
 from .visualization import visualize_cut_plane, visualize_quiver, plot_turbines_with_fi, plot_rotor_values
 from .wind_rose import WindRose
+from .uncertainty_interface import UncertaintyInterface
 
 # from floris.tools import (
     # cut_plane,
-    # energy_ratio,
-    # energy_ratio_single,
     # floris_interface,
     # flow_data,
     # interface_utilities,
