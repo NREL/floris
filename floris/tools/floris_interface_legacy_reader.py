@@ -200,17 +200,37 @@ if __name__ == "__main__":
     Please specify your input and output paths accordingly, and it will
     produce the necessary file.
     """
+    import argparse
+    from pathlib import Path
+
+    # Parse the input arguments
+    description = "Converts a FLORIS v2.4 input file to a FLORIS v3 compatible input file.\
+        The file format is changed from JSON to YAML and all inputs are mapped, as needed."
+
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("-i",
+                        "--input-file",
+                        nargs=1,
+                        required=True,
+                        help="Path to the legacy input file")
+    parser.add_argument("-o",
+                        "--output-file",
+                        nargs="?",
+                        default=None,
+                        help="Path to write the output file")
+    args = parser.parse_args()
 
     # Specify paths
-    legacy_json_path = "inputs/legacy_example_input.json"
-    floris_yaml_output_path = "converted_out/floris_input_file.yaml"
+    legacy_json_path = Path(args.input_file[0])
+    if args.output_file:
+        floris_yaml_output_path = args.output_file
+    else:
+        floris_yaml_output_path = legacy_json_path.stem + ".yaml"
 
     # Load legacy input .json file into V3 object
     fi = FlorisInterfaceLegacyV2(legacy_json_path)
 
     # Create output directory and save converted input file
-    fout = os.path.abspath(floris_yaml_output_path)
-    os.makedirs(os.path.dirname(fout), exist_ok=True)
-    fi.floris.to_file(fout)
+    fi.floris.to_file(floris_yaml_output_path)
 
-    print("Converted file saved to: {:s}".format(fout))
+    print(f"Converted file saved to: {floris_yaml_output_path}")
