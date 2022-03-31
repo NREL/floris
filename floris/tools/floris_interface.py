@@ -228,12 +228,12 @@ class FlorisInterface(LoggerBase):
             :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
         """
         # Get results vectors
-        x_flat = self.floris.grid.x[0, 0].flatten()
-        y_flat = self.floris.grid.y[0, 0].flatten()
-        z_flat = self.floris.grid.z[0, 0].flatten()
-        u_flat = self.floris.flow_field.u[0, 0].flatten()
-        v_flat = self.floris.flow_field.v[0, 0].flatten()
-        w_flat = self.floris.flow_field.w[0, 0].flatten()
+        x_flat = self.floris.grid.x_sorted[0, 0].flatten()
+        y_flat = self.floris.grid.y_sorted[0, 0].flatten()
+        z_flat = self.floris.grid.z_sorted[0, 0].flatten()
+        u_flat = self.floris.flow_field.u_sorted[0, 0].flatten()
+        v_flat = self.floris.flow_field.v_sorted[0, 0].flatten()
+        w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
 
         # Create a df of these
         if normal_vector == "z":
