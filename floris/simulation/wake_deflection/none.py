@@ -24,7 +24,7 @@ from floris.simulation import Grid
 class NoneVelocityDeflection(BaseModel):
     """
     The None deflection model is a placeholder code that simple ignores any
-    deflection and just returns an empty array of zeroes.
+    deflection and returns an array of zeroes.
     """
     model_string = "none"
 
@@ -35,15 +35,10 @@ class NoneVelocityDeflection(BaseModel):
     ) -> Dict[str, Any]:
 
         kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
             freestream_velocity=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer,
         )
         return kwargs
 
-    # @profile
     def function(
         self,
         x_i: np.ndarray,
@@ -53,13 +48,9 @@ class NoneVelocityDeflection(BaseModel):
         ct_i: np.ndarray,
         rotor_diameter_i: float,
         *,
-        x: np.ndarray,
-        y: np.ndarray,
-        z: np.ndarray,
         freestream_velocity: np.ndarray,
-        wind_veer: float,
     ):
-        """Skip all deflection calculations and returns empty array."""
+        """Skip all deflection calculations and returns zeros array."""
         self.logger.info(
             "The wake deflection model is set to 'none'. Deflection modeling disabled."
         )
