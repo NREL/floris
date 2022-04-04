@@ -95,6 +95,9 @@ class Farm(BaseClass):
             axis=2,
         )
 
+        # Initialize the turbine type map
+        self.turbine_type_map = self.turbine_type_map_sorted.copy()
+
     def construct_hub_heights(self):
         self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
 
