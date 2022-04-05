@@ -137,38 +137,36 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         self.farm.initialize(self.grid.sorted_indices)
 
 
-    def steady_state_atmospheric_condition(self):
+    def steady_state_atmospheric_condition(self, no_wake=False):
         """Perform the steady-state wind farm wake calculations. Note that
         initialize_domain() is required to be called before this function."""
 
         vel_model = self.wake.model_strings["velocity_model"]
 
-        # <<interface>>
-        # start = time.time()
-
-        if vel_model=="cc":
-            elapsed_time = cc_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
-        elif vel_model=="turbopark":
-            elapsed_time = turbopark_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+        if not no_wake:
+            if vel_model=="cc":
+                elapsed_time = cc_solver(
+                    self.farm,
+                    self.flow_field,
+                    self.grid,
+                    self.wake
+                )
+            elif vel_model=="turbopark":
+                elapsed_time = turbopark_solver(
+                    self.farm,
+                    self.flow_field,
+                    self.grid,
+                    self.wake
+                )
+            else:
+                elapsed_time = sequential_solver(
+                    self.farm,
+                    self.flow_field,
+                    self.grid,
+                    self.wake
+                )
         else:
-            elapsed_time = sequential_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
-        # end = time.time()
-        # elapsed_time = end - start
+            elapsed_time = 0.0
 
         self.grid.finalize()
         self.flow_field.finalize(self.grid.unsorted_indices)

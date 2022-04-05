@@ -101,9 +101,6 @@ class FlowField(FromDictMixin):
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
-        self.u = self.u_sorted.copy()
-        self.v = self.v_sorted.copy()
-        self.w = self.w_sorted.copy()
 
     def finalize(self, unsorted_indices):
         self.u = np.take_along_axis(self.u_sorted, unsorted_indices, axis=2)

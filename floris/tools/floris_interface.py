@@ -140,9 +140,8 @@ class FlorisInterface(LoggerBase):
         # Initialize solution space
         self.floris.initialize_domain()
 
-        if not no_wake:
-            # Perform the wake calculations
-            self.floris.steady_state_atmospheric_condition()
+        # Perform the wake calculations
+        self.floris.steady_state_atmospheric_condition(no_wake)
 
     def reinitialize(
         self,
