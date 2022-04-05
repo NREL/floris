@@ -143,6 +143,9 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         vel_model = self.wake.model_strings["velocity_model"]
 
+        # <<interface>>
+        # start = time.time()
+
         if vel_model=="cc":
             elapsed_time = cc_solver(
                 self.farm,
@@ -164,6 +167,8 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 self.grid,
                 self.wake
             )
+        # end = time.time()
+        # elapsed_time = end - start
 
         self.finalize()
         return elapsed_time

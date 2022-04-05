@@ -95,7 +95,6 @@ class Farm(BaseClass):
             axis=2,
         )
 
-
     def construct_hub_heights(self):
         self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
 
