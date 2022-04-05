@@ -144,8 +144,11 @@ class FlorisInterface(LoggerBase):
         yaw_angles: NDArrayFloat | list[float] | None = None,
     ) -> None:
         """
-        Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
-        :py:meth:`~.FlowField.calculate_wake` methods.
+        This function is similar to `calculate_wake()` except
+        that it does not apply a wake model. That is, the wind
+        farm is modeled as if there is no wake in the flow.
+        Yaw angles are used to reduce the power and thrust of
+        the turbine that is yawed.
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
