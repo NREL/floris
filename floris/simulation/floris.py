@@ -137,40 +137,35 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         self.farm.initialize(self.grid.sorted_indices)
 
 
-    def steady_state_atmospheric_condition(self, no_wake=False):
+    def steady_state_atmospheric_condition(self):
         """Perform the steady-state wind farm wake calculations. Note that
         initialize_domain() is required to be called before this function."""
 
         vel_model = self.wake.model_strings["velocity_model"]
 
-        if not no_wake:
-            if vel_model=="cc":
-                elapsed_time = cc_solver(
-                    self.farm,
-                    self.flow_field,
-                    self.grid,
-                    self.wake
-                )
-            elif vel_model=="turbopark":
-                elapsed_time = turbopark_solver(
-                    self.farm,
-                    self.flow_field,
-                    self.grid,
-                    self.wake
-                )
-            else:
-                elapsed_time = sequential_solver(
-                    self.farm,
-                    self.flow_field,
-                    self.grid,
-                    self.wake
-                )
+        if vel_model=="cc":
+            elapsed_time = cc_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
+        elif vel_model=="turbopark":
+            elapsed_time = turbopark_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
         else:
-            elapsed_time = 0.0
+            elapsed_time = sequential_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
 
-        self.grid.finalize()
-        self.flow_field.finalize(self.grid.unsorted_indices)
-        self.farm.finalize(self.grid.unsorted_indices)
+        self.finalize()
         return elapsed_time
 
     def solve_for_viz(self):
@@ -191,6 +186,13 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
+    def finalize(self):
+        # Once the wake calculation is finished, unsort the values to match
+        # the user-supplied order of things.
+
+        self.grid.finalize()
+        self.flow_field.finalize(self.grid.unsorted_indices)
+        self.farm.finalize(self.grid.unsorted_indices)
 
     ## I/O
 
