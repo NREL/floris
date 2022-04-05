@@ -23,6 +23,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -e .
+        pip install nbconvert  # For converting Jupyter notebook to python script in the next step
     - name: Run examples
       # Run all examples and test that they finish successfully. Do not evaluate the results.
       run: |
@@ -31,7 +32,7 @@ jobs:
         error_found=0  # 0 is false
         error_results="Error in example:"
 
-        # Run each example and check the exit status
+        # Run each Python script example
         for i in *.py; do
 
           # Skip these examples since they have additional dependencies
@@ -46,6 +47,27 @@ jobs:
             error_results="${error_results}"$'\n'" - ${i}"
             error_found=1
           fi
+        done
+
+        # Run all Jupyter notebooks
+        for i in *.ipynb; do
+
+          # Convert this notebook to a Python script
+          if ! jupyter nbconvert --to script $i; then
+            # On conversion error, report and go to the next notebook
+            error_results="${error_results}"$'\n'" - Error converting ${i} to Python script"
+            continue
+          fi
+
+          # Get the basename of the notebook since the converted script will have the same basename
+          script_name=`basename $i .ipynb`
+
+          # Run the converted script
+          if ! python "${script_name}.py"; then
+            error_results="${error_results}"$'\n'" - ${i}"
+            error_found=1
+          fi
+
         done
 
         if [[ $error_found ]]; then
