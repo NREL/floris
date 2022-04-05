@@ -24,7 +24,7 @@ from floris.simulation import Grid
 class NoneVelocityDeficit(BaseModel):
     """
     The None deficit model is a placeholder code that simple ignores any
-    wake wind speed deficits and just returns an empty array of zeroes.
+    wake wind speed deficits and returns an array of zeroes.
     """
     
     model_string = "none"
@@ -36,15 +36,10 @@ class NoneVelocityDeficit(BaseModel):
     ) -> Dict[str, Any]:
 
         kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
             u_initial=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer
         )
         return kwargs
 
-    # @profile
     def function(
         self,
         x_i: np.ndarray,
@@ -60,11 +55,7 @@ class NoneVelocityDeficit(BaseModel):
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
-        x: np.ndarray,
-        y: np.ndarray,
-        z: np.ndarray,
         u_initial: np.ndarray,
-        wind_veer: float
     ) -> None:
         self.logger.warning("The wake deficit model is set to 'none'. Wake modeling disabled.")
         return np.zeros_like(u_initial)
