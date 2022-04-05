@@ -324,7 +324,7 @@ print(f"    280 degrees: {difference[1, 0]:4.2f}%")
 
     Power % difference with yaw
         270 degrees: 7.39%
-        280 degrees: 0.11%
+        280 degrees: 0.13%
 
 ## Visualization
 
@@ -365,7 +365,7 @@ visualize_cut_plane(horizontal_plane, ax=axarr[1,1], title="280 - Yawed")
 
 
 
-    <matplotlib.collections.QuadMesh at 0x141c79780>
+    <matplotlib.collections.QuadMesh at 0x141104ee0>
 
 
 
@@ -451,9 +451,14 @@ Calculating AEP in FLORIS v3 leverages the vectorized framework to
 substantially reduce the computation time with respect to v2.4.
 Here, we demonstrate a simple AEP calculation for a 25-turbine farm
 using several different modeling options. We make the assumption
-that every wind speed and direction is equally likely.
+that every wind speed and direction is equally likely. We also
+report the time required for the computation using the Python
+`time.perf_counter()` function.
 
 ```python
+import time
+from typing import Tuple
+
 wind_directions = np.arange(0.0, 360.0, 5.0)
 wind_speeds = np.arange(5.0, 25.0, 1.0)
 
@@ -481,50 +486,44 @@ fi_cc = FlorisInterface("inputs/cc.yaml")
 fi_jensen.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
 fi_gch.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
 fi_cc.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
+
+def time_model_calculation(model_fi: FlorisInterface) -> Tuple[float, float]:
+    """
+    This function performs the wake calculation for a given
+    FlorisInterface object and computes the AEP while
+    tracking the amount of wall-time required for both steps.
+
+    Args:
+        model_fi (FlorisInterface): _description_
+        float (_type_): _description_
+
+    Returns:
+        tuple(float, float):
+            0: AEP
+            1: Wall-time for the computation
+    """
+    start = time.perf_counter()
+    model_fi.calculate_wake()
+    aep = model_fi.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
+    end = time.perf_counter()
+    return aep, end - start
+
+jensen_aep, jensen_compute_time = time_model_calculation(fi_jensen)
+gch_aep, gch_compute_time = time_model_calculation(fi_gch)
+cc_aep, cc_compute_time = time_model_calculation(fi_cc)
+
+print('Model    AEP (GWh)  Compute Time (s)')
+print('{:8s} {:<10.3f} {:<6.3f}'.format("Jensen", jensen_aep, jensen_compute_time))
+print('{:8s} {:<10.3f} {:<6.3f}'.format("GCH", gch_aep, gch_compute_time))
+print('{:8s} {:<10.3f} {:<6.3f}'.format("CC", cc_aep, cc_compute_time))
 ```
 
     Calculating AEP for 1440 wind direction and speed combinations...
     Number of turbines = 25
-
-Calculate the AEP and use the jupyter time command to show computation time:
-
-```python
-%%time
-fi_jensen.calculate_wake()
-jensen_aep = fi_jensen.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
-```
-
-    CPU times: user 3.12 s, sys: 1.39 s, total: 4.51 s
-    Wall time: 3.76 s
-
-```python
-%%time
-fi_gch.calculate_wake()
-gch_aep = fi_gch.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
-```
-
-    CPU times: user 5.62 s, sys: 2.64 s, total: 8.25 s
-    Wall time: 7.21 s
-
-```python
-%%time
-fi_cc.calculate_wake()
-cc_aep = fi_cc.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
-```
-
-    CPU times: user 7.87 s, sys: 3.07 s, total: 10.9 s
-    Wall time: 10.9 s
-
-```python
-# Show the results
-print('Jensen %.1f GWh' % jensen_aep)
-print('GCH %.1f GWh' % gch_aep)
-print('CC %.1f GWh' % cc_aep)
-```
-
-    Jensen 843.2 GWh
-    GCH 843.9 GWh
-    CC 839.3 GWh
+    Model    AEP (GWh)  Compute Time (s)
+    Jensen   843.233    3.321 
+    GCH      843.909    5.226 
+    CC       839.267    9.906 
 
 ## Wake Steering Design
 
@@ -554,9 +553,16 @@ yaw_opt = YawOptimizationSR(
 ```
 
 ```python
-%%time
+start = time.perf_counter()
+
 ## Calculate the optimum yaw angles for 25 turbines and 72 wind directions
 df_opt = yaw_opt.optimize()
+
+end = time.perf_counter()
+
+walltime = end - start
+print(f"Optimization wall time: {walltime:.3f} s")
+
 ```
 
     [Serial Refine] Processing pass=0, turbine_depth=0 (0.0 %)
@@ -573,8 +579,7 @@ df_opt = yaw_opt.optimize()
     [Serial Refine] Processing pass=1, turbine_depth=4 (78.6 %)
     [Serial Refine] Processing pass=1, turbine_depth=5 (85.7 %)
     [Serial Refine] Processing pass=1, turbine_depth=6 (92.9 %)
-    CPU times: user 2.24 s, sys: 214 ms, total: 2.46 s
-    Wall time: 2.09 s
+    Optimization wall time: 2.032 s
 
 In the results, T0 is the upstream turbine when wind direction is 270, while T6 is upstream at 90 deg
 
@@ -597,4 +602,4 @@ axarr[-1].set_xlabel('Wind Direction (Deg)')
 
 
 
-![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_39_1.png){: .center-image }
+![png]({{ site.baseurl }}/assets/images/00_getting_started/00_getting_started_34_1.png){: .center-image }
