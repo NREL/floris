@@ -49,7 +49,7 @@ class JimenezVelocityDeflection(BaseModel):
     ) -> Dict[str, Any]:
 
         kwargs = dict(
-            x=grid.x,
+            x=grid.x_sorted,
         )
         return kwargs
 

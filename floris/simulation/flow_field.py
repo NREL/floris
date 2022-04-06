@@ -34,14 +34,17 @@ class FlowField(FromDictMixin):
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
     turbulence_intensity: float = field(converter=float)
-    reference_wind_height: int = field(converter=int)
+    reference_wind_height: float = field(converter=float)
 
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
 
-    u_initial: NDArrayFloat = field(init=False, default=np.array([]))
-    v_initial: NDArrayFloat = field(init=False, default=np.array([]))
-    w_initial: NDArrayFloat = field(init=False, default=np.array([]))
+    u_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    v_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    w_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    u_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    v_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    w_sorted: NDArrayFloat = field(init=False, default=np.array([]))
     u: NDArrayFloat = field(init=False, default=np.array([]))
     v: NDArrayFloat = field(init=False, default=np.array([]))
     w: NDArrayFloat = field(init=False, default=np.array([]))
@@ -70,7 +73,7 @@ class FlowField(FromDictMixin):
         # determined by this line. Since the right-most dimension on grid.z is storing the values
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
-        wind_profile_plane = (grid.z / self.reference_wind_height) ** self.wind_shear
+        wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
 
         # If no hetergeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
@@ -80,9 +83,9 @@ class FlowField(FromDictMixin):
         # grid locations are determined in either 2 or 3 dimensions.
         else:
             if len(self.het_map[0][0].points[0]) == 2:
-                speed_ups = self.calculate_speed_ups(self.het_map, grid.x, grid.y)
+                speed_ups = self.calculate_speed_ups(self.het_map, grid.x_sorted, grid.y_sorted)
             elif len(self.het_map[0][0].points[0]) == 3:
-                speed_ups = self.calculate_speed_ups(self.het_map, grid.x, grid.y, grid.z)
+                speed_ups = self.calculate_speed_ups(self.het_map, grid.x_sorted, grid.y_sorted, grid.z_sorted)
 
         # Create the sheer-law wind profile
         # This array is of shape (# wind directions, # wind speeds, grid.template_array)
@@ -90,18 +93,18 @@ class FlowField(FromDictMixin):
         # here to do broadcasting from left to right (transposed), and then transpose back.
         # The result is an array the wind speed and wind direction dimensions on the left side
         # of the shape and the grid.template array on the right
-        self.u_initial = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * speed_ups
-        self.v_initial = np.zeros(np.shape(self.u_initial), dtype=self.u_initial.dtype)
-        self.w_initial = np.zeros(np.shape(self.u_initial), dtype=self.u_initial.dtype)
+        self.u_initial_sorted = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * speed_ups
+        self.v_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
+        self.w_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
 
-        self.u = self.u_initial.copy()
-        self.v = self.v_initial.copy()
-        self.w = self.w_initial.copy()
+        self.u_sorted = self.u_initial_sorted.copy()
+        self.v_sorted = self.v_initial_sorted.copy()
+        self.w_sorted = self.w_initial_sorted.copy()
 
     def finalize(self, unsorted_indices):
-        self.u = np.take_along_axis(self.u, unsorted_indices, axis=2)
-        self.v = np.take_along_axis(self.v, unsorted_indices, axis=2)
-        self.w = np.take_along_axis(self.w, unsorted_indices, axis=2)
+        self.u = np.take_along_axis(self.u_sorted, unsorted_indices, axis=2)
+        self.v = np.take_along_axis(self.v_sorted, unsorted_indices, axis=2)
+        self.w = np.take_along_axis(self.w_sorted, unsorted_indices, axis=2)
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
         if z is not None:

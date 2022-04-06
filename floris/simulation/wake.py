@@ -19,13 +19,16 @@ from floris.simulation import BaseClass, BaseModel
 from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
+    NoneVelocityDeflection,
 )
 from floris.simulation.wake_combination import FLS, MAX, SOSFS
-from floris.simulation.wake_turbulence.crespo_hernandez import CrespoHernandez
+from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
 from floris.simulation.wake_velocity import (
+    NoneVelocityDeficit,
     CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
-    JensenVelocityDeficit
+    JensenVelocityDeficit,
+    TurbOParkVelocityDeficit,
 )
 
 
@@ -37,15 +40,19 @@ MODEL_MAP = {
     },
     "deflection_model": {
         "jimenez": JimenezVelocityDeflection,
-        "gauss": GaussVelocityDeflection
+        "gauss": GaussVelocityDeflection,
+        "none": NoneVelocityDeflection
     },
     "turbulence_model": {
+        "none": NoneWakeTurbulence,
         "crespo_hernandez": CrespoHernandez
     },
     "velocity_model": {
+        "none": NoneVelocityDeficit,
         "cc": CumulativeGaussCurlVelocityDeficit,
         "gauss": GaussVelocityDeficit,
-        "jensen": JensenVelocityDeficit
+        "jensen": JensenVelocityDeficit,
+        "turbopark": TurbOParkVelocityDeficit
     },
 }
 
@@ -79,7 +86,10 @@ class WakeModelManager(BaseClass):
 
     def __attrs_post_init__(self) -> None:
         model: BaseModel = MODEL_MAP["velocity_model"][self.model_strings["velocity_model"]]
-        model_parameters = self.wake_velocity_parameters[self.model_strings["velocity_model"]]
+        if self.model_strings["velocity_model"].lower() == "none":
+            model_parameters = None
+        else:
+            model_parameters = self.wake_velocity_parameters[self.model_strings["velocity_model"]]
         if model_parameters is None:
             # Use model defaults
             self.velocity_model = model()
@@ -87,14 +97,20 @@ class WakeModelManager(BaseClass):
             self.velocity_model = model.from_dict(model_parameters)
 
         model: BaseModel = MODEL_MAP["deflection_model"][self.model_strings["deflection_model"]]
-        model_parameters = self.wake_deflection_parameters[self.model_strings["deflection_model"]]
+        if self.model_strings["deflection_model"].lower() == "none":
+            model_parameters = None
+        else:
+            model_parameters = self.wake_deflection_parameters[self.model_strings["deflection_model"]]
         if model_parameters is None:
             self.deflection_model = model()
         else:
             self.deflection_model = model.from_dict(model_parameters)
 
         model: BaseModel = MODEL_MAP["turbulence_model"][self.model_strings["turbulence_model"]]
-        model_parameters = self.wake_turbulence_parameters[self.model_strings["turbulence_model"]]
+        if self.model_strings["turbulence_model"].lower() == "none":
+            model_parameters = None
+        else:
+            model_parameters = self.wake_turbulence_parameters[self.model_strings["turbulence_model"]]
         if model_parameters is None:
             self.turbulence_model = model()
         else:

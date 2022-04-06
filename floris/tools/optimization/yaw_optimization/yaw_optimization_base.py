@@ -14,12 +14,10 @@
 
 
 import copy
+from time import perf_counter as timerpc
 
 import numpy as np
 import pandas as pd
-
-from ....utilities import wrap_360
-from floris.tools import FlorisInterface
 
 from .yaw_optimization_tools import (
     derive_downstream_turbines,
@@ -118,7 +116,7 @@ class YawOptimization:
         """
 
         # Save turbine object to self
-        self.fi = FlorisInterface(fi.floris.as_dict())
+        self.fi = fi.copy()
         self.nturbs = len(self.fi.layout_x)
 
         # # Check floris options
@@ -216,7 +214,7 @@ class YawOptimization:
             nturbs = np.shape(self._x0_subset.shape[2])
 
         # Then process maximum yaw angle
-        if isinstance(variable, float):
+        if isinstance(variable, (int, float)):
             # If single value, copy over to all turbines
             variable = np.tile(variable, (nturbs))
 
@@ -252,7 +250,7 @@ class YawOptimization:
         self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
 
         # Initialize subset variables as full set
-        self.fi_subset = FlorisInterface(self.fi.floris.as_dict())
+        self.fi_subset = self.fi.copy()
         nwinddirections_subset = copy.deepcopy(self.fi.floris.flow_field.n_wind_directions)
         minimum_yaw_angle_subset = copy.deepcopy(self.minimum_yaw_angle)
         maximum_yaw_angle_subset = copy.deepcopy(self.maximum_yaw_angle)
@@ -522,7 +520,7 @@ class YawOptimization:
         self,
         farm_power_opt_subset,
         yaw_angles_opt_subset,
-        min_yaw_offset=0.10,
+        min_yaw_offset=0.01,
         min_power_gain_for_yaw=0.02,
         verbose=True,
     ):
@@ -560,12 +558,16 @@ class YawOptimization:
 
         print("Verifying convergence of the found optimal yaw angles.")
 
+        # Start timer
+        start_time = timerpc()
+
         # Define variables locally
         yaw_angles_opt_subset = np.array(yaw_angles_opt_subset, copy=True)
         yaw_angles_baseline_subset = self._yaw_angles_baseline_subset
         farm_power_baseline_subset = self._farm_power_baseline_subset
+        turbs_to_opt_subset = self._turbs_to_opt_subset
 
-        # Round small nonzero yaw angles
+        # Round small nonzero yaw angles to zero
         ydiff = np.abs(yaw_angles_opt_subset - yaw_angles_baseline_subset)
         ids = np.where((ydiff < min_yaw_offset) & (ydiff > 0.0))
         if len(ids[0]) > 0:
@@ -576,8 +578,8 @@ class YawOptimization:
             ydiff[ids] = 0.0
 
         # Turbines to test whether their angles sufficiently improve farm power
-        ids = np.where((self._turbs_to_opt_subset) & (ydiff > min_yaw_offset))
-        
+        ids = np.where((turbs_to_opt_subset) & (ydiff > min_yaw_offset))
+
         # Define situations that need to be calculated and find farm power.
         # Each situation basically contains the exact same conditions as the
         # baseline conditions and optimal yaw angles, besides for a single
@@ -585,70 +587,101 @@ class YawOptimization:
         # typically 0.0 deg). This way, we investigate whether the yaw offset
         # of that turbine really adds significant uplift to the farm power
         # production.
-        wd_array = self.fi_subset.floris.flow_field.wind_directions[ids[0]]
-        # ws_array = self.fi_subset.floris.flow_field.wind_speeds[ids[1]]
-        turbine_weights = self._turbine_weights_subset[ids[0]]
-        yaw_angles = yaw_angles_opt_subset[ids[0], :]
-        for wdii, ti in enumerate(ids[2]):
-            yaw_angles[wdii, 0, ti] = \
-                yaw_angles_baseline_subset[ids[0][wdii], 0, ti]
+
+        # For each turbine in the farm, reset its values to baseline. Thus,
+        # we copy the atmospheric conditions n_turbs times and for each
+        # copy of atmospheric conditions, we reset that turbine's yaw angle
+        # to its baseline value for all conditions.
+        n_turbs = len(self.fi.layout_x)
+        sp = (n_turbs, 1, 1)  # Tile shape for matrix expansion
+        wd_array_nominal = self.fi_subset.floris.flow_field.wind_directions
+        n_wind_directions = len(wd_array_nominal)
+        yaw_angles_verify = np.tile(yaw_angles_opt_subset, sp)
+        yaw_angles_bl_verify = np.tile(yaw_angles_baseline_subset, sp)
+        turbine_id_array = np.zeros(np.shape(yaw_angles_verify)[0], dtype=int)
+        for ti in range(n_turbs):
+            ids = ti * n_wind_directions + np.arange(n_wind_directions)
+            yaw_angles_verify[ids, :, ti] = yaw_angles_bl_verify[ids, :, ti]
+            turbine_id_array[ids] = ti
 
         # Now evaluate all situations
+        farm_power_baseline_verify = np.tile(farm_power_baseline_subset, (n_turbs, 1))
         farm_power = self._calculate_farm_power(
-            yaw_angles=yaw_angles,
-            wd_array=wd_array,
-            turbine_weights=turbine_weights
+            yaw_angles=yaw_angles_verify,
+            wd_array=np.tile(wd_array_nominal, n_turbs),
+            turbine_weights=np.tile(self._turbs_to_opt_subset, sp)
         )
 
         # Calculate power uplift for optimal solutions
-        uplift_o = 100.0 * (
-            farm_power_opt_subset[ids[0]].flatten() /
-            farm_power_baseline_subset[ids[0]].flatten()
-        ) - 100.0
-        
+        uplift_o = 100 * (
+            np.tile(farm_power_opt_subset, (n_turbs, 1)) /
+            farm_power_baseline_verify - 1.0
+        )
+
         # Calculate power uplift for all cases we evaluated
-        uplift_n = 100.0 * (
-            farm_power.flatten() /
-            farm_power_baseline_subset[ids[0]].flatten()
-        ) - 100.0
+        uplift_n = 100.0 * (farm_power / farm_power_baseline_verify - 1.0)
 
         # Check difference in uplift, where each row represents a different
         # situation (i.e., where one turbine was set to its baseline yaw angle
         # instead of its optimal yaw angle).
         dp = uplift_o - uplift_n
-        ids_to_simplify = np.where(dp < min_power_gain_for_yaw)[0]
-        ids = (ids[0][ids_to_simplify], 0, ids[2][ids_to_simplify])
-        yaw_angles_opt_subset[ids] = yaw_angles_baseline_subset[ids]
-        n = len(ids_to_simplify)
+        ids_to_simplify = np.where(dp < min_power_gain_for_yaw)
+        ids_to_simplify = (
+            np.remainder(ids_to_simplify[0], n_wind_directions),  # Wind direction identifier
+            ids_to_simplify[1],  # Wind speed identifier
+            turbine_id_array[ids_to_simplify[0]],  # Turbine identifier
+        )
+
+        # Overwrite yaw angles that insufficiently increased farm power with baseline values
+        yaw_angles_opt_subset[ids_to_simplify] = (
+            yaw_angles_baseline_subset[ids_to_simplify]
+        )
+
+        n = len(ids_to_simplify[0])
         if n > 0:
             # Yaw angles notably changed: recalculate farm powers
-            farm_power_opt_subset_new = self._calculate_farm_power(
-                yaw_angles_opt_subset)
+            farm_power_opt_subset_new = (
+                self._calculate_farm_power(yaw_angles_opt_subset)
+            )
 
             if verbose:
                 # Calculate old uplift for all conditions
-                uplift_o = 100.0 * (
-                    farm_power_opt_subset.flatten() /
-                    farm_power_baseline_subset.flatten()
+                dP_old = 100.0 * (
+                    farm_power_opt_subset /
+                    farm_power_baseline_subset
                 ) - 100.0
 
                 # Calculate new uplift for all conditions
-                uplift_n = 100.0 * (
-                    farm_power_opt_subset_new.flatten() /
-                    farm_power_baseline_subset.flatten()
+                dP_new = 100.0 * (
+                    farm_power_opt_subset_new /
+                    farm_power_baseline_subset
                 ) - 100.0
 
                 # Calculate differences in power uplift
-                dp = uplift_o - uplift_n
-                id_max_loss = np.argmax(dp)
+                diff_uplift = dP_old - dP_new
+                ids_max_loss = np.where(np.nanmax(diff_uplift) == diff_uplift)
+                jj = (ids_max_loss[0][0], ids_max_loss[1][0])
+                ws_array_nominal = self.fi_subset.floris.flow_field.wind_speeds
                 print(
                     "Nullified the optimal yaw offset for {:d}".format(n) +
-                    " turbines over all wind directions. The maximum change " +
-                    "in power uplift: from {:.3f}% to {:.3f}%.".format(
-                        uplift_o[id_max_loss], uplift_n[id_max_loss]
+                    " conditions and turbines."
+                 )
+                print(
+                     "Simplifying the yaw angles for these conditions lead " +
+                     "to a maximum change in wake-steering power uplift from "
+                     + "{:.5f}% to {:.5f}% at ".format(dP_old[jj], dP_new[jj])
+                     + " WD = {:.1f} deg and WS = {:.1f} m/s.".format(
+                        wd_array_nominal[jj[0]], ws_array_nominal[jj[1]],
                     )
                 )
 
+                t = timerpc() - start_time
+                print(
+                    "Time spent to verify the convergence of the optimal " +
+                    "yaw angles: {:.3f} s.".format(t)
+                )
+
+            # Return optimal solutions to the user
             farm_power_opt_subset = farm_power_opt_subset_new
 
         return yaw_angles_opt_subset, farm_power_opt_subset

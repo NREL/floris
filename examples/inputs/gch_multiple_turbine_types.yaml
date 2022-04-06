@@ -5,7 +5,7 @@ floris_version: v3.0.0
 
 logging:
   console:
-    enable: false
+    enable: true
     level: WARNING
   file:
     enable: false
@@ -19,19 +19,16 @@ farm:
   layout_x:
   - 0.0
   - 630.0
-  - 1260.0
   layout_y:
   - 0.0
   - 0.0
-  - 0.0
   turbine_type:
-  - nrel_5MW
   - nrel_5MW
   - iea_10MW
 
 flow_field:
   air_density: 1.225
-  reference_wind_height: 90.0
+  reference_wind_height: 90.0 # Since multiple defined turbines, must specify explicitly the reference wind height
   turbulence_intensity: 0.06
   wind_directions:
   - 270.0

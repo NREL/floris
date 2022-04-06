@@ -38,7 +38,17 @@ fi.reinitialize(
 )
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
-yaw_opt = YawOptimizationSR(fi)
+# Now, we enable the verify_convergence option. This function is useful to prevent
+# yaw misalignment that increases the wind farm power production by a negligible
+# amount. For example, at high wind speeds (e.g., 16 m/s), a turbine might yaw
+# by a substantial amount to increase the power production by less than 1 W. This
+# is typically the result of numerical inprecision of the power coefficient curve,
+# which slightly differs for different above-rated wind speeds. The option
+# verify_convergence therefore refines and validates the yaw angle choices
+# but has no effect on the predicted power uplift from wake steering.
+# Hence, it should mostly be used when actually synthesizing a practicable
+# wind farm controller.
+yaw_opt = YawOptimizationSR(fi, verify_convergence=True)
 df_opt = yaw_opt.optimize()
 
 print("Optimization results:")
@@ -49,7 +59,13 @@ for t in range(3):
     df_opt['t%d' % t] = df_opt.yaw_angles_opt.apply(lambda x: x[t])
 
 # Show the results: optimal yaw angles
-fig, axarr = plt.subplots(nrows=4, ncols=4, sharex=True, sharey=True, figsize=(10, 8))
+fig, axarr = plt.subplots(
+    nrows=4,
+    ncols=4,
+    sharex=True,
+    sharey=True,
+    figsize=(10, 8)
+)
 jj = 0
 for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
     xi = np.remainder(ii, 4)
@@ -73,7 +89,13 @@ for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
     plt.tight_layout()
 
 # Show the results: baseline and optimized farm power
-fig, axarr = plt.subplots(nrows=4, ncols=4, sharex=True, figsize=(10, 8))
+fig, axarr = plt.subplots(
+    nrows=4,
+    ncols=4,
+    sharex=True,
+    sharey=True,
+    figsize=(10, 8)
+)
 jj = 0
 for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
     xi = np.remainder(ii, 4)
@@ -87,6 +109,7 @@ for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
     ax.plot(wd, power_baseline / 1e6, color='k', label='Baseline')
     ax.plot(wd, power_opt / 1e6, color='r', label='Optimized')
     ax.set_title("Wind speed = {:.1f} m/s".format(ws), size=10)
+    ax.set_ylim([0.0, 16.0])
     if ((ii == 0) & (jj == 0)):
         ax.legend()
     ax.grid(True)

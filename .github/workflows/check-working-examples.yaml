@@ -1,0 +1,77 @@
+name: Check Examples APIs
+
+on: [push, pull_request]
+
+jobs:
+
+  examples-check:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.9]
+        os: [ubuntu-latest] #, macos-latest, windows-latest]
+      fail-fast: False
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install project
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+        pip install nbconvert  # For converting Jupyter notebook to python script in the next step
+    - name: Run examples
+      # Run all examples and test that they finish successfully. Do not evaluate the results.
+      run: |
+
+        cd examples/
+        error_found=0  # 0 is false
+        error_results="Error in example:"
+
+        # Run each Python script example
+        for i in *.py; do
+
+          # Skip these examples since they have additional dependencies
+          if [[ $i == *11* ]]; then
+            continue
+          fi
+          if [[ $i == *16* ]]; then
+            continue
+          fi
+
+          if ! python $i; then
+            error_results="${error_results}"$'\n'" - ${i}"
+            error_found=1
+          fi
+        done
+
+        # Run all Jupyter notebooks
+        for i in *.ipynb; do
+
+          # Convert this notebook to a Python script
+          if ! jupyter nbconvert --to script $i; then
+            # On conversion error, report and go to the next notebook
+            error_results="${error_results}"$'\n'" - Error converting ${i} to Python script"
+            continue
+          fi
+
+          # Get the basename of the notebook since the converted script will have the same basename
+          script_name=`basename $i .ipynb`
+
+          # Run the converted script
+          if ! python "${script_name}.py"; then
+            error_results="${error_results}"$'\n'" - ${i}"
+            error_found=1
+          fi
+
+        done
+
+        if [[ $error_found ]]; then
+          echo "${error_results}"
+        fi
+
+        exit $error_found

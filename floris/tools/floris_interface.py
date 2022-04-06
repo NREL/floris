@@ -78,10 +78,32 @@ class FlorisInterface(LoggerBase):
         # Needed for a direct call to fi.calculate_wake without fi.reinitialize
         self.floris.flow_field.het_map = het_map
 
+        # If ref height is -1, assign the hub height
+        if self.floris.flow_field.reference_wind_height == -1:
+            self.assign_hub_height_to_ref_height()
+
+        # Make a check on reference height and provide a helpful warning
+        unique_heights = np.unique(self.floris.farm.hub_heights)
+        if ((len(unique_heights) == 1) and (self.floris.flow_field.reference_wind_height!=unique_heights[0])):
+            err_msg = 'The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height.'
+            self.logger.warning(err_msg, stack_info=True)
+
+    def assign_hub_height_to_ref_height(self):
+
+        # Confirm can do this operation
+        unique_heights = np.unique(self.floris.farm.hub_heights)
+        if (len(unique_heights) > 1):
+            raise ValueError("To assign hub heights to reference height, can not have more than one specified height. Current length is {}.".format(len(unique_heights)))
+
+        self.floris.flow_field.reference_wind_height = unique_heights[0]
+
+    def copy(self):
+        """Create an independent copy of the current FlorisInterface object"""
+        return FlorisInterface(self.floris.as_dict())
+
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
-        # no_wake: bool = False,
         # points: NDArrayFloat | list[float] | None = None,
         # track_n_upstream_wakes: bool = False,
     ) -> None:
@@ -92,9 +114,6 @@ class FlorisInterface(LoggerBase):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
-            no_wake: (bool, optional): When *True* updates the turbine
-                quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to *False*.
             points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
                 coordinates at which the flow field velocity is to be recorded. Defaults
                 to None.
@@ -108,10 +127,46 @@ class FlorisInterface(LoggerBase):
         # )
 
         # TODO decide where to handle this sign issue
-        if yaw_angles is not None:
+        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
+            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
+                # TODO: Implement wake steering for the TurbOPark model
+                raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
             self.floris.farm.yaw_angles = yaw_angles
 
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Perform the wake calculations
         self.floris.steady_state_atmospheric_condition()
+
+    def calculate_no_wake(
+        self,
+        yaw_angles: NDArrayFloat | list[float] | None = None,
+    ) -> None:
+        """
+        This function is similar to `calculate_wake()` except
+        that it does not apply a wake model. That is, the wind
+        farm is modeled as if there is no wake in the flow.
+        Yaw angles are used to reduce the power and thrust of
+        the turbine that is yawed.
+
+        Args:
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+        """
+
+        # TODO decide where to handle this sign issue
+        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
+            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
+                # TODO: Implement wake steering for the TurbOPark model
+                raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
+            self.floris.farm.yaw_angles = yaw_angles
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Finalize values to user-supplied order
+        self.floris.finalize()
 
     def reinitialize(
         self,
@@ -200,12 +255,12 @@ class FlorisInterface(LoggerBase):
             :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
         """
         # Get results vectors
-        x_flat = self.floris.grid.x[0, 0].flatten()
-        y_flat = self.floris.grid.y[0, 0].flatten()
-        z_flat = self.floris.grid.z[0, 0].flatten()
-        u_flat = self.floris.flow_field.u[0, 0].flatten()
-        v_flat = self.floris.flow_field.v[0, 0].flatten()
-        w_flat = self.floris.flow_field.w[0, 0].flatten()
+        x_flat = self.floris.grid.x_sorted[0, 0].flatten()
+        y_flat = self.floris.grid.y_sorted[0, 0].flatten()
+        z_flat = self.floris.grid.z_sorted[0, 0].flatten()
+        u_flat = self.floris.flow_field.u_sorted[0, 0].flatten()
+        v_flat = self.floris.flow_field.v_sorted[0, 0].flatten()
+        w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
 
         # Create a df of these
         if normal_vector == "z":
@@ -296,6 +351,7 @@ class FlorisInterface(LoggerBase):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -324,14 +380,14 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute the cutplane
-        horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1])
+        horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1], "z")
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
         self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake()
+        self.calculate_wake(yaw_angles=current_yaw_angles)
 
         return horizontal_plane
 
@@ -371,11 +427,11 @@ class FlorisInterface(LoggerBase):
             wd = self.floris.flow_field.wind_directions
         if ws is None:
             ws = self.floris.flow_field.wind_speeds
-
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -404,14 +460,14 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute the cutplane
-        cross_plane = CutPlane(df, y_resolution, z_resolution)
+        cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
         self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake()
+        self.calculate_wake(yaw_angles=current_yaw_angles)
 
         return cross_plane
 
@@ -455,6 +511,7 @@ class FlorisInterface(LoggerBase):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -483,14 +540,14 @@ class FlorisInterface(LoggerBase):
         )
 
         # Compute the cutplane
-        y_plane = CutPlane(df, x_resolution, z_resolution)
+        y_plane = CutPlane(df, x_resolution, z_resolution, "y")
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
         self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake()
+        self.calculate_wake(yaw_angles=current_yaw_angles)
 
         return y_plane
 
@@ -543,10 +600,6 @@ class FlorisInterface(LoggerBase):
 
     def get_farm_power(
         self,
-        include_unc=False,
-        unc_pmfs=None,
-        unc_options=None,
-        no_wake=False,
         use_turbulence_correction=False,
     ):
         """
@@ -557,56 +610,12 @@ class FlorisInterface(LoggerBase):
         original wind direction and yaw angles.
 
         Args:
-            include_unc (bool): When *True*, uncertainty in wind direction
-                and/or yaw position is included when determining wind farm
-                power. Defaults to *False*.
-            unc_pmfs (dictionary, optional): A dictionary containing optional
-                probability mass functions describing the distribution of wind
-                direction and yaw position deviations when wind direction and/or
-                yaw position uncertainty is included in the power calculations.
-                Contains the following key-value pairs:
-
-                -   **wd_unc** (*np.array*): Wind direction deviations from the
-                    original wind direction.
-                -   **wd_unc_pmf** (*np.array*): Probability of each wind
-                    direction deviation in **wd_unc** occuring.
-                -   **yaw_unc** (*np.array*): Yaw angle deviations from the
-                    original yaw angles.
-                -   **yaw_unc_pmf** (*np.array*): Probability of each yaw angle
-                    deviation in **yaw_unc** occuring.
-
-                Defaults to None, in which case default PMFs are calculated
-                using values provided in **unc_options**.
-            unc_options (dictionary, optional): A dictionary containing values
-                used to create normally-distributed, zero-mean probability mass
-                functions describing the distribution of wind direction and yaw
-                position deviations when wind direction and/or yaw position
-                uncertainty is included. This argument is only used when
-                **unc_pmfs** is None and contains the following key-value pairs:
-
-                -   **std_wd** (*float*): A float containing the standard
-                    deviation of the wind direction deviations from the
-                    original wind direction.
-                -   **std_yaw** (*float*): A float containing the standard
-                    deviation of the yaw angle deviations from the original yaw
-                    angles.
-                -   **pmf_res** (*float*): A float containing the resolution in
-                    degrees of the wind direction and yaw angle PMFs.
-                -   **pdf_cutoff** (*float*): A float containing the cumulative
-                    distribution function value at which the tails of the
-                    PMFs are truncated.
-
-                Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw':
-                1.75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-            no_wake: (bool, optional): When *True* updates the turbine
-                quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to *False*.
             use_turbulence_correction: (bool, optional): When *True* uses a
                 turbulence parameter to adjust power output calculations.
                 Defaults to *False*.
 
         Returns:
-            float: Sum of wind turbine powers.
+            float: Sum of wind turbine powers in W.
         """
         # TODO: Turbulence correction used in the power calculation, but may not be in
         # the model yet
@@ -615,231 +624,103 @@ class FlorisInterface(LoggerBase):
         # for turbine in self.floris.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
 
-        if include_unc:
-            unc_pmfs = _generate_uncertainty_parameters(unc_options, unc_pmfs)
-
-            # TODO: The original form of this is:
-            # self.floris.farm.wind_map.input_direction[0], but it's unclear why we're
-            # capping at just the first wind direction. Should this behavior be kept?
-            # I'm unsure as to how the first wind direction is the original, so it could
-            # just be a naming thing that's throwing me off....
-            wd_orig = self.floris.flow_field.wind_directions
-
-            yaw_angles = self.floris.farm.yaw_angles()
-            self.reinitialize(wind_direction=wd_orig + unc_pmfs["wd_unc"])
-            power_at_yaw = [
-                self.get_farm_power_for_yaw_angle(yaw_angles + delta_yaw, no_wake=no_wake)
-                for delta_yaw in unc_pmfs["yaw_unc"]
-            ]
-            mean_farm_power = unc_pmfs["wd_unc_pmf"] * unc_pmfs["yaw_unc_pmf"] * np.array(power_at_yaw)
-
-            # reinitialize with original values
-            self.reinitialize(wind_direction=wd_orig)
-            self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
-            return mean_farm_power
-
         turbine_powers = self.get_turbine_powers()
-        # for i in range(self.floris.farm.n_turbines):
-        #     avg_v_i = average_velocity(
-        #         self.floris.flow_field.u,
-        #         ix_filter=[i]
-        #     )
-        #     power_i = power(
-        #         air_density=self.floris.flow_field.air_density,
-        #         velocities=self.floris.flow_field.u,
-        #         yaw_angle=self.floris.farm.yaw_angles,
-        #         pP=self.floris.turbine.pP,
-        #         power_interp=self.floris.turbine.power_interp,
-        #         ix_filter=[i]
-        #     )
-        #     print(i, avg_v_i[0,0,0], power_i[0,0,0])
-        # print( "total, MW", np.sum(turbine_powers[0,0]) / 1000000 )
         return np.sum(turbine_powers, axis=2)
 
     def get_farm_AEP(
         self,
-        wd: NDArrayFloat | list[float],
-        ws: NDArrayFloat | list[float],
-        freq: NDArrayFloat | list[list[float]],
-        yaw: NDArrayFloat | list[float] | None = None,
-        limit_ws: bool = False,
-        ws_limit_tol: float = 0.001,
-        ws_cutout: float = 30.0,
+        freq,
+        cut_in_wind_speed=0.001,
+        cut_out_wind_speed=None,
+        yaw_angles=None,
+        no_wake=False,
     ) -> float:
         """
         Estimate annual energy production (AEP) for distributions of wind speed, wind
-        direction, wind rose probability, and yaw offset. This can be computed for
-        pre-determined wind direction and wind speed combinations, as was the case in
-        FLORIS v2, or additionally, the unique wind directions, wind speeds, and their
-        probabilities can be input.
+        direction, frequency of occurrence, and yaw offset.
 
         Args:
-            wd (NDArrayFloat | list[float]): List or array of wind direction values.
-                Either a unique list of wind directions can be used or the wind
-                directions corresponding to a pre-computed set of combinations
-                should be used.
-            ws (NDArrayFloat | list[float]): List or array of wind speed values.
-                Either a unique list of wind speeds can be used or the wind speeds
-                corresponding to a pre-computed set of combinations should be used.
-            freq (NDArrayFloat | list[list[float]]): Frequencies corresponding to either
-                the pre-computed combinations of wind directions and wind speeds or the
-                full wind rose with dimensions (N wind directions x N wind speeds).
-            yaw (NDArrayFloat | list[float] | None, optional): List or array of yaw
-                values if wake is steering implemented that correspond with the number
-                of wind directions. Defaults to None.
-            limit_ws (bool, optional): When *True*, detect wind speed when power
-                reaches it's maximum value for a given wind direction. For all
-                higher wind speeds, use last calculated value when below cut
-                out. Defaults to False.
-            ws_limit_tol (float, optional): Tolerance fraction for determining
-                wind speed where power stops changing. If limit_ws is *True*,
-                assume power remains constant up to cut out for wind speeds
-                above the point where power changes less than ws_limit_tol of
-                the previous power. Defaults to 0.001.
-            ws_cutout (float, optional): Cut out wind speed (m/s). If limit_ws
-                is *True*, assume power is zero for wind speeds greater than or
-                equal to ws_cutout. Defaults to 30.0
+            freq (NDArrayFloat): NumPy array with shape (n_wind_directions,
+                n_wind_speeds) with the frequencies of each wind direction and
+                wind speed combination. These frequencies should typically sum
+                up to 1.0 and are used to weigh the wind farm power for every
+                condition in calculating the wind farm's AEP.
+            cut_in_wind_speed (float, optional): Wind speed in m/s below which
+                any calculations are ignored and the wind farm is known to 
+                produce 0.0 W of power. Note that to prevent problems with the
+                wake models at negative / zero wind speeds, this variable must
+                always have a positive value. Defaults to 0.001 [m/s].
+            cut_out_wind_speed (float, optional): Wind speed above which the
+                wind farm is known to produce 0.0 W of power. If None is
+                specified, will assume that the wind farm does not cut out
+                at high wind speeds. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional):
+                The relative turbine yaw angles in degrees. If None is
+                specified, will assume that the turbine yaw angles are all
+                zero degrees for all conditions. Defaults to None.
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the wake to
+                the flow field. This can be useful when quantifying the loss
+                in AEP due to wakes. Defaults to *False*.
 
         Returns:
-            float: AEP for wind farm.
+            float: 
+                The Annual Energy Production (AEP) for the wind farm in
+                watt-hours.
         """
 
-        # # Convert the required inputs to arrays
-        # wd = np.array(wd)
-        # ws = np.array(ws)
-        # freq = np.array(freq)
+        # Verify dimensions of the variable "freq"
+        if not (
+            (np.shape(freq)[0] == self.floris.flow_field.n_wind_directions)
+            & (np.shape(freq)[1] == self.floris.flow_field.n_wind_speeds)
+            & (len(np.shape(freq)) == 2)
+        ):
+            raise UserWarning(
+                "'freq' should be a two-dimensional array with dimensions"
+                + " (n_wind_directions, n_wind_speeds)."
+            )
 
-        # # Determine if the direction and speed inputs provided are a set of pre-determined
-        # # combinations, and compute the full combination set if so, where the value
-        # # in freq will be set to 0 if a combination was not in the original set to ensure
-        # # it's not counted.
-        # wd_unique = wd.unique()
-        # ws_unique = ws.unique()
-        # if np.array_equal(wd_unique, sorted(wd)) and np.array_equal(ws_unique, sorted(ws)):
-        #     # Reshape the frequency input if required, and leave the unique inputs as-is
-        #     if freq.shape != (wd_unique.size, ws_unique.size):
-        #         freq = freq.reshape((wd_unique.size, ws_unique.size))
-        # else:
-        #     # Compute all the combinations
-        #     wd_unique, ws_unique, freq, yaw = correct_for_all_combinations(wd, ws, freq, yaw)
+        # Check if frequency vector sums to 1.0. If not, raise a warning
+        if np.abs(np.sum(freq) - 1.0) > 0.001:
+            self.logger.warning(
+                "WARNING: The frequency array provided to get_farm_AEP() "
+                + "does not sum to 1.0. "
+            )
 
-        # # If the yaw input is still None, then create a None array as inputs
-        # if yaw is None:
-        #     N = wd_unique.size * ws_unique.size
-        #     yaw = np.array([None] * N).reshape(wd_unique.size, ws_unique.size)
-        # else:
-        #     yaw = np.array(yaw)
-
-        # filter out wind speeds beyond the cutoff, if necessary
-        # if limit_ws:
-        #     ix_ws_filter = ws_unique >= ws_cutout
-        #     ws_unique = ws_unique[ix_ws_filter]
-        #     freq = freq[:, ix_ws_filter]
-        #     yaw = yaw[:, ix_ws_filter]
-
-        # self.reinitialize(wind_direction=wd_unique, wind_speed=ws_unique, wind_rose_probability=freq)
-        self.calculate_wake()
-        farm_power = self.get_farm_power()  # TODO: Do we need to specify an axis since this is a sum?
-        AEP = farm_power * freq * 8760
-        return np.sum(AEP)
-
-    def _calc_one_AEP_case(self, wd, ws, freq, yaw=None):
-        self.reinitialize(wind_direction=[wd], wind_speed=[ws])
-        self.calculate_wake(yaw_angles=yaw)
-        return self.get_farm_power() * freq * 8760
-
-    # def get_farm_AEP_parallel(
-    #     self,
-    #     wd: NDArrayFloat | list[float],
-    #     ws: NDArrayFloat | list[float],
-    #     freq: NDArrayFloat | list[list[float]],
-    #     yaw: NDArrayFloat | list[float] | None = None,
-    #     jobs=-1,
-    # ):
-    #     """
-    #     Estimate annual energy production (AEP) for distributions of wind
-    #     speed, wind direction and yaw offset with parallel computations on
-    #     a single comptuer.
-
-    #     # TODO: Update the docstrings and allow for the use of precomputed combinations
-    #     as well as unique inputs that need to be computed. Same for the other AEPs
-
-    #     Args:
-    #         wd (iterable): List or array of wind direction values.
-    #         ws (iterable): List or array of wind speed values.
-    #         freq (iterable): Frequencies corresponding to wind direction and wind speed
-    #             combinations in the wind rose with, shape (N wind directions x N wind speeds).
-    #         yaw (iterable, optional): List or array of yaw values if wake is steering
-    #             implemented, with shape (N wind directions). Defaults to None.
-    #         jobs (int, optional): The number of jobs (cores) to use in the parallel
-    #             computations.
-
-    #     Returns:
-    #         float: AEP for wind farm.
-    #     """
-    #     if jobs < -1:
-    #         raise ValueError("Input 'jobs' cannot be negative.")
-    #     if jobs == -1:
-    #         jobs = int(np.ceil(cpu_count() * 0.8))
-    #     if jobs > 0:
-    #         jobs = min(jobs, cpu_count())
-    #     if jobs > len(wd):
-    #         jobs = len(wd)
-
-    #     if yaw is None:
-    #         yaw = [None] * len(wd)
-
-    #     wd = np.array(wd)
-    #     ws = np.array(ws)
-    #     freq = np.array(freq)
-
-    #     # Make one large list of arguments, then flatten and resort the nested tuples
-    #     # to the correct ordering of self, wd, ws, freq, yaw
-    #     global_arguments = list(zip(repeat(self), zip(wd, yaw), ws, freq.flatten()))
-    #     # OR is this supposed to be all wind speeds for each wind direction?:
-    #     # global_arguments = list(zip(repeat(self), zip(wd, yaw), repeat(ws), freq))
-    #     # global_arguments = [(s, n[0], wspd, f, n[1]) for s, n, wspd, f in global_arguments]
-    #     global_arguments = [(s, n[0][0], n[1], f, n[0][1]) for s, n, f in global_arguments]
-
-    #     num_cases = wd.size * ws.size
-    #     chunksize = int(np.ceil(num_cases / jobs))
-
-    #     with Pool(jobs) as pool:
-    #         opt = pool.starmap(global_calc_one_AEP_case, global_arguments, chunksize=chunksize)
-    #         # add AEP to overall AEP
-
-    #     return 0.0 + np.sum(opt)
-
-    def calculate_AEP_wind_limit(self, num_turbines, x_spacing, start_ws, threshold):
-        orig_layout_x = self.layout_x
-        orig_layout_y = self.layout_y
-        D = self.floris.farm.turbines[0].rotor_diameter
-
-        self.reinitialize(
-            layout_array=(
-                [i * x_spacing * D for i in range(num_turbines)],
-                [0.0] * num_turbines,
-            ),
-            wind_speed=start_ws,
+        # Copy the full wind speed array from the floris object and initialize
+        # the the farm_power variable as an empty array.
+        wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
+        farm_power = np.zeros(
+            (self.floris.flow_field.n_wind_directions, len(wind_speeds))
         )
-        self.calculate_wake()
 
-        prev_power = 1.0
-        cur_power = self.get_farm_power()
-        ws = start_ws
+        # Determine which wind speeds we must evaluate in floris
+        conditions_to_evaluate = (wind_speeds >= cut_in_wind_speed)
+        if cut_out_wind_speed is not None:
+            conditions_to_evaluate = conditions_to_evaluate & (
+                wind_speeds < cut_out_wind_speed
+            )
 
-        while np.abs(prev_power - cur_power) / prev_power > threshold:
-            prev_power = cur_power
-            ws += 0.2
-            self.reinitialize(wind_speed=ws)
-            self.calculate_wake()
-            cur_power = self.get_farm_power()
-        ws += 1.0
+        # Evaluate the conditions in floris
+        if np.any(conditions_to_evaluate):
+            wind_speeds_subset = wind_speeds[conditions_to_evaluate]
+            yaw_angles_subset = None
+            if yaw_angles is not None:
+                yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
+            self.reinitialize(wind_speeds=wind_speeds_subset)
+            if no_wake:
+                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
+            else:
+                self.calculate_wake(yaw_angles=yaw_angles_subset)
+            farm_power[:, conditions_to_evaluate] = self.get_farm_power()
 
-        self.reinitialize(layout_array=(orig_layout_x, orig_layout_y), wind_speed=ws)
-        self.calculate_wake()
-        self.max_power = self.get_farm_power()
-        self.ws_limit = ws
+        # Finally, calculate AEP in GWh
+        aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
+
+        # Reset the FLORIS object to the full wind speed array
+        self.reinitialize(wind_speeds=wind_speeds)
+
+        return aep
 
     @property
     def layout_x(self):
@@ -879,164 +760,6 @@ class FlorisInterface(LoggerBase):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
-
-
-def _convert_v24_dictionary_to_v3(dict_legacy):
-    """
-    Converts a v2.4 floris input dictionary file to a v3.0-compatible
-    dictionary. See detailed instructions in the class 
-    FlorisInterface_legacy_v24.
-
-    Args:
-        dict_legacy (dict): Input dictionary in legacy floris v2.4 format.
-
-    Returns:
-        dict_out (dict): Converted dictionary containing the floris input
-        settings in v3.0-compatible format.
-    """
-    # Simple entries that can just be copied over
-    dict_out = dict()  # Output dictionary
-    dict_out["name"] = dict_legacy["name"] + " (auto-converted to v3)"
-    dict_out["description"] = dict_legacy["description"]
-    dict_out["floris_version"] = "v3.0 (converted from legacy format v2)"
-    dict_out["logging"] = dict_legacy["logging"]
-
-    dict_out["solver"] = {
-        "type": "turbine_grid",
-        "turbine_grid_points": dict_legacy["turbine"]["properties"]["ngrid"],
-    }
-
-    fp = dict_legacy["farm"]["properties"]
-    tp = dict_legacy["turbine"]["properties"]
-    dict_out["farm"] = {
-        "layout_x": fp["layout_x"],
-        "layout_y": fp["layout_y"],
-    }
-
-    ref_height = fp["specified_wind_height"]
-    if ref_height < 0:
-        ref_height = tp["hub_height"]
-
-    dict_out["flow_field"] = {
-        "air_density": fp["air_density"],
-        "reference_wind_height": ref_height,
-        "turbulence_intensity": fp["turbulence_intensity"][0],
-        "wind_directions": [fp["wind_direction"]],
-        "wind_shear": fp["wind_shear"],
-        "wind_speeds": [fp["wind_speed"]],
-        "wind_veer": fp["wind_veer"],
-    }
-
-    wp = dict_legacy["wake"]["properties"]
-    velocity_model = wp["velocity_model"]
-    velocity_model_str = velocity_model
-    if velocity_model == "gauss_legacy":
-        velocity_model_str = "gauss"
-    deflection_model = wp["deflection_model"]
-    turbulence_model = wp["turbulence_model"]
-    wdp = wp["parameters"]["wake_deflection_parameters"][deflection_model]
-    wvp = wp["parameters"]["wake_velocity_parameters"][velocity_model]
-    wtp = wp["parameters"]["wake_turbulence_parameters"][turbulence_model]
-    dict_out["wake"] = {
-        "model_strings": {
-            "combination_model": wp["combination_model"],
-            "deflection_model": deflection_model,
-            "turbulence_model": turbulence_model,
-            "velocity_model": velocity_model_str,
-        },
-        "enable_secondary_steering": wdp["use_secondary_steering"],
-        "enable_yaw_added_recovery": wvp["use_yaw_added_recovery"],
-        "enable_transverse_velocities": wvp["calculate_VW_velocities"],
-    }
-
-    # Copy over wake velocity parameters and remove unnecessary parameters
-    velocity_subdict = copy.deepcopy(wvp)
-    c = ["calculate_VW_velocities", "use_yaw_added_recovery", "eps_gain"]
-    for ci in [ci for ci in c if ci in velocity_subdict.keys()]:
-        velocity_subdict.pop(ci)
-
-    # Copy over wake deflection parameters and remove unnecessary parameters
-    deflection_subdict = copy.deepcopy(wdp)
-    c = ["use_secondary_steering"]
-    for ci in [ci for ci in c if ci in deflection_subdict.keys()]:
-        deflection_subdict.pop(ci)
-
-    # Copy over wake turbulence parameters and remove unnecessary parameters
-    turbulence_subdict = copy.deepcopy(wtp)
-
-    # Save parameter settings to wake dictionary
-    dict_out["wake"]["wake_velocity_parameters"] = {
-        velocity_model_str: velocity_subdict
-    }
-    dict_out["wake"]["wake_deflection_parameters"] = {
-        deflection_model: deflection_subdict
-    }
-    dict_out["wake"]["wake_turbulence_parameters"] = {
-        turbulence_model: turbulence_subdict
-    }
-
-    # Finally add turbine information
-    dict_out["turbine"] = {
-        "generator_efficiency": tp["generator_efficiency"],
-        "hub_height": tp["hub_height"],
-        "pP": tp["pP"],
-        "pT": tp["pT"],
-        "rotor_diameter": tp["rotor_diameter"],
-        "TSR": tp["TSR"],
-        "power_thrust_table": tp["power_thrust_table"],
-    }
-
-    return dict_out
-
-
-class FlorisInterface_legacy_v24(FlorisInterface):
-    """
-    FlorisInterface_legacy_v24 provides a wrapper around FlorisInterface
-    which enables compatibility of the class with legacy floris v2.4 input
-    files. The user can simply pass this class the path to a legacy v2.4
-    floris input file to this class and it'll convert it to a v3.0-compatible
-    input dictionary and load the floris v3.0 object.
-
-    After successfully loading the v3.0 Floris object, you can export the
-    input file using: fi.floris.to_file("converted_input_file_v3.yaml").
-
-    If you would like to manually convert the input dictionary without first
-    loading it in FLORIS, or if somehow the code fails to automatically
-    convert the input file to v3, you should follow the following steps:
-      1. Load the legacy v2.4 input floris JSON file as a dictionary
-      2. Pass the v2.4 dictionary to `_convert_v24_dictionary_to_v3(...)`.
-         That will return a v3.0-compatible input dictionary.
-      3. Save the converted configuration file to a YAML or JSON file.
-
-      For example:
-
-        import json, yaml
-        from floris.tools.floris_interface import _convert_v24_dictionary_to_v3
-
-        with open(<path_to_legacy_v24_input_file.json>) as legacy_dict_file:
-            configuration_v2 = json.load(legacy_dict_file)
-        configuration_v3 = _convert_v24_dictionary_to_v3(configuration_v2)
-        with open(r'converted_configuration_file_v3.yaml', 'w') as file:
-            yaml.dump(configuration_v3, file)
-
-    Args:
-        configuration (:py:obj:`dict`): The legacy v2.4 Floris configuration
-            dictionary or the file path to the JSON file.
-    """
-
-    def __init__(self, configuration: dict | str | Path, het_map=None):
-
-        if not isinstance(configuration, (str, Path, dict)):
-            raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
-
-        print("Importing and converting legacy floris v2.4 input file...")
-        if isinstance(configuration, (str, Path)):
-            import json
-            with open(configuration) as legacy_dict_file:
-                configuration = json.load(legacy_dict_file)
-
-        configuration = _convert_v24_dictionary_to_v3(configuration)
-        super().__init__(configuration, het_map=het_map)  # Initialize full class
 
 
 def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):

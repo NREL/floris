@@ -375,8 +375,7 @@ class Turbine(BaseClass):
         inner_power = 0.5 * self.rotor_area * self.fCp_interp(wind_speeds) * self.generator_efficiency * wind_speeds ** 3
         self.power_interp = interp1d(
             wind_speeds,
-            inner_power,
-            fill_value="extrapolate"
+            inner_power
         )
 
         """
