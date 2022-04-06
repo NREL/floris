@@ -365,7 +365,7 @@ visualize_cut_plane(horizontal_plane, ax=axarr[1,1], title="280 - Yawed")
 
 
 
-    <matplotlib.collections.QuadMesh at 0x141104ee0>
+    <matplotlib.collections.QuadMesh at 0x13e86e230>
 
 
 
@@ -521,9 +521,9 @@ print('{:8s} {:<10.3f} {:<6.3f}'.format("CC", cc_aep, cc_compute_time))
     Calculating AEP for 1440 wind direction and speed combinations...
     Number of turbines = 25
     Model    AEP (GWh)  Compute Time (s)
-    Jensen   843.233    3.321 
-    GCH      843.909    5.226 
-    CC       839.267    9.906 
+    Jensen   843.233    3.977 
+    GCH      843.909    6.434 
+    CC       839.267    10.937
 
 ## Wake Steering Design
 
@@ -579,7 +579,7 @@ print(f"Optimization wall time: {walltime:.3f} s")
     [Serial Refine] Processing pass=1, turbine_depth=4 (78.6 %)
     [Serial Refine] Processing pass=1, turbine_depth=5 (85.7 %)
     [Serial Refine] Processing pass=1, turbine_depth=6 (92.9 %)
-    Optimization wall time: 2.032 s
+    Optimization wall time: 2.130 s
 
 In the results, T0 is the upstream turbine when wind direction is 270, while T6 is upstream at 90 deg
 
