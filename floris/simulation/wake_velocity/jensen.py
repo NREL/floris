@@ -57,9 +57,9 @@ class JensenVelocityDeficit(BaseModel):
         the model function.
         """
         kwargs = dict(
-            x=grid.x,
-            y=grid.y,
-            z=grid.z,
+            x=grid.x_sorted,
+            y=grid.y_sorted,
+            z=grid.z_sorted,
         )
         return kwargs
 
@@ -90,7 +90,7 @@ class JensenVelocityDeficit(BaseModel):
         # grid.rotate_fields(flow_field.wind_directions)  # TODO: check the rotations with multiple directions or non-0/270
 
         # Calculate and apply wake mask
-        # x = grid.x # mesh_x_rotated - x_coord_rotated
+        # x = grid.x_sorted # mesh_x_rotated - x_coord_rotated
 
         # This is the velocity deficit seen by the i'th turbine due to wake effects from upstream turbines.
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's

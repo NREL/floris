@@ -104,7 +104,6 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
-        no_wake: bool = False,
         # points: NDArrayFloat | list[float] | None = None,
         # track_n_upstream_wakes: bool = False,
     ) -> None:
@@ -115,9 +114,6 @@ class FlorisInterface(LoggerBase):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
-            no_wake: (bool, optional): When *True* updates the turbine
-                quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to *False*.
             points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
                 coordinates at which the flow field velocity is to be recorded. Defaults
                 to None.
@@ -131,15 +127,46 @@ class FlorisInterface(LoggerBase):
         # )
 
         # TODO decide where to handle this sign issue
-        if yaw_angles is not None:
+        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
+            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
+                # TODO: Implement wake steering for the TurbOPark model
+                raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
             self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
         self.floris.initialize_domain()
 
-        if not no_wake:
-            # Perform the wake calculations
-            self.floris.steady_state_atmospheric_condition()
+        # Perform the wake calculations
+        self.floris.steady_state_atmospheric_condition()
+
+    def calculate_no_wake(
+        self,
+        yaw_angles: NDArrayFloat | list[float] | None = None,
+    ) -> None:
+        """
+        This function is similar to `calculate_wake()` except
+        that it does not apply a wake model. That is, the wind
+        farm is modeled as if there is no wake in the flow.
+        Yaw angles are used to reduce the power and thrust of
+        the turbine that is yawed.
+
+        Args:
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+        """
+
+        # TODO decide where to handle this sign issue
+        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
+            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
+                # TODO: Implement wake steering for the TurbOPark model
+                raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
+            self.floris.farm.yaw_angles = yaw_angles
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Finalize values to user-supplied order
+        self.floris.finalize()
 
     def reinitialize(
         self,
@@ -228,12 +255,12 @@ class FlorisInterface(LoggerBase):
             :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
         """
         # Get results vectors
-        x_flat = self.floris.grid.x[0, 0].flatten()
-        y_flat = self.floris.grid.y[0, 0].flatten()
-        z_flat = self.floris.grid.z[0, 0].flatten()
-        u_flat = self.floris.flow_field.u[0, 0].flatten()
-        v_flat = self.floris.flow_field.v[0, 0].flatten()
-        w_flat = self.floris.flow_field.w[0, 0].flatten()
+        x_flat = self.floris.grid.x_sorted[0, 0].flatten()
+        y_flat = self.floris.grid.y_sorted[0, 0].flatten()
+        z_flat = self.floris.grid.z_sorted[0, 0].flatten()
+        u_flat = self.floris.flow_field.u_sorted[0, 0].flatten()
+        v_flat = self.floris.flow_field.v_sorted[0, 0].flatten()
+        w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
 
         # Create a df of these
         if normal_vector == "z":
@@ -573,7 +600,6 @@ class FlorisInterface(LoggerBase):
 
     def get_farm_power(
         self,
-        no_wake=False,
         use_turbulence_correction=False,
     ):
         """
@@ -584,9 +610,6 @@ class FlorisInterface(LoggerBase):
         original wind direction and yaw angles.
 
         Args:
-            no_wake: (bool, optional): When *True* updates the turbine
-                quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to *False*.
             use_turbulence_correction: (bool, optional): When *True* uses a
                 turbulence parameter to adjust power output calculations.
                 Defaults to *False*.
@@ -685,7 +708,10 @@ class FlorisInterface(LoggerBase):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
             self.reinitialize(wind_speeds=wind_speeds_subset)
-            self.calculate_wake(yaw_angles=yaw_angles_subset, no_wake=no_wake)
+            if no_wake:
+                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
+            else:
+                self.calculate_wake(yaw_angles=yaw_angles_subset)
             farm_power[:, conditions_to_evaluate] = self.get_farm_power()
 
         # Finally, calculate AEP in GWh
@@ -734,164 +760,6 @@ class FlorisInterface(LoggerBase):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
-
-
-def _convert_v24_dictionary_to_v3(dict_legacy):
-    """
-    Converts a v2.4 floris input dictionary file to a v3.0-compatible
-    dictionary. See detailed instructions in the class 
-    FlorisInterface_legacy_v24.
-
-    Args:
-        dict_legacy (dict): Input dictionary in legacy floris v2.4 format.
-
-    Returns:
-        dict_out (dict): Converted dictionary containing the floris input
-        settings in v3.0-compatible format.
-    """
-    # Simple entries that can just be copied over
-    dict_out = dict()  # Output dictionary
-    dict_out["name"] = dict_legacy["name"] + " (auto-converted to v3)"
-    dict_out["description"] = dict_legacy["description"]
-    dict_out["floris_version"] = "v3.0 (converted from legacy format v2)"
-    dict_out["logging"] = dict_legacy["logging"]
-
-    dict_out["solver"] = {
-        "type": "turbine_grid",
-        "turbine_grid_points": dict_legacy["turbine"]["properties"]["ngrid"],
-    }
-
-    fp = dict_legacy["farm"]["properties"]
-    tp = dict_legacy["turbine"]["properties"]
-    dict_out["farm"] = {
-        "layout_x": fp["layout_x"],
-        "layout_y": fp["layout_y"],
-    }
-
-    ref_height = fp["specified_wind_height"]
-    if ref_height < 0:
-        ref_height = tp["hub_height"]
-
-    dict_out["flow_field"] = {
-        "air_density": fp["air_density"],
-        "reference_wind_height": ref_height,
-        "turbulence_intensity": fp["turbulence_intensity"][0],
-        "wind_directions": [fp["wind_direction"]],
-        "wind_shear": fp["wind_shear"],
-        "wind_speeds": [fp["wind_speed"]],
-        "wind_veer": fp["wind_veer"],
-    }
-
-    wp = dict_legacy["wake"]["properties"]
-    velocity_model = wp["velocity_model"]
-    velocity_model_str = velocity_model
-    if velocity_model == "gauss_legacy":
-        velocity_model_str = "gauss"
-    deflection_model = wp["deflection_model"]
-    turbulence_model = wp["turbulence_model"]
-    wdp = wp["parameters"]["wake_deflection_parameters"][deflection_model]
-    wvp = wp["parameters"]["wake_velocity_parameters"][velocity_model]
-    wtp = wp["parameters"]["wake_turbulence_parameters"][turbulence_model]
-    dict_out["wake"] = {
-        "model_strings": {
-            "combination_model": wp["combination_model"],
-            "deflection_model": deflection_model,
-            "turbulence_model": turbulence_model,
-            "velocity_model": velocity_model_str,
-        },
-        "enable_secondary_steering": wdp["use_secondary_steering"],
-        "enable_yaw_added_recovery": wvp["use_yaw_added_recovery"],
-        "enable_transverse_velocities": wvp["calculate_VW_velocities"],
-    }
-
-    # Copy over wake velocity parameters and remove unnecessary parameters
-    velocity_subdict = copy.deepcopy(wvp)
-    c = ["calculate_VW_velocities", "use_yaw_added_recovery", "eps_gain"]
-    for ci in [ci for ci in c if ci in velocity_subdict.keys()]:
-        velocity_subdict.pop(ci)
-
-    # Copy over wake deflection parameters and remove unnecessary parameters
-    deflection_subdict = copy.deepcopy(wdp)
-    c = ["use_secondary_steering"]
-    for ci in [ci for ci in c if ci in deflection_subdict.keys()]:
-        deflection_subdict.pop(ci)
-
-    # Copy over wake turbulence parameters and remove unnecessary parameters
-    turbulence_subdict = copy.deepcopy(wtp)
-
-    # Save parameter settings to wake dictionary
-    dict_out["wake"]["wake_velocity_parameters"] = {
-        velocity_model_str: velocity_subdict
-    }
-    dict_out["wake"]["wake_deflection_parameters"] = {
-        deflection_model: deflection_subdict
-    }
-    dict_out["wake"]["wake_turbulence_parameters"] = {
-        turbulence_model: turbulence_subdict
-    }
-
-    # Finally add turbine information
-    dict_out["turbine"] = {
-        "generator_efficiency": tp["generator_efficiency"],
-        "hub_height": tp["hub_height"],
-        "pP": tp["pP"],
-        "pT": tp["pT"],
-        "rotor_diameter": tp["rotor_diameter"],
-        "TSR": tp["TSR"],
-        "power_thrust_table": tp["power_thrust_table"],
-    }
-
-    return dict_out
-
-
-class FlorisInterface_legacy_v24(FlorisInterface):
-    """
-    FlorisInterface_legacy_v24 provides a wrapper around FlorisInterface
-    which enables compatibility of the class with legacy floris v2.4 input
-    files. The user can simply pass this class the path to a legacy v2.4
-    floris input file to this class and it'll convert it to a v3.0-compatible
-    input dictionary and load the floris v3.0 object.
-
-    After successfully loading the v3.0 Floris object, you can export the
-    input file using: fi.floris.to_file("converted_input_file_v3.yaml").
-
-    If you would like to manually convert the input dictionary without first
-    loading it in FLORIS, or if somehow the code fails to automatically
-    convert the input file to v3, you should follow the following steps:
-      1. Load the legacy v2.4 input floris JSON file as a dictionary
-      2. Pass the v2.4 dictionary to `_convert_v24_dictionary_to_v3(...)`.
-         That will return a v3.0-compatible input dictionary.
-      3. Save the converted configuration file to a YAML or JSON file.
-
-      For example:
-
-        import json, yaml
-        from floris.tools.floris_interface import _convert_v24_dictionary_to_v3
-
-        with open(<path_to_legacy_v24_input_file.json>) as legacy_dict_file:
-            configuration_v2 = json.load(legacy_dict_file)
-        configuration_v3 = _convert_v24_dictionary_to_v3(configuration_v2)
-        with open(r'converted_configuration_file_v3.yaml', 'w') as file:
-            yaml.dump(configuration_v3, file)
-
-    Args:
-        configuration (:py:obj:`dict`): The legacy v2.4 Floris configuration
-            dictionary or the file path to the JSON file.
-    """
-
-    def __init__(self, configuration: dict | str | Path, het_map=None):
-
-        if not isinstance(configuration, (str, Path, dict)):
-            raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
-
-        print("Importing and converting legacy floris v2.4 input file...")
-        if isinstance(configuration, (str, Path)):
-            import json
-            with open(configuration) as legacy_dict_file:
-                configuration = json.load(legacy_dict_file)
-
-        configuration = _convert_v24_dictionary_to_v3(configuration)
-        super().__init__(configuration, het_map=het_map)  # Initialize full class
 
 
 def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
