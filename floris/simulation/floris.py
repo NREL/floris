@@ -194,8 +194,6 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
     def finalize(self):
         # Once the wake calculation is finished, unsort the values to match
         # the user-supplied order of things.
-
-        self.grid.finalize()
         self.flow_field.finalize(self.grid.unsorted_indices)
         self.farm.finalize(self.grid.unsorted_indices)
 
