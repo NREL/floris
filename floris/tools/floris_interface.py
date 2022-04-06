@@ -976,99 +976,6 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     #     origin = Vec3(0.0, 0.0, 0.0)
     #     return FlowData(x, y, z, u, v, w, spacing=spacing, dimensions=dimensions, origin=origin)
 
-
-    # def get_turbine_power(
-    #     self,
-    #     include_unc=False,
-    #     unc_pmfs=None,
-    #     unc_options=None,
-    #     no_wake=False,
-    #     use_turbulence_correction=False,
-    # ):
-    #     """
-    #     Report power from each wind turbine.
-
-    #     Args:
-    #         include_unc (bool): If *True*, uncertainty in wind direction
-    #             and/or yaw position is included when determining turbine
-    #             powers. Defaults to *False*.
-    #         unc_pmfs (dictionary, optional): A dictionary containing optional
-    #             probability mass functions describing the distribution of wind
-    #             direction and yaw position deviations when wind direction and/or
-    #             yaw position uncertainty is included in the power calculations.
-    #             Contains the following key-value pairs:
-
-    #             -   **wd_unc** (*np.array*): Wind direction deviations from the
-    #                 original wind direction.
-    #             -   **wd_unc_pmf** (*np.array*): Probability of each wind
-    #                 direction deviation in **wd_unc** occuring.
-    #             -   **yaw_unc** (*np.array*): Yaw angle deviations from the
-    #                 original yaw angles.
-    #             -   **yaw_unc_pmf** (*np.array*): Probability of each yaw angle
-    #                 deviation in **yaw_unc** occuring.
-
-    #             Defaults to None, in which case default PMFs are calculated
-    #             using values provided in **unc_options**.
-    #         unc_options (dictionary, optional): A dictionary containing values
-    #             used to create normally-distributed, zero-mean probability mass
-    #             functions describing the distribution of wind direction and yaw
-    #             position deviations when wind direction and/or yaw position
-    #             uncertainty is included. This argument is only used when
-    #             **unc_pmfs** is None and contains the following key-value pairs:
-
-    #             -   **std_wd** (*float*): A float containing the standard
-    #                 deviation of the wind direction deviations from the
-    #                 original wind direction.
-    #             -   **std_yaw** (*float*): A float containing the standard
-    #                 deviation of the yaw angle deviations from the original yaw
-    #                 angles.
-    #             -   **pmf_res** (*float*): A float containing the resolution in
-    #                 degrees of the wind direction and yaw angle PMFs.
-    #             -   **pdf_cutoff** (*float*): A float containing the cumulative
-    #                 distribution function value at which the tails of the
-    #                 PMFs are truncated.
-
-    #             Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.
-    #             75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-    #         no_wake: (bool, optional): When *True* updates the turbine
-    #             quantities without calculating the wake or adding the
-    #             wake to the flow field. Defaults to *False*.
-    #         use_turbulence_correction: (bool, optional): When *True* uses a
-    #             turbulence parameter to adjust power output calculations.
-    #             Defaults to *False*.
-
-    #     Returns:
-    #         np.array: Power produced by each wind turbine.
-    #     """
-    #     # TODO: Turbulence correction used in the power calculation, but may not be in
-    #     # the model yet
-    #     # TODO: Turbines need a switch for using turbulence correction
-    #     # TODO: Uncomment out the following two lines once the above are resolved
-    #     # for turbine in self.floris.farm.turbines:
-    #     #     turbine.use_turbulence_correction = use_turbulence_correction
-
-    #     if include_unc:
-    #         unc_pmfs = _generate_uncertainty_parameters(unc_options, unc_pmfs)
-
-    #         mean_farm_power = np.zeros(self.floris.farm.n_turbines)
-    #         wd_orig = self.floris.flow_field.wind_directions  # TODO: same comment as in get_farm_power
-
-    #         yaw_angles = self.get_yaw_angles()
-    #         self.reinitialize(wind_direction=wd_orig[0] + unc_pmfs["wd_unc"])
-    #         for i, delta_yaw in enumerate(unc_pmfs["yaw_unc"]):
-    #             self.calculate_wake(
-    #                 yaw_angles=list(np.array(yaw_angles) + delta_yaw),
-    #                 no_wake=no_wake,
-    #             )
-    #             mean_farm_power += unc_pmfs["wd_unc_pmf"] * unc_pmfs["yaw_unc_pmf"][i] * self._get_turbine_powers()
-
-    #         # reinitialize with original values
-    #         self.reinitialize(wind_direction=wd_orig)
-    #         self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
-    #         return mean_farm_power
-
-    #     return self._get_turbine_powers()
-
     # def get_power_curve(self, wind_speeds):
     #     """
     #     Return the power curve given a set of wind speeds
@@ -1091,71 +998,6 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     #     self.reinitialize(layout_array=(saved_layout_x, saved_layout_y))
 
     #     return turbine_power
-
-    # def get_farm_power_for_yaw_angle(
-    #     self,
-    #     yaw_angles,
-    #     include_unc=False,
-    #     unc_pmfs=None,
-    #     unc_options=None,
-    #     no_wake=False,
-    # ):
-    #     """
-    #     Assign yaw angles to turbines, calculate wake, and report farm power.
-
-    #     Args:
-    #         yaw_angles (np.array): Yaw to apply to each turbine.
-    #         include_unc (bool, optional): When *True*, includes wind direction
-    #             uncertainty in estimate of wind farm power. Defaults to *False*.
-    #         unc_pmfs (dictionary, optional): A dictionary containing optional
-    #             probability mass functions describing the distribution of wind
-    #             direction and yaw position deviations when wind direction and/or
-    #             yaw position uncertainty is included in the power calculations.
-    #             Contains the following key-value pairs:
-
-    #             -   **wd_unc** (*np.array*): Wind direction deviations from the
-    #                 original wind direction.
-    #             -   **wd_unc_pmf** (*np.array*): Probability of each wind
-    #                 direction deviation in **wd_unc** occuring.
-    #             -   **yaw_unc** (*np.array*): Yaw angle deviations from the
-    #                 original yaw angles.
-    #             -   **yaw_unc_pmf** (*np.array*): Probability of each yaw angle
-    #                 deviation in **yaw_unc** occuring.
-
-    #             Defaults to None, in which case default PMFs are calculated
-    #             using values provided in **unc_options**.
-    #         unc_options (dictionary, optional): A dictionary containing values
-    #             used to create normally-distributed, zero-mean probability mass
-    #             functions describing the distribution of wind direction and yaw
-    #             position deviations when wind direction and/or yaw position
-    #             uncertainty is included. This argument is only used when
-    #             **unc_pmfs** is None and contains the following key-value pairs:
-
-    #             -   **std_wd** (*float*): A float containing the standard
-    #                 deviation of the wind direction deviations from the
-    #                 original wind direction.
-    #             -   **std_yaw** (*float*): A float containing the standard
-    #                 deviation of the yaw angle deviations from the original yaw
-    #                 angles.
-    #             -   **pmf_res** (*float*): A float containing the resolution in
-    #                 degrees of the wind direction and yaw angle PMFs.
-    #             -   **pdf_cutoff** (*float*): A float containing the cumulative
-    #                 distribution function value at which the tails of the
-    #                 PMFs are truncated.
-
-    #             Defaults to None. Initializes to {'std_wd': 4.95, 'std_yaw': 1.
-    #             75, 'pmf_res': 1.0, 'pdf_cutoff': 0.995}.
-    #         no_wake: (bool, optional): When *True* updates the turbine
-    #             quantities without calculating the wake or adding the
-    #             wake to the flow field. Defaults to *False*.
-
-    #     Returns:
-    #         float: Wind plant power. #TODO negative? in kW?
-    #     """
-
-    #     self.calculate_wake(yaw_angles=yaw_angles, no_wake=no_wake)
-
-    #     return self.get_farm_power(include_unc=include_unc, unc_pmfs=unc_pmfs, unc_options=unc_options)
 
     # def copy_and_update_turbine_map(
     #     self, base_turbine_id: str, update_parameters: dict, new_id: str | None = None
@@ -1180,56 +1022,6 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     #     turbine = {new_id: self.floris.turbine[base_turbine_id]._asdict()}
     #     turbine[new_id].update(update_parameters)
     #     return turbine
-
-    # def change_turbine(
-    #     self,
-    #     turbine_indices: list[int],
-    #     new_turbine_map: dict[str, dict[str, Any]],
-    #     update_specified_wind_height: bool = False,
-    # ):
-    #     """
-    #     Change turbine properties for specified turbines.
-
-    #     Args:
-    #         turbine_indices (list[int]): List of turbine indices to change.
-    #         new_turbine_map (dict[str, dict[str, Any]]): New dictionary of turbine
-    #             parameters to create the new turbines for each of `turbine_indices`.
-    #         update_specified_wind_height (bool, optional): When *True*, update specified
-    #             wind height to match new hub_height. Defaults to *False*.
-    #     """
-    #     new_turbine = True
-    #     new_turbine_id = [*new_turbine_map][0]
-    #     if new_turbine_id in self.floris.farm.turbine_map:
-    #         new_turbine = False
-    #         self.logger.info(f"Turbines {turbine_indices} will be re-mapped to the definition for: {new_turbine_id}")
-
-    #     self.floris.farm.turbine_id = [
-    #         new_turbine_id if i in turbine_indices else t_id for i, t_id in enumerate(self.floris.farm.turbine_id)
-    #     ]
-    #     if new_turbine:
-    #         self.logger.info(f"Turbines {turbine_indices} have been mapped to the new definition for: {new_turbine_id}")
-
-    #     # Update the turbine mapping if a new turbine was provided, then regenerate the
-    #     # farm arrays for the turbine farm
-    #     if new_turbine:
-    #         turbine_map = self.floris.farm._asdict()["turbine_map"]
-    #         turbine_map.update(new_turbine_map)
-    #         self.floris.farm.turbine_map = turbine_map
-    #     self.floris.farm.generate_farm_points()
-
-    #     new_hub_height = new_turbine_map[new_turbine_id]["hub_height"]
-    #     changed_hub_height = new_hub_height != self.floris.flow_field.reference_wind_height
-
-    #     # Alert user if changing hub-height and not specified wind height
-    #     if changed_hub_height and not update_specified_wind_height:
-    #         self.logger.info("Note, updating hub height but not updating " + "the specfied_wind_height")
-
-    #     if changed_hub_height and update_specified_wind_height:
-    #         self.logger.info(f"Note, specfied_wind_height changed to hub-height: {new_hub_height}")
-    #         self.reinitialize(specified_wind_height=new_hub_height)
-
-    #     # Finish by re-initalizing the flow field
-    #     self.reinitialize()
 
     # def set_use_points_on_perimeter(self, use_points_on_perimeter=False):
     #     """
@@ -1408,11 +1200,6 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     #     """
     #     self.floris.wake = set_params(self.floris.wake, params, verbose)
 
-
-
-
-
-
     # def vis_layout(
     #     self,
     #     ax=None,
@@ -1474,8 +1261,6 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     #         fig, ax = plt.subplots()
     #     visualize_cut_plane(hor_plane, ax=ax)
     #     plt.show()
-
-
 
     ## Functionality removed in v3
 
