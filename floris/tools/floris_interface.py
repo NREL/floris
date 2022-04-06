@@ -104,7 +104,6 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
-        no_wake: bool = False,
         # points: NDArrayFloat | list[float] | None = None,
         # track_n_upstream_wakes: bool = False,
     ) -> None:
@@ -115,9 +114,6 @@ class FlorisInterface(LoggerBase):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
-            no_wake: (bool, optional): When *True* updates the turbine
-                quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to *False*.
             points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
                 coordinates at which the flow field velocity is to be recorded. Defaults
                 to None.
@@ -140,9 +136,37 @@ class FlorisInterface(LoggerBase):
         # Initialize solution space
         self.floris.initialize_domain()
 
-        if not no_wake:
-            # Perform the wake calculations
-            self.floris.steady_state_atmospheric_condition()
+        # Perform the wake calculations
+        self.floris.steady_state_atmospheric_condition()
+
+    def calculate_no_wake(
+        self,
+        yaw_angles: NDArrayFloat | list[float] | None = None,
+    ) -> None:
+        """
+        This function is similar to `calculate_wake()` except
+        that it does not apply a wake model. That is, the wind
+        farm is modeled as if there is no wake in the flow.
+        Yaw angles are used to reduce the power and thrust of
+        the turbine that is yawed.
+
+        Args:
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+        """
+
+        # TODO decide where to handle this sign issue
+        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
+            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
+                # TODO: Implement wake steering for the TurbOPark model
+                raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
+            self.floris.farm.yaw_angles = yaw_angles
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Finalize values to user-supplied order
+        self.floris.finalize()
 
     def reinitialize(
         self,
@@ -576,7 +600,6 @@ class FlorisInterface(LoggerBase):
 
     def get_farm_power(
         self,
-        no_wake=False,
         use_turbulence_correction=False,
     ):
         """
@@ -587,9 +610,6 @@ class FlorisInterface(LoggerBase):
         original wind direction and yaw angles.
 
         Args:
-            no_wake: (bool, optional): When *True* updates the turbine
-                quantities without calculating the wake or adding the
-                wake to the flow field. Defaults to *False*.
             use_turbulence_correction: (bool, optional): When *True* uses a
                 turbulence parameter to adjust power output calculations.
                 Defaults to *False*.
@@ -688,7 +708,10 @@ class FlorisInterface(LoggerBase):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
             self.reinitialize(wind_speeds=wind_speeds_subset)
-            self.calculate_wake(yaw_angles=yaw_angles_subset, no_wake=no_wake)
+            if no_wake:
+                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
+            else:
+                self.calculate_wake(yaw_angles=yaw_angles_subset)
             farm_power[:, conditions_to_evaluate] = self.get_farm_power()
 
         # Finally, calculate AEP in GWh

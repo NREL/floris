@@ -419,10 +419,10 @@ class UncertaintyInterface(LoggerBase):
 
         # Evaluate floris for minimal probablistic set
         self.fi.reinitialize(wind_directions=wd_array_probablistic_min)
-        self.fi.calculate_wake(
-            yaw_angles=yaw_angles_probablistic_min,
-            no_wake=no_wake
-        )
+        if no_wake:
+            self.fi.calculate_no_wake(yaw_angles=yaw_angles_probablistic_min)
+        else:
+            self.fi.calculate_wake(yaw_angles=yaw_angles_probablistic_min)
 
         # Retrieve all power productions using the nominal call
         turbine_powers = self.fi.get_turbine_powers()
