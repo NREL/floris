@@ -813,7 +813,10 @@ class FlorisInterface(LoggerBase):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
             self.reinitialize(wind_speeds=wind_speeds_subset)
-            self.calculate_wake(yaw_angles=yaw_angles_subset, no_wake=no_wake)
+            if no_wake:
+                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
+            else:
+                self.calculate_wake(yaw_angles=yaw_angles_subset)
             farm_power[:, conditions_to_evaluate] = self.get_farm_power()
 
         # Finally, calculate AEP in GWh
