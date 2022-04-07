@@ -32,8 +32,10 @@ from floris.simulation import (
     FlowFieldPlanarGrid,
     sequential_solver,
     cc_solver,
+    turbopark_solver,
     full_flow_sequential_solver,
-    full_flow_cc_solver
+    full_flow_cc_solver,
+    full_flow_turbopark_solver,
 )
 from attrs import define, field
 
@@ -151,6 +153,13 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 self.grid,
                 self.wake
             )
+        elif vel_model=="turbopark":
+            elapsed_time = turbopark_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
         else:
             elapsed_time = sequential_solver(
                 self.farm,
@@ -161,9 +170,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # end = time.time()
         # elapsed_time = end - start
 
-        self.grid.finalize()
-        self.flow_field.finalize(self.grid.unsorted_indices)
-        self.farm.finalize(self.grid.unsorted_indices)
+        self.finalize()
         return elapsed_time
 
     def solve_for_viz(self):
@@ -179,9 +186,16 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
 
         if vel_model=="cc":
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="turbopark":
+            full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
+    def finalize(self):
+        # Once the wake calculation is finished, unsort the values to match
+        # the user-supplied order of things.
+        self.flow_field.finalize(self.grid.unsorted_indices)
+        self.farm.finalize(self.grid.unsorted_indices)
 
     ## I/O
 

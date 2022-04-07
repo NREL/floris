@@ -3,23 +3,26 @@
 FLORIS is a controls-focused wind farm simulation software incorporating
 steady-state engineering wake models into a performance-focused Python
 framework. It has been in active development at NREL since 2013 and the latest
-release is [FLORIS v3.0](https://github.com/NREL/floris/releases/tag/v3.0)
-in March 2022. The new ``v3`` version of the repository
-contains an architectural redesign of the software to enable improved
-performance in AEP calculation and controls optimization.
+release is [FLORIS v3.1](https://github.com/NREL/floris/releases/latest)
+in March 2022.
 
-We are actively seeking beta testers for the new framework. If you are interested
-in using FLORIS to conduct studies of a wind farm or extending FLORIS to include
-your own wake model, please get in touch! Join the conversations at
-[GitHub Discussions](https://github.com/NREL/floris/discussions/categories/v3-design-discussion).
+The software is in active development and engagement with the development team
+is highly encouraged. If you are interested in using FLORIS to conduct studies
+of a wind farm or extending FLORIS to include your own wake model, please join
+the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/categories/v3-design-discussion)!
 
-For more context and background on previous work in FLORIS, see the
-documentation at http://floris.readthedocs.io/.
+Since FLORIS v3, the documentation is migrating to https://nrel.github.io/floris,
+but this is a work in progress. For context and background on previous work in
+FLORIS, see the legacy documentation at http://floris.readthedocs.io/.
 
+---
 
 ## Installation
 
-> :exclamation: **It is highly recommended that you install FLORIS V3 into a new clean virtual environment**. Installing into the existing V2 environment has been seen to cause conflicts.  Further, if you wish to use pyoptsparse with FLORIS, it is recommended to install pyoptsparse into your environment prior to FLORIS
+**If upgrading from v2, it is highly recommended to install FLORIS V3 into a new virtual environment**.
+Installing into a Python environment that contains FLORIS v2 may cause conflicts.
+If you intend to use [pyOptSparse](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/) with FLORIS,
+it is recommended to install that package first before installing FLORIS.
 
 FLORIS can be installed by downloading the source code or via the PyPI
 package manager with `pip`.
@@ -30,12 +33,13 @@ The simplest method is with `pip` by using this command:
 pip install floris
 ```
 
-Developers and anyone who intends to inspect the source code, 
-install FLORIS by downloading the git repository
+Developers and anyone who intends to inspect the source code
+can install FLORIS by downloading the git repository
 from GitHub with ``git`` and use ``pip`` to locally install it.
-It is recommended to use a Python virtual environment such as [conda](https://docs.conda.io/en/latest/miniconda.html)
+It is highly recommended to use a Python virtual environment manager
+such as [conda](https://docs.conda.io/en/latest/miniconda.html)
 in order to maintain a clean and sandboxed environment. The following
-commands in a terminal or shell will download and install **FLORIS v3.0**.
+commands in a terminal or shell will download and install FLORIS.
 
 ```bash
     # Download the source code from the `main` branch
@@ -44,10 +48,10 @@ commands in a terminal or shell will download and install **FLORIS v3.0**.
     # If using conda, be sure to activate your environment prior to installing
     # conda activate <env name>
     
-    # If you would like to use pyoptspare, recommend installing before FLORIS
+    # If using pyOptSpare, install it first
     conda install -c conda-forge pyoptsparse
 
-    # Install into your Python environment
+    # Install FLORIS
     pip install -e floris
 ```
 
@@ -72,11 +76,11 @@ and importing FLORIS:
 
     DATA
         ROOT = PosixPath('/Users/rmudafor/Development/floris')
-        VERSION = '3.0'
+        VERSION = '3.1'
         version_file = <_io.TextIOWrapper name='/Users/rmudafor/Development/fl...
 
     VERSION
-        3.0
+        3.1
 
     FILE
         ~/floris/floris/__init__.py
