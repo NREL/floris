@@ -24,6 +24,10 @@ Show how the new calculate_horizontal_plane_with_turbines can be used to visuali
 calculating a visualization grid of points is not yet possible
 """
 
+# Parameters
+minSpeed = 4.0
+maxSpeed = 8.0
+
 # Initialize seperate FLORIS interface for each model
 fi_jensen = FlorisInterface("inputs/jensen.yaml")
 fi_gch = FlorisInterface("inputs/gch.yaml")
@@ -36,19 +40,24 @@ horizontal_plane_gch = fi_gch.calculate_horizontal_plane(x_resolution=200, y_res
 
 # Next for each model, calculate the horizontal u velocity using the turbine method
 # Because this method is much slower, recommend a much coarser grid
-t_res = 20
-horizontal_plane_jensen_turbine = fi_jensen.calculate_horizontal_plane_with_turbines(x_resolution=t_res, y_resolution=t_res)
-horizontal_plane_gch_turbine = fi_gch.calculate_horizontal_plane_with_turbines(x_resolution=t_res, y_resolution=t_res)
-horizontal_plane_cc_turbine = fi_cc.calculate_horizontal_plane_with_turbines(x_resolution=t_res, y_resolution=t_res)
-horizontal_plane_turbopark_turbine = fi_turbopark.calculate_horizontal_plane_with_turbines(x_resolution=t_res, y_resolution=t_res)
+x_res_turbine = 30
+y_res_turbine = 15
+print('Calculating Jensen Model using turbine method...')
+horizontal_plane_jensen_turbine = fi_jensen.calculate_horizontal_plane_with_turbines(x_resolution=x_res_turbine, y_resolution=y_res_turbine)
+print('Calculating GCH Model using turbine method...')
+horizontal_plane_gch_turbine = fi_gch.calculate_horizontal_plane_with_turbines(x_resolution=x_res_turbine, y_resolution=y_res_turbine)
+print('Calculating CC Model using turbine method...')
+horizontal_plane_cc_turbine = fi_cc.calculate_horizontal_plane_with_turbines(x_resolution=x_res_turbine, y_resolution=y_res_turbine)
+print('Calculating Turbopark Model using turbine method...')
+horizontal_plane_turbopark_turbine = fi_turbopark.calculate_horizontal_plane_with_turbines(x_resolution=x_res_turbine, y_resolution=y_res_turbine)
 
 # Make a plot comparing the visualizations computed via the different methods
 fig, axarr = plt.subplots(4,2, sharex=True, sharey=True)
-visualize_cut_plane(horizontal_plane_jensen, ax=axarr[0,0], title="Jensen - Flowfield")
-visualize_cut_plane(horizontal_plane_jensen_turbine, ax=axarr[0,1], title="Jensen - Turbine")
-visualize_cut_plane(horizontal_plane_gch, ax=axarr[1,0], title="GCH - Flowfield")
-visualize_cut_plane(horizontal_plane_gch_turbine, ax=axarr[1,1], title="GCH - Turbine")
-visualize_cut_plane(horizontal_plane_cc_turbine, ax=axarr[2,1], title="CC - Turbine")
-visualize_cut_plane(horizontal_plane_turbopark_turbine, ax=axarr[3,1], title="Turbopark - Turbine")
+visualize_cut_plane(horizontal_plane_jensen, ax=axarr[0,0], title="Jensen - Flowfield",minSpeed=minSpeed,maxSpeed=maxSpeed)
+visualize_cut_plane(horizontal_plane_jensen_turbine, ax=axarr[0,1], title="Jensen - Turbine",minSpeed=minSpeed,maxSpeed=maxSpeed)
+visualize_cut_plane(horizontal_plane_gch, ax=axarr[1,0], title="GCH - Flowfield",minSpeed=minSpeed,maxSpeed=maxSpeed)
+visualize_cut_plane(horizontal_plane_gch_turbine, ax=axarr[1,1], title="GCH - Turbine",minSpeed=minSpeed,maxSpeed=maxSpeed)
+visualize_cut_plane(horizontal_plane_cc_turbine, ax=axarr[2,1], title="CC - Turbine",minSpeed=minSpeed,maxSpeed=maxSpeed)
+visualize_cut_plane(horizontal_plane_turbopark_turbine, ax=axarr[3,1], title="Turbopark - Turbine",minSpeed=minSpeed,maxSpeed=maxSpeed)
 
 plt.show()
