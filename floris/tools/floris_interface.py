@@ -392,8 +392,8 @@ class FlorisInterface(LoggerBase):
         v_results = np.zeros(num_points)
         w_results = np.zeros(num_points)
         idx = 0
-        for x in x_points:
-            for y in y_points:
+        for y in y_points:
+            for x in x_points:
                 
                 # Save the x and y results
                 x_results[idx] = x
