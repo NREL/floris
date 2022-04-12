@@ -369,8 +369,9 @@ class FlorisInterface(LoggerBase):
         D = self.floris.farm.rotor_diameters_sorted[0][0][0]
 
         # Declare a new layout array with an extra turbine
-        layout_x_test = layout_x + [0]
-        layout_y_test = layout_y + [0]
+        layout_x_test = np.append(layout_x,[0])
+        layout_y_test = np.append(layout_y,[0])
+
 
         # Get a grid of points test test
         if x_bounds is None:
