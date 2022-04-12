@@ -311,6 +311,131 @@ class FlorisInterface(LoggerBase):
 
         return df
 
+    def calculate_horizontal_plane_with_turbines(
+        self,
+        x_resolution=200,
+        y_resolution=200,
+        x_bounds=None,
+        y_bounds=None,
+        wd=None,
+        ws=None,
+        yaw_angles=None,
+    ):
+        """
+        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
+        object containing the velocity field in a horizontal plane cut through
+        using an approximation method of sweeping a turbine around the grid.  Much
+        slower than usual method but helpful for models where the visualization
+        capability is not in place yet
+
+        Args:
+            height (float): Height of cut plane. Defaults to Hub-height.
+            x_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            y_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            x_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            y_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+
+        Returns:
+            :py:class:`~.tools.cut_plane.CutPlane`: containing values
+            of x, y, u, v, w
+        """
+        #TODO update docstring
+        if wd is None:
+            wd = self.floris.flow_field.wind_directions
+        if ws is None:
+            ws = self.floris.flow_field.wind_speeds
+        self.check_wind_condition_for_viz(wd=wd, ws=ws)
+
+        # Store the current state for reinitialization
+        floris_dict = self.floris.as_dict()
+        current_yaw_angles = self.floris.farm.yaw_angles
+
+        # Set the ws and wd
+        self.reinitialize(
+            wind_directions=wd, wind_speeds=ws
+        )
+
+        # TODO this has to be done here as it seems to be lost with reinitialize
+        if yaw_angles is not None:
+            self.floris.farm.yaw_angles = yaw_angles
+
+        # Grab the turbine layout
+        layout_x = copy.deepcopy(self.layout_x)
+        layout_y = copy.deepcopy(self.layout_y)
+        D = self.floris.farm.rotor_diameters_sorted[0][0][0]
+
+        # Declare a new layout array with an extra turbine
+        layout_x_test = layout_x + [0]
+        layout_y_test = layout_y + [0]
+
+        # Get a grid of points test test
+        if x_bounds is None:
+            x_bounds = (np.min(layout_x) - 2 * D, np.max(layout_x) + 10 * D)
+
+        if y_bounds is None:
+            y_bounds = (np.min(layout_y) - 2 * D, np.max(layout_y) + 2 * D)
+
+        # Now generate a list of points
+        x_points = np.linspace(x_bounds[0], x_bounds[1], x_resolution)
+        y_points = np.linspace(y_bounds[0], y_bounds[1], y_resolution)
+        num_points = len(x_points) * len(y_points)
+        
+        # Now loop over the points
+        x_results = np.zeros(num_points)
+        y_results = np.zeros(num_points)
+        z_results = np.zeros(num_points)
+        u_results = np.zeros(num_points)
+        v_results = np.zeros(num_points)
+        w_results = np.zeros(num_points)
+        idx = 0
+        for x in x_points:
+            for y in y_points:
+                
+                # Save the x and y results
+                x_results[idx] = x
+                y_results[idx] = y
+
+                # Place the test turbine at this location and calculate wake
+                layout_x_test[-1] = x
+                layout_y_test[-1] = y
+                self.reinitialize(layout=(layout_x_test, layout_y_test))
+                self.calculate_wake(yaw_angles=yaw_angles)
+
+                # Get the velocity of that test turbines central point
+                center_point = int(np.floor(self.floris.flow_field.u[0,0,-1].shape[0] / 2.0))
+                u_results[idx] = self.floris.flow_field.u[0,0,-1,center_point,center_point]
+
+                # Increment index
+                idx = idx + 1
+
+        # Make a dataframe
+        df = pd.DataFrame({
+            'x1':x_results,
+            'x2':y_results,
+            'x3':z_results,
+            'u':u_results,
+            'v':v_results,
+            'w':w_results,
+        })
+        
+        # Convert to a cut_plane
+        horizontal_plane = CutPlane(df, x_resolution, y_resolution, "z")
+
+
+        # Reset the fi object back to the turbine grid configuration
+        self.floris = Floris.from_dict(floris_dict)
+        self.floris.flow_field.het_map = self.het_map
+
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.calculate_wake(yaw_angles=current_yaw_angles)
+
+        return horizontal_plane
+
+
     def calculate_horizontal_plane(
         self,
         height,
