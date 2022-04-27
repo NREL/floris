@@ -555,7 +555,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
-        reference_turbine_diameter=turbine_grid_farm.rotor_diameters_sorted,
+        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
