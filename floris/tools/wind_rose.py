@@ -1299,7 +1299,7 @@ class WindRose:
         ij = [int(round(x / 2000)) for x in delta]
         return tuple(reversed(ij))
 
-    def plot_wind_speed_all(self, ax=None):
+    def plot_wind_speed_all(self, ax=None, label=None):
         """
         This method plots the wind speed frequency distribution of the WindRose
         object averaged across all wind directions. If no axis is provided, a
@@ -1313,7 +1313,7 @@ class WindRose:
             _, ax = plt.subplots()
 
         df_plot = self.df.groupby("ws").sum()
-        ax.plot(self.ws, df_plot.freq_val)
+        ax.plot(self.ws, df_plot.freq_val, label=label)
 
     def plot_wind_speed_by_direction(self, dirs, ax=None):
         """
