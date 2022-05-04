@@ -12,14 +12,14 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import os
 from typing import Tuple
 
-from attrs import define, field
-import numpy as np
 import yaml
-import os
+import numpy as np
+from attrs import field, define
 
-from floris.type_dec import floris_array_converter, NDArrayFloat
+from floris.type_dec import NDArrayFloat, floris_array_converter
 
 
 def pshape(array: np.ndarray, label: str = ""):
@@ -42,7 +42,7 @@ class Vec3:
     # NOTE: this does not convert elements to float if they are given as int. Is this ok?
 
     @components.validator
-    def _check_components(self, attribute, value) -> None:        
+    def _check_components(self, attribute, value) -> None:
         if np.ndim(value) > 1:
             raise ValueError(f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given.")
         if np.size(value) != 3:
@@ -111,7 +111,7 @@ class Vec3:
         self.components[2] = float(value)
 
     @property
-    def elements(self) -> Tuple[float, float, float]:
+    def elements(self) -> NDArrayFloat:
         # TODO: replace references to elements with components
         # and remove this @property
         return self.components

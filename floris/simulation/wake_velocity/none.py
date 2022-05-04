@@ -12,12 +12,10 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import field, define
 
-from floris.simulation import BaseModel
-from floris.simulation import FlowField
-from floris.simulation import Grid
+from floris.simulation import Grid, BaseModel, FlowField
 
 
 @define
@@ -26,8 +24,8 @@ class NoneVelocityDeficit(BaseModel):
     The None deficit model is a placeholder code that simple ignores any
     wake wind speed deficits and returns an array of zeroes.
     """
-    
-    def prepare_function(
+
+    def prepare_function(  # type: ignore
         self,
         grid: Grid,
         flow_field: FlowField,
@@ -38,7 +36,7 @@ class NoneVelocityDeficit(BaseModel):
         )
         return kwargs
 
-    def function(
+    def function(  # type: ignore
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
@@ -54,6 +52,6 @@ class NoneVelocityDeficit(BaseModel):
         # unpacking of the results from prepare_function()
         *,
         u_initial: np.ndarray,
-    ) -> None:
+    ) -> np.ndarray:
         self.logger.warning("The wake deficit model is set to 'none'. Wake modeling disabled.")
         return np.zeros_like(u_initial)

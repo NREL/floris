@@ -19,10 +19,7 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from .yaw_optimization_tools import (
-    derive_downstream_turbines,
-    find_layout_symmetry,
-)
+from .yaw_optimization_tools import find_layout_symmetry, derive_downstream_turbines
 
 
 class YawOptimization:
@@ -439,9 +436,9 @@ class YawOptimization:
                 print("Exploitation of symmetry has been disabled.")
 
             self._sym_mapping_extrap = np.array(
-                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0] 
+                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0]
                 for x in wd_array_remn], dtype=int)
-            
+
             self._sym_mapping_reduce = copy.deepcopy(ids_minimal)
             self._sym_df = df
 
@@ -451,7 +448,7 @@ class YawOptimization:
         # Check if needed to un-reduce at all, if not, return directly
         if not self.exploit_layout_symmetry:
             return variable
-    
+
         if self._sym_df is None:
             return variable
 
@@ -572,8 +569,7 @@ class YawOptimization:
         ids = np.where((ydiff < min_yaw_offset) & (ydiff > 0.0))
         if len(ids[0]) > 0:
             if verbose:
-                print("Rounding {:d} insignificant yaw angles to their " +
-                "baseline value.".format(len(ids)))
+                print(f"Rounding {len(ids):d} insignificant yaw angles to their baseline value.")
             yaw_angles_opt_subset[ids] = yaw_angles_baseline_subset[ids]
             ydiff[ids] = 0.0
 

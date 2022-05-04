@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from attrs import define
 import numpy as np
+from attrs import define
 
 from floris.simulation import BaseModel
 
@@ -33,7 +33,11 @@ class MAX(BaseModel):
     def prepare_function(self) -> dict:
         pass
 
-    def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
+    def function(  # type: ignore
+        self,
+        wake_field: np.ndarray,
+        velocity_field: np.ndarray,
+    ) -> np.ndarray:
         """
         Incorporates the velicty deficits into the base flow field by
         selecting the maximum of the two for each point.

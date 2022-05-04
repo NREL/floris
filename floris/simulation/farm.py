@@ -10,22 +10,21 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# from __future__ import annotations
-from typing import Any, List
-
-import attrs
-from attrs import define, field
-import numpy as np
-from pathlib import Path
+import os
 import copy
 
-from floris.type_dec import (
-    NDArrayObject,
-    floris_array_converter,
-    NDArrayFloat
-)
-from floris.utilities import Vec3, load_yaml
-from floris.simulation import BaseClass, State
+from typing import Any, List
+from pathlib import Path
+
+import attrs
+import numpy as np
+from attrs import field, define
+
+from floris.type_dec import floris_array_converter
+from floris.type_dec import NDArrayFloat, NDArrayObject
+from floris.utilities import load_yaml
+from floris.utilities import Vec3
+from floris.simulation import BaseClass
 from floris.simulation import Turbine
 
 
@@ -48,16 +47,26 @@ class Farm(BaseClass):
     turbine_type: List = field()
 
     turbine_definitions: dict = field(init=False)
-    yaw_angles: NDArrayFloat = field(init=False)
+    yaw_angles: NDArrayFloat = field(init=False, converter=floris_array_converter, on_setattr=attrs.setters.convert)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
-    coordinates: List[Vec3] = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
+    rotor_diameters: NDArrayFloat = field(init=False)
+    TSRs: NDArrayFloat = field(init=False)
+    pPs: NDArrayFloat = field(init=False)
+    turbine_map: NDArrayFloat = field(init=False)
+    turbine_fCts: NDArrayObject = field(init=False)
+    turbine_fCps: NDArrayFloat = field(init=False)
+    turbine_power_interps: dict = field(init=False)
+    coordinates: NDArrayFloat = field(init=False)
+
+    # Sorted versions of the above variables
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
-    turbine_fCts: tuple = field(init=False, default=[])
-    turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+    turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
+
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:

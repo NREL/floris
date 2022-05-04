@@ -16,28 +16,31 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+
 import yaml
-from floris.utilities import load_yaml
+from attrs import field, define
 
 import floris.logging_manager as logging_manager
+from floris.type_dec import FromDictMixin
+from floris.utilities import load_yaml
 from floris.simulation import (
     BaseClass,
     Farm,
-    WakeModelManager,
-    FlowField,
     Grid,
+    State,
+    Turbine,
+    FlowField,
     TurbineGrid,
     FlowFieldGrid,
+    WakeModelManager,
     FlowFieldPlanarGrid,
-    State,
-    sequential_solver,
     cc_solver,
     turbopark_solver,
-    full_flow_sequential_solver,
+    sequential_solver,
     full_flow_cc_solver,
     full_flow_turbopark_solver,
+    full_flow_sequential_solver,
 )
-from attrs import define, field
 
 
 @define
@@ -50,9 +53,9 @@ class Floris(BaseClass):
 
     logging: dict = field(converter=dict)
     solver: dict = field(converter=dict)
-    wake: WakeModelManager = field(converter=WakeModelManager.from_dict)
-    farm: Farm = field(converter=Farm.from_dict)
-    flow_field: FlowField = field(converter=FlowField.from_dict)
+    wake: WakeModelManager = field(converter=WakeModelManager.from_dict)  # type: ignore
+    farm: Farm = field(converter=Farm.from_dict)  # type: ignore
+    flow_field: FlowField = field(converter=FlowField.from_dict)  # type: ignore
 
     # These fields are included to appease the requirement that all inputs must
     # be mapped to a field in the class. They are not used in FLORIS.

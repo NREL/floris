@@ -12,9 +12,10 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import field, define
 
+from floris.type_dec import NDArrayFloat
 from floris.simulation import BaseModel
 
 
@@ -28,14 +29,14 @@ class NoneWakeTurbulence(BaseModel):
     def prepare_function(self) -> dict:
         pass
 
-    def function(
+    def function(  # type: ignore
         self,
         ambient_TI: float,
         x: np.ndarray,
         x_i: np.ndarray,
         rotor_diameter: float,
         axial_induction: np.ndarray,
-    ) -> None:
+    ) -> NDArrayFloat:
         """Return unchanged field of turbulence intensities"""
         self.logger.info(
             "The wake-turbulence model is set to 'none'. Turbulence model disabled."

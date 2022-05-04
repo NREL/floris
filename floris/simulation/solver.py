@@ -10,21 +10,27 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import copy
-import numpy as np
-import time
 import sys
+import copy
+import time
 
-from floris.simulation import Farm
-from floris.simulation import TurbineGrid, FlowFieldGrid
-from floris.simulation import Ct, axial_induction
-from floris.simulation import FlowField
-from floris.simulation.turbine import average_velocity
+import numpy as np
+
+from floris.simulation import (
+    Ct,
+    Farm,
+    Turbine,
+    FlowField,
+    TurbineGrid,
+    FlowFieldGrid,
+    axial_induction,
+)
 from floris.simulation.wake import WakeModelManager
+from floris.simulation.turbine import average_velocity
 from floris.simulation.wake_deflection.gauss import (
-    calculate_transverse_velocity,
     wake_added_yaw,
-    yaw_added_turbulence_mixing
+    yaw_added_turbulence_mixing,
+    calculate_transverse_velocity,
 )
 
 
@@ -69,7 +75,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         # Get the current turbine quantities
         x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -186,6 +192,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
+        assert isinstance(grid.grid_resolution, int)  # mypy error fixing
         area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
         area_overlap = area_overlap[:, :, :, None, None]
 
@@ -259,7 +266,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
         # Get the current turbine quantities
         x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -378,7 +385,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
     shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
     Ctmp = np.zeros((shape))
     # Ctmp = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))
-    
+
     sigma_i = np.zeros((shape))
     # sigma_i = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))
 
@@ -388,7 +395,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
         # Get the current turbine quantities
         x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -404,7 +411,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
             farm.turbine_fCts,
             turbine_type_map=farm.turbine_type_map_sorted,
         )
-        turb_Cts = turb_Cts[:, :, :, None, None]     
+        turb_Cts = turb_Cts[:, :, :, None, None]
         turb_aIs = axial_induction(
             turb_avg_vels,
             farm.yaw_angles_sorted,
@@ -518,6 +525,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
+        assert isinstance(grid.grid_resolution, int)  # mypy error resolution
         area_overlap = 1 - np.sum(turb_u_wake <= 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
         area_overlap = area_overlap[:, :, :, None, None]
 
@@ -592,7 +600,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
         # Get the current turbine quantities
         x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -720,7 +728,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         # Get the current turbine quantities
         x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -867,6 +875,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         # TODO: leaving this in for GCH quantities; will need to find another way to compute area_overlap
         # as the current wake deficit is solved for only upstream turbines; could use WAT_upstream
         # Calculate wake overlap for wake-added turbulence (WAT)
+        assert isinstance(grid.grid_resolution, int)  # mypy error resolution
         area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
         area_overlap = area_overlap[:, :, :, None, None]
 
@@ -896,7 +905,7 @@ def full_flow_turbopark_solver(farm: Farm, flow_field: FlowField, flow_field_gri
 
     # TODO: Below is a first attempt at plotting, and uses just the values on the rotor. The current TurbOPark model requires that
     # points to be calculated are only at turbine locations. Modification will be required to allow for full flow field calculations.
-    
+
     # # Get the flow quantities and turbine performance
     # turbine_grid_farm = copy.deepcopy(farm)
     # turbine_grid_flow_field = copy.deepcopy(flow_field)
@@ -926,7 +935,7 @@ def full_flow_turbopark_solver(farm: Farm, flow_field: FlowField, flow_field_gri
     # turbine_grid_farm.initialize(turbine_grid.sorted_indices)
     # turbopark_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
-    
+
 
     # flow_field.u = copy.deepcopy(turbine_grid_flow_field.u)
     # flow_field.v = copy.deepcopy(turbine_grid_flow_field.v)

@@ -10,9 +10,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from attrs import define
 import numpy as np
+from attrs import define
 
+from floris.type_dec import NDArrayFloat
 from floris.simulation import BaseModel
 
 
@@ -26,7 +27,11 @@ class SOSFS(BaseModel):
     def prepare_function(self) -> dict:
         pass
 
-    def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
+    def function(  # type: ignore
+        self,
+        wake_field: np.ndarray,
+        velocity_field: np.ndarray,
+    ) -> NDArrayFloat:
         """
         Combines the base flow field with the velocity defecits
         using sum of squares.

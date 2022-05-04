@@ -12,16 +12,12 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
-import numexpr as ne
 import numpy as np
+import numexpr as ne
+from attrs import field, define
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
 from floris.utilities import cosd, sind, tand
+from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -32,7 +28,7 @@ class GaussVelocityDeficit(BaseModel):
     ka: float = field(default=0.38)
     kb: float = field(default=0.004)
 
-    def prepare_function(
+    def prepare_function(  # type: ignore
         self,
         grid: Grid,
         flow_field: FlowField,
@@ -48,7 +44,7 @@ class GaussVelocityDeficit(BaseModel):
         return kwargs
 
     # @profile
-    def function(
+    def function(  # type: ignore
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
@@ -58,7 +54,7 @@ class GaussVelocityDeficit(BaseModel):
         yaw_angle_i: np.ndarray,
         turbulence_intensity_i: np.ndarray,
         ct_i: np.ndarray,
-        hub_height_i: float,
+        hub_height_i: np.ndarray,
         rotor_diameter_i: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
@@ -119,7 +115,7 @@ class GaussVelocityDeficit(BaseModel):
 
             sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
             sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * rotor_diameter_i
-            
+
             sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
             sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * rotor_diameter_i
 
@@ -188,25 +184,25 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     # )
     # C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0) )
 
-    ## Precalculate some parts
-    # twox_sigmay_2 = 2 * sigma_y ** 2
-    # twox_sigmaz_2 = 2 * sigma_z ** 2
-    # a = cosd(wind_veer) ** 2 / (twox_sigmay_2) + sind(wind_veer) ** 2 / (twox_sigmaz_2)
-    # b = -sind(2 * wind_veer) / (2 * twox_sigmay_2) + sind(2 * wind_veer) / (2 * twox_sigmaz_2)
-    # c = sind(wind_veer) ** 2 / (twox_sigmay_2) + cosd(wind_veer) ** 2 / (twox_sigmaz_2)
-    # delta_y = y - y_i - delta
-    # delta_z = z - HH
-    # r = (a * (delta_y ** 2) - 2 * b * (delta_y) * (delta_z) + c * (delta_z ** 2))
-    # C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0) )
+    # Precalculate some parts
+    twox_sigmay_2 = 2 * sigma_y ** 2
+    twox_sigmaz_2 = 2 * sigma_z ** 2
+    a = cosd(wind_veer) ** 2 / (twox_sigmay_2) + sind(wind_veer) ** 2 / (twox_sigmaz_2)
+    b = -sind(2 * wind_veer) / (2 * twox_sigmay_2) + sind(2 * wind_veer) / (2 * twox_sigmaz_2)
+    c = sind(wind_veer) ** 2 / (twox_sigmay_2) + cosd(wind_veer) ** 2 / (twox_sigmaz_2)
+    delta_y = y - y_i - delta
+    delta_z = z - HH
+    r = (a * (delta_y ** 2) - 2 * b * (delta_y) * (delta_z) + c * (delta_z ** 2))
+    C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0) )
 
     ## Numexpr
-    wind_veer = np.deg2rad(wind_veer)
-    a = ne.evaluate("cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)")
-    b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
-    c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
-    r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
-    d = np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0)
-    C = ne.evaluate("1 - sqrt(d)")
+    # wind_veer = np.deg2rad(wind_veer)
+    # a = ne.evaluate("cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)")
+    # b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
+    # c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
+    # r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
+    # d = np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0)
+    # C = ne.evaluate("1 - sqrt(d)")
     return r, C
 
 def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):

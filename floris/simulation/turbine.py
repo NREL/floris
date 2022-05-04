@@ -13,20 +13,21 @@
 # See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
+
 from collections.abc import Iterable
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import field, define
 from scipy.interpolate import interp1d
 
 from floris.type_dec import (
-    floris_array_converter,
-    NDArrayFloat,
-    NDArrayFilter,
     NDArrayInt,
-    NDArrayObject,
+    NDArrayFloat,
     FromDictMixin,
+    NDArrayFilter,
+    NDArrayObject,
+    floris_array_converter,
 )
 from floris.utilities import cosd
 from floris.simulation import BaseClass
@@ -82,7 +83,7 @@ def power(
     ref_density_cp_ct: float,
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
-    pP: float,
+    pP: NDArrayFloat,
     power_interp: NDArrayObject,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
@@ -237,7 +238,7 @@ def axial_induction(
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
 
-def average_velocity(velocities: NDArrayFloat, ix_filter: NDArrayFilter | Iterable[int] | None = None) -> NDArrayFloat:
+def average_velocity(velocities: NDArrayFloat, ix_filter: NDArrayFilter | list[int] | None = None) -> NDArrayFloat:
     """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
 
@@ -348,9 +349,7 @@ class Turbine(BaseClass):
     TSR: float
     generator_efficiency: float
     ref_density_cp_ct: float
-    power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
-
-
+    power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)  # type: ignore
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -390,7 +389,7 @@ class Turbine(BaseClass):
         Given an array of wind speeds, this function returns an array of the interpolated thrust coefficients
         from the power / thrust table used to define the Turbine. The values are bound by the range of the input values.
         Any requested wind speeds outside of the range of input wind speeds are assigned Ct of 0.0001 or 0.9999.
-        
+
         The fill_value arguments sets (upper, lower) bounds for any values outside of the input range
         """
         self.fCt_interp = interp1d(

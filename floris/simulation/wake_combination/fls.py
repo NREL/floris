@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from attrs import define
 import numpy as np
+from attrs import define
 
 from floris.simulation import BaseModel
 
@@ -26,7 +26,11 @@ class FLS(BaseModel):
     def prepare_function(self) -> dict:
         pass
 
-    def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
+    def function(  # type: ignore
+        self,
+        wake_field: np.ndarray,
+        velocity_field: np.ndarray
+    ) -> np.ndarray:
         """
         Combines the base flow field with the velocity deficits
         using freestream linear superpostion. In other words, the wake

@@ -231,7 +231,7 @@ def visualize_quiver(cut_plane, ax=None, minSpeed=None, maxSpeed=None, downSamp=
     # ax.set_aspect('equal')
 
 
-def reverse_cut_plane_x_axis_in_plot(ax):
+def reverse_cut_plane_x_axis_in_plot(ax) -> None:
     """
     Shortcut method to reverse direction of x-axis.
 
@@ -239,6 +239,7 @@ def reverse_cut_plane_x_axis_in_plot(ax):
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
     """
     ax.invert_xaxis()
+    return
 
 
 def plot_rotor_values(
@@ -315,3 +316,5 @@ def plot_rotor_values(
 
     if show:
         plt.show()
+
+    return None

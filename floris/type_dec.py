@@ -12,12 +12,12 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Iterable, Tuple, Union, Callable
+from typing import Any, Tuple, Union, Callable, Iterable
 
 import attrs
-from attrs import define, Attribute
 import numpy as np
 import numpy.typing as npt
+from attrs import Attribute, define
 
 
 ### Define general data types used throughout
@@ -98,15 +98,15 @@ class FromDictMixin:
                 The `attr`-defined class.
         """
         # Check for any inputs that aren't part of the class definition
-        class_attr_names = [a.name for a in cls.__attrs_attrs__]
+        class_attr_names = [a.name for a in cls.__attrs_attrs__]  # type: ignore
         extra_args = [d for d in data if d not in class_attr_names]
         if len(extra_args):
             raise AttributeError(f"The initialization for {cls.__name__} was given extraneous inputs: {extra_args}")
 
-        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
+        kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}  # type: ignore
 
         # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
-        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and a.default is attrs.NOTHING]
+        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and a.default is attrs.NOTHING]  # type: ignore
         undefined = sorted(set(required_inputs) - set(kwargs))
 
         if undefined:
@@ -158,4 +158,3 @@ class FromDictMixin:
 #     kw_only=True,
 # )
 # update_wrapper(int_attrib, attr.ib)
-

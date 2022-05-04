@@ -12,12 +12,10 @@
 
 from typing import Any, Dict
 
-from attrs import define
 import numpy as np
+from attrs import define
 
-from floris.simulation import BaseModel
-from floris.simulation import FlowField
-from floris.simulation import Grid
+from floris.simulation import Grid, BaseModel, FlowField
 
 
 @define
@@ -27,7 +25,7 @@ class NoneVelocityDeflection(BaseModel):
     deflection and returns an array of zeroes.
     """
 
-    def prepare_function(
+    def prepare_function(  # type: ignore
         self,
         grid: Grid,
         flow_field: FlowField,
@@ -38,7 +36,7 @@ class NoneVelocityDeflection(BaseModel):
         )
         return kwargs
 
-    def function(
+    def function(  # type: ignore
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,

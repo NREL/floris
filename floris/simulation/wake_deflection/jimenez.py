@@ -12,16 +12,12 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
-import numexpr as ne
 import numpy as np
+import numexpr as ne
+from attrs import field, define
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
 from floris.utilities import cosd, sind
+from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -41,7 +37,7 @@ class JimenezVelocityDeflection(BaseModel):
     ad: float = field(default=0.0)
     bd: float = field(default=0.0)
 
-    def prepare_function(
+    def prepare_function(  # type: ignore
         self,
         grid: Grid,
         flow_field: FlowField,
@@ -53,7 +49,7 @@ class JimenezVelocityDeflection(BaseModel):
         return kwargs
 
     # @profile
-    def function(
+    def function(  # type: ignore
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
@@ -125,13 +121,28 @@ class JimenezVelocityDeflection(BaseModel):
         ad = self.ad
         bd = self.bd
 
-        delta_x = ne.evaluate("x - x_i")
-        A = ne.evaluate("15 * (2 * kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0")
-        B = ne.evaluate("(30 * kd / rotor_diameter_i) * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0")
-        C = ne.evaluate("xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)")
-        D = ne.evaluate("30 * kd")
+        # delta_x = ne.evaluate("x - x_i")
+        # A = ne.evaluate("15 * (2 * kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0")
+        # B = ne.evaluate("(30 * kd / rotor_diameter_i) * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0")
+        # C = ne.evaluate("xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)")
+        # D = ne.evaluate("30 * kd")
 
-        yYaw_init = ne.evaluate("(xi_init * A / B) - (C / D)")
-        deflection = ne.evaluate("yYaw_init + ad + bd * delta_x")
+        # yYaw_init = ne.evaluate("(xi_init * A / B) - (C / D)")
+        # deflection = ne.evaluate("yYaw_init + ad + bd * delta_x")
+
+        delta_x = x - x_i
+
+        # yaw displacement
+        A = 15 * (2 * self.kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0
+        B = (30 * self.kd / rotor_diameter_i) * ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0
+        C = xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)
+        D = 30 * self.kd
+
+        yYaw_init = (xi_init * A / B) - (C / D)
+
+        # corrected yaw displacement with lateral offset
+        # This has the same shape as the grid
+
+        deflection = yYaw_init + self.ad + self.bd * delta_x
 
         return deflection

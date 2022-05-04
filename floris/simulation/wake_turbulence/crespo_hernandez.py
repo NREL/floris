@@ -12,15 +12,11 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import field, define
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind
+from floris.utilities import cosd, sind, tand
+from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -61,12 +57,12 @@ class CrespoHernandez(BaseModel):
     def prepare_function(self) -> dict:
         pass
 
-    def function(
+    def function(  # type: ignore
         self,
         ambient_TI: float,
         x: np.ndarray,
         x_i: np.ndarray,
-        rotor_diameter: float,
+        rotor_diameter: np.ndarray,
         axial_induction: np.ndarray,
     ) -> None:
         # Replace zeros and negatives with 1 to prevent nans/infs

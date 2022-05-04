@@ -152,8 +152,8 @@ class FlorisInterface(LoggerBase):
         """
 
         # TODO decide where to handle this sign issue
-        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
-            self.floris.farm.yaw_angles = yaw_angles
+        if (yaw_angles is not None) and not (np.all(yaw_angles == 0.0)):
+            self.floris.farm.yaw_angles = yaw_angles  # type: ignore
 
         # Initialize solution space
         self.floris.initialize_domain()

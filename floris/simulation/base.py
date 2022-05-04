@@ -23,7 +23,7 @@ from typing import Any, Dict, Final
 
 import attrs
 
-from floris.type_dec import FromDictMixin
+from floris.type_dec import NDArrayFloat, FromDictMixin
 from floris.logging_manager import LoggerBase
 
 
@@ -73,9 +73,9 @@ class BaseModel(BaseClass, ABC):
     NUM_EPS: Final[float] = 0.001  # This is a numerical epsilon to prevent divide by zeros
 
     @abstractmethod
-    def prepare_function() -> dict:
+    def prepare_function(self, *args) -> dict:
         raise NotImplementedError("BaseModel.prepare_function")
 
     @abstractmethod
-    def function() -> None:
+    def function(self, *args, **kwargs) -> NDArrayFloat:
         raise NotImplementedError("BaseModel.function")

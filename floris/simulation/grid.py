@@ -16,19 +16,20 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Sequence
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import field, define
 
-from floris.utilities import Vec3, rotate_coordinates_rel_west
-from floris.type_dec import  (
+from floris.type_dec import (
+    NDArrayInt,
+    NDArrayFloat,
     floris_float_type,
     floris_array_converter,
-    NDArrayFloat,
-    NDArrayInt
 )
+from floris.utilities import Vec3, rotate_coordinates_rel_west
+
 
 @define
 class Grid(ABC):
@@ -54,14 +55,12 @@ class Grid(ABC):
     Args:
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind data is a time series.
     """
-    turbine_coordinates: list[Vec3] = field()
-    reference_turbine_diameter: float
-    grid_resolution: int | Iterable = field()
+    turbine_coordinates: NDArrayFloat = field()
+    reference_turbine_diameter: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     time_series: bool = field()
@@ -102,22 +101,6 @@ class Grid(ABC):
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
-    @grid_resolution.validator
-    def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
-        # TODO move this to the grid types and off of the base class
-        """Check that grid resolution is given as int or Vec3 with int components."""
-        if isinstance(value, int) and type(self) is TurbineGrid:
-            return
-        elif isinstance(value, Iterable) and type(self) is FlowFieldPlanarGrid:
-            assert type(value[0]) is int
-            assert type(value[1]) is int
-        elif isinstance(value, Iterable) and type(self) is FlowFieldGrid:
-            assert type(value[0]) is int
-            assert type(value[1]) is int
-            assert type(value[2]) is int
-        else:
-            raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
-
     @abstractmethod
     def set_grid(self) -> None:
         raise NotImplementedError("Grid.set_grid")
@@ -134,6 +117,7 @@ class TurbineGrid(Grid):
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
     # TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`
+    grid_resolution: int = field()
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
@@ -196,6 +180,7 @@ class TurbineGrid(Grid):
         # Create the data for the turbine grids
         radius_ratio = 0.5
         disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
+
         template_grid = np.ones(
             (
                 self.n_wind_directions,
@@ -255,6 +240,7 @@ class FlowFieldGrid(Grid):
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
+    grid_resolution: Sequence = field()
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -315,6 +301,7 @@ class FlowFieldPlanarGrid(Grid):
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
+    grid_resolution: Sequence = field()
     normal_vector: str = field()
     planar_coordinate: float = field()
     x1_bounds: tuple = field(default=None)
@@ -424,7 +411,7 @@ class FlowFieldPlanarGrid(Grid):
         # # print(self.x)
 
         # x_coordinates, y_coordinates, _ = self.turbine_coordinates_array.T
-        
+
         # x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
         # y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
         # # print(x_center_of_rotation)

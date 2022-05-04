@@ -12,15 +12,11 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import field, define
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind
+from floris.utilities import cosd, sind, tand
+from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -80,7 +76,7 @@ class GaussVelocityDeflection(BaseModel):
     eps_gain: float = field(converter=float, default=0.2)
     use_secondary_steering: bool = field(converter=bool, default=True)
 
-    def prepare_function(
+    def prepare_function(  # type: ignore
         self,
         grid: Grid,
         flow_field: FlowField,
@@ -96,14 +92,14 @@ class GaussVelocityDeflection(BaseModel):
         return kwargs
 
     # @profile
-    def function(
+    def function(  # type: ignore
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
         yaw_i: np.ndarray,
         turbulence_intensity_i: np.ndarray,
         ct_i: np.ndarray,
-        rotor_diameter_i: float,
+        rotor_diameter_i: np.ndarray,
         *,
         x: np.ndarray,
         y: np.ndarray,

@@ -13,26 +13,26 @@
 # See https://floris.readthedocs.io for documentation
 
 import attrs
-from attrs import define, field
+from attrs import field, define
 
 from floris.simulation import BaseClass, BaseModel
-from floris.simulation.wake_deflection import (
-    GaussVelocityDeflection,
-    JimenezVelocityDeflection,
-    NoneVelocityDeflection,
-)
-from floris.simulation.wake_combination import FLS, MAX, SOSFS
-from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
 from floris.simulation.wake_velocity import (
     NoneVelocityDeficit,
-    CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
     TurbOParkVelocityDeficit,
+    CumulativeGaussCurlVelocityDeficit,
 )
+from floris.simulation.wake_deflection import (
+    NoneVelocityDeflection,
+    GaussVelocityDeflection,
+    JimenezVelocityDeflection,
+)
+from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
+from floris.simulation.wake_combination import FLS, MAX, SOSFS
 
 
-MODEL_MAP = {
+MODEL_MAP: dict = {
     "combination_model": {
         "fls": FLS,
         "max": MAX,
@@ -85,39 +85,41 @@ class WakeModelManager(BaseClass):
     velocity_model: BaseModel = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        model: BaseModel = MODEL_MAP["velocity_model"][self.model_strings["velocity_model"]]
+        model: BaseModel
+
+        model = MODEL_MAP["velocity_model"][self.model_strings["velocity_model"]]
         if self.model_strings["velocity_model"].lower() == "none":
             model_parameters = None
         else:
             model_parameters = self.wake_velocity_parameters[self.model_strings["velocity_model"]]
         if model_parameters is None:
             # Use model defaults
-            self.velocity_model = model()
+            self.velocity_model = model()  # type: ignore
         else:
             self.velocity_model = model.from_dict(model_parameters)
 
-        model: BaseModel = MODEL_MAP["deflection_model"][self.model_strings["deflection_model"]]
+        model = MODEL_MAP["deflection_model"][self.model_strings["deflection_model"]]
         if self.model_strings["deflection_model"].lower() == "none":
             model_parameters = None
         else:
             model_parameters = self.wake_deflection_parameters[self.model_strings["deflection_model"]]
         if model_parameters is None:
-            self.deflection_model = model()
+            self.deflection_model = model()  # type: ignore
         else:
             self.deflection_model = model.from_dict(model_parameters)
 
-        model: BaseModel = MODEL_MAP["turbulence_model"][self.model_strings["turbulence_model"]]
+        model = MODEL_MAP["turbulence_model"][self.model_strings["turbulence_model"]]
         if self.model_strings["turbulence_model"].lower() == "none":
             model_parameters = None
         else:
             model_parameters = self.wake_turbulence_parameters[self.model_strings["turbulence_model"]]
         if model_parameters is None:
-            self.turbulence_model = model()
+            self.turbulence_model = model()  # type: ignore
         else:
             self.turbulence_model = model.from_dict(model_parameters)
 
-        model: BaseModel = MODEL_MAP["combination_model"][self.model_strings["combination_model"]]
-        self.combination_model = model()
+        model = MODEL_MAP["combination_model"][self.model_strings["combination_model"]]
+        self.combination_model = model()  # type: ignore
 
     @model_strings.validator
     def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:

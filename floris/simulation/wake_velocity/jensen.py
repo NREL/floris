@@ -12,15 +12,11 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
-import numexpr as ne
 import numpy as np
+import numexpr as ne
+from attrs import field, define
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
+from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -43,7 +39,7 @@ class JensenVelocityDeficit(BaseModel):
 
     we: float = field(converter=float, default=0.05)
 
-    def prepare_function(
+    def prepare_function(  # type: ignore
         self,
         grid: Grid,
         flow_field: FlowField,
@@ -63,7 +59,7 @@ class JensenVelocityDeficit(BaseModel):
         return kwargs
 
     # @profile
-    def function(
+    def function(  # type: ignore
         self,
         x_i: np.ndarray,
         y_i: np.ndarray,
@@ -142,10 +138,9 @@ class JensenVelocityDeficit(BaseModel):
 
         # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
         boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < boundary_line")
-        
+
         mask = np.logical_and(downstream_mask, boundary_mask)
-        c[~mask] = 0.0
-        # c = ne.evaluate("c * downstream_mask * boundary_mask")
+        c = ne.evaluate("c * downstream_mask * boundary_mask")
 
         velocity_deficit = ne.evaluate("2 * axial_induction_i * c")
 
