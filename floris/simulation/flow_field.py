@@ -102,7 +102,7 @@ class FlowField(FromDictMixin):
         else:
             self.u_initial_sorted = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * speed_ups
         self.v_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
-        self.v_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
+        self.w_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
 
         self.u_sorted = self.u_initial_sorted.copy()
         self.v_sorted = self.v_initial_sorted.copy()
