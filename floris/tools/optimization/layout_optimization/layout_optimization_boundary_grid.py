@@ -312,8 +312,6 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
 
     def _place_boundary_turbines(self, start, boundary_poly, nturbs=None, spacing=None):
         xBounds, yBounds = boundary_poly.boundary.coords.xy
-        print('5: ', nturbs)
-        print('6: ', spacing)
 
         if xBounds[-1] != xBounds[0]:
             xBounds = np.append(xBounds, xBounds[0])
@@ -402,8 +400,6 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
                     x = x[:ii]
                     y = y[:ii]
                     break
-            print('xx: ', x)
-            print('yy: ', y)
         return x, y
 
     def _place_boundary_turbines_with_specified_spacing(self, spacing, start, boundary_x, boundary_y):
@@ -497,8 +493,6 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         layout_y (Array(Float)): turbine y locations
         """
 
-        print('3: ', n_boundary_turbines)
-        print('4: ', boundary_spacing)
         boundary_turbines_x, boundary_turbines_y = self._place_boundary_turbines(
             start, self.boundary_polygon, nturbs=n_boundary_turbines, spacing=boundary_spacing
         )
@@ -579,8 +573,6 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             self.boundary_spacing = boundary_spacing
 
     def reinitialize_xy(self):
-        print('1: ', self.n_boundary_turbines)
-        print('2: ', self.boundary_spacing)
         layout_x, layout_y = self.boundary_grid(
             self.start,
             self.x_spacing,
