@@ -558,12 +558,20 @@ class FlorisInterface(LoggerBase):
         if len(ws) > 1 or len(ws) < 1:
             raise ValueError("Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws)))
 
+    def check_calc_wake_run(self, func_name):
+
+        if not hasattr('self.floris.farm', 'turbine_type_map'):
+            raise AttributeError('Cant call function %s without first calling calculate_wake' % func_name)
+
     def get_turbine_powers(self) -> NDArrayFloat:
         """Calculates the power at each turbine in the windfarm.
 
         Returns:
             NDArrayFloat: [description]
         """
+
+        self.check_calc_wake_run('get_turbine_powers')
+
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
             velocities=self.floris.flow_field.u,
