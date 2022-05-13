@@ -374,9 +374,13 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
                                 # Check if turbine just placed is to close to first turbine
                                 min_dist = cdist([(point_x, point_y)], [(x[0], y[0])])
                                 if min_dist < spacing:
-                                    end_loop = True
-                                    ii = i
-                                    break
+                                    # TODO: make this more robust; pass is needed if 2nd turbine is too close to the first
+                                    if i == 1:
+                                        pass
+                                    else:
+                                        end_loop = True
+                                        ii = i
+                                        break
 
                                 min_dist = cdist([(point_x, point_y)], [(x[i-1], y[i-1])])
                                 if min_dist < spacing:
