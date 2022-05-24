@@ -560,7 +560,7 @@ class FlorisInterface(LoggerBase):
 
     def _check_calc_wake_run(self, func_name):
 
-        if not hasattr('self.floris.farm', 'turbine_type_map'):
+        if not hasattr(self.floris.farm, 'turbine_type_map'):
             raise AttributeError('Cant call function %s without first calling calculate_wake' % func_name)
 
     def get_turbine_powers(self) -> NDArrayFloat:
