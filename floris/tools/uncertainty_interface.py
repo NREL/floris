@@ -456,7 +456,7 @@ class UncertaintyInterface(LoggerBase):
         # Now apply probability distribution weighing to get turbine powers
         return np.sum(wd_weighing * power_probablistic, axis=0)
 
-    def get_farm_power(self):
+    def get_farm_power(self, turbine_weights=None):
         """Calculates the probability-weighted power production of the
         collective of all turbines in the farm, for each wind direction
         and wind speed specified.
