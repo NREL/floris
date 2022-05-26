@@ -600,6 +600,7 @@ class FlorisInterface(LoggerBase):
 
     def get_farm_power(
         self,
+        turbine_weights=None,
         use_turbulence_correction=False,
     ):
         """
@@ -610,6 +611,19 @@ class FlorisInterface(LoggerBase):
         original wind direction and yaw angles.
 
         Args:
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power 
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_wind_directions, n_wind_speeds,
+                n_turbines). Defaults to None.
             use_turbulence_correction: (bool, optional): When *True* uses a
                 turbulence parameter to adjust power output calculations.
                 Defaults to *False*.
@@ -624,7 +638,31 @@ class FlorisInterface(LoggerBase):
         # for turbine in self.floris.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
 
+
+        if turbine_weights is None:
+            # Default to equal weighing of all turbines when turbine_weights is None
+            turbine_weights = np.ones(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            )
+        elif len(np.shape(turbine_weights)) == 1:
+            # Deal with situation when 1D array is provided
+            turbine_weights = np.tile(
+                turbine_weights,
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    1
+                )
+            )
+
+        # Calculate all turbine powers and apply weights
         turbine_powers = self.get_turbine_powers()
+        turbine_powers = np.multiply(turbine_weights, turbine_powers)
+
         return np.sum(turbine_powers, axis=2)
 
     def get_farm_AEP(
@@ -633,6 +671,7 @@ class FlorisInterface(LoggerBase):
         cut_in_wind_speed=0.001,
         cut_out_wind_speed=None,
         yaw_angles=None,
+        turbine_weights=None,
         no_wake=False,
     ) -> float:
         """
@@ -658,6 +697,19 @@ class FlorisInterface(LoggerBase):
                 The relative turbine yaw angles in degrees. If None is
                 specified, will assume that the turbine yaw angles are all
                 zero degrees for all conditions. Defaults to None.
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power 
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_wind_directions, n_wind_speeds,
+                n_turbines). Defaults to None.
             no_wake: (bool, optional): When *True* updates the turbine
                 quantities without calculating the wake or adding the wake to
                 the flow field. This can be useful when quantifying the loss
@@ -712,7 +764,9 @@ class FlorisInterface(LoggerBase):
                 self.calculate_no_wake(yaw_angles=yaw_angles_subset)
             else:
                 self.calculate_wake(yaw_angles=yaw_angles_subset)
-            farm_power[:, conditions_to_evaluate] = self.get_farm_power()
+            farm_power[:, conditions_to_evaluate] = (
+                self.get_farm_power(turbine_weights=turbine_weights)
+            )
 
         # Finally, calculate AEP in GWh
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
