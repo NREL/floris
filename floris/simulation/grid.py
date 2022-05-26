@@ -115,11 +115,6 @@ class Grid(ABC):
     def set_grid(self) -> None:
         raise NotImplementedError("Grid.set_grid")
 
-    @abstractmethod
-    def finalize(self) -> None:
-        raise NotImplementedError("Grid.finalize")
-
-
 @define
 class TurbineGrid(Grid):
     """See `Grid` for more details.
@@ -235,13 +230,9 @@ class TurbineGrid(Grid):
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=2)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=2)
 
-    def finalize(self):
-        # Replace the turbines in their unsorted order so that
-        # we can report values in a sane way.
         self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=2)
         self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=2)
         self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
-
 
 @define
 class FlowFieldGrid(Grid):
@@ -295,10 +286,6 @@ class FlowFieldGrid(Grid):
         self.x_sorted = x_points[None, None, :, :, :]
         self.y_sorted = y_points[None, None, :, :, :]
         self.z_sorted = z_points[None, None, :, :, :]
-
-    def finalize(self):
-        pass
-
 
 @define
 class FlowFieldPlanarGrid(Grid):
@@ -404,7 +391,7 @@ class FlowFieldPlanarGrid(Grid):
         # self.y = np.take_along_axis(self.y, self.sorted_indices, axis=2)
         # self.z = np.take_along_axis(self.z, self.sorted_indices, axis=2)
 
-    def finalize(self):
+    # def finalize(self):
         # sorted_indices = self.x.argsort(axis=2)
         # unsorted_indices = sorted_indices.argsort(axis=2)
 
@@ -425,7 +412,7 @@ class FlowFieldPlanarGrid(Grid):
 
         # self.x, self.y, self.z = self._rotated_grid(-1 * self.wind_directions, (x_center_of_rotation, y_center_of_rotation))
         # TODO figure out how to un-rotate grid for plotting after it has been solved
-        pass
+        # pass
 
     # def _rotated_grid(self, angle, center_of_rotation):
     #     """
