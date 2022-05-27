@@ -18,6 +18,7 @@ Defines the BaseClass parent class for all models to be based upon.
 """
 
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import Any, Dict, Final
 
 import attrs
@@ -27,10 +28,20 @@ from floris.type_dec import FromDictMixin
 from floris.logging_manager import LoggerBase
 
 
+class State(Enum):
+    UNINITIALIZED = 0
+    INITIALIZED = 1
+    USED = 2
+    EXPIRED = 3
+
+
 class BaseClass(LoggerBase, FromDictMixin):
     """
     BaseClass object class. This class does the logging and MixIn class inheritance.
     """
+
+    state = State.UNINITIALIZED
+
 
     @classmethod
     def get_model_defaults(cls) -> Dict[str, Any]:
