@@ -21,7 +21,6 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Final
 
 import attrs
-from attrs import define
 
 from floris.type_dec import FromDictMixin
 from floris.logging_manager import LoggerBase

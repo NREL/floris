@@ -18,11 +18,13 @@ from pathlib import Path
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
 import scipy.io
-import os
 
 from floris.simulation import BaseModel
+from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
+from floris.simulation import Turbine
+from floris.utilities import cosd, sind, tand
 
 
 @define
