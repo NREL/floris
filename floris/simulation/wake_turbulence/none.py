@@ -26,7 +26,7 @@ class NoneWakeTurbulence(BaseModel):
     any wake turbulence and just returns an array of the ambient TIs.
     """
 
-    def prepare_function(self) -> dict:
+    def prepare_function(self) -> dict:  # type: ignore
         pass
 
     def function(  # type: ignore

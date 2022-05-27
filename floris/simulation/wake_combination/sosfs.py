@@ -24,7 +24,7 @@ class SOSFS(BaseModel):
     wake velocity deficits to the base flow field.
     """
 
-    def prepare_function(self) -> dict:
+    def prepare_function(self) -> dict:  # type: ignore
         pass
 
     def function(  # type: ignore

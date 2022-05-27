@@ -54,7 +54,7 @@ class CrespoHernandez(BaseModel):
     ai: float = field(converter=float, default=0.8)
     downstream: float = field(converter=float, default=-0.32)
 
-    def prepare_function(self) -> dict:
+    def prepare_function(self) -> dict:  # type: ignore
         pass
 
     def function(  # type: ignore

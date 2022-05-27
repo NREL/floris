@@ -30,7 +30,7 @@ class MAX(BaseModel):
             :keyprefix: max-
     """
 
-    def prepare_function(self) -> dict:
+    def prepare_function(self) -> dict:  # type: ignore
         pass
 
     def function(  # type: ignore
