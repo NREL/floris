@@ -38,6 +38,7 @@ from floris.tools.cut_plane import get_plane_from_flow_data
 from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
 from floris.tools.interface_utilities import get_params, set_params, show_params
 from floris.tools.cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
+from floris.simulation import State
 
 # from .visualization import visualize_cut_plane
 # from .layout_functions import visualize_layout, build_turbine_loc
