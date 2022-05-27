@@ -25,8 +25,6 @@ class NoneWakeTurbulence(BaseModel):
     any wake turbulence and just returns an array of the ambient TIs.
     """
 
-    model_string = "none"
-
     def prepare_function(self) -> dict:
         pass
 

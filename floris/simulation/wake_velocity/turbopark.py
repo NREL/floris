@@ -36,7 +36,6 @@ class TurbOParkVelocityDeficit(BaseModel):
     A: float = field(default=0.04)
     sigma_max_rel: float = field(default=4.0)
     overlap_gauss_interp: RegularGridInterpolator = field(init=False)
-    model_string = "turbopark"
 
     def __attrs_post_init__(self) -> None:
         lookup_table_matlab_file = Path(__file__).parent / "turbopark_lookup_table.mat"

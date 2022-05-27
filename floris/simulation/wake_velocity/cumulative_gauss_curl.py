@@ -38,8 +38,6 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
     c_f: float = field(default=2.41)
     alpha_mod: float = field(default=1.0)
 
-    model_string = "cumulative_gauss_curl"
-
     def prepare_function(
         self,
         grid: Grid,

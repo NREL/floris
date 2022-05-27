@@ -26,7 +26,6 @@ class NoneVelocityDeflection(BaseModel):
     The None deflection model is a placeholder code that simple ignores any
     deflection and returns an array of zeroes.
     """
-    model_string = "none"
 
     def prepare_function(
         self,

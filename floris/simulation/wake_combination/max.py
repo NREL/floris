@@ -30,8 +30,6 @@ class MAX(BaseModel):
             :keyprefix: max-
     """
 
-    model_string = "max"
-
     def prepare_function(self) -> dict:
         pass
 
