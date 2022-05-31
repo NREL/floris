@@ -30,13 +30,15 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         solver=None,
         optOptions=None,
         timeLimit=None,
-        storeHistory='hist.hist'
+        storeHistory='hist.hist',
+        hotStart=None
     ):
         super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
         self._reinitialize(solver=solver, optOptions=optOptions)
 
         self.storeHistory = storeHistory
         self.timeLimit = timeLimit
+        self.hotStart = hotStart
 
     def _reinitialize(self, solver=None, optOptions=None):
         try:
@@ -78,10 +80,9 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
             self.sol = self.opt(self.optProb, sens=self._sens)
         else:
             if self.timeLimit is not None:
-                print(self.timeLimit)
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, timeLimit=self.timeLimit)
+                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, timeLimit=self.timeLimit, hotStart=self.hotStart)
             else:
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory)
+                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, hotStart=self.hotStart)
         return self.sol
 
     def _obj_func(self, varDict):
