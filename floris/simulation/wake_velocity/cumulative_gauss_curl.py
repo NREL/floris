@@ -175,20 +175,23 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         a2 = 2 ** (4 / n - 2)
 
         # based on Blondel model, modified to include cumulative effects
-        C = a1 - np.sqrt(
-            a2
-            - (
-                (n * turbine_Ct[:,:,ii:ii+1])
-                * cosd(turbine_yaw)
-                / (
-                    16.0
-                    * gamma(2 / n)
-                    * np.sign(sigma_n)
-                    * (np.abs(sigma_n) ** (4 / n))
-                    * (1 - sum_lbda) ** 2
-                )
+        tmp = a2 - (
+            (n * turbine_Ct[:,:,ii:ii+1])
+            * cosd(turbine_yaw)
+            / (
+                16.0
+                * gamma(2 / n)
+                * np.sign(sigma_n)
+                * (np.abs(sigma_n) ** (4 / n))
+                * (1 - sum_lbda) ** 2
             )
         )
+
+        # for some low wind speeds, tmp can become slightly negative, which causes NANs,
+        # so replace the slightly negative values with zeros
+        tmp = tmp * np.array(tmp >= 0)
+
+        C = a1 - np.sqrt(tmp)
 
         C = C * (1 - sum_lbda)
 
@@ -233,4 +236,3 @@ def wake_expansion(
     # Do this ^^ in the main function
 
     return sigma_y
- 
