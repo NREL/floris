@@ -20,7 +20,7 @@ from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
 from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand
+from floris.utilities import cosd, sind
 
 
 @define
@@ -79,7 +79,6 @@ class GaussVelocityDeflection(BaseModel):
     dm: float = field(converter=float, default=1.0)
     eps_gain: float = field(converter=float, default=0.2)
     use_secondary_steering: bool = field(converter=bool, default=True)
-    model_string = "gauss"
 
     def prepare_function(
         self,

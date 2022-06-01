@@ -13,28 +13,35 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import attr
 import pytest
+
+from attr import define, field
 
 from floris.simulation import BaseClass, BaseModel
 
 
-@attr.s(auto_attribs=True)
-class ClassTest(BaseClass):
-    x: int = attr.ib(default=1, converter=int)
-    model_string: str = attr.ib(default="test", converter=str)
+@define
+class ClassTest(BaseModel):
+    x: int = field(default=1, converter=int)
+    a_string: str = field(default="abc", converter=str)
+
+    def prepare_function() -> dict:
+        return {}
+
+    def function() -> None:
+        return None
 
 
 def test_get_model_defaults():
     defaults = ClassTest.get_model_defaults()
     assert len(defaults) == 2
     assert defaults["x"] == 1
-    assert defaults["model_string"] == "test"
+    assert defaults["a_string"] == "abc"
 
 
 def test_get_model_values():
-    cls = ClassTest(x=4, model_string="new")
+    cls = ClassTest(x=4, a_string="xyz")
     values = cls._get_model_dict()
     assert len(values) == 2
     assert values["x"] == 4
-    assert values["model_string"] == "new"
+    assert values["a_string"] == "xyz"

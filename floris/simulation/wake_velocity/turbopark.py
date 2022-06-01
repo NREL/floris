@@ -18,11 +18,13 @@ from pathlib import Path
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
 import scipy.io
-import os
 
 from floris.simulation import BaseModel
+from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
+from floris.simulation import Turbine
+from floris.utilities import cosd, sind, tand
 
 
 @define
@@ -36,7 +38,6 @@ class TurbOParkVelocityDeficit(BaseModel):
     A: float = field(default=0.04)
     sigma_max_rel: float = field(default=4.0)
     overlap_gauss_interp: RegularGridInterpolator = field(init=False)
-    model_string = "turbopark"
 
     def __attrs_post_init__(self) -> None:
         lookup_table_matlab_file = Path(__file__).parent / "turbopark_lookup_table.mat"

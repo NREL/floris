@@ -17,7 +17,6 @@ import attrs
 from attrs import define, field
 import numpy as np
 from pathlib import Path
-import os
 import copy
 
 from floris.type_dec import (
@@ -83,7 +82,7 @@ class Farm(BaseClass):
             if type(val) is str:
                 _floris_dir = Path(__file__).parent.parent
                 fname = _floris_dir / "turbine_library" / f"{val}.yaml"
-                if not os.path.isfile(fname):
+                if not Path.is_file(fname):
                     raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
                 self.turbine_definitions[i] = load_yaml(fname)
 

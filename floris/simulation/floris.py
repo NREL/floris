@@ -25,7 +25,6 @@ from floris.simulation import (
     Farm,
     WakeModelManager,
     FlowField,
-    Turbine,
     Grid,
     TurbineGrid,
     FlowFieldGrid,
