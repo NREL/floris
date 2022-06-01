@@ -22,7 +22,7 @@ import attrs
 from attrs import define, field
 import numpy as np
 
-from floris.utilities import Vec3, rotate_coordinates_rel_west, cosd, sind
+from floris.utilities import Vec3, rotate_coordinates_rel_west
 from floris.type_dec import  (
     floris_float_type,
     floris_array_converter,

@@ -16,7 +16,6 @@ import time
 import sys
 
 from floris.simulation import Farm
-from floris.simulation import Turbine
 from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.simulation import Ct, axial_induction
 from floris.simulation import FlowField

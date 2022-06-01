@@ -23,8 +23,6 @@ class FLS(BaseModel):
     deficits to the freestream flow field.
     """
 
-    model_string = "fls"
-
     def prepare_function(self) -> dict:
         pass
 

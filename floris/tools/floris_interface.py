@@ -14,33 +14,18 @@
 
 from __future__ import annotations
 
-import copy
-from typing import Any, Tuple
+from typing import Tuple
 from pathlib import Path
-from itertools import repeat, product
-from multiprocessing import cpu_count
-from multiprocessing.pool import Pool
 
 import numpy as np
 import pandas as pd
-import numpy.typing as npt
-import matplotlib.pyplot as plt
-from scipy.stats import norm
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
-from numpy.lib.arraysetops import unique
 
-from floris.utilities import Vec3
 from floris.type_dec import NDArrayFloat
-from floris.simulation import Farm, Floris, FlowField, WakeModelManager, farm, floris, flow_field
+from floris.simulation import Floris
 from floris.logging_manager import LoggerBase
-from floris.tools.cut_plane import get_plane_from_flow_data
-# from floris.tools.flow_data import FlowData
 from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
-from floris.tools.interface_utilities import get_params, set_params, show_params
-from floris.tools.cut_plane import CutPlane, change_resolution, get_plane_from_flow_data
-
-# from .visualization import visualize_cut_plane
-# from .layout_functions import visualize_layout, build_turbine_loc
+from floris.tools.cut_plane import CutPlane
 
 
 class FlorisInterface(LoggerBase):
@@ -70,7 +55,7 @@ class FlorisInterface(LoggerBase):
             self.floris = Floris.from_dict(self.configuration)
 
         else:
-            raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
+            raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
 
         # Store the heterogeneous map for use after reinitailization
         self.het_map = het_map

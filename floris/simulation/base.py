@@ -21,7 +21,6 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Final
 
 import attrs
-from attrs import define
 
 from floris.type_dec import FromDictMixin
 from floris.logging_manager import LoggerBase
@@ -62,15 +61,6 @@ class BaseModel(BaseClass, ABC):
     """
 
     NUM_EPS: Final[float] = 0.001  # This is a numerical epsilon to prevent divide by zeros
-
-    @property
-    def model_string(self):
-        return self.model_string
-
-    @model_string.setter
-    @abstractmethod
-    def model_string(self, string):
-        raise NotImplementedError("BaseModel.model_string")
 
     @abstractmethod
     def prepare_function() -> dict:
