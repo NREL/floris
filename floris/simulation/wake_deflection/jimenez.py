@@ -40,7 +40,6 @@ class JimenezVelocityDeflection(BaseModel):
     kd: float = field(default=0.05)
     ad: float = field(default=0.0)
     bd: float = field(default=0.0)
-    model_string = "jimenez"
 
     def prepare_function(
         self,
@@ -49,7 +48,7 @@ class JimenezVelocityDeflection(BaseModel):
     ) -> Dict[str, Any]:
 
         kwargs = dict(
-            x=grid.x,
+            x=grid.x_sorted,
         )
         return kwargs
 

@@ -20,7 +20,7 @@ from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
 from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand
+from floris.utilities import cosd, sind
 
 
 @define
@@ -57,7 +57,6 @@ class CrespoHernandez(BaseModel):
     constant: float = field(converter=float, default=0.9)
     ai: float = field(converter=float, default=0.8)
     downstream: float = field(converter=float, default=-0.32)
-    model_string = "crespo_hernandez"
 
     def prepare_function(self) -> dict:
         pass

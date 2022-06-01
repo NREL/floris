@@ -31,7 +31,6 @@ class GaussVelocityDeficit(BaseModel):
     beta: float = field(default=0.077)
     ka: float = field(default=0.38)
     kb: float = field(default=0.004)
-    model_string = "gauss"
 
     def prepare_function(
         self,
@@ -40,10 +39,10 @@ class GaussVelocityDeficit(BaseModel):
     ) -> Dict[str, Any]:
 
         kwargs = dict(
-            x=grid.x,
-            y=grid.y,
-            z=grid.z,
-            u_initial=flow_field.u_initial,
+            x=grid.x_sorted,
+            y=grid.y_sorted,
+            z=grid.z_sorted,
+            u_initial=flow_field.u_initial_sorted,
             wind_veer=flow_field.wind_veer
         )
         return kwargs

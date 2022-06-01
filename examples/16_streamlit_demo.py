@@ -44,11 +44,12 @@ st.set_page_config(layout="wide")
 
 # Parameters
 D = 126. # Assume for convenience
-floris_model_list = ['jensen','gch','cc']
+floris_model_list = ['jensen','gch','cc','turbopark']
 color_dict = {
     'jensen':'k',
     'gch':'b',
-    'cc':'r'
+    'cc':'r',
+    'turbopark':'c'
 }
 
 # Streamlit inputs
@@ -61,7 +62,7 @@ turbulence_intensity = st.sidebar.slider("Turbulence Intensity", 0.01, 0.25, 0.0
 floris_models = st.sidebar.multiselect("FLORIS Models", floris_model_list, floris_model_list)
 # floris_models_viz = st.sidebar.multiselect("FLORIS Models for Visualization", floris_model_list, floris_model_list)
 desc_yaw = st.sidebar.checkbox("Descending yaw pattern?",value=False)
-front_turbine_yaw = st.sidebar.slider("Upstream yaw angle", -30., 30., 20., step=0.5)
+front_turbine_yaw = st.sidebar.slider("Upstream yaw angle", -30., 30., 0., step=0.5)
 
 # Define the layout
 X = []
@@ -92,6 +93,7 @@ num_models = len(floris_models)
 
 # Determine which models to plot given cant plot cc right now
 floris_models_viz = [m for m in floris_models if not 'cc' in m]
+floris_models_viz = [m for m in floris_models_viz if not 'turbo' in m]
 num_models_to_viz = len(floris_models_viz)
 
 # Set up the visualization plot
@@ -113,7 +115,6 @@ for fm in floris_models:
     # Set the layout, wind direction and wind speed
     fi.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=turbulence_intensity )
 
-    
     fi.calculate_wake(yaw_angles=yaw_angles_base)
     turbine_powers = fi.get_turbine_powers() / 1000.
     ax_turb_pow.plot(turbine_labels,turbine_powers.flatten(),color=color_dict[fm],ls='-',marker='s',label='%s - baseline' % fm)
