@@ -34,56 +34,53 @@ is provided in the first dimension, the second dimension is fixed at 1, and the 
 turbine number again for consistency.
 
 Note by not specifying yaw, the assumption is that all turbines are always pointing into the
-current wind direction with no offset
-
-
+current wind direction with no offset.
 """
 
 # Initialize FLORIS to simple 4 turbine farm
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Convert to a simple two turbine layout
-fi.reinitialize( layout=( [0, 500.], [0., 0.] ) )
-
+fi.reinitialize(layout=([0, 500.], [0., 0.]))
 
 # Create a fake time history where wind speed steps in the middle while wind direction
 # Walks randomly
-time = np.arange(0,120,10.) # Each time step represents a 10-minute average
+time = np.arange(0, 120, 10.) # Each time step represents a 10-minute average
 ws = np.ones_like(time) * 8.
-ws[int(len(ws)/2):] = 9.
+ws[int(len(ws) / 2):] = 9.
 wd = np.ones_like(time) * 270.
 
-for idx in range(1,len(time)):
-    wd[idx] = wd[idx-1] + np.random.randn() * 2.
+for idx in range(1, len(time)):
+    wd[idx] = wd[idx - 1] + np.random.randn() * 2.
 
 
 # Now intiialize FLORIS object to this history using time_series flag
-fi.reinitialize(wind_directions=wd, wind_speeds=ws,time_series=True)
+fi.reinitialize(wind_directions=wd, wind_speeds=ws, time_series=True)
 
 # Collect the powers
 fi.calculate_wake()
-turbine_powers = fi.get_turbine_powers()/1000.
+turbine_powers = fi.get_turbine_powers() / 1000.
 
 # Show the dimensions
 num_turbines = len(fi.layout_x)
 print('There are %d time samples, and %d turbines and so the resulting turbine power matrix has the shape:' % (len(time), num_turbines), turbine_powers.shape)
 
 
-fig, axarr = plt.subplots(3,1,sharex=True,figsize=(7,8))
+fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(7,8))
 
 ax = axarr[0]
-ax.plot(time,ws,'o-')
+ax.plot(time, ws, 'o-')
 ax.set_ylabel('Wind Speed (m/s)')
 ax.grid(True)
 
 ax = axarr[1]
-ax.plot(time,wd,'o-')
+ax.plot(time, wd, 'o-')
 ax.set_ylabel('Wind Direction (Deg)')
 ax.grid(True)
 
 ax = axarr[2]
 for t in range(num_turbines):
-    ax.plot(time,turbine_powers[:,0,t],'o-',label='Turbine %d' % t)
+    ax.plot(time,turbine_powers[:, 0, t], 'o-', label='Turbine %d' % t)
 ax.legend()
 ax.set_ylabel('Turbine Power (kW)')
 ax.set_xlabel('Time (minutes)')
