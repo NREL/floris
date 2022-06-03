@@ -82,6 +82,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
+                time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
@@ -90,6 +91,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
+                time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "flow_field_planar_grid":
             self.grid = FlowFieldPlanarGrid(
@@ -102,6 +104,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 grid_resolution=self.solver["flow_field_grid_points"],
                 x1_bounds=self.solver["flow_field_bounds"][0],
                 x2_bounds=self.solver["flow_field_bounds"][1],
+                time_series=self.flow_field.time_series,
             )
         else:
             raise ValueError(
