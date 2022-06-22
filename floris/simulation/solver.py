@@ -78,21 +78,41 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         u_i = flow_field.u_sorted[:, :, i:i+1]
         v_i = flow_field.v_sorted[:, :, i:i+1]
 
-        ct_i = Ct(
-            velocities=flow_field.u_sorted,
-            yaw_angle=farm.yaw_angles_sorted,
-            fCt=farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
+        if farm.CT_in:
+            ct_i = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input = farm.CT_input_sorted,
+                ix_filter=[i],
+            )
+        else:
+            ct_i = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
-        axial_induction_i = axial_induction(
-            velocities=flow_field.u_sorted,
-            yaw_angle=farm.yaw_angles_sorted,
-            fCt=farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
+        if farm.CT_in:
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input = farm.CT_input_sorted,
+                ix_filter=[i],
+            )
+        else:
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
@@ -265,21 +285,39 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
         u_i = turbine_grid_flow_field.u_sorted[:, :, i:i+1]
         v_i = turbine_grid_flow_field.v_sorted[:, :, i:i+1]
 
-        ct_i = Ct(
-            velocities=turbine_grid_flow_field.u_sorted,
-            yaw_angle=turbine_grid_farm.yaw_angles_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
-            turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
+        if farm.CT_in:
+            ct_i = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input = farm.CT_input_sorted,
+                ix_filter=[i],
+            )
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input = farm.CT_input_sorted,
+                ix_filter=[i],
+            )            
+        else:
+            ct_i = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
-        axial_induction_i = axial_induction(
-            velocities=turbine_grid_flow_field.u_sorted,
-            yaw_angle=turbine_grid_farm.yaw_angles_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
-            turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field[:, :, i:i+1]
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
@@ -395,32 +433,62 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
         turb_inflow_field = turb_inflow_field * ~mask2 + (flow_field.u_initial_sorted - turb_u_wake) * mask2
 
         turb_avg_vels = average_velocity(turb_inflow_field)
-        turb_Cts = Ct(
-            turb_avg_vels,
-            farm.yaw_angles_sorted,
-            farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-        )
-        turb_Cts = turb_Cts[:, :, :, None, None]     
-        turb_aIs = axial_induction(
-            turb_avg_vels,
-            farm.yaw_angles_sorted,
-            farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
+        if farm.CT_in:
+            turb_Cts = Ct(
+                turb_avg_vels,
+                farm.yaw_angles_sorted,
+                farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input=farm.CT_input_sorted,
+            )
+        
+            turb_aIs = axial_induction(
+                turb_avg_vels,
+                farm.yaw_angles_sorted,
+                farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input=farm.CT_input_sorted,
+                ix_filter=[i],
+            )
+
+        else:
+            turb_Cts = Ct(
+                turb_avg_vels,
+                farm.yaw_angles_sorted,
+                farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+            )
+        
+            turb_aIs = axial_induction(
+                turb_avg_vels,
+                farm.yaw_angles_sorted,
+                farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
+        turb_Cts = turb_Cts[:, :, :, None, None] 
         turb_aIs = turb_aIs[:, :, :, None, None]
 
         u_i = turb_inflow_field[:, :, i:i+1]
         v_i = flow_field.v_sorted[:, :, i:i+1]
 
-        axial_induction_i = axial_induction(
-            velocities=flow_field.u_sorted,
-            yaw_angle=farm.yaw_angles_sorted,
-            fCt=farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
+        if farm.CT_in:
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input=farm.CT_input_sorted,
+                ix_filter=[i],
+            )
+        else:
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
 
         axial_induction_i = axial_induction_i[:, :, :, None, None]
 
@@ -595,21 +663,38 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
         v_i = turbine_grid_flow_field.v_sorted[:, :, i:i+1]
 
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
-        turb_Cts = Ct(
-            velocities=turb_avg_vels,
-            yaw_angle=turbine_grid_farm.yaw_angles_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
-            turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-        )
-        turb_Cts = turb_Cts[:, :, :, None, None]
 
-        axial_induction_i = axial_induction(
-            velocities=turbine_grid_flow_field.u_sorted,
-            yaw_angle=turbine_grid_farm.yaw_angles_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
-            turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
+        if farm.CT_in:
+            turb_Cts = Ct(
+                velocities=turb_avg_vels,
+                yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+                fCt=turbine_grid_farm.turbine_fCts,
+                turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+                CT_input=turbine_grid_farm.CT_input_sorted,
+            )
+            axial_induction_i = axial_induction(
+                velocities=turbine_grid_flow_field.u_sorted,
+                yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+                fCt=turbine_grid_farm.turbine_fCts,
+                turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+                CT_input=turbine_grid_farm.CT_input_sorted,
+                ix_filter=[i],
+            ) 
+        else:
+            turb_Cts = Ct(
+                velocities=turb_avg_vels,
+                yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+                fCt=turbine_grid_farm.turbine_fCts,
+                turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            )
+            axial_induction_i = axial_induction(
+                velocities=turbine_grid_flow_field.u_sorted,
+                yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+                fCt=turbine_grid_farm.turbine_fCts,
+                turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )            
+        turb_Cts = turb_Cts[:, :, :, None, None]
         axial_induction_i = axial_induction_i[:, :, :, None, None]
 
         turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field[:, :, i:i+1]
@@ -720,28 +805,55 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         u_i = flow_field.u_sorted[:, :, i:i+1]
         v_i = flow_field.v_sorted[:, :, i:i+1]
 
-        Cts = Ct(
-            velocities=flow_field.u_sorted,
-            yaw_angle=farm.yaw_angles_sorted,
-            fCt=farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-        )
+        if farm.CT_in:
+            Cts = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input=farm.CT_input_sorted,
+            )
 
-        ct_i = Ct(
-            velocities=flow_field.u_sorted,
-            yaw_angle=farm.yaw_angles_sorted,
-            fCt=farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
+            ct_i = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input=farm.CT_input_sorted,
+                ix_filter=[i],
+            )
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                CT_input=farm.CT_input_sorted,
+                ix_filter=[i],
+            )
+
+        else:
+            Cts = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+            )
+
+            ct_i = Ct(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
+            axial_induction_i = axial_induction(
+                velocities=flow_field.u_sorted,
+                yaw_angle=farm.yaw_angles_sorted,
+                fCt=farm.turbine_fCts,
+                turbine_type_map=farm.turbine_type_map_sorted,
+                ix_filter=[i],
+            )
         ct_i = ct_i[:, :, 0:1, None, None]  # Since we are filtering for the i'th turbine in the Ct function, get the first index here (0:1)
-        axial_induction_i = axial_induction(
-            velocities=flow_field.u_sorted,
-            yaw_angle=farm.yaw_angles_sorted,
-            fCt=farm.turbine_fCts,
-            turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-        )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]

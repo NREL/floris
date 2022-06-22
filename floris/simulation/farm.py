@@ -51,6 +51,8 @@ class Farm(BaseClass):
     turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
+    CT_input: NDArrayFloat = field(init=False)
+    CT_input_sorted: NDArrayFloat = field(init=False)    
     coordinates: List[Vec3] = field(init=False)
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
@@ -59,6 +61,7 @@ class Farm(BaseClass):
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+    CT_in: bool = field(init=False)
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
@@ -94,6 +97,12 @@ class Farm(BaseClass):
             sorted_indices[:, :, :, 0, 0],
             axis=2,
         )
+        if self.CT_in:
+            self.CT_input_sorted = np.take_along_axis(
+                self.CT_input,
+                sorted_indices[:, :, :, 0, 0],
+                axis=2,
+            )
 
     def construct_hub_heights(self):
         self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
@@ -123,6 +132,13 @@ class Farm(BaseClass):
         self.coordinates = np.array(
             [Vec3([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)]
         )
+    
+    def Construct_CT_inputs(self, n_wind_directions: int, n_wind_speeds: int):
+        # Initilizes CT_input variable as zero and marker as False
+        self.CT_in = False
+        self.CT_input = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
+        self.CT_input_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
+    
 
     def expand_farm_properties(self, n_wind_directions: int, n_wind_speeds: int, sorted_coord_indices):
         template_shape = np.ones_like(sorted_coord_indices)
@@ -142,8 +158,13 @@ class Farm(BaseClass):
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
         self.yaw_angles_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
 
+    def set_CT_input(self, CT_values):
+        self.CT_in = True
+        self.CT_input = CT_values
+
     def finalize(self, unsorted_indices):
         self.yaw_angles = np.take_along_axis(self.yaw_angles_sorted, unsorted_indices[:,:,:,0,0], axis=2)
+        self.CT_input = np.take_along_axis(self.CT_input_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.hub_heights = np.take_along_axis(self.hub_heights_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.rotor_diameters = np.take_along_axis(self.rotor_diameters_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.TSRs = np.take_along_axis(self.TSRs_sorted, unsorted_indices[:,:,:,0,0], axis=2)

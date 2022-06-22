@@ -104,6 +104,7 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
+        CT_inputs: NDArrayFloat | list[float] | None = None,
         # points: NDArrayFloat | list[float] | None = None,
         # track_n_upstream_wakes: bool = False,
     ) -> None:
@@ -113,6 +114,8 @@ class FlorisInterface(LoggerBase):
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+            CT_inputs (NDArrayFloat | list[float] | None, optional): Turbine coefficients of thrust.
                 Defaults to None.
             points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
                 coordinates at which the flow field velocity is to be recorded. Defaults
@@ -133,11 +136,17 @@ class FlorisInterface(LoggerBase):
                 raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
             self.floris.farm.yaw_angles = yaw_angles
 
+        if CT_inputs is not None:
+            # print('hi?', CT_inputs)
+            shape_CT = np.shape(CT_inputs)
+            self.floris.farm.set_CT_input( CT_inputs)
+
         # Initialize solution space
         self.floris.initialize_domain()
 
         # Perform the wake calculations
         self.floris.steady_state_atmospheric_condition()
+
 
     def calculate_no_wake(
         self,
@@ -564,32 +573,81 @@ class FlorisInterface(LoggerBase):
         Returns:
             NDArrayFloat: [description]
         """
-        turbine_powers = power(
-            air_density=self.floris.flow_field.air_density,
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            pP=self.floris.farm.pPs,
-            power_interp=self.floris.farm.turbine_power_interps,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-        )
+        if self.floris.farm.CT_in:
+            Rotor_areas_ct = np.zeros(np.shape(self.floris.farm.CT_input))
+            for i in range(self.floris.farm.n_turbines):
+                rot_dia = self.floris.farm.turbine_definitions[i]['rotor_diameter']
+                rot_area = np.pi*(rot_dia/2)**2
+                Rotor_areas_ct[:,:,i] = rot_area
+            
+            # for turb_type in turb_types:
+            #     # Using a masked array, apply the thrust coefficient for all turbines of the current
+            #     # type to the main thrust coefficient array
+            #     rot_dia = self.floris.farm.turbine_definitions[0]['rotor_diameter']
+            #     rot_area = np.pi*(rot_dia/2)**2
+            #     Rotor_areas_ct += rot_area * np.array(self.floris.farm.turbine_type_map == turb_type)
+            # print('Rotor areas', Rotor_areas_ct)
+            turbine_powers = power(
+                air_density=self.floris.flow_field.air_density,
+                velocities=self.floris.flow_field.u,
+                yaw_angle=self.floris.farm.yaw_angles,
+                pP=self.floris.farm.pPs,
+                power_interp=self.floris.farm.turbine_power_interps,
+                CT_input=self.floris.farm.CT_input,
+                Turbine_rotor_area= Rotor_areas_ct,
+                Generator_efficiency=self.floris.farm.turbine_definitions[0]['generator_efficiency'],
+                turbine_type_map=self.floris.farm.turbine_type_map,
+                CT_interp_function = self.floris.farm.turbine_fCts,
+                CP_interp_function = self.floris.farm.turbine_fCps,
+                wind_speed_freestream = self.floris.flow_field.wind_speeds
+            )
+
+        else:
+            turbine_powers = power(
+                air_density=self.floris.flow_field.air_density,
+                velocities=self.floris.flow_field.u,
+                yaw_angle=self.floris.farm.yaw_angles,
+                pP=self.floris.farm.pPs,
+                power_interp=self.floris.farm.turbine_power_interps,
+                turbine_type_map=self.floris.farm.turbine_type_map,
+            )
         return turbine_powers
 
     def get_turbine_Cts(self) -> NDArrayFloat:
-        turbine_Cts = Ct(
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            fCt=self.floris.farm.turbine_fCts,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-        )
+
+        if self.floris.farm.CT_in:
+            turbine_Cts = Ct(
+                velocities=self.floris.flow_field.u,
+                yaw_angle=self.floris.farm.yaw_angles,
+                fCt=self.floris.farm.turbine_fCts,
+                turbine_type_map=self.floris.farm.turbine_type_map,
+                CT_input=self.floris.farm.CT_input,
+            )
+        else: 
+            turbine_Cts = Ct(
+                velocities=self.floris.flow_field.u,
+                yaw_angle=self.floris.farm.yaw_angles,
+                fCt=self.floris.farm.turbine_fCts,
+                turbine_type_map=self.floris.farm.turbine_type_map,
+            )
         return turbine_Cts
 
     def get_turbine_ais(self) -> NDArrayFloat:
-        turbine_ais = axial_induction(
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            fCt=self.floris.farm.turbine_fCts,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-        )
+        if self.floris.farm.CT_in:
+            turbine_ais = axial_induction(
+                velocities=self.floris.flow_field.u,
+                yaw_angle=self.floris.farm.yaw_angles,
+                fCt=self.floris.farm.turbine_fCts,
+                turbine_type_map=self.floris.farm.turbine_type_map,
+                CT_input=self.floris.farm.CT_input,
+            )
+        else:
+            turbine_ais = axial_induction(
+                velocities=self.floris.flow_field.u,
+                yaw_angle=self.floris.farm.yaw_angles,
+                fCt=self.floris.farm.turbine_fCts,
+                turbine_type_map=self.floris.farm.turbine_type_map,
+            )
         return turbine_ais
 
     def get_turbine_average_velocities(self) -> NDArrayFloat:
