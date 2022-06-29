@@ -589,6 +589,9 @@ class FlorisInterface(LoggerBase):
         )
         return turbine_avg_vels
 
+    def get_turbine_TIs(self) -> NDArrayFloat:
+        return self.floris.flow_field.turbulence_intensity_field
+
     def get_farm_power(
         self,
         use_turbulence_correction=False,
