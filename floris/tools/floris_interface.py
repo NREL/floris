@@ -164,7 +164,8 @@ class FlorisInterface(LoggerBase):
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
-        solver_settings: dict | None = None
+        solver_settings: dict | None = None,
+        time_series: bool | None = False
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -195,6 +196,11 @@ class FlorisInterface(LoggerBase):
             farm_dict["layout_y"] = layout[1]
         if turbine_type is not None:
             farm_dict["turbine_type"] = turbine_type
+
+        if time_series:
+            flow_field_dict["time_series"] = True
+        else:
+            flow_field_dict["time_series"] = False
 
         ## Wake
         # if wake is not None:
