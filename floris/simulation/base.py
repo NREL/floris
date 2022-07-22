@@ -31,7 +31,6 @@ class State(Enum):
     UNINITIALIZED = 0
     INITIALIZED = 1
     USED = 2
-    EXPIRED = 3
 
 
 class BaseClass(LoggerBase, FromDictMixin):
