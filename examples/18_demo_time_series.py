@@ -41,7 +41,7 @@ current wind direction with no offset.
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Convert to a simple two turbine layout
-fi.reinitialize(layout=([0, 500.], [0., 0.]))
+fi.reinitialize(layout_x=[0, 500.], layout_y=[0., 0.])
 
 # Create a fake time history where wind speed steps in the middle while wind direction
 # Walks randomly

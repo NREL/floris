@@ -45,7 +45,7 @@ def load_floris():
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
     )
-    fi.reinitialize(layout=(X.flatten(), Y.flatten()))
+    fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
 
     return fi
 

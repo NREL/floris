@@ -58,7 +58,7 @@ X, Y = np.meshgrid(
     5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
     5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
 )
-fi.reinitialize( layout=( X.flatten(), Y.flatten() ) )
+fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
 horizontal_plane = fi.calculate_horizontal_plane(height=90.0)
 visualize_cut_plane(horizontal_plane, ax=axarr[3], title="3x3 Farm", minSpeed=MIN_WS, maxSpeed=MAX_WS)
 
