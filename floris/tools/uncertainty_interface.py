@@ -332,7 +332,8 @@ class UncertaintyInterface(LoggerBase):
         reference_wind_height=None,
         turbulence_intensity=None,
         air_density=None,
-        layout=None,
+        layout_x=None,
+        layout_y=None,
         turbine_type=None,
         solver_settings=None,
     ):
@@ -349,7 +350,8 @@ class UncertaintyInterface(LoggerBase):
             reference_wind_height=reference_wind_height,
             turbulence_intensity=turbulence_intensity,
             air_density=air_density,
-            layout=layout,
+            layout_x=layout_x,
+            layout_y=layout_y,
             turbine_type=turbine_type,
             solver_settings=solver_settings,
         )
