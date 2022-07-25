@@ -70,9 +70,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
             for valy in locs[self.nturbs : 2 * self.nturbs]
         ]
         self._change_coordinates(locs_unnorm)
-        self.fi.calculate_wake()
-        AEP_sum = np.sum(self.fi.get_farm_power() * self.freq * 8760)
-        return -1 * AEP_sum / self.initial_AEP
+        return -1 * self.fi.get_farm_AEP(self.freq) / self.initial_AEP
 
     def _change_coordinates(self, locs):
         # Parse the layout coordinates
@@ -101,8 +99,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
     def _set_opt_bounds(self):
         self.bnds = [(0.0, 1.0) for _ in range(2 * self.nturbs)]
 
-    def _space_constraint(self, x_in):
-        rho=500
+    def _space_constraint(self, x_in, rho=500):
         x = [
             self._unnorm(valx, self.bndx_min, self.bndx_max)
             for valx in x_in[0 : self.nturbs]
@@ -146,8 +143,8 @@ class LayoutOptimizationScipy(LayoutOptimization):
         boundary_con = np.zeros(self.nturbs)
         for i in range(self.nturbs):
             loc = Point(x[i], y[i])
-            boundary_con[i] = loc.distance(self.boundary_line)
-            if self.boundary_polygon.contains(loc)==True:
+            boundary_con[i] = loc.distance(self._boundary_line)
+            if self._boundary_polygon.contains(loc)==True:
                 boundary_con[i] *= 1.0
 
         return boundary_con

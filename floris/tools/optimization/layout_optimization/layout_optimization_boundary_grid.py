@@ -43,7 +43,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         boundary = np.zeros((len(self.boundary_x), 2))
         boundary[:, 0] = self.boundary_x[:]
         boundary[:, 1] = self.boundary_y[:]
-        self.boundary_polygon = Polygon(boundary)
+        self._boundary_polygon = Polygon(boundary)
 
         self.start = start
         self.x_spacing = x_spacing
@@ -498,7 +498,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         """
 
         boundary_turbines_x, boundary_turbines_y = self._place_boundary_turbines(
-            start, self.boundary_polygon, nturbs=n_boundary_turbines, spacing=boundary_spacing
+            start, self._boundary_polygon, nturbs=n_boundary_turbines, spacing=boundary_spacing
         )
         # boundary_turbines_x, boundary_turbines_y = self._place_boundary_turbines_with_specified_spacing(
         #     spacing, start, boundary_x, boundary_y
@@ -527,7 +527,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             center_x,
             center_y,
             boundary_setback,
-            self.boundary_polygon,
+            self._boundary_polygon,
         )
 
         layout_x = np.append(boundary_turbines_x, grid_turbines_x)

@@ -20,11 +20,11 @@ from ....logging_manager import LoggerBase
 
 class LayoutOptimization(LoggerBase):
     def __init__(self, fi, boundaries, min_dist=None, freq=None):
-        self.fi = fi
+        self.fi = fi.copy()
         self.boundaries = boundaries
 
-        self.boundary_polygon = Polygon(self.boundaries)
-        self.boundary_line = LineString(self.boundaries)
+        self._boundary_polygon = Polygon(self.boundaries)
+        self._boundary_line = LineString(self.boundaries)
 
         self.xmin = np.min([tup[0] for tup in boundaries])
         self.xmax = np.max([tup[0] for tup in boundaries])

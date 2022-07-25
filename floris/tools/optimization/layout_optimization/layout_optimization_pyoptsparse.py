@@ -81,12 +81,11 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
         # Update turbine map with turbince locations
         self.fi.reinitialize(layout=[self.x, self.y])
-        self.fi.calculate_wake()
 
         # Compute the objective function
         funcs = {}
         funcs["obj"] = (
-            -1 * np.sum(self.fi.get_farm_power() * self.freq * 8760) / self.initial_AEP
+            -1 * self.fi.get_farm_AEP(self.freq) / self.initial_AEP
         )
 
         # Compute constraints, if any are defined for the optimization
@@ -155,8 +154,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         boundary_con = np.zeros(self.nturbs)
         for i in range(self.nturbs):
             loc = Point(x[i], y[i])
-            boundary_con[i] = loc.distance(self.boundary_line)
-            if self.boundary_polygon.contains(loc)==True:
+            boundary_con[i] = loc.distance(self._boundary_line)
+            if self._boundary_polygon.contains(loc)==True:
                 boundary_con[i] *= -1.0
 
         return boundary_con
