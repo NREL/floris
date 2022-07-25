@@ -34,9 +34,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
         self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)
         self.y0 = self._norm(self.fi.layout_y, self.ymin, self.ymax)
-        self._reinitialize(solver=solver, optOptions=optOptions)
 
-    def _reinitialize(self, solver=None, optOptions=None):
         try:
             import pyoptsparse
         except ImportError:
