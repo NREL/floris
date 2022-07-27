@@ -13,7 +13,6 @@
 
 
 import copy
-import warnings
 
 import numpy as np
 from scipy.stats import norm
@@ -334,10 +333,8 @@ class UncertaintyInterface(LoggerBase):
         UncertaintyInterface object, this function is required."""
 
         if layout is not None:
-            warnings.warn(
-                "Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3.",
-                DeprecationWarning,
-            )
+            msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3."
+            self.logger.warning(msg)
             layout_x = layout[0]
             layout_y = layout[1]
 
