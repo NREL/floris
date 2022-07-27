@@ -40,7 +40,7 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 D = 126.
 layout_x = np.array([0, D*6])
 layout_y = [0, 0]
-fi.reinitialize(layout = [layout_x, layout_y])
+fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
 # Sweep wind speeds but keep wind direction fixed
 ws_array = np.arange(5,25,0.5)
