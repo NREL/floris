@@ -24,7 +24,7 @@ from floris.tools import FlorisInterface
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Create a 4-turbine layouts
-fi.reinitialize( layout=( [0, 0., 500., 500.], [0., 300., 0., 300.] ) )
+fi.reinitialize(layout_x=[0, 0., 500., 500.], layout_y=[0., 300., 0., 300.])
 
 # Calculate wake
 fi.calculate_wake()

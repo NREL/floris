@@ -113,7 +113,13 @@ for fm in floris_models:
     fi = FlorisInterface("inputs/%s.yaml" % fm)
 
     # Set the layout, wind direction and wind speed
-    fi.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=turbulence_intensity )
+    fi.reinitialize(
+        layout_x=X,
+        layout_y=Y,
+        wind_speeds=[wind_speed],
+        wind_directions=[wind_direction],
+        turbulence_intensity=turbulence_intensity
+    )
 
     fi.calculate_wake(yaw_angles=yaw_angles_base)
     turbine_powers = fi.get_turbine_powers() / 1000.
@@ -139,7 +145,13 @@ for fm in floris_models:
     fi = FlorisInterface("inputs/%s.yaml" % fm)
 
     # Set the layout, wind direction and wind speed
-    fi.reinitialize( layout=( X, Y ), wind_speeds=[wind_speed], wind_directions=[wind_direction], turbulence_intensity=turbulence_intensity )
+    fi.reinitialize(
+        layout_x=X,
+        layout_y=Y,
+        wind_speeds=[wind_speed],
+        wind_directions=[wind_direction],
+        turbulence_intensity=turbulence_intensity
+    )
 
     fi.calculate_wake(yaw_angles=yaw_angles_yaw)
     turbine_powers = fi.get_turbine_powers() / 1000.

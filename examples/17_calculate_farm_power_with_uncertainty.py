@@ -38,8 +38,8 @@ D = 126.0
 layout_x = np.array([0, D*6, D*12])
 layout_y = [0, 0, 0]
 wd_array = np.arange(0.0, 360.0, 1.0)
-fi.reinitialize(layout=[layout_x, layout_y], wind_directions=wd_array)
-fi_unc.reinitialize(layout=[layout_x, layout_y], wind_directions=wd_array)
+fi.reinitialize(layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array)
+fi_unc.reinitialize(layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array)
 
 # Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimesions are
