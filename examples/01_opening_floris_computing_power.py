@@ -33,7 +33,7 @@ Main concept is introduce FLORIS and illustrate essential structure of most-used
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Convert to a simple two turbine layout
-fi.reinitialize( layout=( [0, 500.], [0., 0.] ) )
+fi.reinitialize(layout_x=[0, 500.], layout_y=[0., 0.])
 
 # Single wind speed and wind direction
 print('\n============================= Single Wind Direction and Wind Speed =============================')

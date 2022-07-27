@@ -56,7 +56,8 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model
 # floris object and assign the layout, wind speed and wind direction arrays.
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
-    layout=[[0.0, 5* D, 10 * D], [0.0, 0.0, 0.0]],
+    layout_x=[0.0, 5 * D, 10 * D],
+    layout_y=[0.0, 0.0, 0.0],
     wind_directions=wd_array,
     wind_speeds=ws_array,
 )
