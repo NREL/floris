@@ -59,6 +59,16 @@ layout_opt = LayoutOptimizationScipy(fi, boundaries, freq=freq)
 # Run the optimization
 sol = layout_opt.optimize()
 
+# Get the resulting improvement in AEP
+print('... calcuating improvement in AEP')
+fi.calculate_wake()
+base_aep = fi.get_farm_AEP(freq=freq) / 1e6
+fi.reinitialize(layout=sol)
+fi.calculate_wake()
+opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
+percent_gain = 100 * (opt_aep - base_aep) / base_aep
+
 # Print and plot the results
-print(sol)
+print('Optimal layout: ', sol)
+print('Optimal layout improves AEP by %.1f%% from %.1f MWh to %.1f MWh' % (percent_gain, base_aep, opt_aep))
 layout_opt.plot_layout_opt_results()
