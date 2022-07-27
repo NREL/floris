@@ -1,4 +1,5 @@
 import time
+import itertools
 from pathlib import Path
 
 import numpy as np
@@ -24,8 +25,9 @@ def change_parameter_space(n_dir, n_speed, grid_dim):
     # Reinitialize and calculate wake
     start = time.perf_counter()
     fi.reinitialize(
-        layout_x=layout_x,
-        layout_y=layout_y,
+        # layout_x=layout_x,
+        # layout_y=layout_y,
+        layout=(layout_x, layout_y),
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
     )
@@ -37,17 +39,22 @@ def change_parameter_space(n_dir, n_speed, grid_dim):
     return end - start, end_2 - end, end_2 - start
 
 
-n_dir = range(5, 361, 5)
-n_speed = range(5, 41, 5)
-grid_dim = range(1, 20)
+n_dir = range(10, 361, 30)
+n_speed = range(5, 41, 10)
+grid_dim = range(1, 20, 3)
+
+combos = itertools.product(n_dir, n_speed, grid_dim)
 
 speed = []
-for i in n_dir:
-    for j in n_speed:
-        for k in grid_dim:
-            init, wake, total = change_parameter_space(i, j, k)
-            speed.append([i, j, k * k, init, wake, total])
-            time.sleep(5)
+for i, j, k in reversed(list(combos)):
+    init, wake, total = change_parameter_space(i, j, k)
+    speed.append([i, j, k * k, init, wake, total])
+    print(i, j, k)
+    print(init)
+    print(wake)
+    print(total)
+    # time.sleep(3)
+    break
 
 df = pd.DataFrame(
     speed,
