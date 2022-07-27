@@ -67,8 +67,8 @@ def plot_turbines_with_fi(ax, fi, color=None):
         ax,
         fi.layout_x,
         fi.layout_y,
-        fi.get_yaw_angles()[0, 0],
-        fi.floris.farm.rotor_diameter[0, 0],
+        fi.floris.farm.yaw_angles[0, 0],
+        fi.floris.farm.rotor_diameters[0, 0],
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
     )
