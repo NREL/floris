@@ -23,6 +23,9 @@ from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from floris.type_dec import NDArrayFloat
 from floris.simulation import Floris
 from floris.logging_manager import LoggerBase
+
+from floris.simulation import State
+
 from floris.tools.cut_plane import CutPlane
 from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
 
@@ -568,6 +571,11 @@ class FlorisInterface(LoggerBase):
         Returns:
             NDArrayFloat: [description]
         """
+
+        # Confirm calculate wake has been run
+        if self.floris.state is not State.USED:
+            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.")
+
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
             velocities=self.floris.flow_field.u,
@@ -630,6 +638,10 @@ class FlorisInterface(LoggerBase):
         # TODO: Uncomment out the following two lines once the above are resolved
         # for turbine in self.floris.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
+
+        # Confirm calculate wake has been run
+        if self.floris.state is not State.USED:
+            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`.")
 
         turbine_powers = self.get_turbine_powers()
         return np.sum(turbine_powers, axis=2)
