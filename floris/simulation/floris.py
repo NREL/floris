@@ -76,6 +76,13 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
 
         if self.solver["type"] == "turbine_grid":
+
+            if self.solver["turbine_grid_points"] > 3:
+                print("turbine_grid_points was assigned a value greater than 3 (%d)" % self.solver["turbine_grid_points"])
+                print("high values of turbine_grid_points are associated with large reductions in performance without improved accurracy")
+                print("setting turbine_grid_points <- 3")
+                self.solver["turbine_grid_points"] = 3
+
             self.grid = TurbineGrid(
                 turbine_coordinates=self.farm.coordinates,
                 reference_turbine_diameter=self.farm.rotor_diameters,
