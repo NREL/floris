@@ -84,7 +84,7 @@ class FlorisInterface(LoggerBase):
 
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
-        return FlorisInterface(self.floris.as_dict())
+        return FlorisInterface(self.floris.as_dict(), het_map=self.het_map)
 
     def calculate_wake(
         self,
