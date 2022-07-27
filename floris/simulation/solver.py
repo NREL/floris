@@ -769,9 +769,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         # Model calculations
         # NOTE: exponential
-        if (farm.yaw_angles_sorted == 0).all():
-            pass
-        else:
+        if not np.all(farm.yaw_angles_sorted):
             model_manager.deflection_model.logger.warning("WARNING: Deflection with the TurbOPark model has not been fully validated. This is an initial implementation, and we advise you use at your own risk and perform a thorough examination of the results.")
             for ii in range(i):
                 x_ii = np.mean(grid.x_sorted[:, :, ii:ii+1], axis=(3, 4))
