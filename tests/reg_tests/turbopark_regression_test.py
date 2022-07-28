@@ -18,7 +18,7 @@ from floris.simulation import Floris
 from floris.simulation import Ct, power, axial_induction, average_velocity
 from tests.conftest import N_TURBINES, N_WIND_DIRECTIONS, N_WIND_SPEEDS, print_test_values, assert_results_arrays
 
-DEBUG = True
+DEBUG = False
 VELOCITY_MODEL = "turbopark"
 DEFLECTION_MODEL = "gauss"
 COMBINATION_MODEL = "fls"
@@ -52,6 +52,35 @@ baseline = np.array(
     ]
 )
 
+
+yawed_baseline = np.array(
+    [
+        # 8 m/s
+        [
+            [7.9803783, 0.7605249, 1683956.5765064, 0.2548147],
+            [5.9926862, 0.8357973, 704869.1763857, 0.2973903],
+            [5.3145419, 0.8725432, 479691.1339821, 0.3214945],
+        ],
+        # 9 m/s
+        [
+            [8.9779256, 0.7596713, 2397236.5542849, 0.2543815],
+            [6.7429885, 0.8025994, 1023094.6963579, 0.2778511],
+            [5.9836502, 0.8362597, 701734.6626599, 0.2976758],
+        ],
+        # 10 m/s
+        [
+            [9.9754729, 0.7499157, 3283591.8023665, 0.2494847],
+            [7.5085974, 0.7756254, 1412651.4697014, 0.2631590],
+            [6.6781823, 0.8052071, 992930.8979929, 0.2793232],
+        ],
+        # 11 m/s
+        [
+            [10.9730201, 0.7276532, 4344222.0129382, 0.2386508],
+            [8.3071319, 0.7620861, 1916104.8725891, 0.2561179],
+            [7.3875052, 0.7795398, 1347926.7384587, 0.2652341],
+        ],
+    ]
+)
 
 # Note: compare the yawed vs non-yawed results. The upstream turbine
 # power should be lower in the yawed case. The following turbine
@@ -197,6 +226,72 @@ def test_regression_rotation(sample_inputs_fixture):
     assert np.allclose(t1_270, t3_360)
     assert np.allclose(t2_270, t0_360)
     assert np.allclose(t3_270, t2_360)
+
+
+def test_regression_yaw(sample_inputs_fixture):
+    """
+    Tandem turbines with the upstream turbine yawed
+    """
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
+
+    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
+    yaw_angles[:,:,0] = 5.0
+    floris.farm.yaw_angles = yaw_angles
+
+    floris.initialize_domain()
+    floris.steady_state_atmospheric_condition()
+
+    n_turbines = floris.farm.n_turbines
+    n_wind_speeds = floris.flow_field.n_wind_speeds
+    n_wind_directions = floris.flow_field.n_wind_directions
+
+    velocities = floris.flow_field.u
+    yaw_angles = floris.farm.yaw_angles
+    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
+
+    farm_avg_velocities = average_velocity(
+        velocities,
+    )
+    farm_cts = Ct(
+        velocities,
+        yaw_angles,
+        floris.farm.turbine_fCts,
+        floris.farm.turbine_type_map,
+    )
+    farm_powers = power(
+        floris.flow_field.air_density,
+        velocities,
+        yaw_angles,
+        floris.farm.pPs,
+        floris.farm.turbine_power_interps,
+        floris.farm.turbine_type_map,
+    )
+    farm_axial_inductions = axial_induction(
+        velocities,
+        yaw_angles,
+        floris.farm.turbine_fCts,
+        floris.farm.turbine_type_map,
+    )
+    for i in range(n_wind_directions):
+        for j in range(n_wind_speeds):
+            for k in range(n_turbines):
+                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
+                test_results[i, j, k, 1] = farm_cts[i, j, k]
+                test_results[i, j, k, 2] = farm_powers[i, j, k]
+                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
+
+    if DEBUG:
+        print_test_values(
+            farm_avg_velocities,
+            farm_cts,
+            farm_powers,
+            farm_axial_inductions,
+        )
+
+    assert_results_arrays(test_results[0], yawed_baseline)
 
 
 def test_regression_small_grid_rotation(sample_inputs_fixture):
