@@ -76,8 +76,8 @@ class FlorisInterface(LoggerBase):
         # Check the turbine_grid_points is reasonable
         if self.floris.solver["type"] == "turbine_grid":
             if self.floris.solver["turbine_grid_points"] > 3:
-                self.logger.error(f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy.")
-                raise ValueError("turbine_grid_points must be less than 3.")
+                self.logger.error(f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy.")
+                raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
     def assign_hub_height_to_ref_height(self):
 
