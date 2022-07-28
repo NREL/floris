@@ -1,9 +1,7 @@
 import time
-import itertools
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 from floris.tools import FlorisInterface
 
@@ -38,13 +36,13 @@ def change_parameter_space(n_dir, n_speed, grid_dim):
     return end - start, end_2 - end, end_2 - start
 
 
-n_dir = range(10, 361, 30)
-n_speed = range(5, 41, 10)
-grid_dim = range(1, 17, 3)
+# n_dir = range(10, 361, 30)
+# n_speed = range(5, 41, 10)
+# grid_dim = range(1, 17, 3)
 
-combos = itertools.product(n_dir, n_speed, grid_dim)
+# combos = itertools.product(n_dir, n_speed, grid_dim)
 
-speed = []
+# speed = []
 # for i, j, k in combos:
 #     init, wake, total = change_parameter_space(i, j, k)
 #     speed.append([i, j, k * k, init, wake, total])
@@ -53,19 +51,6 @@ speed = []
 #     print(wake)
 #     print(total)
 # time.sleep(3)
-
-i, j, k = 40, 5, 13
-for _ in range(10):
-    # Use a case that takes long enough to identify speedups
-    init, wake, total = change_parameter_space(i, j, k)
-    print([i, j, k, init, wake, total])
-    speed.append([init, wake, total])
-
-speed = np.ndarray(speed)
-res = speed.mean(axis=0)
-print(f"Init time : {res[0]:8.6f}")
-print(f"Calc time : {res[1]:8.6f}")
-print(f"Total time: {res[2]:8.6f}")
 
 # df = pd.DataFrame(
 #     speed,
@@ -79,3 +64,18 @@ print(f"Total time: {res[2]:8.6f}")
 #     ],
 # )
 # df.to_csv("python_timing_.csv")
+
+# Use a case that takes just long enough to identify meaningful speedups
+speed = []
+i, j, k = 40, 5, 13
+for _ in range(10):
+    init, wake, total = change_parameter_space(i, j, k)
+    speed.append([init, wake, total])
+
+speed = np.array(speed)
+res = speed.mean(axis=0)
+print("Init Time | Calc Time | Total Time")
+print(f"{res[0]:9.6f} | {res[1]:8.6f} | {res[2]:10.6f}")
+
+# Init Time | Calc Time | Total Time
+#  1.403899 | 28.699313 |  30.103212  <- Base Case with v3.1 as of 9am, 7/28/22
