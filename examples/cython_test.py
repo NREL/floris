@@ -25,9 +25,8 @@ def change_parameter_space(n_dir, n_speed, grid_dim):
     # Reinitialize and calculate wake
     start = time.perf_counter()
     fi.reinitialize(
-        # layout_x=layout_x,
-        # layout_y=layout_y,
-        layout=(layout_x, layout_y),
+        layout_x=layout_x,
+        layout_y=layout_y,
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
     )
@@ -41,30 +40,42 @@ def change_parameter_space(n_dir, n_speed, grid_dim):
 
 n_dir = range(10, 361, 30)
 n_speed = range(5, 41, 10)
-grid_dim = range(1, 20, 3)
+grid_dim = range(1, 17, 3)
 
 combos = itertools.product(n_dir, n_speed, grid_dim)
 
 speed = []
-for i, j, k in reversed(list(combos)):
-    init, wake, total = change_parameter_space(i, j, k)
-    speed.append([i, j, k * k, init, wake, total])
-    print(i, j, k)
-    print(init)
-    print(wake)
-    print(total)
-    # time.sleep(3)
-    break
+# for i, j, k in combos:
+#     init, wake, total = change_parameter_space(i, j, k)
+#     speed.append([i, j, k * k, init, wake, total])
+#     print(i, j, k)
+#     print(init)
+#     print(wake)
+#     print(total)
+# time.sleep(3)
 
-df = pd.DataFrame(
-    speed,
-    columns=[
-        "n_wind_directions",
-        "n_wind_speeds",
-        "n_turbines",
-        "reinitialize_time",
-        "calculate_wake_time",
-        "total_run_time",
-    ],
-)
-df.to_csv("python_timing.csv")
+i, j, k = 40, 5, 13
+for _ in range(10):
+    # Use a case that takes long enough to identify speedups
+    init, wake, total = change_parameter_space(i, j, k)
+    print([i, j, k, init, wake, total])
+    speed.append([init, wake, total])
+
+speed = np.ndarray(speed)
+res = speed.mean(axis=0)
+print(f"Init time : {res[0]:8.6f}")
+print(f"Calc time : {res[1]:8.6f}")
+print(f"Total time: {res[2]:8.6f}")
+
+# df = pd.DataFrame(
+#     speed,
+#     columns=[
+#         "n_wind_directions",
+#         "n_wind_speeds",
+#         "n_turbines",
+#         "reinitialize_time",
+#         "calculate_wake_time",
+#         "total_run_time",
+#     ],
+# )
+# df.to_csv("python_timing_.csv")
