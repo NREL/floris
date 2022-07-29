@@ -27,7 +27,7 @@ class Optimization(LoggerBase):
         Optimization: An instantiated Optimization object.
     """
 
-    def __init__(self, model, solver=None):
+    def __init__(self, model, solver=None, storeHistory='hist.hist', optOptions=None, timeLimit=None):
         """
         Instantiate Optimization object and its parameters.
         """
@@ -51,7 +51,11 @@ class Optimization(LoggerBase):
                 + str(self.solver_choices)
             )
 
-        self.reinitialize(solver=solver)
+        self.optOptions = optOptions
+        self.reinitialize(solver=solver, optOptions=optOptions)
+        self.storeHistory = storeHistory
+        self.timeLimit = timeLimit
+        
 
     # Private methods
 
@@ -85,7 +89,7 @@ class Optimization(LoggerBase):
             if self.solver == "SNOPT":
                 self.optOptions = {"Major optimality tolerance": 1e-7}
             else:
-                self.optOptions = {}
+                self.optOptions = {"IPRINT": 0}
 
         exec("self.opt = pyoptsparse." + self.solver + "(options=self.optOptions)")
 
@@ -93,12 +97,15 @@ class Optimization(LoggerBase):
         if hasattr(self.model, "_sens"):
             self.sol = self.opt(self.optProb, sens=self.model._sens)
         else:
-            self.sol = self.opt(self.optProb, sens="CDR", storeHistory='hist.hist')
+            if self.timeLimit is not None:
+                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, timeLimit=self.timeLimit)
+            else:
+                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory)
 
     # Public methods
 
-    def reinitialize(self, solver=None):
-        self._reinitialize(solver=solver)
+    def reinitialize(self, solver=None, optOptions=None):
+        self._reinitialize(solver=solver, optOptions=optOptions)
 
     def optimize(self):
         self._optimize()
