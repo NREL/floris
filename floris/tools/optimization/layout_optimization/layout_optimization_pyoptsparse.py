@@ -12,7 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
-
+# Test
 import numpy as np
 import matplotlib.pyplot as plt
 from shapely.geometry import Point
@@ -25,6 +25,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self,
         fi,
         boundaries,
+        scale_dv=1.0,
+        scale_con=1.0,
         min_dist=None,
         freq=None,
         solver=None,
@@ -34,6 +36,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         hotStart=None
     ):
         super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
+        self.scale_dv = scale_dv
+        self.scale_con = scale_con
         self._reinitialize(solver=solver, optOptions=optOptions)
 
         self.storeHistory = storeHistory
@@ -121,17 +125,17 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
     def add_var_group(self, optProb):
         optProb.addVarGroup(
-            "x", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.x0
+            "x", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.x0, scale=self.scale_dv
         )
         optProb.addVarGroup(
-            "y", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.y0
+            "y", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.y0, scale=self.scale_dv
         )
 
         return optProb
 
     def add_con_group(self, optProb):
-        optProb.addConGroup("boundary_con", self.nturbs, upper=0.0)
-        optProb.addConGroup("spacing_con", 1, upper=0.0)
+        optProb.addConGroup("boundary_con", self.nturbs, upper=0.0, scale=self.scale_con)
+        optProb.addConGroup("spacing_con", 1, upper=0.0, scale=self.scale_con)
 
         return optProb
 

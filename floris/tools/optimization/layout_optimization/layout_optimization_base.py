@@ -80,4 +80,4 @@ class LayoutOptimization(LoggerBase):
 
     @property
     def rotor_diameter(self):
-        return self.fi.floris.farm.rotor_diameters[0][0][0]
+        return self.fi.floris.farm.rotor_diameters_sorted[0][0][0]
