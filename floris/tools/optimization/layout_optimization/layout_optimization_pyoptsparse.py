@@ -133,7 +133,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         return optProb
 
     def add_con_group(self, optProb):
-        optProb.addConGroup("boundary_con", self.nturbs, upper=0.0, scale=self.scale_con)
+        optProb.addConGroup("boundary_con", self.nturbs, upper=-1.0, scale=self.scale_con)
         optProb.addConGroup("spacing_con", 1, upper=0.0, scale=self.scale_con)
 
         return optProb
