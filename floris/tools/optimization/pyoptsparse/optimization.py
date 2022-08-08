@@ -97,10 +97,10 @@ class Optimization(LoggerBase):
         if hasattr(self.model, "_sens"):
             self.sol = self.opt(self.optProb, sens=self.model._sens)
         else:
-            if self.timeLimit is not None:
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, timeLimit=self.timeLimit)
+            if self.timeLimit is not None: #sens="CDR"
+                self.sol = self.opt(self.optProb, storeHistory=self.storeHistory, timeLimit=self.timeLimit)
             else:
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory)
+                self.sol = self.opt(self.optProb, storeHistory=self.storeHistory)
 
     # Public methods
 
