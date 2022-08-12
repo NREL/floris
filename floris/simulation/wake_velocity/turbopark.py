@@ -72,6 +72,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         rotor_diameter_i: np.ndarray,
         rotor_diameters: np.ndarray,
         i: int,
+        deflection_field: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
@@ -89,8 +90,8 @@ class TurbOParkVelocityDeficit(BaseModel):
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
         # Radial distance between turbine i and the centerlines of wakes from all real/image turbines
-        r_dist = np.sqrt((y_i - y) ** 2 + (z_i - z) ** 2)
-        r_dist_image = np.sqrt((y_i - y) ** 2 + (z_i - (-z)) ** 2)
+        r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
+        r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)
 
         Cts[:,:,i:,:,:] = 0.00001
 

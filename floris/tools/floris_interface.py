@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 
-from typing import Tuple
 from pathlib import Path
 
 import numpy as np
@@ -24,8 +23,11 @@ from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from floris.type_dec import NDArrayFloat
 from floris.simulation import Floris
 from floris.logging_manager import LoggerBase
-from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
+
+from floris.simulation import State
+
 from floris.tools.cut_plane import CutPlane
+from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
 
 
 class FlorisInterface(LoggerBase):
@@ -69,22 +71,32 @@ class FlorisInterface(LoggerBase):
 
         # Make a check on reference height and provide a helpful warning
         unique_heights = np.unique(self.floris.farm.hub_heights)
-        if ((len(unique_heights) == 1) and (self.floris.flow_field.reference_wind_height!=unique_heights[0])):
-            err_msg = 'The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height.'
+        if (len(unique_heights) == 1) and (self.floris.flow_field.reference_wind_height != unique_heights[0]):
+            err_msg = "The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height."
             self.logger.warning(err_msg, stack_info=True)
+
+        # Check the turbine_grid_points is reasonable
+        if self.floris.solver["type"] == "turbine_grid":
+            if self.floris.solver["turbine_grid_points"] > 3:
+                self.logger.error(f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy.")
+                raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
     def assign_hub_height_to_ref_height(self):
 
         # Confirm can do this operation
         unique_heights = np.unique(self.floris.farm.hub_heights)
-        if (len(unique_heights) > 1):
-            raise ValueError("To assign hub heights to reference height, can not have more than one specified height. Current length is {}.".format(len(unique_heights)))
+        if len(unique_heights) > 1:
+            raise ValueError(
+                "To assign hub heights to reference height, can not have more than one specified height. Current length is {}.".format(
+                    len(unique_heights)
+                )
+            )
 
         self.floris.flow_field.reference_wind_height = unique_heights[0]
 
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
-        return FlorisInterface(self.floris.as_dict())
+        return FlorisInterface(self.floris.as_dict(), het_map=self.het_map)
 
     def calculate_wake(
         self,
@@ -113,9 +125,6 @@ class FlorisInterface(LoggerBase):
 
         # TODO decide where to handle this sign issue
         if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
-            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
-                # TODO: Implement wake steering for the TurbOPark model
-                raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
             self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -142,9 +151,6 @@ class FlorisInterface(LoggerBase):
 
         # TODO decide where to handle this sign issue
         if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
-            if self.floris.wake.model_strings["velocity_model"] == "turbopark":
-                # TODO: Implement wake steering for the TurbOPark model
-                raise ValueError("Non-zero yaw angles given and for TurbOPark model; wake steering with this model is not yet implemented.")
             self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -165,13 +171,15 @@ class FlorisInterface(LoggerBase):
         # turbulence_kinetic_energy=None,
         air_density: float | None = None,
         # wake: WakeModelManager = None,
-        layout: Tuple[list[float], list[float]] | Tuple[NDArrayFloat, NDArrayFloat] | None = None,
+        layout_x: list[float] | NDArrayFloat | None = None,
+        layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
         solver_settings: dict | None = None,
-        time_series: bool | None = False
+        time_series: bool | None = False,
+        layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -198,8 +206,14 @@ class FlorisInterface(LoggerBase):
 
         ## Farm
         if layout is not None:
-            farm_dict["layout_x"] = layout[0]
-            farm_dict["layout_y"] = layout[1]
+            msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3."
+            self.logger.warning(msg)
+            layout_x = layout[0]
+            layout_y = layout[1]
+        if layout_x is not None:
+            farm_dict["layout_x"] = layout_x
+        if layout_y is not None:
+            farm_dict["layout_y"] = layout_y
         if turbine_type is not None:
             farm_dict["turbine_type"] = turbine_type
 
@@ -291,7 +305,7 @@ class FlorisInterface(LoggerBase):
         # Subset to plane
         # TODO: Seems sloppy as need more than one plane in the z-direction for GCH
         if planar_coordinate is not None:
-            df = df[np.isclose(df.x3, planar_coordinate)] # , atol=0.1, rtol=0.0)]
+            df = df[np.isclose(df.x3, planar_coordinate)]  # , atol=0.1, rtol=0.0)]
 
         # Drop duplicates
         # TODO is this still needed now that we setup a grid for just this plane?
@@ -333,7 +347,7 @@ class FlorisInterface(LoggerBase):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        #TODO update docstring
+        # TODO update docstring
         if wd is None:
             wd = self.floris.flow_field.wind_directions
         if ws is None:
@@ -352,9 +366,7 @@ class FlorisInterface(LoggerBase):
             "flow_field_grid_points": [x_resolution, y_resolution],
             "flow_field_bounds": [x_bounds, y_bounds],
         }
-        self.reinitialize(
-            wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings
-        )
+        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
 
         # TODO this has to be done here as it seems to be lost with reinitialize
         if yaw_angles is not None:
@@ -432,9 +444,7 @@ class FlorisInterface(LoggerBase):
             "flow_field_grid_points": [y_resolution, z_resolution],
             "flow_field_bounds": [y_bounds, z_bounds],
         }
-        self.reinitialize(
-            wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings
-        )
+        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
 
         # TODO this has to be done here as it seems to be lost with reinitialize
         if yaw_angles is not None:
@@ -493,7 +503,7 @@ class FlorisInterface(LoggerBase):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        #TODO update docstring
+        # TODO update docstring
         if wd is None:
             wd = self.floris.flow_field.wind_directions
         if ws is None:
@@ -512,9 +522,7 @@ class FlorisInterface(LoggerBase):
             "flow_field_grid_points": [x_resolution, z_resolution],
             "flow_field_bounds": [x_bounds, z_bounds],
         }
-        self.reinitialize(
-            wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings
-        )
+        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
 
         # TODO this has to be done here as it seems to be lost with reinitialize
         if yaw_angles is not None:
@@ -544,10 +552,14 @@ class FlorisInterface(LoggerBase):
 
     def check_wind_condition_for_viz(self, wd=None, ws=None):
         if len(wd) > 1 or len(wd) < 1:
-            raise ValueError("Wind direction input must be of length 1 for visualization. Current length is {}.".format(len(wd)))
+            raise ValueError(
+                "Wind direction input must be of length 1 for visualization. Current length is {}.".format(len(wd))
+            )
 
         if len(ws) > 1 or len(ws) < 1:
-            raise ValueError("Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws)))
+            raise ValueError(
+                "Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws))
+            )
 
     def get_turbine_powers(self) -> NDArrayFloat:
         """Calculates the power at each turbine in the windfarm.
@@ -555,6 +567,11 @@ class FlorisInterface(LoggerBase):
         Returns:
             NDArrayFloat: [description]
         """
+
+        # Confirm calculate wake has been run
+        if self.floris.state is not State.USED:
+            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.")
+
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
             velocities=self.floris.flow_field.u,
@@ -618,6 +635,10 @@ class FlorisInterface(LoggerBase):
         # for turbine in self.floris.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
 
+        # Confirm calculate wake has been run
+        if self.floris.state is not State.USED:
+            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`.")
+
         turbine_powers = self.get_turbine_powers()
         return np.sum(turbine_powers, axis=2)
 
@@ -640,7 +661,7 @@ class FlorisInterface(LoggerBase):
                 up to 1.0 and are used to weigh the wind farm power for every
                 condition in calculating the wind farm's AEP.
             cut_in_wind_speed (float, optional): Wind speed in m/s below which
-                any calculations are ignored and the wind farm is known to 
+                any calculations are ignored and the wind farm is known to
                 produce 0.0 W of power. Note that to prevent problems with the
                 wake models at negative / zero wind speeds, this variable must
                 always have a positive value. Defaults to 0.001 [m/s].
@@ -658,7 +679,7 @@ class FlorisInterface(LoggerBase):
                 in AEP due to wakes. Defaults to *False*.
 
         Returns:
-            float: 
+            float:
                 The Annual Energy Production (AEP) for the wind farm in
                 watt-hours.
         """
@@ -670,30 +691,22 @@ class FlorisInterface(LoggerBase):
             & (len(np.shape(freq)) == 2)
         ):
             raise UserWarning(
-                "'freq' should be a two-dimensional array with dimensions"
-                + " (n_wind_directions, n_wind_speeds)."
+                "'freq' should be a two-dimensional array with dimensions" + " (n_wind_directions, n_wind_speeds)."
             )
 
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
-            self.logger.warning(
-                "WARNING: The frequency array provided to get_farm_AEP() "
-                + "does not sum to 1.0. "
-            )
+            self.logger.warning("WARNING: The frequency array provided to get_farm_AEP() " + "does not sum to 1.0. ")
 
         # Copy the full wind speed array from the floris object and initialize
         # the the farm_power variable as an empty array.
         wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
-        farm_power = np.zeros(
-            (self.floris.flow_field.n_wind_directions, len(wind_speeds))
-        )
+        farm_power = np.zeros((self.floris.flow_field.n_wind_directions, len(wind_speeds)))
 
         # Determine which wind speeds we must evaluate in floris
-        conditions_to_evaluate = (wind_speeds >= cut_in_wind_speed)
+        conditions_to_evaluate = wind_speeds >= cut_in_wind_speed
         if cut_out_wind_speed is not None:
-            conditions_to_evaluate = conditions_to_evaluate & (
-                wind_speeds < cut_out_wind_speed
-            )
+            conditions_to_evaluate = conditions_to_evaluate & (wind_speeds < cut_out_wind_speed)
 
         # Evaluate the conditions in floris
         if np.any(conditions_to_evaluate):
@@ -736,7 +749,6 @@ class FlorisInterface(LoggerBase):
         """
         return self.floris.farm.layout_y
 
-
     def get_turbine_layout(self, z=False):
         """
         Get turbine layout
@@ -771,9 +783,6 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
         out_region = [NearestNDInterpolator(list(zip(x, y)), speed_up) for speed_up in speed_ups]
 
     return [in_region, out_region]
-
-
-
 
     ## Functionality removed in v3
 

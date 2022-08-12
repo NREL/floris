@@ -18,7 +18,7 @@ from floris.simulation import Floris
 from floris.simulation import Ct, power, axial_induction, average_velocity
 from tests.conftest import N_TURBINES, N_WIND_DIRECTIONS, N_WIND_SPEEDS, print_test_values, assert_results_arrays
 
-DEBUG = True
+DEBUG = False
 VELOCITY_MODEL = "cc"
 DEFLECTION_MODEL = "gauss"
 
