@@ -63,7 +63,7 @@ def load_floris():
     turbine_weights[0:10] = 1.0
 
     # Now reinitialize FLORIS layout
-    fi.reinitialize(layout=(X, Y))
+    fi.reinitialize(layout_x = X, layout_y = Y)
 
     # And visualize the floris layout
     fig, ax = plt.subplots()
@@ -232,7 +232,7 @@ if __name__ == "__main__":
 
     # Optimize yaw angles while ignoring neighboring farm
     fi_opt_subset = fi_opt.copy()
-    fi_opt_subset.reinitialize(layout=[fi.layout_x[turbs_to_opt], fi.layout_y[turbs_to_opt]])
+    fi_opt_subset.reinitialize(layout_x= fi.layout_x[turbs_to_opt], layout_y = fi.layout_y[turbs_to_opt])
     yaw_opt_interpolant_nonb = optimize_yaw_angles(fi_opt=fi_opt_subset)
 
     # Use interpolant to get optimal yaw angles for fi_AEP object
