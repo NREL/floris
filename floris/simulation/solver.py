@@ -133,6 +133,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
@@ -321,6 +322,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 flow_field_grid.x_sorted - x_i,
                 flow_field_grid.y_sorted - y_i,
                 flow_field_grid.z_sorted,
@@ -465,6 +467,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
@@ -653,6 +656,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 flow_field_grid.x_sorted - x_i,
                 flow_field_grid.y_sorted - y_i,
                 flow_field_grid.z_sorted,
@@ -806,6 +810,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
