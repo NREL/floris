@@ -17,7 +17,6 @@ import attrs
 from attrs import define, field
 import numpy as np
 from pathlib import Path
-import os
 import copy
 
 from floris.type_dec import (
@@ -26,7 +25,7 @@ from floris.type_dec import (
     NDArrayFloat
 )
 from floris.utilities import Vec3, load_yaml
-from floris.simulation import BaseClass
+from floris.simulation import BaseClass, State
 from floris.simulation import Turbine
 
 
@@ -83,7 +82,7 @@ class Farm(BaseClass):
             if type(val) is str:
                 _floris_dir = Path(__file__).parent.parent
                 fname = _floris_dir / "turbine_library" / f"{val}.yaml"
-                if not os.path.isfile(fname):
+                if not Path.is_file(fname):
                     raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
                 self.turbine_definitions[i] = load_yaml(fname)
 
@@ -94,6 +93,7 @@ class Farm(BaseClass):
             sorted_indices[:, :, :, 0, 0],
             axis=2,
         )
+        self.state = State.INITIALIZED
 
     def construct_hub_heights(self):
         self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
@@ -149,6 +149,7 @@ class Farm(BaseClass):
         self.TSRs = np.take_along_axis(self.TSRs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.pPs = np.take_along_axis(self.pPs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.turbine_type_map = np.take_along_axis(self.turbine_type_map_sorted, unsorted_indices[:,:,:,0,0], axis=2)
+        self.state.USED
 
     @property
     def n_turbines(self):

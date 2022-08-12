@@ -22,7 +22,7 @@ import attrs
 from attrs import define, field
 import numpy as np
 
-from floris.utilities import Vec3, rotate_coordinates_rel_west, cosd, sind
+from floris.utilities import Vec3, rotate_coordinates_rel_west
 from floris.type_dec import  (
     floris_float_type,
     floris_array_converter,
@@ -61,6 +61,7 @@ class Grid(ABC):
     grid_resolution: int | Iterable = field()
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
+    time_series: bool = field()
 
     n_turbines: int = field(init=False)
     n_wind_speeds: int = field(init=False)
@@ -88,7 +89,10 @@ class Grid(ABC):
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_speeds` attribute up to date."""
-        self.n_wind_speeds = value.size
+        if self.time_series:
+            self.n_wind_speeds = 1
+        else:
+            self.n_wind_speeds = value.size
 
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:

@@ -13,9 +13,7 @@
 from typing import Any, Dict
 
 from attrs import define, field
-import numexpr as ne
 import numpy as np
-from numpy import newaxis as na
 from scipy.special import gamma
 
 from floris.simulation import BaseModel
@@ -23,7 +21,7 @@ from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
 from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand, pshape
+from floris.utilities import cosd, sind, tand
 
 
 @define
@@ -37,8 +35,6 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
     b_f: float = field(default=-0.68)
     c_f: float = field(default=2.41)
     alpha_mod: float = field(default=1.0)
-
-    model_string = "cumulative_gauss_curl"
 
     def prepare_function(
         self,
@@ -175,20 +171,23 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         a2 = 2 ** (4 / n - 2)
 
         # based on Blondel model, modified to include cumulative effects
-        C = a1 - np.sqrt(
-            a2
-            - (
-                (n * turbine_Ct[:,:,ii:ii+1])
-                * cosd(turbine_yaw)
-                / (
-                    16.0
-                    * gamma(2 / n)
-                    * np.sign(sigma_n)
-                    * (np.abs(sigma_n) ** (4 / n))
-                    * (1 - sum_lbda) ** 2
-                )
+        tmp = a2 - (
+            (n * turbine_Ct[:,:,ii:ii+1])
+            * cosd(turbine_yaw)
+            / (
+                16.0
+                * gamma(2 / n)
+                * np.sign(sigma_n)
+                * (np.abs(sigma_n) ** (4 / n))
+                * (1 - sum_lbda) ** 2
             )
         )
+
+        # for some low wind speeds, tmp can become slightly negative, which causes NANs,
+        # so replace the slightly negative values with zeros
+        tmp = tmp * np.array(tmp >= 0)
+
+        C = a1 - np.sqrt(tmp)
 
         C = C * (1 - sum_lbda)
 
@@ -233,4 +232,3 @@ def wake_expansion(
     # Do this ^^ in the main function
 
     return sigma_y
- 

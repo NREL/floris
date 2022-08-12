@@ -18,11 +18,13 @@ from pathlib import Path
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
 import scipy.io
-import os
 
 from floris.simulation import BaseModel
+from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
+from floris.simulation import Turbine
+from floris.utilities import cosd, sind, tand
 
 
 @define
@@ -36,7 +38,6 @@ class TurbOParkVelocityDeficit(BaseModel):
     A: float = field(default=0.04)
     sigma_max_rel: float = field(default=4.0)
     overlap_gauss_interp: RegularGridInterpolator = field(init=False)
-    model_string = "turbopark"
 
     def __attrs_post_init__(self) -> None:
         lookup_table_matlab_file = Path(__file__).parent / "turbopark_lookup_table.mat"
@@ -71,6 +72,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         rotor_diameter_i: np.ndarray,
         rotor_diameters: np.ndarray,
         i: int,
+        deflection_field: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
@@ -88,8 +90,8 @@ class TurbOParkVelocityDeficit(BaseModel):
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
         # Radial distance between turbine i and the centerlines of wakes from all real/image turbines
-        r_dist = np.sqrt((y_i - y) ** 2 + (z_i - z) ** 2)
-        r_dist_image = np.sqrt((y_i - y) ** 2 + (z_i - (-z)) ** 2)
+        r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
+        r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)
 
         Cts[:,:,i:,:,:] = 0.00001
 

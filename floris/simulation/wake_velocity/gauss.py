@@ -31,7 +31,6 @@ class GaussVelocityDeficit(BaseModel):
     beta: float = field(default=0.077)
     ka: float = field(default=0.38)
     kb: float = field(default=0.004)
-    model_string = "gauss"
 
     def prepare_function(
         self,

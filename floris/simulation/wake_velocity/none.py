@@ -27,8 +27,6 @@ class NoneVelocityDeficit(BaseModel):
     wake wind speed deficits and returns an array of zeroes.
     """
     
-    model_string = "none"
-
     def prepare_function(
         self,
         grid: Grid,
