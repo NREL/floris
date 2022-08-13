@@ -91,7 +91,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self.parse_opt_vars(varDict)
 
         # Update turbine map with turbince locations
-        self.fi.reinitialize(layout=[self.x, self.y])
+        self.fi.reinitialize(layout_x = self.x, layout_y = self.y)
 
         # Compute the objective function
         funcs = {}
@@ -174,6 +174,10 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
     def _get_initial_and_final_locs(self):
         x_initial = self._unnorm(self.x0, self.xmin, self.xmax)
         y_initial = self._unnorm(self.y0, self.ymin, self.ymax)
+        x_opt, y_opt = self.get_optimized_locs()
+        return x_initial, y_initial, x_opt, y_opt
+
+    def get_optimized_locs(self):
         x_opt = self._unnorm(self.sol.getDVs()["x"], self.xmin, self.xmax)
         y_opt = self._unnorm(self.sol.getDVs()["y"], self.ymin, self.ymax)
-        return x_initial, y_initial, x_opt, y_opt
+        return x_opt, y_opt
