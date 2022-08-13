@@ -34,13 +34,14 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         hotStart=None
     ):
         super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
-        self._reinitialize(solver=solver, optOptions=optOptions)
+
+        self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)
+        self.y0 = self._norm(self.fi.layout_y, self.ymin, self.ymax)
 
         self.storeHistory = storeHistory
         self.timeLimit = timeLimit
         self.hotStart = hotStart
 
-    def _reinitialize(self, solver=None, optOptions=None):
         try:
             import pyoptsparse
         except ImportError:
@@ -91,12 +92,11 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
         # Update turbine map with turbince locations
         self.fi.reinitialize(layout=[self.x, self.y])
-        self.fi.calculate_wake()
 
         # Compute the objective function
         funcs = {}
         funcs["obj"] = (
-            -1 * np.sum(self.fi.get_farm_power() * self.freq * 8760) / self.initial_AEP
+            -1 * self.fi.get_farm_AEP(self.freq) / self.initial_AEP
         )
 
         # Compute constraints, if any are defined for the optimization
@@ -121,10 +121,10 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
     def add_var_group(self, optProb):
         optProb.addVarGroup(
-            "x", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.x0
+            "x", self.nturbs, varType="c", lower=0.0, upper=1.0, value=self.x0
         )
         optProb.addVarGroup(
-            "y", self.nturbs, type="c", lower=0.0, upper=1.0, value=self.y0
+            "y", self.nturbs, varType="c", lower=0.0, upper=1.0, value=self.y0
         )
 
         return optProb
@@ -165,46 +165,15 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         boundary_con = np.zeros(self.nturbs)
         for i in range(self.nturbs):
             loc = Point(x[i], y[i])
-            boundary_con[i] = loc.distance(self.boundary_line)
-            if self.boundary_polygon.contains(loc)==True:
+            boundary_con[i] = loc.distance(self._boundary_line)
+            if self._boundary_polygon.contains(loc)==True:
                 boundary_con[i] *= -1.0
 
         return boundary_con
 
-    def plot_layout_opt_results(self):
-        """
-        Method to plot the old and new locations of the layout opitimization.
-        """
-        locsx = self._unnorm(self.sol.getDVs()["x"], self.xmin, self.xmax)
-        locsy = self._unnorm(self.sol.getDVs()["y"], self.ymin, self.ymax)
-        x0 = self._unnorm(self.x0, self.xmin, self.xmax)
-        y0 = self._unnorm(self.y0, self.ymin, self.ymax)
-
-        plt.figure(figsize=(9, 6))
-        fontsize = 16
-        plt.plot(x0, y0, "ob")
-        plt.plot(locsx, locsy, "or")
-        # plt.title('Layout Optimization Results', fontsize=fontsize)
-        plt.xlabel("x (m)", fontsize=fontsize)
-        plt.ylabel("y (m)", fontsize=fontsize)
-        plt.axis("equal")
-        plt.grid()
-        plt.tick_params(which="both", labelsize=fontsize)
-        plt.legend(
-            ["Old locations", "New locations"],
-            loc="lower center",
-            bbox_to_anchor=(0.5, 1.01),
-            ncol=2,
-            fontsize=fontsize,
-        )
-
-        verts = self.boundaries
-        for i in range(len(verts)):
-            if i == len(verts) - 1:
-                plt.plot([verts[i][0], verts[0][0]], [verts[i][1], verts[0][1]], "b")
-            else:
-                plt.plot(
-                    [verts[i][0], verts[i + 1][0]], [verts[i][1], verts[i + 1][1]], "b"
-                )
-        
-        plt.show()
+    def _get_initial_and_final_locs(self):
+        x_initial = self._unnorm(self.x0, self.xmin, self.xmax)
+        y_initial = self._unnorm(self.y0, self.ymin, self.ymax)
+        x_opt = self._unnorm(self.sol.getDVs()["x"], self.xmin, self.xmax)
+        y_opt = self._unnorm(self.sol.getDVs()["y"], self.ymin, self.ymax)
+        return x_initial, y_initial, x_opt, y_opt

@@ -133,6 +133,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
@@ -232,6 +233,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
+        time_series=turbine_grid_flow_field.time_series,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices
@@ -320,6 +322,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 flow_field_grid.x_sorted - x_i,
                 flow_field_grid.y_sorted - y_i,
                 flow_field_grid.z_sorted,
@@ -464,6 +467,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
@@ -652,6 +656,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 flow_field_grid.x_sorted - x_i,
                 flow_field_grid.y_sorted - y_i,
                 flow_field_grid.z_sorted,
@@ -769,9 +774,8 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         # Model calculations
         # NOTE: exponential
-        if (farm.yaw_angles_sorted == 0).all():
-            pass
-        else:
+        if not np.all(farm.yaw_angles_sorted):
+            model_manager.deflection_model.logger.warning("WARNING: Deflection with the TurbOPark model has not been fully validated. This is an initial implementation, and we advise you use at your own risk and perform a thorough examination of the results.")
             for ii in range(i):
                 x_ii = np.mean(grid.x_sorted[:, :, ii:ii+1], axis=(3, 4))
                 x_ii = x_ii[:, :, :, None, None]
@@ -806,6 +810,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,

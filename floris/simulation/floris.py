@@ -20,8 +20,8 @@ import yaml
 from floris.utilities import load_yaml
 
 import floris.logging_manager as logging_manager
-from floris.type_dec import FromDictMixin
 from floris.simulation import (
+    BaseClass,
     Farm,
     WakeModelManager,
     FlowField,
@@ -29,6 +29,7 @@ from floris.simulation import (
     TurbineGrid,
     FlowFieldGrid,
     FlowFieldPlanarGrid,
+    State,
     sequential_solver,
     cc_solver,
     turbopark_solver,
@@ -40,7 +41,7 @@ from attrs import define, field
 
 
 @define
-class Floris(logging_manager.LoggerBase, FromDictMixin):
+class Floris(BaseClass):
     """
     Top-level class that describes a Floris model and initializes the
     simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to
@@ -82,6 +83,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
+                time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
@@ -90,6 +92,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
+                time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "flow_field_planar_grid":
             self.grid = FlowFieldPlanarGrid(
@@ -102,6 +105,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
                 grid_resolution=self.solver["flow_field_grid_points"],
                 x1_bounds=self.solver["flow_field_bounds"][0],
                 x2_bounds=self.solver["flow_field_bounds"][1],
+                time_series=self.flow_field.time_series,
             )
         else:
             raise ValueError(
@@ -135,6 +139,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # Initialize farm quantities
         self.farm.initialize(self.grid.sorted_indices)
 
+        self.state.INITIALIZED
 
     def steady_state_atmospheric_condition(self):
         """Perform the steady-state wind farm wake calculations. Note that
@@ -195,6 +200,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         # the user-supplied order of things.
         self.flow_field.finalize(self.grid.unsorted_indices)
         self.farm.finalize(self.grid.unsorted_indices)
+        self.state = State.USED
 
     ## I/O
 

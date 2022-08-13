@@ -36,10 +36,10 @@ jobs:
         for i in *.py; do
 
           # Skip these examples since they have additional dependencies
-          if [[ $i == *11* ]]; then
+          if [[ $i == *14* ]]; then
             continue
           fi
-          if [[ $i == *16* ]]; then
+          if [[ $i == *18* ]]; then
             continue
           fi
 

@@ -20,32 +20,31 @@ from ....logging_manager import LoggerBase
 
 class LayoutOptimization(LoggerBase):
     def __init__(self, fi, boundaries, min_dist=None, freq=None):
-        self.fi = fi
+        self.fi = fi.copy()
         self.boundaries = boundaries
 
-        self.boundary_polygon = Polygon(self.boundaries)
-        self.boundary_line = LineString(self.boundaries)
+        self._boundary_polygon = Polygon(self.boundaries)
+        self._boundary_line = LineString(self.boundaries)
 
         self.xmin = np.min([tup[0] for tup in boundaries])
         self.xmax = np.max([tup[0] for tup in boundaries])
         self.ymin = np.min([tup[1] for tup in boundaries])
         self.ymax = np.max([tup[1] for tup in boundaries])
-        self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)
-        self.y0 = self._norm(self.fi.layout_y, self.ymin, self.ymax)
 
+        # If no minimum distance is provided, assume a value of 2 rotor diamters
         if min_dist is None:
             self.min_dist = 2 * self.rotor_diameter
         else:
             self.min_dist = min_dist
 
+        # If freq is not provided, give equal weight to all wind conditions
         if freq is None:
-            self.freq = 1
+            self.freq = np.ones((self.fi.floris.flow_field.n_wind_directions, self.fi.floris.flow_field.n_wind_speeds))
+            self.freq = self.freq / self.freq.sum()
         else:
             self.freq = freq
 
-        self.wdir = self.fi.floris.flow_field.wind_directions
-        self.wspd = self.fi.floris.flow_field.wind_speeds
-        self.initial_AEP = np.sum(self.fi.get_farm_power() * self.freq * 8760)
+        self.initial_AEP = fi.get_farm_AEP(self.freq)
 
     def __str__(self):
         return "layout"
@@ -56,11 +55,43 @@ class LayoutOptimization(LoggerBase):
     def _unnorm(self, val, x1, x2):
         return np.array(val) * (x2 - x1) + x1
 
-    # Public methods required for each optimization class
+    # Public methods
 
     def optimize(self):
         sol = self._optimize()
         return sol
+
+    def plot_layout_opt_results(self):
+        x_initial, y_initial, x_opt, y_opt = self._get_initial_and_final_locs()
+
+        plt.figure(figsize=(9, 6))
+        fontsize = 16
+        plt.plot(x_initial, y_initial, "ob")
+        plt.plot(x_opt, y_opt, "or")
+        # plt.title('Layout Optimization Results', fontsize=fontsize)
+        plt.xlabel("x (m)", fontsize=fontsize)
+        plt.ylabel("y (m)", fontsize=fontsize)
+        plt.axis("equal")
+        plt.grid()
+        plt.tick_params(which="both", labelsize=fontsize)
+        plt.legend(
+            ["Old locations", "New locations"],
+            loc="lower center",
+            bbox_to_anchor=(0.5, 1.01),
+            ncol=2,
+            fontsize=fontsize,
+        )
+
+        verts = self.boundaries
+        for i in range(len(verts)):
+            if i == len(verts) - 1:
+                plt.plot([verts[i][0], verts[0][0]], [verts[i][1], verts[0][1]], "b")
+            else:
+                plt.plot(
+                    [verts[i][0], verts[i + 1][0]], [verts[i][1], verts[i + 1][1]], "b"
+                )
+        
+        plt.show()
 
     ###########################################################################
     # Properties
@@ -80,4 +111,4 @@ class LayoutOptimization(LoggerBase):
 
     @property
     def rotor_diameter(self):
-        return self.fi.floris.farm.rotor_diameters[0][0][0]
+        return self.fi.floris.farm.rotor_diameters_sorted[0][0][0]
