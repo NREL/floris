@@ -95,6 +95,28 @@ class GaussVelocityDeflection(BaseModel):
         )
         return kwargs
 
+    def _initial_wake_expansion(self, tilt, yaw_i, ct_i, freestream_velocity, rotor_diameter_i, wind_veer):
+        # initial velocity deficits
+        uR = (
+            freestream_velocity
+          * ct_i
+          * cosd(tilt)
+          * cosd(yaw_i)
+          / (2.0 * (1 - np.sqrt(1 - (ct_i * cosd(tilt) * cosd(yaw_i)))))
+        )
+        u0 = freestream_velocity * np.sqrt(1 - ct_i)  # NOTE: used once
+
+        # wake expansion parameters
+        C0 = 1 - u0 / freestream_velocity
+        M0 = C0 * (2 - C0)
+        E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
+
+        # initial Gaussian wake expansion
+        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
+        sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
+
+        return M0, E0, sigma_y0, sigma_z0
+
     # @profile
     def function(
         self,
@@ -139,20 +161,19 @@ class GaussVelocityDeflection(BaseModel):
         # ==============================================================
 
         # Opposite sign convention in this model
-        yaw_i = -1 * yaw_i
+        yaw_i *= -1
 
         # TODO: connect support for tilt
-        tilt = 0.0 #turbine.tilt_angle
+        tilt = 0.0  # turbine.tilt_angle
 
-        # initial velocity deficits
-        uR = (
-            freestream_velocity
-          * ct_i
-          * cosd(tilt)
-          * cosd(yaw_i)
-          / (2.0 * (1 - np.sqrt(1 - (ct_i * cosd(tilt) * cosd(yaw_i)))))
+        # initial velocity deficits, wake expansion, and Gaussian parameters
+        M0, E0, sigma_y0, sigma_z0 = self._initial_wake_expansion(
+            tilt, yaw_i, ct_i, freestream_velocity, rotor_diameter_i, wind_veer
         )
-        u0 = freestream_velocity * np.sqrt(1 - ct_i)
+
+        # wake expansion parameters
+        ky = self.ka * turbulence_intensity_i + self.kb
+        kz = self.ka * turbulence_intensity_i + self.kb
 
         # length of near wake
         x0 = (
@@ -161,18 +182,6 @@ class GaussVelocityDeflection(BaseModel):
             / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
             + x_i
         )
-
-        # wake expansion parameters
-        ky = self.ka * turbulence_intensity_i + self.kb
-        kz = self.ka * turbulence_intensity_i + self.kb
-
-        C0 = 1 - u0 / freestream_velocity
-        M0 = C0 * (2 - C0)
-        E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
-
-        # initial Gaussian wake expansion
-        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
-        sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
 
         yR = y - y_i
         xR = x_i # yR * tand(yaw) + x_i
@@ -185,14 +194,13 @@ class GaussVelocityDeflection(BaseModel):
 
         # deflection in the near wake
         delta_near_wake = ((x - xR) / (x0 - xR)) * delta0 + (self.ad + self.bd * (x - x_i))
-        delta_near_wake = delta_near_wake * np.array(x >= xR)
-        delta_near_wake = delta_near_wake * np.array(x <= x0)
+        delta_near_wake = delta_near_wake * ((x >= xR) & (x <= x0))
 
         # deflection in the far wake
         sigma_y = ky * (x - x0) + sigma_y0
         sigma_z = kz * (x - x0) + sigma_z0
-        sigma_y = sigma_y * np.array(x >= x0) + sigma_y0 * np.array(x < x0)
-        sigma_z = sigma_z * np.array(x >= x0) + sigma_z0 * np.array(x < x0)
+        sigma_y = sigma_y * np.array(x >= x0) + sigma_y0 * (x < x0)
+        sigma_z = sigma_z * np.array(x >= x0) + sigma_z0 * (x < x0)
 
         ln_deltaNum = (1.6 + np.sqrt(M0)) * (
             1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
@@ -209,7 +217,7 @@ class GaussVelocityDeflection(BaseModel):
           + (self.ad + self.bd * (x - x_i))
         )
 
-        delta_far_wake = delta_far_wake * np.array(x > x0)
+        delta_far_wake = delta_far_wake * (x > x0)
         deflection = delta_near_wake + delta_far_wake
 
         return deflection
