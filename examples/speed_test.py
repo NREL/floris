@@ -81,8 +81,8 @@ print(f"{res[0]:9.6f} | {res[1]:8.6f} | {res[2]:10.6f}")
 #  1.403899 | 28.699313 |  30.103212  <- Base Case with v3.1 as of 9am, 7/28/22
 #  1.477987 | 29.551348 |  31.029335  <- Base Case with v3.1 as of 3pm, 8/15/22
 #  1.457128 | 28.012114 |  29.469241  <- w/ _initial_wake_expansion as of 3:30pm 8/15/22
-#  1.420906 | 27.515838 |  28.936744  <- dropping reassignment from np.array(boolean operation)  as of 3:35 8/15/22
-#
-#
+#  1.420906 | 27.515838 |  28.936744  <- dropping reassignment from np.array(boolean operation) as of 3:35 8/15/22
+#  1.536173 | 28.122597 |  29.658770  <- common variable for reused calculations and more booleans like the above as of 3:55 8/15/22
+#  1.477387 | 27.615849 |  29.093236  <- gamma paramaters to a single function and undo slow change from above as of 4:25 8/15/22
 #
 #
