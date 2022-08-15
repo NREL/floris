@@ -109,10 +109,6 @@ class FromDictMixin:
         required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and a.default is attrs.NOTHING]
         undefined = sorted(set(required_inputs) - set(kwargs))
 
-        # Temporary friendlier warning
-        if 'ref_density_cp_ct' in undefined:
-            raise AttributeError(f"Beginning in v3.2, turbine input files must provide the air density at which cp/ct are defined (ref_density_cp_ct (typically 1.225))")
-
         if undefined:
             raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
         return cls(**kwargs)
