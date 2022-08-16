@@ -191,7 +191,7 @@ class GaussVelocityDeflection(BaseModel):
 
         # deflection in the near wake
         delta_near_wake = ((x - xR) / (x0 - xR)) * delta0 + (self.ad + self.bd * (x - x_i))
-        delta_near_wake = delta_near_wake * ((x >= xR) & (x <= x0))
+        delta_near_wake *= (x >= xR) & (x <= x0)
 
         # deflection in the far wake
         sigma_y = ky * (x - x0) + sigma_y0

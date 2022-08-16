@@ -12,16 +12,13 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
-import numexpr as ne
 import numpy as np
+import numexpr as ne
+from attrs import field, define
+from numpy import exp
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
 from floris.utilities import cosd, sind, tand
+from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -43,7 +40,7 @@ class GaussVelocityDeficit(BaseModel):
             y=grid.y_sorted,
             z=grid.z_sorted,
             u_initial=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer
+            wind_veer=flow_field.wind_veer,
         )
         return kwargs
 
@@ -67,7 +64,7 @@ class GaussVelocityDeficit(BaseModel):
         y: np.ndarray,
         z: np.ndarray,
         u_initial: np.ndarray,
-        wind_veer: float
+        wind_veer: float,
     ) -> None:
 
         # yaw_angle is all turbine yaw angles for each wind speed
@@ -78,13 +75,12 @@ class GaussVelocityDeficit(BaseModel):
         yaw_angle = -1 * yaw_angle_i
 
         # Initialize the velocity deficit
-        uR = u_initial * ct_i / ( 2.0 * (1 - np.sqrt(1 - ct_i) ) )
+        uR = u_initial * ct_i / (2.0 * (1 - np.sqrt(1 - ct_i)))
         u0 = u_initial * np.sqrt(1 - ct_i)
 
         # Initial lateral bounds
         sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
         sigma_y0 = sigma_z0 * cosd(yaw_angle) * cosd(wind_veer)
-
 
         # Compute the bounds of the near and far wake regions and a mask
 
@@ -93,8 +89,8 @@ class GaussVelocityDeficit(BaseModel):
 
         # Start of the far wake
         x0 = np.ones_like(u_initial)
-        x0 *= rotor_diameter_i * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
-        x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) ) )
+        x0 *= rotor_diameter_i * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i))
+        x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i)))
         x0 += x_i
 
         # Initialize the velocity deficit array
@@ -103,8 +99,10 @@ class GaussVelocityDeficit(BaseModel):
         # Masks
         # When we have only an inequality, the current turbine may be applied its own wake in cases where numerical precision
         # cause in incorrect comparison. We've applied a small bump to avoid this. "0.1" is arbitrary but it is a small, non zero value.
-        near_wake_mask = np.array(x > xR + 0.1) * np.array(x < x0)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
-        far_wake_mask = np.array(x >= x0)
+        near_wake_mask = (x > xR + 0.1) * (
+            x < x0
+        )  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
+        far_wake_mask = x >= x0
 
         # Compute the velocity deficit in the NEAR WAKE region
         # ONLY If there are points within the near wake boundary
@@ -113,15 +111,23 @@ class GaussVelocityDeficit(BaseModel):
         if np.sum(near_wake_mask):
 
             # Calculate the wake expansion
-            near_wake_ramp_up = (x - xR) / (x0 - xR)  # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
-            near_wake_ramp_down = (x0 - x) / (x0 - xR)  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
+            near_wake_ramp_up = (x - xR) / (
+                x0 - xR
+            )  # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
+            near_wake_ramp_down = (x0 - x) / (
+                x0 - xR
+            )  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
             # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
 
-            sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
-            sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * rotor_diameter_i
-            
-            sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
-            sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * rotor_diameter_i
+            sigma_y = (
+                near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
+            )
+            sigma_y = sigma_y * (x >= xR) + np.ones_like(sigma_y) * (x < xR) * 0.5 * rotor_diameter_i
+
+            sigma_z = (
+                near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
+            )
+            sigma_z = sigma_z * (x >= xR) + np.ones_like(sigma_z) * (x < xR) * 0.5 * rotor_diameter_i
 
             r, C = rC(
                 wind_veer,
@@ -134,7 +140,7 @@ class GaussVelocityDeficit(BaseModel):
                 hub_height_i,
                 ct_i,
                 yaw_angle,
-                rotor_diameter_i
+                rotor_diameter_i,
             )
 
             near_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
@@ -142,15 +148,14 @@ class GaussVelocityDeficit(BaseModel):
 
             velocity_deficit += near_wake_deficit
 
-
         # Compute the velocity deficit in the FAR WAKE region
         if np.sum(far_wake_mask):
 
             # Wake expansion in the lateral (y) and the vertical (z)
             ky = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
             kz = self.ka * turbulence_intensity_i + self.kb  # wake expansion parameters
-            sigma_y = (ky * (x - x0) + sigma_y0) * far_wake_mask + sigma_y0 * np.array(x < x0)
-            sigma_z = (kz * (x - x0) + sigma_z0) * far_wake_mask + sigma_z0 * np.array(x < x0)
+            sigma_y = (ky * (x - x0) + sigma_y0) * far_wake_mask + sigma_y0 * (x < x0)
+            sigma_z = (kz * (x - x0) + sigma_z0) * far_wake_mask + sigma_z0 * (x < x0)
 
             r, C = rC(
                 wind_veer,
@@ -163,7 +168,7 @@ class GaussVelocityDeficit(BaseModel):
                 hub_height_i,
                 ct_i,
                 yaw_angle,
-                rotor_diameter_i
+                rotor_diameter_i,
             )
 
             far_wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
@@ -205,14 +210,17 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
-    d = np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0)
+    d = np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / (D * D))), 0.0, 1.0)
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
+
 
 def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):
     yR = mesh_y_rotated - y_coord_rotated
     xR = yR * tand(turbine_yaw) + x_coord_rotated
     return xR, yR
 
+
 def gaussian_function(C, r, n, sigma):
-    return C * np.exp(-1 * r ** n / (2 * sigma ** 2))
+    result = ne.evaluate("C * exp(-1 * r ** n / (2 * sigma ** 2))")
+    return result
