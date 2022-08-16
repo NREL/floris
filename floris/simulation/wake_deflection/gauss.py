@@ -272,6 +272,43 @@ def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=F
     return Gamma_top, Gamma_bottom, Gamma_wake_rotation
 
 
+def _calculate_vortex(z_i, HH, D, yLocs, eps, Gamma, which=None):
+    if which not in ("top", "bottom", "rotation"):
+        raise ValueError(
+            "Cannot determine which vortex to calculate, please set `which` to one of: 'top', 'bottom', or 'rotation'."
+        )
+
+    # top vortex
+    if which == "top":
+        # NOTE: this is the top of the grid, not the top of the rotor
+        zT = z_i - (HH + D / 2) + BaseModel.NUM_EPS  # distance from the top of the grid
+        rT = yLocs**2 + zT**2  # TODO: This is - in the paper
+        core_shape = 1 - np.exp(
+            -rT / (eps**2)
+        )  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+        v_top = np.mean((Gamma * zT) / (2 * np.pi * rT) * core_shape, axis=(3, 4))
+        # w_top = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
+        return v_top
+
+    # bottom vortex
+    if which == "bottom":
+        zB = z_i - (HH - D / 2) + BaseModel.NUM_EPS
+        rB = yLocs**2 + zB**2
+        core_shape = 1 - np.exp(-rB / (eps**2))
+        v_bottom = np.mean((Gamma * zB) / (2 * np.pi * rB) * core_shape, axis=(3, 4))
+        # w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
+        return v_bottom
+
+    # wake rotation vortex
+    if which == "rotation":
+        zC = z_i - HH + BaseModel.NUM_EPS
+        rC = yLocs**2 + zC**2
+        core_shape = 1 - np.exp(-rC / (eps**2))
+        v_core = np.mean((Gamma * zC) / (2 * np.pi * rC) * core_shape, axis=(3, 4))
+        # w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
+        return v_core
+
+
 # def calculate_effective_yaw(
 def wake_added_yaw(
     u_i,
@@ -319,31 +356,13 @@ def wake_added_yaw(
     yLocs = delta_y + BaseModel.NUM_EPS
 
     # top vortex
-    # NOTE: this is the top of the grid, not the top of the rotor
-    zT = z_i - (HH + D / 2) + BaseModel.NUM_EPS  # distance from the top of the grid
-    rT = yLocs**2 + zT**2  # TODO: This is - in the paper
-    core_shape = 1 - np.exp(
-        -rT / (eps**2)
-    )  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
-    v_top = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape
-    v_top = np.mean(v_top, axis=(3, 4))
-    # w_top = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
+    v_top = _calculate_vortex(z_i, HH, D, yLocs, eps, Gamma_top, which="top")
 
     # bottom vortex
-    zB = z_i - (HH - D / 2) + BaseModel.NUM_EPS
-    rB = yLocs**2 + zB**2
-    core_shape = 1 - np.exp(-rB / (eps**2))
-    v_bottom = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape
-    v_bottom = np.mean(v_bottom, axis=(3, 4))
-    # w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
+    v_bottom = _calculate_vortex(z_i, HH, D, yLocs, eps, Gamma_bottom, which="bottom")
 
     # wake rotation vortex
-    zC = z_i - HH + BaseModel.NUM_EPS
-    rC = yLocs**2 + zC**2
-    core_shape = 1 - np.exp(-rC / (eps**2))
-    v_core = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape
-    v_core = np.mean(v_core, axis=(3, 4))
-    # w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
+    v_core = _calculate_vortex(z_i, HH, D, yLocs, eps, Gamma_wake_rotation, which="rotation")
 
     # Cap the effective yaw values between -45 and 45 degrees
     val = 2 * (avg_v - v_core) / (v_top + v_bottom)
