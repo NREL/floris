@@ -90,6 +90,8 @@ print(f"{res[0]:9.6f} | {res[1]:8.6f} | {res[2]:10.6f}")
 # Wake Velocity Modifications
 #  1.423692 | 25.375699 |  26.799391  <- remove np.array(boolean) in favor of (boolean)
 #  1.377274 | 23.958512 |  25.335786  <- NumExpr applied to the gaussian function
-#  1.370956 | 24.076823 |  25.447779  <- Crespo numexpr addition 2:20 8/16
+#  1.370956 | 24.076823 |  25.447779  <- Crespo numexpr addition 2:20 8/16/22
 # Computer restart
 #  1.351354 | 22.771568 |  24.122922  <- no changes
+#  1.320245 | 22.193191 |  23.513436  <- split up far wake function and fully NumExpr rC() 3:30 8/16/22
+#  1.313820 | 20.925804 |  22.239624  <- NumExpr to the vortex calculations

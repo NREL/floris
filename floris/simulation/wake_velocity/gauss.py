@@ -44,7 +44,7 @@ class GaussVelocityDeficit(BaseModel):
         )
         return kwargs
 
-    # @profile
+    #  @profile
     def function(
         self,
         x_i: np.ndarray,
@@ -113,7 +113,7 @@ class GaussVelocityDeficit(BaseModel):
             # Calculate the wake expansion
             # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
             near_wake_ramp_up = (x - xR) / (x0 - xR)
-            
+
             # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
             near_wake_ramp_down = (x0 - x) / (x0 - xR)
             # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
@@ -178,7 +178,7 @@ class GaussVelocityDeficit(BaseModel):
         return velocity_deficit
 
 
-# @profile
+#  @profile
 def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
 
     ## original
@@ -209,17 +209,20 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
-    d = np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / (D * D))), 0.0, 1.0)
+    cos_yaw = cosd(yaw)
+    d = np.clip(ne.evaluate("1 - (Ct * cos_yaw / (8.0 * sigma_y * sigma_z / (D * D)))"), 0.0, 1.0)
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
 
 
+#  @profile
 def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):
     yR = mesh_y_rotated - y_coord_rotated
     xR = yR * tand(turbine_yaw) + x_coord_rotated
     return xR, yR
 
 
+#  @profile
 def gaussian_function(C, r, n, sigma):
     result = ne.evaluate("C * exp(-1 * r ** n / (2 * sigma ** 2))")
     return result

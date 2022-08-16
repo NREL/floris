@@ -13,7 +13,9 @@
 from typing import Any, Dict
 
 import numpy as np
+import numexpr as ne
 from attrs import field, define
+from numpy import exp, log, sqrt
 
 from floris.utilities import cosd, sind
 from floris.simulation import Grid, BaseModel, FlowField
@@ -92,6 +94,7 @@ class GaussVelocityDeflection(BaseModel):
         )
         return kwargs
 
+    #  @profile
     def _initial_wake_expansion(self, tilt, yaw_i, ct_i, freestream_velocity, rotor_diameter_i, wind_veer):
         # initial velocity deficits
         uR = (
@@ -114,7 +117,7 @@ class GaussVelocityDeflection(BaseModel):
 
         return M0, E0, sigma_y0, sigma_z0
 
-    # @profile
+    #  @profile
     def function(
         self,
         x_i: np.ndarray,
@@ -204,11 +207,10 @@ class GaussVelocityDeflection(BaseModel):
         ln_deltaNum = (1.6 + M0_sqrt) * (1.6 * middle_term - M0_sqrt)
         ln_deltaDen = (1.6 - M0_sqrt) * (1.6 * middle_term + M0_sqrt)
 
-        delta_far_wake = (
-            delta0
-            + theta_c0 * E0 / 5.2 * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0)) * np.log(ln_deltaNum / ln_deltaDen)
-            + (self.ad + self.bd * (x - x_i))
+        middle_term = ne.evaluate(
+            "theta_c0 * E0 / 5.2 * sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0)) * log(ln_deltaNum / ln_deltaDen)"
         )
+        delta_far_wake = delta0 + middle_term + (self.ad + self.bd * (x - x_i))
 
         delta_far_wake = delta_far_wake * (x > x0)
         deflection = delta_near_wake + delta_far_wake
@@ -219,6 +221,7 @@ class GaussVelocityDeflection(BaseModel):
 ## GCH components
 
 
+#  @profile
 def gamma(
     D,
     velocity,
@@ -241,6 +244,7 @@ def gamma(
     return scale * (np.pi / 8) * D * velocity * Uinf * Ct  # * cosd(yaw)  <- the cos is included in Ct
 
 
+#  @profile
 def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=False):
     # TODO: Needs an appropriate name (and with_scaling)
     scale_factor = sind(yaw) * cosd(yaw) if with_scaling else 1
@@ -272,6 +276,7 @@ def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=F
     return Gamma_top, Gamma_bottom, Gamma_wake_rotation
 
 
+#  @profile
 def _calculate_vortex(
     z_i, HH, D, yLocs, eps, Gamma, decay=1, which: str | None = None, with_decay: bool = False, ground: bool = False
 ):
@@ -317,10 +322,11 @@ def _calculate_vortex(
             zT = z_i + (HH + D / 2) + BaseModel.NUM_EPS
         else:
             zT = z_i - (HH + D / 2) + BaseModel.NUM_EPS
-        rT = yLocs**2 + zT**2  # TODO: This is - in the paper
-        core_shape = 1 - np.exp(
-            -rT / (eps**2)
-        )  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+        rT = ne.evaluate("yLocs**2 + zT**2")  # TODO: This is - in the paper
+
+        # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+        core_shape = ne.evaluate("1 - exp(-rT / (eps**2))")
+
         v_top = (Gamma * zT) / (2 * np.pi * rT) * core_shape
         if with_decay:
             v_top *= decay
@@ -337,8 +343,8 @@ def _calculate_vortex(
             zB = z_i + (HH - D / 2) + BaseModel.NUM_EPS
         else:
             zB = z_i - (HH - D / 2) + BaseModel.NUM_EPS
-        rB = yLocs**2 + zB**2
-        core_shape = 1 - np.exp(-rB / (eps**2))
+        rB = ne.evaluate("yLocs**2 + zB**2")
+        core_shape = ne.evaluate("1 - exp(-rB / (eps**2))")
         v_bottom = (Gamma * zB) / (2 * np.pi * rB) * core_shape
         if with_decay:
             v_bottom *= decay
@@ -355,8 +361,8 @@ def _calculate_vortex(
             zC = z_i + HH + BaseModel.NUM_EPS
         else:
             zC = z_i - HH + BaseModel.NUM_EPS
-        rC = yLocs**2 + zC**2
-        core_shape = 1 - np.exp(-rC / (eps**2))
+        rC = ne.evaluate("yLocs**2 + zC**2")
+        core_shape = ne.evaluate("1 - exp(-rC / (eps**2))")
         v_core = (Gamma * zC) / (2 * np.pi * rC) * core_shape
         if with_decay:
             v_core *= decay
@@ -369,6 +375,7 @@ def _calculate_vortex(
 
 
 # def calculate_effective_yaw(
+#  @profile
 def wake_added_yaw(
     u_i,
     v_i,
@@ -432,6 +439,7 @@ def wake_added_yaw(
     return y[:, :, :, None, None]
 
 
+#  @profile
 def calculate_transverse_velocity(
     u_i,
     u_initial,
@@ -524,6 +532,7 @@ def calculate_transverse_velocity(
     return V, W
 
 
+#  @profile
 def yaw_added_turbulence_mixing(u_i, I_i, v_i, w_i, turb_v_i, turb_w_i):
     # Since turbulence mixing is constant for the turbine,
     # use the left two dimensions only here and expand
