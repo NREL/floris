@@ -111,12 +111,11 @@ class GaussVelocityDeficit(BaseModel):
         if np.sum(near_wake_mask):
 
             # Calculate the wake expansion
-            near_wake_ramp_up = (x - xR) / (
-                x0 - xR
-            )  # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
-            near_wake_ramp_down = (x0 - x) / (
-                x0 - xR
-            )  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
+            # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
+            near_wake_ramp_up = (x - xR) / (x0 - xR)
+            
+            # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
+            near_wake_ramp_down = (x0 - x) / (x0 - xR)
             # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
 
             sigma_y = (
