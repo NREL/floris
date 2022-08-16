@@ -11,20 +11,16 @@
 # the License.
 
 from typing import Any, Dict
-
-from attrs import define, field
-import numpy as np
 from pathlib import Path
+
+import numpy as np
+import scipy.io
+from attrs import field, define
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
-import scipy.io
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
 from floris.utilities import cosd, sind, tand
+from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -35,6 +31,7 @@ class TurbOParkVelocityDeficit(BaseModel):
     Nygaard, Nicolai Gayle, et al. "Modelling cluster wakes and wind farm blockage."
     Journal of Physics: Conference Series. Vol. 1618. No. 6. IOP Publishing, 2020.
     """
+
     A: float = field(default=0.04)
     sigma_max_rel: float = field(default=4.0)
     overlap_gauss_interp: RegularGridInterpolator = field(init=False)
@@ -42,10 +39,12 @@ class TurbOParkVelocityDeficit(BaseModel):
     def __attrs_post_init__(self) -> None:
         lookup_table_matlab_file = Path(__file__).parent / "turbopark_lookup_table.mat"
         lookup_table_file = scipy.io.loadmat(lookup_table_matlab_file)
-        dist = lookup_table_file['overlap_lookup_table'][0][0][0][0]
-        radius_down = lookup_table_file['overlap_lookup_table'][0][0][1][0]
-        overlap_gauss = lookup_table_file['overlap_lookup_table'][0][0][2]
-        self.overlap_gauss_interp = RegularGridInterpolator((dist, radius_down), overlap_gauss, method='linear', bounds_error=False)
+        dist = lookup_table_file["overlap_lookup_table"][0][0][0][0]
+        radius_down = lookup_table_file["overlap_lookup_table"][0][0][1][0]
+        overlap_gauss = lookup_table_file["overlap_lookup_table"][0][0][2]
+        self.overlap_gauss_interp = RegularGridInterpolator(
+            (dist, radius_down), overlap_gauss, method="linear", bounds_error=False
+        )
 
     def prepare_function(
         self,
@@ -86,14 +85,14 @@ class TurbOParkVelocityDeficit(BaseModel):
         # Normalized distances along x between the turbine i and all other turbines
         # The downstream_mask is used to avoid negative numbers in the sqrt and the subsequent runtime warnings
         # Here self.NUM_EPS is to avoid precision issues with masking, and is slightly larger than 0.0
-        downstream_mask = np.array(x_i - x >= self.NUM_EPS)
+        downstream_mask = x_i - x >= self.NUM_EPS
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
         # Radial distance between turbine i and the centerlines of wakes from all real/image turbines
         r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
         r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)
 
-        Cts[:,:,i:,:,:] = 0.00001
+        Cts[:, :, i:, :, :] = 0.00001
 
         # Characteristic wake widths from all turbines relative to turbine i
         dw = characteristic_wake_width(x_dist, ambient_turbulence_intensity, Cts, self.A)
@@ -108,19 +107,21 @@ class TurbOParkVelocityDeficit(BaseModel):
         effective_width = self.sigma_max_rel * sigma
         is_overlapping = effective_width / 2 + rotor_diameter_i / 2 > r_dist
 
-        wtg_overlapping = np.array(x_dist > 0) * is_overlapping
+        wtg_overlapping = (x_dist > 0) * is_overlapping
 
         delta_real = np.empty(np.shape(u_initial)) * np.nan
         delta_image = np.empty(np.shape(u_initial)) * np.nan
 
         # Compute deficits for real turbines and for mirrored (image) turbines
         delta_real = C * self.overlap_gauss_interp((r_dist / sigma, rotor_diameter_i / 2 / sigma)) * wtg_overlapping
-        delta_image = C * self.overlap_gauss_interp((r_dist_image / sigma, rotor_diameter_i / 2 / sigma)) * wtg_overlapping
+        delta_image = (
+            C * self.overlap_gauss_interp((r_dist_image / sigma, rotor_diameter_i / 2 / sigma)) * wtg_overlapping
+        )
         delta = np.concatenate((delta_real, delta_image), axis=2)
 
-        delta_total[:, :, i, :, :] = np.sqrt(np.sum(np.nan_to_num(delta)**2, axis=2))
+        delta_total[:, :, i, :, :] = np.sqrt(np.sum(np.nan_to_num(delta) ** 2, axis=2))
 
-        return delta_total          
+        return delta_total
 
 
 def precalculate_overlap():
@@ -133,7 +134,7 @@ def precalculate_overlap():
     for i in range(len(dist)):
         for j in range(len(radius_down)):
             if radius_down[j] > 0:
-                fun = lambda r, theta: np.exp(-(r ** 2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta))/2) * r
+                fun = lambda r, theta: np.exp(-(r**2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta)) / 2) * r
                 out = integrate.dblquad(fun, 0, radius_down[j], lambda x: 0, lambda x: 2 * np.pi)[0]
                 out = out / (np.pi * radius_down[j] ** 2)
             else:
@@ -152,9 +153,17 @@ def characteristic_wake_width(x_dist, TI, Cts, A):
     alpha = TI * c1
     beta = c2 * TI / np.sqrt(Cts)
 
-    dw = A * TI / beta * (
-        np.sqrt((alpha + beta * x_dist) ** 2 + 1) - np.sqrt(1 + alpha ** 2) - np.log(
-            ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha) / ((np.sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_dist))
+    dw = (
+        A
+        * TI
+        / beta
+        * (
+            np.sqrt((alpha + beta * x_dist) ** 2 + 1)
+            - np.sqrt(1 + alpha**2)
+            - np.log(
+                ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)
+                / ((np.sqrt(1 + alpha**2) + 1) * (alpha + beta * x_dist))
+            )
         )
     )
 

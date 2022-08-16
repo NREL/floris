@@ -96,3 +96,4 @@ print(f"{res[0]:9.6f} | {res[1]:8.6f} | {res[2]:10.6f}")
 #  1.320245 | 22.193191 |  23.513436  <- split up far wake function and fully NumExpr rC() 2:30 8/16/22
 #  1.313820 | 20.925804 |  22.239624  <- NumExpr to the vortex calculations
 #  1.344035 | 20.176910 |  21.520945  <- More NumExpr 3:30 8/16/22
+#  1.350094 | 19.661327 |  21.011421  <- remove np.array(boolean) in favor of (boolean) 4:00 8/16/22

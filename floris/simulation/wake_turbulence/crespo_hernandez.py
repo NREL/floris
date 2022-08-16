@@ -68,7 +68,7 @@ class CrespoHernandez(BaseModel):
         axial_induction: np.ndarray,
     ) -> None:
         # Replace zeros and negatives with 1 to prevent nans/infs
-        delta_x = np.array(x - x_i)
+        delta_x = x - x_i
 
         # TODO: ensure that these fudge factors are needed for different rotations
         upstream_mask = delta_x <= 0.1
