@@ -85,4 +85,4 @@ print(f"{res[0]:9.6f} | {res[1]:8.6f} | {res[2]:10.6f}")
 #  1.536173 | 28.122597 |  29.658770  <- common variable for reused calculations and more booleans like the above as of 3:55 8/15/22
 #  1.477387 | 27.615849 |  29.093236  <- gamma paramaters to a single function and undo slow change from above as of 4:25 8/15/22
 #  1.450766 | 27.384075 |  28.834841  <- vortex calculation addition
-#
+#  1.357376 | 23.781029 |  25.138405  <- update vortex calculation and apply it to tranverse velocity as of 11:28 8/16/22
