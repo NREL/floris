@@ -15,7 +15,7 @@ from typing import Any, Dict
 import numpy as np
 import numexpr as ne
 from attrs import field, define
-from numpy import exp, log, sqrt
+from numpy import exp, log, sqrt, pi
 
 from floris.utilities import cosd, sind
 from floris.simulation import Grid, BaseModel, FlowField
@@ -109,10 +109,10 @@ class GaussVelocityDeflection(BaseModel):
         # wake expansion parameters
         C0 = 1 - u0 / freestream_velocity
         M0 = C0 * (2 - C0)
-        E0 = C0**2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
+        E0 = ne.evaluate("C0**2 - 3 * exp(1.0 / 12.0) * C0 + 3 * exp(1.0 / 3.0)")
 
         # initial Gaussian wake expansion
-        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
+        sigma_z0 = ne.evaluate("rotor_diameter_i * 0.5 * sqrt(uR / (freestream_velocity + u0))")
         sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
 
         return M0, E0, sigma_y0, sigma_z0
@@ -327,12 +327,12 @@ def _calculate_vortex(
         # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
         core_shape = ne.evaluate("1 - exp(-rT / (eps**2))")
 
-        v_top = (Gamma * zT) / (2 * np.pi * rT) * core_shape
+        v_top = ne.evaluate("(Gamma * zT) / (2 * pi * rT) * core_shape")
         if with_decay:
             v_top *= decay
         else:
             v_top = np.mean(v_top, axis=(3, 4))
-        w_top = (-1 * Gamma * yLocs) / (2 * np.pi * rT) * core_shape * decay
+        w_top = ne.evaluate("(-1 * Gamma * yLocs) / (2 * pi * rT) * core_shape * decay")
         if ground:
             return v_top * -1, w_top * -1
         return v_top, w_top
@@ -350,7 +350,7 @@ def _calculate_vortex(
             v_bottom *= decay
         else:
             v_bottom = np.mean(v_bottom, axis=(3, 4))
-        w_bottom = (-1 * Gamma * yLocs) / (2 * np.pi * rB) * core_shape * decay
+        w_bottom = ne.evaluate("(-1 * Gamma * yLocs) / (2 * pi * rB) * core_shape * decay")
         if ground:
             return v_bottom * -1, w_bottom * -1
         return v_bottom, w_bottom
@@ -486,7 +486,7 @@ def calculate_transverse_velocity(
     lm = kappa * z / (1 + kappa * z / lmda)
     nu = lm**2 * np.abs(dudz_initial)
 
-    decay = eps**2 / (4 * nu * delta_x / Uinf + eps**2)  # This is the decay downstream
+    decay = ne.evaluate("eps**2 / (4 * nu * delta_x / Uinf + eps**2)")  # This is the decay downstream
     yLocs = delta_y + BaseModel.NUM_EPS
 
     # top vortex
@@ -532,7 +532,6 @@ def calculate_transverse_velocity(
     return V, W
 
 
-#  @profile
 def yaw_added_turbulence_mixing(u_i, I_i, v_i, w_i, turb_v_i, turb_w_i):
     # Since turbulence mixing is constant for the turbine,
     # use the left two dimensions only here and expand

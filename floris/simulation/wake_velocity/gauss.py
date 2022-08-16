@@ -215,14 +215,12 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     return r, C
 
 
-#  @profile
 def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):
     yR = mesh_y_rotated - y_coord_rotated
     xR = yR * tand(turbine_yaw) + x_coord_rotated
     return xR, yR
 
 
-#  @profile
 def gaussian_function(C, r, n, sigma):
     result = ne.evaluate("C * exp(-1 * r ** n / (2 * sigma ** 2))")
     return result
