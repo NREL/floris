@@ -48,7 +48,6 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
     return np.sum(freestream_velocities - wake_velocities > 0.05, axis=(3, 4)) / (y_ngrid * z_ngrid)
 
 
-# @profile
 def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.

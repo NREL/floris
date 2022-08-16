@@ -94,7 +94,6 @@ class GaussVelocityDeflection(BaseModel):
         )
         return kwargs
 
-    #  @profile
     def _initial_wake_expansion(self, tilt, yaw_i, ct_i, freestream_velocity, rotor_diameter_i, wind_veer):
         # initial velocity deficits
         uR = (
@@ -117,7 +116,6 @@ class GaussVelocityDeflection(BaseModel):
 
         return M0, E0, sigma_y0, sigma_z0
 
-    #  @profile
     def function(
         self,
         x_i: np.ndarray,
@@ -221,7 +219,6 @@ class GaussVelocityDeflection(BaseModel):
 ## GCH components
 
 
-#  @profile
 def gamma(
     D,
     velocity,
@@ -244,7 +241,6 @@ def gamma(
     return scale * (np.pi / 8) * D * velocity * Uinf * Ct  # * cosd(yaw)  <- the cos is included in Ct
 
 
-#  @profile
 def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=False):
     # TODO: Needs an appropriate name (and with_scaling)
     scale_factor = sind(yaw) * cosd(yaw) if with_scaling else 1
@@ -276,7 +272,6 @@ def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=F
     return Gamma_top, Gamma_bottom, Gamma_wake_rotation
 
 
-#  @profile
 def _calculate_vortex(
     z_i, HH, D, yLocs, eps, Gamma, decay=1, which: str | None = None, with_decay: bool = False, ground: bool = False
 ):
@@ -374,8 +369,6 @@ def _calculate_vortex(
         return v_core, w_core
 
 
-# def calculate_effective_yaw(
-#  @profile
 def wake_added_yaw(
     u_i,
     v_i,
@@ -439,7 +432,6 @@ def wake_added_yaw(
     return y[:, :, :, None, None]
 
 
-#  @profile
 def calculate_transverse_velocity(
     u_i,
     u_initial,

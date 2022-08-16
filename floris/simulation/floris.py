@@ -127,7 +127,6 @@ class Floris(BaseClass):
             self.logging["file"]["level"],
         )
 
-    # @profile
     def initialize_domain(self):
         """Initialize solution space prior to wake calculations"""
 
