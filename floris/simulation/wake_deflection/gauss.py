@@ -482,29 +482,12 @@ def calculate_transverse_velocity(
     yLocs = delta_y + BaseModel.NUM_EPS
 
     # top vortex
-    # zT = z - (HH + D / 2) + BaseModel.NUM_EPS
-    # rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
-    # core_shape = 1 - np.exp(
-    #     -rT / (eps ** 2)
-    # )  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
-    # V1 = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape * decay
-    # W1 = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
     V1, W1 = _calculate_vortex(z, HH, D, yLocs, eps, Gamma_top, decay=decay, which="top", with_decay=True)
 
     # bottom vortex
-    # zB = z - (HH - D / 2) + BaseModel.NUM_EPS
-    # rB = yLocs ** 2 + zB ** 2
-    # core_shape = 1 - np.exp(-rB / (eps ** 2))
-    # V2 = (Gamma_bottom * zB) / (2 * np.pi * rB) * core_shape * decay
-    # W2 = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay
     V2, W2 = _calculate_vortex(z, HH, D, yLocs, eps, Gamma_bottom, decay=decay, which="bottom", with_decay=True)
 
     # wake rotation vortex
-    # zC = z - HH + BaseModel.NUM_EPS
-    # rC = yLocs ** 2 + zC ** 2
-    # core_shape = 1 - np.exp(-rC / (eps ** 2))
-    # V5 = (Gamma_wake_rotation * zC) / (2 * np.pi * rC) * core_shape * decay
-    # W5 = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay
     V5, W5 = _calculate_vortex(
         z, HH, D, yLocs, eps, Gamma_wake_rotation, decay=decay, which="rotation", with_decay=True
     )
@@ -512,31 +495,14 @@ def calculate_transverse_velocity(
     ### Boundary condition - ground mirror vortex
 
     # top vortex - ground
-    # zTb = z + (HH + D / 2) + BaseModel.NUM_EPS
-    # rTb = yLocs ** 2 + zTb ** 2
-    # core_shape = 1 - np.exp(
-    #     -rTb / (eps ** 2)
-    # )  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
-    # V3 = (-1 * Gamma_top * zTb) / (2 * np.pi * rTb) * core_shape * decay
-    # W3 = (Gamma_top * yLocs) / (2 * np.pi * rTb) * core_shape * decay
     V3, W3 = _calculate_vortex(z, HH, D, yLocs, eps, Gamma_top, decay=decay, which="top", with_decay=True, ground=True)
 
     # bottom vortex - ground
-    # zBb = z + (HH - D / 2) + BaseModel.NUM_EPS
-    # rBb = yLocs ** 2 + zBb ** 2
-    # core_shape = 1 - np.exp(-rBb / (eps ** 2))
-    # V4 = (-1 * Gamma_bottom * zBb) / (2 * np.pi * rBb) * core_shape * decay
-    # W4 = (Gamma_bottom * yLocs) / (2 * np.pi * rBb) * core_shape * decay
     V4, W4 = _calculate_vortex(
         z, HH, D, yLocs, eps, Gamma_bottom, decay=decay, which="bottom", with_decay=True, ground=True
     )
 
     # wake rotation vortex - ground effect
-    # zCb = z + HH + BaseModel.NUM_EPS
-    # rCb = yLocs ** 2 + zCb ** 2
-    # core_shape = 1 - np.exp(-rCb / (eps ** 2))
-    # V6 = (-1 * Gamma_wake_rotation * zCb) / (2 * np.pi * rCb) * core_shape * decay
-    # W6 = (Gamma_wake_rotation * yLocs) / (2 * np.pi * rCb) * core_shape * decay
     V6, W6 = _calculate_vortex(
         z, HH, D, yLocs, eps, Gamma_wake_rotation, decay=decay, which="rotation", with_decay=True, ground=True
     )
