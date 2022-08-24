@@ -264,6 +264,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,
