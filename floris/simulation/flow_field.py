@@ -50,6 +50,7 @@ class FlowField(FromDictMixin):
     v: NDArrayFloat = field(init=False, default=np.array([]))
     w: NDArrayFloat = field(init=False, default=np.array([]))
     het_map: list = field(init=False, default=None)
+    dudz_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
 
@@ -78,6 +79,7 @@ class FlowField(FromDictMixin):
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
         wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
+        dwind_profile_plane = self.wind_shear * (1 / self.reference_wind_height) ** self.wind_shear * (grid.z_sorted) ** (self.wind_shear - 1)
 
         # If no hetergeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
@@ -99,8 +101,10 @@ class FlowField(FromDictMixin):
         # of the shape and the grid.template array on the right
         if self.time_series:
             self.u_initial_sorted = (self.wind_speeds[:].T * wind_profile_plane.T).T * speed_ups
+            self.dudz_initial_sorted = (self.wind_speeds[:].T * dwind_profile_plane.T).T * speed_ups
         else:
             self.u_initial_sorted = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * speed_ups
+            self.dudz_initial_sorted = (self.wind_speeds[None, :].T * dwind_profile_plane.T).T * speed_ups
         self.v_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
         self.w_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
 
