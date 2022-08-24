@@ -74,6 +74,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         self.farm.construct_turbine_TSRs()
         self.farm.construc_turbine_pPs()
         self.farm.construct_coordinates()
+        self.farm.Construct_CT_inputs(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
 
         if self.solver["type"] == "turbine_grid":
@@ -142,7 +143,7 @@ class Floris(logging_manager.LoggerBase, FromDictMixin):
         initialize_domain() is required to be called before this function."""
 
         vel_model = self.wake.model_strings["velocity_model"]
-
+        # print('whats in farm?', self.farm.CT_in)
         # <<interface>>
         # start = time.time()
 

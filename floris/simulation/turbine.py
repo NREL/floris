@@ -84,6 +84,12 @@ def power(
     pP: float,
     power_interp: NDArrayObject,
     turbine_type_map: NDArrayObject,
+    CT_input: NDArrayFloat | None = None,
+    Turbine_rotor_area: NDArrayFloat | None = None,
+    Generator_efficiency: float | None = None,
+    CT_interp_function: NDArrayObject | None = None,    
+    CP_interp_function: NDArrayObject | None = None,    
+    wind_speed_freestream: NDArrayObject | None = None,    
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
@@ -97,6 +103,19 @@ def power(
         power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
             for each turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.
+        ###############  If using CT_input, also need Turbine_rotor_area, Generator_efficiency, CT_interp_function,  
+                            CP_interp_function, and wind_speed_freestream to run the function ######################
+        CT_input (NDArrayFloat[wd, ws, turbines]): The prescribed coefficient of thrust for each turbine.
+            Defaults to None.
+        Turbine_rotor_area (NDArrayFloat[wd, ws, turbines]): Area of all the turbines in the farm.
+            Defaults to None.
+        Generator_efficiency (NDArrayFloat): Generator efficiency of the turbines in the farm. (assumes single generator efficiency)
+            Defaults to None.
+        CT_interp_function (NDArrayObject[wd, ws, turbines]): The thrust coefficient interpolation function
+            for each turbine.        
+        CP_interp_function (NDArrayObject[wd, ws, turbines]): The power coefficient interpolation function
+            for each turbine.
+        wind_speed_freestream (NDArrayFloat): Freestream wind speed for CT/CP calculation
         ix_filter (NDArrayInt, optional): The boolean array, or
             integer indices to filter out before calculation. Defaults to None.
 
@@ -124,6 +143,10 @@ def power(
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
+    if CT_input is not None:
+        if isinstance(CT_input, list):
+            CT_input = np.array(CT_input)
+
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, yaw_angle)
@@ -131,19 +154,51 @@ def power(
         yaw_angle = yaw_angle[:, :, ix_filter]
         pP = pP[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
+        if CT_input is not None:
+            CT_input = CT_input[:, :, ix_filter]
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = ((air_density/1.225)**(1/3)) * average_velocity(velocities) * cosd(yaw_angle) ** pW
+    # print('average power velocities', yaw_effective_velocity, Generator_efficiency)
+    if CT_input is not None:
+        CT_interp_function = dict(CT_interp_function)
+        CP_interp_function = dict(CP_interp_function)
 
-    # Loop over each turbine type given to get thrust coefficient for all turbines
-    p = np.zeros(np.shape(yaw_effective_velocity))
-    power_interp = dict(power_interp)
-    turb_types = np.unique(turbine_type_map)
-    for turb_type in turb_types:
-        # Using a masked array, apply the thrust coefficient for all turbines of the current
-        # type to the main thrust coefficient array
-        p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
+        p = np.zeros(np.shape(yaw_effective_velocity))
+        power_interp = dict(power_interp)
+
+        # Assign thrust coefficients for all turbines
+        p = np.zeros(np.shape(yaw_effective_velocity))
+        for i in range(np.shape(yaw_effective_velocity)[0]):
+            for j in range(np.shape(yaw_effective_velocity)[1]):
+                for k in range(np.shape(yaw_effective_velocity)[2]):
+                    ai_turb = 0.5*(1-np.sqrt(1-CT_input[i,j,k]))
+                    if (ai_turb < 1e-04):
+                        Cp_i = 0
+                    else:
+                        # print(CT_interp_function, turb_type)
+                        turb_type = turbine_type_map[0][0][k]
+                        CT_temp = CT_interp_function[turb_type](wind_speed_freestream[j])
+                        # CT_temp = CT_interp_function[turb_type](yaw_effective_velocity[i,j,k])
+                        ai_temp = 0.5*(1-np.sqrt(1-CT_temp))
+                        CP_temp = 0.77 * 4*ai_temp*(1-ai_temp)**2
+                        CP_interped = CP_interp_function[turb_type](wind_speed_freestream[j])
+                        CP_interped = CP_interp_function[turb_type](yaw_effective_velocity[i,j,k])
+                        ratio = CP_interped / CP_temp
+                        Cp_i = 0.77*4*ratio*ai_turb*(1-ai_turb)**2
+
+                    p[i,j,k] = 0.5 * Turbine_rotor_area[i,j,k] * Cp_i * Generator_efficiency * yaw_effective_velocity[i,j,k] ** 3
+        # p = np.squeeze(p)
+    else:
+        # Loop over each turbine type given to get thrust coefficient for all turbines
+        p = np.zeros(np.shape(yaw_effective_velocity))
+        power_interp = dict(power_interp)
+        turb_types = np.unique(turbine_type_map)
+        for turb_type in turb_types:
+            # Using a masked array, apply the thrust coefficient for all turbines of the current
+            # type to the main thrust coefficient array
+            p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
 
     return p * 1.225
 
@@ -153,6 +208,7 @@ def Ct(
     yaw_angle: NDArrayFloat,
     fCt: NDArrayObject,
     turbine_type_map: NDArrayObject,
+    CT_input: NDArrayFloat | None = None,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
 
@@ -165,6 +221,8 @@ def Ct(
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         fCt (NDArrayObject[wd, ws, turbines]): The thrust coefficient for each turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.
+        CT_input (NDArrayFloat[wd, ws, turbines]): The prescribed coefficient of thrust for each turbine.
+            Defaults to None.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
             integer indices as an iterable of array to filter out before calculation. Defaults to None.
 
@@ -175,25 +233,42 @@ def Ct(
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
+    if CT_input is not None:
+        if isinstance(CT_input, list):
+            CT_input = np.array(CT_input)
+
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
+        if CT_input is not None:
+            CT_input = CT_input[:, :, ix_filter]
+
 
     average_velocities = average_velocity(velocities)
 
-    # Loop over each turbine type given to get thrust coefficient for all turbines
-    thrust_coefficient = np.zeros(np.shape(average_velocities))
-    fCt = dict(fCt)
-    turb_types = np.unique(turbine_type_map)
-    for turb_type in turb_types:
-        # Using a masked array, apply the thrust coefficient for all turbines of the current
-        # type to the main thrust coefficient array
-        thrust_coefficient += fCt[turb_type](average_velocities) * np.array(turbine_type_map == turb_type)
+
+    if CT_input is not None:
+        thrust_coefficient = np.zeros(np.shape(CT_input))
+        for i in range(np.shape(CT_input)[0]):
+            for j in range(np.shape(CT_input)[1]):
+                for k in range(np.shape(CT_input)[2]):
+                    thrust_coefficient[i,j,k] = CT_input[i,j,k]
+    else:
+        # Loop over each turbine type given to get thrust coefficient for all turbines
+        thrust_coefficient = np.zeros(np.shape(average_velocities))
+        fCt = dict(fCt)
+        turb_types = np.unique(turbine_type_map)
+        for turb_type in turb_types:
+            # Using a masked array, apply the thrust coefficient for all turbines of the current
+            # type to the main thrust coefficient array
+            thrust_coefficient += fCt[turb_type](average_velocities) * np.array(turbine_type_map == turb_type)
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
+
+    # print('effective_thrust', effective_thrust)
     return effective_thrust
 
 
@@ -202,6 +277,7 @@ def axial_induction(
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     fCt: NDArrayObject,  # (turbines)
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
+    CT_input: NDArrayFloat | None = None,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
@@ -213,6 +289,8 @@ def axial_induction(
         fCt (np.array): The thrust coefficient function for each
             turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.
+        CT_input (NDArrayFloat[wd, ws, turbines]): The prescribed coefficient of thrust for each turbine.
+            Defaults to None.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
             integer indices (as an aray or iterable) to filter out before calculation.
             Defaults to None.
@@ -224,13 +302,23 @@ def axial_induction(
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
+    if CT_input is not None:
+        if isinstance(CT_input, list):
+            CT_input = np.array(CT_input)
+
     # Get Ct first before modifying any data
-    thrust_coefficient = Ct(velocities, yaw_angle, fCt, turbine_type_map, ix_filter)
+    if CT_input is not None:
+        thrust_coefficient = Ct(velocities, yaw_angle, fCt, turbine_type_map, CT_input, ix_filter)
+    else:
+        thrust_coefficient = Ct(velocities, yaw_angle, fCt, turbine_type_map, ix_filter=ix_filter)
 
     # Then, process the input arguments as needed for this function
     ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         yaw_angle = yaw_angle[:, :, ix_filter]
+        if CT_input is not None:
+            CT_input = CT_input[:, :, ix_filter]      
+
 
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
