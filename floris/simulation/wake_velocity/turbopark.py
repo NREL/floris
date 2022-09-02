@@ -17,7 +17,7 @@ import numpy as np
 import numexpr as ne
 import scipy.io
 from attrs import field, define
-from numpy import log, sqrt  # noqa: F401
+from numpy import cos, exp, log, sqrt  # noqa: F401
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
 
@@ -130,17 +130,22 @@ def precalculate_overlap():
     # interpolant as the .mat file, so if used, needs to be corrected.
     dist = np.arange(0, 10, 1.0)
     radius_down = np.arange(0, 20, 1.0)
-    overlap_gauss = np.zeros((len(dist), len(radius_down)))
 
-    for i in range(len(dist)):
-        for j in range(len(radius_down)):
-            if radius_down[j] > 0:
-                fun = lambda r, theta: np.exp(-(r**2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta)) / 2) * r
-                out = integrate.dblquad(fun, 0, radius_down[j], lambda x: 0, lambda x: 2 * np.pi)[0]
-                out = out / (np.pi * radius_down[j] ** 2)
-            else:
-                out = np.exp(-(dist[i] ** 2) / 2)
-            overlap_gauss[i, j] = out
+    def fn(r, theta):
+        ne.evaluate("exp(-(r**2 + dist[i] ** 2 - 2 * dist[i] * r * cos(theta)) / 2) * r")
+
+    def zero():
+        return 0
+
+    def two_pi():
+        return 2 * np.pi
+
+    def calc_gauss_val(rad, d):
+        if rad > 0:
+            return integrate.dblquad(fn, 0, rad, zero, two_pi)[0] / ne.evaluate("pi * rad ** 2")
+        return ne.evaluate("exp(-(d ** 2) / 2)")
+
+    overlap_gauss = np.array([[calc_gauss_val(rad, d) for d in dist] for rad in radius_down])
 
     return dist, radius_down, overlap_gauss
 
