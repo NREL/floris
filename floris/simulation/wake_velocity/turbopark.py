@@ -105,7 +105,6 @@ class TurbOParkVelocityDeficit(BaseModel):
 
         # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
         is_overlapping = (self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist
-
         wtg_overlapping = (x_dist > 0) * is_overlapping
 
         delta_real = np.empty(np.shape(u_initial)) * np.nan

@@ -12,15 +12,11 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
-import numexpr as ne
 import numpy as np
+import numexpr as ne
+from attrs import field, define
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
+from floris.simulation import Grid, BaseModel, FlowField
 
 
 @define
@@ -94,7 +90,7 @@ class JensenVelocityDeficit(BaseModel):
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))
 
-        rotor_radius = rotor_diameter_i / 2.0
+        rotor_radius = rotor_diameter_i / 2.0  # noqa: F841
 
         """
         dx = x - x_i
@@ -124,27 +120,25 @@ class JensenVelocityDeficit(BaseModel):
         """
 
         # Numexpr - do not change below without corresponding changes above.
-        dx = ne.evaluate("x - x_i")
-        dy = ne.evaluate("y - y_i - deflection_field_i")
-        dz = ne.evaluate("z - z_i")
+        dx = ne.evaluate("x - x_i")  # noqa: F841
+        dy = ne.evaluate("y - y_i - deflection_field_i")  # noqa: F841
+        dz = ne.evaluate("z - z_i")  # noqa: F841
 
-        we = self.we
-        NUM_EPS = JensenVelocityDeficit.NUM_EPS
-
-        # y = m * x + b
-        boundary_line = ne.evaluate("we * dx + rotor_radius")
-
-        c = ne.evaluate("( rotor_radius / ( rotor_radius + we * dx + NUM_EPS ) ) ** 2")
+        we = self.we  # noqa: F841
+        NUM_EPS = JensenVelocityDeficit.NUM_EPS  # noqa: F841
 
         # C should be 0 at the current turbine and everywhere in front of it
         downstream_mask = ne.evaluate("dx > 0 + NUM_EPS")
 
         # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter
-        boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < boundary_line")
-        
-        mask = np.logical_and(downstream_mask, boundary_mask)
-        c[~mask] = 0.0
-        # c = ne.evaluate("c * downstream_mask * boundary_mask")
+        boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < we * dx + rotor_radius")
+
+        # Calculate C and fill invalid values with 0
+        c = np.where(  # noqa: F841
+            np.logical_and(downstream_mask, boundary_mask),
+            ne.evaluate("(rotor_radius / (rotor_radius + we * dx + NUM_EPS)) ** 2"),
+            0.0,
+        )
 
         velocity_deficit = ne.evaluate("2 * axial_induction_i * c")
 
