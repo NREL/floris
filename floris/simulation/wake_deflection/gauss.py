@@ -15,7 +15,7 @@ from typing import Any, Dict
 import numpy as np
 import numexpr as ne
 from attrs import field, define
-from numpy import exp, log, sqrt, pi
+from numpy import pi, exp, log, sqrt  # noqa: F401
 
 from floris.utilities import cosd, sind
 from floris.simulation import Grid, BaseModel, FlowField
@@ -96,7 +96,7 @@ class GaussVelocityDeflection(BaseModel):
 
     def _initial_wake_expansion(self, tilt, yaw_i, ct_i, freestream_velocity, rotor_diameter_i, wind_veer):
         # initial velocity deficits
-        uR = (
+        uR = (  # noqa: F841
             freestream_velocity
             * ct_i
             * cosd(tilt)
@@ -181,7 +181,7 @@ class GaussVelocityDeflection(BaseModel):
             + x_i
         )
 
-        yR = y - y_i
+        yR = y - y_i  # noqa: F841
         xR = x_i  # yR * tand(yaw) + x_i
 
         # yaw parameters (skew angle and distance from centerline)
@@ -202,8 +202,8 @@ class GaussVelocityDeflection(BaseModel):
 
         M0_sqrt = np.sqrt(M0)
         middle_term = np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0))
-        ln_deltaNum = (1.6 + M0_sqrt) * (1.6 * middle_term - M0_sqrt)
-        ln_deltaDen = (1.6 - M0_sqrt) * (1.6 * middle_term + M0_sqrt)
+        ln_deltaNum = (1.6 + M0_sqrt) * (1.6 * middle_term - M0_sqrt)  # noqa: F841
+        ln_deltaDen = (1.6 - M0_sqrt) * (1.6 * middle_term + M0_sqrt)  # noqa: F841
 
         middle_term = ne.evaluate(
             "theta_c0 * E0 / 5.2 * sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0)) * log(ln_deltaNum / ln_deltaDen)"
@@ -216,7 +216,7 @@ class GaussVelocityDeflection(BaseModel):
         return deflection
 
 
-## GCH components
+# GCH components
 
 
 def gamma(
@@ -246,26 +246,10 @@ def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=F
     scale_factor = sind(yaw) * cosd(yaw) if with_scaling else 1
 
     vel_top = ((HH + D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
-    Gamma_top = scale_factor * gamma(
-        D,
-        vel_top,
-        Uinf,
-        Ct,
-        scale,
-    )
+    Gamma_top = scale_factor * gamma(D, vel_top, Uinf, Ct, scale)
 
     vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
-    Gamma_bottom = (
-        -1
-        * scale_factor
-        * gamma(
-            D,
-            vel_bottom,
-            Uinf,
-            Ct,
-            scale,
-        )
-    )
+    Gamma_bottom = -1 * scale_factor * gamma(D, vel_bottom, Uinf, Ct, scale)
 
     turbine_average_velocity = np.cbrt(np.mean(u_i**3, axis=(3, 4)))[:, :, :, None, None]
     Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI**2) * turbine_average_velocity / TSR
@@ -309,64 +293,19 @@ def _calculate_vortex(
     if not isinstance(ground, bool):
         raise ValueError("Inputs to `ground` must be a boolean.")
 
-    # top vortex
-    if which == "top":
-        # NOTE: this is the top of the grid, not the top of the rotor
-        # distance from the top of the grid
-        if ground:
-            zT = z_i + (HH + D / 2) + BaseModel.NUM_EPS
-        else:
-            zT = z_i - (HH + D / 2) + BaseModel.NUM_EPS
-        rT = ne.evaluate("yLocs**2 + zT**2")  # TODO: This is - in the paper
+    z_mid = HH if which == "rotation" else (HH + (D if which == "top" else -D) / 2)
+    z = z_i + (z_mid if ground else -z_mid)  # noqa: F841
+    r = ne.evaluate("yLocs**2 + z**2")  # noqa: F841  # TODO: This is in the paper
+    # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+    core_shape = ne.evaluate("1 - exp(-r / (eps**2))")  # noqa: F841
 
-        # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
-        core_shape = ne.evaluate("1 - exp(-rT / (eps**2))")
+    V = ne.evaluate("(Gamma * z) / (2 * pi * r) * core_shape")
+    V = V * decay if with_decay else np.mean(V, axis=(3, 4))
+    W = ne.evaluate("(-1 * Gamma * yLocs) / (2 * pi * r) * core_shape * decay")
 
-        v_top = ne.evaluate("(Gamma * zT) / (2 * pi * rT) * core_shape")
-        if with_decay:
-            v_top *= decay
-        else:
-            v_top = np.mean(v_top, axis=(3, 4))
-        w_top = ne.evaluate("(-1 * Gamma * yLocs) / (2 * pi * rT) * core_shape * decay")
-        if ground:
-            return v_top * -1, w_top * -1
-        return v_top, w_top
-
-    # bottom vortex
-    if which == "bottom":
-        if ground:
-            zB = z_i + (HH - D / 2) + BaseModel.NUM_EPS
-        else:
-            zB = z_i - (HH - D / 2) + BaseModel.NUM_EPS
-        rB = ne.evaluate("yLocs**2 + zB**2")
-        core_shape = ne.evaluate("1 - exp(-rB / (eps**2))")
-        v_bottom = (Gamma * zB) / (2 * np.pi * rB) * core_shape
-        if with_decay:
-            v_bottom *= decay
-        else:
-            v_bottom = np.mean(v_bottom, axis=(3, 4))
-        w_bottom = ne.evaluate("(-1 * Gamma * yLocs) / (2 * pi * rB) * core_shape * decay")
-        if ground:
-            return v_bottom * -1, w_bottom * -1
-        return v_bottom, w_bottom
-
-    # wake rotation vortex
-    if which == "rotation":
-        if ground:
-            zC = z_i + HH + BaseModel.NUM_EPS
-        else:
-            zC = z_i - HH + BaseModel.NUM_EPS
-        rC = ne.evaluate("yLocs**2 + zC**2")
-        core_shape = ne.evaluate("1 - exp(-rC / (eps**2))")
-        v_core = (Gamma * zC) / (2 * np.pi * rC) * core_shape
-        if with_decay:
-            v_core *= decay
-        else:
-            v_core = np.mean(v_core, axis=(3, 4))
-        w_core = (-1 * Gamma * yLocs) / (2 * np.pi * rC) * core_shape * decay
-        if ground:
-            return v_core * -1, w_core * -1
-        return v_core, w_core
+    if ground:
+        return -1 * V, -1 * W
+    return V, W
 
 
 def wake_added_yaw(
@@ -409,7 +348,7 @@ def wake_added_yaw(
 
     Gamma_top, Gamma_bottom, Gamma_wake_rotation = _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR)
 
-    ### compute the spanwise and vertical velocities induced by yaw
+    # compute the spanwise and vertical velocities induced by yaw
 
     # decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
     yLocs = delta_y + BaseModel.NUM_EPS
@@ -470,13 +409,13 @@ def calculate_transverse_velocity(
         HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=yaw, with_scaling=True
     )
 
-    ### compute the spanwise and vertical velocities induced by yaw
+    # compute the spanwise and vertical velocities induced by yaw
 
     # decay the vortices as they move downstream - using mixing length
     lmda = D / 8
     kappa = 0.41
     lm = kappa * z / (1 + kappa * z / lmda)
-    nu = lm**2 * np.abs(dudz_initial)
+    nu = lm**2 * np.abs(dudz_initial)  # noqa: F841
 
     decay = ne.evaluate("eps**2 / (4 * nu * delta_x / Uinf + eps**2)")  # This is the decay downstream
     yLocs = delta_y + BaseModel.NUM_EPS
@@ -492,7 +431,7 @@ def calculate_transverse_velocity(
         z, HH, D, yLocs, eps, Gamma_wake_rotation, decay=decay, which="rotation", with_decay=True
     )
 
-    ### Boundary condition - ground mirror vortex
+    # Boundary condition - ground mirror vortex
 
     # top vortex - ground
     V3, W3 = _calculate_vortex(z, HH, D, yLocs, eps, Gamma_top, decay=decay, which="top", with_decay=True, ground=True)
