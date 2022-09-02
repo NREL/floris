@@ -85,12 +85,12 @@ class TurbOParkVelocityDeficit(BaseModel):
         # Normalized distances along x between the turbine i and all other turbines
         # The downstream_mask is used to avoid negative numbers in the sqrt and the subsequent runtime warnings
         # Here self.NUM_EPS is to avoid precision issues with masking, and is slightly larger than 0.0
-        downstream_mask = x_i - x >= self.NUM_EPS
-        x_dist = (x_i - x) * downstream_mask / rotor_diameters
+        x_dist = x_i - x
+        x_dist *= (x_dist >= self.NUM_EPS) / rotor_diameters
 
         # Radial distance between turbine i and the centerlines of wakes from all real/image turbines
-        r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
-        r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)
+        pm = np.array([1, -1], dtype=float)[:, None, None, None, None, None]  # Simultaneously calculate the +/- z
+        r_dist, r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z * pm) ** 2)
 
         Cts[:, :, i:, :, :] = 0.00001
 
@@ -104,8 +104,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         C = 1 - np.sqrt(val)
 
         # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
-        effective_width = self.sigma_max_rel * sigma
-        is_overlapping = effective_width / 2 + rotor_diameter_i / 2 > r_dist
+        is_overlapping = (self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist
 
         wtg_overlapping = (x_dist > 0) * is_overlapping
 
