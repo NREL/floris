@@ -14,13 +14,14 @@ from typing import Any, Dict
 from pathlib import Path
 
 import numpy as np
+import numexpr as ne
 import scipy.io
 from attrs import field, define
+from numpy import log, sqrt  # noqa: F401
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
 
-from floris.utilities import cosd, sind, tand
-from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
+from floris.simulation import Grid, BaseModel, FlowField
 
 
 @define
@@ -124,8 +125,9 @@ class TurbOParkVelocityDeficit(BaseModel):
 
 
 def precalculate_overlap():
-    # TODO: first implementation to generate wake overlap lookup table (currently supplied by turbopark_lookup_table.mat.)
-    # However, the result of this function doesn't generate the same interpolant as the .mat file, so if used, needs to be corrected.
+    # TODO: first implementation to generate wake overlap lookup table (currently supplied by
+    # turbopark_lookup_table.mat.) However, the result of this function doesn't generate the same
+    # interpolant as the .mat file, so if used, needs to be corrected.
     dist = np.arange(0, 10, 1.0)
     radius_down = np.arange(0, 20, 1.0)
     overlap_gauss = np.zeros((len(dist), len(radius_down)))
@@ -149,7 +151,7 @@ def characteristic_wake_width(x_dist, TI, Cts, A):
     c1 = 1.5
     c2 = 0.8
 
-    alpha = TI * c1
+    alpha = TI * c1  # noqa: F841
     beta = c2 * TI / np.sqrt(Cts)
 
     dw = (
@@ -157,11 +159,10 @@ def characteristic_wake_width(x_dist, TI, Cts, A):
         * TI
         / beta
         * (
-            np.sqrt((alpha + beta * x_dist) ** 2 + 1)
-            - np.sqrt(1 + alpha**2)
-            - np.log(
-                ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)
-                / ((np.sqrt(1 + alpha**2) + 1) * (alpha + beta * x_dist))
+            ne.evaluate("sqrt((alpha + beta * x_dist) ** 2 + 1) - sqrt(1 + alpha**2)")
+            - (
+                ne.evaluate("log((sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)")
+                - ne.evaluate("log((sqrt(1 + alpha**2) + 1) * (alpha + beta * x_dist))")
             )
         )
     )
