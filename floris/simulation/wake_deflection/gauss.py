@@ -10,7 +10,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from typing import Any, Dict
+from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import numexpr as ne
@@ -83,7 +85,7 @@ class GaussVelocityDeflection(BaseModel):
         self,
         grid: Grid,
         flow_field: FlowField,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
 
         kwargs = dict(
             x=grid.x_sorted,
