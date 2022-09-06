@@ -13,5 +13,6 @@
 # See https://floris.readthedocs.io for documentation
 
 
-from floris.simulation.wake_turbulence.crespo_hernandez import CrespoHernandez
 from floris.simulation.wake_turbulence.none import NoneWakeTurbulence
+from floris.simulation.wake_turbulence.ishihara_qian import IshiharaQian
+from floris.simulation.wake_turbulence.crespo_hernandez import CrespoHernandez

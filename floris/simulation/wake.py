@@ -13,46 +13,47 @@
 # See https://floris.readthedocs.io for documentation
 
 import attrs
-from attrs import define, field
+from attrs import field, define
 
 from floris.simulation import BaseClass, BaseModel
-from floris.simulation.wake_deflection import (
-    GaussVelocityDeflection,
-    JimenezVelocityDeflection,
-    NoneVelocityDeflection,
-)
-from floris.simulation.wake_combination import FLS, MAX, SOSFS
-from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
 from floris.simulation.wake_velocity import (
     NoneVelocityDeficit,
-    CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
     TurbOParkVelocityDeficit,
+    CumulativeGaussCurlVelocityDeficit,
 )
+from floris.simulation.wake_deflection import (
+    NoneVelocityDeflection,
+    GaussVelocityDeflection,
+    JimenezVelocityDeflection,
+)
+from floris.simulation.wake_turbulence import (
+    IshiharaQian,
+    CrespoHernandez,
+    NoneWakeTurbulence,
+)
+from floris.simulation.wake_combination import FLS, MAX, SOSFS
 
 
 MODEL_MAP = {
-    "combination_model": {
-        "fls": FLS,
-        "max": MAX,
-        "sosfs": SOSFS
-    },
+    "combination_model": {"fls": FLS, "max": MAX, "sosfs": SOSFS},
     "deflection_model": {
         "jimenez": JimenezVelocityDeflection,
         "gauss": GaussVelocityDeflection,
-        "none": NoneVelocityDeflection
+        "none": NoneVelocityDeflection,
     },
     "turbulence_model": {
         "none": NoneWakeTurbulence,
-        "crespo_hernandez": CrespoHernandez
+        "crespo_hernandez": CrespoHernandez,
+        "ishihara_qian": IshiharaQian,
     },
     "velocity_model": {
         "none": NoneVelocityDeficit,
         "cc": CumulativeGaussCurlVelocityDeficit,
         "gauss": GaussVelocityDeficit,
         "jensen": JensenVelocityDeficit,
-        "turbopark": TurbOParkVelocityDeficit
+        "turbopark": TurbOParkVelocityDeficit,
     },
 }
 
@@ -70,6 +71,7 @@ class WakeModelManager(BaseClass):
             - deflection_model (str): The name of the deflection model to be instantiated.
             - combination_model (str): The name of the combination model to be instantiated.
     """
+
     model_strings: dict = field(converter=dict)
     enable_secondary_steering: bool = field(converter=bool)
     enable_yaw_added_recovery: bool = field(converter=bool)
@@ -121,12 +123,7 @@ class WakeModelManager(BaseClass):
 
     @model_strings.validator
     def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:
-        required_strings = [
-            "velocity_model",
-            "deflection_model",
-            "combination_model",
-            "turbulence_model"
-        ]
+        required_strings = ["velocity_model", "deflection_model", "combination_model", "turbulence_model"]
         # Check that all required strings are given
         for s in required_strings:
             if s not in value.keys():
@@ -135,7 +132,9 @@ class WakeModelManager(BaseClass):
         # Check that no other strings are given
         for k in value.keys():
             if k not in required_strings:
-                raise KeyError(f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
+                raise KeyError(
+                    f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}"  # noqa: 501
+                )
 
     @property
     def deflection_function(self):

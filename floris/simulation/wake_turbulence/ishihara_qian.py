@@ -85,11 +85,18 @@ class IshiharaQian:
     """
 
     # wake model parameter
-    kstar: IQParam = field(converter=IQParam.from_dict)
-    epsilon: IQParam = field(converter=IQParam.from_dict)
-    d: IQParam = field(converter=IQParam.from_dict)
-    e: IQParam = field(converter=IQParam.from_dict)
-    f: IQParam = field(converter=IQParam.from_dict)
+    default_parameters = {
+        "kstar": {"const": 0.11, "Ct": 1.07, "TI": 0.2},
+        "epsilon": {"const": 0.23, "Ct": -0.25, "TI": 0.17},
+        "d": {"const": 2.3, "Ct": 1.2, "TI": 0.0},
+        "e": {"const": 1.0, "Ct": 0.0, "TI": 0.1},
+        "f": {"const": 0.7, "Ct": -3.2, "TI": -0.45},
+    }
+    kstar: IQParam = field(converter=IQParam.from_dict, default={"const": 0.11, "Ct": 1.07, "TI": 0.2})
+    epsilon: IQParam = field(converter=IQParam.from_dict, default={"const": 0.23, "Ct": -0.25, "TI": 0.17})
+    d: IQParam = field(converter=IQParam.from_dict, default={"const": 2.3, "Ct": 1.2, "TI": 0.0})
+    e: IQParam = field(converter=IQParam.from_dict, default={"const": 1.0, "Ct": 0.0, "TI": 0.1})
+    f: IQParam = field(converter=IQParam.from_dict, default={"const": 0.7, "Ct": -3.2, "TI": -0.45})
 
     def prepare_function(self) -> dict[str, Any]:
         kwargs = dict()
