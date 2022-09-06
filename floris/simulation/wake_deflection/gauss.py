@@ -448,21 +448,6 @@ def calculate_transverse_velocity(
         z, HH, D, yLocs, eps, Gamma_wake_rotation, decay=decay, which="rotation", with_decay=True, ground=True
     )
 
-    # # total spanwise velocity
-    # V = np.add(np.add(V1, V2, V3), np.add(V4, V5, V6))
-    # W = np.add(np.add(W1, W2, W3), np.add(W4, W5, W6))
-
-    # # no spanwise and vertical velocity upstream of the turbine
-    # # V[delta_x < -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
-    # # W[delta_x < -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation
-    # # TODO Should this be <= ? Shouldn't be adding V and W on the current turbine?
-    # # Subtract by 1 to avoid numerical issues on rotation
-    # V = np.where(delta_x < 0.0, V, 0.0)
-    # W = np.where(delta_x < 0.0, W, 0.0)
-
-    # # TODO: Why would the say W cannot be negative?
-    # W = np.where(W < 0, W, 0.0)
-
     V = ne.evaluate("V1 + V2 + V3 + V4 + V5 + V6")
     W = ne.evaluate("W1 + W2 + W3 + W4 + W5 + W6")
 
