@@ -17,7 +17,7 @@ from typing import Any
 import numpy as np
 import numexpr as ne
 from attrs import field, define
-from numpy import pi, exp, log, sqrt  # noqa: F401
+from numpy import pi, add, exp, log, sqrt  # noqa: F401
 
 from floris.utilities import cosd, sind
 from floris.simulation import Grid, BaseModel, FlowField
@@ -448,8 +448,8 @@ def calculate_transverse_velocity(
         z, HH, D, yLocs, eps, Gamma_wake_rotation, decay=decay, which="rotation", with_decay=True, ground=True
     )
 
-    V = ne.evaluate("V1 + V2 + V3 + V4 + V5 + V6")
-    W = ne.evaluate("W1 + W2 + W3 + W4 + W5 + W6")
+    V = np.add.reduce((V1, V2, V3, V4, V5, V6))
+    W = np.add.reduce((W1, W2, W3, W4, W5, W6))
 
     # Subtract by 1 to avoid numerical issues on rotation
     V = np.where(delta_x >= 0.0, V, 0.0)
