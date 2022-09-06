@@ -16,11 +16,12 @@ from typing import Any
 
 import attrs
 import numpy as np
+import numexpr as ne
 from attrs import field, define
+from numpy import exp  # noqa: F401
 
 from floris.type_dec import FromDictMixin
-from floris.simulation.grid import Grid
-from floris.simulation.flow_field import FlowField
+from floris.utilities import Vec3
 
 
 @define(auto_attribs=True)
@@ -90,12 +91,19 @@ class IshiharaQian:
     e: IQParam = field(converter=IQParam.from_dict)
     f: IQParam = field(converter=IQParam.from_dict)
 
-    def prepare_function(self, grid: Grid, flow_field: FlowField) -> dict[str, Any]:
+    def prepare_function(self) -> dict[str, Any]:
         kwargs = dict()
         return kwargs
 
-    # TODO: Translate this function to v3 inputs format
-    def function(self, ambient_TI, coord_ti, turbine_coord, turbine) -> np.ndarray:
+    def function(
+        self,
+        ambient_TI: float,
+        coord_ti: Vec3,
+        turbine_coord: Vec3,
+        rotor_diameter_i: float,
+        hub_height_i: float,
+        Ct_i: float,
+    ) -> np.ndarray:
         # function(self, x_locations, y_locations, z_locations, turbine,
         #  turbine_coord, flow_field, turb_u_wake, sorted_map):
         """
@@ -119,48 +127,46 @@ class IshiharaQian:
         ti_initial = ambient_TI
 
         # turbine parameters
-        D = turbine.rotor_diameter
-        HH = turbine.hub_height
-        Ct = turbine.Ct
+        D = rotor_diameter_i
+        HH = hub_height_i
+        Ct = Ct_i
 
-        local_x = coord_ti.x1 - turbine_coord.x1
-        local_y = coord_ti.x2 - turbine_coord.x2
-        local_z = coord_ti.x3 - turbine_coord.x3
+        local_x, local_y, local_z = coord_ti.elements - turbine_coord.elements
+
         # coordinate info
-        r = np.sqrt(local_y**2 + (local_z) ** 2)
+        r = np.sqrt(local_y**2 + local_z**2)
 
         kstar = self.kstar.current_value(Ct, ti_initial)
         epsilon = self.epsilon.current_value(Ct, ti_initial)
 
-        d = self.d.current_value(Ct, ti_initial)
-        e = self.e.current_value(Ct, ti_initial)
-        f = self.f.current_value(Ct, ti_initial)
+        d = self.d.current_value(Ct, ti_initial)  # noqa: F841
+        e = self.e.current_value(Ct, ti_initial)  # noqa: F841
+        f = self.f.current_value(Ct, ti_initial)  # noqa: F841
 
-        k1 = np.cos(np.pi / 2 * (r / D - 0.5)) ** 2
-        # TODO: make work for array of turbulences/grid points
-        # k1[r / D > 0.5] = 1.0
-
-        k2 = np.cos(np.pi / 2 * (r / D + 0.5)) ** 2
-        # TODO: make work for array of turbulences/grid points
-        # k2[r / D > 0.5] = 0.0
-
-        if r / D > 0.5:
-            k1 = 1.0
-            k2 = 0.0
+        k1 = 1.0  # noqa: F841
+        k2 = 0.0  # noqa: F841
+        if r / D <= 0.5:
+            # TODO: make work for array of turbulences/grid points
+            # k1[r / D > 0.5] = 1.0
+            # k1 = np.where(k1, r / D <= 0.5, 1.0)
+            # k2[r / D > 0.5] = 0.0
+            # k1 = np.where(k1, r / D <= 0.5, 0.0)
+            k1 = np.cos(np.pi / 2 * (r / D - 0.5)) ** 2  # noqa: F841
+            k2 = np.cos(np.pi / 2 * (r / D + 0.5)) ** 2  # noqa: F841
 
         # Representative wake width = \sigma / D
-        wake_width = kstar * (local_x / D) + epsilon
+        wake_width = kstar * (local_x / D) + epsilon  # noqa: F841
 
         # Added turbulence intensity = \Delta I_1 (x,y,z)
         delta = ti_initial * np.sin(np.pi * (HH - local_z) / HH) ** 2
-        # TODO: make work for array of turbulences/grid points
-        # delta[local_z >= HH] = 0.0
+        # delta = np.where(local_z < HH, delta, 0.0)  # TODO: get working for array math
+
         ti_calculation = (
             1
-            / (d + e * (local_x / D) + f * (1 + (local_x / D)) ** (-2))
+            / ne.evaluate("d + e * (local_x / D) + f * (1 + (local_x / D)) ** (-2)")
             * (
-                (k1 * np.exp(-((r - D / 2) ** 2) / (2 * (wake_width * D) ** 2)))
-                + (k2 * np.exp(-((r + D / 2) ** 2) / (2 * (wake_width * D) ** 2)))
+                ne.evaluate("k1 * exp(-((r - D / 2) ** 2) / (2 * (wake_width * D) ** 2))")
+                + ne.evaluate("k2 * exp(-((r + D / 2) ** 2) / (2 * (wake_width * D) ** 2))")
             )
             - delta
         )
