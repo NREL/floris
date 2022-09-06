@@ -88,7 +88,7 @@ class IshiharaQian:
     default_parameters = {
         "kstar": {"const": 0.11, "Ct": 1.07, "TI": 0.2},
         "epsilon": {"const": 0.23, "Ct": -0.25, "TI": 0.17},
-        "d": {"const": 2.3, "Ct": 1.2, "TI": 0.0},
+        "d": {"const": 2.3, "Ct": -1.2, "TI": 0.0},
         "e": {"const": 1.0, "Ct": 0.0, "TI": 0.1},
         "f": {"const": 0.7, "Ct": -3.2, "TI": -0.45},
     }
