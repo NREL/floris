@@ -37,7 +37,7 @@ class IQParam(FromDictMixin):
     Ct: float = field(converter=float, validator=attrs.validators.instance_of(float))
     TI: float = field(converter=float, validator=attrs.validators.instance_of(float))
 
-    def parameter_value(self, Ct: float, ti_initial: float) -> float:
+    def current_value(self, Ct: float, ti_initial: float) -> float:
         """
         Calculates model parameters using current conditions and parameter settings.
 
@@ -94,7 +94,8 @@ class IshiharaQian:
         kwargs = dict()
         return kwargs
 
-    def function(self, ambient_TI, coord_ti, turbine_coord, turbine):
+    # TODO: Translate this function to v3 inputs format
+    def function(self, ambient_TI, coord_ti, turbine_coord, turbine) -> np.ndarray:
         # function(self, x_locations, y_locations, z_locations, turbine,
         #  turbine_coord, flow_field, turb_u_wake, sorted_map):
         """
@@ -128,12 +129,12 @@ class IshiharaQian:
         # coordinate info
         r = np.sqrt(local_y**2 + (local_z) ** 2)
 
-        kstar = self.parameter_value_from_dict(self.kstar, Ct, ti_initial)
-        epsilon = self.parameter_value_from_dict(self.epsilon, Ct, ti_initial)
+        kstar = self.kstar.current_value(Ct, ti_initial)
+        epsilon = self.epsilon.current_value(Ct, ti_initial)
 
-        d = self.parameter_value_from_dict(self.d, Ct, ti_initial)
-        e = self.parameter_value_from_dict(self.e, Ct, ti_initial)
-        f = self.parameter_value_from_dict(self.f, Ct, ti_initial)
+        d = self.d.current_value(Ct, ti_initial)
+        e = self.e.current_value(Ct, ti_initial)
+        f = self.f.current_value(Ct, ti_initial)
 
         k1 = np.cos(np.pi / 2 * (r / D - 0.5)) ** 2
         # TODO: make work for array of turbulences/grid points
