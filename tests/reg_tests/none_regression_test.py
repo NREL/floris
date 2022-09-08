@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2022 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -118,6 +118,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,
@@ -283,6 +284,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
 
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,

@@ -574,6 +574,7 @@ class FlorisInterface(LoggerBase):
 
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
+            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             pP=self.floris.farm.pPs,

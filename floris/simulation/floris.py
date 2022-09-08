@@ -73,6 +73,7 @@ class Floris(BaseClass):
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
         self.farm.construc_turbine_pPs()
+        self.farm.construc_turbine_ref_density_cp_cts()
         self.farm.construct_coordinates()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
 

@@ -86,6 +86,18 @@ class Farm(BaseClass):
                     raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
                 self.turbine_definitions[i] = load_yaml(fname)
 
+                # This is a temporary block of code that catches that ref_density_cp_ct is not defined
+                # In the yaml file and forces it in
+                # A warning is issued letting the user know in future versions defining this value explicitly
+                # will be required 
+                if not 'ref_density_cp_ct' in self.turbine_definitions[i]:
+                    self.logger.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
+                    self.logger.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
+                    self.logger.warn("In previous versions this was assumed to be 1.225")
+                    self.logger.warn("Future versions of FLORIS will give an error if this value is not explicitly defined")
+                    self.logger.warn("Currently this value is being set to the prior default value of 1.225")
+                    self.turbine_definitions[i]['ref_density_cp_ct'] = 1.225
+
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
         self.yaw_angles_sorted = np.take_along_axis(
@@ -106,6 +118,9 @@ class Farm(BaseClass):
 
     def construc_turbine_pPs(self):
         self.pPs = np.array([turb['pP'] for turb in self.turbine_definitions])
+
+    def construc_turbine_ref_density_cp_cts(self):
+        self.ref_density_cp_cts = np.array([turb['ref_density_cp_ct'] for turb in self.turbine_definitions])
 
     def construct_turbine_map(self):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]

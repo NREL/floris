@@ -108,6 +108,7 @@ class FromDictMixin:
         # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
         required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and a.default is attrs.NOTHING]
         undefined = sorted(set(required_inputs) - set(kwargs))
+
         if undefined:
             raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
         return cls(**kwargs)
