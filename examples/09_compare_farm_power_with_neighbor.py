@@ -34,7 +34,7 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 D = 126.
 layout_x = np.array([0, D*6, 0, D*6])
 layout_y = [0, 0, D*3, D*3]
-fi.reinitialize(layout = [layout_x, layout_y])
+fi.reinitialize(layout_x = layout_x, layout_y = layout_y)
 
 # Define a simple wind rose with just 1 wind speed
 wd_array = np.arange(0,360,4.)
@@ -50,7 +50,7 @@ farm_power_base = fi.get_farm_power() / 1E3 # In kW
 # Add a neighbor to the east
 layout_x = np.array([0, D*6, 0, D*6, D*12, D*15, D*12, D*15])
 layout_y = np.array([0, 0, D*3, D*3, 0, 0, D*3, D*3])
-fi.reinitialize(layout = [layout_x, layout_y])
+fi.reinitialize(layout_x = layout_x, layout_y = layout_y)
 
 # Define the weights to exclude the neighboring farm from calcuations of power
 turbine_weights = np.zeros(len(layout_x), dtype=int)

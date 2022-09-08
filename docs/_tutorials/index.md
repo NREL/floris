@@ -69,7 +69,7 @@ initial 3x1 layout to a 2x2 rectangular layout.
 ```python
 x_2x2 = [0, 0, 800, 800]
 y_2x2 = [0, 400, 0, 400]
-fi.reinitialize( layout=(x_2x2, y_2x2) )
+fi.reinitialize( layout_x=x_2x2, layout_y=y_2x2 )
 
 x, y = fi.get_turbine_layout()
 
@@ -483,9 +483,9 @@ fi_gch = FlorisInterface("inputs/gch.yaml")
 fi_cc = FlorisInterface("inputs/cc.yaml")
 
 # Assign the layouts, wind speeds and directions
-fi_jensen.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
-fi_gch.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
-fi_cc.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_jensen.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_gch.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_cc.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
 
 def time_model_calculation(model_fi: FlorisInterface) -> Tuple[float, float]:
     """
@@ -535,7 +535,7 @@ X = np.linspace(0, 6*7*D, 7)
 Y = np.zeros_like(X)
 wind_speeds = [8.]
 wind_directions = np.arange(0., 360., 2.)
-fi_gch.reinitialize(layout=(X, Y), wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_gch.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
 ```
 
 ```python
