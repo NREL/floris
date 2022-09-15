@@ -72,20 +72,32 @@ class Farm(BaseClass):
         # Construct the turbine definition mapping from the given turbine definitions
         # This loads any turbine models selected from the turbine library
 
-        # If a single value is given, we expand it here to apply to all turbines
-        if len(self.turbine_type) == 1:
-            self.turbine_type = self.n_turbines * [self.turbine_type[0]]
-
-        # Assign the turbine definition to the turbine index
-        # Load from turbine library yaml files if necessary
-        self.turbine_definitions = self.n_turbines * [None]
+        # Load any turbine definitions given in a file path
         for i, turbine_def in enumerate(self.turbine_type):
             if type(turbine_def) is str:
                 floris_dir = Path(__file__).parent.parent
                 fname = floris_dir / "turbine_library" / f"{turbine_def}.yaml"
-                self.turbine_definitions[i] = load_yaml(fname)
+                self.turbine_type[i] = load_yaml(fname)
+
+            # This is a temporary block that catches when ref_density_cp_ct is not defined
+            # in the input and issues a warning letting the user that this value will be
+            # explicitly required in the future.
+            if not 'ref_density_cp_ct' in self.turbine_type[i]:
+                self.warn(
+                    "The input `ref_density_cp_ct` is not defined in the inputs. "
+                    + "This setting is the density at which the Cp and Ct curves are defined. "
+                    + "It is currently an optional input with a default of 1.225. "
+                    + "It will be required as a user input in FLORIS v3.3."
+                )
+                self.turbine_type[i]['ref_density_cp_ct'] = 1.225
+
+        # Assign the turbine definition to the turbine index
+        self.turbine_definitions = self.n_turbines * [None]
+        for i in range(self.n_turbines):
+            if len(self.turbine_type) == 1:
+                self.turbine_definitions[i] = self.turbine_type[0]
             else:
-                self.turbine_definitions[i] = turbine_def
+                self.turbine_definitions[i] = self.turbine_type[i]
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
@@ -105,26 +117,15 @@ class Farm(BaseClass):
                 "turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value."
             )
 
-        self.turbine_definitions = copy.deepcopy(value)
-        for i, val in enumerate(value):
-            if type(val) is str:
-                _floris_dir = Path(__file__).parent.parent
-                fname = _floris_dir / "turbine_library" / f"{val}.yaml"
-                if not Path.is_file(fname):
-                    raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
-                self.turbine_definitions[i] = load_yaml(fname)
-
-                # This is a temporary block of code that catches that ref_density_cp_ct is not defined
-                # In the yaml file and forces it in
-                # A warning is issued letting the user know in future versions defining this value explicitly
-                # will be required 
-                if not 'ref_density_cp_ct' in self.turbine_definitions[i]:
-                    self.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
-                    self.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
-                    self.warn("In previous versions this was assumed to be 1.225")
-                    self.warn("Future versions of FLORIS will give an error if this value is not explicitly defined")
-                    self.warn("Currently this value is being set to the prior default value of 1.225")
-                    self.turbine_definitions[i]['ref_density_cp_ct'] = 1.225
+        for val in value:
+            if isinstance(type(val), str):
+                floris_dir = Path(__file__).parent.parent
+                fname = floris_dir / "turbine_library" / f"{val}.yaml"
+                if not os.path.isfile(fname):
+                    self.error(
+                        ValueError,
+                        "User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val)
+                    )
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
