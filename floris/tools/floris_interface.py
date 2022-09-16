@@ -57,7 +57,7 @@ class FlorisInterface(LoggerBase):
             self.floris = Floris.from_dict(self.configuration)
 
         else:
-            raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
+            self.error(TypeError, "The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
 
         # Store the heterogeneous map for use after reinitailization
         self.het_map = het_map
@@ -71,15 +71,17 @@ class FlorisInterface(LoggerBase):
 
         # Make a check on reference height and provide a helpful warning
         unique_heights = np.unique(self.floris.farm.hub_heights)
-        if (len(unique_heights) == 1) and (self.floris.flow_field.reference_wind_height != unique_heights[0]):
+        if len(unique_heights) == 1 and self.floris.flow_field.reference_wind_height != unique_heights[0]:
             err_msg = "The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height."
             self.logger.warning(err_msg, stack_info=True)
 
         # Check the turbine_grid_points is reasonable
         if self.floris.solver["type"] == "turbine_grid":
             if self.floris.solver["turbine_grid_points"] > 3:
-                self.logger.error(f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy.")
-                raise ValueError("turbine_grid_points must be less than or equal to 3.")
+                self.error(
+                    ValueError,
+                    f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy."
+                )
 
     def assign_hub_height_to_ref_height(self):
 

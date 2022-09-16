@@ -62,12 +62,12 @@ class Farm(BaseClass):
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_y):
-            raise ValueError("layout_x and layout_y must have the same number of entries.")
+            self.error(ValueError, "layout_x and layout_y must have the same number of entries.")
 
     @layout_y.validator
     def check_y(self, instance: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
-            raise ValueError("layout_x and layout_y must have the same number of entries.")
+            self.error(ValueError, "layout_x and layout_y must have the same number of entries.")
 
     @turbine_type.validator
     def check_turbine_type(self, instance: attrs.Attribute, value: Any) -> None:
@@ -75,7 +75,10 @@ class Farm(BaseClass):
             if len(value) == 1:
                 value = self.turbine_type * len(self.layout_x)
             else:
-                raise ValueError("turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value.")
+                self.error(
+                    ValueError,
+                    "turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value."
+                )
 
         self.turbine_definitions = copy.deepcopy(value)
         for i, val in enumerate(value):
@@ -83,7 +86,10 @@ class Farm(BaseClass):
                 _floris_dir = Path(__file__).parent.parent
                 fname = _floris_dir / "turbine_library" / f"{val}.yaml"
                 if not Path.is_file(fname):
-                    raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
+                    self.error(
+                        ValueError,
+                        "User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val)
+                    )
                 self.turbine_definitions[i] = load_yaml(fname)
 
                 # This is a temporary block of code that catches that ref_density_cp_ct is not defined
@@ -91,11 +97,11 @@ class Farm(BaseClass):
                 # A warning is issued letting the user know in future versions defining this value explicitly
                 # will be required 
                 if not 'ref_density_cp_ct' in self.turbine_definitions[i]:
-                    self.logger.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
-                    self.logger.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
-                    self.logger.warn("In previous versions this was assumed to be 1.225")
-                    self.logger.warn("Future versions of FLORIS will give an error if this value is not explicitly defined")
-                    self.logger.warn("Currently this value is being set to the prior default value of 1.225")
+                    self.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
+                    self.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
+                    self.warn("In previous versions this was assumed to be 1.225")
+                    self.warn("Future versions of FLORIS will give an error if this value is not explicitly defined")
+                    self.warn("Currently this value is being set to the prior default value of 1.225")
                     self.turbine_definitions[i]['ref_density_cp_ct'] = 1.225
 
     def initialize(self, sorted_indices):

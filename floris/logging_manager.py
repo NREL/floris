@@ -14,6 +14,7 @@
 
 import logging
 from datetime import datetime
+from typing import Type
 
 import coloredlogs
 
@@ -155,3 +156,13 @@ class LoggerBase:
         return logging.getLogger(
             "{}.{}".format(type(self).__module__, type(self).__name__)
         )
+
+    def error(self, error_type: Type[Exception], message: str):
+        self.logger.error(message)
+        raise error_type(message)
+
+    def warn(self, message: str):
+        self.logger.warn(message)
+
+    def info(self, message: str):
+        self.logger.info(message)

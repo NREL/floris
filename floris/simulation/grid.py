@@ -85,7 +85,7 @@ class Grid(ABC):
         """Ensures all elements are `Vec3` objects and keeps the `n_turbines` attribute up to date."""
         types = np.unique([isinstance(c, Vec3) for c in value])
         if not all(types):
-            raise TypeError("'turbine_coordinates' must be `Vec3` objects.")
+            self.error(TypeError, "'turbine_coordinates' must be `Vec3` objects.")
 
         self.n_turbines = len(value)
 
@@ -141,6 +141,11 @@ class TurbineGrid(Grid):
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
         self.set_grid()
+
+    @grid_resolution.validator
+    def grid_resolution_validator(self, instance: attrs.Attribute, value: int) -> None:
+        if not isinstance(value, int):
+            self.error(TypeError, "TurbineGrid.grid_resolution must be a single value of type `int`.")
 
     def set_grid(self) -> None:
         """
@@ -255,6 +260,13 @@ class FlowFieldGrid(Grid):
         super().__attrs_post_init__()
         self.set_grid()
 
+    @grid_resolution.validator
+    def grid_resolution_validator(self, instance: attrs.Attribute, value: Sequence) -> None:
+        if np.shape(value) != 3:
+            self.error(ValueError, "FlowFieldGrid.grid_resolution must contain 3 values.")
+        if not all(isinstance(v, int) for v in value):
+            self.error(TypeError, "FlowFieldGrid.grid_resolution must be all of type: `int`")
+
     def set_grid(self) -> None:
         """
         Create a structured grid for the entire flow field domain.
@@ -314,6 +326,13 @@ class FlowFieldPlanarGrid(Grid):
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
         self.set_grid()
+
+    @grid_resolution.validator
+    def grid_resolution_validator(self, instance: attrs.Attribute, value: Sequence) -> None:
+        if np.shape(value) != 2:
+            self.error(ValueError, "FlowFieldPlanarGrid.grid_resolution must contain 3 values.")
+        if not all(isinstance(v, int) for v in value):
+            self.error(TypeError, "FlowFieldPlanarGrid.grid_resolution must be all of type: `int`")
 
     def set_grid(self) -> None:
         """

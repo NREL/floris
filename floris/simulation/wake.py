@@ -130,12 +130,12 @@ class WakeModelManager(BaseClass):
         # Check that all required strings are given
         for s in required_strings:
             if s not in value.keys():
-                raise KeyError(f"Wake: '{s}' not provided in the input but it is required.")
+                self.error(KeyError, f"Wake: '{s}' not provided in the input but it is required.")
 
         # Check that no other strings are given
         for k in value.keys():
             if k not in required_strings:
-                raise KeyError(f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
+                self.error(KeyError, f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
 
     @property
     def deflection_function(self):

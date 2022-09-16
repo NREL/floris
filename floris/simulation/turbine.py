@@ -266,7 +266,7 @@ def average_velocity(velocities: NDArrayFloat, ix_filter: NDArrayFilter | Iterab
 
 
 @define
-class PowerThrustTable(FromDictMixin):
+class PowerThrustTable(BaseClass):
     """Helper class to convert the dictionary and list-based inputs to a object of arrays.
 
     Args:
@@ -288,11 +288,11 @@ class PowerThrustTable(FromDictMixin):
         inputs = (self.power, self.thrust, self.wind_speed)
 
         if any(el.ndim > 1 for el in inputs):
-            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
+            self.error(ValueError, "power, thrust, and wind_speed inputs must be 1-D.")
 
-        if len( set( (self.power.size, self.thrust.size, self.wind_speed.size) ) ) > 1:        
-            raise ValueError("power, thrust, and wind_speed tables must be the same size.")
-        
+        if len( set( (self.power.size, self.thrust.size, self.wind_speed.size) ) ) > 1:
+            self.error(ValueError, "power, thrust, and wind_speed tables must be the same size.")
+
         # Remove any duplicate wind speed entries
         _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
         object.__setattr__(self, "power", self.power[duplicate_filter])
@@ -403,7 +403,7 @@ class Turbine(BaseClass):
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
         """Resets the `rotor_radius` and `rotor_area` attributes."""
-        # Temporarily turn off validators to avoid infinite recursion
+        # Temporarily turn off validators to avoid infinite recursion with the `reset_rotor_radius` validator
         with attrs.validators.disabled():
             # Reset the values
             self.rotor_radius = value / 2.0
