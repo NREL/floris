@@ -55,7 +55,7 @@ class Farm(BaseClass):
     TSRs: NDArrayFloat = field(init=False)
     pPs: NDArrayFloat = field(init=False)
     turbine_map: NDArrayFloat = field(init=False)
-    turbine_fCts: NDArrayObject = field(init=False)
+    turbine_fCts: dict = field(init=False)
     turbine_fCps: NDArrayFloat = field(init=False)
     turbine_power_interps: dict = field(init=False)
     coordinates: NDArrayFloat = field(init=False)
@@ -153,13 +153,13 @@ class Farm(BaseClass):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
     def construct_turbine_fCts(self):
-        self.turbine_fCts = [(turb.turbine_type, turb.fCt_interp) for turb in self.turbine_map]
+        self.turbine_fCts = {turb.turbine_type: turb.fCt_interp for turb in self.turbine_map}
 
     def construct_turbine_fCps(self):
         self.turbine_fCps = [(turb.turbine_type, turb.fCp_interp) for turb in self.turbine_map]
 
     def construct_turbine_power_interps(self):
-        self.turbine_power_interps = [(turb.turbine_type, turb.power_interp) for turb in self.turbine_map]
+        self.turbine_power_interps = {turb.turbine_type: turb.power_interp for turb in self.turbine_map}
 
     def construct_coordinates(self):
         self.coordinates = np.array(

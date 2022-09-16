@@ -84,7 +84,7 @@ def power(
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     pP: NDArrayFloat,
-    power_interp: NDArrayObject,
+    power_interp: dict,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -141,7 +141,6 @@ def power(
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     p = np.zeros(np.shape(yaw_effective_velocity))
-    power_interp = dict(power_interp)
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
@@ -154,7 +153,7 @@ def power(
 def Ct(
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
-    fCt: NDArrayObject,
+    fCt: dict,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -189,7 +188,6 @@ def Ct(
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     thrust_coefficient = np.zeros(np.shape(average_velocities))
-    fCt = dict(fCt)
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
@@ -203,7 +201,7 @@ def Ct(
 def axial_induction(
     velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
-    fCt: NDArrayObject,  # (turbines)
+    fCt: dict,  # (turbines)
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
