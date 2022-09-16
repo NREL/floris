@@ -79,6 +79,7 @@ def _filter_convert(
 
 def power(
     air_density: float,
+    ref_density_cp_ct: float,
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     pP: float,
@@ -91,6 +92,7 @@ def power(
 
     Args:
         air_density (NDArrayFloat[wd, ws, turbines]): The air density value(s) at each turbine.
+        ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at a turbine.
         pP (NDArrayFloat[wd, ws, turbines]): The pP value(s) of the cosine exponent relating
             the yaw misalignment angle to power for each turbine.
@@ -134,7 +136,7 @@ def power(
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
-    yaw_effective_velocity = ((air_density/1.225)**(1/3)) * average_velocity(velocities) * cosd(yaw_angle) ** pW
+    yaw_effective_velocity = ((air_density/ref_density_cp_ct)**(1/3)) * average_velocity(velocities) * cosd(yaw_angle) ** pW
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     p = np.zeros(np.shape(yaw_effective_velocity))
@@ -145,7 +147,7 @@ def power(
         # type to the main thrust coefficient array
         p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
 
-    return p * 1.225
+    return p * ref_density_cp_ct
 
 
 def Ct(
@@ -317,6 +319,8 @@ class Turbine(BaseClass):
             tilt angle to power.
         generator_efficiency (:py:obj: float): The generator
             efficiency factor used to scale the power production.
+        ref_density_cp_ct (:py:obj: float): The density at which the provided
+            cp and ct is defined
         power_thrust_table (PowerThrustTable): A dictionary containing the
             following key-value pairs:
 
@@ -343,7 +347,10 @@ class Turbine(BaseClass):
     pT: float
     TSR: float
     generator_efficiency: float
+    ref_density_cp_ct: float
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
+
+
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -354,6 +361,7 @@ class Turbine(BaseClass):
     fCp_interp: interp1d = field(init=False)
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
+
 
     # For the following parameters, use default values if not user-specified
     # self.rloc = float(input_dictionary["rloc"]) if "rloc" in input_dictionary else 0.5

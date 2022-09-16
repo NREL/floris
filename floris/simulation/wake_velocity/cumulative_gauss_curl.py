@@ -13,9 +13,7 @@
 from typing import Any, Dict
 
 from attrs import define, field
-import numexpr as ne
 import numpy as np
-from numpy import newaxis as na
 from scipy.special import gamma
 
 from floris.simulation import BaseModel
@@ -23,7 +21,7 @@ from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
 from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand, pshape
+from floris.utilities import cosd, sind, tand
 
 
 @define
@@ -37,8 +35,6 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
     b_f: float = field(default=-0.68)
     c_f: float = field(default=2.41)
     alpha_mod: float = field(default=1.0)
-
-    model_string = "cumulative_gauss_curl"
 
     def prepare_function(
         self,

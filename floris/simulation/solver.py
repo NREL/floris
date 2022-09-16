@@ -16,7 +16,6 @@ import time
 import sys
 
 from floris.simulation import Farm
-from floris.simulation import Turbine
 from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.simulation import Ct, axial_induction
 from floris.simulation import FlowField
@@ -134,6 +133,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
@@ -224,6 +224,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
     turbine_grid_farm.construct_rotor_diameters()
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construc_turbine_pPs()
+    turbine_grid_farm.construc_turbine_ref_density_cp_cts()
     turbine_grid_farm.construct_coordinates()
 
 
@@ -233,6 +234,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
+        time_series=turbine_grid_flow_field.time_series,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices
@@ -321,6 +323,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 flow_field_grid.x_sorted - x_i,
                 flow_field_grid.y_sorted - y_i,
                 flow_field_grid.z_sorted,
@@ -465,6 +468,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
@@ -551,6 +555,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
     turbine_grid_farm.construct_rotor_diameters()
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construc_turbine_pPs()
+    turbine_grid_farm.construc_turbine_ref_density_cp_cts()
     turbine_grid_farm.construct_coordinates()
 
     turbine_grid = TurbineGrid(
@@ -559,6 +564,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
+        time_series=turbine_grid_flow_field.time_series,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices
@@ -653,6 +659,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 flow_field_grid.x_sorted - x_i,
                 flow_field_grid.y_sorted - y_i,
                 flow_field_grid.z_sorted,
@@ -703,6 +710,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
     shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
     velocity_deficit = np.zeros(shape)
+    deflection_field = np.zeros_like(flow_field.u_initial_sorted)
 
     turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
     ambient_turbulence_intensity = flow_field.turbulence_intensity
@@ -769,20 +777,43 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         # Model calculations
         # NOTE: exponential
-        deflection_field = model_manager.deflection_model.function(
-            x_i,
-            y_i,
-            effective_yaw_i,
-            turbulence_intensity_i,
-            ct_i,
-            rotor_diameter_i,
-            **deflection_model_args
-        )
+        if not np.all(farm.yaw_angles_sorted):
+            model_manager.deflection_model.logger.warning("WARNING: Deflection with the TurbOPark model has not been fully validated. This is an initial implementation, and we advise you use at your own risk and perform a thorough examination of the results.")
+            for ii in range(i):
+                x_ii = np.mean(grid.x_sorted[:, :, ii:ii+1], axis=(3, 4))
+                x_ii = x_ii[:, :, :, None, None]
+                y_ii = np.mean(grid.y_sorted[:, :, ii:ii+1], axis=(3, 4))        
+                y_ii = y_ii[:, :, :, None, None]
+
+                yaw_ii = farm.yaw_angles_sorted[:, :, ii:ii+1, None, None]
+                turbulence_intensity_ii = turbine_turbulence_intensity[:, :, ii:ii+1]
+                ct_ii = Ct(
+                    velocities=flow_field.u_sorted,
+                    yaw_angle=farm.yaw_angles_sorted,
+                    fCt=farm.turbine_fCts,
+                    turbine_type_map=farm.turbine_type_map_sorted,
+                    ix_filter=[ii]
+                )
+                ct_ii = ct_ii[:, :, 0:1, None, None]
+                rotor_diameter_ii = farm.rotor_diameters_sorted[: ,:, ii:ii+1, None, None]
+
+                deflection_field_ii = model_manager.deflection_model.function(
+                    x_ii,
+                    y_ii,
+                    yaw_ii,
+                    turbulence_intensity_ii,
+                    ct_ii,
+                    rotor_diameter_ii,
+                    **deflection_model_args
+                )
+
+                deflection_field[:,:,ii:ii+1,:,:] = deflection_field_ii[:,:,i:i+1,:,:]
 
         if model_manager.enable_transverse_velocities:
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
                 flow_field.u_initial_sorted,
+                flow_field.dudz_initial_sorted,
                 grid.x_sorted - x_i,
                 grid.y_sorted - y_i,
                 grid.z_sorted,
@@ -816,6 +847,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             rotor_diameter_i,
             farm.rotor_diameters_sorted[:, :, :, None, None],
             i,
+            deflection_field,
             **deficit_model_args
         )
 

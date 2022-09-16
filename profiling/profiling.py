@@ -46,16 +46,19 @@ if __name__=="__main__":
     sample_inputs.floris["wake"]["enable_yaw_added_recovery"] = True
     sample_inputs.floris["wake"]["enable_transverse_velocities"] = True
 
-    factor = 100
-    TURBINE_DIAMETER = sample_inputs.floris["turbine"]["rotor_diameter"]
-    sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * i for i in range(factor)]
-    sample_inputs.floris["farm"]["layout_y"] = [0.0 for i in range(factor)]
+    N_TURBINES = 100
+    N_WIND_DIRECTIONS = 72
+    N_WIND_SPEEDS = 25
 
-    factor = 10
-    sample_inputs.floris["flow_field"]["wind_directions"] = factor * [270.0]
-    sample_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
+    TURBINE_DIAMETER = sample_inputs.floris["farm"]["turbine_type"][0]["rotor_diameter"]
+    sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * i for i in range(N_TURBINES)]
+    sample_inputs.floris["farm"]["layout_y"] = [0.0 for i in range(N_TURBINES)]
 
-    N = 5
+    sample_inputs.floris["flow_field"]["wind_directions"] = N_WIND_DIRECTIONS * [270.0]
+    sample_inputs.floris["flow_field"]["wind_speeds"] = N_WIND_SPEEDS * [8.0]
+
+    N = 1
     for i in range(N):
         floris = Floris.from_dict(copy.deepcopy(sample_inputs.floris))
+        floris.initialize_domain()
         floris.steady_state_atmospheric_condition()

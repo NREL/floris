@@ -634,6 +634,22 @@ class WindRose:
         self.internal_resample_wind_direction(wd=wd)
 
         return self.df
+    
+    def read_wind_rose_csv(
+        self,
+        filename
+    ):
+
+        #Read in the csv
+        self.df = pd.read_csv(filename)
+
+        # Renormalize the frequency column
+        self.df["freq_val"] = self.df["freq_val"] / self.df["freq_val"].sum()
+
+        # Call the resample function in order to set all the internal variables
+        self.internal_resample_wind_speed(ws=self.df.ws.unique())
+        self.internal_resample_wind_direction(wd=self.df.wd.unique())
+
 
     def make_wind_rose_from_user_dist(
         self,
@@ -1283,7 +1299,7 @@ class WindRose:
         ij = [int(round(x / 2000)) for x in delta]
         return tuple(reversed(ij))
 
-    def plot_wind_speed_all(self, ax=None):
+    def plot_wind_speed_all(self, ax=None, label=None):
         """
         This method plots the wind speed frequency distribution of the WindRose
         object averaged across all wind directions. If no axis is provided, a
@@ -1297,7 +1313,7 @@ class WindRose:
             _, ax = plt.subplots()
 
         df_plot = self.df.groupby("ws").sum()
-        ax.plot(self.ws, df_plot.freq_val)
+        ax.plot(self.ws, df_plot.freq_val, label=label)
 
     def plot_wind_speed_by_direction(self, dirs, ax=None):
         """

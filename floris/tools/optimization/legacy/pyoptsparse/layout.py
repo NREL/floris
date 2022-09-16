@@ -61,7 +61,7 @@ class Layout:
         self.parse_opt_vars(varDict)
 
         # Update turbine map with turbince locations
-        self.fi.reinitialize(layout=[self.x, self.y])
+        self.fi.reinitialize(layout_x=self.x, layout_y=self.y)
         self.fi.calculate_wake()
 
         # Compute the objective function

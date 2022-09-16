@@ -17,7 +17,6 @@ import attrs
 from attrs import define, field
 import numpy as np
 from pathlib import Path
-import os
 import copy
 
 from floris.type_dec import (
@@ -26,7 +25,7 @@ from floris.type_dec import (
     NDArrayFloat
 )
 from floris.utilities import Vec3, load_yaml
-from floris.simulation import BaseClass
+from floris.simulation import BaseClass, State
 from floris.simulation import Turbine
 
 
@@ -83,9 +82,21 @@ class Farm(BaseClass):
             if type(val) is str:
                 _floris_dir = Path(__file__).parent.parent
                 fname = _floris_dir / "turbine_library" / f"{val}.yaml"
-                if not os.path.isfile(fname):
+                if not Path.is_file(fname):
                     raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
                 self.turbine_definitions[i] = load_yaml(fname)
+
+                # This is a temporary block of code that catches that ref_density_cp_ct is not defined
+                # In the yaml file and forces it in
+                # A warning is issued letting the user know in future versions defining this value explicitly
+                # will be required 
+                if not 'ref_density_cp_ct' in self.turbine_definitions[i]:
+                    self.logger.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
+                    self.logger.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
+                    self.logger.warn("In previous versions this was assumed to be 1.225")
+                    self.logger.warn("Future versions of FLORIS will give an error if this value is not explicitly defined")
+                    self.logger.warn("Currently this value is being set to the prior default value of 1.225")
+                    self.turbine_definitions[i]['ref_density_cp_ct'] = 1.225
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
@@ -94,6 +105,7 @@ class Farm(BaseClass):
             sorted_indices[:, :, :, 0, 0],
             axis=2,
         )
+        self.state = State.INITIALIZED
 
     def construct_hub_heights(self):
         self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
@@ -106,6 +118,9 @@ class Farm(BaseClass):
 
     def construc_turbine_pPs(self):
         self.pPs = np.array([turb['pP'] for turb in self.turbine_definitions])
+
+    def construc_turbine_ref_density_cp_cts(self):
+        self.ref_density_cp_cts = np.array([turb['ref_density_cp_ct'] for turb in self.turbine_definitions])
 
     def construct_turbine_map(self):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
@@ -149,6 +164,7 @@ class Farm(BaseClass):
         self.TSRs = np.take_along_axis(self.TSRs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.pPs = np.take_along_axis(self.pPs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.turbine_type_map = np.take_along_axis(self.turbine_type_map_sorted, unsorted_indices[:,:,:,0,0], axis=2)
+        self.state.USED
 
     @property
     def n_turbines(self):

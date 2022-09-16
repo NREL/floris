@@ -32,7 +32,7 @@ wind_speed_to_test_yaw = 11
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Make one turbine sim
-fi.reinitialize(layout=[[0],[0]])
+fi.reinitialize(layout_x=[0], layout_y=[0])
 
 # Apply wind speeds
 fi.reinitialize(wind_speeds=ws_array)

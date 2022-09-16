@@ -1,4 +1,4 @@
-# Copyright 2021 NREL
+# Copyright 2022 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -17,14 +17,15 @@ import os
 import numpy as np
 
 from floris.tools import FlorisInterface
-import floris.tools.optimization.pyoptsparse as opt
+
+from floris.tools.optimization.layout_optimization.layout_optimization_scipy import LayoutOptimizationScipy
 
 """
-This example shows a simple layout optimization using the python module pyOptSparse.
+This example shows a simple layout optimization using the python module Scipy.
 
 A 4 turbine array is optimized such that the layout of the turbine produces the
 highest annual energy production (AEP) based on the given wind resource. The turbines
-are constrained to a square boundary and a randomw wind resource is supplied. The results
+are constrained to a square boundary and a random wind resource is supplied. The results
 of the optimization show that the turbines are pushed to the outer corners of the boundary,
 which makes sense in order to maximize the energy production by minimizing wake interactions.
 """
@@ -37,8 +38,10 @@ fi = FlorisInterface('inputs/gch.yaml')
 wind_directions = np.arange(0, 360.0, 5.0)
 np.random.seed(1)
 wind_speeds = 8.0 + np.random.randn(1) * 0.5
-freq = np.abs(np.sort(np.random.randn(len(wind_directions))))
+# Shape frequency distribution to match number of wind directions and wind speeds
+freq = np.abs(np.sort(np.random.randn(len(wind_directions)))).reshape((len(wind_directions), len(wind_speeds)))
 freq = freq / freq.sum()
+
 fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
 
 # The boundaries for the turbines, specified as vertices
@@ -49,15 +52,23 @@ D = 126.0 # rotor diameter for the NREL 5MW
 layout_x = [0, 0, 6 * D, 6 * D]
 layout_y = [0, 4 * D, 0, 4 * D]
 fi.reinitialize(layout=(layout_x, layout_y))
-fi.calculate_wake()
 
 # Setup the optimization problem
-model = opt.layout.Layout(fi, boundaries, freq)
-tmp = opt.optimization.Optimization(model=model, solver='SLSQP')
+layout_opt = LayoutOptimizationScipy(fi, boundaries, freq=freq)
 
 # Run the optimization
-sol = tmp.optimize()
+sol = layout_opt.optimize()
+
+# Get the resulting improvement in AEP
+print('... calcuating improvement in AEP')
+fi.calculate_wake()
+base_aep = fi.get_farm_AEP(freq=freq) / 1e6
+fi.reinitialize(layout=sol)
+fi.calculate_wake()
+opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
+percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results
-print(sol)
-model.plot_layout_opt_results(sol)
+print('Optimal layout: ', sol)
+print('Optimal layout improves AEP by %.1f%% from %.1f MWh to %.1f MWh' % (percent_gain, base_aep, opt_aep))
+layout_opt.plot_layout_opt_results()

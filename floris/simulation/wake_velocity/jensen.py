@@ -42,7 +42,6 @@ class JensenVelocityDeficit(BaseModel):
     """
 
     we: float = field(converter=float, default=0.05)
-    model_string = "jensen"
 
     def prepare_function(
         self,

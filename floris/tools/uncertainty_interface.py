@@ -13,16 +13,16 @@
 
 
 import copy
+
 import numpy as np
 from scipy.stats import norm
 
 from floris.tools import FlorisInterface
-from floris.logging_manager import LoggerBase
 from floris.utilities import wrap_360
+from floris.logging_manager import LoggerBase
 
 
 class UncertaintyInterface(LoggerBase):
-
     def __init__(
         self,
         configuration,
@@ -77,7 +77,7 @@ class UncertaintyInterface(LoggerBase):
             will essentially come down to a Gaussian smoothing of FLORIS
             solutions over the wind directions. This calculation can therefore
             be really fast, since it does not require additional calculations
-            compared to a non-uncertainty FLORIS evaluation. 
+            compared to a non-uncertainty FLORIS evaluation.
             When fix_yaw_in_relative_frame=False, the yaw angles are fixed in
             the absolute (compass) reference frame, meaning that for each
             probablistic wind direction evaluation, our probablistic (relative)
@@ -118,6 +118,9 @@ class UncertaintyInterface(LoggerBase):
             fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
         )
 
+        # Add a _no_wake switch to keep track of calculate_wake/calculate_no_wake
+        self._no_wake = False
+
     # Private methods
 
     def _generate_pdfs_from_dict(self):
@@ -132,7 +135,9 @@ class UncertaintyInterface(LoggerBase):
         # create normally distributed wd and yaw uncertaitny pmfs if appropriate
         unc_options = self.unc_options
         if unc_options["std_wd"] > 0:
-            wd_bnd = int(np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"]))
+            wd_bnd = int(
+                np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"])
+            )
             bound = wd_bnd * unc_options["pmf_res"]
             wd_unc = np.linspace(-1 * bound, bound, 2 * wd_bnd + 1)
             wd_unc_pmf = norm.pdf(wd_unc, scale=unc_options["std_wd"])
@@ -176,10 +181,7 @@ class UncertaintyInterface(LoggerBase):
 
         # Expand wind direction and yaw angle array into the direction
         # of uncertainty over the ambient wind direction.
-        wd_array_probablistic = np.vstack(
-            [np.expand_dims(wd_array_nominal, axis=0) + dy
-            for dy in unc_pmfs["wd_unc"]]
-        )
+        wd_array_probablistic = np.vstack([np.expand_dims(wd_array_nominal, axis=0) + dy for dy in unc_pmfs["wd_unc"]])
 
         if self.fix_yaw_in_relative_frame:
             # The relative yaw angle is fixed and always has the nominal
@@ -190,8 +192,7 @@ class UncertaintyInterface(LoggerBase):
             # not require any additional calculations compared to the
             # non-uncertainty FLORIS evaluation.
             yaw_angles_probablistic = np.vstack(
-                [np.expand_dims(yaw_angles_nominal, axis=0)
-                for _ in unc_pmfs["wd_unc"]]
+                [np.expand_dims(yaw_angles_nominal, axis=0) for _ in unc_pmfs["wd_unc"]]
             )
         else:
             # Fix yaw angles in the absolute (compass) reference frame,
@@ -202,8 +203,7 @@ class UncertaintyInterface(LoggerBase):
             # it with a relative yaw angle that is 3 deg below its nominal
             # value.
             yaw_angles_probablistic = np.vstack(
-                [np.expand_dims(yaw_angles_nominal, axis=0) - dy
-                for dy in unc_pmfs["wd_unc"]]
+                [np.expand_dims(yaw_angles_nominal, axis=0) - dy for dy in unc_pmfs["wd_unc"]]
             )
 
         self.wd_array_probablistic = wd_array_probablistic
@@ -223,12 +223,7 @@ class UncertaintyInterface(LoggerBase):
         fi_unc_copy.fi = self.fi.copy()
         return fi_unc_copy
 
-    def reinitialize_uncertainty(
-        self,
-        unc_options=None,
-        unc_pmfs=None,
-        fix_yaw_in_relative_frame=None
-    ):
+    def reinitialize_uncertainty(self, unc_options=None, unc_pmfs=None, fix_yaw_in_relative_frame=None):
         """Reinitialize the wind direction and yaw angle probability
         distributions used in evaluating FLORIS. Must either specify
         'unc_options', in which case distributions are calculated assuming
@@ -281,7 +276,7 @@ class UncertaintyInterface(LoggerBase):
                 will essentially come down to a Gaussian smoothing of FLORIS
                 solutions over the wind directions. This calculation can therefore
                 be really fast, since it does not require additional calculations
-                compared to a non-uncertainty FLORIS evaluation. 
+                compared to a non-uncertainty FLORIS evaluation.
                 When fix_yaw_in_relative_frame=False, the yaw angles are fixed in
                 the absolute (compass) reference frame, meaning that for each
                 probablistic wind direction evaluation, our probablistic (relative)
@@ -300,23 +295,21 @@ class UncertaintyInterface(LoggerBase):
                 often does not perfectly know the true wind direction, and that a
                 turbine often does not perfectly achieve its desired yaw angle offset.
                 Defaults to fix_yaw_in_relative_frame=False.
-                
+
         """
 
         # Check inputs
-        if ((unc_options is not None) and (unc_pmfs is not None)):
-            self.logger.error(
-                "Must specify either 'unc_options' or 'unc_pmfs', not both."
-            )
+        if (unc_options is not None) and (unc_pmfs is not None):
+            self.logger.error("Must specify either 'unc_options' or 'unc_pmfs', not both.")
 
         # Assign uncertainty probability distributions
         if unc_options is not None:
             self.unc_options = unc_options
             self._generate_pdfs_from_dict()
-        
+
         if unc_pmfs is not None:
             self.unc_pmfs = unc_pmfs
-        
+
         if fix_yaw_in_relative_frame is not None:
             self.fix_yaw_in_relative_frame = bool(fix_yaw_in_relative_frame)
 
@@ -330,12 +323,20 @@ class UncertaintyInterface(LoggerBase):
         turbulence_intensity=None,
         air_density=None,
         layout=None,
+        layout_x=None,
+        layout_y=None,
         turbine_type=None,
         solver_settings=None,
     ):
         """Pass to the FlorisInterface reinitialize function. To allow users
         to directly replace a FlorisInterface object with this
         UncertaintyInterface object, this function is required."""
+
+        if layout is not None:
+            msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3."
+            self.logger.warning(msg)
+            layout_x = layout[0]
+            layout_y = layout[1]
 
         # Just passes arguments to the floris object
         self.fi.reinitialize(
@@ -346,7 +347,8 @@ class UncertaintyInterface(LoggerBase):
             reference_wind_height=reference_wind_height,
             turbulence_intensity=turbulence_intensity,
             air_density=air_density,
-            layout=layout,
+            layout_x=layout_x,
+            layout_y=layout_y,
             turbine_type=turbine_type,
             solver_settings=solver_settings,
         )
@@ -364,16 +366,26 @@ class UncertaintyInterface(LoggerBase):
             yaw_angles: NDArrayFloat | list[float] | None = None,
         """
         self._reassign_yaw_angles(yaw_angles)
+        self._no_wake = False
 
-    def get_turbine_powers(self, no_wake=False):
-        """Calculates the probability-weighted power production of each
-        turbine in the wind farm.
+    def calculate_no_wake(self, yaw_angles=None):
+        """Replaces the 'calculate_no_wake' function in the FlorisInterface
+        object. Fundamentally, this function only overwrites the nominal
+        yaw angles in the FlorisInterface object. The actual wake calculations
+        are performed once 'get_turbine_powers' or 'get_farm_powers' is
+        called. However, to allow users to directly replace a FlorisInterface
+        object with this UncertaintyInterface object, this function is
+        required.
 
         Args:
-            no_wake (bool, optional): disable the wakes in the flow model.
-            This can be useful to determine the (probablistic) power
-            production of the farm in the artificial scenario where there
-            would never be any wake losses. Defaults to False.
+            yaw_angles: NDArrayFloat | list[float] | None = None,
+        """
+        self._reassign_yaw_angles(yaw_angles)
+        self._no_wake = True
+
+    def get_turbine_powers(self):
+        """Calculates the probability-weighted power production of each
+        turbine in the wind farm.
 
         Returns:
             NDArrayFloat: Power production of all turbines in the wind farm.
@@ -399,9 +411,7 @@ class UncertaintyInterface(LoggerBase):
 
         # Format into conventional floris format by reshaping
         wd_array_probablistic = np.reshape(self.wd_array_probablistic, -1)
-        yaw_angles_probablistic = np.reshape(
-            self.yaw_angles_probablistic, (-1, num_ws, num_turbines)
-        )
+        yaw_angles_probablistic = np.reshape(self.yaw_angles_probablistic, (-1, num_ws, num_turbines))
 
         # Wrap wind direction array around 360 deg
         wd_array_probablistic = wrap_360(wd_array_probablistic)
@@ -409,17 +419,14 @@ class UncertaintyInterface(LoggerBase):
         # Find minimal set of solutions to evaluate
         wd_exp = np.tile(wd_array_probablistic, (1, num_ws, 1)).T
         _, id_unq, id_unq_rev = np.unique(
-            np.append(yaw_angles_probablistic, wd_exp, axis=2),
-            axis=0,
-            return_index=True,
-            return_inverse=True
+            np.append(yaw_angles_probablistic, wd_exp, axis=2), axis=0, return_index=True, return_inverse=True
         )
         wd_array_probablistic_min = wd_array_probablistic[id_unq]
         yaw_angles_probablistic_min = yaw_angles_probablistic[id_unq, :, :]
 
         # Evaluate floris for minimal probablistic set
         self.fi.reinitialize(wind_directions=wd_array_probablistic_min)
-        if no_wake:
+        if self._no_wake:
             self.fi.calculate_no_wake(yaw_angles=yaw_angles_probablistic_min)
         else:
             self.fi.calculate_wake(yaw_angles=yaw_angles_probablistic_min)
@@ -430,36 +437,187 @@ class UncertaintyInterface(LoggerBase):
 
         # Reshape solutions back to full set
         power_probablistic = turbine_powers[id_unq_rev, :]
-        power_probablistic = np.reshape(
-            power_probablistic, 
-            (num_wd_unc, num_wd, num_ws, num_turbines)
-        )
+        power_probablistic = np.reshape(power_probablistic, (num_wd_unc, num_wd, num_ws, num_turbines))
 
         # Calculate probability weighing terms
         wd_weighing = (
-            np.expand_dims(unc_pmfs["wd_unc_pmf"], axis=(1, 2, 3))
-        ).repeat(num_wd, 1).repeat(num_ws, 2).repeat(num_turbines, 3)
+            (np.expand_dims(unc_pmfs["wd_unc_pmf"], axis=(1, 2, 3)))
+            .repeat(num_wd, 1)
+            .repeat(num_ws, 2)
+            .repeat(num_turbines, 3)
+        )
 
         # Now apply probability distribution weighing to get turbine powers
         return np.sum(wd_weighing * power_probablistic, axis=0)
 
-    def get_farm_power(self, no_wake=False):
+    def get_farm_power(self, turbine_weights=None):
         """Calculates the probability-weighted power production of the
         collective of all turbines in the farm, for each wind direction
         and wind speed specified.
 
         Args:
-            no_wake (bool, optional): disable the wakes in the flow model.
-            This can be useful to determine the (probablistic) power
-            production of the farm in the artificial scenario where there
-            would never be any wake losses. Defaults to False.
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power 
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_wind_directions, n_wind_speeds,
+                n_turbines). Defaults to None.
 
         Returns:
             NDArrayFloat: Expectation of power production of the wind farm.
             This array has the shape (num_wind_directions, num_wind_speeds).
         """
-        turbine_powers = self.get_turbine_powers(no_wake=no_wake)
+
+        if turbine_weights is None:
+            # Default to equal weighing of all turbines when turbine_weights is None
+            turbine_weights = np.ones(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            )
+        elif len(np.shape(turbine_weights)) == 1:
+            # Deal with situation when 1D array is provided
+            turbine_weights = np.tile(
+                turbine_weights,
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    1
+                )
+            )
+
+        # Calculate all turbine powers and apply weights
+        turbine_powers = self.get_turbine_powers()
+        turbine_powers = np.multiply(turbine_weights, turbine_powers)
+
         return np.sum(turbine_powers, axis=2)
+
+    def get_farm_AEP(
+        self,
+        freq,
+        cut_in_wind_speed=0.001,
+        cut_out_wind_speed=None,
+        yaw_angles=None,
+        turbine_weights=None,
+        no_wake=False,
+    ) -> float:
+        """
+        Estimate annual energy production (AEP) for distributions of wind speed, wind
+        direction, frequency of occurrence, and yaw offset.
+
+        Args:
+            freq (NDArrayFloat): NumPy array with shape (n_wind_directions,
+                n_wind_speeds) with the frequencies of each wind direction and
+                wind speed combination. These frequencies should typically sum
+                up to 1.0 and are used to weigh the wind farm power for every
+                condition in calculating the wind farm's AEP.
+            cut_in_wind_speed (float, optional): Wind speed in m/s below which
+                any calculations are ignored and the wind farm is known to
+                produce 0.0 W of power. Note that to prevent problems with the
+                wake models at negative / zero wind speeds, this variable must
+                always have a positive value. Defaults to 0.001 [m/s].
+            cut_out_wind_speed (float, optional): Wind speed above which the
+                wind farm is known to produce 0.0 W of power. If None is
+                specified, will assume that the wind farm does not cut out
+                at high wind speeds. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional):
+                The relative turbine yaw angles in degrees. If None is
+                specified, will assume that the turbine yaw angles are all
+                zero degrees for all conditions. Defaults to None.
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power 
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_wind_directions, n_wind_speeds,
+                n_turbines). Defaults to None.
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the wake to
+                the flow field. This can be useful when quantifying the loss
+                in AEP due to wakes. Defaults to *False*.
+
+        Returns:
+            float:
+                The Annual Energy Production (AEP) for the wind farm in
+                watt-hours.
+        """
+
+        # Verify dimensions of the variable "freq"
+        if not (
+            (np.shape(freq)[0] == self.floris.flow_field.n_wind_directions)
+            & (np.shape(freq)[1] == self.floris.flow_field.n_wind_speeds)
+            & (len(np.shape(freq)) == 2)
+        ):
+            raise UserWarning(
+                "'freq' should be a two-dimensional array with dimensions (n_wind_directions, n_wind_speeds)."
+            )
+
+        # Check if frequency vector sums to 1.0. If not, raise a warning
+        if np.abs(np.sum(freq) - 1.0) > 0.001:
+            self.logger.warning("WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. ")
+
+        # Copy the full wind speed array from the floris object and initialize
+        # the the farm_power variable as an empty array.
+        wind_speeds = np.array(self.fi.floris.flow_field.wind_speeds, copy=True)
+        farm_power = np.zeros((self.fi.floris.flow_field.n_wind_directions, len(wind_speeds)))
+
+        # Determine which wind speeds we must evaluate in floris
+        conditions_to_evaluate = wind_speeds >= cut_in_wind_speed
+        if cut_out_wind_speed is not None:
+            conditions_to_evaluate = conditions_to_evaluate & (wind_speeds < cut_out_wind_speed)
+
+        # Evaluate the conditions in floris
+        if np.any(conditions_to_evaluate):
+            wind_speeds_subset = wind_speeds[conditions_to_evaluate]
+            yaw_angles_subset = None
+            if yaw_angles is not None:
+                yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
+            self.reinitialize(wind_speeds=wind_speeds_subset)
+            if no_wake:
+                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
+            else:
+                self.calculate_wake(yaw_angles=yaw_angles_subset)
+            farm_power[:, conditions_to_evaluate] = (
+                self.get_farm_power(turbine_weights=turbine_weights)
+            )
+
+        # Finally, calculate AEP in GWh
+        aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
+
+        # Reset the FLORIS object to the full wind speed array
+        self.reinitialize(wind_speeds=wind_speeds)
+
+        return aep
+
+    def assign_hub_height_to_ref_height(self):
+        return self.fi.assign_hub_height_to_ref_height()
+
+    def get_turbine_layout(self, z=False):
+        return self.fi.get_turbine_layout(z=z)
+
+    def get_turbine_Cts(self):
+        return self.fi.get_turbine_Cts()
+
+    def get_turbine_ais(self):
+        return self.fi.get_turbine_ais()
+
+    def get_turbine_average_velocities(self):
+        return self.fi.get_turbine_average_velocities()
 
     # Define getter functions that just pass information from FlorisInterface
     @property
