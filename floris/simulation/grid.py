@@ -28,11 +28,12 @@ from floris.type_dec import (
     floris_float_type,
     floris_array_converter,
 )
+from floris.simulation import BaseClass
 from floris.utilities import Vec3, rotate_coordinates_rel_west
 
 
 @define
-class Grid(ABC):
+class Grid(ABC, BaseClass):
     """
     Grid should establish domain bounds based on given criteria,
     and develop three arrays to contain components of the grid
@@ -317,9 +318,9 @@ class FlowFieldPlanarGrid(Grid):
     @grid_resolution.validator
     def grid_resolution_validator(self, instance: attrs.Attribute, value: Sequence) -> None:
         if np.shape(value) != 2:
-            self.error(ValueError, "FlowFieldPlanarGrid.grid_resolution must contain 3 values.")
+            self.error(ValueError, f"FlowFieldPlanarGrid.grid_resolution must contain 2 values; given value: {value}.")
         if not all(isinstance(v, int) for v in value):
-            self.error(TypeError, "FlowFieldPlanarGrid.grid_resolution must be all of type: `int`")
+            self.error(TypeError, f"FlowFieldPlanarGrid.grid_resolution must be of type `int`; given value: {value}.")
 
     def set_grid(self) -> None:
         """

@@ -26,6 +26,7 @@ from floris.utilities import load_yaml
 from floris.utilities import Vec3
 from floris.simulation import BaseClass
 from floris.simulation import Turbine
+from floris.simulation import State
 
 
 @define
@@ -191,7 +192,7 @@ class Farm(BaseClass):
         self.TSRs = np.take_along_axis(self.TSRs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.pPs = np.take_along_axis(self.pPs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.turbine_type_map = np.take_along_axis(self.turbine_type_map_sorted, unsorted_indices[:,:,:,0,0], axis=2)
-        self.state.USED
+        self.state = State.USED
 
     @property
     def n_turbines(self):
