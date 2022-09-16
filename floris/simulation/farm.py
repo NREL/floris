@@ -67,6 +67,24 @@ class Farm(BaseClass):
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
 
+    def __attrs_post_init__(self) -> None:
+        # Construct the turbine definition mapping from the given turbine definitions
+        # This loads any turbine models selected from the turbine library
+
+        # If a single value is given, we expand it here to apply to all turbines
+        if len(self.turbine_type) == 1:
+            self.turbine_type = self.n_turbines * [self.turbine_type[0]]
+
+        # Assign the turbine definition to the turbine index
+        # Load from turbine library yaml files if necessary
+        self.turbine_definitions = self.n_turbines * [None]
+        for i, turbine_def in enumerate(self.turbine_type):
+            if type(turbine_def) is str:
+                floris_dir = Path(__file__).parent.parent
+                fname = floris_dir / "turbine_library" / f"{turbine_def}.yaml"
+                self.turbine_definitions[i] = load_yaml(fname)
+            else:
+                self.turbine_definitions[i] = turbine_def
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
@@ -80,14 +98,11 @@ class Farm(BaseClass):
 
     @turbine_type.validator
     def check_turbine_type(self, instance: attrs.Attribute, value: Any) -> None:
-        if len(value) != len(self.layout_x):
-            if len(value) == 1:
-                value = self.turbine_type * len(self.layout_x)
-            else:
-                self.error(
-                    ValueError,
-                    "turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value."
-                )
+        if len(value) != self.n_turbines and len(value) != 1:
+            self.error(
+                ValueError,
+                "turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value."
+            )
 
         self.turbine_definitions = copy.deepcopy(value)
         for i, val in enumerate(value):
@@ -95,10 +110,7 @@ class Farm(BaseClass):
                 _floris_dir = Path(__file__).parent.parent
                 fname = _floris_dir / "turbine_library" / f"{val}.yaml"
                 if not Path.is_file(fname):
-                    self.error(
-                        ValueError,
-                        "User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val)
-                    )
+                    raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
                 self.turbine_definitions[i] = load_yaml(fname)
 
                 # This is a temporary block of code that catches that ref_density_cp_ct is not defined
@@ -160,9 +172,9 @@ class Farm(BaseClass):
         self.rotor_diameters_sorted = np.take_along_axis(self.rotor_diameters * template_shape, sorted_coord_indices, axis=2)
         self.TSRs_sorted = np.take_along_axis(self.TSRs * template_shape, sorted_coord_indices, axis=2)
         self.pPs_sorted = np.take_along_axis(self.pPs * template_shape, sorted_coord_indices, axis=2)
-        self.turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]
+        turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]
         self.turbine_type_map_sorted = np.take_along_axis(
-            np.reshape(self.turbine_type_names_sorted * n_wind_directions, np.shape(sorted_coord_indices)),
+            np.reshape(turbine_type_names_sorted * n_wind_directions, np.shape(sorted_coord_indices)),
             sorted_coord_indices,
             axis=2
         )
