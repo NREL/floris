@@ -11,11 +11,13 @@
 # the License.
 
 import copy
-import numpy as np
-import time
-import sys
+from typing import Type
 
-from floris.simulation import Farm
+import attrs
+import numpy as np
+from attrs import define, field
+
+from floris.simulation import Farm, flow_field
 from floris.simulation import TurbineGrid, FlowFieldGrid
 from floris.simulation import Ct, axial_induction
 from floris.simulation import FlowField
@@ -26,6 +28,24 @@ from floris.simulation.wake_deflection.gauss import (
     wake_added_yaw,
     yaw_added_turbulence_mixing
 )
+from floris.type_dec import NDArrayFloat
+
+
+def _get_mean_grid(grid: TurbineGrid | FlowFieldGrid, i: int) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
+    """Calculates the mean of the `grid`'s `x_sorted`, `y_sorted`, and `z_sorted` attributes and
+    returns them as a new 5-dimensional object to align with expected internal structures.
+
+    Args:
+        grid (TurbineGrid | FlowFieldGrid): The solver's grid object.
+        i (int): The turbine index that the mean x, y, and z will be computed over.
+
+    Returns:
+        tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]: The mean over axis 3 and 4 at turbine i.
+    """
+    x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))[:, :, :, None, None]
+    y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))[:, :, :, None, None]
+    z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))[:, :, :, None, None]
+    return x_i, y_i, z_i
 
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
@@ -43,7 +63,20 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
     return np.sum(freestream_velocities - wake_velocities > 0.05, axis=(3, 4)) / (y_ngrid * z_ngrid)
 
 
-# @profile
+@define(auto_attribs=True)
+class SequentialSolver:
+    farm: Farm = field(validator=attrs.validators.instance_of(Farm))
+    flow_field: FlowField = field(validator=attrs.validators.instance_of(Farm))
+    grid: TurbineGrid | FlowFieldGrid = field(validator=attrs.validators.instance_of((FlowFieldGrid, TurbineGrid)))
+    model_manager: WakeModelManager = field(validator=attrs.validators.instance_of(WakeModelManager))
+    full_flow: bool = field(validator=attrs.validators.instance_of(bool))
+
+    def _full_flow_init(self):
+        if not isinstance(grid, FlowFieldGrid):
+            raise TypeError("When `full_flow` is True, `grid` must be a `FlowFieldGrid`, not `TurbineGrid`.")
+
+
+
 def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
@@ -67,12 +100,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
     for i in range(grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i, y_i, z_i = _get_mean_grid(grid, i)
 
         u_i = flow_field.u_sorted[:, :, i:i+1]
         v_i = flow_field.v_sorted[:, :, i:i+1]
@@ -257,12 +285,7 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
     for i in range(flow_field_grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i, y_i, z_i = _get_mean_grid(turbine_grid, i)
 
         u_i = turbine_grid_flow_field.u_sorted[:, :, i:i+1]
         v_i = turbine_grid_flow_field.v_sorted[:, :, i:i+1]
@@ -386,12 +409,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
     for i in range(grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i, y_i, z_i = _get_mean_grid(grid, i)
 
         mask2 = np.array(grid.x_sorted < x_i + 0.01) * np.array(grid.x_sorted > x_i - 0.01) * np.array(grid.y_sorted < y_i + 0.51*126.0) * np.array(grid.y_sorted > y_i - 0.51*126.0)
         # mask2 = np.logical_and(np.logical_and(np.logical_and(grid.x_sorted < x_i + 0.01, grid.x_sorted > x_i - 0.01), grid.y_sorted < y_i + 0.51*126.0), grid.y_sorted > y_i - 0.51*126.0)
@@ -590,12 +608,7 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
     for i in range(flow_field_grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i, y_i, z_i = _get_mean_grid(turbine_grid, i)
 
         u_i = turbine_grid_flow_field.u_sorted[:, :, i:i+1]
         v_i = turbine_grid_flow_field.v_sorted[:, :, i:i+1]
@@ -718,12 +731,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i, y_i, z_i = _get_mean_grid(grid, i)
 
         u_i = flow_field.u_sorted[:, :, i:i+1]
         v_i = flow_field.v_sorted[:, :, i:i+1]
