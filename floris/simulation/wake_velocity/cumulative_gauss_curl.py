@@ -81,9 +81,9 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
 
         sigma_n = wake_expansion(
             delta_x,
-            turbine_Ct[:, :, ii : ii + 1],
-            turbine_ti[:, :, ii : ii + 1],
-            turbine_diameter[:, :, ii : ii + 1],
+            turbine_Ct[:, :, ii:ii+1],
+            turbine_ti[:, :, ii:ii+1],
+            turbine_diameter[:, :, ii:ii+1],
             self.a_s,
             self.b_s,
             self.c_s1,
@@ -110,29 +110,29 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         sum_lbda = np.zeros_like(u_initial)
 
         for m in range(0, ii - 1):
-            x_coord_m = x_coord[:, :, m : m + 1]
-            y_coord_m = y_coord[:, :, m : m + 1]
-            z_coord_m = z_coord[:, :, m : m + 1]
+            x_coord_m = x_coord[:, :, m:m+1]
+            y_coord_m = y_coord[:, :, m:m+1]
+            z_coord_m = z_coord[:, :, m:m+1]
 
             # For computing crossplanes, we don't need to compute downstream
             # turbines from out crossplane position.
-            if x_coord[:, :, m : m + 1].size == 0:
+            if x_coord[:, :, m:m+1].size == 0:
                 break
 
             delta_x_m = x - x_coord_m
 
             sigma_i = wake_expansion(
                 delta_x_m,
-                turbine_Ct[:, :, m : m + 1],
-                turbine_ti[:, :, m : m + 1],
-                turbine_diameter[:, :, m : m + 1],
+                turbine_Ct[:, :, m:m+1],
+                turbine_ti[:, :, m:m+1],
+                turbine_diameter[:, :, m:m+1],
                 self.a_s,
                 self.b_s,
                 self.c_s1,
                 self.c_s2,
             )
 
-            S_i = sigma_n**2 + sigma_i**2
+            S_i = sigma_n ** 2 + sigma_i ** 2
 
             Y_i = (y_i_loc - y_coord_m - deflection_field) ** 2 / (2 * S_i)
             Z_i = (z_i_loc - z_coord_m) ** 2 / (2 * S_i)
@@ -159,10 +159,10 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         # blondel
         # super gaussian
         # b_f = self.b_f1 * np.exp(self.b_f2 * TI) + self.b_f3
-        x_tilde = np.abs(delta_x) / turbine_diameter[:, :, ii : ii + 1]
+        x_tilde = np.abs(delta_x) / turbine_diameter[:, :, ii:ii+1]
         r_tilde = (
             np.sqrt((y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2)
-            / turbine_diameter[:, :, ii : ii + 1]
+            / turbine_diameter[:, :, ii:ii+1]
         )
 
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
@@ -171,7 +171,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
 
         # based on Blondel model, modified to include cumulative effects
         tmp = a2 - (
-            (n * turbine_Ct[:, :, ii : ii + 1])
+            (n * turbine_Ct[:, :, ii:ii+1])
             * cosd(turbine_yaw)
             / (16.0 * gamma(2 / n) * np.sign(sigma_n) * (np.abs(sigma_n) ** (4 / n)) * (1 - sum_lbda) ** 2)
         )
@@ -190,15 +190,12 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         xR = yR * tand(turbine_yaw) + x_i
 
         # add turbines together
-        velDef = C * np.exp((-1 * r_tilde**n) / (2 * sigma_n**2))
+        velDef = C * np.exp((-1 * r_tilde ** n) / (2 * sigma_n ** 2))
 
         velDef = velDef * (x - xR >= 0.1)
 
         turb_u_wake = turb_u_wake + turb_avg_vels * velDef
-        return (
-            turb_u_wake,
-            Ctmp,
-        )
+        return (turb_u_wake, Ctmp)
 
 
 def wake_expansion(
