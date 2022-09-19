@@ -118,6 +118,7 @@ class GaussVelocityDeflection(BaseModel):
 
         return M0, E0, sigma_y0, sigma_z0
 
+    # @profile
     def function(
         self,
         x_i: np.ndarray,
