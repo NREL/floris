@@ -74,7 +74,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         turbine_yaw = yaw_i
 
         # TODO Should this be cbrt? This is done to match v2
-        turb_avg_vels = np.cbrt(np.mean(u_i**3, axis=(3, 4)))
+        turb_avg_vels = np.cbrt(np.mean(u_i ** 3, axis=(3, 4)))
         turb_avg_vels = turb_avg_vels[:, :, :, None, None]
 
         delta_x = x - x_i
@@ -137,7 +137,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
             Y_i = (y_i_loc - y_coord_m - deflection_field) ** 2 / (2 * S_i)
             Z_i = (z_i_loc - z_coord_m) ** 2 / (2 * S_i)
 
-            lbda = 1.0 * sigma_i**2 / S_i * np.exp(-Y_i) * np.exp(-Z_i)
+            lbda = 1.0 * sigma_i ** 2 / S_i * np.exp(-Y_i) * np.exp(-Z_i)
 
             sum_lbda = sum_lbda + lbda * (Ctmp[m] / u_initial)
 

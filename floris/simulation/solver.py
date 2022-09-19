@@ -205,7 +205,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
+            np.sqrt(ti_added ** 2 + ambient_turbulence_intensity ** 2), turbine_turbulence_intensity
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -549,7 +549,7 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
+            np.sqrt(ti_added ** 2 + ambient_turbulence_intensity ** 2), turbine_turbulence_intensity
         )
 
         flow_field.v_sorted += v_wake
@@ -905,7 +905,7 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
+            np.sqrt(ti_added ** 2 + ambient_turbulence_intensity ** 2), turbine_turbulence_intensity
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field

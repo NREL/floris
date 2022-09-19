@@ -110,7 +110,7 @@ class GaussVelocityDeflection(BaseModel):
         # wake expansion parameters
         C0 = 1 - u0 / freestream_velocity
         M0 = C0 * (2 - C0)
-        E0 = ne.evaluate("C0**2 - 3 * exp(1.0 / 12.0) * C0 + 3 * exp(1.0 / 3.0)")
+        E0 = ne.evaluate("C0 ** 2 - 3 * exp(1.0 / 12.0) * C0 + 3 * exp(1.0 / 3.0)")
 
         # initial Gaussian wake expansion
         sigma_z0 = ne.evaluate("rotor_diameter_i * 0.5 * sqrt(uR / (freestream_velocity + u0))")
@@ -253,8 +253,8 @@ def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=F
     vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
     Gamma_bottom = -1 * scale_factor * gamma(D, vel_bottom, Uinf, Ct, scale)
 
-    turbine_average_velocity = np.cbrt(np.mean(u_i**3, axis=(3, 4)))[:, :, :, None, None]
-    Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI**2) * turbine_average_velocity / TSR
+    turbine_average_velocity = np.cbrt(np.mean(u_i ** 3, axis=(3, 4)))[:, :, :, None, None]
+    Gamma_wake_rotation = 0.25 * 2 * np.pi * D * (aI - aI ** 2) * turbine_average_velocity / TSR
     return Gamma_top, Gamma_bottom, Gamma_wake_rotation
 
 
@@ -297,9 +297,9 @@ def _calculate_vortex(
 
     z_mid = HH if which == "rotation" else (HH + (D if which == "top" else -D) / 2)
     z = z_i + (z_mid if ground else -z_mid)  # noqa: F841
-    r = ne.evaluate("yLocs**2 + z**2")  # noqa: F841  # TODO: This is in the paper
+    r = ne.evaluate("yLocs ** 2 + z ** 2")  # noqa: F841  # TODO: This is in the paper
     # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
-    core_shape = ne.evaluate("1 - exp(-r / (eps**2))")  # noqa: F841
+    core_shape = ne.evaluate("1 - exp(-r / (eps ** 2))")  # noqa: F841
 
     V = ne.evaluate("(Gamma * z) / (2 * pi * r) * core_shape")
     V = V * decay if with_decay else np.mean(V, axis=(3, 4))
@@ -417,9 +417,9 @@ def calculate_transverse_velocity(
     lmda = D / 8
     kappa = 0.41
     lm = kappa * z / (1 + kappa * z / lmda)
-    nu = lm**2 * np.abs(dudz_initial)  # noqa: F841
+    nu = lm ** 2 * np.abs(dudz_initial)  # noqa: F841
 
-    decay = ne.evaluate("eps**2 / (4 * nu * delta_x / Uinf + eps**2)")  # This is the decay downstream
+    decay = ne.evaluate("eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)")  # This is the decay downstream
     yLocs = delta_y + BaseModel.NUM_EPS
 
     # top vortex
@@ -468,7 +468,7 @@ def yaw_added_turbulence_mixing(u_i, I_i, v_i, w_i, turb_v_i, turb_w_i):
 
     I_i = I_i[:, :, 0, 0, 0]
 
-    average_u_i = np.cbrt(np.mean(u_i**3, axis=(2, 3, 4)))
+    average_u_i = np.cbrt(np.mean(u_i ** 3, axis=(2, 3, 4)))
 
     # Convert ambient turbulence intensity to TKE (eq 24)
     k = (average_u_i * I_i) ** 2 / (2 / 3)
@@ -478,7 +478,7 @@ def yaw_added_turbulence_mixing(u_i, I_i, v_i, w_i, turb_v_i, turb_w_i):
     w_term = np.mean(w_i + turb_w_i, axis=(2, 3, 4))
 
     # Compute the new TKE (eq 23)
-    k_total = 0.5 * (u_term**2 + v_term**2 + w_term**2)
+    k_total = 0.5 * (u_term ** 2 + v_term ** 2 + w_term ** 2)
 
     # Convert TKE back to TI
     I_total = np.sqrt((2 / 3) * k_total) / average_u_i

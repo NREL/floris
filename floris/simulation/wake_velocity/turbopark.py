@@ -162,10 +162,10 @@ def characteristic_wake_width(x_dist, TI, Cts, A):
         * TI
         / beta
         * (
-            ne.evaluate("sqrt((alpha + beta * x_dist) ** 2 + 1) - sqrt(1 + alpha**2)")
+            ne.evaluate("sqrt((alpha + beta * x_dist) ** 2 + 1) - sqrt(1 + alpha ** 2)")
             - (
                 ne.evaluate("log((sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)")
-                - ne.evaluate("log((sqrt(1 + alpha**2) + 1) * (alpha + beta * x_dist))")
+                - ne.evaluate("log((sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_dist))")
             )
         )
     )
