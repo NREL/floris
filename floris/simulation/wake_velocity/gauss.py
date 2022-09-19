@@ -98,9 +98,9 @@ class GaussVelocityDeficit(BaseModel):
         # Masks
         # When we have only an inequality, the current turbine may be applied its own wake in cases where numerical precision
         # cause in incorrect comparison. We've applied a small bump to avoid this. "0.1" is arbitrary but it is a small, non zero value.
-        near_wake_mask = (x > xR + 0.1) * (
-            x < x0
-        )  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
+        
+        # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
+        near_wake_mask = (x > xR + 0.1) * (x < x0)
         far_wake_mask = x >= x0
 
         # Compute the velocity deficit in the NEAR WAKE region
@@ -117,14 +117,12 @@ class GaussVelocityDeficit(BaseModel):
             near_wake_ramp_down = (x0 - x) / (x0 - xR)
             # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
 
-            sigma_y = (
-                near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
-            )
+            sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
+            sigma_y += near_wake_ramp_up * sigma_y0
             sigma_y = sigma_y * (x >= xR) + np.ones_like(sigma_y) * (x < xR) * 0.5 * rotor_diameter_i
 
-            sigma_z = (
-                near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
-            )
+            sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
+            sigma_y += near_wake_ramp_up * sigma_z0
             sigma_z = sigma_z * (x >= xR) + np.ones_like(sigma_z) * (x < xR) * 0.5 * rotor_diameter_i
 
             r, C = rC(
