@@ -574,6 +574,7 @@ class FlorisInterface(LoggerBase):
 
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
+            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             pP=self.floris.farm.pPs,
@@ -781,6 +782,74 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(wind_speeds=wind_speeds)
 
         return aep
+
+    def get_farm_AEP_wind_rose_class(
+        self,
+        wind_rose,
+        cut_in_wind_speed=0.001,
+        cut_out_wind_speed=None,
+        yaw_angles=None,
+        no_wake=False,
+    ) -> float:
+        """
+        Estimate annual energy production (AEP) for distributions of wind speed, wind
+        direction, frequency of occurrence, and yaw offset.
+
+        Args:
+            wind_rose (wind_rose): An object of the wind rose class
+            cut_in_wind_speed (float, optional): Wind speed in m/s below which
+                any calculations are ignored and the wind farm is known to 
+                produce 0.0 W of power. Note that to prevent problems with the
+                wake models at negative / zero wind speeds, this variable must
+                always have a positive value. Defaults to 0.001 [m/s].
+            cut_out_wind_speed (float, optional): Wind speed above which the
+                wind farm is known to produce 0.0 W of power. If None is
+                specified, will assume that the wind farm does not cut out
+                at high wind speeds. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional):
+                The relative turbine yaw angles in degrees. If None is
+                specified, will assume that the turbine yaw angles are all
+                zero degrees for all conditions. Defaults to None.
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the wake to
+                the flow field. This can be useful when quantifying the loss
+                in AEP due to wakes. Defaults to *False*.
+
+        Returns:
+            float: 
+                The Annual Energy Production (AEP) for the wind farm in
+                watt-hours.
+        """
+
+        # Hold the starting values of wind speed and direction
+        wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
+        wind_directions = np.array(self.floris.flow_field.wind_directions, copy=True)
+
+        # Now set FLORIS wind speed and wind direction
+        # over to those values in the wind rose class
+        wind_speeds_wind_rose = wind_rose.df.ws.unique()
+        wind_directions_wind_rose = wind_rose.df.wd.unique()
+        self.reinitialize(wind_speeds=wind_speeds_wind_rose, wind_directions=wind_directions_wind_rose)
+
+        # Build the frequency matrix from wind rose
+        freq = wind_rose.df.set_index(['wd','ws']).unstack().values
+
+        # Now compute aep
+        aep = self.get_farm_AEP(
+            freq,
+            cut_in_wind_speed=cut_in_wind_speed,
+            cut_out_wind_speed=cut_out_wind_speed,
+            yaw_angles=yaw_angles,
+            no_wake=no_wake)
+
+
+        # Reset the FLORIS object to the original wind speed and directions
+        self.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
+        
+
+        return aep
+
+
 
     @property
     def layout_x(self):

@@ -259,6 +259,7 @@ def test_power():
     wind_speed = 10.0
     p = power(
         air_density=AIR_DENSITY,
+        ref_density_cp_ct=AIR_DENSITY,
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         pP=turbine.pP * np.ones((1, 1, 1)),

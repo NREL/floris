@@ -111,10 +111,9 @@ class LayoutOptimizationScipy(LayoutOptimization):
         # Parse the layout coordinates
         layout_x = locs[0 : self.nturbs]
         layout_y = locs[self.nturbs : 2 * self.nturbs]
-        layout_array = (layout_x, layout_y)
 
         # Update the turbine map in floris
-        self.fi.reinitialize(layout=layout_array)
+        self.fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
     def _generate_constraints(self):
         tmp1 = {
