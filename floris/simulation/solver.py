@@ -31,21 +31,31 @@ from floris.simulation.wake_deflection.gauss import (
 from floris.type_dec import NDArrayFloat
 
 
-def _get_mean_grid(grid: TurbineGrid | FlowFieldGrid, i: int) -> tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]:
-    """Calculates the mean of the `grid`'s `x_sorted`, `y_sorted`, and `z_sorted` attributes and
-    returns them as a new 5-dimensional object to align with expected internal structures.
+def _expansion_mean(x: NDArrayFloat) -> NDArrayFloat:
+    """Calculates the mean of the `x` over axis (3, 4) and returns the result as a new 5-dimensional
+    object to align with expected internal structures.
 
     Args:
-        grid (TurbineGrid | FlowFieldGrid): The solver's grid object.
-        i (int): The turbine index that the mean x, y, and z will be computed over.
+        x (NDArrayFloat): An array to calculate the mean.
 
     Returns:
-        tuple[NDArrayFloat, NDArrayFloat, NDArrayFloat]: The mean over axis 3 and 4 at turbine i.
+        NDArrayFloat: The mean over axis 3 and 4 at turbine i and expandd to 5 dimensions.
     """
-    x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))[:, :, :, None, None]
-    y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))[:, :, :, None, None]
-    z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))[:, :, :, None, None]
-    return x_i, y_i, z_i
+    return np.mean(x, axis=(3, 4))[:, :, :, None, None]
+
+
+def _expansion_mean_i(x: NDArrayFloat, i: int) -> NDArrayFloat:
+    """Calculates the mean of the `x` over axis (3, 4) at turbine index `i` and returns the result
+    as a new 5-dimensional object to align with expected internal structures.
+
+    Args:
+        x (NDArrayFloat): An array to calculate the mean.
+        i (int): The turbine index for where to compute the mean.
+
+    Returns:
+        NDArrayFloat: The mean over axis 3 and 4 at turbine i and expandd to 5 dimensions.
+    """
+    return _expansion_mean(x[:, :, i:i+1])
 
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
@@ -173,7 +183,9 @@ class SequentialSolver(Solver):
         # Calculate the velocity deficit sequentially from upstream to downstream turbines
         for i in range(grid.n_turbines):
             # Get the current turbine quantities
-            x_i, y_i, z_i = _get_mean_grid(grid, i)
+            x_i = _expansion_mean_i(grid.x_sorted, i)
+            y_i = _expansion_mean_i(grid.y_sorted, i)
+            z_i = _expansion_mean_i(grid.z_sorted, i)
             u_i = flow_field.u_sorted[:, :, i:i+1]
             v_i = flow_field.v_sorted[:, :, i:i+1]
 
@@ -304,8 +316,7 @@ class SequentialSolver(Solver):
             flow_field.w_sorted += w_wake
 
         if not full_flow:
-            flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3, 4))
-            flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:, :, :, None, None]
+            flow_field.turbulence_intensity_field = _expansion_mean(turbine_turbulence_intensity)
 
 
 @define(auto_attribs=True)
@@ -320,16 +331,19 @@ class CCSolver(Solver):
         *,
         full_flow: bool = False,
         farm: Farm,
-        flow_field: FlowFieldGrid = None,
+        flow_field: FlowField = None,
         grid: TurbineGrid | FlowFieldGrid = None
     ) -> None:
-        
+
         if farm is None:
             farm = self.farm
         if flow_field is None:
             flow_field = self.flow_field
         if grid is None:
             grid = self.grid
+
+        gch_gain = 1.0
+        scale_factor = 2.0
 
         # <<interface>>
         deflection_model_args = self.model_manager.deflection_model.prepare_function(grid, flow_field)
@@ -339,9 +353,13 @@ class CCSolver(Solver):
         v_wake = np.zeros_like(flow_field.v_initial_sorted)
         w_wake = np.zeros_like(flow_field.w_initial_sorted)
         turb_u_wake = np.zeros_like(flow_field.u_initial_sorted)
-        turb_inflow_field = copy.deepcopy(flow_field.u_initial_sorted)
 
-        turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
+        # Not needed for full flow solve, but isn't necessary to have in an if statement
+        turb_inflow_field = copy.deepcopy(flow_field.u_initial_sorted)
+        turbine_turbulence_intensity = np.full(
+            (flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1),
+            flow_field.turbulence_intensity
+        )
         ambient_turbulence_intensity = flow_field.turbulence_intensity
 
         Ctmp = np.zeros((farm.n_turbines,) + np.shape(flow_field.u_initial_sorted))
@@ -351,6 +369,8 @@ class CCSolver(Solver):
 
             # Get the current turbine quantities
             x_i, y_i, z_i = _get_mean_grid(grid, i)
+            u_i = turbine_inflow_field[:, :, i:i+1]
+            v_i = flow_field.v_sorted[:, :, i:i+1]
 
             if not full_flow:
                 mask = (
@@ -359,11 +379,9 @@ class CCSolver(Solver):
                     * (grid.y_sorted < y_i + 0.51 * 126.0)
                     * (grid.y_sorted > y_i - 0.51 * 126.0)
                 )
-                turb_inflow_field = turb_inflow_field * ~mask + (flow_field.u_initial_sorted - turb_u_wake) * mask
+                turb_inflow_field *= ~mask + (flow_field.u_initial_sorted - turb_u_wake) * mask
 
             turbine_inflow_field = flow_field.u_sorted if full_flow else turb_inflow_field
-            u_i = turbine_inflow_field[:, :, i:i+1]
-            v_i = flow_field.v_sorted[:, :, i:i+1]
 
             turb_avg_vels = average_velocity(turb_inflow_field)
             turb_Cts = Ct(
@@ -372,13 +390,15 @@ class CCSolver(Solver):
                 farm.turbine_fCts,
                 turbine_type_map=farm.turbine_type_map_sorted,
             )[:, :, :, None, None]
-            turb_aIs = axial_induction(
-                turb_avg_vels,
-                farm.yaw_angles_sorted,
-                farm.turbine_fCts,
-                turbine_type_map=farm.turbine_type_map_sorted,
-                ix_filter=[i],
-            )[:, :, :, None, None]
+            
+            if not full_flow:
+                turb_aIs = axial_induction(
+                    turb_avg_vels,
+                    farm.yaw_angles_sorted,
+                    farm.turbine_fCts,
+                    turbine_type_map=farm.turbine_type_map_sorted,
+                    ix_filter=[i],
+                )[:, :, :, None, None]
 
             axial_induction_i = axial_induction(
                 velocities=flow_field.u_sorted,
@@ -407,7 +427,7 @@ class CCSolver(Solver):
                     turb_Cts[:, :, i:i+1],
                     TSR_i,
                     axial_induction_i,
-                    scale=2.0,
+                    scale=scale_factor,
                 )
 
             # Model calculations
@@ -436,7 +456,7 @@ class CCSolver(Solver):
                     turb_Cts[:, :, i:i+1],
                     TSR_i,
                     axial_induction_i,
-                    scale=2.0
+                    scale=scale_factor,
                 )
 
             if full_flow:
@@ -451,9 +471,9 @@ class CCSolver(Solver):
                         v_wake[:, :, i:i+1],
                         w_wake[:, :, i:i+1],
                     )
-                    gch_gain = 1.0
                     turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
 
+            # NOTE: exponential
             turb_u_wake, Ctmp = self.model_manager.velocity_model.function(
                 i,
                 x_i,
@@ -508,7 +528,7 @@ class CCSolver(Solver):
         flow_field.u_sorted = flow_field.u_initial_sorted - turb_u_wake if full_flow else turb_inflow_field
 
         if not full_flow:
-            flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3, 4))[:, :, :, None, None]
+            flow_field.turbulence_intensity_field = _expansion_mean(turbine_turbulence_intensity)
 
 
 
