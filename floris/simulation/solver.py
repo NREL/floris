@@ -803,6 +803,7 @@ class TurbOParkSolver(Solver):
 
         flow_field.turbulence_intensity_field = _expansion_mean(turbine_turbulence_intensity)
 
+# Turn off flake8 for the original code
 # flake8: noqa
 def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
