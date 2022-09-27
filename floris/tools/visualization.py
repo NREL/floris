@@ -23,6 +23,9 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
 
+def show_plots():
+    plt.show()
+
 def plot_turbines(ax, layout_x, layout_y, yaw_angles, rotor_diameters, color=None, wind_direction=270.0):
     """
     Plot wind plant layout from turbine locations.
