@@ -166,9 +166,8 @@ def wrap_180(x):
     Returns:
         np.array: Shifted values.
     """
-    x = np.where(x <= -180.0, x + 360.0, x)
-    x = np.where(x > 180.0, x - 360.0, x)
-    return x
+
+    return ( (x + 180.) % 360.) - 180.
 
 
 def wrap_360(x):
@@ -181,9 +180,8 @@ def wrap_360(x):
     Returns:
         np.array: Shifted values.
     """
-    x = np.where(x < 0.0, x + 360.0, x)
-    x = np.where(x >= 360.0, x - 360.0, x)
-    return x
+    
+    return x % 360.0
 
 
 def wind_delta(wind_directions):
