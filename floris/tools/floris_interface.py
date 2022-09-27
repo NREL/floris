@@ -601,11 +601,9 @@ class FlorisInterface(LoggerBase):
         )
         return turbine_ais
 
-    def get_turbine_average_velocities(self) -> NDArrayFloat:
-        turbine_avg_vels = average_velocity(
-            velocities=self.floris.flow_field.u,
-        )
-        return turbine_avg_vels
+    @property
+    def turbine_average_velocities(self) -> NDArrayFloat:
+        return average_velocity(velocities=self.floris.flow_field.u)
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field

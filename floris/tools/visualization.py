@@ -54,23 +54,26 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, rotor_diameters, color=Non
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def plot_turbines_with_fi(ax, fi, color=None):
+def plot_turbines_with_fi(fi, ax=None, color=None, yaw_angles=None):
     """
     Wrapper function to plot turbines which extracts the data
     from a FLORIS interface object
 
     Args:
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes. Defaults
-            to None.
         fi (:py:class:`floris.tools.flow_data.FlowData`):
                 FlowData object.
+        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.
         color (str, optional): Color to plot turbines
     """
+    if not ax:
+        fig, ax = plt.subplots()
+    if yaw_angles is None:
+        yaw_angles = fi.floris.farm.yaw_angles
     plot_turbines(
         ax,
         fi.layout_x,
         fi.layout_y,
-        fi.floris.farm.yaw_angles[0, 0],
+        yaw_angles[0, 0],
         fi.floris.farm.rotor_diameters[0, 0],
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
@@ -103,8 +106,10 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
     Zm = np.ma.masked_where(np.isnan(u_mesh), u_mesh)
     rcParams["contour.negative_linestyle"] = "solid"
 
-    # # Plot the cut-through
-    ax.contour(x1_mesh, x2_mesh, Zm, levels=levels, colors=colors, **kwargs)
+    # Plot the cut-through
+    contours = ax.contour(x1_mesh, x2_mesh, Zm, levels=levels, colors=colors, **kwargs)
+
+    ax.clabel(contours, contours.levels, inline=True, fontsize=10, colors="black")
 
     # Make equal axis
     ax.set_aspect("equal")
@@ -119,7 +124,8 @@ def visualize_cut_plane(
     cmap="coolwarm",
     levels=None,
     color_bar=False,
-    title=""
+    title="",
+    kwargs={}
 ):
     """
     Generate pseudocolor mesh plot of the cut_plane.
@@ -170,7 +176,7 @@ def visualize_cut_plane(
     im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed, shading="nearest")
 
     # Add line contour
-    line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="w", linewidths=0.8, alpha=0.3)
+    line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="b", linewidths=0.8, alpha=0.3, **kwargs)
 
     if cut_plane.normal_vector == "x":
         ax.invert_xaxis()
@@ -267,6 +273,7 @@ def plot_rotor_values(
         return_fig_objects (bool): Indicator to return the primary figure objects for
             further editing, default False.
         save_path (str | None): Where to save the figure, if a value is provided.
+        t_range is turbine range; i.e. the turbine index to loop over
 
     Returns:
         None | tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]: If
@@ -275,9 +282,9 @@ def plot_rotor_values(
 
     Example:
         from floris.tools.visualization import plot_rotor_values
-        plot_rotor_values(floris.flow_field.u, wd_range=range(0,1), ws_range=range(0,1))
-        plot_rotor_values(floris.flow_field.v, wd_range=range(0,1), ws_range=range(0,1))
-        plot_rotor_values(floris.flow_field.w, wd_range=range(0,1), ws_range=range(0,1), show=True)
+        plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0)
+        plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0)
+        plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, show=True)
     """
 
     cmap = plt.cm.get_cmap(name=cmap)
@@ -288,15 +295,13 @@ def plot_rotor_values(
     fig = plt.figure()
     axes = fig.subplots(n_rows, n_cols)
 
-    indices = t_range
-    titles = np.array([f"T{i}" for i in indices])
+    titles = np.array([f"T{i}" for i in t_range])
 
-    for ax, t, i in zip(axes.flatten(), titles, indices):
+    for ax, t, i in zip(axes.flatten(), titles, t_range):
 
         vmin = np.min(values[wd_index, ws_index])
         vmax = np.max(values[wd_index, ws_index])
 
-        bounds = np.linspace(vmin, vmax, 31)
         norm = mplcolors.Normalize(vmin, vmax)
 
         ax.imshow(values[wd_index, ws_index, i].T, cmap=cmap, norm=norm, origin="lower")
