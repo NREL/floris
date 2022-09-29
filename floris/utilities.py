@@ -167,7 +167,7 @@ def wrap_180(x):
         np.array: Shifted values.
     """
 
-    return ( (x + 180.) % 360.) - 180.
+    return ((x + 180.0) % 360.0) - 180.0
 
 
 def wrap_360(x):
