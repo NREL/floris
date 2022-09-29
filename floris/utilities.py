@@ -164,7 +164,7 @@ def wrap_180(x):
         x (numeric or np.array): Scalar value or np.array of values to shift.
 
     Returns:
-        np.array: Shifted values.
+        np.ndarray | float | int: Shifted values.
     """
 
     return ((x + 180.0) % 360.0) - 180.0
@@ -178,7 +178,7 @@ def wrap_360(x):
         x (numeric or np.array): Scalar value or np.array of values to shift.
 
     Returns:
-        np.array: Shifted values.
+        np.ndarray | float | int: Shifted values.
     """
     
     return x % 360.0
