@@ -55,8 +55,8 @@ def test_tand():
 
 
 def test_wrap_180():
-    assert wrap_180(-180.0) == 180.0
-    assert wrap_180(180.0) == 180.0
+    assert wrap_180(-180.0) == -180.0
+    assert wrap_180(180.0) == -180.0
     assert wrap_180(-181.0) == 179.0
     assert wrap_180(-179.0) == -179.0
     assert wrap_180(179.0) == 179.0
