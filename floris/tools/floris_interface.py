@@ -71,7 +71,7 @@ class FlorisInterface(LoggerBase):
 
         # Make a check on reference height and provide a helpful warning
         unique_heights = np.unique(self.floris.farm.hub_heights)
-        if (len(unique_heights) == 1) and (self.floris.flow_field.reference_wind_height != unique_heights[0]):
+        if (len(unique_heights) == 1) and (np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6):
             err_msg = "The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height."
             self.logger.warning(err_msg, stack_info=True)
 
