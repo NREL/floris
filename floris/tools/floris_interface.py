@@ -66,11 +66,11 @@ class FlorisInterface(LoggerBase):
         self.floris.flow_field.het_map = het_map
 
         # If ref height is -1, assign the hub height
-        if self.floris.flow_field.reference_wind_height == -1:
+        if np.abs(self.floris.flow_field.reference_wind_height + 1.0) < 1.0e-6:
             self.assign_hub_height_to_ref_height()
 
         # Make a check on reference height and provide a helpful warning
-        unique_heights = np.unique(self.floris.farm.hub_heights)
+        unique_heights = np.unique(np.round(self.floris.farm.hub_heights, decimals=6))
         if (len(unique_heights) == 1) and (np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6):
             err_msg = "The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height."
             self.logger.warning(err_msg, stack_info=True)
