@@ -54,7 +54,10 @@ class Grid(ABC):
     Args:
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind data is a time series.
     """
     turbine_coordinates: list[Vec3] = field()
     reference_turbine_diameter: float
