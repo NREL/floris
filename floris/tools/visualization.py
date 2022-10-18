@@ -119,8 +119,8 @@ def visualize_cut_plane(
     cut_plane,
     ax=None,
     vel_component='u',
-    minSpeed=None,
-    maxSpeed=None,
+    min_speed=None,
+    max_speed=None,
     cmap="coolwarm",
     levels=None,
     color_bar=False,
@@ -135,9 +135,9 @@ def visualize_cut_plane(
             plane through wind plant.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
             to None.
-        minSpeed (float, optional): Minimum value of wind speed for
+        min_speed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
-        maxSpeed (float, optional): Maximum value of wind speed for
+        max_speed (float, optional): Maximum value of wind speed for
             contours. Defaults to None.
         cmap (str, optional): Colormap specifier. Defaults to
             'coolwarm'.
@@ -150,22 +150,22 @@ def visualize_cut_plane(
         fig, ax = plt.subplots()
     if vel_component=='u':
         vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if minSpeed is None:
-            minSpeed = cut_plane.df.u.min()
-        if maxSpeed is None:
-            maxSpeed = cut_plane.df.u.max()
+        if min_speed is None:
+            min_speed = cut_plane.df.u.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.u.max()
     elif vel_component=='v':
         vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if minSpeed is None:
-            minSpeed = cut_plane.df.v.min()
-        if maxSpeed is None:
-            maxSpeed = cut_plane.df.v.max()
+        if min_speed is None:
+            min_speed = cut_plane.df.v.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.v.max()
     elif vel_component=='w':
         vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if minSpeed is None:
-            minSpeed = cut_plane.df.w.min()
-        if maxSpeed is None:
-            maxSpeed = cut_plane.df.w.max()
+        if min_speed is None:
+            min_speed = cut_plane.df.w.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.w.max()
 
     # Reshape to 2d for plotting
     x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
@@ -173,7 +173,7 @@ def visualize_cut_plane(
     Zm = np.ma.masked_where(np.isnan(vel_mesh), vel_mesh)
 
     # Plot the cut-through
-    im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=minSpeed, vmax=maxSpeed, shading="nearest")
+    im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=min_speed, vmax=max_speed, shading="nearest")
 
     # Add line contour
     line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="b", linewidths=0.8, alpha=0.3, **kwargs)
@@ -194,7 +194,7 @@ def visualize_cut_plane(
     return im
 
 
-def visualize_quiver(cut_plane, ax=None, minSpeed=None, maxSpeed=None, downSamp=1, **kwargs):
+def visualize_quiver(cut_plane, ax=None, min_speed=None, max_speed=None, downSamp=1, **kwargs):
     """
     Visualize the in-plane flows in a cut_plane using quiver.
 
@@ -203,9 +203,9 @@ def visualize_quiver(cut_plane, ax=None, minSpeed=None, maxSpeed=None, downSamp=
             plane through wind plant.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
             to None.
-        minSpeed (float, optional): Minimum value of wind speed for
+        min_speed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
-        maxSpeed (float, optional): Maximum value of wind speed for
+        max_speed (float, optional): Maximum value of wind speed for
             contours. Defaults to None.
         downSamp (int, optional): Down sample the number of quiver arrows
             from underlying grid.
