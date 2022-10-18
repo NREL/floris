@@ -13,7 +13,6 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import enum
 import matplotlib.pyplot as plt
 import numpy as np
 
