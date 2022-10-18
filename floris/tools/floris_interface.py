@@ -117,15 +117,16 @@ class FlorisInterface(LoggerBase):
             track_n_upstream_wakes (bool, optional): When *True*, will keep track of the
                 number of upstream wakes a turbine is experiencing. Defaults to *False*.
         """
-        # self.floris.flow_field.calculate_wake(
-        #     no_wake=no_wake,
-        #     points=points,
-        #     track_n_upstream_wakes=track_n_upstream_wakes,
-        # )
 
-        # TODO decide where to handle this sign issue
-        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
-            self.floris.farm.yaw_angles = yaw_angles
+        if yaw_angles is None:
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            )
+        self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
         self.floris.initialize_domain()
