@@ -1,10 +1,4 @@
----
-layout: default
-title: Workflow
-nav_order: 1
----
-
-# Developer workflows and interaction
+# Developer's Guide
 
 FLORIS is maintained at NREL's National Wind Technology Center.
 We are excited about community contribution, and this page outlines
@@ -12,7 +6,8 @@ processes and procedures to follow when contributing to the
 source code. For technical questions regarding FLORIS usage, please
 post your questions to [GitHub Discussions](https://github.com/NREL/floris/discussions).
 
-## Git and GitHub
+
+## Git and GitHub Workflows
 
 The majority of the collaboration and development for FLORIS takes place
 in the [GitHub repository](http://github.com/nrel/floris). There,
@@ -36,27 +31,26 @@ research at NREL. From time to time, developers of FLORIS using their own
 may want to sync with NREL/FLORIS. To do this, use the following git commands:
 
 ```bash
+# Move into the FLORIS source code directory;
+# this may be named differently on your computer.
+cd floris/
 
-    # Move into the FLORIS source code directory;
-    # this may be named differently on your computer.
-    cd floris/
+# Find the remote name that corresponds to
+# NREL/FLORIS; usually "origin" or "upstream".
+git remote -v
 
-    # Find the remote name that corresponds to
-    # NREL/FLORIS; usually "origin" or "upstream".
-    git remote -v
+# Fetch the changes on all remotes.
+git fetch --all
 
-    # Fetch the changes on all remotes.
-    git fetch --all
+# Decide which branch to sync with
+# NREL/FLORIS. Generally, this will be "main".
+git checkout main
+git pull origin main
 
-    # Decide which branch to sync with
-    # NREL/FLORIS. Generally, this will be "main".
-    git checkout main
-    git pull origin main
-
-    # Update any local working branches with the
-    # latest from NREL/FLORIS.
-    git checkout feature/working_branch
-    git merge main
+# Update any local working branches with the
+# latest from NREL/FLORIS.
+git checkout feature/working_branch
+git merge main
 ```
 
 Note that the example above is a general case and may need to be modified

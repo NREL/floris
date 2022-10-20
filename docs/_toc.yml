@@ -1,0 +1,13 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+chapters:
+- file: installation
+- file: background_concepts
+- file: examples
+- file: dev_guide
+- file: code_quality
+# - file: notebooks
+# - file: markdown-notebooks
