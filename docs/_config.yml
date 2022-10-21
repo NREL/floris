@@ -3,7 +3,7 @@
 
 title: FLORIS
 author: National Renewable Energy Laboratory
-# logo: logo.png
+logo: gch.gif
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
