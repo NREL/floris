@@ -1,3 +1,4 @@
+(installation)=
 # Installation
 
 **If upgrading from v2, it is highly recommended to install FLORIS V3 into a new virtual environment**.

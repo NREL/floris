@@ -13,31 +13,32 @@ Since FLORIS v3, the documentation is migrating to https://nrel.github.io/floris
 but this is a work in progress. For context and background on previous work in
 FLORIS, see the legacy documentation at http://floris.readthedocs.io/.
 
+**Table of Contents**
 ```{tableofcontents}
 ```
 
 ## Quick Start
 
-FLORIS is distributed via `pip`, and can be installed with the following command:
+FLORIS is a Python package run on the command line typically by providing
+an input file with an initial configuration. It can be installed with
+```pip install floris``` (see [](installation)). The typical entry point is the `FlorisInterface`
+object which accepts the path to the input file as an argument. Changes
+can be made to the initial configuration through the
+`FlorisInterface.reinitialize` routine, and the
+simulation is executed with `FlorisInterface.calculate_wake`.
 
-```bash
-pip install floris
+```python
+from floris.tools import FlorisInterface
+fi = FlorisInterface("path/to/input.yaml")
+fi.reinitialize(wind_directions=[i for i in range(10)])
+fi.calculate_wake()
 ```
 
-
-
-
-
-
-
-
-## Getting Started
-
-A series of examples is included in the [examples/](https://github.com/NREL/floris/tree/main/examples)
-directory. These are ordered from simplest to most complex. They demonstrate various
-use cases of FLORIS, and generally provide a good starting point for building a more
-complex simulation.
-
+Finally, results can be analyzed via post-processing functions such as
+`FlorisInterface.get_turbine_layout`, `FlorisInterface.get_turbine_powers`,
+and `FlorisInterface.get_farm_AEP`. Additionally, a visualization package is
+available in `floris.tools.visualization`. A collection of examples are
+included in the repository and described in detail in [](examples).
 
 ## Engaging on GitHub
 
@@ -54,24 +55,3 @@ details for a feature request. [Q&A](https://github.com/NREL/floris/discussions/
 is where to get usage support.
 [Show and tell](https://github.com/NREL/floris/discussions/categories/show-and-tell) is a free-form
 space to show off the things you are doing with FLORIS.
-
-# License
-
-Copyright 2022 NREL
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-
-
-
-
