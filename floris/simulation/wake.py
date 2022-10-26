@@ -29,6 +29,7 @@ from floris.simulation.wake_velocity import (
     GaussVelocityDeficit,
     JensenVelocityDeficit,
     TurbOParkVelocityDeficit,
+    GaussGeometricVelocityDeficit,
 )
 
 
@@ -52,7 +53,8 @@ MODEL_MAP = {
         "cc": CumulativeGaussCurlVelocityDeficit,
         "gauss": GaussVelocityDeficit,
         "jensen": JensenVelocityDeficit,
-        "turbopark": TurbOParkVelocityDeficit
+        "turbopark": TurbOParkVelocityDeficit,
+        "geometric": GaussGeometricVelocityDeficit,
     },
 }
 

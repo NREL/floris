@@ -214,6 +214,34 @@ class GaussVelocityDeflection(BaseModel):
 
         return deflection
 
+@define
+class GaussGeometricDeflection(BaseModel):
+
+    ad: float = field(converter=float, default=0.0)
+    bd: float = field(converter=float, default=0.0)
+    alpha: float = field(converter=float, default=0.58)
+    beta: float = field(converter=float, default=0.077)
+    ka: float = field(converter=float, default=0.38)
+    kb: float = field(converter=float, default=0.004)
+    dm: float = field(converter=float, default=1.0)
+    eps_gain: float = field(converter=float, default=0.2)
+    use_secondary_steering: bool = field(converter=bool, default=True)
+
+    def prepare_function(
+        self,
+        grid: Grid,
+        flow_field: FlowField,
+    ) -> Dict[str, Any]:
+
+        kwargs = dict(
+            x=grid.x_sorted,
+            y=grid.y_sorted,
+            z=grid.z_sorted,
+            freestream_velocity=flow_field.u_initial_sorted,
+            wind_veer=flow_field.wind_veer,
+        )
+        return kwargs
+
 
 ## GCH components
 

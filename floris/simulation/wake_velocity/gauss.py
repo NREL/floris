@@ -173,6 +173,101 @@ class GaussVelocityDeficit(BaseModel):
 
         return velocity_deficit
 
+@define
+class GaussGeometricVelocityDeficit(BaseModel):
+
+    ky: list = field(default=[0.01]) # TODO: set default
+    breakpoint: list = field(default=[]) 
+    sigma_y0: float = field(default=100.0) # TODO: set default
+
+    def prepare_function(
+        self,
+        grid: Grid,
+        flow_field: FlowField,
+    ) -> Dict[str, Any]:
+
+        kwargs = dict(
+            x=grid.x_sorted,
+            y=grid.y_sorted,
+            z=grid.z_sorted,
+            u_initial=flow_field.u_initial_sorted,
+            wind_veer=flow_field.wind_veer
+        )
+        return kwargs
+
+    def function(
+        self,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        z_i: np.ndarray,
+        axial_induction_i: np.ndarray,
+        deflection_field_i: np.ndarray,
+        yaw_angle_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
+        hub_height_i: float,
+        rotor_diameter_i: np.ndarray,
+        # enforces the use of the below as keyword arguments and adherence to the
+        # unpacking of the results from prepare_function()
+        *,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        u_initial: np.ndarray,
+        wind_veer: float
+    ) -> None:
+
+        # yaw_angle is all turbine yaw angles for each wind speed
+        # Extract and broadcast only the current turbine yaw setting
+        # for all wind speeds
+
+        # Opposite sign convention in this model
+        yaw_angle = -1 * yaw_angle_i
+
+        # Initialize the velocity deficit
+        uR = u_initial * ct_i / ( 2.0 * (1 - np.sqrt(1 - ct_i) ) )
+        u0 = u_initial * np.sqrt(1 - ct_i)
+
+        # Initial lateral bounds
+        #sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+        sigma_y0 = self.sigma_y0
+        sigma_z0 = self.sigma_y0
+
+        # No specific near, far wakes in this model
+        downstream_mask = np.array(x > x_i + 0.1)
+
+        # Initialize the velocity deficit array
+        velocity_deficit = np.zeros_like(u_initial)
+
+
+        # Wake expansion in the lateral (y) and the vertical (z)
+        ky = self.ky[0]  # wake expansion parameters
+        kz = self.ky[0]  # wake expansion parameters
+        sigma_y = ky * (x - x_i) + sigma_y0
+        sigma_z = kz * (x - x_i) + sigma_z0
+
+        r, C = rCalt(
+            wind_veer,
+            sigma_y,
+            sigma_z,
+            y,
+            y_i,
+            deflection_field_i,
+            z,
+            hub_height_i,
+            ct_i,
+            yaw_angle,
+            rotor_diameter_i,
+            sigma_y0,
+            sigma_z0
+        )
+
+        wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
+
+        velocity_deficit += wake_deficit * downstream_mask
+
+        return velocity_deficit
+
 
 # @profile
 def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
@@ -206,6 +301,18 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
     d = np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0)
+    C = ne.evaluate("1 - sqrt(d)")
+    return r, C
+
+def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D, sigma_y0, sigma_z0):
+
+    ## Numexpr
+    wind_veer = np.deg2rad(wind_veer)
+    a = ne.evaluate("cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)")
+    b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
+    c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
+    r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
+    d = 1 - Ct * (sigma_y0 * sigma_z0)/(sigma_y * sigma_z)
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
 
