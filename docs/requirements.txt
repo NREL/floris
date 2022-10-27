@@ -3,4 +3,5 @@ matplotlib
 numpy
 sphinx-autoapi
 sphinx-autodoc-typehints
+sphinxcontrib-autoyaml
 -r ../requirements.txt

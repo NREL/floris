@@ -7,6 +7,7 @@ chapters:
 - file: installation
 - file: background_concepts
 - file: examples
+- file: input_reference
 - file: dev_guide
 - file: api_docs
 - file: code_quality

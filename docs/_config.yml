@@ -41,11 +41,13 @@ sphinx:
   - 'sphinx.ext.autodoc'
   - 'sphinx.ext.viewcode'
   - 'sphinx_autodoc_typehints'
+  - 'sphinxcontrib.autoyaml'
   config:
     language: 'python'
     autoapi_dirs:
     - '../floris'
     autoapi_add_toctree_entry: true
+    autoyaml_level: 3
 
     # autoapi_add_objects_to_toctree: true  # WARNING: unknown config value 'autoapi_add_objects_to_toctree' in override, ignoring
     # autoapi_keep_files: true
