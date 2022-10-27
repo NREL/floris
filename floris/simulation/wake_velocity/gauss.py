@@ -176,9 +176,10 @@ class GaussVelocityDeficit(BaseModel):
 @define
 class GaussGeometricVelocityDeficit(BaseModel):
 
-    ky: list = field(default=[0.01]) # TODO: set default
-    breakpoint: list = field(default=[]) 
-    sigma_y0: float = field(default=100.0) # TODO: set default
+    wake_expansion_rates: list = field(default=[0.01]) # TODO: set default
+    breakpoints_D: list = field(default=[]) # TODO: set default
+    sigma_y0_D: float = field(default=1.0) # TODO: check default
+    smoothing_length_D: float = field(default=2.0) # TODO: check default
 
     def prepare_function(
         self,
@@ -230,21 +231,31 @@ class GaussGeometricVelocityDeficit(BaseModel):
 
         # Initial lateral bounds
         #sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-        sigma_y0 = self.sigma_y0
-        sigma_z0 = self.sigma_y0
+        sigma_y0 = self.sigma_y0_D * rotor_diameter_i
+        sigma_z0 = self.sigma_y0_D * rotor_diameter_i
 
         # No specific near, far wakes in this model
         downstream_mask = np.array(x > x_i + 0.1)
+        upstream_mask = np.array(x < x_i - 0.1)
 
         # Initialize the velocity deficit array
         velocity_deficit = np.zeros_like(u_initial)
 
 
         # Wake expansion in the lateral (y) and the vertical (z)
-        ky = self.ky[0]  # wake expansion parameters
-        kz = self.ky[0]  # wake expansion parameters
-        sigma_y = ky * (x - x_i) + sigma_y0
-        sigma_z = kz * (x - x_i) + sigma_z0
+        #ky = self.ky[0]  # wake expansion parameters
+        #kz = self.ky[0]  # wake expansion parameters
+        #sigma_y = ky * (x - x_i) + sigma_y0
+        #sigma_z = kz * (x - x_i) + sigma_z0
+        sigma_y = geometric_model_wake_width(
+            x-x_i, 
+            self.wake_expansion_rates, 
+            [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
+            sigma_y0, 
+            self.smoothing_length_D*rotor_diameter_i,
+        )
+        sigma_y[upstream_mask] = sigma_y0.flatten()
+        sigma_z = sigma_y # Do I want a separate z model eventually?
 
         r, C = rCalt(
             wind_veer,
@@ -323,3 +334,18 @@ def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine
 
 def gaussian_function(C, r, n, sigma):
     return C * np.exp(-1 * r ** n / (2 * sigma ** 2))
+
+def sigmoid_integral(x, center=0, width=1):
+    w = width/(2*np.log(0.95/0.05))
+    return w*np.log(np.exp((x-center)/w) + 1)
+
+def geometric_model_wake_width(x, wake_expansion_rates, breakpoints, sigma_0, smoothing_length):
+    assert len(wake_expansion_rates) == len(breakpoints) + 1, \
+        "Invalid combination of wake_expansion_rates and breakpoints."
+
+    sigma = wake_expansion_rates[0] * x + sigma_0
+    for ib, b in enumerate(breakpoints):
+        sigma += (wake_expansion_rates[ib+1]-wake_expansion_rates[ib]) * \
+            sigmoid_integral(x, center=b, width=smoothing_length) 
+
+    return sigma
