@@ -13,10 +13,6 @@ Since FLORIS v3, the documentation is migrating to https://nrel.github.io/floris
 but this is a work in progress. For context and background on previous work in
 FLORIS, see the legacy documentation at http://floris.readthedocs.io/.
 
-**Table of Contents**
-```{tableofcontents}
-```
-
 ## Quick Start
 
 FLORIS is a Python package run on the command line typically by providing
