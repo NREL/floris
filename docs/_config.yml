@@ -50,5 +50,20 @@ sphinx:
     language: 'python'
     autoyaml_level: 3
     autosummary_generate: true
-    autodoc_member_order: 'bysource'
-    autodoc_typehints: 'both'
+
+    # Autodoc config reference
+    # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
+    autodoc_default_options:
+      members: true
+      member-order: bysource
+      undoc-members: true
+      private-members: true
+      # special-members: true
+      # inherited-members
+      # show-inheritance
+      # ignore-module-all
+      # imported-members: true
+      # exclude-members
+      # class-doc-from
+      # no-value
+    autodoc_typehints: both
