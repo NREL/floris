@@ -82,8 +82,12 @@ def power(
     ref_density_cp_ct: float,
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
+    tilt_angle: NDArrayFloat,
+    ref_tilt_cp_ct: NDArrayFloat,
     pP: float,
+    pT: float,
     power_interp: NDArrayObject,
+    tilt_interp: NDArrayObject,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -131,21 +135,46 @@ def power(
         ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
+        tilt_angle = tilt_angle[:, :, ix_filter]
         pP = pP[:, :, ix_filter]
+        pT = pT[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
 
-    # Compute the yaw effective velocity
+    # Compute the rotor effective velocity adjusting for air density
+    rotor_effective_velocities = ((air_density/ref_density_cp_ct)**(1/3)) * average_velocity(velocities)
+
+    # Compute the rotor effective velocity adjusting for yaw settings
     pW = pP / 3.0  # Convert from pP to w
-    yaw_effective_velocity = ((air_density/ref_density_cp_ct)**(1/3)) * average_velocity(velocities) * cosd(yaw_angle) ** pW
+    rotor_effective_velocities *= cosd(yaw_angle) ** pW
+
+    # Compute the tilt, if using floating turbines
+    # Loop over each turbine type given to get tilt angles for all turbines
+    tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
+    tilt_interp = dict(tilt_interp)
+    turb_types = np.unique(turbine_type_map)
+    for turb_type in turb_types:
+        # If no tilt interpolation is specified, assume no modification to tilt
+        if tilt_interp[turb_type] is None:
+            break
+        # Using a masked array, apply the tilt angle for all turbines of the current
+        # type to the main tilt angle array
+        else:
+            tilt_angles += tilt_interp[turb_type](rotor_effective_velocities) * np.array(turbine_type_map == turb_type)
+
+    if np.sum(tilt_angles) != 0:
+        tilt_angle = tilt_angles
+
+    # Compute the rotor effective velocity adjusting for tilt
+    rotor_effective_velocities *= cosd(tilt_angle - ref_tilt_cp_ct) ** (pT / 3.0)
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
-    p = np.zeros(np.shape(yaw_effective_velocity))
+    p = np.zeros(np.shape(rotor_effective_velocities))
     power_interp = dict(power_interp)
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
+        p += power_interp[turb_type](rotor_effective_velocities) * np.array(turbine_type_map == turb_type)
 
     return p * ref_density_cp_ct
 
@@ -301,6 +330,38 @@ class PowerThrustTable(FromDictMixin):
 
 
 @define
+class TiltTable(FromDictMixin):
+    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
+
+    Args:
+        tilt (NDArrayFloat): The tilt angle at a given windspeed.
+        wind_speeds (NDArrayFloat): Windspeed values, m/s.
+
+    Raises:
+        ValueError: Raised if tilt and wind_speeds are not all 1-d array-like shapes.
+        ValueError: Raised if tilt and wind_speeds don't have the same number of values.
+    """
+    tilt: NDArrayFloat = field(converter=floris_array_converter)
+    wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
+
+    def __attrs_post_init__(self) -> None:
+        # Validate the power, thrust, and wind speed inputs.
+
+        inputs = (self.tilt, self.wind_speeds)
+
+        if any(el.ndim > 1 for el in inputs):
+            raise ValueError("tilt and wind_speed inputs must be 1-D.")
+
+        if len( set( (self.tilt.size, self.wind_speeds.size) ) ) > 1:        
+            raise ValueError("tilt and wind_speed tables must be the same size.")
+        
+        # Remove any duplicate wind speed entries
+        _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
+        object.__setattr__(self, "tilt", self.tilt[duplicate_filter])
+        object.__setattr__(self, "wind_speeds", self.wind_speeds[duplicate_filter])
+
+
+@define
 class Turbine(BaseClass):
     """
     Turbine is a class containing objects pertaining to the individual
@@ -348,8 +409,9 @@ class Turbine(BaseClass):
     TSR: float
     generator_efficiency: float
     ref_density_cp_ct: float
+    ref_tilt_cp_ct: float
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
-
+    floating_tilt_table: NDArrayFloat = field(default={'tilt': [None], 'wind_speeds': [None]}, converter=TiltTable.from_dict)
 
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
@@ -361,6 +423,7 @@ class Turbine(BaseClass):
     fCp_interp: interp1d = field(init=False)
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
+    tilt_interp: interp1d = field(init=False)
 
 
     # For the following parameters, use default values if not user-specified
@@ -399,6 +462,19 @@ class Turbine(BaseClass):
             fill_value=(0.0001, 0.9999),
             bounds_error=False,
         )
+
+        # If defined, create a tilt interpolation function for floating turbines.
+        # fill_value currently set to apply the min or max tilt angles if outside
+        # of the interpolation range.
+        if not np.isnan(self.floating_tilt_table.tilt).all():
+            self.fTilt_interp = interp1d(
+            self.floating_tilt_table.wind_speeds,
+            self.floating_tilt_table.tilt,
+            fill_value=(0.0, self.floating_tilt_table.tilt[-1]),
+            bounds_error=False,
+        )
+        else:
+            self.fTilt_interp = None
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:

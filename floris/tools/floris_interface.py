@@ -101,6 +101,7 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
+        tilt_angles: NDArrayFloat | list[float] | None = None,
         # points: NDArrayFloat | list[float] | None = None,
         # track_n_upstream_wakes: bool = False,
     ) -> None:
@@ -110,6 +111,8 @@ class FlorisInterface(LoggerBase):
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+            tilt_angles (NDArrayFloat | list[float] | None, optional): Turbine tilt angles.
                 Defaults to None.
             points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
                 coordinates at which the flow field velocity is to be recorded. Defaults
@@ -126,6 +129,12 @@ class FlorisInterface(LoggerBase):
         # TODO decide where to handle this sign issue
         if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
             self.floris.farm.yaw_angles = yaw_angles
+        
+        # TODO is this required?
+        if tilt_angles is not None:
+            self.floris.farm.tilt_angles = tilt_angles
+        else:
+            self.floris.farm.set_tilt_to_ref_tilt()
 
         # Initialize solution space
         self.floris.initialize_domain()
@@ -577,8 +586,12 @@ class FlorisInterface(LoggerBase):
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             pP=self.floris.farm.pPs,
+            pT=self.floris.farm.pTs,
             power_interp=self.floris.farm.turbine_power_interps,
+            tilt_interp=self.floris.farm.turbine_fTilts,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_powers

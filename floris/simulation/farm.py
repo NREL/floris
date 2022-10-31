@@ -50,6 +50,8 @@ class Farm(BaseClass):
     turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
+    tilt_angles: NDArrayFloat = field(init=False)
+    tilt_angles_sorted: NDArrayFloat = field(init=False)
     coordinates: List[Vec3] = field(init=False)
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
@@ -58,6 +60,7 @@ class Farm(BaseClass):
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+    pTs_sorted: NDArrayFloat = field(init=False, default=[])
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
@@ -116,11 +119,17 @@ class Farm(BaseClass):
     def construct_turbine_TSRs(self):
         self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])
 
-    def construc_turbine_pPs(self):
+    def construct_turbine_pPs(self):
         self.pPs = np.array([turb['pP'] for turb in self.turbine_definitions])
 
-    def construc_turbine_ref_density_cp_cts(self):
+    def construct_turbine_pTs(self):
+        self.pTs = np.array([turb['pT'] for turb in self.turbine_definitions])
+
+    def construct_turbine_ref_density_cp_cts(self):
         self.ref_density_cp_cts = np.array([turb['ref_density_cp_ct'] for turb in self.turbine_definitions])
+
+    def construct_turbine_ref_tilt_cp_cts(self):
+        self.ref_tilt_cp_cts = np.array([turb['ref_tilt_cp_ct'] for turb in self.turbine_definitions])
 
     def construct_turbine_map(self):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
@@ -130,6 +139,9 @@ class Farm(BaseClass):
 
     def construct_turbine_fCps(self):
         self.turbine_fCps = [(turb.turbine_type, turb.fCp_interp) for turb in self.turbine_map]
+
+    def construct_turbine_fTilts(self):
+        self.turbine_fTilts = [(turb.turbine_type, turb.fTilt_interp) for turb in self.turbine_map]
 
     def construct_turbine_power_interps(self):
         self.turbine_power_interps = [(turb.turbine_type, turb.power_interp) for turb in self.turbine_map]
@@ -144,7 +156,9 @@ class Farm(BaseClass):
         self.hub_heights_sorted = np.take_along_axis(self.hub_heights * template_shape, sorted_coord_indices, axis=2)
         self.rotor_diameters_sorted = np.take_along_axis(self.rotor_diameters * template_shape, sorted_coord_indices, axis=2)
         self.TSRs_sorted = np.take_along_axis(self.TSRs * template_shape, sorted_coord_indices, axis=2)
+        self.tilt_angles_sorted = np.take_along_axis(self.tilt_angles * template_shape, sorted_coord_indices, axis=2)
         self.pPs_sorted = np.take_along_axis(self.pPs * template_shape, sorted_coord_indices, axis=2)
+        self.pTs_sorted = np.take_along_axis(self.pTs * template_shape, sorted_coord_indices, axis=2)
         self.turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(self.turbine_type_names_sorted * n_wind_directions, np.shape(sorted_coord_indices)),
@@ -157,12 +171,17 @@ class Farm(BaseClass):
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
         self.yaw_angles_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
 
+    def set_tilt_to_ref_tilt(self):
+        self.tilt_angles = np.array([tilt for tilt in self.ref_tilt_cp_cts])
+
     def finalize(self, unsorted_indices):
         self.yaw_angles = np.take_along_axis(self.yaw_angles_sorted, unsorted_indices[:,:,:,0,0], axis=2)
+        self.tilt_angles = np.take_along_axis(self.tilt_angles_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.hub_heights = np.take_along_axis(self.hub_heights_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.rotor_diameters = np.take_along_axis(self.rotor_diameters_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.TSRs = np.take_along_axis(self.TSRs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.pPs = np.take_along_axis(self.pPs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
+        self.pTs = np.take_along_axis(self.pTs_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.turbine_type_map = np.take_along_axis(self.turbine_type_map_sorted, unsorted_indices[:,:,:,0,0], axis=2)
         self.state.USED
 
