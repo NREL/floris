@@ -1,7 +1,7 @@
 (examples)=
 # Examples Index
 
-The FLORIS software repository includes a set of [examples](https://github.com/NREL/floris/tree/main/examples)
+The FLORIS software repository includes a set of [examples/](https://github.com/NREL/floris/tree/main/examples)
 intended to describe most features as well as provide a starting point
 for various analysis methods. These are generally ordered from simplest
 to most complex. The examples and their content are described below.

@@ -69,27 +69,49 @@ the highest directory in the repository. A testing-only class is included
 to provide consistent and convenient inputs to modules at
 `floris/tests/conftest.py`.
 
-### Unit Tests
+Unit tests are integrated into FLORIS with [pytest](https://docs.pytest.org/en/latest/),
+and they can be executed with the following command:
 
-Unit tests are integrated into FLORIS with the
-[pytest](https://docs.pytest.org/en/latest/) framework. These can be executed
-by running the command `pytest tests/*_unit_test.py` from the highest
-directory in the repository.
+```bash
+cd floris/
+pytest tests/*_unit_test.py
+```
 
-### Regression Tests
-
-Regression tests are included in FLORIS through the same
-[pytest](https://docs.pytest.org/en/latest/) framework as the unit tests.
+Regression tests are also included through [pytest](https://docs.pytest.org/en/latest/).
 Functionally, the only difference is that the regression tests take more
 time to execute and exercise a large portion of the software. These can be
-executed by running the command `pytest tests/*_regression_test.py` from the
-highest directory in the repository.
+executed with the following command:
+
+```bash
+cd floris/
+pytest tests/*_regression_test.py
+```
 
 ### Continuous Integration
 
 Continuous integration is configured with [GitHub Actions](https://github.com/nrel/floris/actions)
 and executes all of the existing tests for every push-event. The configuration file
 is located at `floris/.github/workflows/continuous-integration-workflow.yaml`.
+
+## Documentation
+
+The online documentation is built with Jupyter Book which uses Sphinx
+as a framework. It is automatically built and hosted by GitHub, but it
+can also be compiled locally. Additional dependencies are required
+for the documentation, and they are listed in ``docs/requirements.txt``.
+The commands to build the docs are given below. After successfully
+compiling, a file should be located at ``docs/_build/html/index.html``.
+This file can be opened in any browser.
+
+```bash
+pip install -r docs/requirements.txt
+jupyter-book build docs/
+
+# Lots of output to the terminal here...
+
+open docs/_build/html/index.html
+```
+
 
 ## Deploying to pip
 

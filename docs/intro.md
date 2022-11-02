@@ -3,15 +3,10 @@
 FLORIS is a controls-focused wind farm simulation software incorporating
 steady-state engineering wake models into a performance-focused Python
 framework.
-
 The software is in active development and engagement with the development team
 is highly encouraged. If you are interested in using FLORIS to conduct studies
 of a wind farm or extending FLORIS to include your own wake model, please join
 the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/categories/v3-design-discussion)!
-
-Since FLORIS v3, the documentation is migrating to https://nrel.github.io/floris,
-but this is a work in progress. For context and background on previous work in
-FLORIS, see the legacy documentation at http://floris.readthedocs.io/.
 
 ## Quick Start
 
@@ -35,14 +30,14 @@ Finally, results can be analyzed via post-processing functions avilable within
 {py:class}`.FlorisInterface` such as
 {py:meth}`.FlorisInterface.get_turbine_layout`,
 {py:meth}`.FlorisInterface.get_turbine_powers` and
-{py:meth}`.FlorisInterface.get_farm_AEP`.
-Additionally, a visualization package is available in {py:mod}`floris.tools.visualization`.
-A collection of examples are included in the repository and described in
-detail in [](examples).
+{py:meth}`.FlorisInterface.get_farm_AEP`, and
+a visualization package is available in {py:mod}`floris.tools.visualization`.
+A collection of examples are included in the [repository](https://github.com/NREL/floris/tree/main/examples)
+and described in detail in [](examples).
 
 ## Engaging on GitHub
 
-FLORIS leverages the following features of GitHub to coordinate support and development efforts:
+FLORIS leverages the following GitHub features to coordinate support and development efforts:
 
 - [Discussions](https://github.com/NREL/floris/discussions): Collaborate to develop ideas for new use cases, features, and software designs, and get support for usage questions
 - [Issues](https://github.com/NREL/floris/issues): Report potential bugs and well-developed feature requests
