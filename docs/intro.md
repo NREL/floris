@@ -6,7 +6,7 @@ framework.
 The software is in active development and engagement with the development team
 is highly encouraged. If you are interested in using FLORIS to conduct studies
 of a wind farm or extending FLORIS to include your own wake model, please join
-the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/categories/v3-design-discussion)!
+the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/)!
 
 ## Quick Start
 
