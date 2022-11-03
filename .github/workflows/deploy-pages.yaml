@@ -2,10 +2,10 @@ name: deploy-pages
 
 on:
   push:
-    # branches:
-    # - develop
-    # paths:
-    # - docs/**
+    branches:
+    - develop
+    paths:
+    - docs/**
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
 jobs:
