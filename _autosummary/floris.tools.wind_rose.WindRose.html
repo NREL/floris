@@ -1,0 +1,2328 @@
+
+<!DOCTYPE html>
+
+<html lang="python">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>floris.tools.wind_rose.WindRose &#8212; FLORIS</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="floris.type_dec" href="floris.type_dec.html" />
+    <link rel="prev" title="floris.tools.wind_rose" href="floris.tools.wind_rose.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="python">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-L8RGXZCW3F"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-L8RGXZCW3F');
+                </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/gch.gif" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">FLORIS</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    FLORIS Wake Modeling & Wind Farm Controls
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation.html">
+   Installation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../background_concepts.html">
+   Background and Concepts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../examples.html">
+   Examples Index
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../input_reference.html">
+   Input File Reference
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../dev_guide.html">
+   Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../api_docs.html">
+   API Documentation
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="floris.logging_manager.html">
+     floris.logging_manager
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.logging_manager.configure_console_log.html">
+       floris.logging_manager.configure_console_log
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.logging_manager.configure_file_log.html">
+       floris.logging_manager.configure_file_log
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.logging_manager.LoggerBase.html">
+       floris.logging_manager.LoggerBase
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.logging_manager.TracebackInfoFilter.html">
+       floris.logging_manager.TracebackInfoFilter
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="floris.simulation.html">
+     floris.simulation
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.base.html">
+       floris.simulation.base
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.base.BaseClass.html">
+         floris.simulation.base.BaseClass
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.base.BaseModel.html">
+         floris.simulation.base.BaseModel
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.base.State.html">
+         floris.simulation.base.State
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.farm.html">
+       floris.simulation.farm
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.farm.Farm.html">
+         floris.simulation.farm.Farm
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.floris.html">
+       floris.simulation.floris
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
+         floris.simulation.floris.logging_manager
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.flow_field.html">
+       floris.simulation.flow_field
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.flow_field.FlowField.html">
+         floris.simulation.flow_field.FlowField
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.grid.html">
+       floris.simulation.grid
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+      <label for="toctree-checkbox-8">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.FlowFieldGrid.html">
+         floris.simulation.grid.FlowFieldGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.FlowFieldPlanarGrid.html">
+         floris.simulation.grid.FlowFieldPlanarGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.Grid.html">
+         floris.simulation.grid.Grid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
+         floris.simulation.grid.TurbineGrid
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.solver.html">
+       floris.simulation.solver
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+      <label for="toctree-checkbox-9">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.calculate_area_overlap.html">
+         floris.simulation.solver.calculate_area_overlap
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.cc_solver.html">
+         floris.simulation.solver.cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.full_flow_cc_solver.html">
+         floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.full_flow_sequential_solver.html">
+         floris.simulation.solver.full_flow_sequential_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.full_flow_turbopark_solver.html">
+         floris.simulation.solver.full_flow_turbopark_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.sequential_solver.html">
+         floris.simulation.solver.sequential_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.turbopark_solver.html">
+         floris.simulation.solver.turbopark_solver
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.turbine.html">
+       floris.simulation.turbine
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+      <label for="toctree-checkbox-10">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.Ct.html">
+         floris.simulation.turbine.Ct
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.average_velocity.html">
+         floris.simulation.turbine.average_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.axial_induction.html">
+         floris.simulation.turbine.axial_induction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.power.html">
+         floris.simulation.turbine.power
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
+         floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.Turbine.html">
+         floris.simulation.turbine.Turbine
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.wake.html">
+       floris.simulation.wake
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+      <label for="toctree-checkbox-11">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake.WakeModelManager.html">
+         floris.simulation.wake.WakeModelManager
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.wake_combination.html">
+       floris.simulation.wake_combination
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+      <label for="toctree-checkbox-12">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_combination.fls.html">
+         floris.simulation.wake_combination.fls
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_combination.max.html">
+         floris.simulation.wake_combination.max
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_combination.sosfs.html">
+         floris.simulation.wake_combination.sosfs
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.wake_deflection.html">
+       floris.simulation.wake_deflection
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+      <label for="toctree-checkbox-13">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_deflection.gauss.html">
+         floris.simulation.wake_deflection.gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_deflection.jimenez.html">
+         floris.simulation.wake_deflection.jimenez
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_deflection.none.html">
+         floris.simulation.wake_deflection.none
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.wake_turbulence.html">
+       floris.simulation.wake_turbulence
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/>
+      <label for="toctree-checkbox-14">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_turbulence.crespo_hernandez.html">
+         floris.simulation.wake_turbulence.crespo_hernandez
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_turbulence.none.html">
+         floris.simulation.wake_turbulence.none
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.simulation.wake_velocity.html">
+       floris.simulation.wake_velocity
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/>
+      <label for="toctree-checkbox-15">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.cumulative_gauss_curl.html">
+         floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.gauss.html">
+         floris.simulation.wake_velocity.gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.jensen.html">
+         floris.simulation.wake_velocity.jensen
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.none.html">
+         floris.simulation.wake_velocity.none
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.turbopark.html">
+         floris.simulation.wake_velocity.turbopark
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 current active has-children">
+    <a class="reference internal" href="floris.tools.html">
+     floris.tools
+    </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/>
+    <label for="toctree-checkbox-16">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="current">
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.cut_plane.html">
+       floris.tools.cut_plane
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/>
+      <label for="toctree-checkbox-17">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.calculate_power.html">
+         floris.tools.cut_plane.calculate_power
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.calculate_wind_speed.html">
+         floris.tools.cut_plane.calculate_wind_speed
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.change_resolution.html">
+         floris.tools.cut_plane.change_resolution
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.get_plane_from_flow_data.html">
+         floris.tools.cut_plane.get_plane_from_flow_data
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.get_power_profile.html">
+         floris.tools.cut_plane.get_power_profile
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.interpolate_onto_array.html">
+         floris.tools.cut_plane.interpolate_onto_array
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.nudge_outward.html">
+         floris.tools.cut_plane.nudge_outward
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.project_onto.html">
+         floris.tools.cut_plane.project_onto
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.rescale_axis.html">
+         floris.tools.cut_plane.rescale_axis
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.set_origin.html">
+         floris.tools.cut_plane.set_origin
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.subtract.html">
+         floris.tools.cut_plane.subtract
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.wind_speed_profile.html">
+         floris.tools.cut_plane.wind_speed_profile
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.cut_plane.CutPlane.html">
+         floris.tools.cut_plane.CutPlane
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.floris_interface.html">
+       floris.tools.floris_interface
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/>
+      <label for="toctree-checkbox-18">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
+         floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
+         floris.tools.floris_interface.FlorisInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.floris_interface_legacy_reader.html">
+       floris.tools.floris_interface_legacy_reader
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/>
+      <label for="toctree-checkbox-19">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html">
+         floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.interface_utilities.html">
+       floris.tools.interface_utilities
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/>
+      <label for="toctree-checkbox-20">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.interface_utilities.get_params.html">
+         floris.tools.interface_utilities.get_params
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.interface_utilities.get_prop_values.html">
+         floris.tools.interface_utilities.get_prop_values
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.interface_utilities.get_props_subset.html">
+         floris.tools.interface_utilities.get_props_subset
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.interface_utilities.print_prop_docs.html">
+         floris.tools.interface_utilities.print_prop_docs
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.interface_utilities.print_props.html">
+         floris.tools.interface_utilities.print_props
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.interface_utilities.set_params.html">
+         floris.tools.interface_utilities.set_params
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.interface_utilities.show_params.html">
+         floris.tools.interface_utilities.show_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.layout_functions.html">
+       floris.tools.layout_functions
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/>
+      <label for="toctree-checkbox-21">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.layout_functions.build_turbine_loc.html">
+         floris.tools.layout_functions.build_turbine_loc
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.layout_functions.label_line.html">
+         floris.tools.layout_functions.label_line
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.layout_functions.make_turbine_array.html">
+         floris.tools.layout_functions.make_turbine_array
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.layout_functions.set_direction.html">
+         floris.tools.layout_functions.set_direction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.layout_functions.turbineDist.html">
+         floris.tools.layout_functions.turbineDist
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.layout_functions.visualize_layout.html">
+         floris.tools.layout_functions.visualize_layout
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.layout_functions.wakeAngle.html">
+         floris.tools.layout_functions.wakeAngle
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.optimization.html">
+       floris.tools.optimization
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/>
+      <label for="toctree-checkbox-22">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.optimization.layout_optimization.html">
+         floris.tools.optimization.layout_optimization
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.optimization.legacy.html">
+         floris.tools.optimization.legacy
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.optimization.other.html">
+         floris.tools.optimization.other
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.optimization.yaw_optimization.html">
+         floris.tools.optimization.yaw_optimization
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.power_rose.html">
+       floris.tools.power_rose
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/>
+      <label for="toctree-checkbox-23">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.power_rose.PowerRose.html">
+         floris.tools.power_rose.PowerRose
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.rews.html">
+       floris.tools.rews
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/>
+      <label for="toctree-checkbox-24">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.rews.compute_rews.html">
+         floris.tools.rews.compute_rews
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.rews.determine_rews_weights.html">
+         floris.tools.rews.determine_rews_weights
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.rews.log_law_interpolate.html">
+         floris.tools.rews.log_law_interpolate
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.rews.rews_from_df.html">
+         floris.tools.rews.rews_from_df
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.uncertainty_interface.html">
+       floris.tools.uncertainty_interface
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/>
+      <label for="toctree-checkbox-25">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.uncertainty_interface.UncertaintyInterface.html">
+         floris.tools.uncertainty_interface.UncertaintyInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.tools.visualization.html">
+       floris.tools.visualization
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
+      <label for="toctree-checkbox-26">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
+         floris.tools.visualization.line_contour_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.plot_rotor_values.html">
+         floris.tools.visualization.plot_rotor_values
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.plot_turbines.html">
+         floris.tools.visualization.plot_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.plot_turbines_with_fi.html">
+         floris.tools.visualization.plot_turbines_with_fi
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
+         floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">
+         floris.tools.visualization.visualize_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">
+         floris.tools.visualization.visualize_quiver
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 current active has-children">
+      <a class="reference internal" href="floris.tools.wind_rose.html">
+       floris.tools.wind_rose
+      </a>
+      <input checked="" class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/>
+      <label for="toctree-checkbox-27">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul class="current">
+       <li class="toctree-l4 current active">
+        <a class="current reference internal" href="#">
+         floris.tools.wind_rose.WindRose
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="floris.type_dec.html">
+     floris.type_dec
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/>
+    <label for="toctree-checkbox-28">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.attr_floris_filter.html">
+       floris.type_dec.attr_floris_filter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.attr_serializer.html">
+       floris.type_dec.attr_serializer
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
+       floris.type_dec.floris_array_converter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.iter_validator.html">
+       floris.type_dec.iter_validator
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.FromDictMixin.html">
+       floris.type_dec.FromDictMixin
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
+    <label for="toctree-checkbox-29">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.cosd.html">
+       floris.utilities.cosd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.load_yaml.html">
+       floris.utilities.load_yaml
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.pshape.html">
+       floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.rotate_coordinates_rel_west.html">
+       floris.utilities.rotate_coordinates_rel_west
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.sind.html">
+       floris.utilities.sind
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.tand.html">
+       floris.utilities.tand
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.wind_delta.html">
+       floris.utilities.wind_delta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.wrap_180.html">
+       floris.utilities.wrap_180
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.wrap_360.html">
+       floris.utilities.wrap_360
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.Loader.html">
+       floris.utilities.Loader
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.Vec3.html">
+       floris.utilities.Vec3
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../code_quality.html">
+   Code Quality
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/nrel/floris"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.tools.wind_rose.WindRose.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.tools.wind_rose.WindRose.rst"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/_autosummary/floris.tools.wind_rose.WindRose.rst"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>floris.tools.wind_rose.WindRose</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="floris-tools-wind-rose-windrose">
+<h1>floris.tools.wind_rose.WindRose<a class="headerlink" href="#floris-tools-wind-rose-windrose" title="Permalink to this headline">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.tools.wind_rose.</span></span><span class="sig-name descname"><span class="pre">WindRose</span></span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The WindRose class is used to organize information about the frequency of
+occurance of different combinations of wind speed and wind direction (and
+other optimal wind variables). A WindRose object can be used to help
+calculate annual energy production (AEP) when combined with Floris power
+calculations for different wind conditions. Several methods exist for
+populating a WindRose object with wind data. WindRose also contains methods
+for visualizing wind roses.</p>
+<p class="rubric">References</p>
+<span class="target" id="id1"></span><p class="rubric">Methods</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.export_for_floris_opt" title="floris.tools.wind_rose.WindRose.export_for_floris_opt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_for_floris_opt</span></code></a></p></td>
+<td><p>This method returns a list of tuples of at least wind speed, wind direction, and frequency of occurance, which can be used to help loop through different wind conditions for Floris power calculations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.import_from_wind_toolkit_hsds" title="floris.tools.wind_rose.WindRose.import_from_wind_toolkit_hsds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">import_from_wind_toolkit_hsds</span></code></a></p></td>
+<td><p>This method populates the WindRose object using wind data from the WIND Toolkit dataset (<a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a>) for the specified lat/long coordinate in the continental US.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.indices_for_coord" title="floris.tools.wind_rose.WindRose.indices_for_coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices_for_coord</span></code></a></p></td>
+<td><p>This method finds the nearest x/y indices of the WIND Toolkit dataset for a given lat/lon coordinate in the continental US.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.internal_resample_average_ws_by_wd" title="floris.tools.wind_rose.WindRose.internal_resample_average_ws_by_wd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">internal_resample_average_ws_by_wd</span></code></a></p></td>
+<td><p>This internal method calculates the mean wind speed for each specified wind direction bin and resamples the wind rose, resulting in a single mean wind speed per wind direction bin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.internal_resample_column" title="floris.tools.wind_rose.WindRose.internal_resample_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">internal_resample_column</span></code></a></p></td>
+<td><p>Internal method for resampling column into desired bins.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.internal_resample_wind_direction" title="floris.tools.wind_rose.WindRose.internal_resample_wind_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">internal_resample_wind_direction</span></code></a></p></td>
+<td><p>Internal method for resampling wind direction into desired bins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.internal_resample_wind_speed" title="floris.tools.wind_rose.WindRose.internal_resample_wind_speed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">internal_resample_wind_speed</span></code></a></p></td>
+<td><p>Internal method for resampling wind speed into desired bins.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load" title="floris.tools.wind_rose.WindRose.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a></p></td>
+<td><p>This method loads data from a previously saved WindRose pickle file into a WindRose object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_file" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_file</span></code></a></p></td>
+<td><p>This method imports raw wind direction and wind speed data saved in the specified csv file downloaded from the WIND Toolkit application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more information).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_folder" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_folder</span></code></a></p></td>
+<td><p>This method imports raw wind direction and wind speed data saved in csv files in the specified folder downloaded from the WIND Toolkit application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more information).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_hsds</span></code></a></p></td>
+<td><p>This method returns a pandas DataFrame containing hourly wind speed, wind direction, and optionally estimated turbulence intensity data using wind data from the WIND Toolkit dataset (<a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a>) for the specified lat/long coordinate in the continental US.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_user_data</span></code></a></p></td>
+<td><p>This method populates the WindRose object given user-specified observations of wind direction, wind speed, and additional optional variables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_user_dist</span></code></a></p></td>
+<td><p>This method populates the WindRose object given user-specified combinations of wind direction, wind speed, additional optional variables, and the corresponding frequencies of occurance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_weibull</span></code></a></p></td>
+<td><p>Populate WindRose object with an example wind rose with wind speed frequencies given by a Weibull distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.obkv_dset_to_L" title="floris.tools.wind_rose.WindRose.obkv_dset_to_L"><code class="xref py py-obj docutils literal notranslate"><span class="pre">obkv_dset_to_L</span></code></a></p></td>
+<td><p>This function returns an array containing hourly Obukhov lengths from the WIND Toolkit dataset for the specified Lat/Lon coordinate indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder" title="floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_wind_toolkit_folder</span></code></a></p></td>
+<td><p>This method populates the WindRose object given raw wind direction and wind speed data saved in csv files downloaded from the WIND Toolkit application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more information).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_ti_ws" title="floris.tools.wind_rose.WindRose.plot_ti_ws"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_ti_ws</span></code></a></p></td>
+<td><p>This method plots the wind speed frequency distribution of the WindRose object for each turbulence intensity bin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_rose" title="floris.tools.wind_rose.WindRose.plot_wind_rose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_rose</span></code></a></p></td>
+<td><p>This method creates a wind rose plot showing the frequency of occurance of the specified wind direction and wind speed bins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_rose_ti" title="floris.tools.wind_rose.WindRose.plot_wind_rose_ti"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_rose_ti</span></code></a></p></td>
+<td><p>This method creates a wind rose plot showing the frequency of occurance of the specified wind direction and turbulence intensity bins.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_all" title="floris.tools.wind_rose.WindRose.plot_wind_speed_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_speed_all</span></code></a></p></td>
+<td><p>This method plots the wind speed frequency distribution of the WindRose object averaged across all wind directions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction" title="floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_speed_by_direction</span></code></a></p></td>
+<td><p>This method plots the wind speed frequency distribution of the WindRose object for each specified wind direction bin center.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.read_wind_rose_csv" title="floris.tools.wind_rose.WindRose.read_wind_rose_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_wind_rose_csv</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_average_ws_by_wd" title="floris.tools.wind_rose.WindRose.resample_average_ws_by_wd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_average_ws_by_wd</span></code></a></p></td>
+<td><p>This method calculates the mean wind speed for each wind direction bin and resamples the wind rose, resulting in a single mean wind speed per wind direction bin.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_column" title="floris.tools.wind_rose.WindRose.resample_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_column</span></code></a></p></td>
+<td><p>This method resamples the specified wind parameter column using the specified bin center values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_wind_direction" title="floris.tools.wind_rose.WindRose.resample_wind_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wind_direction</span></code></a></p></td>
+<td><p>This method resamples the wind direction bins using the specified wind direction bin center values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_wind_speed" title="floris.tools.wind_rose.WindRose.resample_wind_speed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wind_speed</span></code></a></p></td>
+<td><p>This method resamples the wind speed bins using the specified wind speed bin center values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.save" title="floris.tools.wind_rose.WindRose.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a></p></td>
+<td><p>This method saves the WindRose data as a pickle file so that it can be imported into a WindRose object later.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.ti_calculator_IU2" title="floris.tools.wind_rose.WindRose.ti_calculator_IU2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ti_calculator_IU2</span></code></a></p></td>
+<td><p>This function estimates the turbulence intensity corresponding to each Obukhov length value in the input list using the relationship between Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of <span id="id2">[]</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.weibull" title="floris.tools.wind_rose.WindRose.weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weibull</span></code></a></p></td>
+<td><p>This method returns a Weibull distribution corresponding to the input data array (typically wind speed) using the specified Weibull parameters.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.save" title="Permalink to this definition">#</a></dt>
+<dd><p>This method saves the WindRose data as a pickle file so that it can be
+imported into a WindRose object later.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- Path and filename of pickle file to save.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.load" title="Permalink to this definition">#</a></dt>
+<dd><p>This method loads data from a previously saved WindRose pickle file
+into a WindRose object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- Path and filename of pickle file to load.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>Number of wind direction bins.</p></li>
+<li><p>Number of wind speed bins.</p></li>
+<li><p>Wind direction bin size (deg).</p></li>
+<li><p>Wind speed bin size (m/s).</p></li>
+<li><p>List of wind direction bin center values (deg).</p></li>
+<li><p>List of wind speed bin center values (m/s).</p></li>
+<li><p>DataFrame containing at least the following columns:</p>
+<ul>
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of
+the wind conditions in the other columns.</p></li>
+</ul>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int, int, float, float, np.array, np.array, pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.resample_wind_speed">
+<span class="sig-name descname"><span class="pre">resample_wind_speed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.resample_wind_speed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.resample_wind_speed" title="Permalink to this definition">#</a></dt>
+<dd><p>This method resamples the wind speed bins using the specified wind
+speed bin center values. The frequency values are adjusted accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) -- <p>Wind rose DataFrame containing at least the
+following columns:</p>
+<ul>
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</p></li>
+<li><p><strong>ws</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- List of new wind speed center bins (m/s).
+Defaults to np.arange(0, 26, 1.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame with the resampled wind speed
+bins and frequencies containing at least the following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - New wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+new wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.internal_resample_wind_speed">
+<span class="sig-name descname"><span class="pre">internal_resample_wind_speed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.internal_resample_wind_speed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.internal_resample_wind_speed" title="Permalink to this definition">#</a></dt>
+<dd><p>Internal method for resampling wind speed into desired bins. The
+frequency values are adjusted accordingly. Modifies data within
+WindRose object without explicit return.</p>
+<p>TODO: make a private method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ws</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Vector of wind speed bin centers for
+the wind rose (m/s). Defaults to np.arange(0, 26, 1.).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.resample_wind_direction">
+<span class="sig-name descname"><span class="pre">resample_wind_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.resample_wind_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.resample_wind_direction" title="Permalink to this definition">#</a></dt>
+<dd><p>This method resamples the wind direction bins using the specified wind
+direction bin center values. The frequency values are adjusted
+accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) -- <p>Wind rose DataFrame containing at least the
+following columns:</p>
+<ul>
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</p></li>
+<li><p><strong>wd</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- List of new wind direction center bins
+(deg). Defaults to np.arange(0, 360, 5.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame with the resampled wind
+direction bins and frequencies containing at least the following
+columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - New wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+new wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.internal_resample_wind_direction">
+<span class="sig-name descname"><span class="pre">internal_resample_wind_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.internal_resample_wind_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.internal_resample_wind_direction" title="Permalink to this definition">#</a></dt>
+<dd><p>Internal method for resampling wind direction into desired bins. The
+frequency values are adjusted accordingly. Modifies data within
+WindRose object without explicit return.</p>
+<p>TODO: make a private method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wd</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Vector of wind direction bin centers for
+the wind rose (deg). Defaults to np.arange(0, 360, 5.).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.resample_column">
+<span class="sig-name descname"><span class="pre">resample_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.resample_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.resample_column" title="Permalink to this definition">#</a></dt>
+<dd><p>This method resamples the specified wind parameter column using the
+specified bin center values. The frequency values are adjusted
+accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) -- <p>Wind rose DataFrame containing at least the
+following columns as well as <em>col</em>:</p>
+<ul>
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</p></li>
+<li><p><strong>col</strong> (<em>str</em>) -- The name of the column to resample.</p></li>
+<li><p><strong>bins</strong> (<em>np.array</em>) -- List of new bin center values for the specified
+column.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame with the resampled wind
+parameter bins and frequencies containing at least the following
+columns as well as <em>col</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+new wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.internal_resample_column">
+<span class="sig-name descname"><span class="pre">internal_resample_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.internal_resample_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.internal_resample_column" title="Permalink to this definition">#</a></dt>
+<dd><p>Internal method for resampling column into desired bins. The frequency
+values are adjusted accordingly. Modifies data within WindRose object
+without explicit return.</p>
+<p>TODO: make a private method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<em>str</em>) -- Name of column to resample.</p></li>
+<li><p><strong>bins</strong> (<em>np.array</em>) -- Vector of bins for the WindRose column.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.resample_average_ws_by_wd">
+<span class="sig-name descname"><span class="pre">resample_average_ws_by_wd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.resample_average_ws_by_wd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.resample_average_ws_by_wd" title="Permalink to this definition">#</a></dt>
+<dd><p>This method calculates the mean wind speed for each wind direction bin
+and resamples the wind rose, resulting in a single mean wind speed per
+wind direction bin. The frequency values are adjusted accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pandas.DataFrame</em>) -- <p>Wind rose DataFrame containing at least the
+following columns:</p>
+<ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame with the resampled wind speed
+bins and frequencies containing at least the following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - The average wind speed for each wind
+direction bin (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+new wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.internal_resample_average_ws_by_wd">
+<span class="sig-name descname"><span class="pre">internal_resample_average_ws_by_wd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.internal_resample_average_ws_by_wd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.internal_resample_average_ws_by_wd" title="Permalink to this definition">#</a></dt>
+<dd><p>This internal method calculates the mean wind speed for each specified
+wind direction bin and resamples the wind rose, resulting in a single
+mean wind speed per wind direction bin. The frequency values are
+adjusted accordingly.</p>
+<p>TODO: make an internal method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wd</strong> (<em>np.arange</em><em>, </em><em>optional</em>) -- Wind direction bin centers (deg).</p></li>
+<li><p><strong>np.arange</strong> (<em>Defaults to</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame with the resampled wind speed
+bins and frequencies containing at least the following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - The average wind speed for each wind
+direction bin (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+new wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.weibull">
+<span class="sig-name descname"><span class="pre">weibull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.weibull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.weibull" title="Permalink to this definition">#</a></dt>
+<dd><p>This method returns a Weibull distribution corresponding to the input
+data array (typically wind speed) using the specified Weibull
+parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.array</em>) -- List of input data (typically binned wind speed
+observations).</p></li>
+<li><p><strong>k</strong> (<em>float</em><em>, </em><em>optional</em>) -- Weibull shape parameter. Defaults to 2.5.</p></li>
+<li><p><strong>lam</strong> (<em>float</em><em>, </em><em>optional</em>) -- Weibull scale parameter. Defaults to 8.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Weibull distribution probabilities corresponding to
+values in the input array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull">
+<span class="sig-name descname"><span class="pre">make_wind_rose_from_weibull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.make_wind_rose_from_weibull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull" title="Permalink to this definition">#</a></dt>
+<dd><p>Populate WindRose object with an example wind rose with wind speed
+frequencies given by a Weibull distribution. The wind direction
+frequencies are initialized according to an example distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wd</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind direciton bin centers (deg). Defaults</p></li>
+<li><p><strong>np.arange</strong> (<em>to</em>) -- </p></li>
+<li><p><strong>ws</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind speed bin centers (m/s). Defaults to
+np.arange(0, 26, 1.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame containing at least the
+following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data">
+<span class="sig-name descname"><span class="pre">make_wind_rose_from_user_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wd_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws_raw</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.make_wind_rose_from_user_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data" title="Permalink to this definition">#</a></dt>
+<dd><p>This method populates the WindRose object given user-specified
+observations of wind direction, wind speed, and additional optional
+variables. The wind parameters are binned and the frequencies of
+occurance of each binned wind condition combination are calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wd_raw</strong> (<em>array-like</em>) -- An array-like list of all wind direction
+observations used to calculate the normalized frequencies (deg).</p></li>
+<li><p><strong>ws_raw</strong> (<em>array-like</em>) -- An array-like list of all wind speed
+observations used to calculate the normalized frequencies (m/s).</p></li>
+<li><p><strong>*args</strong> -- <p>Variable length argument list consisting of a sequence of
+the following alternating arguments:</p>
+<ul>
+<li><p>string - Name of additional wind parameters to include in
+wind rose.</p></li>
+<li><p>array-like - Values of the additional wind parameters used
+to calculate the frequencies of occurance</p></li>
+<li><p>np.array - Bin center values for binning the additional
+wind parameters.</p></li>
+</ul>
+</p></li>
+<li><p><strong>wd</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind direction bin centers (deg). Defaults
+to np.arange(0, 360, 5.).</p></li>
+<li><p><strong>ws</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind speed bin limits (m/s). Defaults to
+np.arange(0, 26, 1.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame containing at least the
+following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.read_wind_rose_csv">
+<span class="sig-name descname"><span class="pre">read_wind_rose_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.read_wind_rose_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.read_wind_rose_csv" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist">
+<span class="sig-name descname"><span class="pre">make_wind_rose_from_user_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wd_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_val</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.make_wind_rose_from_user_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist" title="Permalink to this definition">#</a></dt>
+<dd><p>This method populates the WindRose object given user-specified
+combinations of wind direction, wind speed, additional optional
+variables, and the corresponding frequencies of occurance. The wind
+parameters are binned using the specified wind parameter bin center
+values and the corresponding frequencies of occrance are calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wd_raw</strong> (<em>array-like</em>) -- An array-like list of wind directions
+corresponding to the specified frequencies of occurance (deg).</p></li>
+<li><p><strong>wd_raw</strong> -- An array-like list of wind speeds
+corresponding to the specified frequencies of occurance (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>array-like</em>) -- An array-like list of normalized frequencies
+corresponding to the provided wind parameter combinations.</p></li>
+<li><p><strong>*args</strong> -- <p>Variable length argument list consisting of a sequence of
+the following alternating arguments:</p>
+<ul>
+<li><p>string - Name of additional wind parameters to include in
+wind rose.</p></li>
+<li><p>array-like - Values of the additional wind parameters
+corresponding to the specified frequencies of occurance.</p></li>
+<li><p>np.array - Bin center values for binning the additional
+wind parameters.</p></li>
+</ul>
+</p></li>
+<li><p><strong>wd</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind direction bin centers (deg). Defaults
+to np.arange(0, 360, 5.).</p></li>
+<li><p><strong>ws</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind speed bin centers (m/s). Defaults to
+np.arange(0, 26, 1.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame containing at least the
+following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder">
+<span class="sig-name descname"><span class="pre">parse_wind_toolkit_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_month</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.parse_wind_toolkit_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder" title="Permalink to this definition">#</a></dt>
+<dd><p>This method populates the WindRose object given raw wind direction and
+wind speed data saved in csv files downloaded from the WIND Toolkit
+application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more
+information). The wind parameters are binned using the specified wind
+parameter bin center values and the corresponding frequencies of
+occurance are calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_name</strong> (<em>str</em>) -- Path to the folder containing the WIND Toolkit
+data files.</p></li>
+<li><p><strong>wd</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind direction bin centers (deg). Defaults
+to np.arange(0, 360, 5.).</p></li>
+<li><p><strong>ws</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind speed bin centers (m/s). Defaults to
+np.arange(0, 26, 1.).</p></li>
+<li><p><strong>limit_month</strong> (<em>list</em><em>, </em><em>optional</em>) -- List of ints of month(s) (e.g., 1, 2
+3...) to consider when calculating the wind condition
+frequencies. If none are specified, all months will be used.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame containing the following
+columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.load_wind_toolkit_folder">
+<span class="sig-name descname"><span class="pre">load_wind_toolkit_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_month</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.load_wind_toolkit_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_folder" title="Permalink to this definition">#</a></dt>
+<dd><p>This method imports raw wind direction and wind speed data saved in csv
+files in the specified folder downloaded from the WIND Toolkit
+application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more
+information).</p>
+<p>TODO: make private method?</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_name</strong> (<em>str</em>) -- Path to the folder containing the WIND Toolkit
+csv data files.</p></li>
+<li><p><strong>limit_month</strong> (<em>list</em><em>, </em><em>optional</em>) -- List of ints of month(s) (e.g., 1, 2,
+3...) to consider when calculating the wind condition
+frequencies. If none are specified, all months will be used.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>DataFrame containing the following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Raw wind direction data (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Raw wind speed data (m/s).</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.load_wind_toolkit_file">
+<span class="sig-name descname"><span class="pre">load_wind_toolkit_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_month</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.load_wind_toolkit_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_file" title="Permalink to this definition">#</a></dt>
+<dd><p>This method imports raw wind direction and wind speed data saved in the
+specified csv file downloaded from the WIND Toolkit application (see
+<a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more information).</p>
+<p>TODO: make private method?</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) -- Path to the WIND Toolkit csv file.</p></li>
+<li><p><strong>limit_month</strong> (<em>list</em><em>, </em><em>optional</em>) -- List of ints of month(s) (e.g., 1, 2,
+3...) to consider when calculating the wind condition
+frequencies. If none are specified, all months will be used.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>DataFrame containing the following columns with
+data from the WIND Toolkit file:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Raw wind direction data (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Raw wind speed data (m/s).</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.import_from_wind_toolkit_hsds">
+<span class="sig-name descname"><span class="pre">import_from_wind_toolkit_hsds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ht</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">5.,</span> <span class="pre">10.,</span> <span class="pre">15.,</span> <span class="pre">20.,</span> <span class="pre">25.,</span> <span class="pre">30.,</span> <span class="pre">35.,</span> <span class="pre">40.,</span> <span class="pre">45.,</span> <span class="pre">50.,</span> <span class="pre">55.,</span> <span class="pre">60.,</span> <span class="pre">65.,</span> <span class="pre">70.,</span> <span class="pre">75.,</span> <span class="pre">80.,</span> <span class="pre">85.,</span> <span class="pre">90.,</span> <span class="pre">95.,</span> <span class="pre">100.,</span> <span class="pre">105.,</span> <span class="pre">110.,</span> <span class="pre">115.,</span> <span class="pre">120.,</span> <span class="pre">125.,</span> <span class="pre">130.,</span> <span class="pre">135.,</span> <span class="pre">140.,</span> <span class="pre">145.,</span> <span class="pre">150.,</span> <span class="pre">155.,</span> <span class="pre">160.,</span> <span class="pre">165.,</span> <span class="pre">170.,</span> <span class="pre">175.,</span> <span class="pre">180.,</span> <span class="pre">185.,</span> <span class="pre">190.,</span> <span class="pre">195.,</span> <span class="pre">200.,</span> <span class="pre">205.,</span> <span class="pre">210.,</span> <span class="pre">215.,</span> <span class="pre">220.,</span> <span class="pre">225.,</span> <span class="pre">230.,</span> <span class="pre">235.,</span> <span class="pre">240.,</span> <span class="pre">245.,</span> <span class="pre">250.,</span> <span class="pre">255.,</span> <span class="pre">260.,</span> <span class="pre">265.,</span> <span class="pre">270.,</span> <span class="pre">275.,</span> <span class="pre">280.,</span> <span class="pre">285.,</span> <span class="pre">290.,</span> <span class="pre">295.,</span> <span class="pre">300.,</span> <span class="pre">305.,</span> <span class="pre">310.,</span> <span class="pre">315.,</span> <span class="pre">320.,</span> <span class="pre">325.,</span> <span class="pre">330.,</span> <span class="pre">335.,</span> <span class="pre">340.,</span> <span class="pre">345.,</span> <span class="pre">350.,</span> <span class="pre">355.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_ti</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_month</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_hour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">en_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.import_from_wind_toolkit_hsds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.import_from_wind_toolkit_hsds" title="Permalink to this definition">#</a></dt>
+<dd><p>This method populates the WindRose object using wind data from the WIND
+Toolkit dataset (<a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a>) for the
+specified lat/long coordinate in the continental US. The wind data
+are obtained from the WIND Toolkit dataset using the HSDS service (see
+<a class="reference external" href="https://github.com/NREL/hsds-examples">https://github.com/NREL/hsds-examples</a>). The wind data returned is
+obtained from the nearest 2km x 2km grid point to the input
+coordinate and is limited to the years 2007-2013. The wind parameters
+are binned using the specified wind parameter bin center values and the
+corresponding frequencies of occrance are calculated.</p>
+<dl class="simple">
+<dt>Requires h5pyd package, which can be installed using:</dt><dd><p>pip install --user git+http://github.com/HDFGroup/h5pyd.git</p>
+</dd>
+</dl>
+<p>Then, make a configuration file at ~/.hscfg containing:</p>
+<blockquote>
+<div><p>hs_endpoint = <a class="reference external" href="https://developer.nrel.gov/api/hsds">https://developer.nrel.gov/api/hsds</a></p>
+<p>hs_username = None</p>
+<p>hs_password = None</p>
+<p>hs_api_key = 3K3JQbjZmWctY0xmIfSYvYgtIcM3CN0cb1Y2w9bf</p>
+</div></blockquote>
+<p>The example API key above is for demonstation and is
+rate-limited per IP. To get your own API key, visit
+<a class="reference external" href="https://developer.nrel.gov/signup/">https://developer.nrel.gov/signup/</a>.</p>
+<p>More information can be found at: <a class="reference external" href="https://github.com/NREL/hsds-examples">https://github.com/NREL/hsds-examples</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>float</em>) -- Latitude in degrees.</p></li>
+<li><p><strong>lon</strong> (<em>float</em>) -- Longitude in degrees.</p></li>
+<li><p><strong>ht</strong> (<em>int</em><em>, </em><em>optional</em>) -- The height above ground where wind
+information is obtained (m). Defaults to 100.</p></li>
+<li><p><strong>wd</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind direction bin centers (deg). Defaults
+to np.arange(0, 360, 5.).</p></li>
+<li><p><strong>ws</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- Wind speed bin centers (m/s). Defaults to
+np.arange(0, 26, 1.).</p></li>
+<li><p><strong>include_ti</strong> (<em>bool</em><em>, </em><em>optional</em>) -- Determines whether turbulence
+intensity is included as an additional parameter. If True, TI
+is added as an additional wind rose variable, estimated based
+on the Obukhov length from WIND Toolkit. Defaults to False.</p></li>
+<li><p><strong>limit_month</strong> (<em>list</em><em>, </em><em>optional</em>) -- List of ints of month(s) (e.g., 1, 2,
+3...) to consider when calculating the wind condition
+frequencies. If none are specified, all months will be used.
+Defaults to None.</p></li>
+<li><p><strong>limit_hour</strong> (<em>list</em><em>, </em><em>optional</em>) -- List of ints of hour(s) (e.g., 0, 1,
+... 23) to consider when calculating the wind condition
+frequencies. If none are specified, all hours will be used.
+Defaults to None.</p></li>
+<li><p><strong>st_date</strong> (<em>str</em><em>, </em><em>optional</em>) -- The start date to consider when creating
+the wind rose, formatted as 'MM-DD-YYYY'. If not specified data
+beginning in 2007 will be used. Defaults to None.</p></li>
+<li><p><strong>en_date</strong> (<em>str</em><em>, </em><em>optional</em>) -- The end date to consider when creating
+the wind rose, formatted as 'MM-DD-YYYY'. If not specified data
+through 2013 will be used. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Wind rose DataFrame containing at least the
+following columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Wind direction bin center values (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Wind speed bin center values (m/s).</p></li>
+<li><p><strong>freq_val</strong> (<em>float</em>) - The frequency of occurance of the
+wind conditions in the other columns.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds">
+<span class="sig-name descname"><span class="pre">load_wind_toolkit_hsds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ht</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_ti</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_month</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_hour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">en_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.load_wind_toolkit_hsds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds" title="Permalink to this definition">#</a></dt>
+<dd><p>This method returns a pandas DataFrame containing hourly wind speed,
+wind direction, and optionally estimated turbulence intensity data
+using wind data from the WIND Toolkit dataset
+(<a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a>) for the specified
+lat/long coordinate in the continental US. The wind data are obtained
+from the WIND Toolkit dataset using the HSDS service
+(see <a class="reference external" href="https://github.com/NREL/hsds-examples">https://github.com/NREL/hsds-examples</a>). The wind data returned is
+obtained from the nearest 2km x 2km grid point to the input coordinate
+and is limited to the years 2007-2013.</p>
+<p>TODO: make private method?</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>float</em>) -- Latitude in degrees.</p></li>
+<li><p><strong>lon</strong> (<em>float</em>) -- Longitude in degrees</p></li>
+<li><p><strong>ht</strong> (<em>int</em><em>, </em><em>optional</em>) -- The height above ground where wind
+information is obtained (m). Defaults to 100.</p></li>
+<li><p><strong>include_ti</strong> (<em>bool</em><em>, </em><em>optional</em>) -- Determines whether turbulence
+intensity is included as an additional parameter. If True, TI
+is added as an additional wind rose variable, estimated based
+on the Obukhov length from WIND Toolkit. Defaults to False.</p></li>
+<li><p><strong>limit_month</strong> (<em>list</em><em>, </em><em>optional</em>) -- List of ints of month(s) (e.g., 1, 2,
+3...) to consider when calculating the wind condition
+frequencies. If none are specified, all months will be used.
+Defaults to None.</p></li>
+<li><p><strong>limit_hour</strong> (<em>list</em><em>, </em><em>optional</em>) -- List of ints of hour(s) (e.g., 0, 1,
+... 23) to consider when calculating the wind condition
+frequencies. If none are specified, all hours will be used.
+Defaults to None.</p></li>
+<li><p><strong>st_date</strong> (<em>str</em><em>, </em><em>optional</em>) -- The start date to consider, formatted as
+'MM-DD-YYYY'. If not specified data beginning in 2007 will be
+used. Defaults to None.</p></li>
+<li><p><strong>en_date</strong> (<em>str</em><em>, </em><em>optional</em>) -- The end date to consider, formatted as
+'MM-DD-YYYY'. If not specified data through 2013 will be used.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>DataFrame containing the following columns(abd
+optionally turbulence intensity) with hourly data from WIND Toolkit:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>wd</strong> (<em>float</em>) - Raw wind direction data (deg).</p></li>
+<li><p><strong>ws</strong> (<em>float</em>) - Raw wind speed data (m/s).</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.obkv_dset_to_L">
+<span class="sig-name descname"><span class="pre">obkv_dset_to_L</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obkv_dset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Location_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.obkv_dset_to_L"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.obkv_dset_to_L" title="Permalink to this definition">#</a></dt>
+<dd><p>This function returns an array containing hourly Obukhov lengths from
+the WIND Toolkit dataset for the specified Lat/Lon coordinate indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obkv_dset</strong> (<em>np.ndarray</em>) -- Dataset for Obukhov lengths from WIND
+Toolkit.</p></li>
+<li><p><strong>Location_idx</strong> (<em>tuple</em>) -- A tuple containing the Lat/Lon coordinate
+indices of interest in the Obukhov length dataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array containing Obukhov lengths for each time index
+in the Wind Toolkit dataset (m).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.ti_calculator_IU2">
+<span class="sig-name descname"><span class="pre">ti_calculator_IU2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.ti_calculator_IU2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.ti_calculator_IU2" title="Permalink to this definition">#</a></dt>
+<dd><p>This function estimates the turbulence intensity corresponding to each
+Obukhov length value in the input list using the relationship between
+Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of
+<span id="id3">[]</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>L</strong> (<em>iterable</em>) -- A list of Obukhov Length values (m).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of turbulence intensity values expressed as fractions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.indices_for_coord">
+<span class="sig-name descname"><span class="pre">indices_for_coord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.indices_for_coord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.indices_for_coord" title="Permalink to this definition">#</a></dt>
+<dd><p>This method finds the nearest x/y indices of the WIND Toolkit dataset
+for a given lat/lon coordinate in the continental US. Rather than
+fetching the entire coordinates database, which is 500+ MB, this uses
+the Proj4 library to find a nearby point and then converts to x/y
+indices.</p>
+<p><strong>Note</strong>: This method is obtained directly from:
+<a class="reference external" href="https://github.com/NREL/hsds-examples/blob/master/notebooks/01_WTK_introduction.ipynb">https://github.com/NREL/hsds-examples/blob/master/notebooks/01_WTK_introduction.ipynb</a>,
+where it is called &quot;indicesForCoord.&quot;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>h5pyd.File</em>) -- A HDF5 &quot;file&quot; used to access the WIND Toolkit data.</p></li>
+<li><p><strong>lat_index</strong> (<em>float</em>) -- Latitude coordinate for which dataset indices
+are to be found (degrees).</p></li>
+<li><p><strong>lon_index</strong> (<em>float</em>) -- Longitude coordinate for which dataset indices
+are to be found (degrees).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple containing the Lat/Lon coordinate indices of
+interest in the WIND Toolkit dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.plot_wind_speed_all">
+<span class="sig-name descname"><span class="pre">plot_wind_speed_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.plot_wind_speed_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_all" title="Permalink to this definition">#</a></dt>
+<dd><p>This method plots the wind speed frequency distribution of the WindRose
+object averaged across all wind directions. If no axis is provided, a
+new one is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>, optional) -- Figure axes on
+which data should be plotted. Defaults to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction">
+<span class="sig-name descname"><span class="pre">plot_wind_speed_by_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.plot_wind_speed_by_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction" title="Permalink to this definition">#</a></dt>
+<dd><p>This method plots the wind speed frequency distribution of the WindRose
+object for each specified wind direction bin center. The wind
+directions are resampled using the specified bin centers and the
+frequencies of occurance of the wind conditions are modified
+accordingly. If no axis is provided, a new one is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dirs</strong> (<em>np.array</em>) -- A list of wind direction bin centers for which
+wind speed distributions are plotted (deg).</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>, optional) -- Figure axes on
+which data should be plotted. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.plot_wind_rose">
+<span class="sig-name descname"><span class="pre">plot_wind_rose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws_right_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([5,</span> <span class="pre">10,</span> <span class="pre">15,</span> <span class="pre">20,</span> <span class="pre">25])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">15.,</span> <span class="pre">30.,</span> <span class="pre">45.,</span> <span class="pre">60.,</span> <span class="pre">75.,</span> <span class="pre">90.,</span> <span class="pre">105.,</span> <span class="pre">120.,</span> <span class="pre">135.,</span> <span class="pre">150.,</span> <span class="pre">165.,</span> <span class="pre">180.,</span> <span class="pre">195.,</span> <span class="pre">210.,</span> <span class="pre">225.,</span> <span class="pre">240.,</span> <span class="pre">255.,</span> <span class="pre">270.,</span> <span class="pre">285.,</span> <span class="pre">300.,</span> <span class="pre">315.,</span> <span class="pre">330.,</span> <span class="pre">345.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.plot_wind_rose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.plot_wind_rose" title="Permalink to this definition">#</a></dt>
+<dd><p>This method creates a wind rose plot showing the frequency of occurance
+of the specified wind direction and wind speed bins. If no axis is
+provided, a new one is created.</p>
+<p><strong>Note</strong>: Based on code provided by Patrick Murphy from the University
+of Colorado Boulder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>, optional) -- The figure axes
+on which the wind rose is plotted. Defaults to None.</p></li>
+<li><p><strong>color_map</strong> (<em>str</em><em>, </em><em>optional</em>) -- Colormap to use. Defaults to 'viridis_r'.</p></li>
+<li><p><strong>ws_right_edges</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- The upper bounds of the wind
+speed bins (m/s). The first bin begins at 0. Defaults to
+np.array([5, 10, 15, 20, 25]).</p></li>
+<li><p><strong>wd_bins</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- The wind direction bin centers used
+for plotting (deg). Defaults to np.arange(0, 360, 15.).</p></li>
+<li><p><strong>legend_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) -- Keyword arguments to be passed to
+ax.legend().</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A figure axes object containing
+the plotted wind rose.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.plot_wind_rose_ti">
+<span class="sig-name descname"><span class="pre">plot_wind_rose_ti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ti_right_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.06,</span> <span class="pre">0.1,</span> <span class="pre">0.14,</span> <span class="pre">0.18,</span> <span class="pre">0.22])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">15.,</span> <span class="pre">30.,</span> <span class="pre">45.,</span> <span class="pre">60.,</span> <span class="pre">75.,</span> <span class="pre">90.,</span> <span class="pre">105.,</span> <span class="pre">120.,</span> <span class="pre">135.,</span> <span class="pre">150.,</span> <span class="pre">165.,</span> <span class="pre">180.,</span> <span class="pre">195.,</span> <span class="pre">210.,</span> <span class="pre">225.,</span> <span class="pre">240.,</span> <span class="pre">255.,</span> <span class="pre">270.,</span> <span class="pre">285.,</span> <span class="pre">300.,</span> <span class="pre">315.,</span> <span class="pre">330.,</span> <span class="pre">345.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.plot_wind_rose_ti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.plot_wind_rose_ti" title="Permalink to this definition">#</a></dt>
+<dd><p>This method creates a wind rose plot showing the frequency of occurance
+of the specified wind direction and turbulence intensity bins. This
+requires turbulence intensity to already be included as a parameter in
+the wind rose. If no axis is provided,a new one is created.</p>
+<p><strong>Note</strong>: Based on code provided by Patrick Murphy from the University
+of Colorado Boulder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>, optional) -- The figure axes
+on which the wind rose is plotted. Defaults to None.</p></li>
+<li><p><strong>color_map</strong> (<em>str</em><em>, </em><em>optional</em>) -- Colormap to use. Defaults to 'viridis_r'.</p></li>
+<li><p><strong>ti_right_edges</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- The upper bounds of the
+turbulence intensity bins. The first bin begins at 0. Defaults
+to np.array([0.06, 0.1, 0.14, 0.18,0.22]).</p></li>
+<li><p><strong>wd_bins</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- The wind direction bin centers used
+for plotting (deg). Defaults to np.arange(0, 360, 15.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A figure axes object containing
+the plotted wind rose.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.plot_ti_ws">
+<span class="sig-name descname"><span class="pre">plot_ti_ws</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.plot_ti_ws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.plot_ti_ws" title="Permalink to this definition">#</a></dt>
+<dd><p>This method plots the wind speed frequency distribution of the WindRose
+object for each turbulence intensity bin. The wind speeds are resampled
+using the specified bin centers and the frequencies of occurance of the
+wind conditions are modified accordingly. This method assumes there are
+five TI bins. If no axis is provided, a new one is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>, optional) -- Figure axes on
+which data should be plotted. Defaults to None.</p></li>
+<li><p><strong>ws_bins</strong> (<em>np.array</em><em>, </em><em>optional</em>) -- A list of wind speed bin centers on
+which the wind speeds are resampled before plotting (m/s).
+Defaults to np.arange(0, 26, 1.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A figure axes object containing
+the plotted wind speed distributions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.export_for_floris_opt">
+<span class="sig-name descname"><span class="pre">export_for_floris_opt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.export_for_floris_opt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.export_for_floris_opt" title="Permalink to this definition">#</a></dt>
+<dd><p>This method returns a list of tuples of at least wind speed, wind
+direction, and frequency of occurance, which can be used to help loop
+through different wind conditions for Floris power calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of tuples containing all combinations of wind
+parameters and frequencies of occurance in the WindRose object's
+wind rose DataFrame values.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./_autosummary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="floris.tools.wind_rose.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">floris.tools.wind_rose</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="floris.type_dec.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">floris.type_dec</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By National Renewable Energy Laboratory<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,1738 @@
+
+<!DOCTYPE html>
+
+<html lang="python">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>floris.simulation.wake_deflection.gauss &#8212; FLORIS</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="python">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-L8RGXZCW3F"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-L8RGXZCW3F');
+                </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../_static/gch.gif" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">FLORIS</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../intro.html">
+                    FLORIS Wake Modeling & Wind Farm Controls
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../installation.html">
+   Installation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../background_concepts.html">
+   Background and Concepts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../examples.html">
+   Examples Index
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../input_reference.html">
+   Input File Reference
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../dev_guide.html">
+   Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../../api_docs.html">
+   API Documentation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../_autosummary/floris.logging_manager.html">
+     floris.logging_manager
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.logging_manager.configure_console_log.html">
+       floris.logging_manager.configure_console_log
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.logging_manager.configure_file_log.html">
+       floris.logging_manager.configure_file_log
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.logging_manager.LoggerBase.html">
+       floris.logging_manager.LoggerBase
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.logging_manager.TracebackInfoFilter.html">
+       floris.logging_manager.TracebackInfoFilter
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../_autosummary/floris.simulation.html">
+     floris.simulation
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.base.html">
+       floris.simulation.base
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.base.BaseClass.html">
+         floris.simulation.base.BaseClass
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.base.BaseModel.html">
+         floris.simulation.base.BaseModel
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.base.State.html">
+         floris.simulation.base.State
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.farm.html">
+       floris.simulation.farm
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.farm.Farm.html">
+         floris.simulation.farm.Farm
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.html">
+       floris.simulation.floris
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.logging_manager.html">
+         floris.simulation.floris.logging_manager
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.flow_field.html">
+       floris.simulation.flow_field
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.flow_field.FlowField.html">
+         floris.simulation.flow_field.FlowField
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.html">
+       floris.simulation.grid
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+      <label for="toctree-checkbox-8">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.FlowFieldGrid.html">
+         floris.simulation.grid.FlowFieldGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.FlowFieldPlanarGrid.html">
+         floris.simulation.grid.FlowFieldPlanarGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.Grid.html">
+         floris.simulation.grid.Grid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
+         floris.simulation.grid.TurbineGrid
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.html">
+       floris.simulation.solver
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+      <label for="toctree-checkbox-9">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.calculate_area_overlap.html">
+         floris.simulation.solver.calculate_area_overlap
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.cc_solver.html">
+         floris.simulation.solver.cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
+         floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.full_flow_sequential_solver.html">
+         floris.simulation.solver.full_flow_sequential_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.full_flow_turbopark_solver.html">
+         floris.simulation.solver.full_flow_turbopark_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.sequential_solver.html">
+         floris.simulation.solver.sequential_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.solver.turbopark_solver.html">
+         floris.simulation.solver.turbopark_solver
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.html">
+       floris.simulation.turbine
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+      <label for="toctree-checkbox-10">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.Ct.html">
+         floris.simulation.turbine.Ct
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.average_velocity.html">
+         floris.simulation.turbine.average_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.axial_induction.html">
+         floris.simulation.turbine.axial_induction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.power.html">
+         floris.simulation.turbine.power
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
+         floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.Turbine.html">
+         floris.simulation.turbine.Turbine
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake.html">
+       floris.simulation.wake
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+      <label for="toctree-checkbox-11">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake.WakeModelManager.html">
+         floris.simulation.wake.WakeModelManager
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_combination.html">
+       floris.simulation.wake_combination
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+      <label for="toctree-checkbox-12">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_combination.fls.html">
+         floris.simulation.wake_combination.fls
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_combination.max.html">
+         floris.simulation.wake_combination.max
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_combination.sosfs.html">
+         floris.simulation.wake_combination.sosfs
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_deflection.html">
+       floris.simulation.wake_deflection
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+      <label for="toctree-checkbox-13">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.html">
+         floris.simulation.wake_deflection.gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_deflection.jimenez.html">
+         floris.simulation.wake_deflection.jimenez
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_deflection.none.html">
+         floris.simulation.wake_deflection.none
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_turbulence.html">
+       floris.simulation.wake_turbulence
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/>
+      <label for="toctree-checkbox-14">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_turbulence.crespo_hernandez.html">
+         floris.simulation.wake_turbulence.crespo_hernandez
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_turbulence.none.html">
+         floris.simulation.wake_turbulence.none
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_velocity.html">
+       floris.simulation.wake_velocity
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/>
+      <label for="toctree-checkbox-15">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
+         floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_velocity.gauss.html">
+         floris.simulation.wake_velocity.gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_velocity.jensen.html">
+         floris.simulation.wake_velocity.jensen
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_velocity.none.html">
+         floris.simulation.wake_velocity.none
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.wake_velocity.turbopark.html">
+         floris.simulation.wake_velocity.turbopark
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../_autosummary/floris.tools.html">
+     floris.tools
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/>
+    <label for="toctree-checkbox-16">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.html">
+       floris.tools.cut_plane
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/>
+      <label for="toctree-checkbox-17">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.calculate_power.html">
+         floris.tools.cut_plane.calculate_power
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.calculate_wind_speed.html">
+         floris.tools.cut_plane.calculate_wind_speed
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.change_resolution.html">
+         floris.tools.cut_plane.change_resolution
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.get_plane_from_flow_data.html">
+         floris.tools.cut_plane.get_plane_from_flow_data
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.get_power_profile.html">
+         floris.tools.cut_plane.get_power_profile
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.interpolate_onto_array.html">
+         floris.tools.cut_plane.interpolate_onto_array
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.nudge_outward.html">
+         floris.tools.cut_plane.nudge_outward
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.project_onto.html">
+         floris.tools.cut_plane.project_onto
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.rescale_axis.html">
+         floris.tools.cut_plane.rescale_axis
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.set_origin.html">
+         floris.tools.cut_plane.set_origin
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.subtract.html">
+         floris.tools.cut_plane.subtract
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.wind_speed_profile.html">
+         floris.tools.cut_plane.wind_speed_profile
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.cut_plane.CutPlane.html">
+         floris.tools.cut_plane.CutPlane
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.html">
+       floris.tools.floris_interface
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/>
+      <label for="toctree-checkbox-18">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
+         floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
+         floris.tools.floris_interface.FlorisInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface_legacy_reader.html">
+       floris.tools.floris_interface_legacy_reader
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/>
+      <label for="toctree-checkbox-19">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html">
+         floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.html">
+       floris.tools.interface_utilities
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/>
+      <label for="toctree-checkbox-20">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.get_params.html">
+         floris.tools.interface_utilities.get_params
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.get_prop_values.html">
+         floris.tools.interface_utilities.get_prop_values
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.get_props_subset.html">
+         floris.tools.interface_utilities.get_props_subset
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.print_prop_docs.html">
+         floris.tools.interface_utilities.print_prop_docs
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.print_props.html">
+         floris.tools.interface_utilities.print_props
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.set_params.html">
+         floris.tools.interface_utilities.set_params
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.interface_utilities.show_params.html">
+         floris.tools.interface_utilities.show_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.html">
+       floris.tools.layout_functions
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/>
+      <label for="toctree-checkbox-21">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.build_turbine_loc.html">
+         floris.tools.layout_functions.build_turbine_loc
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.label_line.html">
+         floris.tools.layout_functions.label_line
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.make_turbine_array.html">
+         floris.tools.layout_functions.make_turbine_array
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.set_direction.html">
+         floris.tools.layout_functions.set_direction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.turbineDist.html">
+         floris.tools.layout_functions.turbineDist
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.visualize_layout.html">
+         floris.tools.layout_functions.visualize_layout
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.layout_functions.wakeAngle.html">
+         floris.tools.layout_functions.wakeAngle
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.optimization.html">
+       floris.tools.optimization
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/>
+      <label for="toctree-checkbox-22">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.optimization.layout_optimization.html">
+         floris.tools.optimization.layout_optimization
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.optimization.legacy.html">
+         floris.tools.optimization.legacy
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.optimization.other.html">
+         floris.tools.optimization.other
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.optimization.yaw_optimization.html">
+         floris.tools.optimization.yaw_optimization
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.power_rose.html">
+       floris.tools.power_rose
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/>
+      <label for="toctree-checkbox-23">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.power_rose.PowerRose.html">
+         floris.tools.power_rose.PowerRose
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.rews.html">
+       floris.tools.rews
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/>
+      <label for="toctree-checkbox-24">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.rews.compute_rews.html">
+         floris.tools.rews.compute_rews
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.rews.determine_rews_weights.html">
+         floris.tools.rews.determine_rews_weights
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.rews.log_law_interpolate.html">
+         floris.tools.rews.log_law_interpolate
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.rews.rews_from_df.html">
+         floris.tools.rews.rews_from_df
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.uncertainty_interface.html">
+       floris.tools.uncertainty_interface
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/>
+      <label for="toctree-checkbox-25">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html">
+         floris.tools.uncertainty_interface.UncertaintyInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.html">
+       floris.tools.visualization
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
+      <label for="toctree-checkbox-26">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
+         floris.tools.visualization.line_contour_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.plot_rotor_values.html">
+         floris.tools.visualization.plot_rotor_values
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.plot_turbines.html">
+         floris.tools.visualization.plot_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.plot_turbines_with_fi.html">
+         floris.tools.visualization.plot_turbines_with_fi
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
+         floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">
+         floris.tools.visualization.visualize_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
+         floris.tools.visualization.visualize_quiver
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../_autosummary/floris.tools.wind_rose.html">
+       floris.tools.wind_rose
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/>
+      <label for="toctree-checkbox-27">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.wind_rose.WindRose.html">
+         floris.tools.wind_rose.WindRose
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../_autosummary/floris.type_dec.html">
+     floris.type_dec
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/>
+    <label for="toctree-checkbox-28">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.type_dec.attr_floris_filter.html">
+       floris.type_dec.attr_floris_filter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.type_dec.attr_serializer.html">
+       floris.type_dec.attr_serializer
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.type_dec.floris_array_converter.html">
+       floris.type_dec.floris_array_converter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.type_dec.iter_validator.html">
+       floris.type_dec.iter_validator
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.type_dec.FromDictMixin.html">
+       floris.type_dec.FromDictMixin
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../_autosummary/floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
+    <label for="toctree-checkbox-29">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.cosd.html">
+       floris.utilities.cosd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.load_yaml.html">
+       floris.utilities.load_yaml
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.pshape.html">
+       floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.rotate_coordinates_rel_west.html">
+       floris.utilities.rotate_coordinates_rel_west
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.sind.html">
+       floris.utilities.sind
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.tand.html">
+       floris.utilities.tand
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.wind_delta.html">
+       floris.utilities.wind_delta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.wrap_180.html">
+       floris.utilities.wrap_180
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.wrap_360.html">
+       floris.utilities.wrap_360
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.Loader.html">
+       floris.utilities.Loader
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.Vec3.html">
+       floris.utilities.Vec3
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../code_quality.html">
+   Code Quality
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/nrel/floris"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_modules/floris/simulation/wake_deflection/gauss.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for floris.simulation.wake_deflection.gauss</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2021 NREL</span>
+
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c1"># use this file except in compliance with the License. You may obtain a copy of</span>
+<span class="c1"># the License at http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c1"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c1"># License for the specific language governing permissions and limitations under</span>
+<span class="c1"># the License.</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">Farm</span>
+<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">FlowField</span>
+<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">Grid</span>
+<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">Turbine</span>
+<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span><span class="p">,</span> <span class="n">sind</span>
+
+
+<div class="viewcode-block" id="GaussVelocityDeflection"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.GaussVelocityDeflection.html#floris.simulation.wake_deflection.gauss.GaussVelocityDeflection">[docs]</a><span class="nd">@define</span>
+<span class="k">class</span> <span class="nc">GaussVelocityDeflection</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Gauss deflection model is a blend of the models described in</span>
+<span class="sd">    :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for</span>
+<span class="sd">    calculating the deflection field in turbine wakes.</span>
+
+<span class="sd">    parameter_dictionary (dict): Model-specific parameters.</span>
+<span class="sd">        Default values are used when a parameter is not included</span>
+<span class="sd">        in `parameter_dictionary`. Possible key-value pairs include:</span>
+
+<span class="sd">            -   **ka** (*float*): Parameter used to determine the linear</span>
+<span class="sd">                relationship between the turbulence intensity and the</span>
+<span class="sd">                width of the Gaussian wake shape.</span>
+<span class="sd">            -   **kb** (*float*): Parameter used to determine the linear</span>
+<span class="sd">                relationship between the turbulence intensity and the</span>
+<span class="sd">                width of the Gaussian wake shape.</span>
+<span class="sd">            -   **alpha** (*float*): Parameter that determines the</span>
+<span class="sd">                dependence of the downstream boundary between the near</span>
+<span class="sd">                wake and far wake region on the turbulence intensity.</span>
+<span class="sd">            -   **beta** (*float*): Parameter that determines the</span>
+<span class="sd">                dependence of the downstream boundary between the near</span>
+<span class="sd">                wake and far wake region on the turbine&#39;s induction</span>
+<span class="sd">                factor.</span>
+<span class="sd">            -   **ad** (*float*): Additional tuning parameter to modify</span>
+<span class="sd">                the wake deflection with a lateral offset.</span>
+<span class="sd">                Defaults to 0.</span>
+<span class="sd">            -   **bd** (*float*): Additional tuning parameter to modify</span>
+<span class="sd">                the wake deflection with a lateral offset.</span>
+<span class="sd">                Defaults to 0.</span>
+<span class="sd">            -   **dm** (*float*): Additional tuning parameter to scale</span>
+<span class="sd">                the amount of wake deflection. Defaults to 1.0</span>
+<span class="sd">            -   **use_secondary_steering** (*bool*): Flag to use</span>
+<span class="sd">                secondary steering on the wake velocity using methods</span>
+<span class="sd">                developed in [2].</span>
+<span class="sd">            -   **eps_gain** (*float*): Tuning value for calculating</span>
+<span class="sd">                the V- and W-component velocities using methods</span>
+<span class="sd">                developed in [7].</span>
+<span class="sd">                TODO: Believe this should be removed, need to verify.</span>
+<span class="sd">                See property on super-class for more details.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        .. bibliography:: /source/zrefs.bib</span>
+<span class="sd">            :style: unsrt</span>
+<span class="sd">            :filter: docname in docnames</span>
+<span class="sd">            :keyprefix: gdm-</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">bd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.58</span><span class="p">)</span>
+    <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.077</span><span class="p">)</span>
+    <span class="n">ka</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.38</span><span class="p">)</span>
+    <span class="n">kb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.004</span><span class="p">)</span>
+    <span class="n">dm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">eps_gain</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">use_secondary_steering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GaussVelocityDeflection.prepare_function"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.GaussVelocityDeflection.html#floris.simulation.wake_deflection.gauss.GaussVelocityDeflection.prepare_function">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_function</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">,</span>
+        <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+            <span class="n">z</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+            <span class="n">freestream_velocity</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
+            <span class="n">wind_veer</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_veer</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">kwargs</span></div>
+
+    <span class="c1"># @profile</span>
+<div class="viewcode-block" id="GaussVelocityDeflection.function"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.GaussVelocityDeflection.html#floris.simulation.wake_deflection.gauss.GaussVelocityDeflection.function">[docs]</a>    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">y_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">yaw_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">turbulence_intensity_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">ct_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rotor_diameter_i</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">freestream_velocity</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">wind_veer</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the deflection field of the wake. See</span>
+<span class="sd">        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls`</span>
+<span class="sd">        for details on the methods used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_locations (np.array): An array of floats that contains the</span>
+<span class="sd">                streamwise direction grid coordinates of the flow field</span>
+<span class="sd">                domain (m).</span>
+<span class="sd">            y_locations (np.array): An array of floats that contains the grid</span>
+<span class="sd">                coordinates of the flow field domain in the direction normal to</span>
+<span class="sd">                x and parallel to the ground (m).</span>
+<span class="sd">            z_locations (np.array): An array of floats that contains the grid</span>
+<span class="sd">                coordinates of the flow field domain in the vertical</span>
+<span class="sd">                direction (m).</span>
+<span class="sd">            turbine (:py:obj:`floris.simulation.turbine`): Object that</span>
+<span class="sd">                represents the turbine creating the wake.</span>
+<span class="sd">            coord (:py:obj:`floris.utilities.Vec3`): Object containing</span>
+<span class="sd">                the coordinate of the turbine creating the wake (m).</span>
+<span class="sd">            flow_field (:py:class:`floris.simulation.flow_field`): Object</span>
+<span class="sd">                containing the flow field information for the wind farm.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.array: Deflection field for the wake.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ==============================================================</span>
+
+        <span class="c1"># Opposite sign convention in this model</span>
+        <span class="n">yaw_i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">yaw_i</span>
+
+        <span class="c1"># TODO: connect support for tilt</span>
+        <span class="n">tilt</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">#turbine.tilt_angle</span>
+
+        <span class="c1"># initial velocity deficits</span>
+        <span class="n">uR</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">freestream_velocity</span>
+          <span class="o">*</span> <span class="n">ct_i</span>
+          <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">tilt</span><span class="p">)</span>
+          <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">)</span>
+          <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ct_i</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">tilt</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">)))))</span>
+        <span class="p">)</span>
+        <span class="n">u0</span> <span class="o">=</span> <span class="n">freestream_velocity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ct_i</span><span class="p">)</span>
+
+        <span class="c1"># length of near wake</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">rotor_diameter_i</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ct_i</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">))))</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">turbulence_intensity_i</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ct_i</span><span class="p">))))</span>
+            <span class="o">+</span> <span class="n">x_i</span>
+        <span class="p">)</span>
+
+        <span class="c1"># wake expansion parameters</span>
+        <span class="n">ky</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ka</span> <span class="o">*</span> <span class="n">turbulence_intensity_i</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">kb</span>
+        <span class="n">kz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ka</span> <span class="o">*</span> <span class="n">turbulence_intensity_i</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">kb</span>
+
+        <span class="n">C0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">u0</span> <span class="o">/</span> <span class="n">freestream_velocity</span>
+        <span class="n">M0</span> <span class="o">=</span> <span class="n">C0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">C0</span><span class="p">)</span>
+        <span class="n">E0</span> <span class="o">=</span> <span class="n">C0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">C0</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+
+        <span class="c1"># initial Gaussian wake expansion</span>
+        <span class="n">sigma_z0</span> <span class="o">=</span> <span class="n">rotor_diameter_i</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">uR</span> <span class="o">/</span> <span class="p">(</span><span class="n">freestream_velocity</span> <span class="o">+</span> <span class="n">u0</span><span class="p">))</span>
+        <span class="n">sigma_y0</span> <span class="o">=</span> <span class="n">sigma_z0</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">wind_veer</span><span class="p">)</span>
+
+        <span class="n">yR</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_i</span>
+        <span class="n">xR</span> <span class="o">=</span> <span class="n">x_i</span> <span class="c1"># yR * tand(yaw) + x_i</span>
+
+        <span class="c1"># yaw parameters (skew angle and distance from centerline)</span>
+        <span class="c1"># skew angle in radians</span>
+        <span class="n">theta_c0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">)</span> <span class="o">/</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ct_i</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_i</span><span class="p">)))</span>
+        <span class="n">delta0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">theta_c0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x_i</span><span class="p">)</span>  <span class="c1"># initial wake deflection;</span>
+        <span class="c1"># NOTE: use np.tan here since theta_c0 is radians</span>
+
+        <span class="c1"># deflection in the near wake</span>
+        <span class="n">delta_near_wake</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">xR</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">xR</span><span class="p">))</span> <span class="o">*</span> <span class="n">delta0</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ad</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bd</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_i</span><span class="p">))</span>
+        <span class="n">delta_near_wake</span> <span class="o">=</span> <span class="n">delta_near_wake</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">xR</span><span class="p">)</span>
+        <span class="n">delta_near_wake</span> <span class="o">=</span> <span class="n">delta_near_wake</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">x0</span><span class="p">)</span>
+
+        <span class="c1"># deflection in the far wake</span>
+        <span class="n">sigma_y</span> <span class="o">=</span> <span class="n">ky</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigma_y0</span>
+        <span class="n">sigma_z</span> <span class="o">=</span> <span class="n">kz</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigma_z0</span>
+        <span class="n">sigma_y</span> <span class="o">=</span> <span class="n">sigma_y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigma_y0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">x0</span><span class="p">)</span>
+        <span class="n">sigma_z</span> <span class="o">=</span> <span class="n">sigma_z</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x0</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigma_z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">x0</span><span class="p">)</span>
+
+        <span class="n">ln_deltaNum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.6</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">M0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mf">1.6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma_y</span> <span class="o">*</span> <span class="n">sigma_z</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma_y0</span> <span class="o">*</span> <span class="n">sigma_z0</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">M0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">ln_deltaDen</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.6</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">M0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mf">1.6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma_y</span> <span class="o">*</span> <span class="n">sigma_z</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma_y0</span> <span class="o">*</span> <span class="n">sigma_z0</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">M0</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">delta_far_wake</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">delta0</span>
+          <span class="o">+</span> <span class="n">theta_c0</span> <span class="o">*</span> <span class="n">E0</span> <span class="o">/</span> <span class="mf">5.2</span>
+          <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma_y0</span> <span class="o">*</span> <span class="n">sigma_z0</span> <span class="o">/</span> <span class="p">(</span><span class="n">ky</span> <span class="o">*</span> <span class="n">kz</span> <span class="o">*</span> <span class="n">M0</span><span class="p">))</span>
+          <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ln_deltaNum</span> <span class="o">/</span> <span class="n">ln_deltaDen</span><span class="p">)</span>
+          <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ad</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bd</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_i</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="n">delta_far_wake</span> <span class="o">=</span> <span class="n">delta_far_wake</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">x0</span><span class="p">)</span>
+        <span class="n">deflection</span> <span class="o">=</span> <span class="n">delta_near_wake</span> <span class="o">+</span> <span class="n">delta_far_wake</span>
+
+        <span class="k">return</span> <span class="n">deflection</span></div></div>
+
+
+<span class="c1">## GCH components</span>
+
+<div class="viewcode-block" id="gamma"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.gamma.html#floris.simulation.wake_deflection.gauss.gamma">[docs]</a><span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span>
+    <span class="n">D</span><span class="p">,</span>
+    <span class="n">velocity</span><span class="p">,</span>
+    <span class="n">Uinf</span><span class="p">,</span>
+    <span class="n">Ct</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Vortex circulation strength. Units of XXX TODO</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        D (float): Rotor diameter of the current turbine</span>
+<span class="sd">        velocity (np.array(float)): Velocities at the current turbine</span>
+<span class="sd">        Uinf (float): Free-stream velocity</span>
+<span class="sd">        Ct (float): Thrust coefficient at the current turbine</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scale</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="n">velocity</span> <span class="o">*</span> <span class="n">Uinf</span> <span class="o">*</span> <span class="n">Ct</span> <span class="c1"># * cosd(yaw)  &lt;- the cos is included in Ct</span></div>
+
+
+<span class="c1"># def calculate_effective_yaw(</span>
+<div class="viewcode-block" id="wake_added_yaw"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.wake_added_yaw.html#floris.simulation.wake_deflection.gauss.wake_added_yaw">[docs]</a><span class="k">def</span> <span class="nf">wake_added_yaw</span><span class="p">(</span>
+    <span class="n">u_i</span><span class="p">,</span>
+    <span class="n">v_i</span><span class="p">,</span>
+    <span class="n">u_initial</span><span class="p">,</span>
+    <span class="n">delta_y</span><span class="p">,</span>
+    <span class="n">z_i</span><span class="p">,</span>
+    <span class="n">rotor_diameter</span><span class="p">,</span>
+    <span class="n">hub_height</span><span class="p">,</span>
+    <span class="n">ct_i</span><span class="p">,</span>
+    <span class="n">tip_speed_ratio</span><span class="p">,</span>
+    <span class="n">axial_induction_i</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    what yaw angle would have produced that same average spanwise velocity</span>
+
+<span class="sd">    These calculations focus around the current turbine. The formulation could</span>
+<span class="sd">    remove the dimension for n-turbines, but for consistency with other</span>
+<span class="sd">    similar equations it is left. However, the turbine dimension should</span>
+<span class="sd">    always have length 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># turbine parameters</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">rotor_diameter</span>              <span class="c1"># scalar</span>
+    <span class="n">HH</span> <span class="o">=</span> <span class="n">hub_height</span>                 <span class="c1"># scalar</span>
+    <span class="n">Ct</span> <span class="o">=</span> <span class="n">ct_i</span>                       <span class="c1"># (wd, ws, 1, 1, 1) for the current turbine</span>
+    <span class="n">TSR</span> <span class="o">=</span> <span class="n">tip_speed_ratio</span>           <span class="c1"># scalar</span>
+    <span class="n">aI</span> <span class="o">=</span> <span class="n">axial_induction_i</span>          <span class="c1"># (wd, ws, 1, 1, 1) for the current turbine</span>
+    <span class="n">avg_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>  <span class="c1"># (wd, ws, 1, grid, grid)</span>
+
+    <span class="c1"># flow parameters</span>
+    <span class="n">Uinf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_initial</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">Uinf</span> <span class="o">=</span> <span class="n">Uinf</span><span class="p">[:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+
+    <span class="c1"># TODO: Allow user input for eps gain</span>
+    <span class="n">eps_gain</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">eps_gain</span> <span class="o">*</span> <span class="n">D</span>  <span class="c1"># Use set value</span>
+
+    <span class="n">vel_top</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Gamma_top</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span>
+        <span class="n">D</span><span class="p">,</span>
+        <span class="n">vel_top</span><span class="p">,</span>
+        <span class="n">Uinf</span><span class="p">,</span>
+        <span class="n">Ct</span><span class="p">,</span>
+        <span class="n">scale</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">vel_bottom</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Gamma_bottom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span>
+        <span class="n">D</span><span class="p">,</span>
+        <span class="n">vel_bottom</span><span class="p">,</span>
+        <span class="n">Uinf</span><span class="p">,</span>
+        <span class="n">Ct</span><span class="p">,</span>
+        <span class="n">scale</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">turbine_average_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span>
+    <span class="n">turbine_average_velocity</span> <span class="o">=</span> <span class="n">turbine_average_velocity</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">Gamma_wake_rotation</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="p">(</span><span class="n">aI</span> <span class="o">-</span> <span class="n">aI</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">turbine_average_velocity</span> <span class="o">/</span> <span class="n">TSR</span>
+
+    <span class="c1">### compute the spanwise and vertical velocities induced by yaw</span>
+
+    <span class="c1"># decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream</span>
+    <span class="n">yLocs</span> <span class="o">=</span> <span class="n">delta_y</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+
+    <span class="c1"># top vortex</span>
+    <span class="c1"># NOTE: this is the top of the grid, not the top of the rotor</span>
+    <span class="n">zT</span> <span class="o">=</span> <span class="n">z_i</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>  <span class="c1"># distance from the top of the grid</span>
+    <span class="n">rT</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zT</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># TODO: This is - in the paper</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rT</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># This looks like spanwise decay - it defines the vortex profile in the spanwise directions</span>
+    <span class="n">v_top</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_top</span> <span class="o">*</span> <span class="n">zT</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rT</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span>
+    <span class="n">v_top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">v_top</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c1"># w_top = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay</span>
+
+    <span class="c1"># bottom vortex</span>
+    <span class="n">zB</span> <span class="o">=</span> <span class="n">z_i</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rB</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zB</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rB</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">v_bottom</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_bottom</span> <span class="o">*</span> <span class="n">zB</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rB</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span>
+    <span class="n">v_bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">v_bottom</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c1"># w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * np.pi * rB) * core_shape * decay</span>
+
+    <span class="c1"># wake rotation vortex</span>
+    <span class="n">zC</span> <span class="o">=</span> <span class="n">z_i</span> <span class="o">-</span> <span class="n">HH</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rC</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zC</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rC</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">v_core</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_wake_rotation</span> <span class="o">*</span> <span class="n">zC</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rC</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span>
+    <span class="n">v_core</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">v_core</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c1"># w_core = (-1 * Gamma_wake_rotation * yLocs) / (2 * np.pi * rC) * core_shape * decay</span>
+
+    <span class="c1"># Cap the effective yaw values between -45 and 45 degrees</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">avg_v</span> <span class="o">-</span> <span class="n">v_core</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">v_top</span> <span class="o">+</span> <span class="n">v_bottom</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">val</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">val</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span> <span class="n">val</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">y</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="calculate_transverse_velocity"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.calculate_transverse_velocity.html#floris.simulation.wake_deflection.gauss.calculate_transverse_velocity">[docs]</a><span class="k">def</span> <span class="nf">calculate_transverse_velocity</span><span class="p">(</span>
+    <span class="n">u_i</span><span class="p">,</span>
+    <span class="n">u_initial</span><span class="p">,</span>
+    <span class="n">dudz_initial</span><span class="p">,</span>
+    <span class="n">delta_x</span><span class="p">,</span>
+    <span class="n">delta_y</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">,</span>
+    <span class="n">rotor_diameter</span><span class="p">,</span>
+    <span class="n">hub_height</span><span class="p">,</span>
+    <span class="n">yaw</span><span class="p">,</span>
+    <span class="n">ct_i</span><span class="p">,</span>
+    <span class="n">tsr_i</span><span class="p">,</span>
+    <span class="n">axial_induction_i</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate transverse velocity components for all downstream turbines</span>
+<span class="sd">    given the vortices at the current turbine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># turbine parameters</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">rotor_diameter</span>
+    <span class="n">HH</span> <span class="o">=</span> <span class="n">hub_height</span>
+    <span class="n">Ct</span> <span class="o">=</span> <span class="n">ct_i</span>
+    <span class="n">TSR</span> <span class="o">=</span> <span class="n">tsr_i</span>
+    <span class="n">aI</span> <span class="o">=</span> <span class="n">axial_induction_i</span>
+
+    <span class="c1"># flow parameters</span>
+    <span class="n">Uinf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_initial</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">Uinf</span> <span class="o">=</span> <span class="n">Uinf</span><span class="p">[:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+
+    <span class="n">eps_gain</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">eps_gain</span> <span class="o">*</span> <span class="n">D</span>  <span class="c1"># Use set value</span>
+
+    <span class="c1"># TODO: wind sheer is hard-coded here but should be connected to the input</span>
+    <span class="n">vel_top</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Gamma_top</span> <span class="o">=</span> <span class="n">sind</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span>
+        <span class="n">D</span><span class="p">,</span>
+        <span class="n">vel_top</span><span class="p">,</span>
+        <span class="n">Uinf</span><span class="p">,</span>
+        <span class="n">Ct</span><span class="p">,</span>
+        <span class="n">scale</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">vel_bottom</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Gamma_bottom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">sind</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span>
+        <span class="n">D</span><span class="p">,</span>
+        <span class="n">vel_bottom</span><span class="p">,</span>
+        <span class="n">Uinf</span><span class="p">,</span>
+        <span class="n">Ct</span><span class="p">,</span>
+        <span class="n">scale</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">turbine_average_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span>
+    <span class="n">turbine_average_velocity</span> <span class="o">=</span> <span class="n">turbine_average_velocity</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">Gamma_wake_rotation</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="p">(</span><span class="n">aI</span> <span class="o">-</span> <span class="n">aI</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">turbine_average_velocity</span> <span class="o">/</span> <span class="n">TSR</span>
+
+    <span class="c1">### compute the spanwise and vertical velocities induced by yaw</span>
+
+    <span class="c1"># decay the vortices as they move downstream - using mixing length</span>
+    <span class="n">lmda</span> <span class="o">=</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">8</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="mf">0.41</span>
+    <span class="n">lm</span> <span class="o">=</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">z</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">z</span> <span class="o">/</span> <span class="n">lmda</span><span class="p">)</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">lm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dudz_initial</span><span class="p">)</span>
+
+    <span class="n">decay</span> <span class="o">=</span> <span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">*</span> <span class="n">delta_x</span> <span class="o">/</span> <span class="n">Uinf</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>   <span class="c1"># This is the decay downstream</span>
+    <span class="n">yLocs</span> <span class="o">=</span> <span class="n">delta_y</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+
+    <span class="c1"># top vortex</span>
+    <span class="n">zT</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rT</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zT</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># TODO: This is - in the paper</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rT</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># This looks like spanwise decay - it defines the vortex profile in the spanwise directions</span>
+    <span class="n">V1</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_top</span> <span class="o">*</span> <span class="n">zT</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rT</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+    <span class="n">W1</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Gamma_top</span> <span class="o">*</span> <span class="n">yLocs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rT</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+
+    <span class="c1"># bottom vortex</span>
+    <span class="n">zB</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="p">(</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rB</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zB</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rB</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">V2</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_bottom</span> <span class="o">*</span> <span class="n">zB</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rB</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+    <span class="n">W2</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Gamma_bottom</span> <span class="o">*</span> <span class="n">yLocs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rB</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+
+    <span class="c1"># wake rotation vortex</span>
+    <span class="n">zC</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">HH</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rC</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zC</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rC</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">V5</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_wake_rotation</span> <span class="o">*</span> <span class="n">zC</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rC</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+    <span class="n">W5</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Gamma_wake_rotation</span> <span class="o">*</span> <span class="n">yLocs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rC</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+
+
+    <span class="c1">### Boundary condition - ground mirror vortex</span>
+
+    <span class="c1"># top vortex - ground</span>
+    <span class="n">zTb</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rTb</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zTb</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rTb</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># This looks like spanwise decay - it defines the vortex profile in the spanwise directions</span>
+    <span class="n">V3</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Gamma_top</span> <span class="o">*</span> <span class="n">zTb</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rTb</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+    <span class="n">W3</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_top</span> <span class="o">*</span> <span class="n">yLocs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rTb</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+
+    <span class="c1"># bottom vortex - ground</span>
+    <span class="n">zBb</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rBb</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zBb</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rBb</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">V4</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Gamma_bottom</span> <span class="o">*</span> <span class="n">zBb</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rBb</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+    <span class="n">W4</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_bottom</span> <span class="o">*</span> <span class="n">yLocs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rBb</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+
+    <span class="c1"># wake rotation vortex - ground effect</span>
+    <span class="n">zCb</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="n">HH</span> <span class="o">+</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">NUM_EPS</span>
+    <span class="n">rCb</span> <span class="o">=</span> <span class="n">yLocs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">zCb</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">core_shape</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rCb</span> <span class="o">/</span> <span class="p">(</span><span class="n">eps</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">V6</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Gamma_wake_rotation</span> <span class="o">*</span> <span class="n">zCb</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rCb</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+    <span class="n">W6</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gamma_wake_rotation</span> <span class="o">*</span> <span class="n">yLocs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rCb</span><span class="p">)</span> <span class="o">*</span> <span class="n">core_shape</span> <span class="o">*</span> <span class="n">decay</span>
+
+    <span class="c1"># total spanwise velocity</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">V1</span> <span class="o">+</span> <span class="n">V2</span> <span class="o">+</span> <span class="n">V3</span> <span class="o">+</span> <span class="n">V4</span> <span class="o">+</span> <span class="n">V5</span> <span class="o">+</span> <span class="n">V6</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">W1</span> <span class="o">+</span> <span class="n">W2</span> <span class="o">+</span> <span class="n">W3</span> <span class="o">+</span> <span class="n">W4</span> <span class="o">+</span> <span class="n">W5</span> <span class="o">+</span> <span class="n">W6</span>
+
+    <span class="c1"># no spanwise and vertical velocity upstream of the turbine</span>
+    <span class="c1"># V[delta_x &lt; -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation</span>
+    <span class="c1"># W[delta_x &lt; -1] = 0.0  # Subtract by 1 to avoid numerical issues on rotation</span>
+    <span class="c1"># TODO Should this be &lt;= ? Shouldn&#39;t be adding V and W on the current turbine?</span>
+    <span class="n">V</span><span class="p">[</span><span class="n">delta_x</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Subtract by 1 to avoid numerical issues on rotation</span>
+    <span class="n">W</span><span class="p">[</span><span class="n">delta_x</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Subtract by 1 to avoid numerical issues on rotation</span>
+
+    <span class="c1"># TODO: Why would the say W cannot be negative?</span>
+    <span class="n">W</span><span class="p">[</span><span class="n">W</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">W</span></div>
+
+
+<div class="viewcode-block" id="yaw_added_turbulence_mixing"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.gauss.yaw_added_turbulence_mixing.html#floris.simulation.wake_deflection.gauss.yaw_added_turbulence_mixing">[docs]</a><span class="k">def</span> <span class="nf">yaw_added_turbulence_mixing</span><span class="p">(</span>
+    <span class="n">u_i</span><span class="p">,</span>
+    <span class="n">I_i</span><span class="p">,</span>
+    <span class="n">v_i</span><span class="p">,</span>
+    <span class="n">w_i</span><span class="p">,</span>
+    <span class="n">turb_v_i</span><span class="p">,</span>
+    <span class="n">turb_w_i</span>
+<span class="p">):</span>
+    <span class="c1"># Since turbulence mixing is constant for the turbine,</span>
+    <span class="c1"># use the left two dimensions only here and expand</span>
+    <span class="c1"># before returning. Dimensions are (wd, ws).</span>
+
+    <span class="n">I_i</span> <span class="o">=</span> <span class="n">I_i</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">average_u_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span>
+
+    <span class="c1"># Convert ambient turbulence intensity to TKE (eq 24)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">average_u_i</span> <span class="o">*</span> <span class="n">I_i</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">u_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">v_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v_i</span> <span class="o">+</span> <span class="n">turb_v_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">w_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">w_i</span> <span class="o">+</span> <span class="n">turb_w_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+
+    <span class="c1"># Compute the new TKE (eq 23)</span>
+    <span class="n">k_total</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span> <span class="n">u_term</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">v_term</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">w_term</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span>
+
+    <span class="c1"># Convert TKE back to TI</span>
+    <span class="n">I_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">k_total</span> <span class="p">)</span> <span class="o">/</span> <span class="n">average_u_i</span>
+
+    <span class="c1"># Remove ambient from total TI leaving only the TI due to mixing</span>
+    <span class="n">I_mixing</span> <span class="o">=</span> <span class="n">I_total</span> <span class="o">-</span> <span class="n">I_i</span>
+
+    <span class="k">return</span> <span class="n">I_mixing</span><span class="p">[:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
+
+
+<span class="c1"># def yaw_added_recovery_correction(</span>
+<span class="c1">#     self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord</span>
+<span class="c1"># ):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         This method corrects the U-component velocities when yaw added recovery</span>
+<span class="c1">#         is enabled. For more details on how the velocities are changed, see [1].</span>
+<span class="c1">#         # TODO add reference to 1</span>
+
+<span class="c1">#         Args:</span>
+<span class="c1">#             U_local (np.array): U-component velocities across the flow field.</span>
+<span class="c1">#             U (np.array): U-component velocity deficits across the flow field.</span>
+<span class="c1">#             W (np.array): W-component velocity deficits across the flow field.</span>
+<span class="c1">#             x_locations (np.array): Streamwise locations in wake.</span>
+<span class="c1">#             y_locations (np.array): Spanwise locations in wake.</span>
+<span class="c1">#             turbine (:py:class:`floris.simulation.turbine.Turbine`):</span>
+<span class="c1">#                 Turbine object.</span>
+<span class="c1">#             turbine_coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):</span>
+<span class="c1">#                 Spatial coordinates of wind turbine.</span>
+
+<span class="c1">#         Returns:</span>
+<span class="c1">#             np.array: U-component velocity deficits across the flow field.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         # compute the velocity without modification</span>
+<span class="c1">#         U1 = U_local - U</span>
+
+<span class="c1">#         # set dimensions</span>
+<span class="c1">#         D = turbine.rotor_diameter</span>
+<span class="c1">#         xLocs = x_locations - turbine_coord.x1</span>
+<span class="c1">#         ky = self.ka * turbine.turbulence_intensity + self.kb</span>
+<span class="c1">#         U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))</span>
+<span class="c1">#         U_total = U1 + np.nan_to_num(U2)</span>
+
+<span class="c1">#         # turn it back into a deficit</span>
+<span class="c1">#         U = U_local - U_total</span>
+
+<span class="c1">#         # zero out anything before the turbine</span>
+<span class="c1">#         U[x_locations &lt; turbine_coord.x1] = 0</span>
+
+<span class="c1">#         return U</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By National Renewable Energy Laboratory<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
