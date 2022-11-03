@@ -4,6 +4,8 @@
 title: FLORIS
 author: National Renewable Energy Laboratory
 logo: gch.gif
+copyright: '2022'
+only_build_toc_files: true
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
@@ -31,3 +33,22 @@ html:
   use_issues_button: true
   use_repository_button: true
   use_edit_page_button: true
+
+# Sphinx for API doc generation
+sphinx:
+  extra_extensions:
+  - 'autoapi.extension'
+  - 'sphinx.ext.autodoc'
+  - 'sphinx.ext.viewcode'
+  - 'sphinx_autodoc_typehints'
+  config:
+    language: 'python'
+    autoapi_dirs:
+    - '../floris'
+    autoapi_add_toctree_entry: true
+
+    # autoapi_add_objects_to_toctree: true  # WARNING: unknown config value 'autoapi_add_objects_to_toctree' in override, ignoring
+    # autoapi_keep_files: true
+    # autoapi_root: 'api_doc'  # default is autoapi/
+    # autoapi_generate_api_docs: false  # default is true
+    # - 'sphinx.ext.napoleon'   # Formats google and numpy docstring styles

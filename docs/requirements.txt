@@ -1,4 +1,6 @@
 jupyter-book
 matplotlib
 numpy
+sphinx-autoapi
+sphinx-autodoc-typehints
 -r ../requirements.txt
