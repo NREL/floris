@@ -13,4 +13,8 @@ more users will interface with the software.
    :template: custom-module-template.rst
    :recursive:
 
-   floris
+   floris.logging_manager
+   floris.simulation
+   floris.tools
+   floris.type_dec
+   floris.utilities
