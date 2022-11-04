@@ -32,7 +32,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
     :cite:`bastankhah_2021`
 
     References:
-    .. bibliography:: /source/zrefs.bib
+    .. bibliography:: /references.bib
         :style: unsrt
         :filter: docname in docnames
         :keyprefix: gdm-
