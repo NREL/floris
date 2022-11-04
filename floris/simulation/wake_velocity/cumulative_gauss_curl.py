@@ -27,7 +27,9 @@ from floris.utilities import cosd, sind, tand
 @define
 class CumulativeGaussCurlVelocityDeficit(BaseModel):
     """
-    The cumulative curl model ...
+    The cumulative curl model is an implementation of the model described in
+    :cite:`gdm-bay_2022`, which itself is based on the cumulative model of
+    :cite:`bastankhah_2021`
 
     References:
     .. bibliography:: /source/zrefs.bib
