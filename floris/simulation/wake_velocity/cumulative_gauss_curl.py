@@ -26,6 +26,15 @@ from floris.utilities import cosd, sind, tand
 
 @define
 class CumulativeGaussCurlVelocityDeficit(BaseModel):
+    """
+    The cumulative curl model ...
+
+    References:
+    .. bibliography:: /source/zrefs.bib
+        :style: unsrt
+        :filter: docname in docnames
+        :keyprefix: gdm-
+    """
 
     a_s: float = field(default=0.179367259)
     b_s: float = field(default=0.0118889215)
