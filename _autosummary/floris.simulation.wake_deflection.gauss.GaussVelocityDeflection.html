@@ -1228,7 +1228,7 @@ title="Print to PDF"
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.wake_deflection.gauss.</span></span><span class="sig-name descname"><span class="pre">GaussVelocityDeflection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.58</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.077</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ka</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.38</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.004</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_gain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_secondary_steering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/wake_deflection/gauss.html#GaussVelocityDeflection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.wake_deflection.gauss.GaussVelocityDeflection" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="floris.simulation.base.BaseModel.html#floris.simulation.base.BaseModel" title="floris.simulation.base.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.simulation.base.BaseModel</span></code></a></p>
 <p>The Gauss deflection model is a blend of the models described in
-<span id="id1">[]</span> and <span id="id2">[]</span> for
+<span id="id1">[<a class="reference internal" href="#id6" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">1</a>]</span> and <span id="id2">[<a class="reference internal" href="#id19" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">2</a>]</span> for
 calculating the deflection field in turbine wakes.</p>
 <dl>
 <dt>parameter_dictionary (dict): Model-specific parameters.</dt><dd><p>Default values are used when a parameter is not included
@@ -1269,7 +1269,17 @@ See property on super-class for more details.</p></li>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<span class="target" id="id3"></span><p class="rubric">Methods</p>
+<div class="docutils container" id="id3">
+<dl class="citation">
+<dt class="label" id="id6"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id1">2</a>,<a href="#id1">3</a>,<a href="#id30">4</a>)</span></dt>
+<dd><p>Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. <em>Journal of Fluid Mechanics</em>, 806:506–541, 2016.</p>
+</dd>
+<dt class="label" id="id19"><span class="brackets">2</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id2">2</a>,<a href="#id2">3</a>,<a href="#id31">4</a>)</span></dt>
+<dd><p>Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. <em>Submitted to Wind Energy Science</em>, 2019.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
@@ -1413,7 +1423,7 @@ See property on super-class for more details.</p></li>
 <dt class="sig sig-object py" id="floris.simulation.wake_deflection.gauss.GaussVelocityDeflection.function">
 <span class="sig-name descname"><span class="pre">function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ct_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter_i</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freestream_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/wake_deflection/gauss.html#GaussVelocityDeflection.function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.wake_deflection.gauss.GaussVelocityDeflection.function" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculates the deflection field of the wake. See
-<span id="id4">[]</span> and <span id="id5">[]</span>
+<span id="id30">[<a class="reference internal" href="#id6" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">1</a>]</span> and <span id="id31">[<a class="reference internal" href="#id19" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">2</a>]</span>
 for details on the methods used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

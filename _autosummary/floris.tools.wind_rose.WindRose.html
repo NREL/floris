@@ -1235,7 +1235,14 @@ calculations for different wind conditions. Several methods exist for
 populating a WindRose object with wind data. WindRose also contains methods
 for visualizing wind roses.</p>
 <p class="rubric">References</p>
-<span class="target" id="id1"></span><p class="rubric">Methods</p>
+<div class="docutils container" id="id1">
+<dl class="citation">
+<dt class="label" id="id21"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id28">2</a>,<a href="#id29">3</a>)</span></dt>
+<dd><p>Sonia Wharton and JK Lundquist. Assessing atmospheric stability and the impacts on wind characteristics at an onshore wind farm. Technical Report, Lawrence Livermore National Lab.(LLNL), Livermore, CA (United States), 2010.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
@@ -1324,7 +1331,7 @@ for visualizing wind roses.</p>
 <td><p>This method saves the WindRose data as a pickle file so that it can be imported into a WindRose object later.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.ti_calculator_IU2" title="floris.tools.wind_rose.WindRose.ti_calculator_IU2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ti_calculator_IU2</span></code></a></p></td>
-<td><p>This function estimates the turbulence intensity corresponding to each Obukhov length value in the input list using the relationship between Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of <span id="id2">[]</span>.</p></td>
+<td><p>This function estimates the turbulence intensity corresponding to each Obukhov length value in the input list using the relationship between Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of <span id="id28">[<a class="reference internal" href="#id21" title="Sonia Wharton and JK Lundquist. Assessing atmospheric stability and the impacts on wind characteristics at an onshore wind farm. Technical Report, Lawrence Livermore National Lab.(LLNL), Livermore, CA (United States), 2010.">1</a>]</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.weibull" title="floris.tools.wind_rose.WindRose.weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weibull</span></code></a></p></td>
 <td><p>This method returns a Weibull distribution corresponding to the input data array (typically wind speed) using the specified Weibull parameters.</p></td>
@@ -2065,7 +2072,7 @@ in the Wind Toolkit dataset (m).</p>
 <dd><p>This function estimates the turbulence intensity corresponding to each
 Obukhov length value in the input list using the relationship between
 Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of
-<span id="id3">[]</span>.</p>
+<span id="id29">[<a class="reference internal" href="#id21" title="Sonia Wharton and JK Lundquist. Assessing atmospheric stability and the impacts on wind characteristics at an onshore wind farm. Technical Report, Lawrence Livermore National Lab.(LLNL), Livermore, CA (United States), 2010.">1</a>]</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>L</strong> (<em>iterable</em>) -- A list of Obukhov Length values (m).</p>

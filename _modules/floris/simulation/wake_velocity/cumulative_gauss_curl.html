@@ -1184,6 +1184,17 @@ title="Open an issue"
 
 <div class="viewcode-block" id="CumulativeGaussCurlVelocityDeficit"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit.html#floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">CumulativeGaussCurlVelocityDeficit</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The cumulative curl model is an implementation of the model described in</span>
+<span class="sd">    :cite:`gdm-bay_2022`, which itself is based on the cumulative model of</span>
+<span class="sd">    :cite:`bastankhah_2021`</span>
+
+<span class="sd">    References:</span>
+<span class="sd">    .. bibliography:: /references.bib</span>
+<span class="sd">        :style: unsrt</span>
+<span class="sd">        :filter: docname in docnames</span>
+<span class="sd">        :keyprefix: gdm-</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">a_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.179367259</span><span class="p">)</span>
     <span class="n">b_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0118889215</span><span class="p">)</span>
