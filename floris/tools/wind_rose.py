@@ -40,7 +40,7 @@ class WindRose:
     for visualizing wind roses.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: wr-
