@@ -11,22 +11,26 @@
 # the License.
 
 # from __future__ import annotations
+import copy
 from typing import Any, List
+from pathlib import Path
 
 import attrs
-from attrs import define, field
 import numpy as np
-from pathlib import Path
-import copy
+from attrs import define, field
 
 from floris.type_dec import (
+    NDArrayFloat,
     NDArrayObject,
+    convert_to_path,
     floris_array_converter,
-    NDArrayFloat
 )
 from floris.utilities import Vec3, load_yaml
 from floris.simulation import BaseClass, State
 from floris.simulation import Turbine
+
+
+default_turbine_library = Path(__file__).parents[1] / "turbine_library"
 
 
 @define
@@ -46,6 +50,7 @@ class Farm(BaseClass):
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
     turbine_type: List = field()
+    turbine_library: str | Path = field(default=default_turbine_library, converter=convert_to_path)
 
     turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
@@ -60,17 +65,23 @@ class Farm(BaseClass):
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
 
     @layout_x.validator
-    def check_x(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_y):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
     @layout_y.validator
-    def check_y(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_y(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
+    @turbine_library.validator
+    def check_library_exists(self, attribute: attrs.Attribute, value: Path) -> None:
+        """Ensures that the input to `library_path` exists and is a directory."""
+        if not value.is_dir():
+            raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
+
     @turbine_type.validator
-    def check_turbine_type(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_turbine_type(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
             if len(value) == 1:
                 value = self.turbine_type * len(self.layout_x)
@@ -80,17 +91,16 @@ class Farm(BaseClass):
         self.turbine_definitions = copy.deepcopy(value)
         for i, val in enumerate(value):
             if type(val) is str:
-                _floris_dir = Path(__file__).parent.parent
-                fname = _floris_dir / "turbine_library" / f"{val}.yaml"
+                fname = self.turbine_library / f"{val}.yaml"
                 if not Path.is_file(fname):
-                    raise ValueError("User-selected turbine definition `{}` does not exist in pre-defined turbine library.".format(val))
+                    raise FileNotFoundError(f"User-selected turbine definition `{val}` does not exist in the turbine library: {self.turbine_library}.")
                 self.turbine_definitions[i] = load_yaml(fname)
 
                 # This is a temporary block of code that catches that ref_density_cp_ct is not defined
                 # In the yaml file and forces it in
                 # A warning is issued letting the user know in future versions defining this value explicitly
                 # will be required 
-                if not 'ref_density_cp_ct' in self.turbine_definitions[i]:
+                if 'ref_density_cp_ct' not in self.turbine_definitions[i]:
                     self.logger.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
                     self.logger.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
                     self.logger.warn("In previous versions this was assumed to be 1.225")

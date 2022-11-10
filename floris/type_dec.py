@@ -13,6 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 from typing import Any, Iterable, Tuple, Union, Callable
+from pathlib import Path
 
 import attrs
 from attrs import define, Attribute
@@ -75,6 +76,31 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
         iterable_validator=attrs.validators.instance_of(iter_type),
     )
     return validator
+
+
+def convert_to_path(fn: str | Path) -> Path:
+    """Converts an input string or pathlib.Path object to a fully resolved pathlib.Path
+    object.
+
+    Args:
+        fn (str | Path): The user input file path or file name.
+
+    Raises:
+        AttributeError: _description_
+        AttributeError: _description_
+
+    Returns:
+        Path: A resolved pathlib.Path object.
+    """
+    if isinstance(fn, str):
+        fn = Path(fn)
+    
+    if isinstance(fn, Path):
+        fn.resolve()
+    else:
+        raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
+    return fn
+
 
 @define
 class FromDictMixin:

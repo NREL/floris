@@ -56,7 +56,7 @@ class Floris(BaseClass):
 
     # These fields are included to appease the requirement that all inputs must
     # be mapped to a field in the class. They are not used in FLORIS.
-    name: str  = field(converter=str)
+    name: str = field(converter=str)
     description: str = field(converter=str)
     floris_version: str = field(converter=str)
 
