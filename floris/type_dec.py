@@ -12,13 +12,15 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Iterable, Tuple, Union, Callable
+from __future__ import annotations
+
+from typing import Any, Tuple, Union, Callable, Iterable
 from pathlib import Path
 
 import attrs
-from attrs import define, Attribute
 import numpy as np
 import numpy.typing as npt
+from attrs import Attribute, define
 
 
 ### Define general data types used throughout
@@ -33,6 +35,7 @@ NDArrayObject = npt.NDArray[np.object_]
 
 ### Custom callables for attrs objects and functions
 
+
 def floris_array_converter(data: Iterable) -> np.ndarray:
     try:
         a = np.array(data, dtype=floris_float_type)
@@ -40,10 +43,12 @@ def floris_array_converter(data: Iterable) -> np.ndarray:
         raise TypeError(e.args[0] + f". Data given: {data}")
     return a
 
+
 def attr_serializer(inst: type, field: Attribute, value: Any):
     if isinstance(value, np.ndarray):
         return value.tolist()
     return value
+
 
 def attr_floris_filter(inst: Attribute, value: Any) -> bool:
     if inst.init is False:
@@ -54,6 +59,7 @@ def attr_floris_filter(inst: Attribute, value: Any) -> bool:
         if value.size == 0:
             return False
     return True
+
 
 def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
     """Helper function to generate iterable validators that will reduce the amount of
@@ -94,7 +100,7 @@ def convert_to_path(fn: str | Path) -> Path:
     """
     if isinstance(fn, str):
         fn = Path(fn)
-    
+
     if isinstance(fn, Path):
         fn.resolve()
     else:
@@ -184,4 +190,3 @@ class FromDictMixin:
 #     kw_only=True,
 # )
 # update_wrapper(int_attrib, attr.ib)
-
