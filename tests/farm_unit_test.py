@@ -18,14 +18,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from tests.conftest import SampleInputs
+from tests.conftest import N_WIND_SPEEDS, N_WIND_DIRECTIONS, SampleInputs
 from floris.utilities import Vec3
 from floris.simulation import Farm
 
-from tests.conftest import (
-    N_WIND_SPEEDS,
-    N_WIND_DIRECTIONS,
-)
 
 def test_farm_init_homogenous_turbines():
     farm_data = SampleInputs().farm
@@ -77,7 +73,7 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     # Demonstrate a passing case
     farm_data = deepcopy(SampleInputs().farm)
     farm_data["turbine_library"] = external_library
-    farm_data["turbine_type"] = ["nrel_5mw"] * len(farm_data["layout_x"])
+    farm_data["turbine_type"] = ["nrel_5MW"] * len(farm_data["layout_x"])
     farm = Farm.from_dict(farm_data)
     assert farm.turbine_library == external_library
 
