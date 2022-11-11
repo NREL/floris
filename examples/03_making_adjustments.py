@@ -57,11 +57,11 @@ X, Y = np.meshgrid(
     5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
     5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
 )
-fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
+fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten(), wind_directions=[360.0])
 horizontal_plane = fi.calculate_horizontal_plane(height=90.0)
 wakeviz.visualize_cut_plane(horizontal_plane, ax=axarr[3], title="3x3 Farm", min_speed=MIN_WS, max_speed=MAX_WS)
 wakeviz.add_turbine_id_labels(fi, axarr[3], color="w", backgroundcolor="k")
-
+wakeviz.plot_turbines_with_fi(fi, axarr[3])
 
 # Change the yaw angles and configure the plot differently
 yaw_angles = np.zeros((1, 1, N * N))

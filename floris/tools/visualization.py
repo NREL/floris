@@ -22,11 +22,20 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
 from floris.tools.floris_interface import FlorisInterface
+from floris.utilities import rotate_coordinates_rel_west
 
 def show_plots():
     plt.show()
 
-def plot_turbines(ax, layout_x, layout_y, yaw_angles, rotor_diameters, color=None, wind_direction=270.0):
+def plot_turbines(
+    ax,
+    layout_x,
+    layout_y,
+    yaw_angles,
+    rotor_diameters,
+    color: str | None = None,
+    wind_direction: float = 270.0
+):
     """
     Plot wind plant layout from turbine locations.
 
@@ -39,13 +48,13 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, rotor_diameters, color=Non
         color (str): Pyplot color option to plot the turbines.
         wind_direction (float): Wind direction (rotates farm)
     """
-
-    # Correct for the wind direction
-    yaw_angles = np.array(yaw_angles)  # - wind_direction - 270
-
     if color is None:
         color = "k"
-    for x, y, yaw, d in zip(layout_x, layout_y, yaw_angles, rotor_diameters):
+
+    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
+    layout_x, layout_y, _ = rotate_coordinates_rel_west(np.array([wind_direction]), coordinates_array)
+
+    for x, y, yaw, d in zip(layout_x[0,0], layout_y[0,0], yaw_angles, rotor_diameters):
         R = d / 2.0
         x_0 = x + np.sin(np.deg2rad(yaw)) * R
         x_1 = x - np.sin(np.deg2rad(yaw)) * R
@@ -90,9 +99,12 @@ def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
         fi (FlorisInterface): Simulation object to get the layout and index information.
         ax (plt.Axes): Axes object to add the labels.
     """
+    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(fi.layout_x, fi.layout_y))])
+    wind_direction = fi.floris.flow_field.wind_directions[0]
+    layout_x, layout_y, _ = rotate_coordinates_rel_west(np.array([wind_direction]), coordinates_array)
 
     for i in range(fi.floris.farm.n_turbines):
-        ax.annotate(i, (fi.layout_x[i], fi.layout_y[i]), xytext=(0,10), textcoords="offset points", **kwargs)
+        ax.annotate(i, (layout_x[0,0,i], layout_y[0,0,i]), xytext=(0,10), textcoords="offset points", **kwargs)
 
 
 def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwargs):
