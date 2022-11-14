@@ -53,6 +53,10 @@ def plot_turbines(
         color (str): Pyplot color option to plot the turbines.
         wind_direction (float): Wind direction (rotates farm)
     """
+
+    # Correct for the wind direction
+    yaw_angles = np.array(yaw_angles) - wind_direction - 270 #dh. activate
+
     if color is None:
         color = "k"
 
