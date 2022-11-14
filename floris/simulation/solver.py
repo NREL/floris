@@ -233,8 +233,9 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
     turbine_grid_farm.construct_turbine_pTs()
     turbine_grid_farm.construct_turbine_ref_density_cp_cts()
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+    turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.set_tilt_to_ref_tilt()
+    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
 
     turbine_grid = TurbineGrid(
@@ -582,8 +583,9 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
     turbine_grid_farm.construct_turbine_pTs()
     turbine_grid_farm.construct_turbine_ref_density_cp_cts()
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+    turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.set_tilt_to_ref_tilt()
+    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
