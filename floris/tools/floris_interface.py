@@ -300,7 +300,8 @@ class FlorisInterface(LoggerBase):
         w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
 
         #dh. inverse rotation of cal. results (x,y,z)
-        if 1 :
+        fix_orientation = True #dh. TODO add variable in class
+        if fix_orientation :
             x_flat2, y_flat2, z_flat2 = rotate_coordinates_rel_west(self.floris.flow_field.wind_directions, (x_flat, y_flat, z_flat), inv_rot=True )
             x_flat=x_flat2[0,0].flatten(); 
             y_flat=y_flat2[0,0].flatten(); 

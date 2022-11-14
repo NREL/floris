@@ -26,7 +26,8 @@ fi = FlorisInterface("floris/examples/inputs/gch.yaml") # 3.2.1.2.1.1
 # # Define 4 turbines
 layout_x = np.array([3000.0, 0.0, 1500.0, 3000.0])
 layout_y = np.array([800.0, 800.0, 800.0, 0.0])
-turbine_type = ['nrel_5MW', 'nrel_5MW', 'iea_10MW', 'iea_15MW']
+if 1 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'nrel_5MW', 'nrel_5MW'] # same WTGs
+if 0 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'iea_10MW', 'iea_15MW'] # mix WTGs
 fi.reinitialize(layout_x=layout_x, layout_y=layout_y, turbine_type=turbine_type)
 
 # sweep_wind_directions
