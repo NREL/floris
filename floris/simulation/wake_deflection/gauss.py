@@ -65,7 +65,7 @@ class GaussVelocityDeflection(BaseModel):
                 See property on super-class for more details.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: gdm-
