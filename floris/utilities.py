@@ -195,13 +195,18 @@ def wind_delta(wind_directions):
     return ((wind_directions - 270) % 360 + 360) % 360
 
 
-def rotate_coordinates_rel_west(wind_directions, coordinates):
+def rotate_coordinates_rel_west(wind_directions, coordinates, inv_rot=False): #dh. add inv_rot
     # Calculate the difference in given wind direction from 270 / West
     wind_deviation_from_west = wind_delta(wind_directions)
     wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))
 
+    if inv_rot : wind_deviation_from_west = -wind_deviation_from_west #dh. for inverse rotation
+    
     # Construct the arrays storing the turbine locations
-    x_coordinates, y_coordinates, z_coordinates = coordinates.T
+    if isinstance(coordinates, (np.ndarray, np.generic) ) :
+        x_coordinates, y_coordinates, z_coordinates = coordinates.T
+    else :
+        x_coordinates, y_coordinates, z_coordinates = coordinates #dh. to handle additional input type (mesh grid)
 
     # Find center of rotation - this is the center of box bounding all of the turbines
     x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2

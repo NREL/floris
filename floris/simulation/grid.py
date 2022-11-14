@@ -354,17 +354,30 @@ class FlowFieldPlanarGrid(Grid):
         First, sort the turbines so that we know the bounds in the correct orientation.
         Then, create the grid based on this wind-from-left orientation
         """
+        
+        fix_orientation = True #dh. TODO add variable in class
+        if fix_orientation : wd = np.ones_like(self.wind_directions)*270 #dh. do not rotate
+        else : wd = self.wind_directions #dh. do rotate
+        
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z = rotate_coordinates_rel_west(wd, self.turbine_coordinates_array)
 
         max_diameter = np.max(self.reference_turbine_diameter)
 
         if self.normal_vector == "z":  # Rules of thumb for horizontal plane
             if self.x1_bounds is None:
-                self.x1_bounds = (np.min(x) - 2 * max_diameter, np.max(x) + 10 * max_diameter)
+                # dh. broaden the flowfiled_planar
+                if fix_orientation : 
+                    self.x1_bounds = (np.min(x) - 10 * max_diameter, np.max(x) + 10 * max_diameter)
+                else : 
+                    self.x1_bounds = (np.min(x) - 2 * max_diameter, np.max(x) + 10 * max_diameter)
 
             if self.x2_bounds is None:
-                self.x2_bounds = (np.min(y) - 2 * max_diameter, np.max(y) + 2 * max_diameter)
+                # dh 
+                if fix_orientation :
+                   self.x2_bounds = (np.min(y) - 10 * max_diameter, np.max(y) + 10 * max_diameter)
+                else : 
+                   self.x2_bounds = (np.min(y) - 2 * max_diameter, np.max(y) + 2 * max_diameter)
 
             # TODO figure out proper z spacing for GCH, currently set to +/- 10.0
             x_points, y_points, z_points = np.meshgrid(
@@ -378,6 +391,10 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
+            #dh. rotating meshgrid to west
+            if fix_orientation : 
+                x_points, y_points, z_points = rotate_coordinates_rel_west(self.wind_directions, (x_points, y_points, z_points), inv_rot=False )
+        
             self.x_sorted = x_points[None, None, :, :, :]
             self.y_sorted = y_points[None, None, :, :, :]
             self.z_sorted = z_points[None, None, :, :, :]

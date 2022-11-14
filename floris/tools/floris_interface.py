@@ -31,6 +31,8 @@ from floris.simulation.turbine import (
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
 
+#dh
+from floris.utilities import rotate_coordinates_rel_west
 
 class FlorisInterface(LoggerBase):
     """
@@ -297,6 +299,13 @@ class FlorisInterface(LoggerBase):
         v_flat = self.floris.flow_field.v_sorted[0, 0].flatten()
         w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
 
+        #dh. inverse rotation of cal. results (x,y,z)
+        if 1 :
+            x_flat2, y_flat2, z_flat2 = rotate_coordinates_rel_west(self.floris.flow_field.wind_directions, (x_flat, y_flat, z_flat), inv_rot=True )
+            x_flat=x_flat2[0,0].flatten(); 
+            y_flat=y_flat2[0,0].flatten(); 
+            z_flat=z_flat2[0,0].flatten();
+
         # Create a df of these
         if normal_vector == "z":
             df = pd.DataFrame(
@@ -342,7 +351,7 @@ class FlorisInterface(LoggerBase):
         df = df.drop_duplicates()
 
         # Sort values of df to make sure plotting is acceptable
-        df = df.sort_values(["x2", "x1"]).reset_index(drop=True)
+        #df = df.sort_values(["x2", "x1"]).reset_index(drop=True) #dh. deactivate
 
         return df
 
