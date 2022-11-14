@@ -134,7 +134,10 @@ class FlorisInterface(LoggerBase):
         if tilt_angles is not None:
             self.floris.farm.tilt_angles = tilt_angles
         else:
-            self.floris.farm.set_tilt_to_ref_tilt()
+            self.floris.farm.set_tilt_to_ref_tilt(
+                self.floris.flow_field.n_wind_directions,
+                self.floris.flow_field.n_wind_speeds
+            )
 
         # Initialize solution space
         self.floris.initialize_domain()
