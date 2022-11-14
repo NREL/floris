@@ -27,7 +27,7 @@ from floris.logging_manager import LoggerBase
 from floris.simulation import State
 
 from floris.tools.cut_plane import CutPlane
-from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
+from floris.simulation.turbine import Ct, power, axial_induction, average_velocity, rotor_effective_velocity
 
 
 class FlorisInterface(LoggerBase):
@@ -581,7 +581,7 @@ class FlorisInterface(LoggerBase):
         if self.floris.state is not State.USED:
             raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.")
 
-        turbine_powers = power(
+        rotor_effective_velocities = rotor_effective_velocity(
             air_density=self.floris.flow_field.air_density,
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
             velocities=self.floris.flow_field.u,
@@ -590,8 +590,14 @@ class FlorisInterface(LoggerBase):
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             pP=self.floris.farm.pPs,
             pT=self.floris.farm.pTs,
-            power_interp=self.floris.farm.turbine_power_interps,
             tilt_interp=self.floris.farm.turbine_fTilts,
+            turbine_type_map=self.floris.farm.turbine_type_map,
+        )
+
+        turbine_powers = power(
+            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            rotor_effective_velocities=rotor_effective_velocities,
+            power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_powers
@@ -600,7 +606,10 @@ class FlorisInterface(LoggerBase):
         turbine_Cts = Ct(
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
+            tilt_interp=self.floris.farm.turbine_fTilts,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_Cts
@@ -609,12 +618,16 @@ class FlorisInterface(LoggerBase):
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
+            tilt_interp=self.floris.farm.turbine_fTilts,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_ais
 
     def get_turbine_average_velocities(self) -> NDArrayFloat:
+        # TODO: Should we have a `get_turbine_effective_velocities` function?
         turbine_avg_vels = average_velocity(
             velocities=self.floris.flow_field.u,
         )
