@@ -14,7 +14,6 @@
 from __future__ import annotations
 
 from typing import Union
-from itertools import product
 
 import numpy as np
 import matplotlib as mpl
@@ -22,6 +21,7 @@ import matplotlib.colors as mplcolors
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
+from floris.tools.floris_interface import FlorisInterface
 
 def show_plots():
     plt.show()
@@ -54,7 +54,7 @@ def plot_turbines(ax, layout_x, layout_y, yaw_angles, rotor_diameters, color=Non
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def plot_turbines_with_fi(fi, ax=None, color=None, yaw_angles=None):
+def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=None):
     """
     Wrapper function to plot turbines which extracts the data
     from a FLORIS interface object
@@ -78,6 +78,21 @@ def plot_turbines_with_fi(fi, ax=None, color=None, yaw_angles=None):
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
     )
+
+
+def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
+    """
+    Adds index labels to a plot based on the given FlorisInterface.
+    See the pyplot.annotate docs for more info: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html.
+    kwargs are passed to Text (https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text).
+
+    Args:
+        fi (FlorisInterface): Simulation object to get the layout and index information.
+        ax (plt.Axes): Axes object to add the labels.
+    """
+
+    for i in range(fi.floris.farm.n_turbines):
+        ax.annotate(i, (fi.layout_x[i], fi.layout_y[i]), xytext=(0,10), textcoords="offset points", **kwargs)
 
 
 def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwargs):
@@ -125,7 +140,7 @@ def visualize_cut_plane(
     levels=None,
     color_bar=False,
     title="",
-    kwargs={}
+    **kwargs
 ):
     """
     Generate pseudocolor mesh plot of the cut_plane.
