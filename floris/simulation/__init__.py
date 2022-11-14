@@ -34,7 +34,7 @@ isort:skip_file
 # Since some of these depend on each other, the order
 # that they are listed here does matter.
 from .base import BaseClass, BaseModel, State
-from .turbine import Turbine, Ct, power, axial_induction, average_velocity
+from .turbine import Turbine, Ct, power, axial_induction, average_velocity, rotor_effective_velocity, _rotor_velocity_yaw_correction, _rotor_velocity_tilt_correction, _compute_tilt_angles_for_floating_turbines
 from .farm import Farm
 from .grid import Grid, TurbineGrid, FlowFieldGrid, FlowFieldPlanarGrid
 from .flow_field import FlowField

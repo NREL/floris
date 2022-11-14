@@ -156,7 +156,9 @@ class Farm(BaseClass):
         self.hub_heights_sorted = np.take_along_axis(self.hub_heights * template_shape, sorted_coord_indices, axis=2)
         self.rotor_diameters_sorted = np.take_along_axis(self.rotor_diameters * template_shape, sorted_coord_indices, axis=2)
         self.TSRs_sorted = np.take_along_axis(self.TSRs * template_shape, sorted_coord_indices, axis=2)
+        self.ref_density_cp_cts_sorted = np.take_along_axis(self.ref_density_cp_cts * template_shape, sorted_coord_indices, axis=2)
         self.tilt_angles_sorted = np.take_along_axis(self.tilt_angles * template_shape, sorted_coord_indices, axis=2)
+        self.ref_tilt_cp_cts_sorted = np.take_along_axis(self.ref_tilt_cp_cts * template_shape, sorted_coord_indices, axis=2)
         self.pPs_sorted = np.take_along_axis(self.pPs * template_shape, sorted_coord_indices, axis=2)
         self.pTs_sorted = np.take_along_axis(self.pTs * template_shape, sorted_coord_indices, axis=2)
         self.turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]
@@ -171,8 +173,9 @@ class Farm(BaseClass):
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
         self.yaw_angles_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
 
-    def set_tilt_to_ref_tilt(self):
-        self.tilt_angles = np.array([tilt for tilt in self.ref_tilt_cp_cts])
+    def set_tilt_to_ref_tilt(self, n_wind_directions: int, n_wind_speeds: int):
+        self.tilt_angles = np.ones((n_wind_directions, n_wind_speeds, self.n_turbines)) * np.array([tilt for tilt in self.ref_tilt_cp_cts])
+        self.tilt_angles_sorted = np.ones((n_wind_directions, n_wind_speeds, self.n_turbines)) * np.array([tilt for tilt in self.ref_tilt_cp_cts])
 
     def finalize(self, unsorted_indices):
         self.yaw_angles = np.take_along_axis(self.yaw_angles_sorted, unsorted_indices[:,:,:,0,0], axis=2)

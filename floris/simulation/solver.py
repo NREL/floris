@@ -80,7 +80,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         ct_i = Ct(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
+            tilt_angle=farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -88,7 +91,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
+            tilt_angle=farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -273,7 +279,10 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
         ct_i = Ct(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+            tilt_angle=turbine_grid_farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
+            tilt_interp=turbine_grid_farm.turbine_fTilts,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -281,7 +290,10 @@ def full_flow_sequential_solver(farm: Farm, flow_field: FlowField, flow_field_gr
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+            tilt_angle=turbine_grid_farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
+            tilt_interp=turbine_grid_farm.turbine_fTilts,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -404,14 +416,20 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
         turb_Cts = Ct(
             turb_avg_vels,
             farm.yaw_angles_sorted,
+            farm.tilt_angles_sorted,
+            farm.ref_tilt_cp_cts_sorted,
             farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
         )
         turb_Cts = turb_Cts[:, :, :, None, None]     
         turb_aIs = axial_induction(
             turb_avg_vels,
             farm.yaw_angles_sorted,
+            farm.tilt_angles_sorted,
+            farm.ref_tilt_cp_cts_sorted,
             farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -423,7 +441,10 @@ def cc_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manage
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
+            tilt_angle=farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -610,7 +631,10 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
         turb_Cts = Ct(
             velocities=turb_avg_vels,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+            tilt_angle=turbine_grid_farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
+            tilt_interp=turbine_grid_farm.turbine_fTilts,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
         )
         turb_Cts = turb_Cts[:, :, :, None, None]
@@ -618,7 +642,10 @@ def full_flow_cc_solver(farm: Farm, flow_field: FlowField, flow_field_grid: Flow
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+            tilt_angle=turbine_grid_farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
+            tilt_interp=turbine_grid_farm.turbine_fTilts,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -737,14 +764,20 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         Cts = Ct(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
+            tilt_angle=farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
         )
 
         ct_i = Ct(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
+            tilt_angle=farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -752,7 +785,10 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
+            tilt_angle=farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -796,7 +832,10 @@ def turbopark_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
                 ct_ii = Ct(
                     velocities=flow_field.u_sorted,
                     yaw_angle=farm.yaw_angles_sorted,
+                    tilt_angle=farm.tilt_angles_sorted,
+                    ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                     fCt=farm.turbine_fCts,
+                    tilt_interp=farm.turbine_fTilts,
                     turbine_type_map=farm.turbine_type_map_sorted,
                     ix_filter=[ii]
                 )

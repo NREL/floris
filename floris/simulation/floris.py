@@ -79,7 +79,7 @@ class Floris(BaseClass):
         self.farm.construct_turbine_fTilts()
         self.farm.construct_coordinates()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
-        self.farm.set_tilt_to_ref_tilt()
+        self.farm.set_tilt_to_ref_tilt(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
