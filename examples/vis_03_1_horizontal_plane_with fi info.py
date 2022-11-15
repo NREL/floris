@@ -41,7 +41,7 @@ if 1 : # dh. 화면에 yaw, fi 정보도 출력
     # yaw angles: Change the yaw angles and configure the plot differently
     n_wd=fi.floris.flow_field.n_wind_directions; n_ws=fi.floris.flow_field.n_wind_speeds
     n_wtg=fi.floris.farm.n_turbines
-    yaw_angles = np.zeros((1, 1, n_wtg));
+    yaw_angles = np.zeros((1, 1, n_wtg))
     yaw_angles[:,:,:] = (0, 0, 15, -15)
 
     # ready for plot 

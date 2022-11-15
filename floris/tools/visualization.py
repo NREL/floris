@@ -91,7 +91,7 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
     if yaw_angles is None:
         yaw_angles = fi.floris.farm.yaw_angles
     
-    #dh. after cal_wake. wind_directions shape has changed.   
+    #dh. after cal_wake. rotor_diameters shape has changed.   
     try:
         np.shape(fi.floris.farm.rotor_diameters)[1]
         rd=fi.floris.farm.rotor_diameters[0,0] # after calculate_wake with wd or ws is over 2
