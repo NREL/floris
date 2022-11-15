@@ -27,8 +27,8 @@ fi = FlorisInterface("floris/examples/inputs/gch.yaml")
 # # Define 4 turbines
 layout_x = np.array([3000.0, 0.0, 1500.0, 3000.0])
 layout_y = np.array([800.0, 800.0, 800.0, 0.0])
-if 0 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'nrel_5MW', 'nrel_5MW'] # same WTGs
-if 1 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'iea_10MW', 'iea_15MW'] # mix WTGs
+if 1 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'nrel_5MW', 'nrel_5MW'] # same WTGs
+if 0 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'iea_10MW', 'iea_15MW'] # mix WTGs
 fi.reinitialize(layout_x=layout_x, layout_y=layout_y, turbine_type=turbine_type)
 
 # plot with yawangle, fi info
@@ -53,8 +53,8 @@ if 1 : # dh. 화면에 yaw, fi 정보도 출력
         # fi update for text on WTGs.
         # at the end of fi.calculate_horizontal_plane, restoring fi to previous,
         # we can't use those results for texting
-        fi.reinitialize( wind_speeds=ws, wind_directions=wd[i] ) # class fi  
-        fi.floris.farm.yaw_angles=yaw_angles; # yaw angles
+        fi.reinitialize( wind_speeds=ws, wind_directions=wd[i] ) # update class fi, loosing yaw angles  
+        fi.floris.farm.yaw_angles=yaw_angles; # set again yaw angles into fi
         
         # getting df (x,y,z, u,v,w) for planar flow field
         horizontal_plane=fi.calculate_horizontal_plane(wd=wd[i], ws=ws, height=90.0, yaw_angles=yaw_angles, x_resolution=res, y_resolution=res)
@@ -69,7 +69,7 @@ if 1 : # dh. 화면에 yaw, fi 정보도 출력
         #dh. text on WTGs
         # fi update with reinitialize
         turbine_yaw = fi.floris.farm.yaw_angles
-        turbine_type= fi.floris.farm.turbine_type
+        turbine_type= fi.floris.farm.turbine_type_names_sorted
         turbine_avg_vel=fi.get_turbine_average_velocities()
         turbine_powers = fi.get_turbine_powers()/1000.
         turbine_ais =fi.get_turbine_ais()

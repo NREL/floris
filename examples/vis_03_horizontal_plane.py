@@ -26,8 +26,8 @@ fi = FlorisInterface("floris/examples/inputs/gch.yaml") # 3.2.1.2.1.1
 # # Define 4 turbines
 layout_x = np.array([3000.0, 0.0, 1500.0, 3000.0])
 layout_y = np.array([800.0, 800.0, 800.0, 0.0])
-if 1 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'nrel_5MW', 'nrel_5MW'] # same WTGs
-if 0 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'iea_10MW', 'iea_15MW'] # mix WTGs
+if 0 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'nrel_5MW', 'nrel_5MW'] # same WTGs
+if 1 : turbine_type = ['nrel_5MW', 'nrel_5MW', 'iea_10MW', 'iea_15MW'] # mix WTGs
 fi.reinitialize(layout_x=layout_x, layout_y=layout_y, turbine_type=turbine_type)
 
 # sweep_wind_directions
@@ -59,7 +59,7 @@ if 1 : # just with yaw angle text
         
         # text on WTGs
         turbine_yaw = yaw_angles.flatten()
-        turbine_type= fi.floris.farm.turbine_type
+        turbine_type= fi.floris.farm.turbine_type_names_sorted
         
         mytext = [f"yaw: {i:.1f}" for i in turbine_yaw] 
         if 1: mytext = [f"T{i:0d}: {turbine_type[i]} \n {mytext[i]}" for i in range(n_wtg)] 

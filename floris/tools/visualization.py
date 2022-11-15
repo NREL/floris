@@ -90,12 +90,20 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
         fig, ax = plt.subplots()
     if yaw_angles is None:
         yaw_angles = fi.floris.farm.yaw_angles
+    
+    #dh. after cal_wake. wind_directions shape has changed.   
+    try:
+        np.shape(fi.floris.farm.rotor_diameters)[1]
+        rd=fi.floris.farm.rotor_diameters[0,0] # after calculate_wake with wd or ws is over 2
+    except:        
+        rd=fi.floris.farm.rotor_diameters # after FI, reinitialize, etc...
+        
     plot_turbines(
         ax,
         fi.layout_x,
         fi.layout_y,
         yaw_angles[0, 0],
-        fi.floris.farm.rotor_diameters[0, 0],
+        rd, #dh. change
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
     )
