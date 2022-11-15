@@ -53,13 +53,12 @@ def plot_turbines(
         color (str): Pyplot color option to plot the turbines.
         wind_direction (float): Wind direction (rotates farm)
     """
-
-    # Correct for the wind direction
-    yaw_angles = np.array(yaw_angles) - wind_direction - 270 #dh. activate
-
     if color is None:
         color = "k"
 
+    fix_orientation=1 #dh. how to 
+    if fix_orientation : wind_direction = np.ones_like(wind_direction)*270 #dh
+    
     coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
     layout_x, layout_y, _ = rotate_coordinates_rel_west(
         np.array([wind_direction]),
@@ -95,7 +94,7 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
     try:
         np.shape(fi.floris.farm.rotor_diameters)[1]
         rd=fi.floris.farm.rotor_diameters[0,0] # after calculate_wake with wd or ws is over 2
-    except:        
+    except:
         rd=fi.floris.farm.rotor_diameters # after FI, reinitialize, etc...
         
     plot_turbines(
@@ -103,7 +102,7 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
         fi.layout_x,
         fi.layout_y,
         yaw_angles[0, 0],
-        rd, #dh. change
+        rotor_diameters=rd, #dh
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
     )
