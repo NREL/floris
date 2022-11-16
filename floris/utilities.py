@@ -12,12 +12,12 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import os
 from typing import Tuple
 
-from attrs import define, field
 import numpy as np
 import yaml
-import os
+from attrs import define, field
 
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
