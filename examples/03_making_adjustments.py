@@ -16,8 +16,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
 import floris.tools.visualization as wakeviz
+from floris.tools import FlorisInterface
+
 
 """
 This example makes changes to the given input file through the script.

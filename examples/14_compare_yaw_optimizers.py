@@ -13,8 +13,10 @@
 # See https://floris.readthedocs.io for documentation
 
 from time import perf_counter as timerpc
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
+
 from floris.tools import FlorisInterface
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import (
     YawOptimizationScipy

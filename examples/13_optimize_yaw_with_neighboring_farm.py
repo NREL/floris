@@ -16,11 +16,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.interpolate import NearestNDInterpolator
+
 from floris.tools import FlorisInterface
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
-    YawOptimizationSR,
+    YawOptimizationSR
 )
-from scipy.interpolate import NearestNDInterpolator
 
 
 """

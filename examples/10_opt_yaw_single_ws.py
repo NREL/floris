@@ -12,12 +12,14 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from floris.tools import FlorisInterface
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
-    YawOptimizationSR,
+    YawOptimizationSR
 )
+
 
 """
 This example demonstrates how to perform a yaw optimization for multiple wind directions and 1 wind speed.

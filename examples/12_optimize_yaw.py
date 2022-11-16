@@ -14,13 +14,16 @@
 
 
 from time import perf_counter as timerpc
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
 from floris.tools import FlorisInterface
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
-    YawOptimizationSR,
+    YawOptimizationSR
 )
+
 
 """
 This example demonstrates how to perform a yaw optimization and evaluate the performance over a full wind rose.

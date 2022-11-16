@@ -15,8 +15,9 @@
 
 import matplotlib.pyplot as plt
 
-from floris.tools import FlorisInterface
 import floris.tools.visualization as wakeviz
+from floris.tools import FlorisInterface
+
 
 """
 This example initializes the FLORIS software, and then uses internal

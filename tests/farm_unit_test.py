@@ -14,14 +14,14 @@
 
 import numpy as np
 
-from tests.conftest import SampleInputs
-from floris.utilities import Vec3
 from floris.simulation import Farm
-
+from floris.utilities import Vec3
 from tests.conftest import (
-    N_WIND_SPEEDS,
     N_WIND_DIRECTIONS,
+    N_WIND_SPEEDS,
+    SampleInputs
 )
+
 
 def test_farm_init_homogenous_turbines():
     farm_data = SampleInputs().farm

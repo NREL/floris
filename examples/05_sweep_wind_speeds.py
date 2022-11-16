@@ -18,6 +18,7 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
+
 """
 05_sweep_wind_speeds
 

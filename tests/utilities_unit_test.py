@@ -21,14 +21,18 @@ import pytest
 
 from floris.utilities import (
     cosd,
+    rotate_coordinates_rel_west,
     sind,
     tand,
-    wrap_180,
-    wrap_360,
     wind_delta,
-    rotate_coordinates_rel_west
+    wrap_180,
+    wrap_360
 )
-from tests.conftest import X_COORDS, Y_COORDS, Z_COORDS
+from tests.conftest import (
+    X_COORDS,
+    Y_COORDS,
+    Z_COORDS
+)
 
 
 def test_cosd():

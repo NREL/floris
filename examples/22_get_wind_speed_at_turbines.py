@@ -17,6 +17,7 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
+
 # Initialize FLORIS with the given input file via FlorisInterface.
 # For basic usage, FlorisInterface provides a simplified and expressive
 # entry point to the simulation routines.
