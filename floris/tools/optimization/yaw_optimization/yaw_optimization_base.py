@@ -19,10 +19,7 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from .yaw_optimization_tools import (
-    derive_downstream_turbines,
-    find_layout_symmetry,
-)
+from .yaw_optimization_tools import derive_downstream_turbines, find_layout_symmetry
 
 
 class YawOptimization:
