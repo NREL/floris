@@ -41,8 +41,6 @@ exclude = '''
 
 
 [tool.isort]
-multi_line_output = 3
-ensure_newline_before_comments = true
 sections = [
     "FUTURE",
     "STDLIB",
@@ -50,17 +48,20 @@ sections = [
     "FIRSTPARTY",
     "LOCALFOLDER"
 ]
-known_third_party = [
-    "numpy",
-    "pandas",
-    "scipy",
-    "attr"
+known_first_party = [
+    "floris"
 ]
-known_first_party = ["floris"]
+multi_line_output = 3
 combine_as_imports = true
-force_grid_wrap = 0
-include_trailing_comma = true
+force_grid_wrap = 3
+include_trailing_comma = false
 use_parentheses = true
-length_sort = true
 lines_after_imports = 2
 line_length = 88
+order_by_type = false
+
+# length_sort = true
+# case_sensitive: False
+# force_sort_within_sections: True
+# reverse_relative: True
+# sort_relative_in_force_sorted_sections: True

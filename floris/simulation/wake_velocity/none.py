@@ -12,12 +12,14 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.simulation import BaseModel
-from floris.simulation import FlowField
-from floris.simulation import Grid
+from floris.simulation import (
+    BaseModel,
+    FlowField,
+    Grid
+)
 
 
 @define
