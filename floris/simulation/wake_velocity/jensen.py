@@ -35,7 +35,7 @@ class JensenVelocityDeficit(BaseModel):
         wake.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: jvm-

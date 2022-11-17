@@ -24,7 +24,7 @@ class MAX(BaseModel):
     :cite:`max-gunn2016limitations`.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: max-
