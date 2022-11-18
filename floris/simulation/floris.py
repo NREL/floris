@@ -166,13 +166,13 @@ class Floris(BaseClass):
                 self.grid,
                 self.wake
             )
-        elif vel_model=="geometric":
-            elapsed_time = geometric_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+        # elif vel_model=="geometric":
+        #     elapsed_time = geometric_solver(
+        #         self.farm,
+        #         self.flow_field,
+        #         self.grid,
+        #         self.wake
+        #     )
         else:
             elapsed_time = sequential_solver(
                 self.farm,

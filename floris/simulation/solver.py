@@ -11,6 +11,7 @@
 # the License.
 
 import copy
+from turtle import down
 import numpy as np
 import time
 import sys
@@ -62,6 +63,18 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
     turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
     ambient_turbulence_intensity = flow_field.turbulence_intensity
+
+
+    # MStemp
+    if model_manager.model_strings["turbulence_model"] == "wake_induced_mixing":
+        # TODO: check this works when mutliple ws, wd are passed. 
+        # (both transpose and divide)
+        x_locs = np.mean(grid.x_sorted, axis=(3, 4))[:,:,:,None]
+        downstream_distance_D = x_locs - np.transpose(x_locs, axes=(0,1,3,2))
+        downstream_distance_D = downstream_distance_D / \
+           np.repeat(farm.rotor_diameters_sorted[:,:,:,None], grid.n_turbines, axis=-1)
+        downstream_distance_D = np.maximum(downstream_distance_D, 0.1) # For ease
+        wake_induced_mixing_factor = np.zeros_like(downstream_distance_D)
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -158,6 +171,7 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
 
         # NOTE: exponential
+        #import ipdb; ipdb.set_trace()
         velocity_deficit = model_manager.velocity_model.function(
             x_i,
             y_i,
@@ -165,7 +179,9 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             axial_induction_i,
             deflection_field,
             yaw_angle_i,
-            turbulence_intensity_i,
+            np.sum(wake_induced_mixing_factor[:,:,i:i+1,:], axis=-1)[:,:,:,None,None] \
+                if model_manager.model_strings["turbulence_model"] == "wake_induced_mixing" \
+                else turbulence_intensity_i,
             ct_i,
             hub_height_i,
             rotor_diameter_i,
@@ -176,7 +192,8 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
             wake_field,
             velocity_deficit * flow_field.u_initial_sorted
         )
-
+        
+        # Not used in geomodel? Remove??
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
             ambient_turbulence_intensity,
             grid.x_sorted,
@@ -187,6 +204,10 @@ def sequential_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
 
         # Calculate wake overlap for wake-added turbulence (WAT)
         area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
+        if model_manager.model_strings["turbulence_model"] == "wake_induced_mixing":
+            #import ipdb; ipdb.set_trace()
+            wake_induced_mixing_factor[:,:,:,i] = area_overlap * \
+                axial_induction_i[:,:,:,0,0] / downstream_distance_D[:,:,:,i]
         area_overlap = area_overlap[:, :, :, None, None]
 
         # Modify wake added turbulence by wake area overlap

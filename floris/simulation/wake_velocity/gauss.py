@@ -69,6 +69,7 @@ class GaussVelocityDeficit(BaseModel):
         u_initial: np.ndarray,
         wind_veer: float
     ) -> None:
+        #import ipdb; ipdb.set_trace()
 
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
@@ -180,7 +181,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
     breakpoints_D: list = field(default=[]) # TODO: set default
     sigma_y0_D: float = field(default=1.0) # TODO: check default
     smoothing_length_D: float = field(default=2.0) # TODO: check default
-    wim_gain: float = field(default=0.5) # TODO: check default
+    wim_gain: float = field(default=1.0) # TODO: check default
 
     def prepare_function(
         self,
@@ -254,8 +255,9 @@ class GaussGeometricVelocityDeficit(BaseModel):
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_y0, 
             self.smoothing_length_D*rotor_diameter_i,
+            self.wim_gain*turbulence_intensity_i,
         )
-        sigma_y[upstream_mask] = sigma_y0.flatten()
+        sigma_y[upstream_mask] = sigma_y0.flatten()[0] # Not very elegant
         sigma_z = sigma_y # Do I want a separate z model eventually?
 
         r, C = rCalt(
@@ -340,11 +342,19 @@ def sigmoid_integral(x, center=0, width=1):
     w = width/(2*np.log(0.95/0.05))
     return w*np.log(np.exp((x-center)/w) + 1)
 
-def geometric_model_wake_width(x, wake_expansion_rates, breakpoints, sigma_0, smoothing_length):
+def geometric_model_wake_width(
+    x, 
+    wake_expansion_rates, 
+    breakpoints, 
+    sigma_0, 
+    smoothing_length,
+    wake_induced_mixing,
+    ):
     assert len(wake_expansion_rates) == len(breakpoints) + 1, \
         "Invalid combination of wake_expansion_rates and breakpoints."
 
-    sigma = wake_expansion_rates[0] * x + sigma_0
+    #import ipdb; ipdb.set_trace()
+    sigma = (wake_expansion_rates[0] + wake_induced_mixing) * x + sigma_0
     for ib, b in enumerate(breakpoints):
         sigma += (wake_expansion_rates[ib+1]-wake_expansion_rates[ib]) * \
             sigmoid_integral(x, center=b, width=smoothing_length) 

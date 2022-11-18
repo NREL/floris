@@ -47,7 +47,7 @@ MODEL_MAP = {
     "turbulence_model": {
         "none": NoneWakeTurbulence,
         "crespo_hernandez": CrespoHernandez,
-        "wake_induced_mixing":NoneWakeTurbulence
+        "wake_induced_mixing": NoneWakeTurbulence
     },
     "velocity_model": {
         "none": NoneVelocityDeficit,
@@ -110,7 +110,8 @@ class WakeModelManager(BaseClass):
             self.deflection_model = model.from_dict(model_parameters)
 
         model: BaseModel = MODEL_MAP["turbulence_model"][self.model_strings["turbulence_model"]]
-        if self.model_strings["turbulence_model"].lower() == "none":
+        if self.model_strings["turbulence_model"].lower() == "none" or \
+            self.model_strings["turbulence_model"].lower() == "wake_induced_mixing":
             model_parameters = None
         else:
             model_parameters = self.wake_turbulence_parameters[self.model_strings["turbulence_model"]]
