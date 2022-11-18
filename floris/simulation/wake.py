@@ -46,7 +46,8 @@ MODEL_MAP = {
     },
     "turbulence_model": {
         "none": NoneWakeTurbulence,
-        "crespo_hernandez": CrespoHernandez
+        "crespo_hernandez": CrespoHernandez,
+        "wake_induced_mixing":NoneWakeTurbulence
     },
     "velocity_model": {
         "none": NoneVelocityDeficit,

@@ -180,6 +180,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
     breakpoints_D: list = field(default=[]) # TODO: set default
     sigma_y0_D: float = field(default=1.0) # TODO: check default
     smoothing_length_D: float = field(default=2.0) # TODO: check default
+    wim_gain: float = field(default=0.5) # TODO: check default
 
     def prepare_function(
         self,
