@@ -24,6 +24,7 @@ import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+from scipy.interpolate import LinearNDInterpolator
 # from pyproj import Proj
 
 import floris.utilities as geo
@@ -442,6 +443,31 @@ class WindRose:
 
         # Update internal data frame
         self.df = self.resample_average_ws_by_wd(self.df)
+
+    def to_linear_interpolant(self):
+        """
+        This method returns a linear interpolant that will return the occurrence
+        frequency for any given wind direction and wind speed combination(s).
+        This can be particularly useful when evaluating the wind rose at a
+        higher frequency than the input data is provided.
+
+        Returns:
+            scipy.interpolate.LinearNDInterpolant: Linear interpolant for the
+            wind rose currently available in the class (self.df).
+        """
+        # Load windrose information from self
+        df = self.df.copy()
+
+        # Copy values from 0 deg over to 360 deg
+        df_copy = df[df["wd"] == 0.0].copy()
+        df_copy["wd"] = 360.0
+        df_wrapped = pd.concat([df, df_copy], axis=0)
+
+        return LinearNDInterpolator(
+            points=df_wrapped[["wd", "ws"]],
+            values=df_wrapped["freq_val"],
+            fill_value=0.0
+        )
 
     def weibull(self, x, k=2.5, lam=8.0):
         """
