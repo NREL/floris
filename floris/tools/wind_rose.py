@@ -24,7 +24,7 @@ import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from scipy.interpolate import LinearNDInterpolator
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 # from pyproj import Proj
 
 import floris.utilities as geo
@@ -444,30 +444,62 @@ class WindRose:
         # Update internal data frame
         self.df = self.resample_average_ws_by_wd(self.df)
 
-    def to_linear_interpolant(self):
+    def interpolate(
+        self,
+        wind_directions: np.ndarray,
+        wind_speeds: np.ndarray,
+        mirror_0_to_360=True,
+        fill_value=0.0,
+        method="linear"
+    ):
         """
         This method returns a linear interpolant that will return the occurrence
         frequency for any given wind direction and wind speed combination(s).
         This can be particularly useful when evaluating the wind rose at a
         higher frequency than the input data is provided.
 
+        Args:
+            wind_directions (np.ndarray): One or multi-dimensional array containing
+            the wind direction values at which the wind rose frequency of occurrence
+            should be evaluated.
+            wind_speeds (np.ndarray): One or multi-dimensional array containing
+            the wind speed values at which the wind rose frequency of occurrence
+            should be evaluated.
+            mirror_0_to_360 (bool, optional): This function copies the wind rose
+            frequency values from 0 deg to 360 deg. This can be useful when, for example,
+            the wind rose is only calculated until 357 deg but then interpolant is
+            requesting values at 359 deg. Defaults to True.
+            fill_value (float, optional): Fill value for the interpolant when
+            interpolating values outside of the data region. Defaults to 0.0.
+            method (str, optional): The interpolation method. Options are 'linear' and
+            'nearest'. Recommended usage is 'linear'. Defaults to 'linear'.
+
         Returns:
             scipy.interpolate.LinearNDInterpolant: Linear interpolant for the
             wind rose currently available in the class (self.df).
         """
+        if method is "linear":
+            interpolator = LinearNDInterpolator
+        elif method is "nearest":
+            interpolator = NearestNDInterpolator
+        else:
+            UserWarning("Unknown interpolation method: '{:s}'".format(method))
+
         # Load windrose information from self
         df = self.df.copy()
 
-        # Copy values from 0 deg over to 360 deg
-        df_copy = df[df["wd"] == 0.0].copy()
-        df_copy["wd"] = 360.0
-        df_wrapped = pd.concat([df, df_copy], axis=0)
+        if mirror_0_to_360:
+            # Copy values from 0 deg over to 360 deg
+            df_copy = df[df["wd"] == 0.0].copy()
+            df_copy["wd"] = 360.0
+            df = pd.concat([df, df_copy], axis=0)
 
-        return LinearNDInterpolator(
-            points=df_wrapped[["wd", "ws"]],
-            values=df_wrapped["freq_val"],
-            fill_value=0.0
+        interp = interpolator(
+            points=df[["wd", "ws"]],
+            values=df["freq_val"],
+            fill_value=fill_value
         )
+        return interp(wind_directions, wind_speeds)
 
     def weibull(self, x, k=2.5, lam=8.0):
         """
