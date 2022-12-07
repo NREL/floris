@@ -76,6 +76,7 @@ class Grid(ABC):
     x: NDArrayFloat = field(init=False, default=[])
     y: NDArrayFloat = field(init=False, default=[])
     z: NDArrayFloat = field(init=False, default=[])
+    weight: NDArrayFloat = field(init=False, default=[])
     x_sorted: NDArrayFloat = field(init=False)
     y_sorted: NDArrayFloat = field(init=False)
     z_sorted: NDArrayFloat = field(init=False)
@@ -270,6 +271,9 @@ class TurbineGrid(Grid):
         self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=2)
         self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=2)
         self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
+
+        # Add turbine rotor interpolation weights
+        self.weight = np.ones_like(self.x)
 
 @define
 class FlowFieldGrid(Grid):

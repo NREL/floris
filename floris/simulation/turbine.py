@@ -219,6 +219,7 @@ def power(
     power_interp: NDArrayObject,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
+    weights: NDArrayFloat | Iterable[int] | None = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
@@ -280,6 +281,7 @@ def Ct(
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
+    weights: NDArrayFloat | Iterable[int] | None = None,
 ) -> NDArrayFloat:
 
     """Thrust coefficient of a turbine incorporating the yaw angle.
@@ -325,7 +327,7 @@ def Ct(
         turbine_type_map = turbine_type_map[:, :, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, :, ix_filter]
 
-    average_velocities = average_velocity(velocities)
+    average_velocities = average_velocity(velocities, weights)
 
     # Compute the tilt, if using floating turbines
     old_tilt_angle = copy.deepcopy(tilt_angle)
@@ -432,7 +434,7 @@ def axial_induction(
 
 def average_velocity(
     velocities: NDArrayFloat,
-    ix_filter: NDArrayFilter | Iterable[int] | None = None
+    weights: NDArrayFloat | Iterable[int] | None = None
 ) -> NDArrayFloat:
     """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
@@ -455,8 +457,8 @@ def average_velocity(
     # The input velocities are expected to be a 5 dimensional array with shape:
     # (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)
 
-    if ix_filter is not None:
-        velocities = velocities[:, :, ix_filter]
+    if weights is not None:
+        velocities = np.multiply(velocities, weights)
     axis = tuple([3 + i for i in range(velocities.ndim - 3)])
     return np.cbrt(np.mean(velocities ** 3, axis=axis))
 
