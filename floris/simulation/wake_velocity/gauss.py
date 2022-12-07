@@ -206,7 +206,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         axial_induction_i: np.ndarray,
         deflection_field_i: np.ndarray,
         yaw_angle_i: np.ndarray,
-        turbulence_intensity_i: np.ndarray, # TODO: rename this!
+        wake_induced_mixing_i: np.ndarray,
         ct_i: np.ndarray,
         hub_height_i: float,
         rotor_diameter_i: np.ndarray,
@@ -255,7 +255,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_y0, 
             self.smoothing_length_D*rotor_diameter_i,
-            self.wim_gain*turbulence_intensity_i,
+            self.wim_gain*wake_induced_mixing_i,
         )
         sigma_y[upstream_mask] = sigma_y0.flatten()[0] # Not very elegant
         sigma_z = sigma_y # Do I want a separate z model eventually?
@@ -348,13 +348,13 @@ def geometric_model_wake_width(
     breakpoints, 
     sigma_0, 
     smoothing_length,
-    wake_induced_mixing,
+    wake_induced_mixing_final,
     ):
     assert len(wake_expansion_rates) == len(breakpoints) + 1, \
         "Invalid combination of wake_expansion_rates and breakpoints."
 
     #import ipdb; ipdb.set_trace()
-    sigma = (wake_expansion_rates[0] + wake_induced_mixing) * x + sigma_0
+    sigma = (wake_expansion_rates[0] + wake_induced_mixing_final) * x + sigma_0
     for ib, b in enumerate(breakpoints):
         sigma += (wake_expansion_rates[ib+1]-wake_expansion_rates[ib]) * \
             sigmoid_integral(x, center=b, width=smoothing_length) 
