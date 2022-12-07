@@ -101,6 +101,7 @@ def sequential_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            weights=grid.weights,
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)

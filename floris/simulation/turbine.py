@@ -365,6 +365,7 @@ def axial_induction(
     correct_cp_ct_for_tilt: NDArrayBool, # (wind directions, wind speeds, turbines)
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
+    weights:  NDArrayFloat | Iterable[int] | None = None,
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
@@ -410,7 +411,8 @@ def axial_induction(
         tilt_interp,
         correct_cp_ct_for_tilt,
         turbine_type_map,
-        ix_filter
+        ix_filter,
+        weights
     )
 
     # Then, process the input arguments as needed for this function
