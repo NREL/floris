@@ -206,7 +206,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         axial_induction_i: np.ndarray,
         deflection_field_i: np.ndarray,
         yaw_angle_i: np.ndarray,
-        turbulence_intensity_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray, # TODO: rename this!
         ct_i: np.ndarray,
         hub_height_i: float,
         rotor_diameter_i: np.ndarray,
