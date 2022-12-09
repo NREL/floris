@@ -36,7 +36,8 @@ from floris.simulation import (
     full_flow_sequential_solver,
     full_flow_cc_solver,
     full_flow_turbopark_solver,
-    geometric_solver
+    geometric_solver,
+    full_flow_geometric_solver
 )
 from attrs import define, field
 
@@ -201,6 +202,8 @@ class Floris(BaseClass):
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="geometric":
+            full_flow_geometric_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
