@@ -54,6 +54,9 @@ class FlowField(FromDictMixin):
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
 
+    # Only used in geometric model
+    wim_field: NDArrayFloat = field(init=False, default=np.array([]))
+
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_speeds` attribute up to date."""

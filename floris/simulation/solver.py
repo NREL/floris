@@ -1095,9 +1095,11 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
     flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3,4))
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
+    flow_field.wim_field = wake_induced_mixing_factor # This is used for full_flow calc
 
 def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
     # TODO: confirm correct operation
+    # BUG: Seems deficits are not recovering in visualization as expected?
 
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
@@ -1139,6 +1141,16 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
     wake_field = np.zeros_like(flow_field.u_initial_sorted)
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
+
+    # Components of wake induced mixing
+    
+    #x_locs = np.mean(flow_field_grid.x_sorted, axis=(3, 4))[:,:,:,None]
+    # turb_x_locs = np.mean(turbine_grid.x_sorted, axis=(3, 4))[:,:,:,None]
+    # downstream_distance_D = turb_x_locs - np.transpose(turb_x_locs, axes=(0,1,3,2))
+    # downstream_distance_D = downstream_distance_D / \
+    #     np.repeat(turbine_grid_farm.rotor_diameters_sorted[:,:,:,None], flow_field_grid.n_turbines, axis=-1)
+    # downstream_distance_D = np.maximum(downstream_distance_D, 0.1) # For ease
+    # wake_induced_mixing_factor = np.zeros_like(downstream_distance_D)
     
     wake_induced_mixing_factor = np.zeros((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
 
@@ -1173,7 +1185,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
         turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field[:, :, i:i+1]
-        wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :]
+        wake_induced_mixing_i = turbine_grid_flow_field.wim_field[:, :, i:i+1, :]
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = turbine_grid_farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
@@ -1233,7 +1245,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             axial_induction_i,
             deflection_field,
             yaw_angle_i,
-            wake_induced_mixing_i,
+            wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None],
             ct_i,
             hub_height_i,
             rotor_diameter_i,
@@ -1244,6 +1256,16 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             wake_field,
             velocity_deficit * flow_field.u_initial_sorted
         )
+
+        # Calculate wake overlap for wake-added turbulence (WAT)
+        # TODO: Should this be just for the turbines, or for every location?
+        # Just the turbines, I think... but why is it not in the other solvers?
+        # import ipdb; ipdb.set_trace()
+        # area_overlap = np.sum(velocity_deficit * turbine_grid_flow_field.u_initial_sorted > 0.05, axis=(3, 4)) / (turbine_grid.grid_resolution * turbine_grid.grid_resolution)
+        # if model_manager.model_strings["turbulence_model"] == "wake_induced_mixing":
+        #     wake_induced_mixing_factor[:,:,:,i] = area_overlap * \
+        #         axial_induction_i[:,:,:,0,0] / downstream_distance_D[:,:,:,i]
+        # area_overlap = area_overlap[:, :, :, None, None]
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
