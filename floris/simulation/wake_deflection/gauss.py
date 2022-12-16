@@ -242,6 +242,124 @@ class GaussGeometricDeflection(BaseModel):
         )
         return kwargs
 
+    # @profile
+    def function(
+        self,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        yaw_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
+        rotor_diameter_i: float,
+        *,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        freestream_velocity: np.ndarray,
+        wind_veer: float,
+    ):
+        """
+        Calculates the deflection field of the wake. See
+        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls`
+        for details on the methods used.
+
+        Args:
+            x_locations (np.array): An array of floats that contains the
+                streamwise direction grid coordinates of the flow field
+                domain (m).
+            y_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the direction normal to
+                x and parallel to the ground (m).
+            z_locations (np.array): An array of floats that contains the grid
+                coordinates of the flow field domain in the vertical
+                direction (m).
+            turbine (:py:obj:`floris.simulation.turbine`): Object that
+                represents the turbine creating the wake.
+            coord (:py:obj:`floris.utilities.Vec3`): Object containing
+                the coordinate of the turbine creating the wake (m).
+            flow_field (:py:class:`floris.simulation.flow_field`): Object
+                containing the flow field information for the wind farm.
+
+        Returns:
+            np.array: Deflection field for the wake.
+        """
+        # ==============================================================
+
+        # Opposite sign convention in this model; here, sign is important
+        yaw_i = -1 * yaw_i
+
+        # TODO: connect support for tilt
+        tilt = 0.0 #turbine.tilt_angle
+
+        # initial velocity deficits
+        uR = (
+            freestream_velocity
+          * ct_i
+          * cosd(tilt)
+          * cosd(yaw_i)
+          / (2.0 * (1 - np.sqrt(1 - (ct_i * cosd(tilt) * cosd(yaw_i)))))
+        )
+        u0 = freestream_velocity * np.sqrt(1 - ct_i)
+
+        # length of near wake
+        x0 = (
+            rotor_diameter_i
+            * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
+            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
+            + x_i
+        )
+
+        # wake expansion parameters
+        ky = self.ka * turbulence_intensity_i + self.kb
+        kz = self.ka * turbulence_intensity_i + self.kb
+
+        C0 = 1 - u0 / freestream_velocity
+        M0 = C0 * (2 - C0)
+        E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
+
+        # initial Gaussian wake expansion
+        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
+        sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
+
+        yR = y - y_i
+        xR = x_i # yR * tand(yaw) + x_i
+
+        # yaw parameters (skew angle and distance from centerline)
+        # NOTE: Tilt in here at all? z_h?
+        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i)) * (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
+        delta0 = np.tan(theta_c0) * (x0 - x_i)  # initial wake deflection;
+
+        # deflection in the near wake
+        delta_near_wake = ((x - xR) / (x0 - xR)) * delta0 + (self.ad + self.bd * (x - x_i))
+        delta_near_wake = delta_near_wake * np.array(x >= xR)
+        delta_near_wake = delta_near_wake * np.array(x <= x0)
+
+        # deflection in the far wake
+        sigma_y = ky * (x - x0) + sigma_y0
+        sigma_z = kz * (x - x0) + sigma_z0
+        sigma_y = sigma_y * np.array(x >= x0) + sigma_y0 * np.array(x < x0)
+        sigma_z = sigma_z * np.array(x >= x0) + sigma_z0 * np.array(x < x0)
+
+        ln_deltaNum = (1.6 + np.sqrt(M0)) * (
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
+        )
+        ln_deltaDen = (1.6 - np.sqrt(M0)) * (
+            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
+        )
+
+        delta_far_wake = (
+            delta0
+          + theta_c0 * E0 / 5.2
+          * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))
+          * np.log(ln_deltaNum / ln_deltaDen)
+          + (self.ad + self.bd * (x - x_i))
+        )
+
+        delta_far_wake = delta_far_wake * np.array(x > x0)
+        deflection = delta_near_wake + delta_far_wake
+
+        return deflection
+
 
 ## GCH components
 

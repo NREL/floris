@@ -954,9 +954,6 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
     turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
-
-
 
     # TODO: check this works when mutliple ws, wd are passed. 
     # (both transpose and divide)
@@ -1142,18 +1139,6 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-    # Components of wake induced mixing
-    
-    #x_locs = np.mean(flow_field_grid.x_sorted, axis=(3, 4))[:,:,:,None]
-    # turb_x_locs = np.mean(turbine_grid.x_sorted, axis=(3, 4))[:,:,:,None]
-    # downstream_distance_D = turb_x_locs - np.transpose(turb_x_locs, axes=(0,1,3,2))
-    # downstream_distance_D = downstream_distance_D / \
-    #     np.repeat(turbine_grid_farm.rotor_diameters_sorted[:,:,:,None], flow_field_grid.n_turbines, axis=-1)
-    # downstream_distance_D = np.maximum(downstream_distance_D, 0.1) # For ease
-    # wake_induced_mixing_factor = np.zeros_like(downstream_distance_D)
-    
-    wake_induced_mixing_factor = np.zeros((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
-
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(flow_field_grid.n_turbines):
 
@@ -1256,16 +1241,6 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             wake_field,
             velocity_deficit * flow_field.u_initial_sorted
         )
-
-        # Calculate wake overlap for wake-added turbulence (WAT)
-        # TODO: Should this be just for the turbines, or for every location?
-        # Just the turbines, I think... but why is it not in the other solvers?
-        # import ipdb; ipdb.set_trace()
-        # area_overlap = np.sum(velocity_deficit * turbine_grid_flow_field.u_initial_sorted > 0.05, axis=(3, 4)) / (turbine_grid.grid_resolution * turbine_grid.grid_resolution)
-        # if model_manager.model_strings["turbulence_model"] == "wake_induced_mixing":
-        #     wake_induced_mixing_factor[:,:,:,i] = area_overlap * \
-        #         axial_induction_i[:,:,:,0,0] / downstream_distance_D[:,:,:,i]
-        # area_overlap = area_overlap[:, :, :, None, None]
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake

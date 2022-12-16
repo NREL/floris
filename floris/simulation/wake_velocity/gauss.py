@@ -224,7 +224,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
 
-        # Opposite sign convention in this model
+        # Only symmetric terms using yaw in this model, but anyway:
         yaw_angle = -1 * yaw_angle_i
 
         # Initialize the velocity deficit
@@ -233,8 +233,9 @@ class GaussGeometricVelocityDeficit(BaseModel):
 
         # Initial lateral bounds
         #sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-        sigma_y0 = self.sigma_y0_D * rotor_diameter_i
-        sigma_z0 = self.sigma_y0_D * rotor_diameter_i
+        # TODO: add a yawing component?
+        sigma_y0 = self.sigma_y0_D * rotor_diameter_i * cosd(yaw_angle)
+        sigma_z0 = self.sigma_y0_D * rotor_diameter_i # * cosd(tilt_angle)
 
         # No specific near, far wakes in this model
         downstream_mask = np.array(x > x_i + 0.1)
@@ -259,6 +260,8 @@ class GaussGeometricVelocityDeficit(BaseModel):
         )
         sigma_y[upstream_mask] = sigma_y0.flatten()[0] # Not very elegant
         sigma_z = sigma_y # Do I want a separate z model eventually?
+        # TODO: sigma_z could stop growing, while sigma_y continues to grow...
+        # That could be quite elegant. 
 
         r, C = rCalt(
             wind_veer,
@@ -326,7 +329,7 @@ def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D, sigma_y
     b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
-    d = 1 - Ct * (sigma_y0 * sigma_z0)/(sigma_y * sigma_z)
+    d = 1 - Ct * (sigma_y0 * sigma_z0)/(sigma_y * sigma_z) * cosd(yaw) # TODO: should there be a cosine yaw factor in here? Are we then double counting it? and how about tilt?
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
 
