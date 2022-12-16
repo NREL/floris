@@ -1005,19 +1005,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         effective_yaw_i += yaw_angle_i
 
         if model_manager.enable_secondary_steering:
-            added_yaw = wake_added_yaw(
-                u_i,
-                v_i,
-                flow_field.u_initial_sorted,
-                grid.y_sorted[:, :, i:i+1] - y_i,
-                grid.z_sorted[:, :, i:i+1],
-                rotor_diameter_i,
-                hub_height_i,
-                ct_i,
-                TSR_i,
-                axial_induction_i
-            )
-            effective_yaw_i += added_yaw
+            raise NotImplementedError("Secondary effects model not yet developed.")
 
         # Model calculations
         # NOTE: exponential
@@ -1032,32 +1020,10 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         )
 
         if model_manager.enable_transverse_velocities:
-            v_wake, w_wake = calculate_transverse_velocity(
-                u_i,
-                flow_field.u_initial_sorted,
-                flow_field.dudz_initial_sorted,
-                grid.x_sorted - x_i,
-                grid.y_sorted - y_i,
-                grid.z_sorted,
-                rotor_diameter_i,
-                hub_height_i,
-                yaw_angle_i,
-                ct_i,
-                TSR_i,
-                axial_induction_i
-            )
+            raise NotImplementedError("Secondary effects model not yet developed.")
 
         if model_manager.enable_yaw_added_recovery:
-            I_mixing = yaw_added_turbulence_mixing(
-                u_i,
-                turbulence_intensity_i,
-                v_i,
-                flow_field.w_sorted[:, :, i:i+1],
-                v_wake[:, :, i:i+1],
-                w_wake[:, :, i:i+1],
-            )
-            gch_gain = 2
-            turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
+            raise NotImplementedError("Secondary effects model not yet developed.")
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
@@ -1180,19 +1146,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
         effective_yaw_i += yaw_angle_i
 
         if model_manager.enable_secondary_steering:
-            added_yaw = wake_added_yaw(
-                u_i,
-                v_i,
-                turbine_grid_flow_field.u_initial_sorted,
-                turbine_grid.y_sorted[:, :, i:i+1] - y_i,
-                turbine_grid.z_sorted[:, :, i:i+1],
-                rotor_diameter_i,
-                hub_height_i,
-                ct_i,
-                TSR_i,
-                axial_induction_i
-            )
-            effective_yaw_i += added_yaw
+            raise NotImplementedError("Secondary effects model not yet developed.")
 
         # Model calculations
         # NOTE: exponential
@@ -1207,20 +1161,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
         )
 
         if model_manager.enable_transverse_velocities:
-            v_wake, w_wake = calculate_transverse_velocity(
-                u_i,
-                flow_field.u_initial_sorted,
-                flow_field.dudz_initial_sorted,
-                flow_field_grid.x_sorted - x_i,
-                flow_field_grid.y_sorted - y_i,
-                flow_field_grid.z_sorted,
-                rotor_diameter_i,
-                hub_height_i,
-                yaw_angle_i,
-                ct_i,
-                TSR_i,
-                axial_induction_i
-            )
+            raise NotImplementedError("Secondary effects model not yet developed.")
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
