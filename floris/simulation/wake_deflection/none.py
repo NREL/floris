@@ -52,9 +52,9 @@ class NoneVelocityDeflection(BaseModel):
         freestream_velocity: np.ndarray,
     ):
         """Skip all deflection calculations and returns zeros array."""
-        self.logger.info(
-            "The wake deflection model is set to 'none'. Deflection modeling disabled."
-        )
+        # self.logger.info(
+        #     "The wake deflection model is set to 'none'. Deflection modeling disabled."
+        # )
         if np.any(np.abs(yaw_i) > 0.001):
             raise ValueError(
                 "The deflection model is disabled yet not all effective yaw angles are zero. " +

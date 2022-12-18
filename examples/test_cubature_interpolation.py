@@ -58,7 +58,12 @@ ti = 0
 hh = fi.floris.farm.turbine_definitions[ti]["hub_height"]
 r = fi.floris.farm.turbine_definitions[ti]["rotor_diameter"] / 2.0
 theta = np.linspace(0.0, 2 * np.pi, 1000)
-ax[0].plot(fi.floris.grid.y[0, 0, ti, :, :].flatten(), fi.floris.grid.z[0, 0, ti, :, :].flatten(), 'o')
+sc = ax[0].scatter(
+    fi.floris.grid.y[0, 0, ti, :, :].flatten(),
+    fi.floris.grid.z[0, 0, ti, :, :].flatten(),
+    # c=fi.floris.grid.weights[0, 0, ti, :, :].flatten()
+)
+# plt.colorbar(sc, ax=ax[0])
 ax[0].plot(fi.floris.grid.y[0, 0, ti, :, :].mean() + r * np.cos(theta), hh + r * np.sin(theta), '--')
 ax[0].grid(True)
 ax[0].axis("equal")

@@ -32,12 +32,12 @@ The power of both turbines for each wind direction is then plotted
 """
 
 # Instantiate FLORIS using either the GCH or CC model
-fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+fi = FlorisInterface("inputs/jensen.yaml") # GCH model matched to the default "legacy_gauss" of V2
 # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
 # Define a two turbine farm
 D = 126.
-layout_x = np.array([0, D*6])
+layout_x = np.array([0, D*5])
 layout_y = [0, 0]
 fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
@@ -65,8 +65,8 @@ pow_t1 = turbine_powers[:,:,1].flatten()
 
 # Plot
 fig, ax = plt.subplots()
-ax.plot(wd_array,pow_t0,color='k',label='Upstream Turbine')
-ax.plot(wd_array,pow_t1,color='r',label='Downstream Turbine')
+ax.plot(wd_array,pow_t0, "-o", color='k',label='Upstream Turbine')
+ax.plot(wd_array,pow_t1, "-o", color='r',label='Downstream Turbine')
 ax.grid(True)
 ax.legend()
 ax.set_xlabel('Wind Direction (deg)')
