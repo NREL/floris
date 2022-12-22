@@ -57,7 +57,7 @@ force_grid_wrap = 3
 include_trailing_comma = false
 use_parentheses = true
 lines_after_imports = 2
-line_length = 88
+line_length = 100
 order_by_type = false
 
 # length_sort = true
