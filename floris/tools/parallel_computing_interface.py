@@ -2,11 +2,10 @@
 import copy
 from time import perf_counter as timerpc
 
-import multiprocessing as mp
 import numpy as np
 import pandas as pd
 
-from floris.tools import FlorisInterface
+from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
     YawOptimizationSR,
 )
@@ -14,23 +13,46 @@ from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
 from floris.logging_manager import LoggerBase
 
 
-def _get_turbine_powers_serial(fi_dict, yaw_angles):
-    fi = FlorisInterface(fi_dict)
+def _load_local_floris_object(
+    fi_dict,
+    het_map=None,
+    unc_options=None,
+    unc_pmfs=None,
+    fix_yaw_in_relative_frame=False
+):
+    # Load local FLORIS object
+    if ((unc_options is None) & (unc_pmfs is None)):
+        fi = FlorisInterface(fi_dict, het_map=het_map)
+    else:
+        fi = UncertaintyInterface(
+            fi_dict,
+            het_map=het_map,
+            unc_options=unc_options,
+            unc_pmfs=unc_pmfs,
+            fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
+        )
+    return fi
+
+
+def _get_turbine_powers_serial(fi_information, yaw_angles=None):
+    fi = _load_local_floris_object(*fi_information)
     fi.calculate_wake(yaw_angles=yaw_angles)
     return fi.get_turbine_powers()
 
+
 def _optimize_yaw_angles_serial(
-    fi_opt,
-    minimum_yaw_angle=0.0,
-    maximum_yaw_angle=25.0,
-    yaw_angles_baseline=None,
-    x0=None,
-    Ny_passes=[5, 4],  # Optimization options
-    turbine_weights=None,
-    exclude_downstream_turbines=True,
-    exploit_layout_symmetry=True,
-    verify_convergence=False,
+    fi_information,
+    minimum_yaw_angle,
+    maximum_yaw_angle,
+    yaw_angles_baseline,
+    x0,
+    Ny_passes,
+    turbine_weights,
+    exclude_downstream_turbines,
+    exploit_layout_symmetry,
+    verify_convergence,
 ):
+    fi_opt = _load_local_floris_object(*fi_information)
     yaw_opt = YawOptimizationSR(
         fi=fi_opt,
         minimum_yaw_angle=minimum_yaw_angle,
@@ -47,19 +69,14 @@ def _optimize_yaw_angles_serial(
 
 
 class ParallelComputingInterface(LoggerBase):
-    def __init__(self, configuration, max_workers, n_wind_direction_splits, n_wind_speed_splits=1, het_map=None, use_mpi4py=False, print_timings=False):
+    def __init__(self, fi, max_workers, n_wind_direction_splits, n_wind_speed_splits=1, use_mpi4py=False, print_timings=False):
         """A wrapper around the nominal floris_interface class that adds
         parallel computing to common FlorisInterface properties.
 
         Args:
-        configuration (:py:obj:`dict` or FlorisInterface object): The Floris
-            object, configuration dictarionary, JSON file, or YAML file. The
-            configuration should have the following inputs specified.
-                - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
-                - **farm**: See `floris.simulation.farm.Farm` for more details.
-                - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
-                - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                - **logging**: See `floris.simulation.floris.Floris` for more details.
+        fi (FlorisInterface or UncertaintyInterface object): Interactive FLORIS object used to
+          perform the wake and turbine calculations. Can either be a regular FlorisInterface
+          object or can be an UncertaintyInterface object.
         """
 
         # Load the correct library
@@ -69,14 +86,11 @@ class ParallelComputingInterface(LoggerBase):
         else:
             import multiprocessing as mp
             self._PoolExecutor = mp.Pool
-            if n_cores is None:
-                n_cores = mp.cpu_count()
+            if max_workers is None:
+                max_workers = mp.cpu_count()
 
         # Initialize floris object
-        if isinstance(configuration, FlorisInterface):
-            self.fi = configuration
-        else:
-            self.fi = FlorisInterface(configuration, het_map=het_map)
+        self.fi = fi.copy()
 
         # Save to self
         self.n_wind_direction_splits = n_wind_direction_splits
@@ -84,7 +98,7 @@ class ParallelComputingInterface(LoggerBase):
         self.max_workers = max_workers
         self.print_timings = print_timings
 
-    def _preprocess_dicts(self, yaw_angles):
+    def _preprocess_dicts(self, yaw_angles=None):
         # Format yaw angles
         if yaw_angles is None:
             yaw_angles = np.zeros((
@@ -103,10 +117,16 @@ class ParallelComputingInterface(LoggerBase):
                 fi_dict_split = copy.deepcopy(fi_dict)
                 wind_directions = self.fi.floris.flow_field.wind_directions[wd_id_split]
                 wind_speeds = self.fi.floris.flow_field.wind_speeds[ws_id_split]
-                yaw_angles_subset = yaw_angles[wd_id_split, ws_id_split, :]
+                yaw_angles_subset = yaw_angles[wd_id_split[0]:wd_id_split[-1]+1, ws_id_split, :]
                 fi_dict_split["flow_field"]["wind_directions"] = wind_directions
                 fi_dict_split["flow_field"]["wind_speeds"] = wind_speeds
-                multiargs.append((copy.deepcopy(fi_dict_split), yaw_angles_subset))
+
+                # Prepare lightweight data to pass along
+                if isinstance(self.fi, FlorisInterface):
+                    fi_information = (fi_dict_split, self.fi.het_map, None, None, None)
+                else:
+                    fi_information = (fi_dict_split, self.fi.het_map, self.fi.unc_options, self.fi.unc_pmfs, self.fi.fix_yaw_in_relative_frame)
+                multiargs.append((fi_information, yaw_angles_subset))
 
         return multiargs
 
@@ -137,7 +157,7 @@ class ParallelComputingInterface(LoggerBase):
         t_postprocessing = timerpc() - t2
         t_total = timerpc() - t0
 
-        if self.print_timing:
+        if self.print_timings:
             print("==================================================================================")
             print("Total time spent for parallel calculation ({:d} workers): {:.3f} s".format(self.max_workers, t_total))
             print("  Time spent in parallel preprocessing: {:.3f} s".format(t_preparation))
@@ -318,15 +338,13 @@ class ParallelComputingInterface(LoggerBase):
         print("Optimizing yaw angles with {:d} workers.".format(self.max_workers))
         with self._PoolExecutor(self.max_workers) as p:
             df_opt_splits = p.starmap(_optimize_yaw_angles_serial, multiargs)
-        end_time = timerpc()
         t2 = timerpc()
-        print("Optimization finished in {:.2f} seconds.".format(t_tot))
 
         # Combine all solutions from multiprocessing into single dataframe
         df_opt = pd.concat(df_opt_splits, axis=0)
         t3 = timerpc()
 
-        if self.print_timing:
+        if self.print_timings:
             print("==================================================================================")
             print("Total time spent for parallel calculation ({:d} workers): {:.3f} s".format(self.max_workers, t3 - t0))
             print("  Time spent in parallel preprocessing: {:.3f} s".format(t1 - t0))
