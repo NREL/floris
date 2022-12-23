@@ -16,18 +16,16 @@ from floris.logging_manager import LoggerBase
 def _load_local_floris_object(
     fi_dict,
     het_map=None,
-    unc_options=None,
     unc_pmfs=None,
     fix_yaw_in_relative_frame=False
 ):
     # Load local FLORIS object
-    if ((unc_options is None) & (unc_pmfs is None)):
+    if unc_pmfs is None:
         fi = FlorisInterface(fi_dict, het_map=het_map)
     else:
         fi = UncertaintyInterface(
             fi_dict,
             het_map=het_map,
-            unc_options=unc_options,
             unc_pmfs=unc_pmfs,
             fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
         )
@@ -123,9 +121,9 @@ class ParallelComputingInterface(LoggerBase):
 
                 # Prepare lightweight data to pass along
                 if isinstance(self.fi, FlorisInterface):
-                    fi_information = (fi_dict_split, self.fi.het_map, None, None, None)
+                    fi_information = (fi_dict_split, self.fi.het_map, None, None)
                 else:
-                    fi_information = (fi_dict_split, self.fi.het_map, self.fi.unc_options, self.fi.unc_pmfs, self.fi.fix_yaw_in_relative_frame)
+                    fi_information = (fi_dict_split, self.fi.fi.het_map, self.fi.unc_pmfs, self.fi.fix_yaw_in_relative_frame)
                 multiargs.append((fi_information, yaw_angles_subset))
 
         return multiargs
