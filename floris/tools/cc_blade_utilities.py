@@ -1,12 +1,12 @@
 # functions to couple floris with CCBlade and a controller
 
-import os
 import copy
+import os
 import pickle
 from os import path
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy import interpolate
 
 import floris.tools as wfct

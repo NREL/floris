@@ -20,14 +20,16 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
-from floris.type_dec import NDArrayFloat
-from floris.simulation import Floris
 from floris.logging_manager import LoggerBase
-
-from floris.simulation import State
-
+from floris.simulation import Floris, State
+from floris.simulation.turbine import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    power
+)
 from floris.tools.cut_plane import CutPlane
-from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
+from floris.type_dec import NDArrayFloat
 
 
 class FlorisInterface(LoggerBase):

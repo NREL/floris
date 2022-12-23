@@ -12,11 +12,12 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Polygon, LineString
+import numpy as np
+from shapely.geometry import LineString, Polygon
 
 from ....logging_manager import LoggerBase
+
 
 class LayoutOptimization(LoggerBase):
     def __init__(self, fi, boundaries, min_dist=None, freq=None):

@@ -17,6 +17,7 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
+
 """
 This example creates a FLORIS instance
 1) Makes a two-turbine layout

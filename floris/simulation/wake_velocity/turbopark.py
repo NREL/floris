@@ -10,21 +10,27 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from pathlib import Path
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
-from pathlib import Path
+import scipy.io
+from attrs import define, field
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
-import scipy.io
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine
+)
+from floris.utilities import (
+    cosd,
+    sind,
+    tand
+)
 
 
 @define

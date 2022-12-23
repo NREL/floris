@@ -18,10 +18,10 @@ import re
 import numpy as np
 import pandas as pd
 
+from ..logging_manager import LoggerBase
+from ..utilities import Vec3
 from .cut_plane import CutPlane, get_plane_from_flow_data
 from .flow_data import FlowData
-from ..utilities import Vec3
-from ..logging_manager import LoggerBase
 
 
 class SowfaInterface(LoggerBase):

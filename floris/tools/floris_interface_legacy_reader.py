@@ -14,9 +14,9 @@
 
 from __future__ import annotations
 
-import os
 import copy
 import json
+import os
 from pathlib import Path
 
 from floris.tools import FlorisInterface

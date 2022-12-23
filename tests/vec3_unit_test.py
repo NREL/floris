@@ -15,6 +15,7 @@
 
 import numpy as np
 import pytest
+
 from floris.utilities import Vec3
 
 

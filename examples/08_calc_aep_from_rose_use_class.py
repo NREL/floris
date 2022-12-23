@@ -13,8 +13,13 @@
 # See https://floris.readthedocs.io for documentation
 
 
-from floris.tools import FlorisInterface, WindRose, wind_rose
 import floris.tools.visualization as wakeviz
+from floris.tools import (
+    FlorisInterface,
+    wind_rose,
+    WindRose
+)
+
 
 """
 This example demonstrates how to calculate the Annual Energy Production (AEP)
