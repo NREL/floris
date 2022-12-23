@@ -31,7 +31,6 @@ floris.tools.floris\_interface.FlorisInterface
       ~FlorisInterface.get_turbine_Cts
       ~FlorisInterface.get_turbine_TIs
       ~FlorisInterface.get_turbine_ais
-      ~FlorisInterface.get_turbine_average_velocities
       ~FlorisInterface.get_turbine_layout
       ~FlorisInterface.get_turbine_powers
       ~FlorisInterface.reinitialize
@@ -47,5 +46,6 @@ floris.tools.floris\_interface.FlorisInterface
       ~FlorisInterface.layout_x
       ~FlorisInterface.layout_y
       ~FlorisInterface.logger
+      ~FlorisInterface.turbine_average_velocities
    
    

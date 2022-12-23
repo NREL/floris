@@ -601,11 +601,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.subtract.html">
-         floris.tools.cut_plane.subtract
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
@@ -859,6 +854,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -881,6 +881,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
@@ -1314,21 +1319,13 @@ or YAML file. The configuration should have the following inputs specified.</p>
 </dl>
 </p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.get_turbine_average_velocities" title="floris.tools.floris_interface.FlorisInterface.get_turbine_average_velocities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_turbine_average_velocities</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</p>
-</dd>
-</dl>
-</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.get_turbine_layout" title="floris.tools.floris_interface.FlorisInterface.get_turbine_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_turbine_layout</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.get_turbine_layout" title="floris.tools.floris_interface.FlorisInterface.get_turbine_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_turbine_layout</span></code></a></p></td>
 <td><p>Get turbine layout</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.get_turbine_powers" title="floris.tools.floris_interface.FlorisInterface.get_turbine_powers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_turbine_powers</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.get_turbine_powers" title="floris.tools.floris_interface.FlorisInterface.get_turbine_powers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_turbine_powers</span></code></a></p></td>
 <td><p>Calculates the power at each turbine in the windfarm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.reinitialize" title="floris.tools.floris_interface.FlorisInterface.reinitialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reinitialize</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.reinitialize" title="floris.tools.floris_interface.FlorisInterface.reinitialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reinitialize</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1348,6 +1345,9 @@ or YAML file. The configuration should have the following inputs specified.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.logger" title="floris.tools.floris_interface.FlorisInterface.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.floris_interface.FlorisInterface.turbine_average_velocities" title="floris.tools.floris_interface.FlorisInterface.turbine_average_velocities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_average_velocities</span></code></a></p></td>
+<td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</p></td>
 </tr>
 </tbody>
 </table>
@@ -1558,12 +1558,13 @@ of x, y, u, v, w</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.get_turbine_average_velocities">
-<span class="sig-name descname"><span class="pre">get_turbine_average_velocities</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.get_turbine_average_velocities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.get_turbine_average_velocities" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.turbine_average_velocities">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">turbine_average_velocities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.turbine_average_velocities" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>rtype</p>
 </dd>
 </dl>
 </dd></dl>

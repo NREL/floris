@@ -598,11 +598,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.tools.cut_plane.subtract.html">
-         floris.tools.cut_plane.subtract
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
@@ -856,6 +851,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -878,6 +878,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
@@ -1178,14 +1183,16 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">LinearNDInterpolator</span><span class="p">,</span> <span class="n">NearestNDInterpolator</span>
 
-<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
-<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">Floris</span>
 <span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggerBase</span>
-
-<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">State</span>
-
+<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">Floris</span><span class="p">,</span> <span class="n">State</span>
+<span class="kn">from</span> <span class="nn">floris.simulation.turbine</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">average_velocity</span><span class="p">,</span>
+    <span class="n">axial_induction</span><span class="p">,</span>
+    <span class="n">Ct</span><span class="p">,</span>
+    <span class="n">power</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.tools.cut_plane</span> <span class="kn">import</span> <span class="n">CutPlane</span>
-<span class="kn">from</span> <span class="nn">floris.simulation.turbine</span> <span class="kn">import</span> <span class="n">Ct</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">axial_induction</span><span class="p">,</span> <span class="n">average_velocity</span>
+<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
 
 
 <div class="viewcode-block" id="FlorisInterface"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface">[docs]</a><span class="k">class</span> <span class="nc">FlorisInterface</span><span class="p">(</span><span class="n">LoggerBase</span><span class="p">):</span>
@@ -1224,12 +1231,12 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="n">het_map</span>
 
         <span class="c1"># If ref height is -1, assign the hub height</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-6</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assign_hub_height_to_ref_height</span><span class="p">()</span>
 
         <span class="c1"># Make a check on reference height and provide a helpful warning</span>
-        <span class="n">unique_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">hub_heights</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_heights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">!=</span> <span class="n">unique_heights</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">unique_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">hub_heights</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_heights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">-</span> <span class="n">unique_heights</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0e-6</span><span class="p">):</span>
             <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">err_msg</span><span class="p">,</span> <span class="n">stack_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -1275,15 +1282,16 @@ title="Open an issue"
 <span class="sd">            track_n_upstream_wakes (bool, optional): When *True*, will keep track of the</span>
 <span class="sd">                number of upstream wakes a turbine is experiencing. Defaults to *False*.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># self.floris.flow_field.calculate_wake(</span>
-        <span class="c1">#     no_wake=no_wake,</span>
-        <span class="c1">#     points=points,</span>
-        <span class="c1">#     track_n_upstream_wakes=track_n_upstream_wakes,</span>
-        <span class="c1"># )</span>
 
-        <span class="c1"># TODO decide where to handle this sign issue</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">yaw_angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">==</span><span class="mf">0.</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span>
+        <span class="k">if</span> <span class="n">yaw_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span>
 
         <span class="c1"># Initialize solution space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">initialize_domain</span><span class="p">()</span>
@@ -1759,11 +1767,9 @@ title="Open an issue"
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">turbine_ais</span></div>
 
-<div class="viewcode-block" id="FlorisInterface.get_turbine_average_velocities"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_average_velocities">[docs]</a>    <span class="k">def</span> <span class="nf">get_turbine_average_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
-        <span class="n">turbine_avg_vels</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span>
-            <span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">turbine_avg_vels</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">turbine_average_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FlorisInterface.get_turbine_TIs"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_TIs">[docs]</a>    <span class="k">def</span> <span class="nf">get_turbine_TIs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span></div>

@@ -601,11 +601,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.subtract.html">
-         floris.tools.cut_plane.subtract
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
@@ -859,6 +854,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -881,6 +881,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
@@ -1405,16 +1410,16 @@ file as the only argument. After this object is created, it can immediately be u
 inspect the data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">floris.tools</span> <span class="kn">import</span> <span class="n">FlorisInterface</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
+from floris.tools import FlorisInterface
+import matplotlib.pyplot as plt
 
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
-<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
+fi = FlorisInterface(&quot;gch.yaml&quot;)
+x, y = fi.get_turbine_layout()
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     x       y&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_x</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_y</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+print(&quot;     x       y&quot;)
+for _x, _y in zip(x, y):
+    print(f&quot;{_x:6.1f}, {_y:6.1f}&quot;)
 </pre></div>
 </div>
 </div>
@@ -1441,15 +1446,15 @@ changes the value of inputs specified in the input file.</p>
 initial 3x1 layout to a 2x2 rectangular layout.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_2x2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">]</span>
-<span class="n">y_2x2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">x_2x2</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">y_2x2</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>x_2x2 = [0, 0, 800, 800]
+y_2x2 = [0, 400, 0, 400]
+fi.reinitialize(layout_x=x_2x2, layout_y=y_2x2)
 
-<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
+x, y = fi.get_turbine_layout()
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     x       y&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_x</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">_y</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+print(&quot;     x       y&quot;)
+for _x, _y in zip(x, y):
+    print(f&quot;{_x:6.1f}, {_y:6.1f}&quot;)
 </pre></div>
 </div>
 </div>
@@ -1470,14 +1475,14 @@ direction with each speed.</p>
 <p>Notice that we can give <code class="docutils literal notranslate"><span class="pre">FlorisInterface.reinitialize()</span></code> multiple keyword arguments at once.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># One wind direction and one speed -&gt; one atmospheric condition</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">]</span> <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># One wind direction and one speed -&gt; one atmospheric condition
+fi.reinitialize( wind_directions=[270.0], wind_speeds=[8.0] )
 
-<span class="c1"># Two wind directions and one speed -&gt; two atmospheric conditions</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">]</span> <span class="p">)</span>
+# Two wind directions and one speed -&gt; two atmospheric conditions
+fi.reinitialize( wind_directions=[270.0, 280.0], wind_speeds=[8.0] )
 
-<span class="c1"># Two wind directions and two speeds -&gt; four atmospheric conditions</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span> <span class="p">)</span>
+# Two wind directions and two speeds -&gt; four atmospheric conditions
+fi.reinitialize( wind_directions=[270.0, 280.0], wind_speeds=[8.0, 9.0] )
 </pre></div>
 </div>
 </div>
@@ -1503,21 +1508,21 @@ the first wind direction and first wind speed. We can also plot all the grid poi
 space to get an idea of the overall form of our grid.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensions of grid x-components&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(&quot;Dimensions of grid x-components&quot;)
+print( np.shape(fi.floris.grid.x) )
 
-<span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine 3 grid x-components for first wind direction and first wind speed&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+print()
+print(&quot;Turbine 3 grid x-components for first wind direction and first wind speed&quot;)
+print(fi.floris.grid.x[0, 0, 2, :, :])
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">z</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+x = fi.floris.grid.x[0, 0, :, :, :]
+y = fi.floris.grid.y[0, 0, :, :, :]
+z = fi.floris.grid.z[0, 0, :, :, :]
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span>
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=&quot;3d&quot;)
+ax.scatter(x, y, z, marker=&quot;.&quot;)
+ax.set_zlim([0, 150])
 </pre></div>
 </div>
 </div>
@@ -1546,7 +1551,7 @@ direction combination. Since we have not explicitly specified yaw control settin
 all turbines are aligned with the inflow.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fi.calculate_wake()
 </pre></div>
 </div>
 </div>
@@ -1560,23 +1565,23 @@ we have configured the simulation with two wind directions, two wind speeds, and
 turbines.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">powers</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># calculated in Watts, so convert to kW</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>powers = fi.get_turbine_powers() / 1000.0  # calculated in Watts, so convert to kW
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensions of `powers`&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">powers</span><span class="p">)</span> <span class="p">)</span>
+print(&quot;Dimensions of `powers`&quot;)
+print( np.shape(powers) )
 
-<span class="n">N_TURBINES</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
+N_TURBINES = fi.floris.farm.n_turbines
 
-<span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers for 8 m/s&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind direction </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TURBINES</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Turbine </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">powers</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> kW&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
+print()
+print(&quot;Turbine powers for 8 m/s&quot;)
+for i in range(2):
+    print(f&quot;Wind direction {i}&quot;)
+    for j in range(N_TURBINES):
+        print(f&quot;  Turbine {j} - {powers[i, 0, j]:.2f} kW&quot;)
+    print()
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers for all turbines at all wind conditions&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">powers</span><span class="p">)</span>
+print(&quot;Turbine powers for all turbines at all wind conditions&quot;)
+print(powers)
 </pre></div>
 </div>
 </div>
@@ -1625,15 +1630,15 @@ a <code class="docutils literal notranslate"><span class="pre">Numpy.array</span
 turbine yaw settings, as shown below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Yaw angle array initialized with 0&#39;s&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>yaw_angles = np.zeros( (2, 2, 4) )
+print(&quot;Yaw angle array initialized with 0&#39;s&quot;)
+print(yaw_angles)
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First turbine yawed 25 degrees for every atmospheric condition&quot;</span><span class="p">)</span>
-<span class="n">yaw_angles</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
+print(&quot;First turbine yawed 25 degrees for every atmospheric condition&quot;)
+yaw_angles[:, :, 0] = 25
+print(yaw_angles)
 
-<span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
+fi.calculate_wake(yaw_angles=yaw_angles)
 </pre></div>
 </div>
 </div>
@@ -1670,53 +1675,53 @@ First turbine yawed 25 degrees for every atmospheric condition
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Load an input file</span>
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># 1. Load an input file
+fi = FlorisInterface(&quot;gch.yaml&quot;)
 
-<span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solver</span>
+fi.floris.solver
 
-<span class="c1"># 2. Modify the inputs with a more complex wind turbine layout</span>
-<span class="n">D</span> <span class="o">=</span> <span class="mf">126.0</span>  <span class="c1"># Design the layout based on turbine diameter</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">6</span> <span class="o">*</span> <span class="n">D</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">D</span><span class="p">]</span>
-<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">D</span><span class="p">]</span>
-<span class="n">wind_directions</span> <span class="o">=</span> <span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">]</span>
-<span class="n">wind_speeds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">]</span>
+# 2. Modify the inputs with a more complex wind turbine layout
+D = 126.0  # Design the layout based on turbine diameter
+x = [0, 0,  6 * D, 6 * D]
+y = [0, 3 * D, 0, 3 * D]
+wind_directions = [270.0, 280.0]
+wind_speeds = [8.0]
 
-<span class="c1"># Pass the new data to FlorisInterface</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span>
-    <span class="n">layout_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-    <span class="n">layout_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-    <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
-    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span>
-<span class="p">)</span>
+# Pass the new data to FlorisInterface
+fi.reinitialize(
+    layout_x=x,
+    layout_y=y,
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds
+)
 
-<span class="c1"># 3. Calculate the velocities at each turbine for all atmospheric conditions</span>
-<span class="c1"># All turbines have 0 degrees yaw</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">()</span>
+# 3. Calculate the velocities at each turbine for all atmospheric conditions
+# All turbines have 0 degrees yaw
+fi.calculate_wake()
 
-<span class="c1"># 4. Get the total farm power</span>
-<span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Given in W, so convert to kW</span>
-<span class="n">farm_power_baseline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_powers</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Sum over the third dimension</span>
+# 4. Get the total farm power
+turbine_powers = fi.get_turbine_powers() / 1000.0  # Given in W, so convert to kW
+farm_power_baseline = np.sum(turbine_powers, 2)  # Sum over the third dimension
 
-<span class="c1"># 5. Develop the yaw control settings</span>
-<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span>  <span class="c1"># Construct the yaw array with dimensions for two wind directions, one wind speed, and four turbines</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>            <span class="c1"># At 270 degrees, yaw the first turbine 25 degrees</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>            <span class="c1"># At 270 degrees, yaw the second turbine 25 degrees</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1"># At 265 degrees, yaw the first turbine -25 degrees</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1"># At 265 degrees, yaw the second turbine -25 degrees</span>
+# 5. Develop the yaw control settings
+yaw_angles = np.zeros( (2, 1, 4) )  # Construct the yaw array with dimensions for two wind directions, one wind speed, and four turbines
+yaw_angles[0, :, 0] = 25            # At 270 degrees, yaw the first turbine 25 degrees
+yaw_angles[0, :, 1] = 25            # At 270 degrees, yaw the second turbine 25 degrees
+yaw_angles[1, :, 0] = 10           # At 265 degrees, yaw the first turbine -25 degrees
+yaw_angles[1, :, 1] = 10           # At 265 degrees, yaw the second turbine -25 degrees
 
-<span class="c1"># 6. Calculate the velocities at each turbine for all atmospheric conditions with the new yaw settings</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
+# 6. Calculate the velocities at each turbine for all atmospheric conditions with the new yaw settings
+fi.calculate_wake(yaw_angles=yaw_angles)
 
-<span class="c1"># 7. Get the total farm power</span>
-<span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>
-<span class="n">farm_power_yaw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_powers</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+# 7. Get the total farm power
+turbine_powers = fi.get_turbine_powers() / 1000.0
+farm_power_yaw = np.sum(turbine_powers, 2)
 
-<span class="c1"># 8. Compare farm power with and without wake steering</span>
-<span class="n">difference</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">farm_power_yaw</span> <span class="o">-</span> <span class="n">farm_power_baseline</span><span class="p">)</span> <span class="o">/</span> <span class="n">farm_power_baseline</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Power </span><span class="si">% d</span><span class="s2">ifference with yaw&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    270 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    280 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+# 8. Compare farm power with and without wake steering
+difference = 100 * (farm_power_yaw - farm_power_baseline) / farm_power_baseline
+print(&quot;Power % difference with yaw&quot;)
+print(f&quot;    270 degrees: {difference[0, 0]:4.2f}%&quot;)
+print(f&quot;    280 degrees: {difference[1, 0]:4.2f}%&quot;)
 </pre></div>
 </div>
 </div>
@@ -1745,26 +1750,26 @@ different wind directions, the farm is rotated so that the wind is coming from t
 left (West) in both cases.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.tools.visualization</span> <span class="kn">import</span> <span class="n">visualize_cut_plane</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from floris.tools.visualization import visualize_cut_plane
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+fig, axarr = plt.subplots(2, 2, figsize=(15,8))
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;270 - Aligned&quot;</span><span class="p">)</span>
+horizontal_plane = fi.calculate_horizontal_plane(wd=[wind_directions[0]], height=90.0)
+visualize_cut_plane(horizontal_plane, ax=axarr[0,0], title=&quot;270 - Aligned&quot;)
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;270 - Yawed&quot;</span><span class="p">)</span>
+horizontal_plane = fi.calculate_horizontal_plane(wd=[wind_directions[0]], yaw_angles=yaw_angles[0:1,0:1] , height=90.0)
+visualize_cut_plane(horizontal_plane, ax=axarr[0,1], title=&quot;270 - Yawed&quot;)
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;280 - Aligned&quot;</span><span class="p">)</span>
+horizontal_plane = fi.calculate_horizontal_plane(wd=[wind_directions[1]], height=90.0)
+visualize_cut_plane(horizontal_plane, ax=axarr[1,0], title=&quot;280 - Aligned&quot;)
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
-<span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;280 - Yawed&quot;</span><span class="p">)</span>
+horizontal_plane = fi.calculate_horizontal_plane(wd=[wind_directions[1]], yaw_angles=yaw_angles[1:2,0:1] , height=90.0)
+visualize_cut_plane(horizontal_plane, ax=axarr[1,1], title=&quot;280 - Yawed&quot;)
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f5d409fa7c0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f97fc307880&gt;
 </pre></div>
 </div>
 <img alt="_images/background_concepts_18_1.png" src="_images/background_concepts_18_1.png" />
@@ -1776,13 +1781,13 @@ simply plots any data given as the first argument, so in this case
 <code class="docutils literal notranslate"><span class="pre">fi.floris.flow_field.u</span></code> contains the yawed calculation from above.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.tools.visualization</span> <span class="kn">import</span> <span class="n">plot_rotor_values</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from floris.tools.visualization import plot_rotor_values
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">wd_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ws_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind direction 270&quot;</span><span class="p">)</span>
+fig, _, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=4, return_fig_objects=True)
+fig.suptitle(&quot;Wind direction 270&quot;)
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">wd_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ws_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind direction 280&quot;</span><span class="p">)</span>
+fig, _, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=1, ws_index=0, n_rows=1, n_cols=4, return_fig_objects=True)
+fig.suptitle(&quot;Wind direction 280&quot;)
 </pre></div>
 </div>
 </div>
@@ -1807,24 +1812,24 @@ but retuning of some parameters might be required.</p>
 <p>We can visualize the locations of the grid points in the current example using <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the grid points</span>
-<span class="n">xs</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y</span>
-<span class="n">zs</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Get the grid points
+xs = fi.floris.grid.x
+ys = fi.floris.grid.y
+zs = fi.floris.grid.z
 
-<span class="c1"># Consider the shape</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;shape of xs: </span><span class="si">{</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  2 wd x 2 ws x 4 turbines x 3 x 3 grid points&quot;</span><span class="p">)</span>
+# Consider the shape
+print(f&quot;shape of xs: {xs.shape}&quot;)
+print(&quot;  2 wd x 2 ws x 4 turbines x 3 x 3 grid points&quot;)
 
-<span class="c1"># Lets plot just one wd/ws conditions</span>
-<span class="n">xs</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">zs</span> <span class="o">=</span> <span class="n">zs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+# Lets plot just one wd/ws conditions
+xs = xs[1, 0, :, :, :]
+ys = ys[1, 0, :, :, :]
+zs = zs[1, 0, :, :, :]
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span>
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=&quot;3d&quot;)
+ax.scatter(xs, ys, zs, marker=&quot;.&quot;)
+ax.set_zlim([0, 150])
 </pre></div>
 </div>
 </div>
@@ -1851,66 +1856,66 @@ report the time required for the computation using the Python
 <code class="docutils literal notranslate"><span class="pre">time.perf_counter()</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import time
+from typing import Tuple
 
-<span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
-<span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+wind_directions = np.arange(0.0, 360.0, 5.0)
+wind_speeds = np.arange(5.0, 25.0, 1.0)
 
-<span class="n">num_bins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating AEP for </span><span class="si">{</span><span class="n">num_bins</span><span class="si">}</span><span class="s2"> wind direction and speed combinations...&quot;</span><span class="p">)</span>
+num_bins = len(wind_directions) * len(wind_speeds)
+print(f&quot;Calculating AEP for {num_bins} wind direction and speed combinations...&quot;)
 
-<span class="c1"># Set up a square 25 turbine layout</span>
-<span class="n">N</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Number of turbines per row and per column</span>
-<span class="n">D</span> <span class="o">=</span> <span class="mf">126.0</span>
+# Set up a square 25 turbine layout
+N = 5  # Number of turbines per row and per column
+D = 126.0
 
-<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
-    <span class="mf">7.0</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="mf">7.0</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of turbines = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+X, Y = np.meshgrid(
+    7.0 * D * np.arange(0, N, 1),
+    7.0 * D * np.arange(0, N, 1),
+)
+X = X.flatten()
+Y = Y.flatten()
+print(f&quot;Number of turbines = {len(X)}&quot;)
 
-<span class="c1"># Define several models</span>
-<span class="n">fi_jensen</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;jensen.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi_gch</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi_cc</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;cc.yaml&quot;</span><span class="p">)</span>
+# Define several models
+fi_jensen = FlorisInterface(&quot;jensen.yaml&quot;)
+fi_gch = FlorisInterface(&quot;gch.yaml&quot;)
+fi_cc = FlorisInterface(&quot;cc.yaml&quot;)
 
-<span class="c1"># Assign the layouts, wind speeds and directions</span>
-<span class="n">fi_jensen</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
-<span class="n">fi_gch</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
-<span class="n">fi_cc</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
+# Assign the layouts, wind speeds and directions
+fi_jensen.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_gch.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_cc.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
 
-<span class="k">def</span> <span class="nf">time_model_calculation</span><span class="p">(</span><span class="n">model_fi</span><span class="p">:</span> <span class="n">FlorisInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function performs the wake calculation for a given</span>
-<span class="sd">    FlorisInterface object and computes the AEP while</span>
-<span class="sd">    tracking the amount of wall-time required for both steps.</span>
+def time_model_calculation(model_fi: FlorisInterface) -&gt; Tuple[float, float]:
+    &quot;&quot;&quot;
+    This function performs the wake calculation for a given
+    FlorisInterface object and computes the AEP while
+    tracking the amount of wall-time required for both steps.
 
-<span class="sd">    Args:</span>
-<span class="sd">        model_fi (FlorisInterface): _description_</span>
-<span class="sd">        float (_type_): _description_</span>
+    Args:
+        model_fi (FlorisInterface): _description_
+        float (_type_): _description_
 
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple(float, float):</span>
-<span class="sd">            0: AEP</span>
-<span class="sd">            1: Wall-time for the computation</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">model_fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">()</span>
-    <span class="n">aep</span> <span class="o">=</span> <span class="n">model_fi</span><span class="o">.</span><span class="n">get_farm_power</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">num_bins</span>  <span class="o">/</span> <span class="mf">1E9</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="mi">24</span>
-    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">aep</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+    Returns:
+        tuple(float, float):
+            0: AEP
+            1: Wall-time for the computation
+    &quot;&quot;&quot;
+    start = time.perf_counter()
+    model_fi.calculate_wake()
+    aep = model_fi.get_farm_power().sum() / num_bins  / 1E9 * 365 * 24
+    end = time.perf_counter()
+    return aep, end - start
 
-<span class="n">jensen_aep</span><span class="p">,</span> <span class="n">jensen_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fi_jensen</span><span class="p">)</span>
-<span class="n">gch_aep</span><span class="p">,</span> <span class="n">gch_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fi_gch</span><span class="p">)</span>
-<span class="n">cc_aep</span><span class="p">,</span> <span class="n">cc_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fi_cc</span><span class="p">)</span>
+jensen_aep, jensen_compute_time = time_model_calculation(fi_jensen)
+gch_aep, gch_compute_time = time_model_calculation(fi_gch)
+cc_aep, cc_compute_time = time_model_calculation(fi_cc)
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model    AEP (GWh)  Compute Time (s)&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Jensen&quot;</span><span class="p">,</span> <span class="n">jensen_aep</span><span class="p">,</span> <span class="n">jensen_compute_time</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;GCH&quot;</span><span class="p">,</span> <span class="n">gch_aep</span><span class="p">,</span> <span class="n">gch_compute_time</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;CC&quot;</span><span class="p">,</span> <span class="n">cc_aep</span><span class="p">,</span> <span class="n">cc_compute_time</span><span class="p">))</span>
+print(&#39;Model    AEP (GWh)  Compute Time (s)&#39;)
+print(&#39;{:8s} {:&lt;10.3f} {:&lt;6.3f}&#39;.format(&quot;Jensen&quot;, jensen_aep, jensen_compute_time))
+print(&#39;{:8s} {:&lt;10.3f} {:&lt;6.3f}&#39;.format(&quot;GCH&quot;, gch_aep, gch_compute_time))
+print(&#39;{:8s} {:&lt;10.3f} {:&lt;6.3f}&#39;.format(&quot;CC&quot;, cc_aep, cc_compute_time))
 </pre></div>
 </div>
 </div>
@@ -1920,9 +1925,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   843.237    2.569 
-GCH      843.904    4.358 
-CC       839.263    6.955 
+Jensen   843.237    2.904 
+GCH      843.904    4.969 
+CC       839.263    7.577 
 </pre></div>
 </div>
 </div>
@@ -1933,44 +1938,44 @@ CC       839.263    6.955
 <p>FLORIS V3 further includes new optimization routines for the design of wake steering controllers.  The SerialRefine is a new method for quickly identifying optimum yaw angles.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Demonstrate on 7-turbine single row farm</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="o">*</span><span class="mi">7</span><span class="o">*</span><span class="n">D</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">wind_speeds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.</span><span class="p">]</span>
-<span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">360.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)</span>
-<span class="n">fi_gch</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Demonstrate on 7-turbine single row farm
+X = np.linspace(0, 6*7*D, 7)
+Y = np.zeros_like(X)
+wind_speeds = [8.]
+wind_directions = np.arange(0., 360., 2.)
+fi_gch.reinitialize(layout_x=X, layout_y=Y, wind_directions=wind_directions, wind_speeds=wind_speeds)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.tools.optimization.yaw_optimization.yaw_optimizer_sr</span> <span class="kn">import</span> <span class="n">YawOptimizationSR</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
-<span class="c1"># Define the SerialRefine optimization</span>
-<span class="n">yaw_opt</span> <span class="o">=</span> <span class="n">YawOptimizationSR</span><span class="p">(</span>
-    <span class="n">fi</span><span class="o">=</span><span class="n">fi_gch</span><span class="p">,</span>
-    <span class="n">minimum_yaw_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># Allowable yaw angles lower bound</span>
-    <span class="n">maximum_yaw_angle</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span>  <span class="c1"># Allowable yaw angles upper bound</span>
-    <span class="n">Ny_passes</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
-    <span class="n">exclude_downstream_turbines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">exploit_layout_symmetry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+# Define the SerialRefine optimization
+yaw_opt = YawOptimizationSR(
+    fi=fi_gch,
+    minimum_yaw_angle=0.0,  # Allowable yaw angles lower bound
+    maximum_yaw_angle=25.0,  # Allowable yaw angles upper bound
+    Ny_passes=[5, 4],
+    exclude_downstream_turbines=True,
+    exploit_layout_symmetry=True,
+)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>start = time.perf_counter()
 
-<span class="c1">## Calculate the optimum yaw angles for 25 turbines and 72 wind directions</span>
-<span class="n">df_opt</span> <span class="o">=</span> <span class="n">yaw_opt</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+## Calculate the optimum yaw angles for 25 turbines and 72 wind directions
+df_opt = yaw_opt.optimize()
 
-<span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+end = time.perf_counter()
 
-<span class="n">walltime</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimization wall time: </span><span class="si">{</span><span class="n">walltime</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+walltime = end - start
+print(f&quot;Optimization wall time: {walltime:.3f} s&quot;)
 </pre></div>
 </div>
 </div>
@@ -2003,7 +2008,7 @@ CC       839.263    6.955
 [Serial Refine] Processing pass=1, turbine_depth=6 (92.9 %)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 2.383 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 2.538 s
 </pre></div>
 </div>
 </div>
@@ -2011,15 +2016,15 @@ CC       839.263    6.955
 <p>In the results, T0 is the upstream turbine when wind direction is 270, while T6 is upstream at 90 deg</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show the results</span>
-<span class="n">yaw_angles_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt</span><span class="p">[</span><span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">])</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">yaw_angles_opt</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;T</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Yaw (Deg)&#39;</span><span class="p">)</span>
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-    <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">axarr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Wind Direction (Deg)&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Show the results
+yaw_angles_opt = np.vstack(df_opt[&quot;yaw_angles_opt&quot;])
+fig, axarr = plt.subplots(len(X), 1, sharex=True, sharey=True, figsize=(10, 10))
+for i in range(len(X)):
+    axarr[i].plot(wind_directions, yaw_angles_opt[:, i], &#39;k-&#39;, label=&#39;T%d&#39; % i)
+    axarr[i].set_ylabel(&#39;Yaw (Deg)&#39;)
+    axarr[i].legend()
+    axarr[i].grid(True)
+axarr[-1].set_xlabel(&#39;Wind Direction (Deg)&#39;)
 </pre></div>
 </div>
 </div>

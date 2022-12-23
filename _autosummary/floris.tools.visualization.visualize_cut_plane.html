@@ -53,7 +53,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="floris.tools.visualization.visualize_quiver" href="floris.tools.visualization.visualize_quiver.html" />
-    <link rel="prev" title="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html" />
+    <link rel="prev" title="floris.tools.visualization.show_plots" href="floris.tools.visualization.show_plots.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
     
@@ -601,11 +601,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.subtract.html">
-         floris.tools.cut_plane.subtract
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
@@ -859,6 +854,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul class="current">
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -881,6 +881,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4 current active">
@@ -1225,7 +1230,7 @@ title="Print to PDF"
 <h1>floris.tools.visualization.visualize_cut_plane<a class="headerlink" href="#floris-tools-visualization-visualize-cut-plane" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.tools.visualization.visualize_cut_plane">
-<span class="sig-prename descclassname"><span class="pre">floris.tools.visualization.</span></span><span class="sig-name descname"><span class="pre">visualize_cut_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cut_plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel_component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'u'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minSpeed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxSpeed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_bar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/visualization.html#visualize_cut_plane"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.visualization.visualize_cut_plane" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">floris.tools.visualization.</span></span><span class="sig-name descname"><span class="pre">visualize_cut_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cut_plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel_component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'u'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_bar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/visualization.html#visualize_cut_plane"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.visualization.visualize_cut_plane" title="Permalink to this definition">#</a></dt>
 <dd><p>Generate pseudocolor mesh plot of the cut_plane.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1234,9 +1239,9 @@ title="Print to PDF"
 plane through wind plant.</p></li>
 <li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>) -- Figure axes. Defaults
 to None.</p></li>
-<li><p><strong>minSpeed</strong> (<em>float</em><em>, </em><em>optional</em>) -- Minimum value of wind speed for
+<li><p><strong>min_speed</strong> (<em>float</em><em>, </em><em>optional</em>) -- Minimum value of wind speed for
 contours. Defaults to None.</p></li>
-<li><p><strong>maxSpeed</strong> (<em>float</em><em>, </em><em>optional</em>) -- Maximum value of wind speed for
+<li><p><strong>max_speed</strong> (<em>float</em><em>, </em><em>optional</em>) -- Maximum value of wind speed for
 contours. Defaults to None.</p></li>
 <li><p><strong>cmap</strong> (<em>str</em><em>, </em><em>optional</em>) -- Colormap specifier. Defaults to
 'coolwarm'.</p></li>
@@ -1280,11 +1285,11 @@ contours. Defaults to None.</p></li>
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="floris.tools.visualization.show_plots.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">floris.tools.visualization.reverse_cut_plane_x_axis_in_plot</p>
+            <p class="prev-next-title">floris.tools.visualization.show_plots</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="floris.tools.visualization.visualize_quiver.html" title="next page">

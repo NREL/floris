@@ -601,11 +601,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.subtract.html">
-         floris.tools.cut_plane.subtract
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
@@ -859,6 +854,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -881,6 +881,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
@@ -1260,10 +1265,7 @@ title="Print to PDF"
 <tr class="row-even"><td><p><a class="reference internal" href="floris.tools.cut_plane.set_origin.html#floris.tools.cut_plane.set_origin" title="floris.tools.cut_plane.set_origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_origin</span></code></a></p></td>
 <td><p>Establish the origin of a CutPlane object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="floris.tools.cut_plane.subtract.html#floris.tools.cut_plane.subtract" title="floris.tools.cut_plane.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a></p></td>
-<td><p>Subtract u,v,w terms of cut_plane_b from cut_plane_a</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="floris.tools.cut_plane.wind_speed_profile.html#floris.tools.cut_plane.wind_speed_profile" title="floris.tools.cut_plane.wind_speed_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_speed_profile</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.tools.cut_plane.wind_speed_profile.html#floris.tools.cut_plane.wind_speed_profile" title="floris.tools.cut_plane.wind_speed_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_speed_profile</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1432,26 +1434,6 @@ Defaults to (100, 100).</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Cut_plane_a projected onto cut_plane_b's axis.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>cut_plane (<a class="reference internal" href="floris.tools.cut_plane.CutPlane.html#floris.tools.cut_plane.CutPlane" title="floris.tools.cut_plane.CutPlane"><code class="xref py py-class docutils literal notranslate"><span class="pre">CutPlane</span></code></a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="floris.tools.cut_plane.subtract">
-<span class="sig-prename descclassname"><span class="pre">floris.tools.cut_plane.</span></span><span class="sig-name descname"><span class="pre">subtract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cut_plane_a_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_plane_b_in</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/cut_plane.html#subtract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.cut_plane.subtract" title="Permalink to this definition">#</a></dt>
-<dd><p>Subtract u,v,w terms of cut_plane_b from cut_plane_a</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cut_plane_a_in</strong> (<a class="reference internal" href="floris.tools.cut_plane.CutPlane.html#floris.tools.cut_plane.CutPlane" title="floris.tools.cut_plane.CutPlane"><code class="xref py py-class docutils literal notranslate"><span class="pre">CutPlane</span></code></a>) -- Plane of data to subtract from.</p></li>
-<li><p><strong>cut_plane_b_in</strong> (<a class="reference internal" href="floris.tools.cut_plane.CutPlane.html#floris.tools.cut_plane.CutPlane" title="floris.tools.cut_plane.CutPlane"><code class="xref py py-class docutils literal notranslate"><span class="pre">CutPlane</span></code></a>) -- Plane of data to subtract b.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Difference of cut_plane_a_in minus cut_plane_b_in.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>cut_plane (<a class="reference internal" href="floris.tools.cut_plane.CutPlane.html#floris.tools.cut_plane.CutPlane" title="floris.tools.cut_plane.CutPlane"><code class="xref py py-class docutils literal notranslate"><span class="pre">CutPlane</span></code></a>)</p>

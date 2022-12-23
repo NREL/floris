@@ -601,11 +601,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.subtract.html">
-         floris.tools.cut_plane.subtract
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
@@ -859,6 +854,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -881,6 +881,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
@@ -1232,6 +1237,18 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code-quality-tools">
+   Code quality tools
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#isort">
+     isort
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#testing">
    Testing
   </a>
@@ -1280,6 +1297,18 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#syncing-a-local-repository-with-nrel-floris">
      Syncing a local repository with NREL/FLORIS
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#code-quality-tools">
+   Code quality tools
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#isort">
+     isort
     </a>
    </li>
   </ul>
@@ -1370,6 +1399,27 @@ git merge main
 to fit a specific use case or purpose. If significant development has
 happened locally, then <a class="reference external" href="https://www.atlassian.com/git/tutorials/using-branches/merge-conflicts">merge conflicts</a>
 are likely and should be resolved as early as possible.</p>
+</section>
+</section>
+<section id="code-quality-tools">
+<h2>Code quality tools<a class="headerlink" href="#code-quality-tools" title="Permalink to this headline">#</a></h2>
+<p>FLORIS is configured to use tools to automatically check and enforce
+aspects of code quality. In general, these should be adopted by all
+developers and incorporated into the development workflow. Most
+tools are configured in <a class="reference external" href="https://github.com/NREL/floris/blob/main/pyproject.toml">pyproject.toml</a>,
+but some may have a dedicated configuration file.</p>
+<section id="isort">
+<h3>isort<a class="headerlink" href="#isort" title="Permalink to this headline">#</a></h3>
+<p>Import lines can easily get out of hand and cause unnecessary distraction
+in source code files. <a class="reference external" href="https://pycqa.github.io/isort/index.html">isort</a>
+it used to automatically manage imports in the source code. It can be run
+directly with the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>isort &lt;path to file&gt;
+isort dir/*
+</pre></div>
+</div>
+<p>This tool was initially configured in <a class="reference external" href="https://github.com/NREL/floris/pull/535">#535</a>,
+and additional information on specific decisions can be found there.</p>
 </section>
 </section>
 <section id="testing">

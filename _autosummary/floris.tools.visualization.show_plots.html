@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>floris.tools.cut_plane.subtract &#8212; FLORIS</title>
+    <title>floris.tools.visualization.show_plots &#8212; FLORIS</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -52,8 +52,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="floris.tools.cut_plane.wind_speed_profile" href="floris.tools.cut_plane.wind_speed_profile.html" />
-    <link rel="prev" title="floris.tools.cut_plane.set_origin" href="floris.tools.cut_plane.set_origin.html" />
+    <link rel="next" title="floris.tools.visualization.visualize_cut_plane" href="floris.tools.visualization.visualize_cut_plane.html" />
+    <link rel="prev" title="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
     
@@ -540,16 +540,16 @@ const thebe_selector_output = ".output, .cell_output"
      </i>
     </label>
     <ul class="current">
-     <li class="toctree-l3 current active has-children">
+     <li class="toctree-l3 has-children">
       <a class="reference internal" href="floris.tools.cut_plane.html">
        floris.tools.cut_plane
       </a>
-      <input checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/>
+      <input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/>
       <label for="toctree-checkbox-17">
        <i class="fas fa-chevron-down">
        </i>
       </label>
-      <ul class="current">
+      <ul>
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.cut_plane.calculate_power.html">
          floris.tools.cut_plane.calculate_power
@@ -598,11 +598,6 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.cut_plane.set_origin.html">
          floris.tools.cut_plane.set_origin
-        </a>
-       </li>
-       <li class="toctree-l4 current active">
-        <a class="current reference internal" href="#">
-         floris.tools.cut_plane.subtract
         </a>
        </li>
        <li class="toctree-l4">
@@ -848,16 +843,21 @@ const thebe_selector_output = ".output, .cell_output"
        </li>
       </ul>
      </li>
-     <li class="toctree-l3 has-children">
+     <li class="toctree-l3 current active has-children">
       <a class="reference internal" href="floris.tools.visualization.html">
        floris.tools.visualization
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
+      <input checked="" class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
       <label for="toctree-checkbox-26">
        <i class="fas fa-chevron-down">
        </i>
       </label>
-      <ul>
+      <ul class="current">
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
@@ -881,6 +881,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4 current active">
+        <a class="current reference internal" href="#">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
@@ -1115,7 +1120,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.tools.cut_plane.subtract.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.tools.visualization.show_plots.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1132,7 +1137,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.tools.cut_plane.subtract.rst"
+        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.tools.visualization.show_plots.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1160,7 +1165,7 @@ title="Edit this page"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../_sources/_autosummary/floris.tools.cut_plane.subtract.rst"
+        <a href="../_sources/_autosummary/floris.tools.visualization.show_plots.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1209,7 +1214,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>floris.tools.cut_plane.subtract</h1>
+                <h1>floris.tools.visualization.show_plots</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -1221,27 +1226,12 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="floris-tools-cut-plane-subtract">
-<h1>floris.tools.cut_plane.subtract<a class="headerlink" href="#floris-tools-cut-plane-subtract" title="Permalink to this headline">#</a></h1>
+  <section id="floris-tools-visualization-show-plots">
+<h1>floris.tools.visualization.show_plots<a class="headerlink" href="#floris-tools-visualization-show-plots" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="floris.tools.cut_plane.subtract">
-<span class="sig-prename descclassname"><span class="pre">floris.tools.cut_plane.</span></span><span class="sig-name descname"><span class="pre">subtract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cut_plane_a_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_plane_b_in</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/cut_plane.html#subtract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.cut_plane.subtract" title="Permalink to this definition">#</a></dt>
-<dd><p>Subtract u,v,w terms of cut_plane_b from cut_plane_a</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cut_plane_a_in</strong> (<a class="reference internal" href="floris.tools.cut_plane.CutPlane.html#floris.tools.cut_plane.CutPlane" title="floris.tools.cut_plane.CutPlane"><code class="xref py py-class docutils literal notranslate"><span class="pre">CutPlane</span></code></a>) -- Plane of data to subtract from.</p></li>
-<li><p><strong>cut_plane_b_in</strong> (<a class="reference internal" href="floris.tools.cut_plane.CutPlane.html#floris.tools.cut_plane.CutPlane" title="floris.tools.cut_plane.CutPlane"><code class="xref py py-class docutils literal notranslate"><span class="pre">CutPlane</span></code></a>) -- Plane of data to subtract b.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Difference of cut_plane_a_in minus cut_plane_b_in.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>cut_plane (<a class="reference internal" href="floris.tools.cut_plane.CutPlane.html#floris.tools.cut_plane.CutPlane" title="floris.tools.cut_plane.CutPlane"><code class="xref py py-class docutils literal notranslate"><span class="pre">CutPlane</span></code></a>)</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="floris.tools.visualization.show_plots">
+<span class="sig-prename descclassname"><span class="pre">floris.tools.visualization.</span></span><span class="sig-name descname"><span class="pre">show_plots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/visualization.html#show_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.visualization.show_plots" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </section>
 
@@ -1272,17 +1262,17 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="floris.tools.cut_plane.set_origin.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">floris.tools.cut_plane.set_origin</p>
+            <p class="prev-next-title">floris.tools.visualization.reverse_cut_plane_x_axis_in_plot</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="floris.tools.cut_plane.wind_speed_profile.html" title="next page">
+    <a class='right-next' id="next-link" href="floris.tools.visualization.visualize_cut_plane.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">floris.tools.cut_plane.wind_speed_profile</p>
+        <p class="prev-next-title">floris.tools.visualization.visualize_cut_plane</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

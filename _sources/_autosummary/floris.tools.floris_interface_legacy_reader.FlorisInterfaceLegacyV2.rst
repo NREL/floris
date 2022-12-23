@@ -31,7 +31,6 @@ floris.tools.floris\_interface\_legacy\_reader.FlorisInterfaceLegacyV2
       ~FlorisInterfaceLegacyV2.get_turbine_Cts
       ~FlorisInterfaceLegacyV2.get_turbine_TIs
       ~FlorisInterfaceLegacyV2.get_turbine_ais
-      ~FlorisInterfaceLegacyV2.get_turbine_average_velocities
       ~FlorisInterfaceLegacyV2.get_turbine_layout
       ~FlorisInterfaceLegacyV2.get_turbine_powers
       ~FlorisInterfaceLegacyV2.reinitialize
@@ -47,5 +46,6 @@ floris.tools.floris\_interface\_legacy\_reader.FlorisInterfaceLegacyV2
       ~FlorisInterfaceLegacyV2.layout_x
       ~FlorisInterfaceLegacyV2.layout_y
       ~FlorisInterfaceLegacyV2.logger
+      ~FlorisInterfaceLegacyV2.turbine_average_velocities
    
    

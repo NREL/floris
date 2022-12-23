@@ -598,11 +598,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.subtract.html">
-         floris.tools.cut_plane.subtract
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
@@ -856,6 +851,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -878,6 +878,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
@@ -1491,6 +1496,8 @@ title="Open an issue"
       <li><a href="_autosummary/floris.utilities.Loader.html#floris.utilities.Loader.add_multi_constructor">add_multi_constructor() (floris.utilities.Loader class method)</a>
 </li>
       <li><a href="_autosummary/floris.utilities.Loader.html#floris.utilities.Loader.add_path_resolver">add_path_resolver() (floris.utilities.Loader class method)</a>
+</li>
+      <li><a href="_autosummary/floris.tools.visualization.add_turbine_id_labels.html#floris.tools.visualization.add_turbine_id_labels">add_turbine_id_labels() (in module floris.tools.visualization)</a>, <a href="_autosummary/floris.tools.visualization.html#floris.tools.visualization.add_turbine_id_labels">[1]</a>
 </li>
       <li><a href="_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.html#floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.add_var_group">add_var_group() (floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse method)</a>, <a href="_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.html#floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.add_var_group">[1]</a>
 
@@ -2582,10 +2589,10 @@ title="Open an issue"
       </ul></li>
       <li><a href="_autosummary/floris.utilities.Loader.html#floris.utilities.Loader.get_node">get_node() (floris.utilities.Loader method)</a>
 </li>
-      <li><a href="_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.html#floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.get_optimized_locs">get_optimized_locs() (floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse method)</a>, <a href="_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.html#floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.get_optimized_locs">[1]</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.html#floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.get_optimized_locs">get_optimized_locs() (floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse method)</a>, <a href="_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.html#floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.get_optimized_locs">[1]</a>
+</li>
       <li><a href="_autosummary/floris.tools.interface_utilities.get_params.html#floris.tools.interface_utilities.get_params">get_params() (in module floris.tools.interface_utilities)</a>, <a href="_autosummary/floris.tools.interface_utilities.html#floris.tools.interface_utilities.get_params">[1]</a>
 </li>
       <li><a href="_autosummary/floris.tools.cut_plane.get_plane_from_flow_data.html#floris.tools.cut_plane.get_plane_from_flow_data">get_plane_from_flow_data() (in module floris.tools.cut_plane)</a>, <a href="_autosummary/floris.tools.cut_plane.html#floris.tools.cut_plane.get_plane_from_flow_data">[1]</a>
@@ -2616,14 +2623,8 @@ title="Open an issue"
         <li><a href="_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html#floris.tools.uncertainty_interface.UncertaintyInterface.get_turbine_ais">(floris.tools.uncertainty_interface.UncertaintyInterface method)</a>, <a href="_autosummary/floris.tools.uncertainty_interface.html#floris.tools.uncertainty_interface.UncertaintyInterface.get_turbine_ais">[1]</a>
 </li>
       </ul></li>
-      <li><a href="_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_average_velocities">get_turbine_average_velocities() (floris.tools.floris_interface.FlorisInterface method)</a>, <a href="_autosummary/floris.tools.floris_interface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_average_velocities">[1]</a>
-
-      <ul>
-        <li><a href="_autosummary/floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html#floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.get_turbine_average_velocities">(floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2 method)</a>
+      <li><a href="_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html#floris.tools.uncertainty_interface.UncertaintyInterface.get_turbine_average_velocities">get_turbine_average_velocities() (floris.tools.uncertainty_interface.UncertaintyInterface method)</a>, <a href="_autosummary/floris.tools.uncertainty_interface.html#floris.tools.uncertainty_interface.UncertaintyInterface.get_turbine_average_velocities">[1]</a>
 </li>
-        <li><a href="_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html#floris.tools.uncertainty_interface.UncertaintyInterface.get_turbine_average_velocities">(floris.tools.uncertainty_interface.UncertaintyInterface method)</a>, <a href="_autosummary/floris.tools.uncertainty_interface.html#floris.tools.uncertainty_interface.UncertaintyInterface.get_turbine_average_velocities">[1]</a>
-</li>
-      </ul></li>
       <li><a href="_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_Cts">get_turbine_Cts() (floris.tools.floris_interface.FlorisInterface method)</a>, <a href="_autosummary/floris.tools.floris_interface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_Cts">[1]</a>
 
       <ul>
@@ -3525,6 +3526,8 @@ title="Open an issue"
 </li>
       <li><a href="_autosummary/floris.tools.interface_utilities.html#floris.tools.interface_utilities.show_params">show_params() (in module floris.tools.interface_utilities)</a>, <a href="_autosummary/floris.tools.interface_utilities.show_params.html#floris.tools.interface_utilities.show_params">[1]</a>
 </li>
+      <li><a href="_autosummary/floris.tools.visualization.html#floris.tools.visualization.show_plots">show_plots() (in module floris.tools.visualization)</a>, <a href="_autosummary/floris.tools.visualization.show_plots.html#floris.tools.visualization.show_plots">[1]</a>
+</li>
       <li><a href="_autosummary/floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit.html#floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit.sigma_max_rel">sigma_max_rel (floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit attribute)</a>, <a href="_autosummary/floris.simulation.wake_velocity.turbopark.html#floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit.sigma_max_rel">[1]</a>
 </li>
       <li><a href="_autosummary/floris.utilities.html#floris.utilities.sind">sind() (in module floris.utilities)</a>, <a href="_autosummary/floris.utilities.sind.html#floris.utilities.sind">[1]</a>
@@ -3595,8 +3598,6 @@ title="Open an issue"
       </ul></li>
       <li><a href="_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.steady_state_atmospheric_condition">steady_state_atmospheric_condition() (floris.simulation.floris.Floris method)</a>
 </li>
-      <li><a href="_autosummary/floris.tools.cut_plane.html#floris.tools.cut_plane.subtract">subtract() (in module floris.tools.cut_plane)</a>, <a href="_autosummary/floris.tools.cut_plane.subtract.html#floris.tools.cut_plane.subtract">[1]</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -3633,6 +3634,12 @@ title="Open an issue"
 </li>
       <li><a href="_autosummary/floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine">Turbine (class in floris.simulation.turbine)</a>, <a href="_autosummary/floris.simulation.turbine.html#floris.simulation.turbine.Turbine">[1]</a>
 </li>
+      <li><a href="_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.turbine_average_velocities">turbine_average_velocities (floris.tools.floris_interface.FlorisInterface property)</a>, <a href="_autosummary/floris.tools.floris_interface.html#floris.tools.floris_interface.FlorisInterface.turbine_average_velocities">[1]</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html#floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.turbine_average_velocities">(floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2 property)</a>
+</li>
+      </ul></li>
       <li><a href="_autosummary/floris.simulation.grid.FlowFieldGrid.html#floris.simulation.grid.FlowFieldGrid.turbine_coordinates">turbine_coordinates (floris.simulation.grid.FlowFieldGrid attribute)</a>
 
       <ul>

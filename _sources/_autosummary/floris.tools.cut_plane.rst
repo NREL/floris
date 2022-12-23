@@ -25,7 +25,6 @@ floris.tools.cut\_plane
       project_onto
       rescale_axis
       set_origin
-      subtract
       wind_speed_profile
    
    
