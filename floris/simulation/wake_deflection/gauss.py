@@ -20,6 +20,7 @@ from floris.simulation import Farm
 from floris.simulation import FlowField
 from floris.simulation import Grid
 from floris.simulation import Turbine
+from floris.simulation.wake_velocity.gauss import geometric_model_wake_width
 from floris.utilities import cosd, sind
 
 
@@ -217,15 +218,11 @@ class GaussVelocityDeflection(BaseModel):
 @define
 class GaussGeometricDeflection(BaseModel):
 
-    ad: float = field(converter=float, default=0.0)
-    bd: float = field(converter=float, default=0.0)
-    alpha: float = field(converter=float, default=0.58)
-    beta: float = field(converter=float, default=0.077)
-    ka: float = field(converter=float, default=0.38)
-    kb: float = field(converter=float, default=0.004)
-    dm: float = field(converter=float, default=1.0)
-    eps_gain: float = field(converter=float, default=0.2)
-    use_secondary_steering: bool = field(converter=bool, default=True)
+    wake_deflection_rates: list = field(default=[0.01]) # TODO: set default
+    breakpoints_D: list = field(default=[]) # TODO: set default
+    initial_deflection: float = field(default=0.0) # TODO: check default
+    smoothing_length_D: float = field(default=2.0) # TODO: check default
+    wim_gain_deflection: float = field(default=1.0) # TODO: check default
 
     def prepare_function(
         self,
@@ -248,7 +245,7 @@ class GaussGeometricDeflection(BaseModel):
         x_i: np.ndarray,
         y_i: np.ndarray,
         yaw_i: np.ndarray,
-        turbulence_intensity_i: np.ndarray,
+        wake_induced_mixing_i: np.ndarray,
         ct_i: np.ndarray,
         rotor_diameter_i: float,
         *,
@@ -285,80 +282,35 @@ class GaussGeometricDeflection(BaseModel):
         """
         # ==============================================================
 
-        # Opposite sign convention in this model; here, sign is important
-        yaw_i = -1 * yaw_i
+        tilt = 0.0
 
-        # TODO: connect support for tilt
-        tilt = 0.0 #turbine.tilt_angle
+        # TODO: rename geometric_model_wake_width function, as it is 
+        # now also being used for deflections
+        deflection_y = geometric_model_wake_width(
+            x-x_i, 
+            self.wake_deflection_rates, 
+            [b*rotor_diameter_i for b in self.breakpoints_D],
+            self.initial_deflection, 
+            self.smoothing_length_D*rotor_diameter_i,
+            self.wim_gain_deflection*wake_induced_mixing_i,
+        ) * -sind(yaw_i) # Deflection grows with sine of yaw. Appropriate?
 
-        # initial velocity deficits
-        uR = (
-            freestream_velocity
-          * ct_i
-          * cosd(tilt)
-          * cosd(yaw_i)
-          / (2.0 * (1 - np.sqrt(1 - (ct_i * cosd(tilt) * cosd(yaw_i)))))
-        )
-        u0 = freestream_velocity * np.sqrt(1 - ct_i)
+        deflection_z = geometric_model_wake_width(
+            x-x_i, 
+            self.wake_deflection_rates, 
+            [b*rotor_diameter_i for b in self.breakpoints_D],
+            self.initial_deflection, 
+            self.smoothing_length_D*rotor_diameter_i,
+            self.wim_gain_deflection*wake_induced_mixing_i,
+        ) * sind(tilt) # Deflection grows with sine of tilt. Appropriate?
 
-        # length of near wake
-        x0 = (
-            rotor_diameter_i
-            * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
-            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
-            + x_i
-        )
+        downstream_mask = np.array(x > x_i + 0.1)
 
-        # wake expansion parameters
-        ky = self.ka * turbulence_intensity_i + self.kb
-        kz = self.ka * turbulence_intensity_i + self.kb
+        # Will need to pass out y, z components of delfection, right?
+        deflection_y = deflection_y * downstream_mask
+        deflection_z = deflection_z * downstream_mask
 
-        C0 = 1 - u0 / freestream_velocity
-        M0 = C0 * (2 - C0)
-        E0 = C0 ** 2 - 3 * np.exp(1.0 / 12.0) * C0 + 3 * np.exp(1.0 / 3.0)
-
-        # initial Gaussian wake expansion
-        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
-        sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
-
-        yR = y - y_i
-        xR = x_i # yR * tand(yaw) + x_i
-
-        # yaw parameters (skew angle and distance from centerline)
-        # NOTE: Tilt in here at all? z_h?
-        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i)) * (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
-        delta0 = np.tan(theta_c0) * (x0 - x_i)  # initial wake deflection;
-
-        # deflection in the near wake
-        delta_near_wake = ((x - xR) / (x0 - xR)) * delta0 + (self.ad + self.bd * (x - x_i))
-        delta_near_wake = delta_near_wake * np.array(x >= xR)
-        delta_near_wake = delta_near_wake * np.array(x <= x0)
-
-        # deflection in the far wake
-        sigma_y = ky * (x - x0) + sigma_y0
-        sigma_z = kz * (x - x0) + sigma_z0
-        sigma_y = sigma_y * np.array(x >= x0) + sigma_y0 * np.array(x < x0)
-        sigma_z = sigma_z * np.array(x >= x0) + sigma_z0 * np.array(x < x0)
-
-        ln_deltaNum = (1.6 + np.sqrt(M0)) * (
-            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) - np.sqrt(M0)
-        )
-        ln_deltaDen = (1.6 - np.sqrt(M0)) * (
-            1.6 * np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0)) + np.sqrt(M0)
-        )
-
-        delta_far_wake = (
-            delta0
-          + theta_c0 * E0 / 5.2
-          * np.sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))
-          * np.log(ln_deltaNum / ln_deltaDen)
-          + (self.ad + self.bd * (x - x_i))
-        )
-
-        delta_far_wake = delta_far_wake * np.array(x > x0)
-        deflection = delta_near_wake + delta_far_wake
-
-        return deflection
+        return deflection_y
 
 
 ## GCH components
