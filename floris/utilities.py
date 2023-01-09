@@ -195,31 +195,59 @@ def wind_delta(wind_directions):
     return ((wind_directions - 270) % 360 + 360) % 360
 
 
-def rotate_coordinates_rel_west(wind_directions, coordinates):
+def rotate_coordinates_rel_west(wind_directions, coordinates, inv_rot=False,layout_x=0,layout_y=0):
     # Calculate the difference in given wind direction from 270 / West
     wind_deviation_from_west = wind_delta(wind_directions)
     wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))
+      
 
     # Construct the arrays storing the turbine locations
-    x_coordinates, y_coordinates, z_coordinates = coordinates.T
+    # x_coordinates, y_coordinates, z_coordinates = coordinates.T
+    if isinstance(coordinates, (np.ndarray, np.generic) ) :
+        x_coordinates, y_coordinates, z_coordinates = coordinates.T
+    else :
+        x_coordinates, y_coordinates, z_coordinates = coordinates #dh. to handle additional input type (mesh grid)
 
-    # Find center of rotation - this is the center of box bounding all of the turbines
-    x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
-    y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+    if inv_rot : 
+        wind_deviation_from_west = -wind_deviation_from_west #dh. for inverse rotation
+        x_center_of_rotation = (np.min(layout_x) + np.max(layout_x)) / 2
+        y_center_of_rotation = (np.min(layout_y) + np.max(layout_y)) / 2
+    else:
+        # Find center of rotation - this is the center of box bounding all of the turbines
+        x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
+        y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+    
 
     # Rotate turbine coordinates about the center
     x_coord_offset = x_coordinates - x_center_of_rotation
     y_coord_offset = y_coordinates - y_center_of_rotation
-    x_coord_rotated = (
-        x_coord_offset * cosd(wind_deviation_from_west)
-        - y_coord_offset * sind(wind_deviation_from_west)
-        + x_center_of_rotation
-    )
-    y_coord_rotated = (
-        x_coord_offset * sind(wind_deviation_from_west)
-        + y_coord_offset * cosd(wind_deviation_from_west)
-        + y_center_of_rotation
-    )
+    
+
+    
+    if inv_rot : 
+        x_coord_rotated = (
+            x_coord_offset * cosd(wind_deviation_from_west)
+            - y_coord_offset * sind(wind_deviation_from_west)
+        )
+        # pdb.set_trace()
+        x_coord_rotated =x_coord_rotated + x_center_of_rotation
+        y_coord_rotated = (
+            x_coord_offset * sind(wind_deviation_from_west)
+            + y_coord_offset * cosd(wind_deviation_from_west)
+        )
+        y_coord_rotated =y_coord_rotated + y_center_of_rotation
+    else:
+        x_coord_rotated = (
+            x_coord_offset * cosd(wind_deviation_from_west)
+            - y_coord_offset * sind(wind_deviation_from_west)
+            + x_center_of_rotation
+        )
+        y_coord_rotated = (
+            x_coord_offset * sind(wind_deviation_from_west)
+            + y_coord_offset * cosd(wind_deviation_from_west)
+            + y_center_of_rotation
+        )
+    
     z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
     return x_coord_rotated, y_coord_rotated, z_coord_rotated
 
