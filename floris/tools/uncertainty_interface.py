@@ -17,9 +17,9 @@ import copy
 import numpy as np
 from scipy.stats import norm
 
+from floris.logging_manager import LoggerBase
 from floris.tools import FlorisInterface
 from floris.utilities import wrap_360
-from floris.logging_manager import LoggerBase
 
 
 class UncertaintyInterface(LoggerBase):

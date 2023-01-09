@@ -58,6 +58,31 @@ to fit a specific use case or purpose. If significant development has
 happened locally, then [merge conflicts](https://www.atlassian.com/git/tutorials/using-branches/merge-conflicts)
 are likely and should be resolved as early as possible.
 
+
+## Code quality tools
+
+FLORIS is configured to use tools to automatically check and enforce
+aspects of code quality. In general, these should be adopted by all
+developers and incorporated into the development workflow. Most
+tools are configured in [pyproject.toml](https://github.com/NREL/floris/blob/main/pyproject.toml),
+but some may have a dedicated configuration file.
+
+### isort
+
+Import lines can easily get out of hand and cause unnecessary distraction
+in source code files. [isort](https://pycqa.github.io/isort/index.html)
+it used to automatically manage imports in the source code. It can be run
+directly with the following command:
+
+```bash
+isort <path to file>
+isort dir/*
+```
+
+This tool was initially configured in [#535](https://github.com/NREL/floris/pull/535),
+and additional information on specific decisions can be found there.
+
+
 ## Testing
 
 In order to maintain a level of confidence in the software, FLORIS is expected

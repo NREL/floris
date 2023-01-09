@@ -15,14 +15,15 @@ from __future__ import annotations
 
 from typing import Union
 
-import numpy as np
 import matplotlib as mpl
 import matplotlib.colors as mplcolors
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import rcParams
 
 from floris.tools.floris_interface import FlorisInterface
 from floris.utilities import rotate_coordinates_rel_west
+
 
 def show_plots():
     plt.show()

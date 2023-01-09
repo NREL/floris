@@ -10,23 +10,27 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# from __future__ import annotations
+from __future__ import annotations
+
+import copy
+from pathlib import Path
 from typing import Any, List
 
 import attrs
-from attrs import define, field
 import numpy as np
-from pathlib import Path
-import copy
+from attrs import define, field
 
-from floris.type_dec import (
-    NDArrayObject,
-    floris_array_converter,
-    NDArrayFloat
+from floris.simulation import (
+    BaseClass,
+    State,
+    Turbine
 )
-from floris.utilities import Vec3, load_yaml
-from floris.simulation import BaseClass, State
-from floris.simulation import Turbine
+from floris.type_dec import (
+    floris_array_converter,
+    NDArrayFloat,
+    NDArrayObject
+)
+from floris.utilities import load_yaml, Vec3
 
 
 @define

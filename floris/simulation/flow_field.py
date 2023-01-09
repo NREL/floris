@@ -15,15 +15,15 @@
 from __future__ import annotations
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.type_dec import (
-    FromDictMixin,
-    NDArrayFloat,
-    floris_array_converter
-)
 from floris.simulation import Grid
+from floris.type_dec import (
+    floris_array_converter,
+    FromDictMixin,
+    NDArrayFloat
+)
 
 
 @define

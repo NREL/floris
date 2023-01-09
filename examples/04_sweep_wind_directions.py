@@ -18,6 +18,7 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
+
 """
 04_sweep_wind_directions
 
