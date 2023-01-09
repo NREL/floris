@@ -39,6 +39,7 @@ fi.reinitialize(wind_speeds=ws_array)
 
 # Get a list of available turbine models
 turbines = os.listdir('../floris/turbine_library')
+turbines = [t for t in turbines if 'yaml' in t]
 turbines = [t.strip('.yaml') for t in turbines]
 
 # Declare a set of figures for comparing cp and ct across models
