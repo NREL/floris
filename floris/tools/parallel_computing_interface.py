@@ -105,10 +105,16 @@ class ParallelComputingInterface(LoggerBase):
                 self.fi.floris.farm.n_turbines
             ))
 
+        # Prepare settings
+        n_wind_direction_splits = self.n_wind_direction_splits
+        n_wind_direction_splits = np.min([n_wind_direction_splits, self.fi.floris.flow_field.n_wind_directions])
+        n_wind_speed_splits = self.n_wind_speed_splits
+        n_wind_speed_splits = np.min([n_wind_speed_splits, self.fi.floris.flow_field.n_wind_speeds])
+    
         # Prepare the input arguments for parallel execution
         fi_dict = self.fi.floris.as_dict()
-        wind_direction_id_splits = np.array_split(np.arange(self.fi.floris.flow_field.n_wind_directions), self.n_wind_direction_splits)
-        wind_speed_id_splits = np.array_split(np.arange(self.fi.floris.flow_field.n_wind_speeds), self.n_wind_speed_splits)
+        wind_direction_id_splits = np.array_split(np.arange(self.fi.floris.flow_field.n_wind_directions), n_wind_direction_splits)
+        wind_speed_id_splits = np.array_split(np.arange(self.fi.floris.flow_field.n_wind_speeds), n_wind_speed_splits)
         multiargs = []
         for wd_id_split in wind_direction_id_splits:
             for ws_id_split in wind_speed_id_splits:
