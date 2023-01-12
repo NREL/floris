@@ -1,3 +1,5 @@
+
+import numpy as np
 from pathlib import Path
 
 from floris.tools.floris_interface import FlorisInterface
@@ -14,124 +16,22 @@ def test_read_yaml():
 
 
 def test_calculate_wake():
+
+    """
+    In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the first time
+    has non-zero yaw settings but the second run had all-zero yaw settings. The test below asserts
+    that the yaw angles are correctly set in subsequent calls to calculate_wake.
+    """
+    fi = FlorisInterface(configuration=YAML_INPUT)
+    yaw_angles = 20 * np.ones((fi.floris.flow_field.n_wind_directions, fi.floris.flow_field.n_wind_speeds, fi.floris.farm.n_turbines))
+    fi.calculate_wake(yaw_angles=yaw_angles)
+    assert fi.floris.farm.yaw_angles == yaw_angles
+
+    yaw_angles = np.zeros((fi.floris.flow_field.n_wind_directions, fi.floris.flow_field.n_wind_speeds, fi.floris.farm.n_turbines))
+    fi.calculate_wake(yaw_angles=yaw_angles)
+    assert fi.floris.farm.yaw_angles == yaw_angles
+
+
+def test_reinitialize():
     pass
 
-
-def test_reinitialize_flow_field():
-    pass
-
-
-def test_get_plane_of_points():
-    pass
-
-
-def test_get_set_of_points():
-    pass
-
-
-def test_get_hor_plane():
-    pass
-
-
-def test_get_cross_plane():
-    pass
-
-
-def test_get_y_plane():
-    pass
-
-
-def test_get_flow_data():
-    pass
-
-
-def test_get_farm_power():
-    pass
-
-
-def test_get_turbine_layout():
-    pass
-
-
-def test_get_power_curve():
-    pass
-
-
-def test_get_turbine_ti():
-    pass
-
-
-def test_get_farm_power_for_yaw_angle():
-    pass
-
-
-def test_get_farm_AEP():
-    pass
-
-
-def test_calc_one_AEP_case():
-    pass
-
-
-def test_get_farm_AEP_parallel():
-    pass
-
-
-def test_calc_AEP_wind_limit():
-    pass
-
-
-def test_calc_change_turbine():
-    pass
-
-
-def test_set_use_points_on_perimeter():
-    pass
-
-
-def test_set_gch():
-    pass
-
-
-def test_set_gch_yaw_added_recovery():
-    pass
-
-
-def test_set_gch_secondary_steering():
-    pass
-
-
-def test_layout_x():  # TODO
-    pass
-
-
-def test_layout_y():  # TODO
-    pass
-
-
-def test_TKE_to_TI():
-    pass
-
-
-def test_set_rotor_diameter():  # TODO
-    pass
-
-
-def test_show_model_parameters():  # TODO
-    pass
-
-
-def test_get_model_parameters():  # TODO
-    pass
-
-
-def test_set_model_parameters():  # TODO
-    pass
-
-
-def test_vis_layout():
-    pass
-
-
-def test_show_flow_field():
-    pass

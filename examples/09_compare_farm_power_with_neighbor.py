@@ -14,7 +14,6 @@
 
 
 import numpy as np
-import pandas as pd
 from floris.tools import FlorisInterface
 import matplotlib.pyplot as plt
 

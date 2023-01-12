@@ -31,7 +31,7 @@ class JimenezVelocityDeflection(BaseModel):
     :cite:`jdm-jimenez2010application`.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: jdm-
