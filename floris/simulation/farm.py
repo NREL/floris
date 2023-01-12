@@ -105,6 +105,11 @@ class Farm(BaseClass):
             sorted_indices[:, :, :, 0, 0],
             axis=2,
         )
+        self.tilt_angles_sorted = np.take_along_axis(
+            self.tilt_angles,
+            sorted_indices[:, :, :, 0, 0],
+            axis=2,
+        )
         self.state = State.INITIALIZED
 
     def construct_hub_heights(self):

@@ -997,6 +997,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1] # Will be removed once deflection model is in place
         wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :]
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
+        tilt_angle_i = farm.tilt_angles_sorted[:, :, i:i+1, None, None] + 0 # How to deal with reference angle?
         hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
         TSR_i = farm.TSRs_sorted[: ,:, i:i+1, None, None]
@@ -1009,10 +1010,11 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         # Model calculations
         # NOTE: exponential
-        deflection_field = model_manager.deflection_model.function(
+        deflection_field_y, deflection_field_z = model_manager.deflection_model.function(
             x_i,
             y_i,
             effective_yaw_i,
+            tilt_i,
             turbulence_intensity_i,
             ct_i,
             rotor_diameter_i,
@@ -1031,7 +1033,8 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             y_i,
             z_i,
             axial_induction_i,
-            deflection_field,
+            deflection_field_y,
+            deflection_field_z,
             yaw_angle_i,
             wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None], # Differs from Gaussian
             ct_i,
@@ -1150,7 +1153,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
 
         # Model calculations
         # NOTE: exponential
-        deflection_field = model_manager.deflection_model.function(
+        deflection_field_y, deflection_field_z = model_manager.deflection_model.function(
             x_i,
             y_i,
             effective_yaw_i,
@@ -1169,7 +1172,8 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             y_i,
             z_i,
             axial_induction_i,
-            deflection_field,
+            deflection_field_y,
+            deflection_field_z,
             yaw_angle_i,
             wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None],
             ct_i,

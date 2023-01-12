@@ -204,7 +204,8 @@ class GaussGeometricVelocityDeficit(BaseModel):
         y_i: np.ndarray,
         z_i: np.ndarray,
         axial_induction_i: np.ndarray,
-        deflection_field_i: np.ndarray,
+        deflection_field_y_i: np.ndarray,
+        deflection_field_z_i: np.ndarray,
         yaw_angle_i: np.ndarray,
         wake_induced_mixing_i: np.ndarray,
         ct_i: np.ndarray,
@@ -269,7 +270,8 @@ class GaussGeometricVelocityDeficit(BaseModel):
             sigma_z,
             y,
             y_i,
-            deflection_field_i,
+            deflection_field_y_i,
+            deflection_field_z_i,
             z,
             hub_height_i,
             ct_i,
@@ -321,14 +323,14 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
 
-def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D, sigma_y0, sigma_z0):
+def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta_y, delta_z, z, HH, Ct, yaw, D, sigma_y0, sigma_z0):
 
     ## Numexpr
     wind_veer = np.deg2rad(wind_veer)
     a = ne.evaluate("cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
-    r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
+    r = ne.evaluate("a * ( (y - y_i - delta_y) ** 2) - 2 * b * (y - y_i - delta_y) * (z - HH - delta_z) + c * ((z - HH - delta_z) ** 2)")
     d = 1 - Ct * (sigma_y0 * sigma_z0)/(sigma_y * sigma_z) * cosd(yaw) # TODO: should there be a cosine yaw factor in here? Are we then double counting it? and how about tilt?
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
