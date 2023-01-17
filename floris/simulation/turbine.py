@@ -14,11 +14,13 @@
 
 from __future__ import annotations
 from collections.abc import Iterable
+from typing import Any
 
 import attrs
 from attrs import define, field
 import numpy as np
 from scipy.interpolate import interp1d
+import copy
 
 from floris.type_dec import (
     floris_array_converter,
@@ -26,6 +28,7 @@ from floris.type_dec import (
     NDArrayFilter,
     NDArrayInt,
     NDArrayObject,
+    NDArrayBool,
     FromDictMixin,
 )
 from floris.utilities import cosd
@@ -95,15 +98,19 @@ def _rotor_velocity_tilt_correction(
     ref_tilt_cp_ct: NDArrayFloat,
     pT: float,
     tilt_interp: NDArrayObject,
+    correct_cp_ct_for_tilt: NDArrayBool,
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Compute the tilt, if using floating turbines
+    old_tilt_angle = copy.deepcopy(tilt_angle)
     tilt_angle = _compute_tilt_angles_for_floating_turbines(
         turbine_type_map,
         tilt_angle,
         tilt_interp,
         rotor_effective_velocities,
     )
+    # Only update tilt angle if requested (if the tilt isn't accounted for in the Cp curve)
+    tilt_angle = old_tilt_angle * np.array(correct_cp_ct_for_tilt == False) + tilt_angle * np.array(correct_cp_ct_for_tilt == True)
 
     # Compute the rotor effective velocity adjusting for tilt
     rotor_effective_velocities = rotor_effective_velocities * cosd(tilt_angle - ref_tilt_cp_ct) ** (pT / 3.0)
@@ -125,7 +132,7 @@ def _compute_tilt_angles_for_floating_turbines(
         # If no tilt interpolation is specified, assume no modification to tilt
         if tilt_interp[turb_type] is None:
             # TODO should this be break? Should it be continue? Do we want to support mixed fixed-bottom and floating? Or non-tilting floating?
-            break
+            pass
         # Using a masked array, apply the tilt angle for all turbines of the current
         # type to the main tilt angle array
         else:
@@ -150,6 +157,7 @@ def rotor_effective_velocity(
     pP: float,
     pT: float,
     tilt_interp: NDArrayObject,
+    correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -186,6 +194,7 @@ def rotor_effective_velocity(
         ref_tilt_cp_ct,
         pT,
         tilt_interp,
+        correct_cp_ct_for_tilt,
         rotor_effective_velocities,
     )
 
@@ -260,6 +269,7 @@ def Ct(
     ref_tilt_cp_ct: NDArrayFloat,
     fCt: NDArrayObject,
     tilt_interp: NDArrayObject,
+    correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -294,16 +304,20 @@ def Ct(
         tilt_angle = tilt_angle[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
+        correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, :, ix_filter]
 
     average_velocities = average_velocity(velocities)
 
     # Compute the tilt, if using floating turbines
+    old_tilt_angle = copy.deepcopy(tilt_angle)
     tilt_angle = _compute_tilt_angles_for_floating_turbines(
         turbine_type_map,
         tilt_angle,
         tilt_interp,
         average_velocities,
     )
+    # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
+    tilt_angle = old_tilt_angle * np.array(correct_cp_ct_for_tilt == False) + tilt_angle * np.array(correct_cp_ct_for_tilt == True)
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     thrust_coefficient = np.zeros(np.shape(average_velocities))
@@ -325,6 +339,7 @@ def axial_induction(
     ref_tilt_cp_ct: NDArrayFloat,
     fCt: NDArrayObject,  # (turbines)
     tilt_interp: NDArrayObject,  # (turbines)
+    correct_cp_ct_for_tilt: NDArrayBool, # (wind directions, wind speeds, turbines)
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -348,11 +363,12 @@ def axial_induction(
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
+    # TODO: Should the tilt_angle used for the return calculation be modified the same as the tilt_angle in Ct, if the user has supplied a tilt/wind_speed table?
     if isinstance(tilt_angle, list):
         tilt_angle = np.array(tilt_angle)
 
     # Get Ct first before modifying any data
-    thrust_coefficient = Ct(velocities, yaw_angle, tilt_angle, ref_tilt_cp_ct, fCt, tilt_interp, turbine_type_map, ix_filter)
+    thrust_coefficient = Ct(velocities, yaw_angle, tilt_angle, ref_tilt_cp_ct, fCt, tilt_interp, correct_cp_ct_for_tilt, turbine_type_map, ix_filter)
 
     # Then, process the input arguments as needed for this function
     ix_filter = _filter_convert(ix_filter, yaw_angle)
@@ -511,6 +527,7 @@ class Turbine(BaseClass):
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
     # floating_tilt_table: NDArrayFloat = field(default={'tilt': [None], 'wind_speeds': [None]}, converter=TiltTable.from_dict)
     floating_tilt_table = field(default=None)
+    floating_correct_cp_ct_for_tilt = field(default=None)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -573,9 +590,11 @@ class Turbine(BaseClass):
                 bounds_error=False,
             )
             self.tilt_interp = self.fTilt_interp
+            self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
         else:
             self.fTilt_interp = None
             self.tilt_interp = None
+            self.correct_cp_ct_for_tilt = False
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
@@ -601,3 +620,23 @@ class Turbine(BaseClass):
         `rotor_diameter`, `rotor_radius` and `rotor_area`.
         """
         self.rotor_radius = (value / np.pi) ** 0.5
+
+    @floating_tilt_table.validator
+    def check_floating_tilt_table(self, instance: attrs.Attribute, value: Any) -> None:
+        """
+        Check that if the tile/wind_speed table is defined, that the tilt and
+        wind_speed arrays are the same length so that the interpolation will work.
+        """
+        if self.floating_tilt_table is not None:
+            if len(self.floating_tilt_table["tilt"]) != len(self.floating_tilt_table["wind_speeds"]):
+                raise ValueError("tilt and wind_speeds must be the same length for the interpolation to work.")
+
+    @floating_correct_cp_ct_for_tilt.validator
+    def check_for_cp_ct_correct_flag_if_floating(self, instance: attrs.Attribute, value: Any) -> None:
+        """
+        Check that the boolean flag exists for correcting Cp/Ct for tilt
+        if a tile/wind_speed table is also defined.
+        """
+        if self.floating_tilt_table is not None:
+            if self.floating_correct_cp_ct_for_tilt is None:
+                raise ValueError("If a floating tilt/wind_speed table is defined, the boolean flag floating_correct_cp_ct_for_tilt must also be defined.")

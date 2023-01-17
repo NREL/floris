@@ -28,6 +28,7 @@ NDArrayFloat = npt.NDArray[floris_float_type]
 NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
+NDArrayBool = npt.NDArray[np.bool_]
 
 
 ### Custom callables for attrs objects and functions
