@@ -248,6 +248,7 @@ class GaussGeometricDeflection(BaseModel):
         x_i: np.ndarray,
         y_i: np.ndarray,
         yaw_i: np.ndarray,
+        tilt_i: np.ndarray,
         wake_induced_mixing_i: np.ndarray,
         ct_i: np.ndarray,
         rotor_diameter_i: float,
@@ -285,8 +286,6 @@ class GaussGeometricDeflection(BaseModel):
         """
         # ==============================================================
 
-        tilt = 0.0
-
         # TODO: rename geometric_model_wake_width function, as it is 
         # now also being used for deflections
         deflection_y = geometric_model_wake_width(
@@ -305,7 +304,7 @@ class GaussGeometricDeflection(BaseModel):
             self.initial_deflection, 
             self.smoothing_length_D*rotor_diameter_i,
             self.wim_gain_deflection*wake_induced_mixing_i,
-        ) * sind(tilt) # Deflection grows with sine of tilt. Appropriate?
+        ) * sind(tilt_i) # Deflection grows with sine of tilt. Appropriate?
 
         downstream_mask = np.array(x > x_i + 0.1)
 
@@ -313,7 +312,7 @@ class GaussGeometricDeflection(BaseModel):
         deflection_y = deflection_y * downstream_mask
         deflection_z = deflection_z * downstream_mask
 
-        return deflection_y
+        return deflection_y, deflection_z
 
 
 ## GCH components
