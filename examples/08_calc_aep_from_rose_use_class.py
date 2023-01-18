@@ -13,11 +13,13 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.interpolate import NearestNDInterpolator
-from floris.tools import FlorisInterface, WindRose, wind_rose
+import floris.tools.visualization as wakeviz
+from floris.tools import (
+    FlorisInterface,
+    wind_rose,
+    WindRose
+)
+
 
 """
 This example demonstrates how to calculate the Annual Energy Production (AEP)
@@ -70,5 +72,4 @@ print("Farm AEP (with cut_in/out specified): {:.3f} GWh".format(aep / 1.0e9))
 aep_no_wake = fi.get_farm_AEP_wind_rose_class(wind_rose=wind_rose, no_wake=True)
 print("Farm AEP (no_wake=True): {:.3f} GWh".format(aep_no_wake / 1.0e9))
 
-
-plt.show()
+wakeviz.show_plots()

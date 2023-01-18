@@ -21,7 +21,7 @@ from floris.simulation import (
     Floris,
     FlowField,
     TurbineGrid,
-    WakeModelManager,
+    WakeModelManager
 )
 
 

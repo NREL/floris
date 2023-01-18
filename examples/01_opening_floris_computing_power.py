@@ -13,10 +13,10 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
+
 
 """
 This example creates a FLORIS instance

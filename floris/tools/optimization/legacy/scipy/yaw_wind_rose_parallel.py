@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from .yaw_wind_rose import YawOptimizationWindRose
 from ....logging_manager import LoggerBase
+from .yaw_wind_rose import YawOptimizationWindRose
 
 
 class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):

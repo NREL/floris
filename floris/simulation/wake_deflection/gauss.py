@@ -12,14 +12,17 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine
+)
+# TODO: remove following import after removing this form of deflection model
 from floris.simulation.wake_velocity.gauss import geometric_model_wake_width
 from floris.utilities import cosd, sind
 
@@ -66,7 +69,7 @@ class GaussVelocityDeflection(BaseModel):
                 See property on super-class for more details.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: gdm-

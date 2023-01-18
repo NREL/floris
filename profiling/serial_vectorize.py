@@ -1,11 +1,12 @@
 
 import copy
-import numpy as np
 import time
+
 import matplotlib.pyplot as plt
+import numpy as np
+from conftest import SampleInputs
 
 from floris.simulation import Floris
-from conftest import SampleInputs
 
 
 def time_vec(input_dict):

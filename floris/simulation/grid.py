@@ -19,16 +19,17 @@ from abc import ABC, abstractmethod
 from typing import Iterable
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.utilities import Vec3, rotate_coordinates_rel_west
-from floris.type_dec import  (
-    floris_float_type,
+from floris.type_dec import (
     floris_array_converter,
+    floris_float_type,
     NDArrayFloat,
     NDArrayInt
 )
+from floris.utilities import rotate_coordinates_rel_west, Vec3
+
 
 @define
 class Grid(ABC):

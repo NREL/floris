@@ -15,15 +15,15 @@
 from __future__ import annotations
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.type_dec import (
-    FromDictMixin,
-    NDArrayFloat,
-    floris_array_converter
-)
 from floris.simulation import Grid
+from floris.type_dec import (
+    floris_array_converter,
+    FromDictMixin,
+    NDArrayFloat
+)
 
 
 @define
@@ -34,7 +34,7 @@ class FlowField(FromDictMixin):
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
     turbulence_intensity: float = field(converter=float)
-    reference_wind_height: int = field(converter=int)
+    reference_wind_height: float = field(converter=float)
     time_series : bool = field(default=False)
 
     n_wind_speeds: int = field(init=False)

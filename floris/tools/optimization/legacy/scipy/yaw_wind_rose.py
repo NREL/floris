@@ -14,11 +14,11 @@
 
 import numpy as np
 import pandas as pd
-from scipy.stats import norm
 from scipy.optimize import minimize
+from scipy.stats import norm
 
-from .optimization import Optimization
 from .derive_downstream_turbines import derive_downstream_turbines
+from .optimization import Optimization
 
 
 class YawOptimizationWindRose(Optimization):

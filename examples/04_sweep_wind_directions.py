@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
 
 
 """
@@ -72,4 +71,5 @@ ax.grid(True)
 ax.legend()
 ax.set_xlabel('Wind Direction (deg)')
 ax.set_ylabel('Power (kW)')
+
 plt.show()

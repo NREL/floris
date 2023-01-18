@@ -16,21 +16,25 @@ import attrs
 from attrs import define, field
 
 from floris.simulation import BaseClass, BaseModel
+from floris.simulation.wake_combination import (
+    FLS,
+    MAX,
+    SOSFS
+)
 from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
     NoneVelocityDeflection,
     GaussGeometricDeflection
 )
-from floris.simulation.wake_combination import FLS, MAX, SOSFS
 from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
 from floris.simulation.wake_velocity import (
-    NoneVelocityDeficit,
     CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
+    NoneVelocityDeficit,
     TurbOParkVelocityDeficit,
-    GaussGeometricVelocityDeficit,
+    GaussGeometricVelocityDeficit
 )
 
 

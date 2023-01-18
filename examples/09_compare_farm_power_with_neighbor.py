@@ -13,10 +13,11 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
-import pandas as pd
-from floris.tools import FlorisInterface
 import matplotlib.pyplot as plt
+import numpy as np
+
+from floris.tools import FlorisInterface
+
 
 """
 This example demonstrates how to use turbine_wieghts to define a set of turbines belonging to a neighboring farm which

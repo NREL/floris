@@ -19,8 +19,11 @@
 # from copy import deepcopy
 
 import copy
-from floris.simulation import Floris
+
 from conftest import SampleInputs
+
+from floris.simulation import Floris
+
 
 def run_floris():
     floris = Floris.from_file("examples/example_input.yaml")

@@ -20,14 +20,16 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
-from floris.type_dec import NDArrayFloat
-from floris.simulation import Floris
 from floris.logging_manager import LoggerBase
-
-from floris.simulation import State
-
+from floris.simulation import Floris, State
+from floris.simulation.turbine import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    power
+)
 from floris.tools.cut_plane import CutPlane
-from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
+from floris.type_dec import NDArrayFloat
 
 
 class FlorisInterface(LoggerBase):
@@ -66,12 +68,12 @@ class FlorisInterface(LoggerBase):
         self.floris.flow_field.het_map = het_map
 
         # If ref height is -1, assign the hub height
-        if self.floris.flow_field.reference_wind_height == -1:
+        if np.abs(self.floris.flow_field.reference_wind_height + 1.0) < 1.0e-6:
             self.assign_hub_height_to_ref_height()
 
         # Make a check on reference height and provide a helpful warning
-        unique_heights = np.unique(self.floris.farm.hub_heights)
-        if (len(unique_heights) == 1) and (self.floris.flow_field.reference_wind_height != unique_heights[0]):
+        unique_heights = np.unique(np.round(self.floris.farm.hub_heights, decimals=6))
+        if (len(unique_heights) == 1) and (np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6):
             err_msg = "The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height."
             self.logger.warning(err_msg, stack_info=True)
 
@@ -117,15 +119,16 @@ class FlorisInterface(LoggerBase):
             track_n_upstream_wakes (bool, optional): When *True*, will keep track of the
                 number of upstream wakes a turbine is experiencing. Defaults to *False*.
         """
-        # self.floris.flow_field.calculate_wake(
-        #     no_wake=no_wake,
-        #     points=points,
-        #     track_n_upstream_wakes=track_n_upstream_wakes,
-        # )
 
-        # TODO decide where to handle this sign issue
-        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
-            self.floris.farm.yaw_angles = yaw_angles
+        if yaw_angles is None:
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            )
+        self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
         self.floris.initialize_domain()
@@ -601,11 +604,9 @@ class FlorisInterface(LoggerBase):
         )
         return turbine_ais
 
-    def get_turbine_average_velocities(self) -> NDArrayFloat:
-        turbine_avg_vels = average_velocity(
-            velocities=self.floris.flow_field.u,
-        )
-        return turbine_avg_vels
+    @property
+    def turbine_average_velocities(self) -> NDArrayFloat:
+        return average_velocity(velocities=self.floris.flow_field.u)
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field
