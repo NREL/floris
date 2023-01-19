@@ -221,11 +221,9 @@ class GaussVelocityDeflection(BaseModel):
 @define
 class GaussGeometricDeflection(BaseModel):
 
-    wake_deflection_rates: list = field(default=[0.01]) # TODO: set default
-    breakpoints_D: list = field(default=[]) # TODO: set default
-    initial_deflection: float = field(default=0.0) # TODO: check default
-    smoothing_length_D: float = field(default=2.0) # TODO: check default
-    wim_gain_deflection: float = field(default=1.0) # TODO: check default
+    deflection_gain_y: float = field(default=1.0) # TODO: check default
+    deflection_gain_z: float = field(default=1.0) # TODO: check default
+    wim_gain_deflection: float = field(default=0.0) # TODO: check default
 
     def prepare_function(
         self,
@@ -286,31 +284,28 @@ class GaussGeometricDeflection(BaseModel):
         """
         # ==============================================================
 
-        # TODO: rename geometric_model_wake_width function, as it is 
-        # now also being used for deflections
-        deflection_y = geometric_model_wake_width(
-            x-x_i, 
-            self.wake_deflection_rates, 
-            [b*rotor_diameter_i for b in self.breakpoints_D],
-            self.initial_deflection, 
-            self.smoothing_length_D*rotor_diameter_i,
-            self.wim_gain_deflection*wake_induced_mixing_i,
-        ) * -sind(yaw_i) # Deflection grows with sine of yaw. Appropriate?
+        def Bastankhah_skew(yaw, ct):
+            g = yaw*np.pi/180
+            return 0.3*g / np.cos(g) * (1 - np.sqrt(1 - ct*np.cos(g)))
 
-        deflection_z = geometric_model_wake_width(
-            x-x_i, 
-            self.wake_deflection_rates, 
-            [b*rotor_diameter_i for b in self.breakpoints_D],
-            self.initial_deflection, 
-            self.smoothing_length_D*rotor_diameter_i,
-            self.wim_gain_deflection*wake_induced_mixing_i,
-        ) * sind(tilt_i) # Deflection grows with sine of tilt. Appropriate?
+        # Alternative to Bastankhah_skew; To be discussed
+        # Remove that 0.2 gain eventually, as this gets superseded by the 
+        # deflection_rate_y/z tuning parameters
+        def sine_skew(yaw, ct): 
+            g = yaw*np.pi/180
+            return 0.2*np.sin(ct*g) 
 
-        downstream_mask = np.array(x > x_i + 0.1)
+        A_y = (1/(1+self.wim_gain_deflection*wake_induced_mixing_i)) * \
+            self.deflection_gain_y * Bastankhah_skew(-yaw_i, ct_i)
 
-        # Will need to pass out y, z components of delfection, right?
-        deflection_y = deflection_y * downstream_mask
-        deflection_z = deflection_z * downstream_mask
+        A_z = (1/(1+self.wim_gain_deflection*wake_induced_mixing_i)) * \
+            self.deflection_gain_z * Bastankhah_skew(tilt_i, ct_i)
+
+        # if yaw_i >= 1:
+        #     import ipdb; ipdb.set_trace()
+        # Apply downstream mask in the process
+        deflection_y = A_y * np.log(((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i + 1)
+        deflection_z = A_z * np.log(((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i + 1)
 
         return deflection_y, deflection_z
 
