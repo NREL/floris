@@ -89,12 +89,60 @@ class ParallelComputingInterface(LoggerBase):
 
         # Initialize floris object
         self.fi = fi.copy()
+        self.layout_x = self.fi.layout_x
+        self.layout_y = self.fi.layout_y
 
         # Save to self
-        self.n_wind_direction_splits = n_wind_direction_splits
-        self.n_wind_speed_splits = n_wind_speed_splits
-        self.max_workers = max_workers
+        self.n_wind_direction_splits = int(np.min([n_wind_direction_splits, self.fi.floris.flow_field.n_wind_directions]))
+        self.n_wind_speed_splits = int(np.min([n_wind_speed_splits, self.fi.floris.flow_field.n_wind_speeds]))
+        self.max_workers = int(np.min([max_workers, self.n_wind_direction_splits * self.n_wind_speed_splits]))
         self.print_timings = print_timings
+
+    def copy(self):
+        # Make an independent copy
+        self_copy = copy.deepcopy(self)
+        self_copy.fi = self.fi.copy()
+        return self_copy
+
+    def reinitialize(
+        self,
+        wind_speeds=None,
+        wind_directions=None,
+        wind_shear=None,
+        wind_veer=None,
+        reference_wind_height=None,
+        turbulence_intensity=None,
+        air_density=None,
+        layout=None,
+        layout_x=None,
+        layout_y=None,
+        turbine_type=None,
+        solver_settings=None,
+    ):
+        """Pass to the FlorisInterface reinitialize function. To allow users
+        to directly replace a FlorisInterface object with this
+        UncertaintyInterface object, this function is required."""
+
+        if layout is not None:
+            msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3."
+            self.logger.warning(msg)
+            layout_x = layout[0]
+            layout_y = layout[1]
+
+        # Just passes arguments to the floris object
+        self.fi.reinitialize(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions,
+            wind_shear=wind_shear,
+            wind_veer=wind_veer,
+            reference_wind_height=reference_wind_height,
+            turbulence_intensity=turbulence_intensity,
+            air_density=air_density,
+            layout_x=layout_x,
+            layout_y=layout_y,
+            turbine_type=turbine_type,
+            solver_settings=solver_settings,
+        )
 
     def _preprocess_dicts(self, yaw_angles=None):
         # Format yaw angles
@@ -135,7 +183,8 @@ class ParallelComputingInterface(LoggerBase):
         return multiargs
 
     def calculate_wake(self):
-        raise UserWarning("'calculate_wake' not supported. Please use 'get_turbine_powers' or 'get_farm_power' directly.")
+        # raise UserWarning("'calculate_wake' not supported. Please use 'get_turbine_powers' or 'get_farm_power' directly.")
+        return None  # Do nothing
 
     def get_turbine_powers(self, yaw_angles=None):
         # Retrieve multiargs: preprocessing
