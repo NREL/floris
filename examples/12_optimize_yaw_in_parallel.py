@@ -50,6 +50,9 @@ def load_windrose():
 
 
 if __name__ == "__main__":
+    # Parallel options
+    max_workers = 16
+
     # Load a dataframe containing the wind rose information
     df_windrose, windrose_interpolant = load_windrose()
 
@@ -66,8 +69,8 @@ if __name__ == "__main__":
     # Pour this into a parallel computing interface
     fi_aep_parallel = ParallelComputingInterface(
         fi=fi_aep,
-        max_workers=16,
-        n_wind_direction_splits=16,
+        max_workers=max_workers,
+        n_wind_direction_splits=max_workers,
         n_wind_speed_splits=1,
         use_mpi4py=False,
         print_timings=True,
@@ -97,7 +100,7 @@ if __name__ == "__main__":
     # Load a FLORIS object for yaw optimization
     fi_opt = load_floris()
     wind_directions = np.arange(0.0, 360.0, 3.0)
-    wind_speeds=np.arange(6.0, 14.0, 2.0)
+    wind_speeds = np.arange(6.0, 14.0, 2.0)
     fi_opt.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
@@ -107,8 +110,8 @@ if __name__ == "__main__":
     # Pour this into a parallel computing interface
     fi_opt_parallel = ParallelComputingInterface(
         fi=fi_opt,
-        max_workers=16,
-        n_wind_direction_splits=16,
+        max_workers=max_workers,
+        n_wind_direction_splits=max_workers,
         n_wind_speed_splits=1,
         use_mpi4py=False,
         print_timings=True,
