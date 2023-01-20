@@ -178,6 +178,7 @@ def test_regression_tandem(sample_inputs_fixture):
         floris.farm.pPs,
         floris.farm.pTs,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_cts = Ct(
@@ -187,6 +188,7 @@ def test_regression_tandem(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_powers = power(
@@ -202,6 +204,7 @@ def test_regression_tandem(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     for i in range(n_wind_directions):
@@ -340,6 +343,7 @@ def test_regression_yaw(sample_inputs_fixture):
         floris.farm.pPs,
         floris.farm.pTs,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_cts = Ct(
@@ -349,6 +353,7 @@ def test_regression_yaw(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_powers = power(
@@ -364,6 +369,7 @@ def test_regression_yaw(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     for i in range(n_wind_directions):
@@ -430,6 +436,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         floris.farm.pPs,
         floris.farm.pTs,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_cts = Ct(
@@ -439,6 +446,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_powers = power(
@@ -454,6 +462,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     for i in range(n_wind_directions):
@@ -519,6 +528,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
         floris.farm.pPs,
         floris.farm.pTs,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_cts = Ct(
@@ -528,6 +538,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_powers = power(
@@ -543,6 +554,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     for i in range(n_wind_directions):
@@ -612,6 +624,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
         floris.farm.pPs,
         floris.farm.pTs,
         floris.farm.turbine_fTilts,
+        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
     farm_powers = power(
