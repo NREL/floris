@@ -1051,6 +1051,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -1062,6 +1063,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -1069,13 +1071,15 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1] # Will be removed once deflection model is in place
         wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :]
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
-        tilt_angle_i = farm.tilt_angles_sorted[:, :, i:i+1, None, None] + 0 # How to deal with reference angle?
         hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
         TSR_i = farm.TSRs_sorted[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
+
+        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(flow_field.u_sorted)\
+            [:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError("Secondary effects model not yet developed.")
@@ -1153,6 +1157,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
     turbine_grid_farm.construct_turbine_ref_density_cp_cts()
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
     turbine_grid_farm.construct_turbine_fTilts()
+    turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
@@ -1203,6 +1208,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -1214,6 +1220,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             ix_filter=[i],
         )
@@ -1221,13 +1228,15 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
         turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field[:, :, i:i+1]
         wake_induced_mixing_i = turbine_grid_flow_field.wim_field[:, :, i:i+1, :]
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
-        tilt_angle_i = farm.tilt_angles_sorted[:, :, i:i+1, None, None] + 0 # How to deal with reference angle?
         hub_height_i = turbine_grid_farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
         TSR_i = turbine_grid_farm.TSRs_sorted[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
+
+        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(flow_field.u_sorted)\
+            [:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError("Secondary effects model not yet developed.")
