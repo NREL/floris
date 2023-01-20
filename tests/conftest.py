@@ -490,6 +490,7 @@ class SampleInputs:
                     50.0,
                 ],
             },
+            "floating_correct_cp_ct_for_tilt": True,
             "TSR": 8.0
         }
 

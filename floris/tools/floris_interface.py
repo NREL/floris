@@ -597,6 +597,7 @@ class FlorisInterface(LoggerBase):
             pP=self.floris.farm.pPs,
             pT=self.floris.farm.pTs,
             tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
 
@@ -616,6 +617,7 @@ class FlorisInterface(LoggerBase):
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
             tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_Cts
@@ -628,6 +630,7 @@ class FlorisInterface(LoggerBase):
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
             tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_ais
