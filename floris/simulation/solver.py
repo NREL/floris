@@ -1121,9 +1121,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
     flow_field.wim_field = wake_induced_mixing_factor # This is used for full_flow calc
 
 def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
-    # TODO: confirm correct operation
-    # BUG: Seems deficits are not recovering in visualization as expected?
-
+    
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
