@@ -227,6 +227,8 @@ class GaussGeometricVelocityDeficit(BaseModel):
         wind_veer: float
     ) -> None:
 
+        include_mirror_wake = True # Could add this as a user preference.
+
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
         # for all wind speeds
@@ -248,10 +250,6 @@ class GaussGeometricVelocityDeficit(BaseModel):
         downstream_mask = np.array(x > x_i + 0.1)
         upstream_mask = np.array(x < x_i - 0.1)
 
-        # Initialize the velocity deficit array
-        velocity_deficit = np.zeros_like(u_initial)
-
-
         # Wake expansion in the lateral (y) and the vertical (z)
         #ky = self.ky[0]  # wake expansion parameters
         #kz = self.ky[0]  # wake expansion parameters
@@ -270,6 +268,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         # TODO: sigma_z could stop growing, while sigma_y continues to grow...
         # That could be quite elegant. 
 
+        # Real component
         r, C = rCalt(
             wind_veer,
             sigma_y,
@@ -286,10 +285,37 @@ class GaussGeometricVelocityDeficit(BaseModel):
             sigma_y0,
             sigma_z0
         )
-
+        
         wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
+        
+        if include_mirror_wake:
+            # TODO: speed up this option by calculating various elements in 
+            #       rCalt only once.
+            # Mirror component
+            r_mirr, C_mirr = rCalt(
+                wind_veer, # TODO: Is veer OK with mirror wakes?
+                sigma_y,
+                sigma_z,
+                y,
+                y_i,
+                deflection_field_y_i,
+                deflection_field_z_i,
+                z,
+                -hub_height_i, # Turbine at negative hub height location
+                ct_i,
+                yaw_angle,
+                rotor_diameter_i,
+                sigma_y0,
+                sigma_z0
+            )
+            
+            # ASSUME sum-of-squares superposition for the real and mirror wakes
+            wake_deficit = np.sqrt(
+                wake_deficit**2 + 
+                gaussian_function(C_mirr, r_mirr, 1, np.sqrt(0.5))**2
+            )
 
-        velocity_deficit += wake_deficit * downstream_mask
+        velocity_deficit = wake_deficit * downstream_mask
 
         return velocity_deficit
 
