@@ -268,7 +268,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         # TODO: sigma_z could stop growing, while sigma_y continues to grow...
         # That could be quite elegant. 
 
-        # Real component
+        # 'Standard' wake component
         r, C = rCalt(
             wind_veer,
             sigma_y,

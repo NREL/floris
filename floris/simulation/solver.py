@@ -1080,6 +1080,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         tilt_angle_i = farm.calculate_tilt_for_eff_velocities(flow_field.u_sorted)\
             [:, :, i:i+1, None, None]
+        # TODO: Does tilt affect other aspects of the model, as yaw does?
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError("Secondary effects model not yet developed.")
