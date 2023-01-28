@@ -80,7 +80,7 @@ class ParallelComputingInterface(LoggerBase):
         # Load the correct library
         if use_mpi4py:
             import mpi4py.futures as mp
-            self._PoolExecutor = mp.PoolExecutor
+            self._PoolExecutor = mp.MPIPoolExecutor
         else:
             import multiprocessing as mp
             self._PoolExecutor = mp.Pool
@@ -93,9 +93,14 @@ class ParallelComputingInterface(LoggerBase):
         self.layout_y = self.fi.layout_y
 
         # Save to self
+        self._n_wind_direction_splits = n_wind_direction_splits  # Save initial user input
+        self._n_wind_speed_splits = n_wind_speed_splits  # Save initial user input
+        self._max_workers = max_workers  # Save initial user input
+
         self.n_wind_direction_splits = int(np.min([n_wind_direction_splits, self.fi.floris.flow_field.n_wind_directions]))
         self.n_wind_speed_splits = int(np.min([n_wind_speed_splits, self.fi.floris.flow_field.n_wind_speeds]))
         self.max_workers = int(np.min([max_workers, self.n_wind_direction_splits * self.n_wind_speed_splits]))
+        self.use_mpi4py = use_mpi4py
         self.print_timings = print_timings
 
     def copy(self):
@@ -130,7 +135,8 @@ class ParallelComputingInterface(LoggerBase):
             layout_y = layout[1]
 
         # Just passes arguments to the floris object
-        self.fi.reinitialize(
+        fi = self.fi.copy()
+        fi.reinitialize(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
             wind_shear=wind_shear,
@@ -142,6 +148,16 @@ class ParallelComputingInterface(LoggerBase):
             layout_y=layout_y,
             turbine_type=turbine_type,
             solver_settings=solver_settings,
+        )
+
+        # Reinitialize settings
+        self.__init__(
+            fi=fi,
+            max_workers=self._max_workers,
+            n_wind_direction_splits=self._n_wind_direction_splits,
+            n_wind_speed_splits=self._n_wind_speed_splits,
+            use_mpi4py=self.use_mpi4py,
+            print_timings=self.print_timings
         )
 
     def _preprocess_dicts(self, yaw_angles=None):
@@ -394,7 +410,7 @@ class ParallelComputingInterface(LoggerBase):
         t2 = timerpc()
 
         # Combine all solutions from multiprocessing into single dataframe
-        df_opt = pd.concat(df_opt_splits, axis=0)
+        df_opt = pd.concat(df_opt_splits, axis=0).reset_index(drop=True).sort_values(by=["wind_direction", "wind_speed", "turbulence_intensity"])
         t3 = timerpc()
 
         if self.print_timings:
