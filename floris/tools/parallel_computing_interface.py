@@ -49,6 +49,7 @@ def _optimize_yaw_angles_serial(
     exclude_downstream_turbines,
     exploit_layout_symmetry,
     verify_convergence,
+    print_progress,
 ):
     fi_opt = _load_local_floris_object(*fi_information)
     yaw_opt = YawOptimizationSR(
@@ -63,7 +64,10 @@ def _optimize_yaw_angles_serial(
         exploit_layout_symmetry=exploit_layout_symmetry,
         verify_convergence=verify_convergence,
     )
-    return yaw_opt.optimize()
+
+    # Perform optimization but silence print statements to avoid cluttering
+    df_opt = yaw_opt.optimize(print_progress=print_progress)
+    return df_opt
 
 
 class ParallelComputingInterface(LoggerBase):
@@ -383,6 +387,7 @@ class ParallelComputingInterface(LoggerBase):
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=True,
         verify_convergence=False,
+        print_worker_progress=False,  # Recommended disabled to avoid clutter. Useful for debugging
     ):   
 
         # Prepare the inputs to each core for multiprocessing module
@@ -400,6 +405,7 @@ class ParallelComputingInterface(LoggerBase):
                 exclude_downstream_turbines,
                 exploit_layout_symmetry,
                 verify_convergence,
+                print_worker_progress,
             )
         t1 = timerpc()
 
