@@ -35,7 +35,7 @@ def _load_local_floris_object(
 def _get_turbine_powers_serial(fi_information, yaw_angles=None):
     fi = _load_local_floris_object(*fi_information)
     fi.calculate_wake(yaw_angles=yaw_angles)
-    return fi.get_turbine_powers()
+    return (fi.get_turbine_powers(), fi.floris.flow_field)
 
 
 def _optimize_yaw_angles_serial(
@@ -71,7 +71,7 @@ def _optimize_yaw_angles_serial(
 
 
 class ParallelComputingInterface(LoggerBase):
-    def __init__(self, fi, max_workers, n_wind_direction_splits, n_wind_speed_splits=1, use_mpi4py=False, print_timings=False):
+    def __init__(self, fi, max_workers, n_wind_direction_splits, n_wind_speed_splits=1, use_mpi4py=False, propagate_flowfield_from_workers=False, print_timings=False):
         """A wrapper around the nominal floris_interface class that adds
         parallel computing to common FlorisInterface properties.
 
@@ -91,10 +91,9 @@ class ParallelComputingInterface(LoggerBase):
             if max_workers is None:
                 max_workers = mp.cpu_count()
 
-        # Initialize floris object
+        # Initialize floris object and copy common properties
         self.fi = fi.copy()
-        self.layout_x = self.fi.layout_x
-        self.layout_y = self.fi.layout_y
+        self.floris = self.fi.floris  # Static copy as a placeholder
 
         # Save to self
         self._n_wind_direction_splits = n_wind_direction_splits  # Save initial user input
@@ -104,6 +103,7 @@ class ParallelComputingInterface(LoggerBase):
         self.n_wind_direction_splits = int(np.min([n_wind_direction_splits, self.fi.floris.flow_field.n_wind_directions]))
         self.n_wind_speed_splits = int(np.min([n_wind_speed_splits, self.fi.floris.flow_field.n_wind_speeds]))
         self.max_workers = int(np.min([max_workers, self.n_wind_direction_splits * self.n_wind_speed_splits]))
+        self.propagate_flowfield_from_workers = propagate_flowfield_from_workers
         self.use_mpi4py = use_mpi4py
         self.print_timings = print_timings
 
@@ -161,10 +161,11 @@ class ParallelComputingInterface(LoggerBase):
             n_wind_direction_splits=self._n_wind_direction_splits,
             n_wind_speed_splits=self._n_wind_speed_splits,
             use_mpi4py=self.use_mpi4py,
-            print_timings=self.print_timings
+            propagate_flowfield_from_workers=self.propagate_flowfield_from_workers,
+            print_timings=self.print_timings,
         )
 
-    def _preprocess_dicts(self, yaw_angles=None):
+    def _preprocessing(self, yaw_angles=None):
         # Format yaw angles
         if yaw_angles is None:
             yaw_angles = np.zeros((
@@ -202,6 +203,49 @@ class ParallelComputingInterface(LoggerBase):
 
         return multiargs
 
+    # Function to merge subsets in dictionaries
+    def _merge_subsets(self, field, subset):
+        return np.concatenate(  # Merges wind speeds
+            [  
+                np.concatenate(  # Merges wind directions
+                    [
+                        eval("f.{:s}".format(field)) for f in
+                        subset[wii*self.n_wind_direction_splits:(wii+1)*self.n_wind_direction_splits]
+                    ],
+                    axis=0
+                )
+                for wii in range(self.n_wind_speed_splits)
+            ],
+            axis=1
+        )
+
+    def _postprocessing(self, output):
+        # Split results
+        power_subsets = [p[0] for p in output]
+        flowfield_subsets = [p[1] for p in output]
+
+        # Retrieve and merge turbine power productions
+        turbine_powers = np.concatenate(
+            [
+                np.concatenate(power_subsets[self.n_wind_speed_splits*(ii):self.n_wind_speed_splits*(ii+1)], axis=1)
+                for ii in range(self.n_wind_direction_splits)
+            ],
+            axis=0
+        )
+
+        # Optionally, also merge flow field dictionaries from individual floris solutions
+        if self.propagate_flowfield_from_workers:
+            self.floris = self.fi.floris  # Refresh static copy of underlying floris class
+            # self.floris.flow_field.u_initial = self._merge_subsets("u_initial", flowfield_subsets)
+            # self.floris.flow_field.v_initial = self._merge_subsets("v_initial", flowfield_subsets)
+            # self.floris.flow_field.w_initial = self._merge_subsets("w_initial", flowfield_subsets)
+            self.floris.flow_field.u = self._merge_subsets("u", flowfield_subsets)
+            self.floris.flow_field.v = self._merge_subsets("v", flowfield_subsets)
+            self.floris.flow_field.w = self._merge_subsets("w", flowfield_subsets)
+            self.floris.flow_field.turbulence_intensity_field = self._merge_subsets("turbulence_intensity_field", flowfield_subsets)
+
+        return turbine_powers
+
     def calculate_wake(self):
         # raise UserWarning("'calculate_wake' not supported. Please use 'get_turbine_powers' or 'get_farm_power' directly.")
         return None  # Do nothing
@@ -209,7 +253,7 @@ class ParallelComputingInterface(LoggerBase):
     def get_turbine_powers(self, yaw_angles=None):
         # Retrieve multiargs: preprocessing
         t0 = timerpc()
-        multiargs = self._preprocess_dicts(yaw_angles)
+        multiargs = self._preprocessing(yaw_angles)
         t_preparation = timerpc() - t0
 
         # Perform parallel calculation
@@ -217,16 +261,10 @@ class ParallelComputingInterface(LoggerBase):
         with self._PoolExecutor(self.max_workers) as p:
             out = p.starmap(_get_turbine_powers_serial, multiargs)
         t_execution = timerpc() - t1
-        
-        # Merge solutions and print output
+
+        # Postprocessing: merge power production (and opt. flow field) from individual runs
         t2 = timerpc()
-        turbine_powers = np.concatenate(
-            [
-                np.concatenate(out[self.n_wind_speed_splits*(ii):self.n_wind_speed_splits*(ii+1)], axis=1)
-                for ii in range(self.n_wind_direction_splits)
-            ],
-            axis=0
-        )
+        turbine_powers = self._postprocessing(out)
         t_postprocessing = timerpc() - t2
         t_total = timerpc() - t0
 
@@ -392,7 +430,7 @@ class ParallelComputingInterface(LoggerBase):
 
         # Prepare the inputs to each core for multiprocessing module
         t0 = timerpc()
-        multiargs = self._preprocess_dicts()
+        multiargs = self._preprocessing()
         for ii in range(len(multiargs)):
             multiargs[ii] = (
                 multiargs[ii][0],
@@ -427,3 +465,15 @@ class ParallelComputingInterface(LoggerBase):
             print("  Time spent in parallel postprocessing: {:.3f} s".format(t3 - t2))
 
         return df_opt
+
+    @property
+    def layout_x(self):
+        return self.fi.layout_x
+
+    @property
+    def layout_y(self):
+        return self.fi.layout_y
+
+    # @property
+    # def floris(self):
+    #     return self.fi.floris
