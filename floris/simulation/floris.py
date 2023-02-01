@@ -111,12 +111,15 @@ class Floris(BaseClass):
             )
         else:
             raise ValueError(
-                f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {self.solver['type']}"
+                f"Supported solver types are [turbine_grid, flow_field_grid],"
+                f" but type given was {self.solver['type']}"
             )
 
         if type(self.grid) == TurbineGrid:
             self.farm.expand_farm_properties(
-                self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds, self.grid.sorted_coord_indices
+                self.flow_field.n_wind_directions,
+                self.flow_field.n_wind_speeds,
+                self.grid.sorted_coord_indices
             )
 
         # Configure logging
