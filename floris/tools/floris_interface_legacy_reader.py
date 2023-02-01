@@ -202,7 +202,6 @@ if __name__ == "__main__":
     produce the necessary file.
     """
     import argparse
-    from pathlib import Path
 
     # Parse the input arguments
     description = "Converts a FLORIS v2.4 input file to a FLORIS v3 compatible input file.\

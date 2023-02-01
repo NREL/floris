@@ -170,9 +170,9 @@ def visualize_layout(
                 continue
 
             if black_and_white:
-                (l,) = ax.plot(x, y, color="k")
+                (line,) = ax.plot(x, y, color="k")
             else:
-                (l,) = ax.plot(x, y)
+                (line,) = ax.plot(x, y)
 
             linetext = "%.2f D --- %.1f/%.1f" % (
                 dist.loc[t1, t2] / D,
@@ -181,7 +181,7 @@ def visualize_layout(
             )
 
             label_line(
-                l, linetext, ax, near_i=1, near_x=None, near_y=None, rotation_offset=180
+                line, linetext, ax, near_i=1, near_x=None, near_y=None, rotation_offset=180
             )
 
 

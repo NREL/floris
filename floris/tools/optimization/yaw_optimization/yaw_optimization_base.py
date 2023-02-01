@@ -421,7 +421,7 @@ class YawOptimization:
 
             wd_array = self.fi.floris.flow_field.wind_directions
             sym_step = df.iloc[0]["wd_range"][1]
-            if ((not 0.0 in wd_array) or(not sym_step in wd_array)):
+            if ((0.0 not in wd_array) or(sym_step not in wd_array)):
                 print("Floris wind direction array does not " +
                       "intersect {:.1f} and {:.1f}.".format(0.0, sym_step))
                 print("Exploitation of symmetry has been disabled.")
@@ -569,8 +569,7 @@ class YawOptimization:
         ids = np.where((ydiff < min_yaw_offset) & (ydiff > 0.0))
         if len(ids[0]) > 0:
             if verbose:
-                print("Rounding {:d} insignificant yaw angles to their " +
-                "baseline value.".format(len(ids)))
+                print(f"Rounding {len(ids)} insignificant yaw angles to their baseline value.")
             yaw_angles_opt_subset[ids] = yaw_angles_baseline_subset[ids]
             ydiff[ids] = 0.0
 

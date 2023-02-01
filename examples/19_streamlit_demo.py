@@ -94,8 +94,8 @@ else:
 num_models = len(floris_models)
 
 # Determine which models to plot given cant plot cc right now
-floris_models_viz = [m for m in floris_models if not 'cc' in m]
-floris_models_viz = [m for m in floris_models_viz if not 'turbo' in m]
+floris_models_viz = [m for m in floris_models if "cc" not in m]
+floris_models_viz = [m for m in floris_models_viz if "turbo" not in m]
 num_models_to_viz = len(floris_models_viz)
 
 # Set up the visualization plot

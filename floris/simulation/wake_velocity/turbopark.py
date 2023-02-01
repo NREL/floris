@@ -139,7 +139,8 @@ def precalculate_overlap():
     for i in range(len(dist)):
         for j in range(len(radius_down)):
             if radius_down[j] > 0:
-                fun = lambda r, theta: np.exp(-(r ** 2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta))/2) * r
+                def fun(r, theta):
+                    return np.exp(-(r ** 2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta)) / 2) * r
                 out = integrate.dblquad(fun, 0, radius_down[j], lambda x: 0, lambda x: 2 * np.pi)[0]
                 out = out / (np.pi * radius_down[j] ** 2)
             else:

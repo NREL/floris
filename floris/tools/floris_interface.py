@@ -573,7 +573,7 @@ class FlorisInterface(LoggerBase):
 
         # Confirm calculate wake has been run
         if self.floris.state is not State.USED:
-            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.")
+            raise RuntimeError("Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.")
 
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
@@ -653,7 +653,7 @@ class FlorisInterface(LoggerBase):
 
         # Confirm calculate wake has been run
         if self.floris.state is not State.USED:
-            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`.")
+            raise RuntimeError("Can't run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`.")
 
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None

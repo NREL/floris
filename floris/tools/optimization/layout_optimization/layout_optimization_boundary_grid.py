@@ -354,7 +354,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             for i in range(nturbs):
                 done = False
                 for j in range(nBounds):
-                    if done == False:
+                    if done is False:
                         if bound_loc[i] < sum(lenBound[0:j+1]):
                             point_x = xBounds[j] + (xBounds[j+1]-xBounds[j])*(bound_loc[i]-sum(lenBound[0:j]))/lenBound[j]
                             point_y = yBounds[j] + (yBounds[j+1]-yBounds[j])*(bound_loc[i]-sum(lenBound[0:j]))/lenBound[j]
@@ -368,7 +368,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             for i in range(nturbs):
                 done = False
                 for j in range(nBounds):
-                    while done == False:
+                    while done is False:
                         dist = start + i*spacing + additional_space
                         if dist < sum(lenBound[0:j+1]):
                             point_x = xBounds[j] + (xBounds[j+1]-xBounds[j])*(dist -sum(lenBound[0:j]))/lenBound[j]
@@ -403,9 +403,9 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
                                 pass
                         else:
                             break
-                    if end_loop == True:
+                    if end_loop is True:
                         break
-                if end_loop == True:
+                if end_loop is True:
                     x = x[:ii]
                     y = y[:ii]
                     break

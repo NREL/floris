@@ -173,7 +173,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         for i in range(self.nturbs):
             loc = Point(x[i], y[i])
             boundary_con[i] = loc.distance(self._boundary_line)
-            if self._boundary_polygon.contains(loc)==True:
+            if self._boundary_polygon.contains(loc) is True:
                 boundary_con[i] *= 1.0
 
         return boundary_con

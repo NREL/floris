@@ -176,7 +176,7 @@ class GaussVelocityDeflection(BaseModel):
         sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
         sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
 
-        yR = y - y_i
+        # yR = y - y_i
         xR = x_i # yR * tand(yaw) + x_i
 
         # yaw parameters (skew angle and distance from centerline)

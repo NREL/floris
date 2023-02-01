@@ -67,7 +67,7 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     nturbs = len(fi.layout_x)
     yaw_cols = ["yaw_{:03d}".format(ti) for ti in range(nturbs)]
 
-    if not "yaw_000" in df_windrose.columns:
+    if "yaw_000" not in df_windrose.columns:
         df_windrose[yaw_cols] = 0.0  # Add zeros
 
     # Derive the wind directions and speeds we need to evaluate in FLORIS

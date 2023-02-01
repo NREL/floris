@@ -48,7 +48,7 @@ def run_floris(input_dict):
         floris.steady_state_atmospheric_condition()
         end = time.perf_counter()
         return end - start
-    except KeyError as e:
+    except KeyError:
         # Catch the errors when an invalid wake model was given because the model was not yet implemented
         return -1.0
 

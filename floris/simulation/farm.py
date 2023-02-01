@@ -94,7 +94,7 @@ class Farm(BaseClass):
                 # In the yaml file and forces it in
                 # A warning is issued letting the user know in future versions defining this value explicitly
                 # will be required 
-                if not 'ref_density_cp_ct' in self.turbine_definitions[i]:
+                if "ref_density_cp_ct" not in self.turbine_definitions[i]:
                     self.logger.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
                     self.logger.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
                     self.logger.warn("In previous versions this was assumed to be 1.225")
