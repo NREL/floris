@@ -65,7 +65,7 @@ print("Farm AEP (with cut_in/out specified): {:.3f} GWh".format(aep / 1.0e9))
 
 # Compute the AEP a final time, this time marking one of the turbines as 
 # belonging to another farm by setting its weight to 0
-turbine_weights = np.array([1.0, 1.0, 0.0],dtype=int)
+turbine_weights = np.array([1.0, 1.0, 0.0])
 aep = fi.get_farm_AEP_wind_rose_class(
     wind_rose=wind_rose,
     turbine_weights= turbine_weights
