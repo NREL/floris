@@ -21,6 +21,7 @@ from floris.tools.layout_functions import visualize_layout
 
 """
 This example visualizes a wind turbine layout
+using the visualize_layout function
 """
 
 # Declare a FLORIS interface
