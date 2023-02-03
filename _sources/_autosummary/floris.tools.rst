@@ -34,6 +34,7 @@
    floris.tools.interface_utilities
    floris.tools.layout_functions
    floris.tools.optimization
+   floris.tools.parallel_computing_interface
    floris.tools.plotting
    floris.tools.power_rose
    floris.tools.rews

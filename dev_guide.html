@@ -778,11 +778,28 @@ const thebe_selector_output = ".output, .cell_output"
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="_autosummary/floris.tools.power_rose.html">
-       floris.tools.power_rose
+      <a class="reference internal" href="_autosummary/floris.tools.parallel_computing_interface.html">
+       floris.tools.parallel_computing_interface
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/>
       <label for="toctree-checkbox-23">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html">
+         floris.tools.parallel_computing_interface.ParallelComputingInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/floris.tools.power_rose.html">
+       floris.tools.power_rose
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/>
+      <label for="toctree-checkbox-24">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -798,8 +815,8 @@ const thebe_selector_output = ".output, .cell_output"
       <a class="reference internal" href="_autosummary/floris.tools.rews.html">
        floris.tools.rews
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/>
-      <label for="toctree-checkbox-24">
+      <input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/>
+      <label for="toctree-checkbox-25">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -830,8 +847,8 @@ const thebe_selector_output = ".output, .cell_output"
       <a class="reference internal" href="_autosummary/floris.tools.uncertainty_interface.html">
        floris.tools.uncertainty_interface
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/>
-      <label for="toctree-checkbox-25">
+      <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
+      <label for="toctree-checkbox-26">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -847,8 +864,8 @@ const thebe_selector_output = ".output, .cell_output"
       <a class="reference internal" href="_autosummary/floris.tools.visualization.html">
        floris.tools.visualization
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
-      <label for="toctree-checkbox-26">
+      <input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/>
+      <label for="toctree-checkbox-27">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -904,8 +921,8 @@ const thebe_selector_output = ".output, .cell_output"
       <a class="reference internal" href="_autosummary/floris.tools.wind_rose.html">
        floris.tools.wind_rose
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/>
-      <label for="toctree-checkbox-27">
+      <input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/>
+      <label for="toctree-checkbox-28">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -923,8 +940,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="_autosummary/floris.type_dec.html">
      floris.type_dec
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/>
-    <label for="toctree-checkbox-28">
+    <input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
+    <label for="toctree-checkbox-29">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -960,8 +977,8 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="_autosummary/floris.utilities.html">
      floris.utilities
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
-    <label for="toctree-checkbox-29">
+    <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
+    <label for="toctree-checkbox-30">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1375,24 +1392,24 @@ research at NREL. From time to time, developers of FLORIS using their own
 may want to sync with NREL/FLORIS. To do this, use the following git commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Move into the FLORIS source code directory;</span>
 <span class="c1"># this may be named differently on your computer.</span>
-<span class="nb">cd</span> floris/
+<span class="nb">cd</span><span class="w"> </span>floris/
 
 <span class="c1"># Find the remote name that corresponds to</span>
 <span class="c1"># NREL/FLORIS; usually &quot;origin&quot; or &quot;upstream&quot;.</span>
-git remote -v
+git<span class="w"> </span>remote<span class="w"> </span>-v
 
 <span class="c1"># Fetch the changes on all remotes.</span>
-git fetch --all
+git<span class="w"> </span>fetch<span class="w"> </span>--all
 
 <span class="c1"># Decide which branch to sync with</span>
 <span class="c1"># NREL/FLORIS. Generally, this will be &quot;main&quot;.</span>
-git checkout main
-git pull origin main
+git<span class="w"> </span>checkout<span class="w"> </span>main
+git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
 
 <span class="c1"># Update any local working branches with the</span>
 <span class="c1"># latest from NREL/FLORIS.</span>
-git checkout feature/working_branch
-git merge main
+git<span class="w"> </span>checkout<span class="w"> </span>feature/working_branch
+git<span class="w"> </span>merge<span class="w"> </span>main
 </pre></div>
 </div>
 <p>Note that the example above is a general case and may need to be modified
@@ -1414,8 +1431,8 @@ but some may have a dedicated configuration file.</p>
 in source code files. <a class="reference external" href="https://pycqa.github.io/isort/index.html">isort</a>
 it used to automatically manage imports in the source code. It can be run
 directly with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>isort &lt;path to file&gt;
-isort dir/*
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>isort<span class="w"> </span>&lt;path<span class="w"> </span>to<span class="w"> </span>file&gt;
+isort<span class="w"> </span>dir/*
 </pre></div>
 </div>
 <p>This tool was initially configured in <a class="reference external" href="https://github.com/NREL/floris/pull/535">#535</a>,
@@ -1433,16 +1450,16 @@ to provide consistent and convenient inputs to modules at
 <code class="docutils literal notranslate"><span class="pre">floris/tests/conftest.py</span></code>.</p>
 <p>Unit tests are integrated into FLORIS with <a class="reference external" href="https://docs.pytest.org/en/latest/">pytest</a>,
 and they can be executed with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> floris/
-pytest tests/*_unit_test.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>floris/
+pytest<span class="w"> </span>tests/*_unit_test.py
 </pre></div>
 </div>
 <p>Regression tests are also included through <a class="reference external" href="https://docs.pytest.org/en/latest/">pytest</a>.
 Functionally, the only difference is that the regression tests take more
 time to execute and exercise a large portion of the software. These can be
 executed with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> floris/
-pytest tests/*_regression_test.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>floris/
+pytest<span class="w"> </span>tests/*_regression_test.py
 </pre></div>
 </div>
 <section id="continuous-integration">
@@ -1461,12 +1478,12 @@ for the documentation, and they are listed in <code class="docutils literal notr
 The commands to build the docs are given below. After successfully
 compiling, a file should be located at <code class="docutils literal notranslate"><span class="pre">docs/_build/html/index.html</span></code>.
 This file can be opened in any browser.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -r docs/requirements.txt
-jupyter-book build docs/
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+jupyter-book<span class="w"> </span>build<span class="w"> </span>docs/
 
 <span class="c1"># Lots of output to the terminal here...</span>
 
-open docs/_build/html/index.html
+open<span class="w"> </span>docs/_build/html/index.html
 </pre></div>
 </div>
 </section>
