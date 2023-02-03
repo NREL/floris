@@ -108,11 +108,6 @@ Construct wind farm yaw settings for a full wind rose based on the
 optimized yaw settings at a single wind speed. Then, compare
 results to the baseline no-yaw configuration.
 
-### 12_optimize_yaw.py
-Construct wind farm yaw settings for a full wind rose based on the
-optimized yaw settings at a single wind speed. Then, compare
-results to the baseline no-yaw configuration.
-
 ### 12_optimize_yaw_in_parallel.py
 Comparable to the above but perform all the computations using
 parallel processing. In the current example, use 16 cores
