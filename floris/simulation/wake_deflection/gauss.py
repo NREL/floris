@@ -285,8 +285,8 @@ class GaussGeometricDeflection(BaseModel):
         """
         # ==============================================================
 
-        def Bastankhah_skew(yaw, ct):
-            g = yaw*np.pi/180
+        def Bastankhah_skew(misalignment, ct):
+            g = misalignment*np.pi/180
             return 0.3*g / np.cos(g) * (1 - np.sqrt(1 - ct*np.cos(g)))
 
         # Alternative to Bastankhah_skew; To be discussed
@@ -313,6 +313,7 @@ class GaussGeometricDeflection(BaseModel):
         # Apply downstream mask in the process
         deflection_y = theta_c_y*(-delta_0 + A_y * log_term)
         deflection_z = theta_c_z*(-delta_0 + A_z * log_term)
+        import ipdb; ipdb.set_trace()
 
         # Possible TODO: Add warning for points in the near wake x-x_i, where 
         # model won't be very good
