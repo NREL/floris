@@ -13,23 +13,24 @@
 # See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
+
 from collections.abc import Iterable
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 from scipy.interpolate import interp1d
 
+from floris.simulation import BaseClass
 from floris.type_dec import (
     floris_array_converter,
-    NDArrayFloat,
-    NDArrayFilter,
-    NDArrayInt,
-    NDArrayObject,
     FromDictMixin,
+    NDArrayFilter,
+    NDArrayFloat,
+    NDArrayInt,
+    NDArrayObject
 )
 from floris.utilities import cosd
-from floris.simulation import BaseClass
 
 
 def _filter_convert(

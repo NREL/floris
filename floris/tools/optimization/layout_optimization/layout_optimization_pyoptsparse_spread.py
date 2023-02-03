@@ -13,12 +13,13 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Point
+import numpy as np
 from scipy.spatial.distance import cdist
+from shapely.geometry import Point
 
 from .layout_optimization_base import LayoutOptimization
+
 
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
     def __init__(

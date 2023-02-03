@@ -211,7 +211,7 @@ class YawOptimizationSR(YawOptimization):
         farm_powers = self._calc_powers_with_memory(evaluation_grid)
         return farm_powers
 
-    def optimize(self): 
+    def optimize(self, print_progress=True): 
         """
         Find the yaw angles that maximize the power production for every wind direction,
         wind speed and turbulence intensity.
@@ -223,7 +223,8 @@ class YawOptimizationSR(YawOptimization):
             for turbine_depth in range(self.nturbs):
                 p = 100.0 * ii / (len(self.Ny_passes) * self.nturbs)
                 ii += 1
-                print("[Serial Refine] Processing pass={:d}, turbine_depth={:d} ({:.1f} %)".format(Nii, turbine_depth, p))
+                if print_progress:
+                    print("[Serial Refine] Processing pass={:d}, turbine_depth={:d} ({:.1f} %)".format(Nii, turbine_depth, p))
 
                 # Create grid to evaluate yaw angles for one turbine == turbine_depth
                 evaluation_grid = self._generate_evaluation_grid(pass_depth=Nii, turbine_depth=turbine_depth)

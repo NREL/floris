@@ -1,6 +1,7 @@
 
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 from floris.tools.floris_interface import FlorisInterface
 

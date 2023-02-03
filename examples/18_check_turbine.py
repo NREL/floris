@@ -13,11 +13,13 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import matplotlib.pyplot as plt
-import numpy as np
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 from floris.tools import FlorisInterface
+
 
 """
 For each turbine in the turbine library, make a small figure showing that its power curve and power loss to yaw are reasonable and 

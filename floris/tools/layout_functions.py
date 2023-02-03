@@ -18,12 +18,10 @@
 
 import math
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist, squareform
-
 
 
 def visualize_layout(

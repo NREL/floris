@@ -15,6 +15,7 @@
 from floris.simulation import WakeModelManager
 from tests.conftest import SampleInputs
 
+
 def test_asdict(sample_inputs_fixture: SampleInputs):
 
     wake_model_manager = WakeModelManager.from_dict(sample_inputs_fixture.wake)

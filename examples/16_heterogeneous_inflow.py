@@ -19,6 +19,7 @@ from floris.tools import FlorisInterface
 from floris.tools.floris_interface import generate_heterogeneous_wind_map
 from floris.tools.visualization import visualize_cut_plane
 
+
 """
 This example showcases the heterogeneous inflow capabilities of FLORIS.
 Heterogeneous flow can be defined in either 2- or 3-dimensions.

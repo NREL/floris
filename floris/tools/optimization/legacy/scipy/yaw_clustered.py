@@ -17,9 +17,9 @@ import copy
 import numpy as np
 import pandas as pd
 
-from .yaw import YawOptimization
-from .cluster_turbines import cluster_turbines
 from ....logging_manager import LoggerBase
+from .cluster_turbines import cluster_turbines
+from .yaw import YawOptimization
 
 
 class YawOptimizationClustered(YawOptimization, LoggerBase):
