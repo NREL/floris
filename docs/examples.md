@@ -86,6 +86,10 @@ impact on wind turbine wakes.
 Load an input file that describes a wind farm with two turbines
 of different types and plot the wake profiles.
 
+### 23_visualize_layout.py
+Use the visualize_layout function to provide diagram visualization
+of a turbine layout within FLORIS
+
 
 ## Optimization
 
