@@ -301,8 +301,6 @@ class GaussGeometricDeflection(BaseModel):
         A_z = (1/(1+self.wim_gain_deflection*wake_induced_mixing_i)) * \
             self.deflection_gain_z * Bastankhah_skew(tilt_i, ct_i)
 
-        # if yaw_i >= 1:
-        #     import ipdb; ipdb.set_trace()
         # Apply downstream mask in the process
         deflection_y = A_y * np.log(((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i + 1)
         deflection_z = A_z * np.log(((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i + 1)
