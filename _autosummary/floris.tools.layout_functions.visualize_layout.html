@@ -709,18 +709,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul class="current">
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.build_turbine_loc.html">
-         floris.tools.layout_functions.build_turbine_loc
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.layout_functions.label_line.html">
          floris.tools.layout_functions.label_line
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.make_turbine_array.html">
-         floris.tools.layout_functions.make_turbine_array
         </a>
        </li>
        <li class="toctree-l4">
@@ -1247,21 +1237,24 @@ title="Print to PDF"
 <h1>floris.tools.layout_functions.visualize_layout<a class="headerlink" href="#floris-tools-layout-functions-visualize-layout" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.tools.layout_functions.visualize_layout">
-<span class="sig-prename descclassname"><span class="pre">floris.tools.layout_functions.</span></span><span class="sig-name descname"><span class="pre">visualize_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbineLoc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_wake_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_face_north</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_index_turbine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">black_and_white</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/layout_functions.html#visualize_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.layout_functions.visualize_layout" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">floris.tools.layout_functions.</span></span><span class="sig-name descname"><span class="pre">visualize_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_wake_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_dist_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lim_lines_per_turbine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_face_north</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_index_turbine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">black_and_white</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_rotor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/layout_functions.html#visualize_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.layout_functions.visualize_layout" title="Permalink to this definition">#</a></dt>
 <dd><p>Make a plot which shows the turbine locations, and important wakes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>turbineLoc</strong> (<em>pd.DataFrame</em>) -- turbine location data</p></li>
-<li><p><strong>D</strong> (<em>float</em>) -- wind turbine rotor diameter.</p></li>
+<li><p><strong>object</strong> (<em>fi</em>) -- </p></li>
 <li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code> optional) -- figure axes. Defaults to None.</p></li>
 <li><p><strong>show_wake_lines</strong> (<em>bool</em><em>, </em><em>optional</em>) -- flag to control plotting of
 wake boundaries. Defaults to False.</p></li>
-<li><p><strong>limit_dist</strong> (<em>float</em><em>, </em><em>optional</em>) -- Downstream limit to plot wakes. D
+<li><p><strong>limit_dist_m</strong> (<em>float</em><em>, </em><em>optional</em>) -- Only plot distances less than this ammount (m)
 Defaults to None.</p></li>
+<li><p><strong>lim_lines_per_turbine</strong> (<em>int</em><em>, </em><em>optional</em>) -- Limit number of lines eminating from a turbine</p></li>
 <li><p><strong>turbine_face_north</strong> (<em>bool</em><em>, </em><em>optional</em>) -- Force orientation of wind
 turbines. Defaults to False.</p></li>
-<li><p><strong>one_index_turbine</strong> (<em>bool</em><em>, </em><em>optional</em>) -- if true, 1st turbine is turbine 1</p></li>
+<li><p><strong>one_index_turbine</strong> (<em>bool</em><em>, </em><em>optional</em>) -- if true, 1st turbine is turbine 1 (ignored if turbine names provided)</p></li>
+<li><p><strong>black_and_white</strong> (<em>bool</em><em>, </em><em>optional</em>) -- if true print in black and white</p></li>
+<li><p><strong>plot_rotor</strong> (<em>bool</em><em>, </em><em>optional</em>) -- if true plot the turbine rotors and offset the labels</p></li>
+<li><p><strong>turbines_names</strong> (<em>list</em><em>, </em><em>optional</em>) -- optional list of turbine names</p></li>
 </ul>
 </dd>
 </dl>

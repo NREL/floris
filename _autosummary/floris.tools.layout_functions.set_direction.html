@@ -53,7 +53,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="floris.tools.layout_functions.turbineDist" href="floris.tools.layout_functions.turbineDist.html" />
-    <link rel="prev" title="floris.tools.layout_functions.make_turbine_array" href="floris.tools.layout_functions.make_turbine_array.html" />
+    <link rel="prev" title="floris.tools.layout_functions.label_line" href="floris.tools.layout_functions.label_line.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
     
@@ -709,18 +709,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul class="current">
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.build_turbine_loc.html">
-         floris.tools.layout_functions.build_turbine_loc
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.layout_functions.label_line.html">
          floris.tools.layout_functions.label_line
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.make_turbine_array.html">
-         floris.tools.layout_functions.make_turbine_array
         </a>
        </li>
        <li class="toctree-l4 current active">
@@ -1247,13 +1237,13 @@ title="Print to PDF"
 <h1>floris.tools.layout_functions.set_direction<a class="headerlink" href="#floris-tools-layout-functions-set-direction" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.tools.layout_functions.set_direction">
-<span class="sig-prename descclassname"><span class="pre">floris.tools.layout_functions.</span></span><span class="sig-name descname"><span class="pre">set_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbineLoc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation_angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/layout_functions.html#set_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.layout_functions.set_direction" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">floris.tools.layout_functions.</span></span><span class="sig-name descname"><span class="pre">set_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_turbine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation_angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/layout_functions.html#set_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.layout_functions.set_direction" title="Permalink to this definition">#</a></dt>
 <dd><p>Rotate wind farm CCW by the given angle provided in degrees</p>
 <p>#TODO add center of rotation? Default = center of farm?</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>turbineLoc</strong> (<em>pd.DataFrame</em>) -- turbine location data</p></li>
+<li><p><strong>df_turbine</strong> (<em>pd.DataFrame</em>) -- turbine location data</p></li>
 <li><p><strong>rotation_angle</strong> (<em>float</em>) -- rotation angle in degrees</p></li>
 </ul>
 </dd>
@@ -1295,11 +1285,11 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="floris.tools.layout_functions.make_turbine_array.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="floris.tools.layout_functions.label_line.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">floris.tools.layout_functions.make_turbine_array</p>
+            <p class="prev-next-title">floris.tools.layout_functions.label_line</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="floris.tools.layout_functions.turbineDist.html" title="next page">
