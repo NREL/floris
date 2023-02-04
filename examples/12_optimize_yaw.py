@@ -24,14 +24,17 @@ from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptim
 
 
 """
-This example demonstrates how to perform a yaw optimization and evaluate the performance over a full wind rose.
+This example demonstrates how to perform a yaw optimization and evaluate the performance
+over a full wind rose.
 
-The beginning of the file contains the definition of several functions used in the main part of the script.
+The beginning of the file contains the definition of several functions used in the main part
+of the script.
 
-Within the main part of the script, we first load the wind rose information. We then initialize our Floris Interface
-object. We determine the baseline AEP using the wind rose information, and then perform the yaw optimization over 72
-wind directions with 1 wind speed per direction. The optimal yaw angles are then used to determine yaw angles across
-all the wind speeds included in the wind rose. Lastly, the final AEP is calculated and analysis of the results are
+Within the main part of the script, we first load the wind rose information. We then initialize
+our Floris Interface object. We determine the baseline AEP using the wind rose information, and
+then perform the yaw optimization over 72 wind directions with 1 wind speed per direction. The
+optimal yaw angles are then used to determine yaw angles across all the wind speeds included in
+the wind rose. Lastly, the final AEP is calculated and analysis of the results are
 shown in several plots.
 """
 

@@ -128,7 +128,8 @@ if __name__ == "__main__":
 
 
     
-    # Assume linear ramp up at 5-6 m/s and ramp down at 13-14 m/s, add to table for linear interpolant
+    # Assume linear ramp up at 5-6 m/s and ramp down at 13-14 m/s,
+    # add to table for linear interpolant
     df_copy_lb = df_opt[df_opt["wind_speed"] == 6.0].copy()
     df_copy_ub = df_opt[df_opt["wind_speed"] == 13.0].copy()
     df_copy_lb["wind_speed"] = 5.0

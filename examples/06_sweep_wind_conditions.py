@@ -77,7 +77,8 @@ for ws_idx, ws in enumerate(ws_array):
 ax.set_xlabel('Wind Direction (deg)')
 
 # Sum across wind speeds and directions to show energy produced by turbine as bar plot
-energy_by_turbine = np.sum(turbine_powers, axis=(0,1)) # Sum over wind direction (0-axis) and wind speed (1-axis)
+# Sum over wind direction (0-axis) and wind speed (1-axis)
+energy_by_turbine = np.sum(turbine_powers, axis=(0,1))
 fig, ax = plt.subplots()
 ax.bar(['T%d' % t for t in range(num_turbine)],energy_by_turbine)
 ax.set_title('Energy Produced by Turbine')
