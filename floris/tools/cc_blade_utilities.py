@@ -159,7 +159,8 @@ def CCrotor(
 
 
 # Return the demanded generator torque for a given gen speed
-# This is based on the torque controller within SOWFA and using the control parameters within the SOWFA example
+# This is based on the torque controller within SOWFA and using the
+# control parameters within the SOWFA example
 def trq_cont(turbine_dict, genSpeedF):
     """
     Compute the torque control at a given gen speed (based on SOWFA)
@@ -217,7 +218,8 @@ def trq_cont(turbine_dict, genSpeedF):
 
 
 # Update the PI pitch controller
-# This is based on the pitch controller within SOWFA and using the control parameters within the SOWFA example
+# This is based on the pitch controller within SOWFA and using the control
+# parameters within the SOWFA example
 def pitch_control(turbine_dict, rotSpeedF, pitch_prev, dt, intSpeedError):
     min_pitch = 0.0
     max_pitch = 90.0

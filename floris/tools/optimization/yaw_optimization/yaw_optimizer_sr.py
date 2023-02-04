@@ -66,8 +66,10 @@ class YawOptimizationSR(YawOptimization):
             if Ny < 2:
                 raise ValueError("Each entry in Ny_passes must have a value of at least 2.")
             if (Nii > 0) & ((Ny + 1) % 2 == 0):
-                raise ValueError("The second and further entries of Ny_passes must be even numbers. " + 
-                    "This is to ensure the same yaw angles are not evaluated twice between passes.")
+                raise ValueError(
+                    "The second and further entries of Ny_passes must be even numbers. "
+                    "This is to ensure the same yaw angles are not evaluated twice between passes."
+                )
 
         # # Set baseline and optimization settings
         # if reduce_ngrid:
@@ -125,7 +127,7 @@ class YawOptimizationSR(YawOptimization):
         if use_memory:
             idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
             farm_powers[idx, :] = farm_power_opt_subset[idx, :]
-            # print("Skipping {:d}/{:d} calculations: already in memory.".format(np.sum(idx), len(idx)))
+            print(f"Skipping {np.sum(idx)}/{len(idx)} calculations: already in memory.")
         else:
             idx = np.zeros(yaw_angles_subset.shape[0], dtype=bool)
 
@@ -224,10 +226,16 @@ class YawOptimizationSR(YawOptimization):
                 p = 100.0 * ii / (len(self.Ny_passes) * self.nturbs)
                 ii += 1
                 if print_progress:
-                    print("[Serial Refine] Processing pass={:d}, turbine_depth={:d} ({:.1f} %)".format(Nii, turbine_depth, p))
+                    print(
+                        f"[Serial Refine] Processing pass={Nii}, "
+                        f"turbine_depth={turbine_depth} ({p:.1f}%)"
+                    )
 
                 # Create grid to evaluate yaw angles for one turbine == turbine_depth
-                evaluation_grid = self._generate_evaluation_grid(pass_depth=Nii, turbine_depth=turbine_depth)
+                evaluation_grid = self._generate_evaluation_grid(
+                    pass_depth=Nii,
+                    turbine_depth=turbine_depth
+                )
 
                 # Evaluate grid of yaw angles, get farm powers and find optimal solutions
                 farm_powers = self._process_evaluation_grid()

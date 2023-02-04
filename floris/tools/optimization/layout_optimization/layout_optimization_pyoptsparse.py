@@ -82,9 +82,20 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
             self.sol = self.opt(self.optProb, sens=self._sens)
         else:
             if self.timeLimit is not None:
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, timeLimit=self.timeLimit, hotStart=self.hotStart)
+                self.sol = self.opt(
+                    self.optProb,
+                    sens="CDR",
+                    storeHistory=self.storeHistory,
+                    timeLimit=self.timeLimit,
+                    hotStart=self.hotStart
+                )
             else:
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, hotStart=self.hotStart)
+                self.sol = self.opt(
+                    self.optProb,
+                    sens="CDR",
+                    storeHistory=self.storeHistory,
+                    hotStart=self.hotStart
+                )
         return self.sol
 
     def _obj_func(self, varDict):

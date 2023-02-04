@@ -133,10 +133,12 @@ class YawOptimization:
             self.yaw_angles_baseline = self._unpack_variable(b)
             if np.any(np.abs(b) > 0.0):
                 print(
-                    "INFO: Baseline yaw angles were not specified and were derived from the floris object."
+                    "INFO: Baseline yaw angles were not specified and "
+                    "were derived from the floris object."
                 )
                 print(
-                    "INFO: The inherent yaw angles in the floris object are not all 0.0 degrees."
+                    "INFO: The inherent yaw angles in the floris object "
+                    "are not all 0.0 degrees."
                 )
 
         # Set optimization bounds
@@ -228,7 +230,9 @@ class YawOptimization:
             )
 
         if len(np.shape(variable)) == 2:
-            raise UserWarning("Variable input must have shape (n_wind_directions, n_wind_speeds, nturbs)")
+            raise UserWarning(
+                "Variable input must have shape (n_wind_directions, n_wind_speeds, nturbs)"
+            )
 
         return variable
 
@@ -325,8 +329,14 @@ class YawOptimization:
         ub = np.max(self._maximum_yaw_angle_subset)
         self._normalization_length = (ub - lb)
         self._x0_subset_norm = self._x0_subset / self._normalization_length
-        self._minimum_yaw_angle_subset_norm = self._minimum_yaw_angle_subset / self._normalization_length
-        self._maximum_yaw_angle_subset_norm = self._maximum_yaw_angle_subset / self._normalization_length
+        self._minimum_yaw_angle_subset_norm = (
+            self._minimum_yaw_angle_subset
+            / self._normalization_length
+        )
+        self._maximum_yaw_angle_subset_norm = (
+            self._maximum_yaw_angle_subset
+            / self._normalization_length
+        )
 
     def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None):
         """

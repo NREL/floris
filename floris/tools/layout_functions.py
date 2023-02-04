@@ -50,7 +50,8 @@ def visualize_layout(
         lim_lines_per_turbine (int, optional): Limit number of lines eminating from a turbine
         turbine_face_north (bool, optional): Force orientation of wind
             turbines. Defaults to False.
-        one_index_turbine (bool, optional): if true, 1st turbine is turbine 1 (ignored if turbine names provided)
+        one_index_turbine (bool, optional): if true, 1st turbine is
+            turbine 1 (ignored if turbine names provided)
         black_and_white (bool, optional): if true print in black and white
         plot_rotor (bool, optional): if true plot the turbine rotors and offset the labels
         turbines_names (list, optional): optional list of turbine names
@@ -84,7 +85,9 @@ def visualize_layout(
     if turbine_names is not None:
         
         if len(turbine_names) != N_turbine:
-            raise ValueError("Length of turbine names array must equal number of turbines within fi")
+            raise ValueError(
+                "Length of turbine names array must equal number of turbines within fi"
+            )
 
         df_turbine['turbine_names'] = turbine_names
 
@@ -148,9 +151,12 @@ def visualize_layout(
         # If selected to limit the number of lines per turbine
         if lim_lines_per_turbine is not None:
             # Limit list to smallest lim_lines_per_turbine
-            ordList = ordList.groupby(['T1']).apply(lambda x: x.nsmallest(n=lim_lines_per_turbine, columns='Dist')).reset_index(drop=True)
+            ordList = ordList.groupby(['T1'])
+            ordList = ordList.apply(lambda x: x.nsmallest(n=lim_lines_per_turbine, columns='Dist'))
+            ordList = ordList.reset_index(drop=True)
 
-        # Add in the reflected version of each case (only postive directions will be plotted to help test show face up)
+        # Add in the reflected version of each case (only postive directions will be
+        # plotted to help test show face up)
         df_reflect = ordList.copy()
         df_reflect.columns = ['T2','T1','Dist','angle'] # Reflect T2 and T1
         ordList = pd.concat([ordList,df_reflect]).drop_duplicates().reset_index(drop=True)
@@ -190,7 +196,15 @@ def visualize_layout(
         ax.plot(df_turbine.x, df_turbine.y,'o',ls='None', color='k')
     
     # Also mark the place of each label to make sure figure is correct scale
-    ax.plot(df_turbine.x + label_offset, df_turbine.y + label_offset,'.',ls='None', color='w',alpha=0)
+    ax.plot(
+        df_turbine.x + label_offset,
+        df_turbine.y + label_offset,
+        '.',
+        ls='None',
+        color='w',
+        alpha=0
+    
+    )
 
     # Plot turbines
     for t1 in turbines:

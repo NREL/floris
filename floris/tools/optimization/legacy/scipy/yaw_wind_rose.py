@@ -577,7 +577,8 @@ class YawOptimizationWindRose(Optimization):
             ]
             if any(np.abs(self.yaw_angles_baseline) > 0.0):
                 print(
-                    "INFO: Baseline yaw angles were not specified and were derived from the floris object."
+                    "INFO: Baseline yaw angles were not specified and were derived "
+                    "from the floris object."
                 )
                 print(
                     "INFO: The inherent yaw angles in the floris object are not all 0.0 degrees."
