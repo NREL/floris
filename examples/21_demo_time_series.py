@@ -18,19 +18,20 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
+
 """
 This example demonstrates running FLORIS in time series mode.
 
 Typically when an array of wind directions and wind speeds are passed in FLORIS,
-it is assumed these are defining a grid of wd/ws points to consider, as in a wind rose.  
+it is assumed these are defining a grid of wd/ws points to consider, as in a wind rose.
 All combinations of wind direction and wind speed are therefore computed, and resulting
 matrices, for example of turbine power are returned with martrices whose dimensions are
 wind direction, wind speed and turbine number.
 
 In time series mode, specified by setting the time_series flag of the FLORIS interface to True
 each wd/ws pair is assumed to constitute a single point in time and each pair is computed.
-Results are returned still as a 3 dimensional matrix, however the index of the (wd/ws) pair 
-is provided in the first dimension, the second dimension is fixed at 1, and the thrid is 
+Results are returned still as a 3 dimensional matrix, however the index of the (wd/ws) pair
+is provided in the first dimension, the second dimension is fixed at 1, and the thrid is
 turbine number again for consistency.
 
 Note by not specifying yaw, the assumption is that all turbines are always pointing into the
@@ -63,7 +64,10 @@ turbine_powers = fi.get_turbine_powers() / 1000.
 
 # Show the dimensions
 num_turbines = len(fi.layout_x)
-print('There are %d time samples, and %d turbines and so the resulting turbine power matrix has the shape:' % (len(time), num_turbines), turbine_powers.shape)
+print(
+    f'There are {len(time)} time samples, and {num_turbines} turbines and '
+    f'so the resulting turbine power matrix has the shape {turbine_powers.shape}.'
+)
 
 
 fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(7,8))

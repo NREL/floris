@@ -13,23 +13,24 @@
 # See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
+
 from collections.abc import Iterable
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 from scipy.interpolate import interp1d
 
+from floris.simulation import BaseClass
 from floris.type_dec import (
     floris_array_converter,
-    NDArrayFloat,
+    FromDictMixin,
     NDArrayFilter,
+    NDArrayFloat,
     NDArrayInt,
     NDArrayObject,
-    FromDictMixin,
 )
 from floris.utilities import cosd
-from floris.simulation import BaseClass
 
 
 def _filter_convert(
@@ -98,7 +99,8 @@ def power(
             the yaw misalignment angle to power for each turbine.
         power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
             for each turbine.
-        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.
+        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
+            each turbine.
         ix_filter (NDArrayInt, optional): The boolean array, or
             integer indices to filter out before calculation. Defaults to None.
 
@@ -136,7 +138,11 @@ def power(
 
     # Compute the yaw effective velocity
     pW = pP / 3.0  # Convert from pP to w
-    yaw_effective_velocity = ((air_density/ref_density_cp_ct)**(1/3)) * average_velocity(velocities) * cosd(yaw_angle) ** pW
+    yaw_effective_velocity = (
+        (air_density/ref_density_cp_ct)**(1/3)
+        * average_velocity(velocities)
+        * cosd(yaw_angle) ** pW
+    )
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     p = np.zeros(np.shape(yaw_effective_velocity))
@@ -145,7 +151,10 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        p += power_interp[turb_type](yaw_effective_velocity) * np.array(turbine_type_map == turb_type)
+        p += (
+            power_interp[turb_type](yaw_effective_velocity)
+            * np.array(turbine_type_map == turb_type)
+        )
 
     return p * ref_density_cp_ct
 
@@ -163,12 +172,15 @@ def Ct(
     wind speed table using the rotor swept area average velocity.
 
     Args:
-        velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at a turbine.
+        velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at
+            a turbine.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         fCt (NDArrayObject[wd, ws, turbines]): The thrust coefficient for each turbine.
-        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.
+        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
+            for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
-            integer indices as an iterable of array to filter out before calculation. Defaults to None.
+            integer indices as an iterable of array to filter out before calculation.
+            Defaults to None.
 
     Returns:
         NDArrayFloat: Coefficient of thrust for each requested turbine.
@@ -193,7 +205,10 @@ def Ct(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        thrust_coefficient += fCt[turb_type](average_velocities) * np.array(turbine_type_map == turb_type)
+        thrust_coefficient += (
+            fCt[turb_type](average_velocities)
+            * np.array(turbine_type_map == turb_type)
+        )
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle)
     return effective_thrust
@@ -214,7 +229,8 @@ def axial_induction(
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
         fCt (np.array): The thrust coefficient function for each
             turbine.
-        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.
+        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
+            for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
             integer indices (as an aray or iterable) to filter out before calculation.
             Defaults to None.
@@ -237,7 +253,10 @@ def axial_induction(
     return 0.5 / cosd(yaw_angle) * (1 - np.sqrt(1 - thrust_coefficient * cosd(yaw_angle)))
 
 
-def average_velocity(velocities: NDArrayFloat, ix_filter: NDArrayFilter | Iterable[int] | None = None) -> NDArrayFloat:
+def average_velocity(
+    velocities: NDArrayFloat,
+    ix_filter: NDArrayFilter | Iterable[int] | None = None
+) -> NDArrayFloat:
     """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
 
@@ -290,9 +309,9 @@ class PowerThrustTable(FromDictMixin):
         if any(el.ndim > 1 for el in inputs):
             raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
 
-        if len( set( (self.power.size, self.thrust.size, self.wind_speed.size) ) ) > 1:        
+        if len( {self.power.size, self.thrust.size, self.wind_speed.size} ) > 1:
             raise ValueError("power, thrust, and wind_speed tables must be the same size.")
-        
+
         # Remove any duplicate wind speed entries
         _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
         object.__setattr__(self, "power", self.power[duplicate_filter])
@@ -380,18 +399,26 @@ class Turbine(BaseClass):
             fill_value=(0.0, 1.0),
             bounds_error=False,
         )
-        inner_power = 0.5 * self.rotor_area * self.fCp_interp(wind_speeds) * self.generator_efficiency * wind_speeds ** 3
+        inner_power = (
+            0.5 * self.rotor_area
+            * self.fCp_interp(wind_speeds)
+            * self.generator_efficiency
+            * wind_speeds ** 3
+        )
         self.power_interp = interp1d(
             wind_speeds,
             inner_power
         )
 
         """
-        Given an array of wind speeds, this function returns an array of the interpolated thrust coefficients
-        from the power / thrust table used to define the Turbine. The values are bound by the range of the input values.
-        Any requested wind speeds outside of the range of input wind speeds are assigned Ct of 0.0001 or 0.9999.
-        
-        The fill_value arguments sets (upper, lower) bounds for any values outside of the input range
+        Given an array of wind speeds, this function returns an array of the
+        interpolated thrust coefficients from the power / thrust table used
+        to define the Turbine. The values are bound by the range of the input
+        values. Any requested wind speeds outside of the range of input wind
+        speeds are assigned Ct of 0.0001 or 0.9999.
+
+        The fill_value arguments sets (upper, lower) bounds for any values
+        outside of the input range.
         """
         self.fCt_interp = interp1d(
             wind_speeds,

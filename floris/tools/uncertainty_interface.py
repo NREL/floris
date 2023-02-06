@@ -17,9 +17,9 @@ import copy
 import numpy as np
 from scipy.stats import norm
 
+from floris.logging_manager import LoggerBase
 from floris.tools import FlorisInterface
 from floris.utilities import wrap_360
-from floris.logging_manager import LoggerBase
 
 
 class UncertaintyInterface(LoggerBase):
@@ -136,7 +136,10 @@ class UncertaintyInterface(LoggerBase):
         unc_options = self.unc_options
         if unc_options["std_wd"] > 0:
             wd_bnd = int(
-                np.ceil(norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"]) / unc_options["pmf_res"])
+                np.ceil(
+                    norm.ppf(unc_options["pdf_cutoff"], scale=unc_options["std_wd"])
+                    / unc_options["pmf_res"]
+                )
             )
             bound = wd_bnd * unc_options["pmf_res"]
             wd_unc = np.linspace(-1 * bound, bound, 2 * wd_bnd + 1)
@@ -181,7 +184,10 @@ class UncertaintyInterface(LoggerBase):
 
         # Expand wind direction and yaw angle array into the direction
         # of uncertainty over the ambient wind direction.
-        wd_array_probablistic = np.vstack([np.expand_dims(wd_array_nominal, axis=0) + dy for dy in unc_pmfs["wd_unc"]])
+        wd_array_probablistic = np.vstack([
+            np.expand_dims(wd_array_nominal, axis=0) + dy
+            for dy in unc_pmfs["wd_unc"]
+        ])
 
         if self.fix_yaw_in_relative_frame:
             # The relative yaw angle is fixed and always has the nominal
@@ -191,9 +197,10 @@ class UncertaintyInterface(LoggerBase):
             # wind directions. This can also be really fast, since it would
             # not require any additional calculations compared to the
             # non-uncertainty FLORIS evaluation.
-            yaw_angles_probablistic = np.vstack(
-                [np.expand_dims(yaw_angles_nominal, axis=0) for _ in unc_pmfs["wd_unc"]]
-            )
+            yaw_angles_probablistic = np.vstack([
+                np.expand_dims(yaw_angles_nominal, axis=0)
+                for _ in unc_pmfs["wd_unc"]
+            ])
         else:
             # Fix yaw angles in the absolute (compass) reference frame,
             # meaning that for each probablistic wind direction evaluation,
@@ -202,9 +209,10 @@ class UncertaintyInterface(LoggerBase):
             # direction 3 deg above the nominal value means that we evaluate
             # it with a relative yaw angle that is 3 deg below its nominal
             # value.
-            yaw_angles_probablistic = np.vstack(
-                [np.expand_dims(yaw_angles_nominal, axis=0) - dy for dy in unc_pmfs["wd_unc"]]
-            )
+            yaw_angles_probablistic = np.vstack([
+                np.expand_dims(yaw_angles_nominal, axis=0) - dy
+                for dy in unc_pmfs["wd_unc"]
+            ])
 
         self.wd_array_probablistic = wd_array_probablistic
         self.yaw_angles_probablistic = yaw_angles_probablistic
@@ -223,7 +231,12 @@ class UncertaintyInterface(LoggerBase):
         fi_unc_copy.fi = self.fi.copy()
         return fi_unc_copy
 
-    def reinitialize_uncertainty(self, unc_options=None, unc_pmfs=None, fix_yaw_in_relative_frame=None):
+    def reinitialize_uncertainty(
+        self,
+        unc_options=None,
+        unc_pmfs=None,
+        fix_yaw_in_relative_frame=None
+    ):
         """Reinitialize the wind direction and yaw angle probability
         distributions used in evaluating FLORIS. Must either specify
         'unc_options', in which case distributions are calculated assuming
@@ -333,8 +346,10 @@ class UncertaintyInterface(LoggerBase):
         UncertaintyInterface object, this function is required."""
 
         if layout is not None:
-            msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3."
-            self.logger.warning(msg)
+            self.logger.warning(
+                "Use the `layout_x` and `layout_y` parameters in place of `layout` "
+                "because the `layout` parameter will be deprecated in 3.3."
+            )
             layout_x = layout[0]
             layout_y = layout[1]
 
@@ -411,7 +426,10 @@ class UncertaintyInterface(LoggerBase):
 
         # Format into conventional floris format by reshaping
         wd_array_probablistic = np.reshape(self.wd_array_probablistic, -1)
-        yaw_angles_probablistic = np.reshape(self.yaw_angles_probablistic, (-1, num_ws, num_turbines))
+        yaw_angles_probablistic = np.reshape(
+            self.yaw_angles_probablistic,
+            (-1, num_ws, num_turbines)
+        )
 
         # Wrap wind direction array around 360 deg
         wd_array_probablistic = wrap_360(wd_array_probablistic)
@@ -419,7 +437,10 @@ class UncertaintyInterface(LoggerBase):
         # Find minimal set of solutions to evaluate
         wd_exp = np.tile(wd_array_probablistic, (1, num_ws, 1)).T
         _, id_unq, id_unq_rev = np.unique(
-            np.append(yaw_angles_probablistic, wd_exp, axis=2), axis=0, return_index=True, return_inverse=True
+            np.append(yaw_angles_probablistic, wd_exp, axis=2),
+            axis=0,
+            return_index=True,
+            return_inverse=True
         )
         wd_array_probablistic_min = wd_array_probablistic[id_unq]
         yaw_angles_probablistic_min = yaw_angles_probablistic[id_unq, :, :]
@@ -437,7 +458,10 @@ class UncertaintyInterface(LoggerBase):
 
         # Reshape solutions back to full set
         power_probablistic = turbine_powers[id_unq_rev, :]
-        power_probablistic = np.reshape(power_probablistic, (num_wd_unc, num_wd, num_ws, num_turbines))
+        power_probablistic = np.reshape(
+            power_probablistic,
+            (num_wd_unc, num_wd, num_ws, num_turbines)
+        )
 
         # Calculate probability weighing terms
         wd_weighing = (
@@ -458,7 +482,7 @@ class UncertaintyInterface(LoggerBase):
         Args:
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -535,7 +559,7 @@ class UncertaintyInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -564,12 +588,15 @@ class UncertaintyInterface(LoggerBase):
             & (len(np.shape(freq)) == 2)
         ):
             raise UserWarning(
-                "'freq' should be a two-dimensional array with dimensions (n_wind_directions, n_wind_speeds)."
+                "'freq' should be a two-dimensional array with dimensions "
+                "(n_wind_directions, n_wind_speeds)."
             )
 
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
-            self.logger.warning("WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. ")
+            self.logger.warning(
+                "WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. "
+            )
 
         # Copy the full wind speed array from the floris object and initialize
         # the the farm_power variable as an empty array.

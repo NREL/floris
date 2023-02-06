@@ -14,7 +14,6 @@
 
 
 import pytest
-
 from attr import define, field
 
 from floris.simulation import BaseClass, BaseModel

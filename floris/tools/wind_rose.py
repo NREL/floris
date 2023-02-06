@@ -19,15 +19,19 @@
 import os
 import pickle
 
-import numpy as np
-import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 # from pyproj import Proj
+import numpy as np
+import pandas as pd
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
 import floris.utilities as geo
+
+
+# from pyproj import Proj
+
 
 
 class WindRose:
@@ -478,9 +482,9 @@ class WindRose:
             scipy.interpolate.LinearNDInterpolant: Linear interpolant for the
             wind rose currently available in the class (self.df).
         """
-        if method is "linear":
+        if method == "linear":
             interpolator = LinearNDInterpolator
-        elif method is "nearest":
+        elif method == "nearest":
             interpolator = NearestNDInterpolator
         else:
             UserWarning("Unknown interpolation method: '{:s}'".format(method))
@@ -692,7 +696,7 @@ class WindRose:
         self.internal_resample_wind_direction(wd=wd)
 
         return self.df
-    
+
     def read_wind_rose_csv(
         self,
         filename
@@ -1448,7 +1452,7 @@ class WindRose:
         color_array = cm.get_cmap(color_map, len(ws_right_edges))
 
         for wd in wd_bins:
-            rects = list()
+            rects = []
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ws_idx, ws in enumerate(ws_right_edges[::-1]):
                 plot_val = df_plot_sub[
@@ -1517,13 +1521,13 @@ class WindRose:
 
         # Set up figure
         if ax is None:
-            _, ax = plt.subplots(subplot_kw=dict(polar=True))
+            _, ax = plt.subplots(subplot_kw={"polar": True})
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ti_right_edges))
 
         for wd in wd_bins:
-            rects = list()
+            rects = []
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ti_idx, ti in enumerate(ti_right_edges[::-1]):
                 plot_val = df_plot_sub[

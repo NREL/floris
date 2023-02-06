@@ -13,15 +13,17 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 
 from floris.tools import FlorisInterface
 
+
 """
-For each turbine in the turbine library, make a small figure showing that its power curve and power loss to yaw are reasonable and 
-reasonably smooth
+For each turbine in the turbine library, make a small figure showing that its power
+curve and power loss to yaw are reasonable and  reasonably smooth
 """
 ws_array = np.arange(0.1,30,0.2)
 yaw_angles = np.linspace(-30,30,60)
@@ -53,11 +55,17 @@ for t in turbines:
     fi.assign_hub_height_to_ref_height()
 
     # Plot cp and ct onto the fig_cp_ct plot
-    axarr_cp_ct[0].plot(fi.floris.farm.turbine_map[0].power_thrust_table.wind_speed, fi.floris.farm.turbine_map[0].power_thrust_table.power,label=t )
+    axarr_cp_ct[0].plot(
+        fi.floris.farm.turbine_map[0].power_thrust_table.wind_speed,
+        fi.floris.farm.turbine_map[0].power_thrust_table.power,label=t
+    )
     axarr_cp_ct[0].grid(True)
     axarr_cp_ct[0].legend()
     axarr_cp_ct[0].set_ylabel('Cp')
-    axarr_cp_ct[1].plot(fi.floris.farm.turbine_map[0].power_thrust_table.wind_speed, fi.floris.farm.turbine_map[0].power_thrust_table.thrust,label=t )
+    axarr_cp_ct[1].plot(
+        fi.floris.farm.turbine_map[0].power_thrust_table.wind_speed,
+        fi.floris.farm.turbine_map[0].power_thrust_table.thrust,label=t
+    )
     axarr_cp_ct[1].grid(True)
     axarr_cp_ct[1].legend()
     axarr_cp_ct[1].set_ylabel('Ct')
@@ -68,7 +76,7 @@ for t in turbines:
 
     # Try a few density
     for density in [1.15,1.225,1.3]:
-        
+
         fi.reinitialize(air_density=density)
 
         # POWER CURVE

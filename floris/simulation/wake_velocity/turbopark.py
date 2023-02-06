@@ -10,27 +10,34 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+from pathlib import Path
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
-from pathlib import Path
+import scipy.io
+from attrs import define, field
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
-import scipy.io
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
+from floris.utilities import (
+    cosd,
+    sind,
+    tand,
+)
 
 
 @define
 class TurbOParkVelocityDeficit(BaseModel):
     """
-    Model based on the TurbOPark model. For model details see https://github.com/OrstedRD/TurbOPark,
+    Model based on the TurbOPark model. For model details see
+    https://github.com/OrstedRD/TurbOPark,
     https://github.com/OrstedRD/TurbOPark/blob/main/TurbOPark%20description.pdf, and
     Nygaard, Nicolai Gayle, et al. "Modelling cluster wakes and wind farm blockage."
     Journal of Physics: Conference Series. Vol. 1618. No. 6. IOP Publishing, 2020.
@@ -45,7 +52,12 @@ class TurbOParkVelocityDeficit(BaseModel):
         dist = lookup_table_file['overlap_lookup_table'][0][0][0][0]
         radius_down = lookup_table_file['overlap_lookup_table'][0][0][1][0]
         overlap_gauss = lookup_table_file['overlap_lookup_table'][0][0][2]
-        self.overlap_gauss_interp = RegularGridInterpolator((dist, radius_down), overlap_gauss, method='linear', bounds_error=False)
+        self.overlap_gauss_interp = RegularGridInterpolator(
+            (dist, radius_down),
+            overlap_gauss,
+            method='linear',
+            bounds_error=False
+        )
 
     def prepare_function(
         self,
@@ -53,12 +65,12 @@ class TurbOParkVelocityDeficit(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            u_initial=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "u_initial": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     # @profile
@@ -84,12 +96,15 @@ class TurbOParkVelocityDeficit(BaseModel):
         delta_total = np.zeros_like(u_initial)
 
         # Normalized distances along x between the turbine i and all other turbines
-        # The downstream_mask is used to avoid negative numbers in the sqrt and the subsequent runtime warnings
-        # Here self.NUM_EPS is to avoid precision issues with masking, and is slightly larger than 0.0
+        # The downstream_mask is used to avoid negative numbers in the sqrt and the
+        # subsequent runtime warnings.
+        # Here self.NUM_EPS is to avoid precision issues with masking, and is slightly
+        # larger than 0.0
         downstream_mask = np.array(x_i - x >= self.NUM_EPS)
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
-        # Radial distance between turbine i and the centerlines of wakes from all real/image turbines
+        # Radial distance between turbine i and the centerlines of wakes from all
+        # real/image turbines
         r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
         r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)
 
@@ -97,7 +112,9 @@ class TurbOParkVelocityDeficit(BaseModel):
 
         # Characteristic wake widths from all turbines relative to turbine i
         dw = characteristic_wake_width(x_dist, ambient_turbulence_intensity, Cts, self.A)
-        epsilon = 0.25 * np.sqrt(np.min(0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts), 3, keepdims=True))
+        epsilon = 0.25 * np.sqrt(
+            np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts), 3, keepdims=True )
+        )
         sigma = rotor_diameters * (epsilon + dw)
 
         # Peak wake deficits
@@ -114,18 +131,24 @@ class TurbOParkVelocityDeficit(BaseModel):
         delta_image = np.empty(np.shape(u_initial)) * np.nan
 
         # Compute deficits for real turbines and for mirrored (image) turbines
-        delta_real = C * self.overlap_gauss_interp((r_dist / sigma, rotor_diameter_i / 2 / sigma)) * wtg_overlapping
-        delta_image = C * self.overlap_gauss_interp((r_dist_image / sigma, rotor_diameter_i / 2 / sigma)) * wtg_overlapping
+        delta_real = C * wtg_overlapping * self.overlap_gauss_interp(
+            (r_dist / sigma, rotor_diameter_i / 2 / sigma)
+        )
+        delta_image = C * wtg_overlapping * self.overlap_gauss_interp(
+            (r_dist_image / sigma, rotor_diameter_i / 2 / sigma)
+        )
         delta = np.concatenate((delta_real, delta_image), axis=2)
 
         delta_total[:, :, i, :, :] = np.sqrt(np.sum(np.nan_to_num(delta)**2, axis=2))
 
-        return delta_total          
+        return delta_total
 
 
 def precalculate_overlap():
-    # TODO: first implementation to generate wake overlap lookup table (currently supplied by turbopark_lookup_table.mat.)
-    # However, the result of this function doesn't generate the same interpolant as the .mat file, so if used, needs to be corrected.
+    # TODO: first implementation to generate wake overlap lookup table
+    # (currently supplied by turbopark_lookup_table.mat.)
+    # However, the result of this function doesn't generate the same
+    # interpolant as the .mat file, so if used, needs to be corrected.
     dist = np.arange(0, 10, 1.0)
     radius_down = np.arange(0, 20, 1.0)
     overlap_gauss = np.zeros((len(dist), len(radius_down)))
@@ -133,7 +156,10 @@ def precalculate_overlap():
     for i in range(len(dist)):
         for j in range(len(radius_down)):
             if radius_down[j] > 0:
-                fun = lambda r, theta: np.exp(-(r ** 2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta))/2) * r
+                def fun(r, theta):
+                    return r * np.exp(
+                        -1 * (r ** 2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta)) / 2
+                    )
                 out = integrate.dblquad(fun, 0, radius_down[j], lambda x: 0, lambda x: 2 * np.pi)[0]
                 out = out / (np.pi * radius_down[j] ** 2)
             else:
@@ -144,8 +170,9 @@ def precalculate_overlap():
 
 
 def characteristic_wake_width(x_dist, TI, Cts, A):
-    # Parameter values taken from S. T. Frandsen, “Risø-R-1188(EN) Turbulence and turbulence generated structural
-    # loading in wind turbine clusters” Risø, Roskilde, Denmark, 2007.
+    # Parameter values taken from S. T. Frandsen, “Risø-R-1188(EN) Turbulence
+    # and turbulence generated structural loading in wind turbine clusters”
+    # Risø, Roskilde, Denmark, 2007.
     c1 = 1.5
     c2 = 0.8
 
@@ -153,8 +180,11 @@ def characteristic_wake_width(x_dist, TI, Cts, A):
     beta = c2 * TI / np.sqrt(Cts)
 
     dw = A * TI / beta * (
-        np.sqrt((alpha + beta * x_dist) ** 2 + 1) - np.sqrt(1 + alpha ** 2) - np.log(
-            ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha) / ((np.sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_dist))
+        np.sqrt((alpha + beta * x_dist) ** 2 + 1)
+        - np.sqrt(1 + alpha ** 2)
+        - np.log(
+            ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)
+            / ((np.sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_dist))
         )
     )
 

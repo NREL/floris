@@ -13,12 +13,17 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Point, Polygon, LineString
+import numpy as np
 from scipy.spatial.distance import cdist
+from shapely.geometry import (
+    LineString,
+    Point,
+    Polygon,
+)
 
 from .layout_optimization_base import LayoutOptimization
+
 
 class LayoutOptimizationBoundaryGrid(LayoutOptimization):
     def __init__(
@@ -37,7 +42,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         boundary_spacing=None,
     ):
         self.fi = fi
-        
+
         self.boundary_x = np.array([val[0] for val in boundaries])
         self.boundary_y = np.array([val[1] for val in boundaries])
         boundary = np.zeros((len(self.boundary_x), 2))
@@ -72,10 +77,12 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         eps=1e-3,
     ):
         """
-        Map from grid design variables to turbine x and y locations. Includes integer design variables and the formulation
+        Map from grid design variables to turbine x and y locations.
+        Includes integer design variables and the formulation
         results in a discontinous design space.
 
-        TODO: shrink_boundary doesn't work well with concave boundaries, or with boundary angles less than 90 deg
+        TODO: shrink_boundary doesn't work well with concave boundaries,
+        or with boundary angles less than 90 deg
 
         Args:
             nrows (Int): number of rows in the grid.
@@ -217,7 +224,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         d = np.array([i for x in xlocs for i in row_number])
         layout_x = np.array([x for x in xlocs for y in ylocs]) + d*y_spacing*np.tan(shear)
         layout_y = np.array([y for x in xlocs for y in ylocs])
-        
+
         # rotate
         rotate_x = np.cos(rotation)*layout_x - np.sin(rotation)*layout_y
         rotate_y = np.sin(rotation)*layout_x + np.cos(rotation)*layout_y
@@ -236,7 +243,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         # arrange final x,y points
         return_x = rotate_x[meets_constraints]
         return_y = rotate_y[meets_constraints]
-    
+
         return return_x, return_y
 
     def find_lengths(self, x, y, npoints):
@@ -320,7 +327,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         nBounds = len(xBounds)
         lenBound = self.find_lengths(xBounds, yBounds, len(xBounds) - 1)
         circumference = sum(lenBound)
-        
+
         if nturbs is not None and spacing is None:
             # When the number of boundary turbines is specified
             nturbs = int(nturbs)
@@ -349,10 +356,20 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             for i in range(nturbs):
                 done = False
                 for j in range(nBounds):
-                    if done == False:
+                    if done is False:
                         if bound_loc[i] < sum(lenBound[0:j+1]):
-                            point_x = xBounds[j] + (xBounds[j+1]-xBounds[j])*(bound_loc[i]-sum(lenBound[0:j]))/lenBound[j]
-                            point_y = yBounds[j] + (yBounds[j+1]-yBounds[j])*(bound_loc[i]-sum(lenBound[0:j]))/lenBound[j]
+                            point_x = (
+                                xBounds[j]
+                                + (xBounds[j+1] - xBounds[j])
+                                * (bound_loc[i] - sum(lenBound[0:j]))
+                                / lenBound[j]
+                            )
+                            point_y = (
+                                yBounds[j]
+                                + (yBounds[j+1] - yBounds[j])
+                                * (bound_loc[i] - sum(lenBound[0:j]))
+                                / lenBound[j]
+                            )
                             done = True
                             x[i] = point_x
                             y[i] = point_y
@@ -363,18 +380,29 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             for i in range(nturbs):
                 done = False
                 for j in range(nBounds):
-                    while done == False:
+                    while done is False:
                         dist = start + i*spacing + additional_space
                         if dist < sum(lenBound[0:j+1]):
-                            point_x = xBounds[j] + (xBounds[j+1]-xBounds[j])*(dist -sum(lenBound[0:j]))/lenBound[j]
-                            point_y = yBounds[j] + (yBounds[j+1]-yBounds[j])*(dist -sum(lenBound[0:j]))/lenBound[j]
+                            point_x = (
+                                xBounds[j]
+                                + (xBounds[j+1]-xBounds[j])
+                                * (dist -sum(lenBound[0:j]))
+                                / lenBound[j]
+                            )
+                            point_y = (
+                                yBounds[j]
+                                + (yBounds[j+1]-yBounds[j])
+                                * (dist -sum(lenBound[0:j]))
+                                / lenBound[j]
+                            )
 
                             # Check if turbine is too close to previous turbine
                             if i > 0:
                                 # Check if turbine just placed is to close to first turbine
                                 min_dist = cdist([(point_x, point_y)], [(x[0], y[0])])
                                 if min_dist < spacing:
-                                    # TODO: make this more robust; pass is needed if 2nd turbine is too close to the first
+                                    # TODO: make this more robust;
+                                    # pass is needed if 2nd turbine is too close to the first
                                     if i == 1:
                                         pass
                                     else:
@@ -398,15 +426,21 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
                                 pass
                         else:
                             break
-                    if end_loop == True:
+                    if end_loop is True:
                         break
-                if end_loop == True:
+                if end_loop is True:
                     x = x[:ii]
                     y = y[:ii]
                     break
         return x, y
 
-    def _place_boundary_turbines_with_specified_spacing(self, spacing, start, boundary_x, boundary_y):
+    def _place_boundary_turbines_with_specified_spacing(
+        self,
+        spacing,
+        start,
+        boundary_x,
+        boundary_y
+    ):
         """
         Place turbines equally spaced traversing the perimiter if the wind farm along the boundary
 
@@ -489,7 +523,8 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
 
         Args:
         n_boundary_turbs,start: boundary variables
-        nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,shrink_boundary,eps: grid variables
+        nrows,ncols,farm_width,farm_height,shear,
+            rotation,center_x,center_y,shrink_boundary,eps: grid variables
         boundary_x,boundary_y: boundary points
 
         Returns
@@ -500,7 +535,8 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         boundary_turbines_x, boundary_turbines_y = self._place_boundary_turbines(
             start, self._boundary_polygon, nturbs=n_boundary_turbines, spacing=boundary_spacing
         )
-        # boundary_turbines_x, boundary_turbines_y = self._place_boundary_turbines_with_specified_spacing(
+        # ( boundary_turbines_x,
+        #  boundary_turbines_y ) = self._place_boundary_turbines_with_specified_spacing(
         #     spacing, start, boundary_x, boundary_y
         # )
 

@@ -16,23 +16,25 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from floris.tools import FlorisInterface
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
-    YawOptimizationSR,
-)
 from scipy.interpolate import NearestNDInterpolator
+
+from floris.tools import FlorisInterface
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 """
-This example demonstrates how to perform a yaw optimization and evaluate the performance over a full wind rose.
+This example demonstrates how to perform a yaw optimization and evaluate the performance over a
+full wind rose.
 
-The beginning of the file contains the definition of several functions used in the main part of the script.
+The beginning of the file contains the definition of several functions used in the main part of
+the script.
 
-Within the main part of the script, we first load the wind rose information. We then initialize our Floris Interface
-object. We determine the baseline AEP using the wind rose information, and then perform the yaw optimization over 72
-wind directions with 1 wind speed per direction. The optimal yaw angles are then used to determine yaw angles across
-all the wind speeds included in the wind rose. Lastly, the final AEP is calculated and analysis of the results are
-shown in several plots.
+Within the main part of the script, we first load the wind rose information.
+We then initialize our Floris Interface object. We determine the baseline AEP using the
+wind rose information, and then perform the yaw optimization over 72 wind directions with 1
+wind speed per direction. The optimal yaw angles are then used to determine yaw angles across
+all the wind speeds included in the wind rose. Lastly, the final AEP is calculated and analysis
+of the results are shown in several plots.
 """
 
 def load_floris():
@@ -42,7 +44,7 @@ def load_floris():
 
     # Specify the full wind farm layout: nominal and neighboring wind farms
     X = np.array(
-        [ 
+        [
                0.,   756.,  1512.,  2268.,  3024.,     0.,   756.,  1512.,
             2268.,  3024.,     0.,   756.,  1512.,  2268.,  3024.,     0.,
              756.,  1512.,  2268.,  3024.,  4500.,  5264.,  6028.,  4878.,
@@ -232,7 +234,10 @@ if __name__ == "__main__":
 
     # Optimize yaw angles while ignoring neighboring farm
     fi_opt_subset = fi_opt.copy()
-    fi_opt_subset.reinitialize(layout_x= fi.layout_x[turbs_to_opt], layout_y = fi.layout_y[turbs_to_opt])
+    fi_opt_subset.reinitialize(
+        layout_x = fi.layout_x[turbs_to_opt],
+        layout_y = fi.layout_y[turbs_to_opt]
+    )
     yaw_opt_interpolant_nonb = optimize_yaw_angles(fi_opt=fi_opt_subset)
 
     # Use interpolant to get optimal yaw angles for fi_AEP object
@@ -261,8 +266,14 @@ if __name__ == "__main__":
     )
     uplift_subset_nonb = 100.0 * (aep_opt_subset_nonb - aep_bl_subset) / aep_bl_subset
     uplift_subset = 100.0 * (aep_opt_subset - aep_bl_subset) / aep_bl_subset
-    print("Optimized AEP for subset farm (including neighbor farms' wakes): {:.3f} GWh (+{:.2f}%).".format(aep_opt_subset_nonb, uplift_subset_nonb))
-    print("Optimized AEP for subset farm (ignoring neighbor farms' wakes): {:.3f} GWh (+{:.2f}%).".format(aep_opt_subset, uplift_subset))
+    print(
+        "Optimized AEP for subset farm (including neighbor farms' wakes): "
+        f"{aep_opt_subset_nonb:.3f} GWh (+{uplift_subset_nonb:.2f}%)."
+    )
+    print(
+        "Optimized AEP for subset farm (ignoring neighbor farms' wakes): "
+        f"{aep_opt_subset:.3f} GWh (+{uplift_subset:.2f}%)."
+    )
     print("===========================================================")
     print(" ")
 

@@ -12,9 +12,11 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import numpy as np
 
-from floris.tools import FlorisInterface, WindRose, wind_rose
 import floris.tools.visualization as wakeviz
+from floris.tools import FlorisInterface, WindRose
+
 
 """
 This example demonstrates how to calculate the Annual Energy Production (AEP)
@@ -41,7 +43,8 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model
 # floris object and assign the layout, wind speed and wind direction arrays.
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
-    layout=[[0.0, 5* D, 10 * D], [0.0, 0.0, 0.0]]
+    layout_x=[0.0, 5* D, 10 * D],
+    layout_y=[0.0, 0.0, 0.0],
 )
 
 # Compute the AEP using the default settings
@@ -60,6 +63,15 @@ aep = fi.get_farm_AEP_wind_rose_class(
     cut_out_wind_speed=25.0,  # Wakes are not evaluated above this wind speed
 )
 print("Farm AEP (with cut_in/out specified): {:.3f} GWh".format(aep / 1.0e9))
+
+# Compute the AEP a final time, this time marking one of the turbines as
+# belonging to another farm by setting its weight to 0
+turbine_weights = np.array([1.0, 1.0, 0.0])
+aep = fi.get_farm_AEP_wind_rose_class(
+    wind_rose=wind_rose,
+    turbine_weights= turbine_weights
+)
+print("Farm AEP (one turbine removed from power calculation): {:.3f} GWh".format(aep / 1.0e9))
 
 # Finally, we can also compute the AEP while ignoring all wake calculations.
 # This can be useful to quantity the annual wake losses in the farm. Such

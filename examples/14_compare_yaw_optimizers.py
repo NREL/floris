@@ -13,21 +13,24 @@
 # See https://floris.readthedocs.io for documentation
 
 from time import perf_counter as timerpc
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
+
 from floris.tools import FlorisInterface
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import (
-    YawOptimizationScipy
-)
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
-    YawOptimizationSR
-)
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 """
 This example compares the SciPy-based yaw optimizer with the new Serial-Refine optimizer.
 
-First, we initialize our Floris Interface, and then generate a 3 turbine wind farm. Next, we create two yaw optimization objects, `yaw_opt_sr` and `yaw_opt_scipy` for the Serial-Refine and SciPy methods, respectively. We then perform the optimization using both methods. Finally, we compare the time it took to find the optimal angles and plot the optimal yaw angles and resulting wind farm powers.
+First, we initialize our Floris Interface, and then generate a 3 turbine wind farm.
+Next, we create two yaw optimization objects, `yaw_opt_sr` and `yaw_opt_scipy` for the
+Serial-Refine and SciPy methods, respectively.
+We then perform the optimization using both methods.
+Finally, we compare the time it took to find the optimal angles and plot the optimal yaw angles
+and resulting wind farm powers.
 """
 
 # Load the default example floris object
@@ -39,7 +42,7 @@ D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=np.arange(0.0, 360.0, 3.0), 
+    wind_directions=np.arange(0.0, 360.0, 3.0),
     wind_speeds=[8.0],
 )
 
@@ -76,9 +79,25 @@ for t in range(3):
 
 # Power results
 fig, ax = plt.subplots()
-ax.plot(df_opt_sr.wind_direction,df_opt_sr.farm_power_baseline,color='k',label='Baseline')
-ax.plot(df_opt_sr.wind_direction,df_opt_sr.farm_power_opt,color='r',label='Optimized, Serial Refine')
-ax.plot(df_opt_scipy.wind_direction,df_opt_scipy.farm_power_opt,'--', color='g', label='Optimized, SciPy')
+ax.plot(
+    df_opt_sr.wind_direction,
+    df_opt_sr.farm_power_baseline,
+    color='k',
+    label='Baseline'
+)
+ax.plot(
+    df_opt_sr.wind_direction,
+    df_opt_sr.farm_power_opt,
+    color='r',
+    label='Optimized, Serial Refine'
+)
+ax.plot(
+    df_opt_scipy.wind_direction,
+    df_opt_scipy.farm_power_opt,
+    '--',
+    color='g',
+    label='Optimized, SciPy'
+)
 ax.set_ylabel('Wind Farm Power (W)')
 ax.set_xlabel('Wind Direction (deg)')
 ax.legend()

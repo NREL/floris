@@ -13,11 +13,11 @@
 # See https://floris.readthedocs.io for documentation
 
 import numpy as np
-from scipy.stats import norm
 from scipy.optimize import minimize
+from scipy.stats import norm
 
-from .optimization import Optimization
 from .derive_downstream_turbines import derive_downstream_turbines
+from .optimization import Optimization
 
 
 class YawOptimization(Optimization):
@@ -82,7 +82,7 @@ class YawOptimization(Optimization):
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -385,7 +385,7 @@ class YawOptimization(Optimization):
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -473,7 +473,8 @@ class YawOptimization(Optimization):
             ]
             if any(np.abs(self.yaw_angles_baseline) > 0.0):
                 print(
-                    "INFO: Baseline yaw angles were not specified and were derived from the floris object."
+                    "INFO: Baseline yaw angles were not specified and were derived "
+                    "from the floris object."
                 )
                 print(
                     "INFO: The inherent yaw angles in the floris object are not all 0.0 degrees."
