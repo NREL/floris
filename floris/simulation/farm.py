@@ -49,8 +49,8 @@ class Farm(BaseClass):
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
-    turbine_type: List = field()
     turbine_library: Path = field(default=default_turbine_library, converter=convert_to_path)
+    turbine_type: List = field()
 
     turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
