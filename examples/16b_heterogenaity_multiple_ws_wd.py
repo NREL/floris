@@ -77,3 +77,7 @@ print('With wind directions now set to 270 and 275 deg')
 print(f'T0: {turbine_powers[:,:,0].flatten()} kW')
 print(f'T1: {turbine_powers[:,:,1].flatten()} kW')
 
+# Note if we change wind directions to 3 without a matching change to het map we get an error
+fi.reinitialize(wind_directions=[270,275, 280], wind_speeds=[8.])
+fi.calculate_wake()
+turbine_powers = np.round(fi.get_turbine_powers()/1000.)
