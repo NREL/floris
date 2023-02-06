@@ -515,7 +515,7 @@ class YawOptimization:
                 "wind_direction": self.fi.floris.flow_field.wind_directions,
                 "wind_speed": wind_speed * np.ones(num_wind_directions),
                 "turbulence_intensity": ti * np.ones(num_wind_directions),
-                "yaw_angles_opt": [yaw_angles for yaw_angles in self.yaw_angles_opt[:, ii, :]],
+                "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
                 "farm_power_opt": self.farm_power_opt[:, ii],
                 "farm_power_baseline": self.farm_power_baseline[:, ii],
             }))

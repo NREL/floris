@@ -49,9 +49,9 @@ class JimenezVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+        }
         return kwargs
 
     # @profile

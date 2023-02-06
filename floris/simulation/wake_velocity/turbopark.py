@@ -65,12 +65,12 @@ class TurbOParkVelocityDeficit(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            u_initial=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "u_initial": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     # @profile

@@ -249,7 +249,7 @@ def visualize_layout(
             df_turbine.loc[t1].y + label_offset,
             df_turbine.turbine_names.values[t1],
             ha="center",
-            bbox=dict(boxstyle="round", ec=ec_color, fc="white")
+            bbox={"boxstyle": "round", "ec": ec_color, "fc": "white"}
         )
 
     ax.set_aspect("equal")
@@ -388,7 +388,7 @@ def label_line(
             color=line.get_color(),
             ha="center",
             va="center",
-            bbox=dict(ec="1", fc="1", alpha=0.8),
+            bbox={"ec": "1", "fc": "1", "alpha": 0.8},
         )
 
     # extract line data

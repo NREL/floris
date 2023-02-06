@@ -260,7 +260,7 @@ def stacked_plot(x, groups, x_bins, ax, color_array=None):
         if num_points > 0:
             for g_idx, g in enumerate(group_vals):
                 p_array[g_idx, x_idx] = np.sum(g_bin == g)  # / float(num_points)
-    p = list()
+    p = []
 
     if color_array is not None:
         p.append(
@@ -329,7 +329,7 @@ def stacked_percent_plot(x, groups, x_bins, ax, color_array=None):
         if num_points > 0:
             for g_idx, g in enumerate(group_vals):
                 p_array[g_idx, x_idx] = np.sum(g_bin == g) / float(num_points)
-    p = list()
+    p = []
 
     if color_array is not None:
         p.append(

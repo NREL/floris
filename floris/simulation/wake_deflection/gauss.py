@@ -88,13 +88,13 @@ class GaussVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            freestream_velocity=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "freestream_velocity": flow_field.u_initial_sorted,
+            "wind_veer": flow_field.wind_veer,
+        }
         return kwargs
 
     # @profile

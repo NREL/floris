@@ -333,9 +333,9 @@ def show_torque_curve(turbine_dict, ax, label="_nolegend_"):
 def generate_base_lut(rotor, turbine_dict):
 
     # These dicts (keyed on yaw)
-    cp_dict = dict()
-    ct_dict = dict()
-    cq_dict = dict()
+    cp_dict = {}
+    ct_dict = {}
+    cq_dict = {}
 
     # for now, assume only one yaw angle, perhaps expand later
     yaw = 0.0
@@ -613,9 +613,9 @@ def get_steady_state(
 def get_wind_sweep_steady_values(turbine_dict, rotor, ws_array=np.arange(3, 21, 1.0)):
 
     # Get the steady values
-    pow_array = list()
-    cp_array = list()
-    ct_array = list()
+    pow_array = []
+    cp_array = []
+    ct_array = []
 
     for ws in ws_array:
         print(ws)

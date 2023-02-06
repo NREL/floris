@@ -97,7 +97,7 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
         settings in v3.0-compatible format.
     """
     # Simple entries that can just be copied over
-    dict_floris = dict()  # Output dictionary
+    dict_floris = {}  # Output dictionary
     dict_floris["name"] = dict_legacy["name"] + " (auto-converted to v3)"
     dict_floris["description"] = dict_legacy["description"]
     dict_floris["floris_version"] = "v3.0 (converted from legacy format v2)"

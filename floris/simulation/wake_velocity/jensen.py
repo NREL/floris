@@ -57,11 +57,11 @@ class JensenVelocityDeficit(BaseModel):
         do not use this function and instead pass that data directly to
         the model function.
         """
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+        }
         return kwargs
 
     # @profile

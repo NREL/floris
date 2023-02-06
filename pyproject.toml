@@ -28,14 +28,14 @@ target-version = "py310"
 
 # See https://github.com/charliermarsh/ruff#supported-rules
 # for rules included and matching to prefix.
-select = ["E", "F", "W"]
+select = ["F", "E", "W", "C4"]
 
 # F401 unused-import: Ignore until all used isort flags are adopted in ruff
 ignore = ["F401"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 # fixable = ["A", "B", "C", "D", "E", "F"]
-fixable = ["E", "F", "W"]
+fixable = ["F", "E", "W", "C4"]
 unfixable = []
 
 # Exclude a variety of commonly ignored directories.

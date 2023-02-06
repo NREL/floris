@@ -309,7 +309,7 @@ class PowerThrustTable(FromDictMixin):
         if any(el.ndim > 1 for el in inputs):
             raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
 
-        if len( set( (self.power.size, self.thrust.size, self.wind_speed.size) ) ) > 1:        
+        if len( {self.power.size, self.thrust.size, self.wind_speed.size} ) > 1:        
             raise ValueError("power, thrust, and wind_speed tables must be the same size.")
         
         # Remove any duplicate wind speed entries

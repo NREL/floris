@@ -727,7 +727,7 @@ class YawOptimizationWindRose(Optimization):
 
         # Put results in dict for speed, instead of previously
         # appending to frame.
-        result_dict = dict()
+        result_dict = {}
 
         for i in range(len(self.wd)):
             if self.verbose:
