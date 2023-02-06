@@ -90,12 +90,12 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
 
     # Now map FLORIS solutions to dataframe
     interpolant = NearestNDInterpolator(
-        np.vstack([X.flatten(), Y.flatten()]).T, 
+        np.vstack([X.flatten(), Y.flatten()]).T,
         farm_power_array.flatten()
     )
     df_windrose[column_name] = interpolant(df_windrose[["wd", "ws"]])  # Save to dataframe
     df_windrose[column_name] = df_windrose[column_name].fillna(0.0)  # Replace NaNs with 0.0
-    
+
     # Calculate AEP in GWh
     aep = np.dot(df_windrose["freq_val"], df_windrose[column_name]) * 365 * 24 / 1e9
 

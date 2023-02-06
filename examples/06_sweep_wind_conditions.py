@@ -22,12 +22,12 @@ from floris.tools import FlorisInterface
 """
 06_sweep_wind_conditions
 
-This example demonstrates vectorization of wind speed and wind direction.  
+This example demonstrates vectorization of wind speed and wind direction.
 When the intialize function is passed an array of wind speeds and an
 array of wind directions it automatically expands the vectors to compute
 the result of all combinations.
 
-This calculation is performed for a single-row 5 turbine farm.  In addition 
+This calculation is performed for a single-row 5 turbine farm.  In addition
 to plotting the powers of the individual turbines, an energy by turbine
 calculation is made and plotted by summing over the wind speed and wind direction
 axes of the power matrix returned by get_turbine_powers()
@@ -56,7 +56,7 @@ fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
 num_wd = len(wd_array)
 num_ws = len(ws_array)
 num_turbine = len(layout_x)
-yaw_angles = np.zeros((num_wd, num_ws, num_turbine)) 
+yaw_angles = np.zeros((num_wd, num_ws, num_turbine))
 
 # Calculate
 fi.calculate_wake(yaw_angles=yaw_angles)

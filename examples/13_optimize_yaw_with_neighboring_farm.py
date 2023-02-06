@@ -44,7 +44,7 @@ def load_floris():
 
     # Specify the full wind farm layout: nominal and neighboring wind farms
     X = np.array(
-        [ 
+        [
                0.,   756.,  1512.,  2268.,  3024.,     0.,   756.,  1512.,
             2268.,  3024.,     0.,   756.,  1512.,  2268.,  3024.,     0.,
              756.,  1512.,  2268.,  3024.,  4500.,  5264.,  6028.,  4878.,

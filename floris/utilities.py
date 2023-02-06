@@ -42,7 +42,7 @@ class Vec3:
     # NOTE: this does not convert elements to float if they are given as int. Is this ok?
 
     @components.validator
-    def _check_components(self, attribute, value) -> None:        
+    def _check_components(self, attribute, value) -> None:
         if np.ndim(value) > 1:
             raise ValueError(
                 f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given."
@@ -184,7 +184,7 @@ def wrap_360(x):
     Returns:
         np.ndarray | float | int: Shifted values.
     """
-    
+
     return x % 360.0
 
 

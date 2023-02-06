@@ -119,7 +119,7 @@ class Farm(BaseClass):
                 # This is a temporary block of code that catches that ref_density_cp_ct
                 # is not defined in the yaml file and forces it in
                 # A warning is issued letting the user know in future versions defining
-                # this value explicitly will be required 
+                # this value explicitly will be required
                 if "ref_density_cp_ct" not in self.turbine_definitions[i]:
                     self.logger.warn(
                         f"The value ref_density_cp_ct is not defined in the file {fname}."

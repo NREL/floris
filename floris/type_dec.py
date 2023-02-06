@@ -196,4 +196,3 @@ class FromDictMixin:
 #     kw_only=True,
 # )
 # update_wrapper(int_attrib, attr.ib)
-

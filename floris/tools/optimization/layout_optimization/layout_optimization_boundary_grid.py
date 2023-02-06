@@ -42,7 +42,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         boundary_spacing=None,
     ):
         self.fi = fi
-        
+
         self.boundary_x = np.array([val[0] for val in boundaries])
         self.boundary_y = np.array([val[1] for val in boundaries])
         boundary = np.zeros((len(self.boundary_x), 2))
@@ -224,7 +224,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         d = np.array([i for x in xlocs for i in row_number])
         layout_x = np.array([x for x in xlocs for y in ylocs]) + d*y_spacing*np.tan(shear)
         layout_y = np.array([y for x in xlocs for y in ylocs])
-        
+
         # rotate
         rotate_x = np.cos(rotation)*layout_x - np.sin(rotation)*layout_y
         rotate_y = np.sin(rotation)*layout_x + np.cos(rotation)*layout_y
@@ -243,7 +243,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         # arrange final x,y points
         return_x = rotate_x[meets_constraints]
         return_y = rotate_y[meets_constraints]
-    
+
         return return_x, return_y
 
     def find_lengths(self, x, y, npoints):
@@ -327,7 +327,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         nBounds = len(xBounds)
         lenBound = self.find_lengths(xBounds, yBounds, len(xBounds) - 1)
         circumference = sum(lenBound)
-        
+
         if nturbs is not None and spacing is None:
             # When the number of boundary turbines is specified
             nturbs = int(nturbs)

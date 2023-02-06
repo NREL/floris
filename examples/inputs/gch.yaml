@@ -98,7 +98,7 @@ flow_field:
   ###
   # Air density.
   air_density: 1.225
-  
+
   ###
   # The height to consider the "center" of the vertical wind speed profile
   # due to shear. With a shear exponent not 1, the wind speed at this height
@@ -109,17 +109,17 @@ flow_field:
   # to use the hub height of the wind turbine definition. For multiple wind turbine
   # types, the reference wind height must be given explicitly.
   reference_wind_height: -1
-  
+
   ###
   # The level of turbulence intensity level in the wind.
   turbulence_intensity: 0.06
-  
+
   ###
   # The wind directions to include in the simulation.
   # 0 is north and 270 is west.
   wind_directions:
   - 270.0
-  
+
   ###
   # The exponent used to model the wind shear profile; see
   # :py:meth:`.FlowField.initialize_velocity_field`.
@@ -139,7 +139,7 @@ flow_field:
 wake:
 
   ###
-  # Select the models to use for the simulation. 
+  # Select the models to use for the simulation.
   # See :py:mod:`~.wake` for a list
   # of available models and their descriptions.
   model_strings:

@@ -82,13 +82,12 @@ isort dir/*
 This tool was initially configured in [PR#535](https://github.com/NREL/floris/pull/535),
 and additional information on specific decisions can be found there.
 
-
 ### Ruff
 
 [Ruff](https://github.com/charliermarsh/ruff) is a general linter and limited auto-formatter.
 It is configured in `pyproject.toml` through various `[tool.ruff.*]` blocks. It is a command line
-tool and integrations into popular IDE's are available. A typical command to run Ruff is the
-following:
+tool and integrations into popular IDE's are available. A typical command to run Ruff for all of
+FLORIS is the following:
 
 ```bash
 ruff . --fix
@@ -101,6 +100,43 @@ Ruff was initially configured in [PR#562](https://github.com/NREL/floris/pull/56
 in more detail in [D#561](https://github.com/NREL/floris/discussions/561). See the Ruff
 documentation for a list of [supported rules](https://github.com/charliermarsh/ruff#supported-rules)
 and [available options for various rules](https://github.com/charliermarsh/ruff#reference).
+
+### Pre-commit
+
+[Pre-commit](https://pre-commit.com) is a utility to execute a series of git-hooks to catch
+and fix formatting errors. It integrates easily with other tools, in our case isort and Ruff.
+Pre-commit is tightly integrated into git and is mostly not used directly by users.
+
+Once installed, the precommit hooks must be installed into each development environment with
+the following command from the `floris/` directory:
+
+```bash
+pre-commit install
+```
+
+Then, each commit creation with `git` will run the installed hooks and display where
+checks have failed. Pre-commit will typically modify the files directly to fix the issues. However,
+each file fixed by Pre-commit must be added to the git-commit again to capture the changes. A
+typical workflow is given below.
+
+```bash
+git add floris/simulation/turbine.py
+git commit -m "Update so and so"
+> [WARNING] Unstaged files detected.
+> [INFO] Stashing unstaged files to /Users/rafmudaf/.cache/pre-commit/patch1675722485-25489.
+> isort....................................................................Failed
+> - hook id: isort
+> - files were modified by this hook
+>
+> Fixing /Users/rafmudaf/Development/floris/floris/simulation/turbine.py
+
+# Check that the error is fixed or fixed it manually
+git status
+
+# Stage the new changes and commit
+git add floris/simulation/turbine.py
+git commit -m "Update so and so"
+```
 
 ## Testing
 

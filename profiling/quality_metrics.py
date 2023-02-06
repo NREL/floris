@@ -98,7 +98,7 @@ def memory_profile(input_dict):
     floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
-    
+
     with perf():
         for i in range(N_ITERATIONS):
             floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
@@ -115,7 +115,7 @@ def test_mem_jensen_jimenez(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = "jensen"
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = "jimenez"
     memory_profile(sample_inputs_fixture)
-    
+
 
 if __name__=="__main__":
     warnings.filterwarnings('ignore')
@@ -131,7 +131,7 @@ if __name__=="__main__":
     print()
     print("### Memory profiling")
     test_mem_jensen_jimenez(sample_inputs)
-    
+
     print()
     print("### Performance profiling")
     time_jensen = test_time_jensen_jimenez(sample_inputs)
