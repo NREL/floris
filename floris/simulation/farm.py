@@ -49,8 +49,8 @@ class Farm(BaseClass):
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
-    turbine_library: Path = field(default=default_turbine_library, converter=convert_to_path)
     turbine_type: List = field()
+    turbine_library: Path = field(default=default_turbine_library, converter=convert_to_path)
 
     turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
@@ -63,6 +63,9 @@ class Farm(BaseClass):
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+
+    def __attrs_post_init__(self) -> None:
+        self.check_turbine_type()
 
     @layout_x.validator
     def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
@@ -80,19 +83,18 @@ class Farm(BaseClass):
         if not value.is_dir():
             raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
 
-    @turbine_type.validator
-    def check_turbine_type(self, attribute: attrs.Attribute, value: Any) -> None:
-        if len(value) != len(self.layout_x):
-            if len(value) == 1:
-                value = self.turbine_type * len(self.layout_x)
+    def check_turbine_type(self) -> None:
+        if len(self.turbine_type) != len(self.layout_x):
+            if len(self.turbine_type) == 1:
+                self.turbine_type *= len(self.layout_x)
             else:
                 raise ValueError(
                     "turbine_type must have the same number of entries as layout_x/layout_y or have"
                     " a single turbine_type value."
                 )
 
-        self.turbine_definitions = copy.deepcopy(value)
-        for i, val in enumerate(value):
+        self.turbine_definitions = copy.deepcopy(self.turbine_type)
+        for i, val in enumerate(self.turbine_type):
             if type(val) is str:
                 fname = (self.turbine_library / val).with_suffix(".yaml")
                 if not fname.is_file():
@@ -126,7 +128,7 @@ class Farm(BaseClass):
 
         # If the user specified the default location, do not check against duplicated definitions
         if self.turbine_library != default_turbine_library:
-            unique_turbines = np.unique(value)
+            unique_turbines = np.unique(self.turbine_type)
             for turbine_fn in unique_turbines:
                 in_external = (self.turbine_library / turbine_fn).with_suffix(".yaml").exists()
                 in_internal = (default_turbine_library / turbine_fn).with_suffix(".yaml").exists()
