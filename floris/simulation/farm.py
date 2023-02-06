@@ -87,7 +87,10 @@ class Farm(BaseClass):
         if len(self.turbine_type) != len(self.layout_x):
             if len(self.turbine_type) == 1:
                 self.turbine_type *= len(self.layout_x)
+            elif np.unique(self.turbine_type).size == 1:
+                self.turbine_type = [self.turbine_type[0]] * len(self.layout_x)
             else:
+                print(self.turbine_type)
                 raise ValueError(
                     "turbine_type must have the same number of entries as layout_x/layout_y or have"
                     " a single turbine_type value."
