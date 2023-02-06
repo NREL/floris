@@ -12,7 +12,11 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from copy import deepcopy
+from pathlib import Path
+
 import numpy as np
+import pytest
 
 from floris.simulation import Farm
 from floris.utilities import Vec3
@@ -68,3 +72,33 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2
+
+
+def test_farm_external_library(sample_inputs_fixture: SampleInputs):
+    external_library = Path(__file__).parent / "data"
+
+    # Demonstrate a passing case
+    farm_data = deepcopy(SampleInputs().farm)
+    farm_data["turbine_library"] = external_library
+    farm_data["turbine_type"] = ["nrel_5MW_custom"] * len(farm_data["layout_x"])
+    farm = Farm.from_dict(farm_data)
+    assert farm.turbine_library == external_library
+
+    # Demonstrate a failing case with an incorrect library location
+    farm_data["turbine_library"] = external_library / "turbine_library"
+    with pytest.raises(FileExistsError):
+        Farm.from_dict(farm_data)
+
+    # Demonstrate a failing case where a user expects the FLORIS data when not using the default
+    farm_data["turbine_library"] = external_library
+    farm_data["turbine_type"] = ["iea_10MW"] * len(farm_data["layout_x"])
+    with pytest.raises(FileNotFoundError):
+        Farm.from_dict(farm_data)
+
+    # Demonstrate a failing case where there is a duplicated turbine between the internal
+    # and external turbine libraries
+    farm_data = deepcopy(SampleInputs().farm)
+    farm_data["turbine_library"] = external_library
+    farm_data["turbine_type"] = ["nrel_5MW"] * len(farm_data["layout_x"])
+    with pytest.raises(ValueError):
+        Farm.from_dict(farm_data)
