@@ -18,10 +18,10 @@ import re
 import numpy as np
 import pandas as pd
 
+from ..logging_manager import LoggerBase
+from ..utilities import Vec3
 from .cut_plane import CutPlane, get_plane_from_flow_data
 from .flow_data import FlowData
-from ..utilities import Vec3
-from ..logging_manager import LoggerBase
 
 
 class SowfaInterface(LoggerBase):
@@ -299,7 +299,7 @@ class SowfaInterface(LoggerBase):
         Returns:
             pow_list (numpy array): an array of powers per turbine
         """
-        pow_list = list()
+        pow_list = []
         for t in range(self.num_turbines):
             df_sub = self.turbine_output[self.turbine_output.turbine == t]
             pow_list.append(df_sub.powerGenerator.mean())
@@ -327,7 +327,7 @@ class SowfaInterface(LoggerBase):
         Returns:
             pow_list (numpy array): an array of thrust per turbine
         """
-        thrust_list = list()
+        thrust_list = []
         for t in range(self.num_turbines):
             df_sub = self.turbine_output[self.turbine_output.turbine == t]
             thrust_list.append(df_sub.thrust.mean())
@@ -570,8 +570,8 @@ def get_turbine_locations(turbine_array_file):
         layout_x (np.array): wind plant layout coodinates (east-west).
         layout_y (np.array): wind plant layout coodinates (north-south).
     """
-    x = list()
-    y = list()
+    x = []
+    y = []
 
     with open(turbine_array_file, "r") as f:
         for line in f:
@@ -599,7 +599,7 @@ def get_turbine_pitch_angles(turbine_array_file):
     Returns:
         p (np.array): blade pitch info.
     """
-    p = list()
+    p = []
 
     with open(turbine_array_file, "r") as f:
         for line in f:
@@ -625,7 +625,7 @@ def get_turbine_yaw_angles(turbine_array_file, wind_direction=270.0):
     Returns:
         y (np.array): wind turbine yaw info.
     """
-    y = list()
+    y = []
 
     with open(turbine_array_file, "r") as f:
         for line in f:

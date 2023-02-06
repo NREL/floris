@@ -15,12 +15,16 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-import numexpr as ne
-from attrs import field, define
-from numpy import pi, add, exp, log, sqrt  # noqa: F401
+from attrs import define, field
 
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
 from floris.utilities import cosd, sind
-from floris.simulation import Grid, BaseModel, FlowField
 
 
 @define
@@ -65,7 +69,7 @@ class GaussVelocityDeflection(BaseModel):
                 See property on super-class for more details.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: gdm-
@@ -87,13 +91,13 @@ class GaussVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            freestream_velocity=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "freestream_velocity": flow_field.u_initial_sorted,
+            "wind_veer": flow_field.wind_veer,
+        }
         return kwargs
 
     def _initial_wake_expansion(self, tilt, yaw_i, ct_i, freestream_velocity, rotor_diameter_i, wind_veer):
@@ -180,8 +184,9 @@ class GaussVelocityDeflection(BaseModel):
         x0 = (
             rotor_diameter_i
             * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
-            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
-            + x_i
+            / (np.sqrt(2) * (
+                4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))
+            )) + x_i
         )
 
         yR = y - y_i  # noqa: F841
@@ -189,7 +194,8 @@ class GaussVelocityDeflection(BaseModel):
 
         # yaw parameters (skew angle and distance from centerline)
         # skew angle in radians
-        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i)) * (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
+        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i))
+        theta_c0 *= (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
         delta0 = np.tan(theta_c0) * (x0 - x_i)  # initial wake deflection;
         # NOTE: use np.tan here since theta_c0 is radians
 

@@ -13,12 +13,13 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Point
+import numpy as np
 from scipy.spatial.distance import cdist
+from shapely.geometry import Point
 
 from .layout_optimization_base import LayoutOptimization
+
 
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
     def __init__(
@@ -81,9 +82,20 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
             self.sol = self.opt(self.optProb, sens=self._sens)
         else:
             if self.timeLimit is not None:
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, timeLimit=self.timeLimit, hotStart=self.hotStart)
+                self.sol = self.opt(
+                    self.optProb,
+                    sens="CDR",
+                    storeHistory=self.storeHistory,
+                    timeLimit=self.timeLimit,
+                    hotStart=self.hotStart
+                )
             else:
-                self.sol = self.opt(self.optProb, sens="CDR", storeHistory=self.storeHistory, hotStart=self.hotStart)
+                self.sol = self.opt(
+                    self.optProb,
+                    sens="CDR",
+                    storeHistory=self.storeHistory,
+                    hotStart=self.hotStart
+                )
         return self.sol
 
     def _obj_func(self, varDict):
@@ -166,7 +178,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         for i in range(self.nturbs):
             loc = Point(x[i], y[i])
             boundary_con[i] = loc.distance(self._boundary_line)
-            if self._boundary_polygon.contains(loc)==True:
+            if self._boundary_polygon.contains(loc) is True:
                 boundary_con[i] *= -1.0
 
         return boundary_con

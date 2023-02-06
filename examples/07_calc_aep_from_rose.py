@@ -16,7 +16,9 @@
 import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
+
 from floris.tools import FlorisInterface
+
 
 """
 This example demonstrates how to calculate the Annual Energy Production (AEP)

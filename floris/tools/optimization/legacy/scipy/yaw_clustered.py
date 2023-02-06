@@ -17,9 +17,9 @@ import copy
 import numpy as np
 import pandas as pd
 
-from .yaw import YawOptimization
-from .cluster_turbines import cluster_turbines
 from ....logging_manager import LoggerBase
+from .cluster_turbines import cluster_turbines
+from .yaw import YawOptimization
 
 
 class YawOptimizationClustered(YawOptimization, LoggerBase):
@@ -92,7 +92,7 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to
@@ -214,7 +214,7 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
             wake_slope=self.clustering_wake_slope,
             plot_lines=True
         )
-        
+
     def optimize(self, verbose=True):
         """
         This method solves for the optimum turbine yaw angles for power
@@ -278,7 +278,7 @@ class YawOptimizationClustered(YawOptimization, LoggerBase):
                 np.array(fi_full.layout_y)
             ]
         )
-    
+
         if verbose and np.sum(np.abs(opt_yaw_angles)) == 0:
             print(
                 "No change in controls suggested for this inflow \

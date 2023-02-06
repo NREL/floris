@@ -16,28 +16,29 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+
 import yaml
-from floris.utilities import load_yaml
+from attrs import define, field
 
 import floris.logging_manager as logging_manager
 from floris.simulation import (
     BaseClass,
+    cc_solver,
     Farm,
-    WakeModelManager,
     FlowField,
-    Grid,
-    TurbineGrid,
     FlowFieldGrid,
     FlowFieldPlanarGrid,
-    State,
-    sequential_solver,
-    cc_solver,
-    turbopark_solver,
-    full_flow_sequential_solver,
     full_flow_cc_solver,
+    full_flow_sequential_solver,
     full_flow_turbopark_solver,
+    Grid,
+    sequential_solver,
+    State,
+    TurbineGrid,
+    turbopark_solver,
+    WakeModelManager,
 )
-from attrs import define, field
+from floris.utilities import load_yaml
 
 
 @define
@@ -110,12 +111,15 @@ class Floris(BaseClass):
             )
         else:
             raise ValueError(
-                f"Supported solver types are [turbine_grid, flow_field_grid], but type given was {self.solver['type']}"
+                f"Supported solver types are [turbine_grid, flow_field_grid],"
+                f" but type given was {self.solver['type']}"
             )
 
         if type(self.grid) == TurbineGrid:
             self.farm.expand_farm_properties(
-                self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds, self.grid.sorted_coord_indices
+                self.flow_field.n_wind_directions,
+                self.flow_field.n_wind_speeds,
+                self.grid.sorted_coord_indices
             )
 
         # Configure logging

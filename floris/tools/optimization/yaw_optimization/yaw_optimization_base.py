@@ -19,10 +19,7 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from .yaw_optimization_tools import (
-    derive_downstream_turbines,
-    find_layout_symmetry,
-)
+from .yaw_optimization_tools import derive_downstream_turbines, find_layout_symmetry
 
 
 class YawOptimization:
@@ -136,10 +133,12 @@ class YawOptimization:
             self.yaw_angles_baseline = self._unpack_variable(b)
             if np.any(np.abs(b) > 0.0):
                 print(
-                    "INFO: Baseline yaw angles were not specified and were derived from the floris object."
+                    "INFO: Baseline yaw angles were not specified and "
+                    "were derived from the floris object."
                 )
                 print(
-                    "INFO: The inherent yaw angles in the floris object are not all 0.0 degrees."
+                    "INFO: The inherent yaw angles in the floris object "
+                    "are not all 0.0 degrees."
                 )
 
         # Set optimization bounds
@@ -231,7 +230,9 @@ class YawOptimization:
             )
 
         if len(np.shape(variable)) == 2:
-            raise UserWarning("Variable input must have shape (n_wind_directions, n_wind_speeds, nturbs)")
+            raise UserWarning(
+                "Variable input must have shape (n_wind_directions, n_wind_speeds, nturbs)"
+            )
 
         return variable
 
@@ -328,8 +329,14 @@ class YawOptimization:
         ub = np.max(self._maximum_yaw_angle_subset)
         self._normalization_length = (ub - lb)
         self._x0_subset_norm = self._x0_subset / self._normalization_length
-        self._minimum_yaw_angle_subset_norm = self._minimum_yaw_angle_subset / self._normalization_length
-        self._maximum_yaw_angle_subset_norm = self._maximum_yaw_angle_subset / self._normalization_length
+        self._minimum_yaw_angle_subset_norm = (
+            self._minimum_yaw_angle_subset
+            / self._normalization_length
+        )
+        self._maximum_yaw_angle_subset_norm = (
+            self._maximum_yaw_angle_subset
+            / self._normalization_length
+        )
 
     def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None):
         """
@@ -424,7 +431,7 @@ class YawOptimization:
 
             wd_array = self.fi.floris.flow_field.wind_directions
             sym_step = df.iloc[0]["wd_range"][1]
-            if ((not 0.0 in wd_array) or(not sym_step in wd_array)):
+            if ((0.0 not in wd_array) or(sym_step not in wd_array)):
                 print("Floris wind direction array does not " +
                       "intersect {:.1f} and {:.1f}.".format(0.0, sym_step))
                 print("Exploitation of symmetry has been disabled.")
@@ -439,9 +446,9 @@ class YawOptimization:
                 print("Exploitation of symmetry has been disabled.")
 
             self._sym_mapping_extrap = np.array(
-                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0] 
+                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0]
                 for x in wd_array_remn], dtype=int)
-            
+
             self._sym_mapping_reduce = copy.deepcopy(ids_minimal)
             self._sym_df = df
 
@@ -451,7 +458,7 @@ class YawOptimization:
         # Check if needed to un-reduce at all, if not, return directly
         if not self.exploit_layout_symmetry:
             return variable
-    
+
         if self._sym_df is None:
             return variable
 
@@ -508,7 +515,7 @@ class YawOptimization:
                 "wind_direction": self.fi.floris.flow_field.wind_directions,
                 "wind_speed": wind_speed * np.ones(num_wind_directions),
                 "turbulence_intensity": ti * np.ones(num_wind_directions),
-                "yaw_angles_opt": [yaw_angles for yaw_angles in self.yaw_angles_opt[:, ii, :]],
+                "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
                 "farm_power_opt": self.farm_power_opt[:, ii],
                 "farm_power_baseline": self.farm_power_baseline[:, ii],
             }))
@@ -572,8 +579,7 @@ class YawOptimization:
         ids = np.where((ydiff < min_yaw_offset) & (ydiff > 0.0))
         if len(ids[0]) > 0:
             if verbose:
-                print("Rounding {:d} insignificant yaw angles to their " +
-                "baseline value.".format(len(ids)))
+                print(f"Rounding {len(ids)} insignificant yaw angles to their baseline value.")
             yaw_angles_opt_subset[ids] = yaw_angles_baseline_subset[ids]
             ydiff[ids] = 0.0
 

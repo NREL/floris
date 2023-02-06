@@ -13,11 +13,16 @@
 from typing import Any, Dict
 
 import numpy as np
-import numexpr as ne
-from attrs import field, define
+from attrs import define, field
 
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
 from floris.utilities import cosd, sind
-from floris.simulation import Farm, Grid, Turbine, BaseModel, FlowField
 
 
 @define
@@ -45,7 +50,7 @@ class CrespoHernandez(BaseModel):
                 turbulence.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: cht-

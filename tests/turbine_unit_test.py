@@ -18,9 +18,15 @@ import numpy as np
 import pytest
 from scipy.interpolate import interp1d
 
-from tests.conftest import WIND_SPEEDS, SampleInputs
-from floris.simulation import Ct, Turbine, power, axial_induction, average_velocity
-from floris.simulation.turbine import PowerThrustTable, _filter_convert
+from floris.simulation import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    power,
+    Turbine,
+)
+from floris.simulation.turbine import _filter_convert, PowerThrustTable
+from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
 # size 3 x 4 x 1 x 1 x 1
@@ -68,9 +74,18 @@ def test_turbine_init():
 
     pt_data = turbine_data["power_thrust_table"]
     assert isinstance(turbine.power_thrust_table, PowerThrustTable)
-    np.testing.assert_allclose(turbine.power_thrust_table.power, np.array(pt_data["power"]))
-    np.testing.assert_allclose(turbine.power_thrust_table.thrust, np.array(pt_data["thrust"]))
-    np.testing.assert_allclose(turbine.power_thrust_table.wind_speed, np.array(pt_data["wind_speed"]))
+    np.testing.assert_allclose(
+        turbine.power_thrust_table.power,
+        np.array(pt_data["power"])
+    )
+    np.testing.assert_allclose(
+        turbine.power_thrust_table.thrust,
+        np.array(pt_data["thrust"])
+    )
+    np.testing.assert_allclose(
+        turbine.power_thrust_table.wind_speed,
+        np.array(pt_data["wind_speed"])
+    )
 
     assert isinstance(turbine.fCp_interp, interp1d)
     assert isinstance(turbine.fCt_interp, interp1d)
@@ -178,9 +193,11 @@ def test_average_velocity():
     velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,1,4,3,3)
         [i * np.ones((1, 1, 3, 3)) for i in range(1,5)],
         # (
+        #     # The first dimension here is the wind direction
+        #     # and second is the wind speed since we are stacking on axis=2
         #     np.ones(
         #         (1, 1, 3, 3)
-        #     ),  # The first dimension here is the wind direction and second is the wind speed since we are stacking on axis=2
+        #     ),
         #     2 * np.ones((1, 1, 3, 3)),
         #     3 * np.ones((1, 1, 3, 3)),
         #     4 * np.ones((1, 1, 3, 3)),
@@ -243,7 +260,10 @@ def test_ct():
 
     for i in range(len(INDEX_FILTER)):
         truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(WIND_SPEEDS[0])
-        np.testing.assert_allclose(thrusts[0, 0, i], turbine_data["power_thrust_table"]["thrust"][truth_index])
+        np.testing.assert_allclose(
+            thrusts[0, 0, i],
+            turbine_data["power_thrust_table"]["thrust"][truth_index]
+        )
 
 
 def test_power():
@@ -271,7 +291,13 @@ def test_power():
     effective_velocity_trurth = ((AIR_DENSITY/1.225)**(1/3)) * wind_speed
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(effective_velocity_trurth)
     cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
-    power_truth = 0.5 * turbine.rotor_area * cp_truth * turbine.generator_efficiency * effective_velocity_trurth ** 3
+    power_truth = (
+        0.5
+        * turbine.rotor_area
+        * cp_truth
+        * turbine.generator_efficiency
+        * effective_velocity_trurth ** 3
+    )
     np.testing.assert_allclose(p,cp_truth,power_truth )
 
     # # Multiple turbines with ix filter
@@ -288,12 +314,19 @@ def test_power():
 
     # for i in range(len(INDEX_FILTER)):
     #     effective_velocity_trurth = ((AIR_DENSITY/1.225)**(1/3)) * WIND_SPEEDS[0]
-    #     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(effective_velocity_trurth)
+    #     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(
+    #         effective_velocity_trurth
+    #     )
     #     cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
-    #     power_truth = 0.5 * turbine.rotor_area * cp_truth * turbine.generator_efficiency * effective_velocity_trurth ** 3
+    #     power_truth = (
+    #         0.5
+    #         * turbine.rotor_area
+    #         * cp_truth
+    #         * turbine.generator_efficiency
+    #         * effective_velocity_trurth ** 3
+    #     )
     #     print(i,WIND_SPEEDS, effective_velocity_trurth, cp_truth, p[0, 0, i], power_truth)
     #     np.testing.assert_allclose(p[0, 0, i], power_truth)
-        
 
 
 def test_axial_induction():
@@ -333,7 +366,7 @@ def test_axial_induction():
 
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
-    
+
     turbine = Turbine.from_dict(sample_inputs_fixture.turbine)
     dict1 = turbine.as_dict()
 

@@ -12,12 +12,12 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import os
 from typing import Tuple
 
-from attrs import define, field
 import numpy as np
 import yaml
-import os
+from attrs import define, field
 
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
@@ -42,11 +42,15 @@ class Vec3:
     # NOTE: this does not convert elements to float if they are given as int. Is this ok?
 
     @components.validator
-    def _check_components(self, attribute, value) -> None:        
+    def _check_components(self, attribute, value) -> None:
         if np.ndim(value) > 1:
-            raise ValueError(f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given.")
+            raise ValueError(
+                f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given."
+            )
         if np.size(value) != 3:
-            raise ValueError(f"Vec3 must contain exactly 3 components, {np.size(value)} were given.")
+            raise ValueError(
+                f"Vec3 must contain exactly 3 components, {np.size(value)} were given."
+            )
 
     def __add__(self, arg):
         if type(arg) is Vec3:
@@ -164,11 +168,10 @@ def wrap_180(x):
         x (numeric or np.array): Scalar value or np.array of values to shift.
 
     Returns:
-        np.array: Shifted values.
+        np.ndarray | float | int: Shifted values.
     """
-    x = np.where(x <= -180.0, x + 360.0, x)
-    x = np.where(x > 180.0, x - 360.0, x)
-    return x
+
+    return ((x + 180.0) % 360.0) - 180.0
 
 
 def wrap_360(x):
@@ -179,11 +182,10 @@ def wrap_360(x):
         x (numeric or np.array): Scalar value or np.array of values to shift.
 
     Returns:
-        np.array: Shifted values.
+        np.ndarray | float | int: Shifted values.
     """
-    x = np.where(x < 0.0, x + 360.0, x)
-    x = np.where(x >= 360.0, x - 360.0, x)
-    return x
+
+    return x % 360.0
 
 
 def wind_delta(wind_directions):
