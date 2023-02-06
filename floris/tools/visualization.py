@@ -408,8 +408,7 @@ def calculate_horizontal_plane_with_turbines(
 
         Args:
             fi_in (:py:class:`floris.tools.floris_interface.FlorisInterface`):
-                FLORIS object.
-            height (float): Height of cut plane. Defaults to Hub-height.
+                FlorisInterface object.
             x_resolution (float, optional): Output array resolution.
                 Defaults to 200 points.
             y_resolution (float, optional): Output array resolution.
@@ -422,7 +421,7 @@ def calculate_horizontal_plane_with_turbines(
                 Defaults to None.
             ws (float, optional): Wind speed for visualization
                 Defaults to None.
-            yaw_angles ((np.ndarray), optional): Wind speed for visualization
+            yaw_angles ((np.ndarray), optional): Yaw angles for visualization
                 Defaults to None.
 
         Returns:
@@ -439,10 +438,6 @@ def calculate_horizontal_plane_with_turbines(
         if ws is None:
             ws = fi.floris.flow_field.wind_speeds
         fi.check_wind_condition_for_viz(wd=wd, ws=ws)
-
-        # # Store the current state for reinitialization
-        # floris_dict = fi.floris.as_dict()
-        # current_yaw_angles = fi.floris.farm.yaw_angles
 
         # Set the ws and wd
         fi.reinitialize(
@@ -466,7 +461,6 @@ def calculate_horizontal_plane_with_turbines(
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
         yaw_angles = np.append(yaw_angles, np.zeros([len(wd), len(ws), 1]), axis=2)
-
 
         # Get a grid of points test test
         if x_bounds is None:
