@@ -13,20 +13,18 @@
 # See https://floris.readthedocs.io for documentation
 from __future__ import annotations
 
-from typing import Union
 import copy
+from typing import Union
 
-import numpy as np
-import pandas as pd
 import matplotlib as mpl
 import matplotlib.colors as mplcolors
 import matplotlib.pyplot as plt
-
+import numpy as np
+import pandas as pd
 from matplotlib import rcParams
 
-from floris.tools.cut_plane import CutPlane
 from floris.simulation import Floris
-
+from floris.tools.cut_plane import CutPlane
 from floris.tools.floris_interface import FlorisInterface
 from floris.utilities import rotate_coordinates_rel_west
 
