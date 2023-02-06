@@ -182,8 +182,8 @@ class FlorisInterface(LoggerBase):
         # with_resolution: float | None = None,
         solver_settings: dict | None = None,
         time_series: bool | None = False,
-        het_map=None,
         layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
+        het_map=None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
