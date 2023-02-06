@@ -45,9 +45,20 @@ REQUIRED = [
 ]
 
 # What packages are optional?
+# To use: pip install -e ".[develop]" or pip install "floris[develop]"
 EXTRAS = {
-    "docs": {"readthedocs-sphinx-ext", "Sphinx", "sphinxcontrib-napoleon"},
-    "develop": {"pytest", "coverage[toml]", "pre-commit", "black", "isort"},
+    "docs": {
+        "jupyter-book",
+        "sphinx-book-theme",
+        "sphinx-autodoc-typehints",
+        "sphinxcontrib-autoyaml"
+    },
+    "develop": {
+        "pytest",
+        "pre-commit",
+        "ruff",
+        "isort"
+    },
 }
 
 ROOT = Path(__file__).parent
