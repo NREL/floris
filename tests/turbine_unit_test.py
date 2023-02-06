@@ -23,7 +23,7 @@ from floris.simulation import (
     axial_induction,
     Ct,
     power,
-    Turbine
+    Turbine,
 )
 from floris.simulation.turbine import _filter_convert, PowerThrustTable
 from tests.conftest import SampleInputs, WIND_SPEEDS

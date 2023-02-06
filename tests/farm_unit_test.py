@@ -19,7 +19,7 @@ from floris.utilities import Vec3
 from tests.conftest import (
     N_WIND_DIRECTIONS,
     N_WIND_SPEEDS,
-    SampleInputs
+    SampleInputs,
 )
 
 

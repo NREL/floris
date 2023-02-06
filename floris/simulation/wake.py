@@ -19,12 +19,12 @@ from floris.simulation import BaseClass, BaseModel
 from floris.simulation.wake_combination import (
     FLS,
     MAX,
-    SOSFS
+    SOSFS,
 )
 from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
-    NoneVelocityDeflection
+    NoneVelocityDeflection,
 )
 from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
 from floris.simulation.wake_velocity import (
@@ -32,7 +32,7 @@ from floris.simulation.wake_velocity import (
     GaussVelocityDeficit,
     JensenVelocityDeficit,
     NoneVelocityDeficit,
-    TurbOParkVelocityDeficit
+    TurbOParkVelocityDeficit,
 )
 
 

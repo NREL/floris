@@ -26,7 +26,7 @@ from floris.type_dec import (
     floris_array_converter,
     floris_float_type,
     NDArrayFloat,
-    NDArrayInt
+    NDArrayInt,
 )
 from floris.utilities import rotate_coordinates_rel_west, Vec3
 

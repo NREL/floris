@@ -20,7 +20,7 @@ from floris.simulation import (
     Floris,
     FlowField,
     FlowFieldGrid,
-    TurbineGrid
+    TurbineGrid,
 )
 from floris.utilities import Vec3
 

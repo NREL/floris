@@ -26,12 +26,12 @@ from floris.utilities import (
     tand,
     wind_delta,
     wrap_180,
-    wrap_360
+    wrap_360,
 )
 from tests.conftest import (
     X_COORDS,
     Y_COORDS,
-    Z_COORDS
+    Z_COORDS,
 )
 
 

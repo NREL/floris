@@ -18,7 +18,7 @@ from attrs import define, field
 from floris.simulation import (
     BaseModel,
     FlowField,
-    Grid
+    Grid,
 )
 
 

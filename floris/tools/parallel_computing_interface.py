@@ -5,12 +5,9 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import (
-    YawOptimizationSR,
-)
-
 from floris.logging_manager import LoggerBase
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
 
 
 def _load_local_floris_object(

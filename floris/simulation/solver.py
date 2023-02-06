@@ -22,14 +22,14 @@ from floris.simulation import (
     Farm,
     FlowField,
     FlowFieldGrid,
-    TurbineGrid
+    TurbineGrid,
 )
 from floris.simulation.turbine import average_velocity
 from floris.simulation.wake import WakeModelManager
 from floris.simulation.wake_deflection.gauss import (
     calculate_transverse_velocity,
     wake_added_yaw,
-    yaw_added_turbulence_mixing
+    yaw_added_turbulence_mixing,
 )
 
 

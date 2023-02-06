@@ -21,7 +21,7 @@ from tests.conftest import (
     N_TURBINES,
     N_WIND_DIRECTIONS,
     N_WIND_SPEEDS,
-    TURBINE_GRID_RESOLUTION
+    TURBINE_GRID_RESOLUTION,
 )
 
 

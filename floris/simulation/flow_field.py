@@ -22,7 +22,7 @@ from floris.simulation import Grid
 from floris.type_dec import (
     floris_array_converter,
     FromDictMixin,
-    NDArrayFloat
+    NDArrayFloat,
 )
 
 

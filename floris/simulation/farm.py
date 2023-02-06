@@ -23,12 +23,12 @@ from attrs import define, field
 from floris.simulation import (
     BaseClass,
     State,
-    Turbine
+    Turbine,
 )
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
-    NDArrayObject
+    NDArrayObject,
 )
 from floris.utilities import load_yaml, Vec3
 

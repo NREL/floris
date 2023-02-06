@@ -36,7 +36,7 @@ from floris.simulation import (
     State,
     TurbineGrid,
     turbopark_solver,
-    WakeModelManager
+    WakeModelManager,
 )
 from floris.utilities import load_yaml
 

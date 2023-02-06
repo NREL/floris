@@ -17,7 +17,7 @@ from typing import (
     Callable,
     Iterable,
     Tuple,
-    Union
+    Union,
 )
 
 import attrs

@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator
 
-from floris.tools import FlorisInterface
-from floris.tools import ParallelComputingInterface
+from floris.tools import FlorisInterface, ParallelComputingInterface
+
 
 """
 This example demonstrates how to perform a yaw optimization using parallel computing.

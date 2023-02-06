@@ -21,7 +21,7 @@ from floris.simulation import (
     Farm,
     FlowField,
     Grid,
-    Turbine
+    Turbine,
 )
 
 

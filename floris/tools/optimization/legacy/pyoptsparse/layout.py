@@ -19,7 +19,7 @@ from scipy.spatial.distance import cdist
 from shapely.geometry import (
     LineString,
     Point,
-    Polygon
+    Polygon,
 )
 
 

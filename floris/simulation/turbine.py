@@ -28,7 +28,7 @@ from floris.type_dec import (
     NDArrayFilter,
     NDArrayFloat,
     NDArrayInt,
-    NDArrayObject
+    NDArrayObject,
 )
 from floris.utilities import cosd
 
