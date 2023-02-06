@@ -89,7 +89,7 @@ class Farm(BaseClass):
         if not value.is_dir():
             raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
 
-    def check_turbine_type(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_turbine_type(self) -> None:
         if len(self.turbine_type) != len(self.layout_x):
             if len(self.turbine_type) == 1:
                 self.turbine_type *= len(self.layout_x)
