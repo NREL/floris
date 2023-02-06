@@ -50,7 +50,7 @@ class Farm(BaseClass):
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
     turbine_type: List = field()
-    turbine_library: str | Path = field(default=default_turbine_library, converter=convert_to_path)
+    turbine_library: Path = field(default=default_turbine_library, converter=convert_to_path)
 
     turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
@@ -87,17 +87,24 @@ class Farm(BaseClass):
                 value = self.turbine_type * len(self.layout_x)
             else:
                 raise ValueError(
-                    "turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value."
+                    "turbine_type must have the same number of entries as layout_x/layout_y or have"
+                    " a single turbine_type value."
                 )
 
         self.turbine_definitions = copy.deepcopy(value)
         for i, val in enumerate(value):
             if type(val) is str:
-                fname = self.turbine_library / f"{val}.yaml"
-                if not Path.is_file(fname):
-                    raise FileNotFoundError(
-                        f"User-selected turbine definition `{val}` does not exist in the turbine library: {self.turbine_library}."
-                    )
+                fname = (self.turbine_library / val).with_suffix(".yaml")
+                if not fname.is_file():
+                    # Change to the internal turbine library and check again
+                    fname = (self.turbine_library / val).with_suffix(".yaml")
+                    if not fname.exists():
+                        raise FileNotFoundError(
+                            f"User-selected turbine defintion `{val}` does not exist in the"
+                            f" user-specified turbine library: {self.turbine_library} or the internal"
+                            f" FLORIS turbine library: {default_turbine_library}"
+                        )
+
                 self.turbine_definitions[i] = load_yaml(fname)
 
                 # This is a temporary block of code that catches that ref_density_cp_ct is not defined
@@ -107,7 +114,8 @@ class Farm(BaseClass):
                 if "ref_density_cp_ct" not in self.turbine_definitions[i]:
                     self.logger.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
                     self.logger.warn(
-                        "This value is not the simulated air density but is the density at which the cp/ct curves are defined"
+                        "This value is not the simulated air density but is the density at which the"
+                        " cp/ct curves are defined"
                     )
                     self.logger.warn("In previous versions this was assumed to be 1.225")
                     self.logger.warn(
@@ -115,6 +123,16 @@ class Farm(BaseClass):
                     )
                     self.logger.warn("Currently this value is being set to the prior default value of 1.225")
                     self.turbine_definitions[i]["ref_density_cp_ct"] = 1.225
+
+        if self.turbine_library != default_turbine_library:
+            unique_turbines = np.unique(value)
+            for turbine_fn in unique_turbines:
+                in_external = (self.turbine_library / turbine_fn).with_suffix(".yaml").exists()
+                in_internal = (default_turbine_library / turbine_fn).with_suffix(".yaml").exists()
+                if in_external and in_internal:
+                    raise ValueError(
+                        f"The turbine type: {turbine_fn} exists in both the internal and external turbine library."
+                    )
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
