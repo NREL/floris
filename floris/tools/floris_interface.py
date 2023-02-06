@@ -21,11 +21,8 @@ import pandas as pd
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
 from floris.type_dec import NDArrayFloat
-from floris.simulation import Floris
+from floris.simulation import State, Floris
 from floris.logging_manager import LoggerBase
-
-from floris.simulation import State
-
 from floris.tools.cut_plane import CutPlane
 from floris.simulation.turbine import Ct, power, axial_induction, average_velocity
 
@@ -78,11 +75,12 @@ class FlorisInterface(LoggerBase):
         # Check the turbine_grid_points is reasonable
         if self.floris.solver["type"] == "turbine_grid":
             if self.floris.solver["turbine_grid_points"] > 3:
-                self.logger.error(f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy.")
+                self.logger.error(
+                    f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy."
+                )
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
     def assign_hub_height_to_ref_height(self):
-
         # Confirm can do this operation
         unique_heights = np.unique(self.floris.farm.hub_heights)
         if len(unique_heights) > 1:
@@ -124,7 +122,7 @@ class FlorisInterface(LoggerBase):
         # )
 
         # TODO decide where to handle this sign issue
-        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
+        if (yaw_angles is not None) and not (np.all(yaw_angles == 0.0)):
             self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -150,7 +148,7 @@ class FlorisInterface(LoggerBase):
         """
 
         # TODO decide where to handle this sign issue
-        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
+        if (yaw_angles is not None) and not (np.all(yaw_angles == 0.0)):
             self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -173,8 +171,8 @@ class FlorisInterface(LoggerBase):
         # wake: WakeModelManager = None,
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
-        turbine_type: list | None = None,
         turbine_library: str | Path | None = None,
+        turbine_type: list | None = None,
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
@@ -215,10 +213,10 @@ class FlorisInterface(LoggerBase):
             farm_dict["layout_x"] = layout_x
         if layout_y is not None:
             farm_dict["layout_y"] = layout_y
-        if turbine_type is not None:
-            farm_dict["turbine_type"] = turbine_type
         if turbine_library is not None:
             farm_dict["turbine_library"] = turbine_library
+        if turbine_type is not None:
+            farm_dict["turbine_type"] = turbine_type
 
         if time_series:
             flow_field_dict["time_series"] = True
@@ -573,7 +571,9 @@ class FlorisInterface(LoggerBase):
 
         # Confirm calculate wake has been run
         if self.floris.state is not State.USED:
-            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.")
+            raise RuntimeError(
+                f"Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`."
+            )
 
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
@@ -628,7 +628,7 @@ class FlorisInterface(LoggerBase):
         Args:
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -655,7 +655,9 @@ class FlorisInterface(LoggerBase):
 
         # Confirm calculate wake has been run
         if self.floris.state is not State.USED:
-            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`.")
+            raise RuntimeError(
+                f"Can't run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`."
+            )
 
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None
@@ -663,18 +665,13 @@ class FlorisInterface(LoggerBase):
                 (
                     self.floris.flow_field.n_wind_directions,
                     self.floris.flow_field.n_wind_speeds,
-                    self.floris.farm.n_turbines
+                    self.floris.farm.n_turbines,
                 )
             )
         elif len(np.shape(turbine_weights)) == 1:
             # Deal with situation when 1D array is provided
             turbine_weights = np.tile(
-                turbine_weights,
-                (
-                    self.floris.flow_field.n_wind_directions,
-                    self.floris.flow_field.n_wind_speeds,
-                    1
-                )
+                turbine_weights, (self.floris.flow_field.n_wind_directions, self.floris.flow_field.n_wind_speeds, 1)
             )
 
         # Calculate all turbine powers and apply weights
@@ -717,7 +714,7 @@ class FlorisInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -774,9 +771,7 @@ class FlorisInterface(LoggerBase):
                 self.calculate_no_wake(yaw_angles=yaw_angles_subset)
             else:
                 self.calculate_wake(yaw_angles=yaw_angles_subset)
-            farm_power[:, conditions_to_evaluate] = (
-                self.get_farm_power(turbine_weights=turbine_weights)
-            )
+            farm_power[:, conditions_to_evaluate] = self.get_farm_power(turbine_weights=turbine_weights)
 
         # Finally, calculate AEP in GWh
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
@@ -801,7 +796,7 @@ class FlorisInterface(LoggerBase):
         Args:
             wind_rose (wind_rose): An object of the wind rose class
             cut_in_wind_speed (float, optional): Wind speed in m/s below which
-                any calculations are ignored and the wind farm is known to 
+                any calculations are ignored and the wind farm is known to
                 produce 0.0 W of power. Note that to prevent problems with the
                 wake models at negative / zero wind speeds, this variable must
                 always have a positive value. Defaults to 0.001 [m/s].
@@ -819,7 +814,7 @@ class FlorisInterface(LoggerBase):
                 in AEP due to wakes. Defaults to *False*.
 
         Returns:
-            float: 
+            float:
                 The Annual Energy Production (AEP) for the wind farm in
                 watt-hours.
         """
@@ -835,7 +830,7 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(wind_speeds=wind_speeds_wind_rose, wind_directions=wind_directions_wind_rose)
 
         # Build the frequency matrix from wind rose
-        freq = wind_rose.df.set_index(['wd','ws']).unstack().values
+        freq = wind_rose.df.set_index(["wd", "ws"]).unstack().values
 
         # Now compute aep
         aep = self.get_farm_AEP(
@@ -843,16 +838,13 @@ class FlorisInterface(LoggerBase):
             cut_in_wind_speed=cut_in_wind_speed,
             cut_out_wind_speed=cut_out_wind_speed,
             yaw_angles=yaw_angles,
-            no_wake=no_wake)
-
+            no_wake=no_wake,
+        )
 
         # Reset the FLORIS object to the original wind speed and directions
         self.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
-        
 
         return aep
-
-
 
     @property
     def layout_x(self):
