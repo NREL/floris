@@ -13,11 +13,11 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import enum
 import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
+
 
 """
 06_sweep_wind_conditions
@@ -42,7 +42,7 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 D = 126.
 layout_x = np.array([0, D*6, D*12, D*18,D*24])
 layout_y = [0, 0, 0, 0, 0]
-fi.reinitialize(layout = [layout_x, layout_y])
+fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
 # Define a ws and wd to sweep
 # Note that all combinations will be computed

@@ -1,1 +1,6 @@
-from . import other, scipy, pyoptsparse, yaw_optimization
+from . import (
+    layout_optimization,
+    legacy,
+    other,
+    yaw_optimization
+)

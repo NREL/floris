@@ -19,14 +19,17 @@
 import os
 import pickle
 
-import numpy as np
-import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-# from pyproj import Proj
+import numpy as np
+import pandas as pd
 
 import floris.utilities as geo
+
+
+# from pyproj import Proj
+
 
 
 class WindRose:
@@ -40,7 +43,7 @@ class WindRose:
     for visualizing wind roses.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: wr-
@@ -634,6 +637,22 @@ class WindRose:
         self.internal_resample_wind_direction(wd=wd)
 
         return self.df
+    
+    def read_wind_rose_csv(
+        self,
+        filename
+    ):
+
+        #Read in the csv
+        self.df = pd.read_csv(filename)
+
+        # Renormalize the frequency column
+        self.df["freq_val"] = self.df["freq_val"] / self.df["freq_val"].sum()
+
+        # Call the resample function in order to set all the internal variables
+        self.internal_resample_wind_speed(ws=self.df.ws.unique())
+        self.internal_resample_wind_direction(wd=self.df.wd.unique())
+
 
     def make_wind_rose_from_user_dist(
         self,
@@ -1283,7 +1302,7 @@ class WindRose:
         ij = [int(round(x / 2000)) for x in delta]
         return tuple(reversed(ij))
 
-    def plot_wind_speed_all(self, ax=None):
+    def plot_wind_speed_all(self, ax=None, label=None):
         """
         This method plots the wind speed frequency distribution of the WindRose
         object averaged across all wind directions. If no axis is provided, a
@@ -1297,7 +1316,7 @@ class WindRose:
             _, ax = plt.subplots()
 
         df_plot = self.df.groupby("ws").sum()
-        ax.plot(self.ws, df_plot.freq_val)
+        ax.plot(self.ws, df_plot.freq_val, label=label)
 
     def plot_wind_speed_by_direction(self, dirs, ax=None):
         """
@@ -1368,12 +1387,12 @@ class WindRose:
 
         # Set up figure
         if ax is None:
-            _, ax = plt.subplots(subplot_kw=dict(polar=True))
+            _, ax = plt.subplots(subplot_kw={"polar": True})
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ws_right_edges))
 
-        for wd_idx, wd in enumerate(wd_bins):
+        for wd in wd_bins:
             rects = list()
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ws_idx, ws in enumerate(ws_right_edges[::-1]):
@@ -1448,7 +1467,7 @@ class WindRose:
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ti_right_edges))
 
-        for wd_idx, wd in enumerate(wd_bins):
+        for wd in wd_bins:
             rects = list()
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ti_idx, ti in enumerate(ti_right_edges[::-1]):

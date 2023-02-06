@@ -19,16 +19,17 @@ from abc import ABC, abstractmethod
 from typing import Iterable
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.utilities import Vec3, rotate_coordinates_rel_west
-from floris.type_dec import  (
-    floris_float_type,
+from floris.type_dec import (
     floris_array_converter,
+    floris_float_type,
     NDArrayFloat,
     NDArrayInt
 )
+from floris.utilities import rotate_coordinates_rel_west, Vec3
+
 
 @define
 class Grid(ABC):
@@ -54,7 +55,10 @@ class Grid(ABC):
     Args:
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind data is a time series.
     """
     turbine_coordinates: list[Vec3] = field()
     reference_turbine_diameter: float

@@ -12,20 +12,37 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 from scipy.special import gamma
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine
+)
+from floris.utilities import (
+    cosd,
+    sind,
+    tand
+)
 
 
 @define
 class CumulativeGaussCurlVelocityDeficit(BaseModel):
+    """
+    The cumulative curl model is an implementation of the model described in
+    :cite:`gdm-bay_2022`, which itself is based on the cumulative model of
+    :cite:`bastankhah_2021`
+
+    References:
+    .. bibliography:: /references.bib
+        :style: unsrt
+        :filter: docname in docnames
+        :keyprefix: gdm-
+    """
 
     a_s: float = field(default=0.179367259)
     b_s: float = field(default=0.0118889215)

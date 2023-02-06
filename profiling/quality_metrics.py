@@ -14,12 +14,14 @@
 
 
 import copy
-import numpy as np
 import time
 import warnings
 
-from floris.simulation import Floris
+import numpy as np
 from linux_perf import perf
+
+from floris.simulation import Floris
+
 
 WIND_DIRECTIONS = np.arange(0, 360.0, 5)
 N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)

@@ -14,7 +14,8 @@
 
 
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 
 # Package meta-data.
@@ -64,7 +65,7 @@ setup(
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
-    package_data={'floris': ['turbine_library/*.yaml']},
+    package_data={'floris': ['turbine_library/*.yaml', 'simulation/wake_velocity/turbopark_lookup_table.mat']},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,

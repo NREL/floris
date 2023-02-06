@@ -12,14 +12,16 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine
+)
 from floris.utilities import cosd, sind
 
 
@@ -65,7 +67,7 @@ class GaussVelocityDeflection(BaseModel):
                 See property on super-class for more details.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: gdm-
@@ -342,6 +344,7 @@ def wake_added_yaw(
 def calculate_transverse_velocity(
     u_i,
     u_initial,
+    dudz_initial,
     delta_x,
     delta_y,
     z,
@@ -401,9 +404,6 @@ def calculate_transverse_velocity(
     lmda = D / 8
     kappa = 0.41
     lm = kappa * z / (1 + kappa * z / lmda)
-    # TODO: get this from the z input?
-    z_basis = np.linspace(np.min(z), np.max(z), np.shape(u_initial)[4])
-    dudz_initial = np.gradient(u_initial, z_basis, axis=4)
     nu = lm ** 2 * np.abs(dudz_initial)
 
     decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream

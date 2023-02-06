@@ -15,9 +15,13 @@
 
 import numpy as np
 import pytest
-from floris.simulation import Floris
-from floris.simulation import FlowField
-from floris.simulation import TurbineGrid, FlowFieldGrid
+
+from floris.simulation import (
+    Floris,
+    FlowField,
+    FlowFieldGrid,
+    TurbineGrid
+)
 from floris.utilities import Vec3
 
 
@@ -156,6 +160,7 @@ class SampleInputs:
             "pP": 1.88,
             "pT": 1.88,
             "generator_efficiency": 1.0,
+            "ref_density_cp_ct": 1.225,
             "power_thrust_table": {
                 "power": [
                     0.000000,

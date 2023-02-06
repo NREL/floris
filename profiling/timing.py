@@ -1,12 +1,14 @@
 
 import copy
-import numpy as np
 import time
+
 import matplotlib.pyplot as plt
 import memory_profiler
+import numpy as np
+from conftest import SampleInputs
 
 from floris.simulation import Floris
-from conftest import SampleInputs
+
 
 def time_profile(input_dict):
     floris = Floris.from_dict(input_dict.floris)

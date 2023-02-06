@@ -14,9 +14,9 @@
 
 from __future__ import annotations
 
-import os
 import copy
 import json
+import os
 from pathlib import Path
 
 from floris.tools import FlorisInterface
@@ -188,6 +188,7 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
         "rotor_diameter": tp["rotor_diameter"],
         "TSR": tp["TSR"],
         "power_thrust_table": tp["power_thrust_table"],
+        "ref_density_cp_ct": 1.225 # This was implicit in the former input file
     }
 
     return dict_floris, dict_turbine

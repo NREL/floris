@@ -16,13 +16,14 @@
 import numpy as np
 import pytest
 
+from floris.utilities import Vec3
 from tests.conftest import (
     N_TURBINES,
-    N_WIND_SPEEDS,
-    TURBINE_GRID_RESOLUTION,
     N_WIND_DIRECTIONS,
+    N_WIND_SPEEDS,
+    TURBINE_GRID_RESOLUTION
 )
-from floris.utilities import Vec3
+
 
 # TODO: test the dimension expansion
 

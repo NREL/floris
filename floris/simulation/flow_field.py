@@ -15,15 +15,15 @@
 from __future__ import annotations
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.type_dec import (
-    FromDictMixin,
-    NDArrayFloat,
-    floris_array_converter
-)
 from floris.simulation import Grid
+from floris.type_dec import (
+    floris_array_converter,
+    FromDictMixin,
+    NDArrayFloat
+)
 
 
 @define
@@ -34,7 +34,7 @@ class FlowField(FromDictMixin):
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
     turbulence_intensity: float = field(converter=float)
-    reference_wind_height: int = field(converter=int)
+    reference_wind_height: float = field(converter=float)
     time_series : bool = field(default=False)
 
     n_wind_speeds: int = field(init=False)
@@ -50,6 +50,7 @@ class FlowField(FromDictMixin):
     v: NDArrayFloat = field(init=False, default=np.array([]))
     w: NDArrayFloat = field(init=False, default=np.array([]))
     het_map: list = field(init=False, default=None)
+    dudz_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
 
@@ -78,6 +79,7 @@ class FlowField(FromDictMixin):
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
         wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
+        dwind_profile_plane = self.wind_shear * (1 / self.reference_wind_height) ** self.wind_shear * (grid.z_sorted) ** (self.wind_shear - 1)
 
         # If no hetergeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
@@ -99,8 +101,10 @@ class FlowField(FromDictMixin):
         # of the shape and the grid.template array on the right
         if self.time_series:
             self.u_initial_sorted = (self.wind_speeds[:].T * wind_profile_plane.T).T * speed_ups
+            self.dudz_initial_sorted = (self.wind_speeds[:].T * dwind_profile_plane.T).T * speed_ups
         else:
             self.u_initial_sorted = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * speed_ups
+            self.dudz_initial_sorted = (self.wind_speeds[None, :].T * dwind_profile_plane.T).T * speed_ups
         self.v_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
         self.w_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
 

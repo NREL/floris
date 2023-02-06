@@ -7,23 +7,26 @@ __pycache__/
 *.egg-info
 dist
 build
-_build
+.pytest_cache
 
-#pip meta data
+# pip meta data
 pip-wheel-metadata
 
 # macOS files
 .DS_Store
 
-# ide settings and files
+# IDE settings and files
 .idea
 .vscode
 
-# Other
-.pytest_cache
-examples/cp_ct_cq_lut.p
+# Documentation output
 _site/
 .jekyll-cache/
+_build
+_autosummary/
+
+# Output from examples
+examples/cp_ct_cq_lut.p
 examples/hist.hist
 examples/SLSQP.out
 

@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from attrs import define
 import numpy as np
+from attrs import define
 
 from floris.simulation import BaseModel
 
@@ -24,7 +24,7 @@ class MAX(BaseModel):
     :cite:`max-gunn2016limitations`.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: max-

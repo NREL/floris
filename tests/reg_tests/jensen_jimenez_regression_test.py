@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2022 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -14,9 +14,20 @@
 
 import numpy as np
 
-from tests.conftest import N_TURBINES, N_WIND_DIRECTIONS, N_WIND_SPEEDS
-from tests.conftest import print_test_values, assert_results_arrays
-from floris.simulation import Ct, Floris, power, axial_induction, average_velocity
+from floris.simulation import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    Floris,
+    power
+)
+from tests.conftest import (
+    assert_results_arrays,
+    N_TURBINES,
+    N_WIND_DIRECTIONS,
+    N_WIND_SPEEDS,
+    print_test_values
+)
 
 
 DEBUG = False
@@ -117,6 +128,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,
@@ -261,6 +273,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,
@@ -330,6 +343,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
 
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,
