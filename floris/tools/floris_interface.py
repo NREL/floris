@@ -26,7 +26,8 @@ from floris.simulation.turbine import (
     average_velocity,
     axial_induction,
     Ct,
-    power
+    power,
+    rotor_effective_velocity
 )
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
