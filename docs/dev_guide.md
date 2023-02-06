@@ -79,9 +79,28 @@ isort <path to file>
 isort dir/*
 ```
 
-This tool was initially configured in [#535](https://github.com/NREL/floris/pull/535),
+This tool was initially configured in [PR#535](https://github.com/NREL/floris/pull/535),
 and additional information on specific decisions can be found there.
 
+
+### Ruff
+
+[Ruff](https://github.com/charliermarsh/ruff) is a general linter and limited auto-formatter.
+It is configured in `pyproject.toml` through various `[tool.ruff.*]` blocks. It is a command line
+tool and integrations into popular IDE's are available. A typical command to run Ruff is the
+following:
+
+```bash
+ruff . --fix
+```
+
+This sets the configuration from `pyproject.toml`, applies the selected rules to Python files,
+and fixes errors in-place where possible.
+
+Ruff was initially configured in [PR#562](https://github.com/NREL/floris/pull/562), and discussed
+in more detail in [D#561](https://github.com/NREL/floris/discussions/561). See the Ruff
+documentation for a list of [supported rules](https://github.com/charliermarsh/ruff#supported-rules)
+and [available options for various rules](https://github.com/charliermarsh/ruff#reference).
 
 ## Testing
 
