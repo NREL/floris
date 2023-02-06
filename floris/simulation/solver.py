@@ -1068,11 +1068,11 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
-        wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :]
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
-        TSR_i = farm.TSRs_sorted[: ,:, i:i+1, None, None]
+        wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :, None].\
+            sum(axis=3, keepdims=1)
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -1091,7 +1091,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             y_i,
             effective_yaw_i,
             tilt_angle_i,
-            wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None], # Differs from Gaussian
+            wake_induced_mixing_i,
             ct_i,
             rotor_diameter_i,
             **deflection_model_args
@@ -1113,7 +1113,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             deflection_field_z,
             yaw_angle_i,
             tilt_angle_i,
-            wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None], # Differs from Gaussian
+            wake_induced_mixing_i,
             ct_i,
             hub_height_i,
             rotor_diameter_i,
@@ -1226,11 +1226,11 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             ix_filter=[i],
         )
         axial_induction_i = axial_induction_i[:, :, 0:1, None, None]    # Since we are filtering for the i'th turbine in the axial induction function, get the first index here (0:1)
-        wake_induced_mixing_i = turbine_grid_flow_field.wim_field[:, :, i:i+1, :]
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = turbine_grid_farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
-        TSR_i = turbine_grid_farm.TSRs_sorted[: ,:, i:i+1, None, None]
+        wake_induced_mixing_i = turbine_grid_flow_field.wim_field[:, :, i:i+1, :, None].\
+            sum(axis=3, keepdims=1)
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -1248,7 +1248,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             y_i,
             effective_yaw_i,
             tilt_angle_i,
-            wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None],
+            wake_induced_mixing_i,
             ct_i,
             rotor_diameter_i,
             **deflection_model_args
@@ -1267,7 +1267,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             deflection_field_z,
             yaw_angle_i,
             tilt_angle_i,
-            wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None],
+            wake_induced_mixing_i,
             ct_i,
             hub_height_i,
             rotor_diameter_i,
