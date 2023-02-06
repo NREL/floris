@@ -30,11 +30,8 @@ from floris.type_dec import (
     NDArrayFloat,
     NDArrayObject
 )
-from floris.utilities import Vec3, load_yaml
-from floris.simulation import BaseClass, State
-from floris.simulation import Turbine
+from floris.utilities import load_yaml, Vec3
 from floris.simulation.turbine import _compute_tilt_angles_for_floating_turbines
-
 
 @define
 class Farm(BaseClass):

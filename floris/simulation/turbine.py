@@ -32,7 +32,6 @@ from floris.type_dec import (
     NDArrayInt,
     NDArrayObject,
     NDArrayBool,
-    FromDictMixin,
 )
 from floris.utilities import cosd
 

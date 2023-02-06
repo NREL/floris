@@ -86,6 +86,10 @@ impact on wind turbine wakes.
 Load an input file that describes a wind farm with two turbines
 of different types and plot the wake profiles.
 
+### 23_visualize_layout.py
+Use the visualize_layout function to provide diagram visualization
+of a turbine layout within FLORIS
+
 
 ## Optimization
 
@@ -107,6 +111,12 @@ Similar to above but with extra steps for post processing.
 Construct wind farm yaw settings for a full wind rose based on the
 optimized yaw settings at a single wind speed. Then, compare
 results to the baseline no-yaw configuration.
+
+### 12_optimize_yaw_in_parallel.py
+Comparable to the above but perform all the computations using
+parallel processing. In the current example, use 16 cores
+simultaneously to calculate the AEP and perform a wake steering
+yaw angle optimization for multiple wind speeds.
 
 ### 13_optimize_yaw_with_neighboring_farm.py
 Same as above but considering the effects of a nearby wind farm.
