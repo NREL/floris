@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1193,12 +1198,12 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseClass</span><span class="p">,</span>
     <span class="n">State</span><span class="p">,</span>
-    <span class="n">Turbine</span>
+    <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">floris_array_converter</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
-    <span class="n">NDArrayObject</span>
+    <span class="n">NDArrayObject</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">load_yaml</span><span class="p">,</span> <span class="n">Vec3</span>
 
@@ -1249,7 +1254,10 @@ title="Open an issue"
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;turbine_type must have the same number of entries as layout_x/layout_y or have a single turbine_type value.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;turbine_type must have the same number of entries as &quot;</span>
+                    <span class="s2">&quot;layout_x/layout_y or have a single turbine_type value.&quot;</span>
+                <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -1257,19 +1265,25 @@ title="Open an issue"
                 <span class="n">_floris_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
                 <span class="n">fname</span> <span class="o">=</span> <span class="n">_floris_dir</span> <span class="o">/</span> <span class="s2">&quot;turbine_library&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="o">.</span><span class="n">is_file</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;User-selected turbine definition `</span><span class="si">{}</span><span class="s2">` does not exist in pre-defined turbine library.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;User-selected turbine definition `</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">` &quot;</span>
+                        <span class="s2">&quot;does not exist in pre-defined turbine library.&quot;</span>
+                    <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
-                <span class="c1"># This is a temporary block of code that catches that ref_density_cp_ct is not defined</span>
-                <span class="c1"># In the yaml file and forces it in</span>
-                <span class="c1"># A warning is issued letting the user know in future versions defining this value explicitly</span>
-                <span class="c1"># will be required </span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;ref_density_cp_ct&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The value ref_density_cp_ct is not defined in the file: </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">fname</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This value is not the simulated air density but is the density at which the cp/ct curves are defined&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;In previous versions this was assumed to be 1.225&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Future versions of FLORIS will give an error if this value is not explicitly defined&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Currently this value is being set to the prior default value of 1.225&quot;</span><span class="p">)</span>
+                <span class="c1"># This is a temporary block of code that catches that ref_density_cp_ct</span>
+                <span class="c1"># is not defined in the yaml file and forces it in</span>
+                <span class="c1"># A warning is issued letting the user know in future versions defining</span>
+                <span class="c1"># this value explicitly will be required </span>
+                <span class="k">if</span> <span class="s2">&quot;ref_density_cp_ct&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The value ref_density_cp_ct is not defined in the file </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.&quot;</span>
+                        <span class="s2">&quot;This value is not the simulated air density but is the density &quot;</span>
+                        <span class="s2">&quot;at which the cp/ct curves are defined. In previous versions, this &quot;</span>
+                        <span class="s2">&quot;was assumed to be 1.225. Future versions of FLORIS will give an error &quot;</span>
+                        <span class="s2">&quot;if this value is not explicitly defined. Currently, this value is &quot;</span>
+                        <span class="s2">&quot;being set to the prior default value of 1.225.&quot;</span>
+                    <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;ref_density_cp_ct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.225</span></div>
 
 <div class="viewcode-block" id="Farm.initialize"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sorted_indices</span><span class="p">):</span>
@@ -1285,7 +1299,9 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">turb</span><span class="p">[</span><span class="s1">&#39;hub_height&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Farm.construct_rotor_diameters"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_rotor_diameters">[docs]</a>    <span class="k">def</span> <span class="nf">construct_rotor_diameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">turb</span><span class="p">[</span><span class="s1">&#39;rotor_diameter&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">])</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">turb</span><span class="p">[</span><span class="s1">&#39;rotor_diameter&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span>
+        <span class="p">])</span></div>
 
 <div class="viewcode-block" id="Farm.construct_turbine_TSRs"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_turbine_TSRs">[docs]</a>    <span class="k">def</span> <span class="nf">construct_turbine_TSRs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TSRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">turb</span><span class="p">[</span><span class="s1">&#39;TSR&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">])</span></div>
@@ -1294,7 +1310,9 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">pPs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">turb</span><span class="p">[</span><span class="s1">&#39;pP&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Farm.construc_turbine_ref_density_cp_cts"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construc_turbine_ref_density_cp_cts">[docs]</a>    <span class="k">def</span> <span class="nf">construc_turbine_ref_density_cp_cts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ref_density_cp_cts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">turb</span><span class="p">[</span><span class="s1">&#39;ref_density_cp_ct&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">])</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref_density_cp_cts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">turb</span><span class="p">[</span><span class="s1">&#39;ref_density_cp_ct&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span>
+        <span class="p">])</span></div>
 
 <div class="viewcode-block" id="Farm.construct_turbine_map"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_turbine_map">[docs]</a>    <span class="k">def</span> <span class="nf">construct_turbine_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">Turbine</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">turb</span><span class="p">)</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">]</span></div>
@@ -1306,22 +1324,48 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_fCps</span> <span class="o">=</span> <span class="p">[(</span><span class="n">turb</span><span class="o">.</span><span class="n">turbine_type</span><span class="p">,</span> <span class="n">turb</span><span class="o">.</span><span class="n">fCp_interp</span><span class="p">)</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Farm.construct_turbine_power_interps"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_turbine_power_interps">[docs]</a>    <span class="k">def</span> <span class="nf">construct_turbine_power_interps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_power_interps</span> <span class="o">=</span> <span class="p">[(</span><span class="n">turb</span><span class="o">.</span><span class="n">turbine_type</span><span class="p">,</span> <span class="n">turb</span><span class="o">.</span><span class="n">power_interp</span><span class="p">)</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_power_interps</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">turb</span><span class="o">.</span><span class="n">turbine_type</span><span class="p">,</span> <span class="n">turb</span><span class="o">.</span><span class="n">power_interp</span><span class="p">)</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span>
+        <span class="p">]</span></div>
 
 <div class="viewcode-block" id="Farm.construct_coordinates"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">construct_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">Vec3</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights</span><span class="p">)]</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">Vec3</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights</span><span class="p">)</span>
+        <span class="p">])</span></div>
 
-<div class="viewcode-block" id="Farm.expand_farm_properties"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.expand_farm_properties">[docs]</a>    <span class="k">def</span> <span class="nf">expand_farm_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_wind_directions</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_wind_speeds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sorted_coord_indices</span><span class="p">):</span>
+<div class="viewcode-block" id="Farm.expand_farm_properties"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.expand_farm_properties">[docs]</a>    <span class="k">def</span> <span class="nf">expand_farm_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_wind_directions</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_wind_speeds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">sorted_coord_indices</span>
+    <span class="p">):</span>
         <span class="n">template_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">sorted_coord_indices</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hub_heights</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span> <span class="n">sorted_coord_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span> <span class="n">sorted_coord_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">TSRs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TSRs</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span> <span class="n">sorted_coord_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pPs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pPs</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span> <span class="n">sorted_coord_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span>
+            <span class="n">sorted_coord_indices</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span>
+            <span class="n">sorted_coord_indices</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TSRs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TSRs</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span>
+            <span class="n">sorted_coord_indices</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pPs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pPs</span> <span class="o">*</span> <span class="n">template_shape</span><span class="p">,</span>
+            <span class="n">sorted_coord_indices</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_names_sorted</span> <span class="o">=</span> <span class="p">[</span><span class="n">turb</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_names_sorted</span> <span class="o">*</span> <span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">sorted_coord_indices</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_names_sorted</span> <span class="o">*</span> <span class="n">n_wind_directions</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">sorted_coord_indices</span><span class="p">)</span>
+            <span class="p">),</span>
             <span class="n">sorted_coord_indices</span><span class="p">,</span>
             <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
         <span class="p">)</span></div>
@@ -1332,12 +1376,36 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">n_wind_speeds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Farm.finalize"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">TSRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pPs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pPs_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
+            <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">,</span>
+            <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">,</span>
+            <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TSRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">,</span>
+            <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pPs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pPs_sorted</span><span class="p">,</span>
+            <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">unsorted_indices</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">USED</span></div>
 
     <span class="nd">@property</span>

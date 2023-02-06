@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1343,7 +1348,7 @@ title="Open an issue"
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span><span class="p">):</span>
             <span class="n">loc</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="n">boundary_con</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">loc</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_boundary_line</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_polygon</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_polygon</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">boundary_con</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">1.0</span>
 
         <span class="k">return</span> <span class="n">boundary_con</span></div>

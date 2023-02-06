@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1258,10 +1263,12 @@ all of these arrays are the same size</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The collection of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
 <li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The reference turbine's rotor diameter.</p></li>
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution specific to each grid type.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution specific
+to each grid type.</p></li>
 <li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
 <li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
-<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- True/false flag to indicate whether the supplied wind data is a time series.</p></li>
+<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- True/false flag to indicate whether the supplied wind
+data is a time series.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1434,7 +1441,8 @@ all of these arrays are the same size</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.check_coordinates">
 <span class="sig-name descname"><span class="pre">check_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#Grid.check_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.Grid.check_coordinates" title="Permalink to this definition">#</a></dt>
-<dd><p>Ensures all elements are <cite>Vec3</cite> objects and keeps the <cite>n_turbines</cite> attribute up to date.</p>
+<dd><p>Ensures all elements are <cite>Vec3</cite> objects and keeps the <cite>n_turbines</cite>
+attribute up to date.</p>
 </dd></dl>
 
 <dl class="py method">

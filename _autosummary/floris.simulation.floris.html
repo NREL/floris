@@ -52,7 +52,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="floris.simulation.floris.logging_manager" href="floris.simulation.floris.logging_manager.html" />
+    <link rel="next" title="floris.simulation.floris.Floris" href="floris.simulation.floris.Floris.html" />
     <link rel="prev" title="floris.simulation.farm.Farm" href="floris.simulation.farm.Farm.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1235,6 +1240,18 @@ title="Print to PDF"
                 
   <section id="module-floris.simulation.floris">
 <span id="floris-simulation-floris"></span><h1>floris.simulation.floris<a class="headerlink" href="#module-floris.simulation.floris" title="Permalink to this headline">#</a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.floris.Floris.html#floris.simulation.floris.Floris" title="floris.simulation.floris.Floris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Floris</span></code></a></p></td>
+<td><p>Top-level class that describes a Floris model and initializes the simulation.</p></td>
+</tr>
+</tbody>
+</table>
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.floris.Floris">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.floris.</span></span><span class="sig-name descname"><span class="pre">Floris</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logging</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wake</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">farm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floris_version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/floris.html#Floris"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.floris.Floris" title="Permalink to this definition">#</a></dt>
@@ -1343,10 +1360,10 @@ input file.</p></li>
 <dd class="field-even"><p>The class object instance.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#floris.simulation.floris.Floris" title="floris.simulation.floris.Floris">Floris</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="floris.simulation.floris.Floris.html#floris.simulation.floris.Floris" title="floris.simulation.floris.Floris">Floris</a></p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#floris.simulation.floris.Floris" title="floris.simulation.floris.Floris">Floris</a></p>
+<dd class="field-even"><p><a class="reference internal" href="floris.simulation.floris.Floris.html#floris.simulation.floris.Floris" title="floris.simulation.floris.Floris">Floris</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1370,17 +1387,6 @@ input file.</p></li>
 
 </dd></dl>
 
-<table class="autosummary longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.floris.logging_manager.html#module-floris.simulation.floris.logging_manager" title="floris.simulation.floris.logging_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floris.simulation.floris.logging_manager</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1417,10 +1423,10 @@ input file.</p></li>
             <p class="prev-next-title">floris.simulation.farm.Farm</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="floris.simulation.floris.logging_manager.html" title="next page">
+    <a class='right-next' id="next-link" href="floris.simulation.floris.Floris.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">floris.simulation.floris.logging_manager</p>
+        <p class="prev-next-title">floris.simulation.floris.Floris</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

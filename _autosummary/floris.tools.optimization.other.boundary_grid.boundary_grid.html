@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1241,8 +1246,11 @@ title="Print to PDF"
 <dd><p>Place turbines equally spaced traversing the perimiter if the wind farm along the boundary</p>
 <p>Args:
 n_boundary_turbs,start: boundary variables
-nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,shrink_boundary,eps: grid variables
-boundary_x,boundary_y: boundary points</p>
+nrows,ncols,farm_width,farm_height,shear,</p>
+<blockquote>
+<div><p>rotation,center_x,center_y,shrink_boundary,eps: grid variables</p>
+</div></blockquote>
+<p>boundary_x,boundary_y: boundary points</p>
 <p>Returns
 layout_x (Array(Float)): turbine x locations
 layout_y (Array(Float)): turbine y locations</p>

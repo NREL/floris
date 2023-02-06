@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1191,7 +1196,7 @@ title="Open an issue"
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
-    <span class="n">Turbine</span>
+    <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -1227,11 +1232,11 @@ title="Open an issue"
 <span class="sd">        do not use this function and instead pass that data directly to</span>
 <span class="sd">        the model function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
-            <span class="n">z</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
     <span class="c1"># @profile</span>
@@ -1258,12 +1263,14 @@ title="Open an issue"
         <span class="c1"># u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)</span>
         <span class="c1"># velocities is 3-dimensional (n turbines, grid res 1, grid res 2)</span>
 
-        <span class="c1"># grid.rotate_fields(flow_field.wind_directions)  # TODO: check the rotations with multiple directions or non-0/270</span>
+        <span class="c1"># TODO: check the rotations with multiple directions or non-0/270</span>
+        <span class="c1"># grid.rotate_fields(flow_field.wind_directions)</span>
 
         <span class="c1"># Calculate and apply wake mask</span>
         <span class="c1"># x = grid.x_sorted # mesh_x_rotated - x_coord_rotated</span>
 
-        <span class="c1"># This is the velocity deficit seen by the i&#39;th turbine due to wake effects from upstream turbines.</span>
+        <span class="c1"># This is the velocity deficit seen by the i&#39;th turbine due to wake effects</span>
+        <span class="c1"># from upstream turbines.</span>
         <span class="c1"># Indeces of velocity_deficit corresponding to unwaked turbines will have 0&#39;s</span>
         <span class="c1"># velocity_deficit = np.zeros(np.shape(flow_field.u_initial))</span>
 
@@ -1279,15 +1286,22 @@ title="Open an issue"
 
 <span class="sd">        # Calculate the wake velocity deficit ratios</span>
 <span class="sd">        # Do we need to do masking here or can it be handled in the solver?</span>
-<span class="sd">        # TODO: why do we need to slice with i:i+1 below? This became a problem when adding the wind direction dimension. Prior to that, the dimensions worked out simply with i</span>
+<span class="sd">        # TODO: why do we need to slice with i:i+1 below? This became a problem</span>
+<span class="sd">        # when adding the wind direction dimension. Prior to that, the dimensions</span>
+<span class="sd">        # worked out simply with i.</span>
 <span class="sd">        c = ( rotor_radius / ( rotor_radius + self.we * dx + self.NUM_EPS ) ) ** 2</span>
-<span class="sd">        # c *= ~(np.array(x - x[:, :, i:i+1] &lt;= 0.0))  # using this causes nan&#39;s in the upstream turbine because it negates the mask rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius, c goes to infinity and then this line flips it to Nans rather than setting to 0.</span>
+<span class="sd">        </span>
+<span class="sd">        # using this causes nan&#39;s in the upstream turbine because it negates the mask</span>
+<span class="sd">        # rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius,</span>
+<span class="sd">        # c goes to infinity and then this line flips it to Nans rather than setting to 0.</span>
+<span class="sd">        # c *= ~(np.array(x - x[:, :, i:i+1] &lt;= 0.0))</span>
 <span class="sd">        # c *= ~(((y - y_center) ** 2 + (z - z_center) ** 2) &gt; (boundary_line ** 2))</span>
 <span class="sd">        # np.nan_to_num</span>
 
 <span class="sd">        # C should be 0 at the current turbine and everywhere in front of it</span>
 <span class="sd">        downstream_mask = np.array(dx &gt; 0.0 + self.NUM_EPS, dtype=int)</span>
-<span class="sd">        # C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter</span>
+<span class="sd">        # C should be 0 everywhere outside of the lateral and vertical bounds defined by</span>
+<span class="sd">        # the wake expansion parameter</span>
 <span class="sd">        boundary_mask = np.array( np.sqrt(dy ** 2 + dz ** 2) &lt; boundary_line, dtype=int)</span>
 
 <span class="sd">        mask = np.logical_and(downstream_mask, boundary_mask)</span>
@@ -1312,7 +1326,8 @@ title="Open an issue"
         <span class="c1"># C should be 0 at the current turbine and everywhere in front of it</span>
         <span class="n">downstream_mask</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;dx &gt; 0 + NUM_EPS&quot;</span><span class="p">)</span>
 
-        <span class="c1"># C should be 0 everywhere outside of the lateral and vertical bounds defined by the wake expansion parameter</span>
+        <span class="c1"># C should be 0 everywhere outside of the lateral and vertical bounds defined</span>
+        <span class="c1"># by the wake expansion parameter</span>
         <span class="n">boundary_mask</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(dy ** 2 + dz ** 2) &lt; boundary_line&quot;</span><span class="p">)</span>
         
         <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">downstream_mask</span><span class="p">,</span> <span class="n">boundary_mask</span><span class="p">)</span>

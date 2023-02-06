@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1188,7 +1193,7 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
-    <span class="n">Grid</span>
+    <span class="n">Grid</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -1205,9 +1210,9 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">freestream_velocity</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;freestream_velocity&quot;</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
 <div class="viewcode-block" id="NoneVelocityDeflection.function"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_deflection.none.NoneVelocityDeflection.html#floris.simulation.wake_deflection.none.NoneVelocityDeflection.function">[docs]</a>    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span>

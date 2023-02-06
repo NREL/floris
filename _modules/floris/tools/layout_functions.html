@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1220,7 +1225,8 @@ title="Open an issue"
 <span class="sd">        lim_lines_per_turbine (int, optional): Limit number of lines eminating from a turbine</span>
 <span class="sd">        turbine_face_north (bool, optional): Force orientation of wind</span>
 <span class="sd">            turbines. Defaults to False.</span>
-<span class="sd">        one_index_turbine (bool, optional): if true, 1st turbine is turbine 1 (ignored if turbine names provided)</span>
+<span class="sd">        one_index_turbine (bool, optional): if true, 1st turbine is</span>
+<span class="sd">            turbine 1 (ignored if turbine names provided)</span>
 <span class="sd">        black_and_white (bool, optional): if true print in black and white</span>
 <span class="sd">        plot_rotor (bool, optional): if true plot the turbine rotors and offset the labels</span>
 <span class="sd">        turbines_names (list, optional): optional list of turbine names</span>
@@ -1254,7 +1260,9 @@ title="Open an issue"
     <span class="k">if</span> <span class="n">turbine_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">turbine_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">N_turbine</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Length of turbine names array must equal number of turbines within fi&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Length of turbine names array must equal number of turbines within fi&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">df_turbine</span><span class="p">[</span><span class="s1">&#39;turbine_names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">turbine_names</span>
 
@@ -1318,9 +1326,12 @@ title="Open an issue"
         <span class="c1"># If selected to limit the number of lines per turbine</span>
         <span class="k">if</span> <span class="n">lim_lines_per_turbine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Limit list to smallest lim_lines_per_turbine</span>
-            <span class="n">ordList</span> <span class="o">=</span> <span class="n">ordList</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;T1&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">lim_lines_per_turbine</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Dist&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ordList</span> <span class="o">=</span> <span class="n">ordList</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;T1&#39;</span><span class="p">])</span>
+            <span class="n">ordList</span> <span class="o">=</span> <span class="n">ordList</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">lim_lines_per_turbine</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Dist&#39;</span><span class="p">))</span>
+            <span class="n">ordList</span> <span class="o">=</span> <span class="n">ordList</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1"># Add in the reflected version of each case (only postive directions will be plotted to help test show face up)</span>
+        <span class="c1"># Add in the reflected version of each case (only postive directions will be</span>
+        <span class="c1"># plotted to help test show face up)</span>
         <span class="n">df_reflect</span> <span class="o">=</span> <span class="n">ordList</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df_reflect</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;T2&#39;</span><span class="p">,</span><span class="s1">&#39;T1&#39;</span><span class="p">,</span><span class="s1">&#39;Dist&#39;</span><span class="p">,</span><span class="s1">&#39;angle&#39;</span><span class="p">]</span> <span class="c1"># Reflect T2 and T1</span>
         <span class="n">ordList</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ordList</span><span class="p">,</span><span class="n">df_reflect</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1340,9 +1351,9 @@ title="Open an issue"
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">black_and_white</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">l</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">l</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
             <span class="n">linetext</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2"> D --- </span><span class="si">%.1f</span><span class="s2">/</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="n">dist</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">]</span> <span class="o">/</span> <span class="n">D</span><span class="p">,</span>
@@ -1351,7 +1362,7 @@ title="Open an issue"
             <span class="p">)</span>
 
             <span class="n">label_line</span><span class="p">(</span>
-                <span class="n">l</span><span class="p">,</span> <span class="n">linetext</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">near_i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">near_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">near_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotation_offset</span><span class="o">=</span><span class="mi">180</span>
+                <span class="n">line</span><span class="p">,</span> <span class="n">linetext</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">near_i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">near_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">near_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotation_offset</span><span class="o">=</span><span class="mi">180</span>
             <span class="p">)</span>
 
 
@@ -1360,7 +1371,15 @@ title="Open an issue"
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df_turbine</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">df_turbine</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
     
     <span class="c1"># Also mark the place of each label to make sure figure is correct scale</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df_turbine</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">label_offset</span><span class="p">,</span> <span class="n">df_turbine</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">label_offset</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">df_turbine</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">label_offset</span><span class="p">,</span>
+        <span class="n">df_turbine</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">label_offset</span><span class="p">,</span>
+        <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+        <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span>
+    
+    <span class="p">)</span>
 
     <span class="c1"># Plot turbines</span>
     <span class="k">for</span> <span class="n">t1</span> <span class="ow">in</span> <span class="n">turbines</span><span class="p">:</span>
@@ -1405,7 +1424,7 @@ title="Open an issue"
             <span class="n">df_turbine</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t1</span><span class="p">]</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">label_offset</span><span class="p">,</span>
             <span class="n">df_turbine</span><span class="o">.</span><span class="n">turbine_names</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">t1</span><span class="p">],</span>
             <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-            <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="n">ec_color</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;boxstyle&quot;</span><span class="p">:</span> <span class="s2">&quot;round&quot;</span><span class="p">,</span> <span class="s2">&quot;ec&quot;</span><span class="p">:</span> <span class="n">ec_color</span><span class="p">,</span> <span class="s2">&quot;fc&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">}</span>
         <span class="p">)</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span></div>
@@ -1544,7 +1563,7 @@ title="Open an issue"
             <span class="n">color</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
             <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
             <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
-            <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">ec</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
+            <span class="n">bbox</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ec&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;fc&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
         <span class="p">)</span>
 
     <span class="c1"># extract line data</span>

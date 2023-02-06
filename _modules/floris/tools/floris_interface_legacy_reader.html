@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1267,7 +1272,7 @@ title="Open an issue"
 <span class="sd">        settings in v3.0-compatible format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Simple entries that can just be copied over</span>
-    <span class="n">dict_floris</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># Output dictionary</span>
+    <span class="n">dict_floris</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Output dictionary</span>
     <span class="n">dict_floris</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_legacy</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; (auto-converted to v3)&quot;</span>
     <span class="n">dict_floris</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_legacy</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
     <span class="n">dict_floris</span><span class="p">[</span><span class="s2">&quot;floris_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;v3.0 (converted from legacy format v2)&quot;</span>
@@ -1372,7 +1377,6 @@ title="Open an issue"
 <span class="sd">    produce the necessary file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">argparse</span>
-    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
     <span class="c1"># Parse the input arguments</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Converts a FLORIS v2.4 input file to a FLORIS v3 compatible input file.</span><span class="se">\</span>

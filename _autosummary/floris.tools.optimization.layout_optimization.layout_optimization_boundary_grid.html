@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1253,9 +1258,11 @@ title="Print to PDF"
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="floris.tools.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid._discontinuous_grid">
 <span class="sig-name descname"><span class="pre">_discontinuous_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nrows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">farm_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">farm_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/optimization/layout_optimization/layout_optimization_boundary_grid.html#LayoutOptimizationBoundaryGrid._discontinuous_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid._discontinuous_grid" title="Permalink to this definition">#</a></dt>
-<dd><p>Map from grid design variables to turbine x and y locations. Includes integer design variables and the formulation
+<dd><p>Map from grid design variables to turbine x and y locations.
+Includes integer design variables and the formulation
 results in a discontinous design space.</p>
-<p>TODO: shrink_boundary doesn't work well with concave boundaries, or with boundary angles less than 90 deg</p>
+<p>TODO: shrink_boundary doesn't work well with concave boundaries,
+or with boundary angles less than 90 deg</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1329,8 +1336,11 @@ layout_y (Array(Float)): turbine y locations</p>
 <dd><p>Place turbines equally spaced traversing the perimiter if the wind farm along the boundary</p>
 <p>Args:
 n_boundary_turbs,start: boundary variables
-nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,shrink_boundary,eps: grid variables
-boundary_x,boundary_y: boundary points</p>
+nrows,ncols,farm_width,farm_height,shear,</p>
+<blockquote>
+<div><p>rotation,center_x,center_y,shrink_boundary,eps: grid variables</p>
+</div></blockquote>
+<p>boundary_x,boundary_y: boundary points</p>
 <p>Returns
 layout_x (Array(Float)): turbine x locations
 layout_y (Array(Float)): turbine y locations</p>

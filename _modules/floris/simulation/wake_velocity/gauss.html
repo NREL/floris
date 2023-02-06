@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1191,12 +1196,12 @@ title="Open an issue"
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
-    <span class="n">Turbine</span>
+    <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">cosd</span><span class="p">,</span>
     <span class="n">sind</span><span class="p">,</span>
-    <span class="n">tand</span>
+    <span class="n">tand</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -1214,13 +1219,13 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
-            <span class="n">z</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
-            <span class="n">u_initial</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
-            <span class="n">wind_veer</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_veer</span>
-        <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;u_initial&quot;</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;wind_veer&quot;</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">wind_veer</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
     <span class="c1"># @profile</span>
@@ -1270,16 +1275,22 @@ title="Open an issue"
         <span class="c1"># Start of the far wake</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">u_initial</span><span class="p">)</span>
         <span class="n">x0</span> <span class="o">*=</span> <span class="n">rotor_diameter_i</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ct_i</span><span class="p">)</span> <span class="p">)</span>
-        <span class="n">x0</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">turbulence_intensity_i</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ct_i</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">x0</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">turbulence_intensity_i</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ct_i</span><span class="p">)</span> <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">x0</span> <span class="o">+=</span> <span class="n">x_i</span>
 
         <span class="c1"># Initialize the velocity deficit array</span>
         <span class="n">velocity_deficit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">u_initial</span><span class="p">)</span>
 
         <span class="c1"># Masks</span>
-        <span class="c1"># When we have only an inequality, the current turbine may be applied its own wake in cases where numerical precision</span>
-        <span class="c1"># cause in incorrect comparison. We&#39;ve applied a small bump to avoid this. &quot;0.1&quot; is arbitrary but it is a small, non zero value.</span>
-        <span class="n">near_wake_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">xR</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">x0</span><span class="p">)</span>  <span class="c1"># This mask defines the near wake; keeps the areas downstream of xR and upstream of x0</span>
+        <span class="c1"># When we have only an inequality, the current turbine may be applied its own</span>
+        <span class="c1"># wake in cases where numerical precision cause in incorrect comparison. We&#39;ve</span>
+        <span class="c1"># applied a small bump to avoid this. &quot;0.1&quot; is arbitrary but it is a small, non</span>
+        <span class="c1"># zero value.</span>
+
+        <span class="c1"># This mask defines the near wake; keeps the areas downstream of xR and upstream of x0</span>
+        <span class="n">near_wake_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">xR</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">x0</span><span class="p">)</span>
         <span class="n">far_wake_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x0</span><span class="p">)</span>
 
         <span class="c1"># Compute the velocity deficit in the NEAR WAKE region</span>
@@ -1289,15 +1300,24 @@ title="Open an issue"
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">near_wake_mask</span><span class="p">):</span>
 
             <span class="c1"># Calculate the wake expansion</span>
-            <span class="n">near_wake_ramp_up</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xR</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">xR</span><span class="p">)</span>  <span class="c1"># This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.</span>
-            <span class="n">near_wake_ramp_down</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">xR</span><span class="p">)</span>  <span class="c1"># Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake</span>
+
+            <span class="c1"># This is a linear ramp from 0 to 1 from the start of the near wake to the start</span>
+            <span class="c1"># of the far wake.</span>
+            <span class="n">near_wake_ramp_up</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xR</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">xR</span><span class="p">)</span>
+            <span class="c1"># Another linear ramp, but positive upstream of the far wake and negative in the</span>
+            <span class="c1"># far wake; 0 at the start of the far wake</span>
+            <span class="n">near_wake_ramp_down</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">xR</span><span class="p">)</span>
             <span class="c1"># near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?</span>
 
-            <span class="n">sigma_y</span> <span class="o">=</span> <span class="n">near_wake_ramp_down</span> <span class="o">*</span> <span class="mf">0.501</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ct_i</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">near_wake_ramp_up</span> <span class="o">*</span> <span class="n">sigma_y0</span>
-            <span class="n">sigma_y</span> <span class="o">=</span> <span class="n">sigma_y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">xR</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">sigma_y</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">xR</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span>
+            <span class="n">sigma_y</span> <span class="o">=</span> <span class="n">near_wake_ramp_down</span> <span class="o">*</span> <span class="mf">0.501</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ct_i</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="n">sigma_y</span> <span class="o">+=</span> <span class="n">near_wake_ramp_up</span> <span class="o">*</span> <span class="n">sigma_y0</span>
+            <span class="n">sigma_y</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">xR</span><span class="p">)</span>
+            <span class="n">sigma_y</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">sigma_y</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">xR</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span>
             
-            <span class="n">sigma_z</span> <span class="o">=</span> <span class="n">near_wake_ramp_down</span> <span class="o">*</span> <span class="mf">0.501</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ct_i</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">near_wake_ramp_up</span> <span class="o">*</span> <span class="n">sigma_z0</span>
-            <span class="n">sigma_z</span> <span class="o">=</span> <span class="n">sigma_z</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">xR</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">sigma_z</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">xR</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span>
+            <span class="n">sigma_z</span> <span class="o">=</span> <span class="n">near_wake_ramp_down</span> <span class="o">*</span> <span class="mf">0.501</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ct_i</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="n">sigma_z</span> <span class="o">+=</span> <span class="n">near_wake_ramp_up</span> <span class="o">*</span> <span class="n">sigma_z0</span>
+            <span class="n">sigma_z</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">xR</span><span class="p">)</span>
+            <span class="n">sigma_z</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">sigma_z</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">xR</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span>
 
             <span class="n">r</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">rC</span><span class="p">(</span>
                 <span class="n">wind_veer</span><span class="p">,</span>
@@ -1362,7 +1382,7 @@ title="Open an issue"
     <span class="c1">#     - 2 * b * (y - y_i - delta) * (z - HH)</span>
     <span class="c1">#     + c * (z - HH) ** 2</span>
     <span class="c1"># )</span>
-    <span class="c1"># C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0) )</span>
+    <span class="c1"># C = 1 - np.sqrt(np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0))</span>
 
     <span class="c1">## Precalculate some parts</span>
     <span class="c1"># twox_sigmay_2 = 2 * sigma_y ** 2</span>
@@ -1373,14 +1393,22 @@ title="Open an issue"
     <span class="c1"># delta_y = y - y_i - delta</span>
     <span class="c1"># delta_z = z - HH</span>
     <span class="c1"># r = (a * (delta_y ** 2) - 2 * b * (delta_y) * (delta_z) + c * (delta_z ** 2))</span>
-    <span class="c1"># C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0) )</span>
+    <span class="c1"># C = 1 - np.sqrt(np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / (D * D))), 0.0, 1.0))</span>
 
     <span class="c1">## Numexpr</span>
     <span class="n">wind_veer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">wind_veer</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)&quot;</span><span class="p">)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)&quot;</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)&quot;</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)&quot;</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="s2">&quot;cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="s2">&quot;-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="s2">&quot;sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="s2">&quot;a * ((y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)&quot;</span>
+    <span class="p">)</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">Ct</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">sigma_y</span> <span class="o">*</span> <span class="n">sigma_z</span> <span class="o">/</span> <span class="p">(</span><span class="n">D</span> <span class="o">*</span> <span class="n">D</span><span class="p">)</span> <span class="p">)),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="n">C</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;1 - sqrt(d)&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">C</span></div>

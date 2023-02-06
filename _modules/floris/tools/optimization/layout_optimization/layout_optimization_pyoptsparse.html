@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1252,9 +1257,20 @@ title="Open an issue"
             <span class="bp">self</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optProb</span><span class="p">,</span> <span class="n">sens</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sens</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeLimit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optProb</span><span class="p">,</span> <span class="n">sens</span><span class="o">=</span><span class="s2">&quot;CDR&quot;</span><span class="p">,</span> <span class="n">storeHistory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">storeHistory</span><span class="p">,</span> <span class="n">timeLimit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeLimit</span><span class="p">,</span> <span class="n">hotStart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hotStart</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">optProb</span><span class="p">,</span>
+                    <span class="n">sens</span><span class="o">=</span><span class="s2">&quot;CDR&quot;</span><span class="p">,</span>
+                    <span class="n">storeHistory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">storeHistory</span><span class="p">,</span>
+                    <span class="n">timeLimit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeLimit</span><span class="p">,</span>
+                    <span class="n">hotStart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hotStart</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optProb</span><span class="p">,</span> <span class="n">sens</span><span class="o">=</span><span class="s2">&quot;CDR&quot;</span><span class="p">,</span> <span class="n">storeHistory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">storeHistory</span><span class="p">,</span> <span class="n">hotStart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hotStart</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">optProb</span><span class="p">,</span>
+                    <span class="n">sens</span><span class="o">=</span><span class="s2">&quot;CDR&quot;</span><span class="p">,</span>
+                    <span class="n">storeHistory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">storeHistory</span><span class="p">,</span>
+                    <span class="n">hotStart</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hotStart</span>
+                <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sol</span></div>
 
 <div class="viewcode-block" id="LayoutOptimizationPyOptSparse._obj_func"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.html#floris.tools.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse._obj_func">[docs]</a>    <span class="k">def</span> <span class="nf">_obj_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varDict</span><span class="p">):</span>
@@ -1337,7 +1353,7 @@ title="Open an issue"
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span><span class="p">):</span>
             <span class="n">loc</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="n">boundary_con</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">loc</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_boundary_line</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_polygon</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_polygon</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">boundary_con</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mf">1.0</span>
 
         <span class="k">return</span> <span class="n">boundary_con</span></div>

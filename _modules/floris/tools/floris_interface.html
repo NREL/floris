@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1196,7 +1201,7 @@ title="Open an issue"
     <span class="n">average_velocity</span><span class="p">,</span>
     <span class="n">axial_induction</span><span class="p">,</span>
     <span class="n">Ct</span><span class="p">,</span>
-    <span class="n">power</span>
+    <span class="n">power</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.tools.cut_plane</span> <span class="kn">import</span> <span class="n">CutPlane</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
@@ -1243,14 +1248,26 @@ title="Open an issue"
 
         <span class="c1"># Make a check on reference height and provide a helpful warning</span>
         <span class="n">unique_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">hub_heights</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_heights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">-</span> <span class="n">unique_heights</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0e-6</span><span class="p">):</span>
-            <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height.&quot;</span>
+        <span class="k">if</span> <span class="p">((</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">unique_heights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">-</span> <span class="n">unique_heights</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0e-6</span>
+        <span class="p">)):</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;The only unique hub-height is not the equal to the specified reference &quot;</span>
+                <span class="s2">&quot;wind height. If this was unintended use -1 as the reference hub height to &quot;</span>
+                <span class="s2">&quot; indicate use of hub-height as reference wind height.&quot;</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">err_msg</span><span class="p">,</span> <span class="n">stack_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Check the turbine_grid_points is reasonable</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;turbine_grid&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;turbine_grid_points&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;turbine_grid_points value is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s1">&#39;turbine_grid_points&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;turbine_grid_points value is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s1">&#39;turbine_grid_points&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="s2">&quot;which is larger than the recommended value of less than or equal to 3. &quot;</span>
+                    <span class="s2">&quot;High amounts of turbine grid points reduce the computational performance &quot;</span>
+                    <span class="s2">&quot;but have a small change on accuracy.&quot;</span>
+                <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;turbine_grid_points must be less than or equal to 3.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FlorisInterface.assign_hub_height_to_ref_height"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.assign_hub_height_to_ref_height">[docs]</a>    <span class="k">def</span> <span class="nf">assign_hub_height_to_ref_height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1259,9 +1276,9 @@ title="Open an issue"
         <span class="n">unique_heights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">hub_heights</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_heights</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;To assign hub heights to reference height, can not have more than one specified height. Current length is </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="n">unique_heights</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="s2">&quot;To assign hub heights to reference height, can not have more than one &quot;</span>
+                <span class="s2">&quot;specified height. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Current length is </span><span class="si">{</span><span class="n">unique_heights</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">=</span> <span class="n">unique_heights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
@@ -1379,8 +1396,10 @@ title="Open an issue"
 
         <span class="c1">## Farm</span>
         <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Use the `layout_x` and `layout_y` parameters in place of `layout` &quot;</span>
+                <span class="s2">&quot;because the `layout` parameter will be deprecated in 3.3.&quot;</span>
+            <span class="p">)</span>
             <span class="n">layout_x</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">layout_y</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">layout_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1426,7 +1445,8 @@ title="Open an issue"
 <span class="sd">        Args:</span>
 <span class="sd">            normal_vector (string, optional): Vector normal to plane.</span>
 <span class="sd">                Defaults to z.</span>
-<span class="sd">            planar_coordinate (float, optional): Value of normal vector to slice through. Defaults to None.</span>
+<span class="sd">            planar_coordinate (float, optional): Value of normal vector</span>
+<span class="sd">                to slice through. Defaults to None.</span>
 
 
 <span class="sd">        Returns:</span>
@@ -1549,14 +1569,20 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solve_for_viz</span><span class="p">()</span>
 
         <span class="c1"># Get the points of data in a dataframe</span>
-        <span class="c1"># TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.</span>
+        <span class="c1"># TODO this just seems to be flattening and storing the data in a df; is this necessary?</span>
+        <span class="c1"># It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plane_of_points</span><span class="p">(</span>
             <span class="n">normal_vector</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span>
             <span class="n">planar_coordinate</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Compute the cutplane</span>
-        <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">CutPlane</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
+        <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">CutPlane</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">&quot;z&quot;</span>
+        <span class="p">)</span>
 
         <span class="c1"># Reset the fi object back to the turbine grid configuration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span> <span class="o">=</span> <span class="n">Floris</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">floris_dict</span><span class="p">)</span>
@@ -1627,7 +1653,8 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solve_for_viz</span><span class="p">()</span>
 
         <span class="c1"># Get the points of data in a dataframe</span>
-        <span class="c1"># TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.</span>
+        <span class="c1"># TODO this just seems to be flattening and storing the data in a df; is this necessary?</span>
+        <span class="c1"># It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plane_of_points</span><span class="p">(</span>
             <span class="n">normal_vector</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
             <span class="n">planar_coordinate</span><span class="o">=</span><span class="n">downstream_dist</span><span class="p">,</span>
@@ -1705,7 +1732,8 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solve_for_viz</span><span class="p">()</span>
 
         <span class="c1"># Get the points of data in a dataframe</span>
-        <span class="c1"># TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.</span>
+        <span class="c1"># TODO this just seems to be flattening and storing the data in a df; is this necessary?</span>
+        <span class="c1"># It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plane_of_points</span><span class="p">(</span>
             <span class="n">normal_vector</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
             <span class="n">planar_coordinate</span><span class="o">=</span><span class="n">crossstream_dist</span><span class="p">,</span>
@@ -1726,12 +1754,14 @@ title="Open an issue"
 <div class="viewcode-block" id="FlorisInterface.check_wind_condition_for_viz"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.check_wind_condition_for_viz">[docs]</a>    <span class="k">def</span> <span class="nf">check_wind_condition_for_viz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Wind direction input must be of length 1 for visualization. Current length is </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wd</span><span class="p">))</span>
+                <span class="s2">&quot;Wind direction input must be of length 1 for visualization. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Current length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Wind speed input must be of length 1 for visualization. Current length is </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">))</span>
+                <span class="s2">&quot;Wind speed input must be of length 1 for visualization. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Current length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="FlorisInterface.get_turbine_powers"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_powers">[docs]</a>    <span class="k">def</span> <span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
@@ -1743,7 +1773,10 @@ title="Open an issue"
 
         <span class="c1"># Confirm calculate wake has been run</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">State</span><span class="o">.</span><span class="n">USED</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Can&#39;t run function `FlorisInterface.get_turbine_powers` without &quot;</span>
+                <span class="s2">&quot;first running `FlorisInterface.calculate_wake`.&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">power</span><span class="p">(</span>
             <span class="n">air_density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">air_density</span><span class="p">,</span>
@@ -1823,7 +1856,10 @@ title="Open an issue"
 
         <span class="c1"># Confirm calculate wake has been run</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">State</span><span class="o">.</span><span class="n">USED</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Can&#39;t run function `FlorisInterface.get_turbine_powers` without &quot;</span>
+                <span class="s2">&quot;first running `FlorisInterface.calculate_wake`.&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">turbine_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Default to equal weighing of all turbines when turbine_weights is None</span>
@@ -1914,12 +1950,16 @@ title="Open an issue"
             <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-                <span class="s2">&quot;&#39;freq&#39; should be a two-dimensional array with dimensions&quot;</span> <span class="o">+</span> <span class="s2">&quot; (n_wind_directions, n_wind_speeds).&quot;</span>
+                <span class="s2">&quot;&#39;freq&#39; should be a two-dimensional array with dimensions &quot;</span>
+                <span class="s2">&quot; (n_wind_directions, n_wind_speeds).&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Check if frequency vector sums to 1.0. If not, raise a warning</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;WARNING: The frequency array provided to get_farm_AEP() &quot;</span> <span class="o">+</span> <span class="s2">&quot;does not sum to 1.0. &quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;WARNING: The frequency array provided to get_farm_AEP() &quot;</span>
+                <span class="s2">&quot;does not sum to 1.0.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Copy the full wind speed array from the floris object and initialize</span>
         <span class="c1"># the the farm_power variable as an empty array.</span>
@@ -2014,7 +2054,10 @@ title="Open an issue"
         <span class="c1"># over to those values in the wind rose class</span>
         <span class="n">wind_speeds_wind_rose</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
         <span class="n">wind_directions_wind_rose</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">wd</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds_wind_rose</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions_wind_rose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span>
+            <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds_wind_rose</span><span class="p">,</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions_wind_rose</span>
+        <span class="p">)</span>
 
         <span class="c1"># Build the frequency matrix from wind rose</span>
         <span class="n">freq</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;wd&#39;</span><span class="p">,</span><span class="s1">&#39;ws&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
@@ -2030,7 +2073,10 @@ title="Open an issue"
 
 
         <span class="c1"># Reset the FLORIS object to the original wind speed and directions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span>
+            <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span>
+        <span class="p">)</span>
         
 
         <span class="k">return</span> <span class="n">aep</span></div>
@@ -2067,7 +2113,7 @@ title="Open an issue"
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: lists of x, y, and (optionally) z coordinates of</span>
-<span class="sd">                      each turbine</span>
+<span class="sd">                each turbine</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">xcoords</span><span class="p">,</span> <span class="n">ycoords</span><span class="p">,</span> <span class="n">zcoords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">elements</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
         <span class="k">if</span> <span class="n">z</span><span class="p">:</span>
@@ -2081,26 +2127,39 @@ title="Open an issue"
         <span class="c1"># Compute the 3-dimensional interpolants for each wind diretion</span>
         <span class="c1"># Linear interpolation is used for points within the user-defined area of values,</span>
         <span class="c1"># while a nearest-neighbor interpolant is used for points outside that region</span>
-        <span class="n">in_region</span> <span class="o">=</span> <span class="p">[</span><span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span><span class="p">]</span>
-        <span class="n">out_region</span> <span class="o">=</span> <span class="p">[</span><span class="n">NearestNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">)</span> <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span><span class="p">]</span>
+        <span class="n">in_region</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
+        <span class="p">]</span>
+        <span class="n">out_region</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">NearestNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
+        <span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Compute the 2-dimensional interpolants for each wind diretion</span>
         <span class="c1"># Linear interpolation is used for points within the user-defined area of values,</span>
         <span class="c1"># while a nearest-neighbor interpolant is used for points outside that region</span>
-        <span class="n">in_region</span> <span class="o">=</span> <span class="p">[</span><span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span><span class="p">]</span>
-        <span class="n">out_region</span> <span class="o">=</span> <span class="p">[</span><span class="n">NearestNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">)</span> <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span><span class="p">]</span>
+        <span class="n">in_region</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
+        <span class="p">]</span>
+        <span class="n">out_region</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">NearestNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
+        <span class="p">]</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="n">in_region</span><span class="p">,</span> <span class="n">out_region</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">in_region</span><span class="p">,</span> <span class="n">out_region</span><span class="p">]</span></div>
 
-    <span class="c1">## Functionality removed in v3</span>
+<span class="c1">## Functionality removed in v3</span>
 
-    <span class="k">def</span> <span class="nf">set_rotor_diameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rotor_diameter</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function has been replaced and no longer works correctly, assigning an error</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="s2">&quot;FlorinInterface.set_rotor_diameter has been removed in favor of FlorinInterface.change_turbine. See examples/change_turbine/.&quot;</span>
-        <span class="p">)</span></div>
+<div class="viewcode-block" id="set_rotor_diameter"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html#floris.tools.floris_interface.set_rotor_diameter">[docs]</a><span class="k">def</span> <span class="nf">set_rotor_diameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rotor_diameter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function has been replaced and no longer works correctly, assigning an error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+        <span class="s2">&quot;FlorinInterface.set_rotor_diameter has been removed in favor of &quot;</span>
+        <span class="s2">&quot;FlorinInterface.change_turbine. See examples/change_turbine/.&quot;</span>
+    <span class="p">)</span></div>
 </pre></div>
 
               </div>

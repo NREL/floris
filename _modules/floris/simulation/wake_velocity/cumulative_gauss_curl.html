@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1191,12 +1196,12 @@ title="Open an issue"
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
-    <span class="n">Turbine</span>
+    <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">cosd</span><span class="p">,</span>
     <span class="n">sind</span><span class="p">,</span>
-    <span class="n">tand</span>
+    <span class="n">tand</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -1229,12 +1234,12 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
-            <span class="n">z</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
-            <span class="n">u_initial</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;u_initial&quot;</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
 <div class="viewcode-block" id="CumulativeGaussCurlVelocityDeficit.function"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit.html#floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit.function">[docs]</a>    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span>
@@ -1340,7 +1345,8 @@ title="Open an issue"
         <span class="c1">#     Y = (y_i_loc - y_coord - deflection_field) ** 2 / (2 * S)</span>
         <span class="c1">#     Z = (z_i_loc - z_coord) ** 2 / (2 * S)</span>
 
-        <span class="c1">#     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2 / S * np.exp(-Y) * np.exp(-Z)</span>
+        <span class="c1">#     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2</span>
+        <span class="c1">#     lbda /= S * np.exp(-Y) * np.exp(-Z)</span>
         <span class="c1">#     sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)       </span>
         <span class="c1"># else:</span>
         <span class="c1">#     sum_lbda = 0.0</span>
@@ -1351,7 +1357,8 @@ title="Open an issue"
         <span class="c1"># super gaussian</span>
         <span class="c1"># b_f = self.b_f1 * np.exp(self.b_f2 * TI) + self.b_f3</span>
         <span class="n">x_tilde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">turbine_diameter</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">r_tilde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">y_loc</span> <span class="o">-</span> <span class="n">y_i_loc</span> <span class="o">-</span> <span class="n">deflection_field</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z_loc</span> <span class="o">-</span> <span class="n">z_i_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">turbine_diameter</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">r_tilde</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">y_loc</span> <span class="o">-</span> <span class="n">y_i_loc</span> <span class="o">-</span> <span class="n">deflection_field</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z_loc</span> <span class="o">-</span> <span class="n">z_i_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span>
+        <span class="n">r_tilde</span> <span class="o">/=</span> <span class="n">turbine_diameter</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a_f</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b_f</span> <span class="o">*</span> <span class="n">x_tilde</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span>
         <span class="n">a1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>

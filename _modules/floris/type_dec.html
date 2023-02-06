@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1187,7 +1192,7 @@ title="Open an issue"
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
     <span class="n">Tuple</span><span class="p">,</span>
-    <span class="n">Union</span>
+    <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">attrs</span>
@@ -1277,16 +1282,25 @@ title="Open an issue"
         <span class="n">class_attr_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__attrs_attrs__</span><span class="p">]</span>
         <span class="n">extra_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class_attr_names</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extra_args</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The initialization for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was given extraneous inputs: </span><span class="si">{</span><span class="n">extra_args</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The initialization for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was given extraneous inputs: </span><span class="si">{</span><span class="n">extra_args</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__attrs_attrs__</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">init</span><span class="p">}</span>
 
         <span class="c1"># Map the inputs must be provided: 1) must be initialized, 2) no default value defined</span>
-        <span class="n">required_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__attrs_attrs__</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">init</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="n">attrs</span><span class="o">.</span><span class="n">NOTHING</span><span class="p">]</span>
+        <span class="n">required_inputs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__attrs_attrs__</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">init</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="n">attrs</span><span class="o">.</span><span class="n">NOTHING</span>
+        <span class="p">]</span>
         <span class="n">undefined</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">required_inputs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">undefined</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The class defintion for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is missing the following inputs: </span><span class="si">{</span><span class="n">undefined</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The class defintion for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="s2">&quot;is missing the following inputs: </span><span class="si">{undefined}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FromDictMixin.as_dict"><a class="viewcode-back" href="../../_autosummary/floris.type_dec.FromDictMixin.html#floris.type_dec.FromDictMixin.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -1308,7 +1322,7 @@ title="Open an issue"
 <span class="c1">#     if attribute.default != value:</span>
 <span class="c1">#         raise ValueError(f&quot;{attribute.name} should never be set manually.&quot;)</span>
 
-<span class="c1"># model_attrib = partial(field, on_setattr=attrs.setters.frozen, validator=is_default)  # type: ignore</span>
+<span class="c1"># model_attrib = partial(field, on_setattr=attrs.setters.frozen, validator=is_default)</span>
 <span class="c1"># update_wrapper(model_attrib, field)</span>
 
 <span class="c1"># float_attrib = partial(</span>

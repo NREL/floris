@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1206,12 +1211,12 @@ title="Open an issue"
     <span class="n">State</span><span class="p">,</span>
     <span class="n">TurbineGrid</span><span class="p">,</span>
     <span class="n">turbopark_solver</span><span class="p">,</span>
-    <span class="n">WakeModelManager</span>
+    <span class="n">WakeModelManager</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">load_yaml</span>
 
 
-<div class="viewcode-block" id="Floris"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris">[docs]</a><span class="nd">@define</span>
+<div class="viewcode-block" id="Floris"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">Floris</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Top-level class that describes a Floris model and initializes the</span>
@@ -1281,12 +1286,15 @@ title="Open an issue"
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Supported solver types are [turbine_grid, flow_field_grid], but type given was </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Supported solver types are [turbine_grid, flow_field_grid],&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; but type given was </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span> <span class="o">==</span> <span class="n">TurbineGrid</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">expand_farm_properties</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
             <span class="p">)</span>
 
         <span class="c1"># Configure logging</span>
@@ -1300,7 +1308,7 @@ title="Open an issue"
         <span class="p">)</span>
 
     <span class="c1"># @profile</span>
-<div class="viewcode-block" id="Floris.initialize_domain"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.initialize_domain">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Floris.initialize_domain"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.initialize_domain">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize solution space prior to wake calculations&quot;&quot;&quot;</span>
 
         <span class="c1"># Initialize field quanitities; doing this immediately prior to doing</span>
@@ -1313,7 +1321,7 @@ title="Open an issue"
 
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">INITIALIZED</span></div>
 
-<div class="viewcode-block" id="Floris.steady_state_atmospheric_condition"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.steady_state_atmospheric_condition">[docs]</a>    <span class="k">def</span> <span class="nf">steady_state_atmospheric_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Floris.steady_state_atmospheric_condition"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.steady_state_atmospheric_condition">[docs]</a>    <span class="k">def</span> <span class="nf">steady_state_atmospheric_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the steady-state wind farm wake calculations. Note that</span>
 <span class="sd">        initialize_domain() is required to be called before this function.&quot;&quot;&quot;</span>
 
@@ -1349,7 +1357,7 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">elapsed_time</span></div>
 
-<div class="viewcode-block" id="Floris.solve_for_viz"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.solve_for_viz">[docs]</a>    <span class="k">def</span> <span class="nf">solve_for_viz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Floris.solve_for_viz"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.solve_for_viz">[docs]</a>    <span class="k">def</span> <span class="nf">solve_for_viz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Do the calculation with the TurbineGrid for a single wind speed</span>
         <span class="c1"># and wind direction and 1 point on the grid. Then, use the result</span>
         <span class="c1"># to construct the full flow field grid.</span>
@@ -1367,7 +1375,7 @@ title="Open an issue"
         <span class="k">else</span><span class="p">:</span>
             <span class="n">full_flow_sequential_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Floris.finalize"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Floris.finalize"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Once the wake calculation is finished, unsort the values to match</span>
         <span class="c1"># the user-supplied order of things.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">finalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">unsorted_indices</span><span class="p">)</span>
@@ -1376,7 +1384,7 @@ title="Open an issue"
 
     <span class="c1">## I/O</span>
 
-<div class="viewcode-block" id="Floris.from_file"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Floris.from_file"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.from_file">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">filetype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Floris</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a `Floris` instance from an input file. Must be filetype</span>
 <span class="sd">        JSON or YAML.</span>
@@ -1408,7 +1416,7 @@ title="Open an issue"
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Supported import filetypes are JSON and YAML&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Floris</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Floris.to_file"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.to_file">[docs]</a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filetype</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;YAML&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Floris.to_file"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.to_file">[docs]</a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filetype</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;YAML&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts the `Floris` object to an input-ready JSON or YAML file at `output_file_path`.</span>
 
 <span class="sd">        Args:</span>

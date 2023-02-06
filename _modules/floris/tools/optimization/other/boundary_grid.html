@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1187,7 +1192,6 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Point</span><span class="p">,</span> <span class="n">Polygon</span>
 
 
-<span class="c1"># def discontinuous_grid(nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,boundary_mult,boundary_x,boundary_y):</span>
 <div class="viewcode-block" id="discontinuous_grid"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.other.boundary_grid.discontinuous_grid.html#floris.tools.optimization.other.boundary_grid.discontinuous_grid">[docs]</a><span class="k">def</span> <span class="nf">discontinuous_grid</span><span class="p">(</span>
     <span class="n">nrows</span><span class="p">,</span>
     <span class="n">ncols</span><span class="p">,</span>
@@ -1203,10 +1207,12 @@ title="Open an issue"
     <span class="n">eps</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Map from grid design variables to turbine x and y locations. Includes integer design variables and the formulation</span>
+<span class="sd">    Map from grid design variables to turbine x and y locations.</span>
+<span class="sd">    Includes integer design variables and the formulation</span>
 <span class="sd">    results in a discontinous design space.</span>
 
-<span class="sd">    TODO: shrink_boundary doesn&#39;t work well with concave boundaries, or with boundary angles less than 90 deg</span>
+<span class="sd">    TODO: shrink_boundary doesn&#39;t work well with concave boundaries,</span>
+<span class="sd">    or with boundary angles less than 90 deg</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nrows (Int): number of rows in the grid.</span>
@@ -1385,7 +1391,8 @@ title="Open an issue"
 
 <span class="sd">    Args:</span>
 <span class="sd">    n_boundary_turbs,start: boundary variables</span>
-<span class="sd">    nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,shrink_boundary,eps: grid variables</span>
+<span class="sd">    nrows,ncols,farm_width,farm_height,shear,</span>
+<span class="sd">        rotation,center_x,center_y,shrink_boundary,eps: grid variables</span>
 <span class="sd">    boundary_x,boundary_y: boundary points</span>
 
 <span class="sd">    Returns</span>
@@ -1550,7 +1557,6 @@ title="Open an issue"
             <span class="mf">600.0</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">)</span>
-    <span class="c1"># x,y = discontinuous_grid(nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,boundary_mult,boundary_x,boundary_y)</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">discontinuous_grid</span><span class="p">(</span>
         <span class="n">nrows</span><span class="p">,</span>
         <span class="n">ncols</span><span class="p">,</span>

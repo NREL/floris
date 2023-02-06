@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1223,7 +1228,10 @@ title="Open an issue"
         <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
 
     <span class="n">coordinates_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">))])</span>
-    <span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wind_direction</span><span class="p">]),</span> <span class="n">coordinates_array</span><span class="p">)</span>
+    <span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wind_direction</span><span class="p">]),</span>
+        <span class="n">coordinates_array</span>
+    <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yaw</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">layout_x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">layout_y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">yaw_angles</span><span class="p">,</span> <span class="n">rotor_diameters</span><span class="p">):</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="mf">2.0</span>
@@ -1263,19 +1271,33 @@ title="Open an issue"
 <div class="viewcode-block" id="add_turbine_id_labels"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.add_turbine_id_labels.html#floris.tools.visualization.add_turbine_id_labels">[docs]</a><span class="k">def</span> <span class="nf">add_turbine_id_labels</span><span class="p">(</span><span class="n">fi</span><span class="p">:</span> <span class="n">FlorisInterface</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds index labels to a plot based on the given FlorisInterface.</span>
-<span class="sd">    See the pyplot.annotate docs for more info: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html.</span>
-<span class="sd">    kwargs are passed to Text (https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text).</span>
+<span class="sd">    See the pyplot.annotate docs for more info:</span>
+<span class="sd">    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html.</span>
+<span class="sd">    kwargs are passed to Text</span>
+<span class="sd">    (https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fi (FlorisInterface): Simulation object to get the layout and index information.</span>
 <span class="sd">        ax (plt.Axes): Axes object to add the labels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">coordinates_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">fi</span><span class="o">.</span><span class="n">layout_y</span><span class="p">))])</span>
+    <span class="n">coordinates_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">fi</span><span class="o">.</span><span class="n">layout_y</span><span class="p">))</span>
+    <span class="p">])</span>
     <span class="n">wind_direction</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wind_direction</span><span class="p">]),</span> <span class="n">coordinates_array</span><span class="p">)</span>
+    <span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wind_direction</span><span class="p">]),</span>
+        <span class="n">coordinates_array</span>
+    <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">):</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">layout_x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">layout_y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">textcoords</span><span class="o">=</span><span class="s2">&quot;offset points&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+            <span class="n">i</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">layout_x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">layout_y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span>
+            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span>
+            <span class="n">textcoords</span><span class="o">=</span><span class="s2">&quot;offset points&quot;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="line_contour_cut_plane"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.line_contour_cut_plane.html#floris.tools.visualization.line_contour_cut_plane">[docs]</a><span class="k">def</span> <span class="nf">line_contour_cut_plane</span><span class="p">(</span><span class="n">cut_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1371,10 +1393,26 @@ title="Open an issue"
     <span class="n">Zm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vel_mesh</span><span class="p">),</span> <span class="n">vel_mesh</span><span class="p">)</span>
 
     <span class="c1"># Plot the cut-through</span>
-    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">x1_mesh</span><span class="p">,</span> <span class="n">x2_mesh</span><span class="p">,</span> <span class="n">Zm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">min_speed</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">max_speed</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span>
+        <span class="n">x1_mesh</span><span class="p">,</span>
+        <span class="n">x2_mesh</span><span class="p">,</span>
+        <span class="n">Zm</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=</span><span class="n">min_speed</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="n">max_speed</span><span class="p">,</span>
+        <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
+    <span class="p">)</span>
 
     <span class="c1"># Add line contour</span>
-    <span class="n">line_contour_cut_plane</span><span class="p">(</span><span class="n">cut_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">line_contour_cut_plane</span><span class="p">(</span>
+        <span class="n">cut_plane</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>

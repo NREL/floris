@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1189,12 +1194,12 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">floris.simulation.wake_combination</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">FLS</span><span class="p">,</span>
     <span class="n">MAX</span><span class="p">,</span>
-    <span class="n">SOSFS</span>
+    <span class="n">SOSFS</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.wake_deflection</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">GaussVelocityDeflection</span><span class="p">,</span>
     <span class="n">JimenezVelocityDeflection</span><span class="p">,</span>
-    <span class="n">NoneVelocityDeflection</span>
+    <span class="n">NoneVelocityDeflection</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.wake_turbulence</span> <span class="kn">import</span> <span class="n">CrespoHernandez</span><span class="p">,</span> <span class="n">NoneWakeTurbulence</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.wake_velocity</span> <span class="kn">import</span> <span class="p">(</span>
@@ -1202,7 +1207,7 @@ title="Open an issue"
     <span class="n">GaussVelocityDeficit</span><span class="p">,</span>
     <span class="n">JensenVelocityDeficit</span><span class="p">,</span>
     <span class="n">NoneVelocityDeficit</span><span class="p">,</span>
-    <span class="n">TurbOParkVelocityDeficit</span>
+    <span class="n">TurbOParkVelocityDeficit</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -1259,38 +1264,42 @@ title="Open an issue"
     <span class="n">velocity_model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+        <span class="n">velocity_model_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">][</span><span class="n">velocity_model_string</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">velocity_model_string</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
             <span class="n">model_parameters</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">model_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake_velocity_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]]</span>
+            <span class="n">model_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake_velocity_parameters</span><span class="p">[</span><span class="n">velocity_model_string</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">model_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Use model defaults</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">velocity_model</span> <span class="o">=</span> <span class="n">model</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">velocity_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">model_parameters</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;deflection_model&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;deflection_model&quot;</span><span class="p">]]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;deflection_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+        <span class="n">deflection_model_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;deflection_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;deflection_model&quot;</span><span class="p">][</span><span class="n">deflection_model_string</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">deflection_model_string</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
             <span class="n">model_parameters</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">model_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake_deflection_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;deflection_model&quot;</span><span class="p">]]</span>
+            <span class="n">model_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake_deflection_parameters</span><span class="p">[</span><span class="n">deflection_model_string</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">model_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">deflection_model</span> <span class="o">=</span> <span class="n">model</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">deflection_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">model_parameters</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;turbulence_model&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;turbulence_model&quot;</span><span class="p">]]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;turbulence_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+        <span class="n">turbulence_model_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;turbulence_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;turbulence_model&quot;</span><span class="p">][</span><span class="n">turbulence_model_string</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">turbulence_model_string</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
             <span class="n">model_parameters</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">model_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake_turbulence_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;turbulence_model&quot;</span><span class="p">]]</span>
+            <span class="n">model_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake_turbulence_parameters</span><span class="p">[</span><span class="n">turbulence_model_string</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">model_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">turbulence_model</span> <span class="o">=</span> <span class="n">model</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">turbulence_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">model_parameters</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;combination_model&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;combination_model&quot;</span><span class="p">]]</span>
+        <span class="n">combination_model_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;combination_model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;combination_model&quot;</span><span class="p">][</span><span class="n">combination_model_string</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">combination_model</span> <span class="o">=</span> <span class="n">model</span><span class="p">()</span>
 
 <div class="viewcode-block" id="WakeModelManager.validate_model_strings"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.wake.WakeModelManager.html#floris.simulation.wake.WakeModelManager.validate_model_strings">[docs]</a>    <span class="nd">@model_strings</span><span class="o">.</span><span class="n">validator</span>
@@ -1309,7 +1318,10 @@ title="Open an issue"
         <span class="c1"># Check that no other strings are given</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">required_strings</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wake: &#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&#39; was given as input but it is not a valid option. Required inputs are: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">required_strings</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">((</span>
+                    <span class="sa">f</span><span class="s2">&quot;Wake: &#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&#39; was given as input but it is not a valid option.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Required inputs are: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">required_strings</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">deflection_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

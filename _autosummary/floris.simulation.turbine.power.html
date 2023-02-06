@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1250,7 +1255,8 @@ given in Watts.</p>
 the yaw misalignment angle to power for each turbine.</p></li>
 <li><p><strong>power_interp</strong> (<em>NDArrayObject</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The power interpolation function
 for each turbine.</p></li>
-<li><p><strong>turbine_type_map</strong> -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.</p></li>
+<li><p><strong>turbine_type_map</strong> -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
+each turbine.</p></li>
 <li><p><strong>ix_filter</strong> (<em>NDArrayInt</em><em>, </em><em>optional</em>) -- The boolean array, or
 integer indices to filter out before calculation. Defaults to None.</p></li>
 </ul>

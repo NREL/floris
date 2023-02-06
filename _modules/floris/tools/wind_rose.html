@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -2563,7 +2568,7 @@ title="Open an issue"
         <span class="n">color_array</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">color_map</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws_right_edges</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">wd</span> <span class="ow">in</span> <span class="n">wd_bins</span><span class="p">:</span>
-            <span class="n">rects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">rects</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">df_plot_sub</span> <span class="o">=</span> <span class="n">df_plot</span><span class="p">[</span><span class="n">df_plot</span><span class="o">.</span><span class="n">wd</span> <span class="o">==</span> <span class="n">wd</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">ws_idx</span><span class="p">,</span> <span class="n">ws</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ws_right_edges</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
                 <span class="n">plot_val</span> <span class="o">=</span> <span class="n">df_plot_sub</span><span class="p">[</span>
@@ -2632,13 +2637,13 @@ title="Open an issue"
 
         <span class="c1"># Set up figure</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;polar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 
         <span class="c1"># Get a color array</span>
         <span class="n">color_array</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">color_map</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ti_right_edges</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">wd</span> <span class="ow">in</span> <span class="n">wd_bins</span><span class="p">:</span>
-            <span class="n">rects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="n">rects</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">df_plot_sub</span> <span class="o">=</span> <span class="n">df_plot</span><span class="p">[</span><span class="n">df_plot</span><span class="o">.</span><span class="n">wd</span> <span class="o">==</span> <span class="n">wd</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">ti_idx</span><span class="p">,</span> <span class="n">ti</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ti_right_edges</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
                 <span class="n">plot_val</span> <span class="o">=</span> <span class="n">df_plot_sub</span><span class="p">[</span>

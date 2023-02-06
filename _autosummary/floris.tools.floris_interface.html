@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1245,6 +1250,9 @@ title="Print to PDF"
 <tr class="row-odd"><td><p><a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html#floris.tools.floris_interface.generate_heterogeneous_wind_map" title="floris.tools.floris_interface.generate_heterogeneous_wind_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_heterogeneous_wind_map</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html#floris.tools.floris_interface.set_rotor_diameter" title="floris.tools.floris_interface.set_rotor_diameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_rotor_diameter</span></code></a></p></td>
+<td><p>This function has been replaced and no longer works correctly, assigning an error</p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
@@ -1370,7 +1378,8 @@ specified by inputs.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>normal_vector</strong> (<em>string</em><em>, </em><em>optional</em>) -- Vector normal to plane.
 Defaults to z.</p></li>
-<li><p><strong>planar_coordinate</strong> (<em>float</em><em>, </em><em>optional</em>) -- Value of normal vector to slice through. Defaults to None.</p></li>
+<li><p><strong>planar_coordinate</strong> (<em>float</em><em>, </em><em>optional</em>) -- Value of normal vector
+to slice through. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1739,6 +1748,12 @@ watt-hours.</p>
 <dt class="sig sig-object py" id="floris.tools.floris_interface.generate_heterogeneous_wind_map">
 <span class="sig-prename descclassname"><span class="pre">floris.tools.floris_interface.</span></span><span class="sig-name descname"><span class="pre">generate_heterogeneous_wind_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">speed_ups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#generate_heterogeneous_wind_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.generate_heterogeneous_wind_map" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.tools.floris_interface.set_rotor_diameter">
+<span class="sig-prename descclassname"><span class="pre">floris.tools.floris_interface.</span></span><span class="sig-name descname"><span class="pre">set_rotor_diameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#set_rotor_diameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.set_rotor_diameter" title="Permalink to this definition">#</a></dt>
+<dd><p>This function has been replaced and no longer works correctly, assigning an error</p>
+</dd></dl>
 
 </section>
 

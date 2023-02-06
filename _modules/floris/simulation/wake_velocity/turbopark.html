@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1194,19 +1199,20 @@ title="Open an issue"
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
-    <span class="n">Turbine</span>
+    <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">cosd</span><span class="p">,</span>
     <span class="n">sind</span><span class="p">,</span>
-    <span class="n">tand</span>
+    <span class="n">tand</span><span class="p">,</span>
 <span class="p">)</span>
 
 
 <div class="viewcode-block" id="TurbOParkVelocityDeficit"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit.html#floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">TurbOParkVelocityDeficit</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Model based on the TurbOPark model. For model details see https://github.com/OrstedRD/TurbOPark,</span>
+<span class="sd">    Model based on the TurbOPark model. For model details see</span>
+<span class="sd">    https://github.com/OrstedRD/TurbOPark,</span>
 <span class="sd">    https://github.com/OrstedRD/TurbOPark/blob/main/TurbOPark%20description.pdf, and</span>
 <span class="sd">    Nygaard, Nicolai Gayle, et al. &quot;Modelling cluster wakes and wind farm blockage.&quot;</span>
 <span class="sd">    Journal of Physics: Conference Series. Vol. 1618. No. 6. IOP Publishing, 2020.</span>
@@ -1221,7 +1227,12 @@ title="Open an issue"
         <span class="n">dist</span> <span class="o">=</span> <span class="n">lookup_table_file</span><span class="p">[</span><span class="s1">&#39;overlap_lookup_table&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">radius_down</span> <span class="o">=</span> <span class="n">lookup_table_file</span><span class="p">[</span><span class="s1">&#39;overlap_lookup_table&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">overlap_gauss</span> <span class="o">=</span> <span class="n">lookup_table_file</span><span class="p">[</span><span class="s1">&#39;overlap_lookup_table&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">overlap_gauss_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">((</span><span class="n">dist</span><span class="p">,</span> <span class="n">radius_down</span><span class="p">),</span> <span class="n">overlap_gauss</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlap_gauss_interp</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">radius_down</span><span class="p">),</span>
+            <span class="n">overlap_gauss</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+            <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="TurbOParkVelocityDeficit.prepare_function"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit.html#floris.simulation.wake_velocity.turbopark.TurbOParkVelocityDeficit.prepare_function">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1229,12 +1240,12 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
-            <span class="n">z</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
-            <span class="n">u_initial</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+            <span class="s2">&quot;u_initial&quot;</span><span class="p">:</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
     <span class="c1"># @profile</span>
@@ -1260,12 +1271,15 @@ title="Open an issue"
         <span class="n">delta_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">u_initial</span><span class="p">)</span>
 
         <span class="c1"># Normalized distances along x between the turbine i and all other turbines</span>
-        <span class="c1"># The downstream_mask is used to avoid negative numbers in the sqrt and the subsequent runtime warnings</span>
-        <span class="c1"># Here self.NUM_EPS is to avoid precision issues with masking, and is slightly larger than 0.0</span>
+        <span class="c1"># The downstream_mask is used to avoid negative numbers in the sqrt and the</span>
+        <span class="c1"># subsequent runtime warnings.</span>
+        <span class="c1"># Here self.NUM_EPS is to avoid precision issues with masking, and is slightly</span>
+        <span class="c1"># larger than 0.0</span>
         <span class="n">downstream_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_i</span> <span class="o">-</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NUM_EPS</span><span class="p">)</span>
         <span class="n">x_dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_i</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">downstream_mask</span> <span class="o">/</span> <span class="n">rotor_diameters</span>
 
-        <span class="c1"># Radial distance between turbine i and the centerlines of wakes from all real/image turbines</span>
+        <span class="c1"># Radial distance between turbine i and the centerlines of wakes from all</span>
+        <span class="c1"># real/image turbines</span>
         <span class="n">r_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">y_i</span> <span class="o">-</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">deflection_field</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z_i</span> <span class="o">-</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">r_dist_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">y_i</span> <span class="o">-</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">deflection_field</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z_i</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
@@ -1273,7 +1287,9 @@ title="Open an issue"
 
         <span class="c1"># Characteristic wake widths from all turbines relative to turbine i</span>
         <span class="n">dw</span> <span class="o">=</span> <span class="n">characteristic_wake_width</span><span class="p">(</span><span class="n">x_dist</span><span class="p">,</span> <span class="n">ambient_turbulence_intensity</span><span class="p">,</span> <span class="n">Cts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
-        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Cts</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Cts</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Cts</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">Cts</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="n">rotor_diameters</span> <span class="o">*</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">+</span> <span class="n">dw</span><span class="p">)</span>
 
         <span class="c1"># Peak wake deficits</span>
@@ -1290,18 +1306,24 @@ title="Open an issue"
         <span class="n">delta_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">u_initial</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
         <span class="c1"># Compute deficits for real turbines and for mirrored (image) turbines</span>
-        <span class="n">delta_real</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_gauss_interp</span><span class="p">((</span><span class="n">r_dist</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rotor_diameter_i</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">))</span> <span class="o">*</span> <span class="n">wtg_overlapping</span>
-        <span class="n">delta_image</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_gauss_interp</span><span class="p">((</span><span class="n">r_dist_image</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rotor_diameter_i</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">))</span> <span class="o">*</span> <span class="n">wtg_overlapping</span>
+        <span class="n">delta_real</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="n">wtg_overlapping</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_gauss_interp</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">r_dist</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rotor_diameter_i</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">delta_image</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="n">wtg_overlapping</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_gauss_interp</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">r_dist_image</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rotor_diameter_i</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">delta_real</span><span class="p">,</span> <span class="n">delta_image</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="n">delta_total</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">delta_total</span>          </div></div>
+        <span class="k">return</span> <span class="n">delta_total</span></div></div>
 
 
 <div class="viewcode-block" id="precalculate_overlap"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_velocity.turbopark.precalculate_overlap.html#floris.simulation.wake_velocity.turbopark.precalculate_overlap">[docs]</a><span class="k">def</span> <span class="nf">precalculate_overlap</span><span class="p">():</span>
-    <span class="c1"># TODO: first implementation to generate wake overlap lookup table (currently supplied by turbopark_lookup_table.mat.)</span>
-    <span class="c1"># However, the result of this function doesn&#39;t generate the same interpolant as the .mat file, so if used, needs to be corrected.</span>
+    <span class="c1"># TODO: first implementation to generate wake overlap lookup table</span>
+    <span class="c1"># (currently supplied by turbopark_lookup_table.mat.)</span>
+    <span class="c1"># However, the result of this function doesn&#39;t generate the same</span>
+    <span class="c1"># interpolant as the .mat file, so if used, needs to be corrected.</span>
     <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="n">radius_down</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="n">overlap_gauss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">dist</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">radius_down</span><span class="p">)))</span>
@@ -1309,7 +1331,10 @@ title="Open an issue"
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dist</span><span class="p">)):</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">radius_down</span><span class="p">)):</span>
             <span class="k">if</span> <span class="n">radius_down</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span>
+                <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                        <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+                    <span class="p">)</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">dblquad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">radius_down</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">radius_down</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1320,8 +1345,9 @@ title="Open an issue"
 
 
 <div class="viewcode-block" id="characteristic_wake_width"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_velocity.turbopark.characteristic_wake_width.html#floris.simulation.wake_velocity.turbopark.characteristic_wake_width">[docs]</a><span class="k">def</span> <span class="nf">characteristic_wake_width</span><span class="p">(</span><span class="n">x_dist</span><span class="p">,</span> <span class="n">TI</span><span class="p">,</span> <span class="n">Cts</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-    <span class="c1"># Parameter values taken from S. T. Frandsen, “Risø-R-1188(EN) Turbulence and turbulence generated structural</span>
-    <span class="c1"># loading in wind turbine clusters” Risø, Roskilde, Denmark, 2007.</span>
+    <span class="c1"># Parameter values taken from S. T. Frandsen, “Risø-R-1188(EN) Turbulence</span>
+    <span class="c1"># and turbulence generated structural loading in wind turbine clusters”</span>
+    <span class="c1"># Risø, Roskilde, Denmark, 2007.</span>
     <span class="n">c1</span> <span class="o">=</span> <span class="mf">1.5</span>
     <span class="n">c2</span> <span class="o">=</span> <span class="mf">0.8</span>
 
@@ -1329,8 +1355,11 @@ title="Open an issue"
     <span class="n">beta</span> <span class="o">=</span> <span class="n">c2</span> <span class="o">*</span> <span class="n">TI</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Cts</span><span class="p">)</span>
 
     <span class="n">dw</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">TI</span> <span class="o">/</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">x_dist</span><span class="p">))</span>
         <span class="p">)</span>
     <span class="p">)</span>
 

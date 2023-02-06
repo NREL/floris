@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1306,7 +1311,10 @@ title="Open an issue"
         <span class="n">unc_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unc_options</span>
         <span class="k">if</span> <span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;std_wd&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">wd_bnd</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;pdf_cutoff&quot;</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;std_wd&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;pmf_res&quot;</span><span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span>
+                    <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;pdf_cutoff&quot;</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;std_wd&quot;</span><span class="p">])</span>
+                    <span class="o">/</span> <span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;pmf_res&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
             <span class="p">)</span>
             <span class="n">bound</span> <span class="o">=</span> <span class="n">wd_bnd</span> <span class="o">*</span> <span class="n">unc_options</span><span class="p">[</span><span class="s2">&quot;pmf_res&quot;</span><span class="p">]</span>
             <span class="n">wd_unc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">bound</span><span class="p">,</span> <span class="n">bound</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">wd_bnd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -1351,7 +1359,10 @@ title="Open an issue"
 
         <span class="c1"># Expand wind direction and yaw angle array into the direction</span>
         <span class="c1"># of uncertainty over the ambient wind direction.</span>
-        <span class="n">wd_array_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">wd_array_nominal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span> <span class="k">for</span> <span class="n">dy</span> <span class="ow">in</span> <span class="n">unc_pmfs</span><span class="p">[</span><span class="s2">&quot;wd_unc&quot;</span><span class="p">]])</span>
+        <span class="n">wd_array_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">wd_array_nominal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span>
+            <span class="k">for</span> <span class="n">dy</span> <span class="ow">in</span> <span class="n">unc_pmfs</span><span class="p">[</span><span class="s2">&quot;wd_unc&quot;</span><span class="p">]</span>
+        <span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix_yaw_in_relative_frame</span><span class="p">:</span>
             <span class="c1"># The relative yaw angle is fixed and always has the nominal</span>
@@ -1361,9 +1372,10 @@ title="Open an issue"
             <span class="c1"># wind directions. This can also be really fast, since it would</span>
             <span class="c1"># not require any additional calculations compared to the</span>
             <span class="c1"># non-uncertainty FLORIS evaluation.</span>
-            <span class="n">yaw_angles_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">yaw_angles_nominal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">unc_pmfs</span><span class="p">[</span><span class="s2">&quot;wd_unc&quot;</span><span class="p">]]</span>
-            <span class="p">)</span>
+            <span class="n">yaw_angles_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">yaw_angles_nominal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">unc_pmfs</span><span class="p">[</span><span class="s2">&quot;wd_unc&quot;</span><span class="p">]</span>
+            <span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Fix yaw angles in the absolute (compass) reference frame,</span>
             <span class="c1"># meaning that for each probablistic wind direction evaluation,</span>
@@ -1372,9 +1384,10 @@ title="Open an issue"
             <span class="c1"># direction 3 deg above the nominal value means that we evaluate</span>
             <span class="c1"># it with a relative yaw angle that is 3 deg below its nominal</span>
             <span class="c1"># value.</span>
-            <span class="n">yaw_angles_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">yaw_angles_nominal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">dy</span> <span class="k">for</span> <span class="n">dy</span> <span class="ow">in</span> <span class="n">unc_pmfs</span><span class="p">[</span><span class="s2">&quot;wd_unc&quot;</span><span class="p">]]</span>
-            <span class="p">)</span>
+            <span class="n">yaw_angles_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">yaw_angles_nominal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">dy</span>
+                <span class="k">for</span> <span class="n">dy</span> <span class="ow">in</span> <span class="n">unc_pmfs</span><span class="p">[</span><span class="s2">&quot;wd_unc&quot;</span><span class="p">]</span>
+            <span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">wd_array_probablistic</span> <span class="o">=</span> <span class="n">wd_array_probablistic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_probablistic</span> <span class="o">=</span> <span class="n">yaw_angles_probablistic</span></div>
@@ -1393,7 +1406,12 @@ title="Open an issue"
         <span class="n">fi_unc_copy</span><span class="o">.</span><span class="n">fi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">fi_unc_copy</span></div>
 
-<div class="viewcode-block" id="UncertaintyInterface.reinitialize_uncertainty"><a class="viewcode-back" href="../../../_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html#floris.tools.uncertainty_interface.UncertaintyInterface.reinitialize_uncertainty">[docs]</a>    <span class="k">def</span> <span class="nf">reinitialize_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unc_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unc_pmfs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fix_yaw_in_relative_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="UncertaintyInterface.reinitialize_uncertainty"><a class="viewcode-back" href="../../../_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html#floris.tools.uncertainty_interface.UncertaintyInterface.reinitialize_uncertainty">[docs]</a>    <span class="k">def</span> <span class="nf">reinitialize_uncertainty</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">unc_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">unc_pmfs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fix_yaw_in_relative_frame</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reinitialize the wind direction and yaw angle probability</span>
 <span class="sd">        distributions used in evaluating FLORIS. Must either specify</span>
 <span class="sd">        &#39;unc_options&#39;, in which case distributions are calculated assuming</span>
@@ -1503,8 +1521,10 @@ title="Open an issue"
 <span class="sd">        UncertaintyInterface object, this function is required.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Use the `layout_x` and `layout_y` parameters in place of `layout` &quot;</span>
+                <span class="s2">&quot;because the `layout` parameter will be deprecated in 3.3.&quot;</span>
+            <span class="p">)</span>
             <span class="n">layout_x</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">layout_y</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -1581,7 +1601,10 @@ title="Open an issue"
 
         <span class="c1"># Format into conventional floris format by reshaping</span>
         <span class="n">wd_array_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wd_array_probablistic</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">yaw_angles_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_probablistic</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_ws</span><span class="p">,</span> <span class="n">num_turbines</span><span class="p">))</span>
+        <span class="n">yaw_angles_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_probablistic</span><span class="p">,</span>
+            <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_ws</span><span class="p">,</span> <span class="n">num_turbines</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Wrap wind direction array around 360 deg</span>
         <span class="n">wd_array_probablistic</span> <span class="o">=</span> <span class="n">wrap_360</span><span class="p">(</span><span class="n">wd_array_probablistic</span><span class="p">)</span>
@@ -1589,7 +1612,10 @@ title="Open an issue"
         <span class="c1"># Find minimal set of solutions to evaluate</span>
         <span class="n">wd_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">wd_array_probablistic</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_ws</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">id_unq</span><span class="p">,</span> <span class="n">id_unq_rev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yaw_angles_probablistic</span><span class="p">,</span> <span class="n">wd_exp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yaw_angles_probablistic</span><span class="p">,</span> <span class="n">wd_exp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">wd_array_probablistic_min</span> <span class="o">=</span> <span class="n">wd_array_probablistic</span><span class="p">[</span><span class="n">id_unq</span><span class="p">]</span>
         <span class="n">yaw_angles_probablistic_min</span> <span class="o">=</span> <span class="n">yaw_angles_probablistic</span><span class="p">[</span><span class="n">id_unq</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
@@ -1607,7 +1633,10 @@ title="Open an issue"
 
         <span class="c1"># Reshape solutions back to full set</span>
         <span class="n">power_probablistic</span> <span class="o">=</span> <span class="n">turbine_powers</span><span class="p">[</span><span class="n">id_unq_rev</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">power_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">power_probablistic</span><span class="p">,</span> <span class="p">(</span><span class="n">num_wd_unc</span><span class="p">,</span> <span class="n">num_wd</span><span class="p">,</span> <span class="n">num_ws</span><span class="p">,</span> <span class="n">num_turbines</span><span class="p">))</span>
+        <span class="n">power_probablistic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">power_probablistic</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">num_wd_unc</span><span class="p">,</span> <span class="n">num_wd</span><span class="p">,</span> <span class="n">num_ws</span><span class="p">,</span> <span class="n">num_turbines</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Calculate probability weighing terms</span>
         <span class="n">wd_weighing</span> <span class="o">=</span> <span class="p">(</span>
@@ -1734,12 +1763,15 @@ title="Open an issue"
             <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-                <span class="s2">&quot;&#39;freq&#39; should be a two-dimensional array with dimensions (n_wind_directions, n_wind_speeds).&quot;</span>
+                <span class="s2">&quot;&#39;freq&#39; should be a two-dimensional array with dimensions &quot;</span>
+                <span class="s2">&quot;(n_wind_directions, n_wind_speeds).&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Check if frequency vector sums to 1.0. If not, raise a warning</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. &quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. &quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Copy the full wind speed array from the floris object and initialize</span>
         <span class="c1"># the the farm_power variable as an empty array.</span>

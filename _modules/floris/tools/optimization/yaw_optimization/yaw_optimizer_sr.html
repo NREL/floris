@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1236,8 +1241,10 @@ title="Open an issue"
             <span class="k">if</span> <span class="n">Ny</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Each entry in Ny_passes must have a value of at least 2.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">Nii</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">Ny</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The second and further entries of Ny_passes must be even numbers. &quot;</span> <span class="o">+</span> 
-                    <span class="s2">&quot;This is to ensure the same yaw angles are not evaluated twice between passes.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The second and further entries of Ny_passes must be even numbers. &quot;</span>
+                    <span class="s2">&quot;This is to ensure the same yaw angles are not evaluated twice between passes.&quot;</span>
+                <span class="p">)</span>
 
         <span class="c1"># # Set baseline and optimization settings</span>
         <span class="c1"># if reduce_ngrid:</span>
@@ -1295,7 +1302,7 @@ title="Open an issue"
         <span class="k">if</span> <span class="n">use_memory</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yaw_angles_opt_subset</span> <span class="o">-</span> <span class="n">yaw_angles_subset</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">farm_powers</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">farm_power_opt_subset</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
-            <span class="c1"># print(&quot;Skipping {:d}/{:d} calculations: already in memory.&quot;.format(np.sum(idx), len(idx)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> calculations: already in memory.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yaw_angles_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
@@ -1394,10 +1401,16 @@ title="Open an issue"
                 <span class="n">p</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ny_passes</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span><span class="p">)</span>
                 <span class="n">ii</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">print_progress</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Serial Refine] Processing pass=</span><span class="si">{:d}</span><span class="s2">, turbine_depth=</span><span class="si">{:d}</span><span class="s2"> (</span><span class="si">{:.1f}</span><span class="s2"> %)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Nii</span><span class="p">,</span> <span class="n">turbine_depth</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;[Serial Refine] Processing pass=</span><span class="si">{</span><span class="n">Nii</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;turbine_depth=</span><span class="si">{</span><span class="n">turbine_depth</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span>
+                    <span class="p">)</span>
 
                 <span class="c1"># Create grid to evaluate yaw angles for one turbine == turbine_depth</span>
-                <span class="n">evaluation_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_evaluation_grid</span><span class="p">(</span><span class="n">pass_depth</span><span class="o">=</span><span class="n">Nii</span><span class="p">,</span> <span class="n">turbine_depth</span><span class="o">=</span><span class="n">turbine_depth</span><span class="p">)</span>
+                <span class="n">evaluation_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_evaluation_grid</span><span class="p">(</span>
+                    <span class="n">pass_depth</span><span class="o">=</span><span class="n">Nii</span><span class="p">,</span>
+                    <span class="n">turbine_depth</span><span class="o">=</span><span class="n">turbine_depth</span>
+                <span class="p">)</span>
 
                 <span class="c1"># Evaluate grid of yaw angles, get farm powers and find optimal solutions</span>
                 <span class="n">farm_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_evaluation_grid</span><span class="p">()</span>

@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1198,7 +1203,7 @@ title="Open an issue"
     <span class="n">NDArrayFilter</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
     <span class="n">NDArrayInt</span><span class="p">,</span>
-    <span class="n">NDArrayObject</span>
+    <span class="n">NDArrayObject</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span>
 
@@ -1269,7 +1274,8 @@ title="Open an issue"
 <span class="sd">            the yaw misalignment angle to power for each turbine.</span>
 <span class="sd">        power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function</span>
 <span class="sd">            for each turbine.</span>
-<span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.</span>
+<span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for</span>
+<span class="sd">            each turbine.</span>
 <span class="sd">        ix_filter (NDArrayInt, optional): The boolean array, or</span>
 <span class="sd">            integer indices to filter out before calculation. Defaults to None.</span>
 
@@ -1307,7 +1313,11 @@ title="Open an issue"
 
     <span class="c1"># Compute the yaw effective velocity</span>
     <span class="n">pW</span> <span class="o">=</span> <span class="n">pP</span> <span class="o">/</span> <span class="mf">3.0</span>  <span class="c1"># Convert from pP to w</span>
-    <span class="n">yaw_effective_velocity</span> <span class="o">=</span> <span class="p">((</span><span class="n">air_density</span><span class="o">/</span><span class="n">ref_density_cp_ct</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span> <span class="o">*</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">)</span> <span class="o">**</span> <span class="n">pW</span>
+    <span class="n">yaw_effective_velocity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">air_density</span><span class="o">/</span><span class="n">ref_density_cp_ct</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">)</span> <span class="o">**</span> <span class="n">pW</span>
+    <span class="p">)</span>
 
     <span class="c1"># Loop over each turbine type given to get thrust coefficient for all turbines</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">yaw_effective_velocity</span><span class="p">))</span>
@@ -1316,7 +1326,10 @@ title="Open an issue"
     <span class="k">for</span> <span class="n">turb_type</span> <span class="ow">in</span> <span class="n">turb_types</span><span class="p">:</span>
         <span class="c1"># Using a masked array, apply the thrust coefficient for all turbines of the current</span>
         <span class="c1"># type to the main thrust coefficient array</span>
-        <span class="n">p</span> <span class="o">+=</span> <span class="n">power_interp</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">yaw_effective_velocity</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">power_interp</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">yaw_effective_velocity</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">p</span> <span class="o">*</span> <span class="n">ref_density_cp_ct</span></div>
 
@@ -1334,12 +1347,15 @@ title="Open an issue"
 <span class="sd">    wind speed table using the rotor swept area average velocity.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at a turbine.</span>
+<span class="sd">        velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at</span>
+<span class="sd">            a turbine.</span>
 <span class="sd">        yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.</span>
 <span class="sd">        fCt (NDArrayObject[wd, ws, turbines]): The thrust coefficient for each turbine.</span>
-<span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.</span>
+<span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition</span>
+<span class="sd">            for each turbine.</span>
 <span class="sd">        ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or</span>
-<span class="sd">            integer indices as an iterable of array to filter out before calculation. Defaults to None.</span>
+<span class="sd">            integer indices as an iterable of array to filter out before calculation.</span>
+<span class="sd">            Defaults to None.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        NDArrayFloat: Coefficient of thrust for each requested turbine.</span>
@@ -1364,7 +1380,10 @@ title="Open an issue"
     <span class="k">for</span> <span class="n">turb_type</span> <span class="ow">in</span> <span class="n">turb_types</span><span class="p">:</span>
         <span class="c1"># Using a masked array, apply the thrust coefficient for all turbines of the current</span>
         <span class="c1"># type to the main thrust coefficient array</span>
-        <span class="n">thrust_coefficient</span> <span class="o">+=</span> <span class="n">fCt</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">average_velocities</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+        <span class="n">thrust_coefficient</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">fCt</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">average_velocities</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+        <span class="p">)</span>
     <span class="n">thrust_coefficient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">thrust_coefficient</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">)</span>
     <span class="n">effective_thrust</span> <span class="o">=</span> <span class="n">thrust_coefficient</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">effective_thrust</span></div>
@@ -1385,7 +1404,8 @@ title="Open an issue"
 <span class="sd">            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.</span>
 <span class="sd">        fCt (np.array): The thrust coefficient function for each</span>
 <span class="sd">            turbine.</span>
-<span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.</span>
+<span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition</span>
+<span class="sd">            for each turbine.</span>
 <span class="sd">        ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or</span>
 <span class="sd">            integer indices (as an aray or iterable) to filter out before calculation.</span>
 <span class="sd">            Defaults to None.</span>
@@ -1408,7 +1428,10 @@ title="Open an issue"
     <span class="k">return</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">thrust_coefficient</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">)))</span></div>
 
 
-<div class="viewcode-block" id="average_velocity"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.average_velocity.html#floris.simulation.turbine.average_velocity">[docs]</a><span class="k">def</span> <span class="nf">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span> <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
+<div class="viewcode-block" id="average_velocity"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.average_velocity.html#floris.simulation.turbine.average_velocity">[docs]</a><span class="k">def</span> <span class="nf">average_velocity</span><span class="p">(</span>
+    <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This property calculates and returns the cube root of the</span>
 <span class="sd">    mean cubed velocity in the turbine&#39;s rotor swept area (m/s).</span>
 
@@ -1461,7 +1484,7 @@ title="Open an issue"
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed inputs must be 1-D.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="nb">set</span><span class="p">(</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="o">.</span><span class="n">size</span><span class="p">}</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>        
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed tables must be the same size.&quot;</span><span class="p">)</span>
         
         <span class="c1"># Remove any duplicate wind speed entries</span>
@@ -1551,18 +1574,26 @@ title="Open an issue"
             <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
             <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">inner_power</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotor_area</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fCp_interp</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_efficiency</span> <span class="o">*</span> <span class="n">wind_speeds</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="n">inner_power</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotor_area</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fCp_interp</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_efficiency</span>
+            <span class="o">*</span> <span class="n">wind_speeds</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">power_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
             <span class="n">wind_speeds</span><span class="p">,</span>
             <span class="n">inner_power</span>
         <span class="p">)</span>
 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Given an array of wind speeds, this function returns an array of the interpolated thrust coefficients</span>
-<span class="sd">        from the power / thrust table used to define the Turbine. The values are bound by the range of the input values.</span>
-<span class="sd">        Any requested wind speeds outside of the range of input wind speeds are assigned Ct of 0.0001 or 0.9999.</span>
+<span class="sd">        Given an array of wind speeds, this function returns an array of the</span>
+<span class="sd">        interpolated thrust coefficients from the power / thrust table used</span>
+<span class="sd">        to define the Turbine. The values are bound by the range of the input</span>
+<span class="sd">        values. Any requested wind speeds outside of the range of input wind</span>
+<span class="sd">        speeds are assigned Ct of 0.0001 or 0.9999.</span>
 <span class="sd">        </span>
-<span class="sd">        The fill_value arguments sets (upper, lower) bounds for any values outside of the input range</span>
+<span class="sd">        The fill_value arguments sets (upper, lower) bounds for any values</span>
+<span class="sd">        outside of the input range.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fCt_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
             <span class="n">wind_speeds</span><span class="p">,</span>

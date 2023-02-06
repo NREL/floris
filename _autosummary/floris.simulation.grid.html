@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1288,10 +1293,12 @@ all of these arrays are the same size</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The collection of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
 <li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The reference turbine's rotor diameter.</p></li>
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution specific to each grid type.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution specific
+to each grid type.</p></li>
 <li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
 <li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
-<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- True/false flag to indicate whether the supplied wind data is a time series.</p></li>
+<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- True/false flag to indicate whether the supplied wind
+data is a time series.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1381,7 +1388,8 @@ all of these arrays are the same size</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.check_coordinates">
 <span class="sig-name descname"><span class="pre">check_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#Grid.check_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.Grid.check_coordinates" title="Permalink to this definition">#</a></dt>
-<dd><p>Ensures all elements are <cite>Vec3</cite> objects and keeps the <cite>n_turbines</cite> attribute up to date.</p>
+<dd><p>Ensures all elements are <cite>Vec3</cite> objects and keeps the <cite>n_turbines</cite>
+attribute up to date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1502,22 +1510,41 @@ all of these arrays are the same size</p>
 <span class="sig-name descname"><span class="pre">set_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#TurbineGrid.set_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.set_grid" title="Permalink to this definition">#</a></dt>
 <dd><p>Create grid points at each turbine for each wind direction and wind speed in the simulation.
 This creates the underlying data structure for the calculation.</p>
-<p>arrays have shape (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)
+<p>arrays have shape
+(n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)
 - dimension 1: each wind direction
 - dimension 2: each wind speed
 - dimension 3: each turbine
 - dimension 4: number of points in the spanwise direction (ngrid)
 - dimension 5: number of points in the vertical dimension (ngrid)</p>
 <p>For example
-- x is [n wind direction, n wind speeds, n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
-- y is [n wind direction, n wind speeds, n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]</p>
+- x is [</p>
+<blockquote>
+<div><p>n wind direction,
+n wind speeds,
+n turbines,
+x-component of the points in the spanwise direction,
+x-component of the points in the vertical direction</p>
+</div></blockquote>
+<p>]
+- y is [</p>
+<blockquote>
+<div><p>n wind direction,
+n wind speeds,
+n turbines,
+y-component of the points in the spanwise direction,
+y-component of the points in the vertical direction</p>
+</div></blockquote>
+<p>]</p>
 <p>The x,y,z arrays contain the actual locations in that direction.</p>
 <p># -   <strong>self.grid_resolution</strong> (<em>int</em>, optional): The square root of the number
 #             of points to use on the turbine grid. This number will be
 #             squared so that the points can be evenly distributed.
 #             Defaults to 5.</p>
-<p>If the grid conforms to the sequential solver interface, it must be sorted from upstream to downstream</p>
-<p>In a y-z plane on the rotor swept area, the -2 dimension is a column of points and the -1 dimension is the row number.
+<p>If the grid conforms to the sequential solver interface,
+it must be sorted from upstream to downstream</p>
+<p>In a y-z plane on the rotor swept area, the -2 dimension is a column of
+points and the -1 dimension is the row number.
 So the following line prints the 0'th column of the the 0'th turbine's grid:
 print(grid.y_sorted[0,0,0,0,:])
 print(grid.z_sorted[0,0,0,0,:])

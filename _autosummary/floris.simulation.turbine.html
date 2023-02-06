@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1318,7 +1323,8 @@ given in Watts.</p>
 the yaw misalignment angle to power for each turbine.</p></li>
 <li><p><strong>power_interp</strong> (<em>NDArrayObject</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The power interpolation function
 for each turbine.</p></li>
-<li><p><strong>turbine_type_map</strong> (<em>NDArrayObject</em>) -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.</p></li>
+<li><p><strong>turbine_type_map</strong> (<em>NDArrayObject</em>) -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
+each turbine.</p></li>
 <li><p><strong>ix_filter</strong> (<em>NDArrayInt</em><em>, </em><em>optional</em>) -- The boolean array, or
 integer indices to filter out before calculation. Defaults to None.</p></li>
 <li><p><strong>ref_density_cp_ct</strong> (<em>float</em>) -- </p></li>
@@ -1343,12 +1349,15 @@ wind speed table using the rotor swept area average velocity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>velocities</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>, </em><em>grid1</em><em>, </em><em>grid2</em><em>]</em>) -- The velocity field at a turbine.</p></li>
+<li><p><strong>velocities</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>, </em><em>grid1</em><em>, </em><em>grid2</em><em>]</em>) -- The velocity field at
+a turbine.</p></li>
 <li><p><strong>yaw_angle</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The yaw angle for each turbine.</p></li>
 <li><p><strong>fCt</strong> (<em>NDArrayObject</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The thrust coefficient for each turbine.</p></li>
-<li><p><strong>turbine_type_map</strong> (<em>NDArrayObject</em>) -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.</p></li>
+<li><p><strong>turbine_type_map</strong> (<em>NDArrayObject</em>) -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition
+for each turbine.</p></li>
 <li><p><strong>ix_filter</strong> (<em>NDArrayFilter</em><em> | </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) -- The boolean array, or
-integer indices as an iterable of array to filter out before calculation. Defaults to None.</p></li>
+integer indices as an iterable of array to filter out before calculation.
+Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1372,7 +1381,8 @@ the thrust coefficient and yaw angle.</p>
 (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.</p></li>
 <li><p><strong>fCt</strong> (<em>np.array</em>) -- The thrust coefficient function for each
 turbine.</p></li>
-<li><p><strong>turbine_type_map</strong> (<em>NDArrayObject</em>) -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for each turbine.</p></li>
+<li><p><strong>turbine_type_map</strong> (<em>NDArrayObject</em>) -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition
+for each turbine.</p></li>
 <li><p><strong>ix_filter</strong> (<em>NDArrayFilter</em><em> | </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) -- The boolean array, or
 integer indices (as an aray or iterable) to filter out before calculation.
 Defaults to None.</p></li>

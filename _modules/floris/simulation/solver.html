@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1192,20 +1197,21 @@ title="Open an issue"
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">FlowFieldGrid</span><span class="p">,</span>
-    <span class="n">TurbineGrid</span>
+    <span class="n">TurbineGrid</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.turbine</span> <span class="kn">import</span> <span class="n">average_velocity</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.wake</span> <span class="kn">import</span> <span class="n">WakeModelManager</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.wake_deflection.gauss</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">calculate_transverse_velocity</span><span class="p">,</span>
     <span class="n">wake_added_yaw</span><span class="p">,</span>
-    <span class="n">yaw_added_turbulence_mixing</span>
+    <span class="n">yaw_added_turbulence_mixing</span><span class="p">,</span>
 <span class="p">)</span>
 
 
 <div class="viewcode-block" id="calculate_area_overlap"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.calculate_area_overlap.html#floris.simulation.solver.calculate_area_overlap">[docs]</a><span class="k">def</span> <span class="nf">calculate_area_overlap</span><span class="p">(</span><span class="n">wake_velocities</span><span class="p">,</span> <span class="n">freestream_velocities</span><span class="p">,</span> <span class="n">y_ngrid</span><span class="p">,</span> <span class="n">z_ngrid</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    compute wake overlap based on the number of points that are not freestream velocity, i.e. affected by the wake</span>
+<span class="sd">    compute wake overlap based on the number of points that are not freestream</span>
+<span class="sd">    velocity, i.e. affected by the wake</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Count all of the rotor points with a negligible difference from freestream</span>
     <span class="c1"># count = np.sum(freestream_velocities - wake_velocities &lt;= 0.05, axis=(3, 4))</span>
@@ -1219,7 +1225,12 @@ title="Open an issue"
 
 
 <span class="c1"># @profile</span>
-<div class="viewcode-block" id="sequential_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.sequential_solver.html#floris.simulation.solver.sequential_solver">[docs]</a><span class="k">def</span> <span class="nf">sequential_solver</span><span class="p">(</span><span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span> <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="sequential_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.sequential_solver.html#floris.simulation.solver.sequential_solver">[docs]</a><span class="k">def</span> <span class="nf">sequential_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Algorithm</span>
     <span class="c1"># For each turbine, calculate its effect on every downstream turbine.</span>
     <span class="c1"># For the current turbine, we are calculating the deficit that it adds to downstream turbines.</span>
@@ -1235,7 +1246,10 @@ title="Open an issue"
     <span class="n">v_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">v_initial_sorted</span><span class="p">)</span>
     <span class="n">w_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">w_initial_sorted</span><span class="p">)</span>
 
-    <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span>
+        <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">)</span>
     <span class="n">ambient_turbulence_intensity</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span>
 
     <span class="c1"># Calculate the velocity deficit sequentially from upstream to downstream turbines</span>
@@ -1259,7 +1273,9 @@ title="Open an issue"
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function, get the first index here (0:1)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction</span><span class="p">(</span>
             <span class="n">velocities</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
             <span class="n">yaw_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
@@ -1267,7 +1283,9 @@ title="Open an issue"
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>    <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function, get the first index here (0:1)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -1361,7 +1379,10 @@ title="Open an issue"
         <span class="p">)</span>
 
         <span class="c1"># Calculate wake overlap for wake-added turbulence (WAT)</span>
-        <span class="n">area_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">velocity_deficit</span> <span class="o">*</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+        <span class="n">area_overlap</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">velocity_deficit</span> <span class="o">*</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">area_overlap</span> <span class="o">=</span> <span class="n">area_overlap</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="c1"># Modify wake added turbulence by wake area overlap</span>
@@ -1375,7 +1396,10 @@ title="Open an issue"
         <span class="p">)</span>
 
         <span class="c1"># Combine turbine TIs with WAT</span>
-        <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">,</span> <span class="n">turbine_turbulence_intensity</span> <span class="p">)</span>
+        <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">),</span>
+            <span class="n">turbine_turbulence_intensity</span>
+        <span class="p">)</span>
 
         <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">wake_field</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
@@ -1385,7 +1409,12 @@ title="Open an issue"
     <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="full_flow_sequential_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_sequential_solver.html#floris.simulation.solver.full_flow_sequential_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_sequential_solver</span><span class="p">(</span><span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span> <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span> <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="full_flow_sequential_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_sequential_solver.html#floris.simulation.solver.full_flow_sequential_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_sequential_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
     <span class="c1"># Get the flow quantities and turbine performance</span>
     <span class="n">turbine_grid_farm</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">farm</span><span class="p">)</span>
@@ -1412,7 +1441,9 @@ title="Open an issue"
         <span class="n">time_series</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">expand_farm_properties</span><span class="p">(</span>
-        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+        <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
     <span class="p">)</span>
     <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="n">turbine_grid</span><span class="p">)</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">)</span>
@@ -1421,8 +1452,14 @@ title="Open an issue"
     <span class="c1">### Referring to the quantities from above, calculate the wake in the full grid</span>
 
     <span class="c1"># Use full flow_field here to use the full grid in the wake models</span>
-    <span class="n">deflection_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">flow_field_grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
-    <span class="n">deficit_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">flow_field_grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
+    <span class="n">deflection_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span>
+        <span class="n">flow_field_grid</span><span class="p">,</span>
+        <span class="n">flow_field</span>
+    <span class="p">)</span>
+    <span class="n">deficit_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span>
+        <span class="n">flow_field_grid</span><span class="p">,</span>
+        <span class="n">flow_field</span>
+    <span class="p">)</span>
 
     <span class="n">wake_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">)</span>
     <span class="n">v_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">v_initial_sorted</span><span class="p">)</span>
@@ -1449,7 +1486,9 @@ title="Open an issue"
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function, get the first index here (0:1)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction</span><span class="p">(</span>
             <span class="n">velocities</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
             <span class="n">yaw_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
@@ -1457,7 +1496,9 @@ title="Open an issue"
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>    <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function, get the first index here (0:1)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -1535,8 +1576,12 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span></div>
 
 
-<div class="viewcode-block" id="cc_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.cc_solver.html#floris.simulation.solver.cc_solver">[docs]</a><span class="k">def</span> <span class="nf">cc_solver</span><span class="p">(</span><span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span> <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-
+<div class="viewcode-block" id="cc_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.cc_solver.html#floris.simulation.solver.cc_solver">[docs]</a><span class="k">def</span> <span class="nf">cc_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># &lt;&lt;interface&gt;&gt;</span>
     <span class="n">deflection_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
     <span class="n">deficit_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
@@ -1547,14 +1592,17 @@ title="Open an issue"
     <span class="n">turb_u_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">)</span>
     <span class="n">turb_inflow_field</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">)</span>
 
-    <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span>
+        <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">)</span>
     <span class="n">ambient_turbulence_intensity</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span>
 
     <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">)</span>
     <span class="n">Ctmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">shape</span><span class="p">))</span>
     <span class="c1"># Ctmp = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))</span>
     
-    <span class="n">sigma_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">shape</span><span class="p">))</span>
+    <span class="c1"># sigma_i = np.zeros((shape))</span>
     <span class="c1"># sigma_i = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))</span>
 
     <span class="c1"># Calculate the velocity deficit sequentially from upstream to downstream turbines</span>
@@ -1568,9 +1616,28 @@ title="Open an issue"
         <span class="n">z_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">z_i</span> <span class="o">=</span> <span class="n">z_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
-        <span class="n">mask2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;</span> <span class="n">x_i</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span> <span class="o">-</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&lt;</span> <span class="n">y_i</span> <span class="o">+</span> <span class="mf">0.51</span><span class="o">*</span><span class="mf">126.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&gt;</span> <span class="n">y_i</span> <span class="o">-</span> <span class="mf">0.51</span><span class="o">*</span><span class="mf">126.0</span><span class="p">)</span>
-        <span class="c1"># mask2 = np.logical_and(np.logical_and(np.logical_and(grid.x_sorted &lt; x_i + 0.01, grid.x_sorted &gt; x_i - 0.01), grid.y_sorted &lt; y_i + 0.51*126.0), grid.y_sorted &gt; y_i - 0.51*126.0)</span>
-        <span class="n">turb_inflow_field</span> <span class="o">=</span> <span class="n">turb_inflow_field</span> <span class="o">*</span> <span class="o">~</span><span class="n">mask2</span> <span class="o">+</span> <span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">turb_u_wake</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask2</span>
+        <span class="n">mask2</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;</span> <span class="n">x_i</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span> <span class="o">-</span> <span class="mf">0.01</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&lt;</span> <span class="n">y_i</span> <span class="o">+</span> <span class="mf">0.51</span><span class="o">*</span><span class="mf">126.0</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&gt;</span> <span class="n">y_i</span> <span class="o">-</span> <span class="mf">0.51</span><span class="o">*</span><span class="mf">126.0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># mask2 = (</span>
+        <span class="c1">#     np.logical_and(</span>
+        <span class="c1">#         np.logical_and(</span>
+        <span class="c1">#             np.logical_and(</span>
+        <span class="c1">#                 grid.x_sorted &lt; x_i + 0.01,</span>
+        <span class="c1">#                 grid.x_sorted &gt; x_i - 0.01</span>
+        <span class="c1">#             ),</span>
+        <span class="c1">#             grid.y_sorted &lt; y_i + 0.51*126.0</span>
+        <span class="c1">#         ),</span>
+        <span class="c1">#         grid.y_sorted &gt; y_i - 0.51*126.0</span>
+        <span class="c1">#     )</span>
+        <span class="c1"># )</span>
+        <span class="n">turb_inflow_field</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">turb_inflow_field</span> <span class="o">*</span> <span class="o">~</span><span class="n">mask2</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">turb_u_wake</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask2</span>
+        <span class="p">)</span>
 
         <span class="n">turb_avg_vels</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">turb_inflow_field</span><span class="p">)</span>
         <span class="n">turb_Cts</span> <span class="o">=</span> <span class="n">Ct</span><span class="p">(</span>
@@ -1693,7 +1760,10 @@ title="Open an issue"
         <span class="p">)</span>
 
         <span class="c1"># Calculate wake overlap for wake-added turbulence (WAT)</span>
-        <span class="n">area_overlap</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turb_u_wake</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+        <span class="n">area_overlap</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turb_u_wake</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">area_overlap</span> <span class="o">=</span> <span class="n">area_overlap</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="c1"># Modify wake added turbulence by wake area overlap</span>
@@ -1707,8 +1777,10 @@ title="Open an issue"
         <span class="p">)</span>
 
         <span class="c1"># Combine turbine TIs with WAT</span>
-        <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">,</span> <span class="n">turbine_turbulence_intensity</span> <span class="p">)</span>
-
+        <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">),</span>
+            <span class="n">turbine_turbulence_intensity</span>
+        <span class="p">)</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
     <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">turb_inflow_field</span>
@@ -1717,7 +1789,12 @@ title="Open an issue"
     <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="full_flow_cc_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_cc_solver.html#floris.simulation.solver.full_flow_cc_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_cc_solver</span><span class="p">(</span><span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span> <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span> <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="full_flow_cc_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_cc_solver.html#floris.simulation.solver.full_flow_cc_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_cc_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Get the flow quantities and turbine performance</span>
     <span class="n">turbine_grid_farm</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">farm</span><span class="p">)</span>
     <span class="n">turbine_grid_flow_field</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">flow_field</span><span class="p">)</span>
@@ -1742,7 +1819,9 @@ title="Open an issue"
         <span class="n">time_series</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">expand_farm_properties</span><span class="p">(</span>
-        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+        <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
     <span class="p">)</span>
     <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="n">turbine_grid</span><span class="p">)</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">)</span>
@@ -1751,8 +1830,14 @@ title="Open an issue"
     <span class="c1">### Referring to the quantities from above, calculate the wake in the full grid</span>
 
     <span class="c1"># Use full flow_field here to use the full grid in the wake models</span>
-    <span class="n">deflection_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">flow_field_grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
-    <span class="n">deficit_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">flow_field_grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
+    <span class="n">deflection_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span>
+        <span class="n">flow_field_grid</span><span class="p">,</span>
+        <span class="n">flow_field</span>
+    <span class="p">)</span>
+    <span class="n">deficit_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span>
+        <span class="n">flow_field_grid</span><span class="p">,</span>
+        <span class="n">flow_field</span>
+    <span class="p">)</span>
 
     <span class="n">v_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">v_initial_sorted</span><span class="p">)</span>
     <span class="n">w_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">w_initial_sorted</span><span class="p">)</span>
@@ -1868,7 +1953,12 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
     <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">turb_u_wake</span></div>
 
-<div class="viewcode-block" id="turbopark_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.turbopark_solver.html#floris.simulation.solver.turbopark_solver">[docs]</a><span class="k">def</span> <span class="nf">turbopark_solver</span><span class="p">(</span><span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span> <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="turbopark_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.turbopark_solver.html#floris.simulation.solver.turbopark_solver">[docs]</a><span class="k">def</span> <span class="nf">turbopark_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Algorithm</span>
     <span class="c1"># For each turbine, calculate its effect on every downstream turbine.</span>
     <span class="c1"># For the current turbine, we are calculating the deficit that it adds to downstream turbines.</span>
@@ -1887,7 +1977,10 @@ title="Open an issue"
     <span class="n">velocity_deficit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">deflection_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">)</span>
 
-    <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span>
+        <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span> <span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">)</span>
     <span class="n">ambient_turbulence_intensity</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span>
 
     <span class="c1"># Calculate the velocity deficit sequentially from upstream to downstream turbines</span>
@@ -1917,7 +2010,9 @@ title="Open an issue"
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function, get the first index here (0:1)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction</span><span class="p">(</span>
             <span class="n">velocities</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
             <span class="n">yaw_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
@@ -1925,7 +2020,9 @@ title="Open an issue"
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>    <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function, get the first index here (0:1)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -1953,7 +2050,11 @@ title="Open an issue"
         <span class="c1"># Model calculations</span>
         <span class="c1"># NOTE: exponential</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">):</span>
-            <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;WARNING: Deflection with the TurbOPark model has not been fully validated. This is an initial implementation, and we advise you use at your own risk and perform a thorough examination of the results.&quot;</span><span class="p">)</span>
+            <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;WARNING: Deflection with the TurbOPark model has not been fully validated.&quot;</span>
+                <span class="s2">&quot;This is an initial implementation, and we advise you use at your own risk&quot;</span>
+                <span class="s2">&quot;and perform a thorough examination of the results.&quot;</span>
+            <span class="p">)</span>
             <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
                 <span class="n">x_ii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
                 <span class="n">x_ii</span> <span class="o">=</span> <span class="n">x_ii</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -2039,10 +2140,14 @@ title="Open an issue"
             <span class="n">axial_induction_i</span>
         <span class="p">)</span>
 
-        <span class="c1"># TODO: leaving this in for GCH quantities; will need to find another way to compute area_overlap</span>
-        <span class="c1"># as the current wake deficit is solved for only upstream turbines; could use WAT_upstream</span>
+        <span class="c1"># TODO: leaving this in for GCH quantities; will need to find another way to</span>
+        <span class="c1"># compute area_overlap as the current wake deficit is solved for only upstream</span>
+        <span class="c1"># turbines; could use WAT_upstream</span>
         <span class="c1"># Calculate wake overlap for wake-added turbulence (WAT)</span>
-        <span class="n">area_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">velocity_deficit</span> <span class="o">*</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+        <span class="n">area_overlap</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">velocity_deficit</span> <span class="o">*</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">area_overlap</span> <span class="o">=</span> <span class="n">area_overlap</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="c1"># Modify wake added turbulence by wake area overlap</span>
@@ -2056,7 +2161,10 @@ title="Open an issue"
         <span class="p">)</span>
 
         <span class="c1"># Combine turbine TIs with WAT</span>
-        <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">,</span> <span class="n">turbine_turbulence_intensity</span> <span class="p">)</span>
+        <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">),</span>
+            <span class="n">turbine_turbulence_intensity</span>
+        <span class="p">)</span>
 
         <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">wake_field</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
@@ -2066,11 +2174,17 @@ title="Open an issue"
     <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="full_flow_turbopark_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_turbopark_solver.html#floris.simulation.solver.full_flow_turbopark_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_turbopark_solver</span><span class="p">(</span><span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span> <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span> <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="full_flow_turbopark_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_turbopark_solver.html#floris.simulation.solver.full_flow_turbopark_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_turbopark_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Plotting for the TurbOPark model is not currently implemented.&quot;</span><span class="p">)</span></div>
 
-    <span class="c1"># TODO: Below is a first attempt at plotting, and uses just the values on the rotor. The current TurbOPark model requires that</span>
-    <span class="c1"># points to be calculated are only at turbine locations. Modification will be required to allow for full flow field calculations.</span>
+    <span class="c1"># TODO: Below is a first attempt at plotting, and uses just the values on the rotor.</span>
+    <span class="c1"># The current TurbOPark model requires that points to be calculated are only at turbine</span>
+    <span class="c1"># locations. Modification will be required to allow for full flow field calculations.</span>
     
     <span class="c1"># # Get the flow quantities and turbine performance</span>
     <span class="c1"># turbine_grid_farm = copy.deepcopy(farm)</span>
@@ -2095,7 +2209,9 @@ title="Open an issue"
     <span class="c1">#     grid_resolution=11,</span>
     <span class="c1"># )</span>
     <span class="c1"># turbine_grid_farm.expand_farm_properties(</span>
-    <span class="c1">#     turbine_grid_flow_field.n_wind_directions, turbine_grid_flow_field.n_wind_speeds, turbine_grid.sorted_coord_indices</span>
+    <span class="c1">#     turbine_grid_flow_field.n_wind_directions,</span>
+    <span class="c1">#     turbine_grid_flow_field.n_wind_speeds,</span>
+    <span class="c1">#     turbine_grid.sorted_coord_indices</span>
     <span class="c1"># )</span>
     <span class="c1"># turbine_grid_flow_field.initialize_velocity_field(turbine_grid)</span>
     <span class="c1"># turbine_grid_farm.initialize(turbine_grid.sorted_indices)</span>

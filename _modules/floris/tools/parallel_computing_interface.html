@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1175,12 +1180,9 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">floris.tools.uncertainty_interface</span> <span class="kn">import</span> <span class="n">FlorisInterface</span><span class="p">,</span> <span class="n">UncertaintyInterface</span>
-<span class="kn">from</span> <span class="nn">floris.tools.optimization.yaw_optimization.yaw_optimizer_sr</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">YawOptimizationSR</span><span class="p">,</span>
-<span class="p">)</span>
-
 <span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggerBase</span>
+<span class="kn">from</span> <span class="nn">floris.tools.optimization.yaw_optimization.yaw_optimizer_sr</span> <span class="kn">import</span> <span class="n">YawOptimizationSR</span>
+<span class="kn">from</span> <span class="nn">floris.tools.uncertainty_interface</span> <span class="kn">import</span> <span class="n">FlorisInterface</span><span class="p">,</span> <span class="n">UncertaintyInterface</span>
 
 
 <div class="viewcode-block" id="_load_local_floris_object"><a class="viewcode-back" href="../../../_autosummary/floris.tools.parallel_computing_interface.html#floris.tools.parallel_computing_interface._load_local_floris_object">[docs]</a><span class="k">def</span> <span class="nf">_load_local_floris_object</span><span class="p">(</span>
@@ -1241,14 +1243,23 @@ title="Open an issue"
 
 
 <div class="viewcode-block" id="ParallelComputingInterface"><a class="viewcode-back" href="../../../_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html#floris.tools.parallel_computing_interface.ParallelComputingInterface">[docs]</a><span class="k">class</span> <span class="nc">ParallelComputingInterface</span><span class="p">(</span><span class="n">LoggerBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fi</span><span class="p">,</span> <span class="n">max_workers</span><span class="p">,</span> <span class="n">n_wind_direction_splits</span><span class="p">,</span> <span class="n">n_wind_speed_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">use_mpi4py</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">propagate_flowfield_from_workers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_timings</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fi</span><span class="p">,</span>
+        <span class="n">max_workers</span><span class="p">,</span>
+        <span class="n">n_wind_direction_splits</span><span class="p">,</span>
+        <span class="n">n_wind_speed_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">use_mpi4py</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">propagate_flowfield_from_workers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">print_timings</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A wrapper around the nominal floris_interface class that adds</span>
 <span class="sd">        parallel computing to common FlorisInterface properties.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">        fi (FlorisInterface or UncertaintyInterface object): Interactive FLORIS object used to</span>
-<span class="sd">          perform the wake and turbine calculations. Can either be a regular FlorisInterface</span>
-<span class="sd">          object or can be an UncertaintyInterface object.</span>
+<span class="sd">            perform the wake and turbine calculations. Can either be a regular FlorisInterface</span>
+<span class="sd">            object or can be an UncertaintyInterface object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Load the correct library</span>
@@ -1270,9 +1281,15 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_wind_speed_splits</span> <span class="o">=</span> <span class="n">n_wind_speed_splits</span>  <span class="c1"># Save initial user input</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span> <span class="o">=</span> <span class="n">max_workers</span>  <span class="c1"># Save initial user input</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_wind_direction_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_wind_speed_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">max_workers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_wind_direction_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_wind_speed_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">max_workers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span><span class="p">])</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">propagate_flowfield_from_workers</span> <span class="o">=</span> <span class="n">propagate_flowfield_from_workers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_mpi4py</span> <span class="o">=</span> <span class="n">use_mpi4py</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_timings</span> <span class="o">=</span> <span class="n">print_timings</span>
@@ -1303,7 +1320,8 @@ title="Open an issue"
 <span class="sd">        UncertaintyInterface object, this function is required.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Use the `layout_x` and `layout_y` parameters in place of `layout` &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;because the `layout` parameter will be deprecated in 3.3.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">layout_x</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">layout_y</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1346,14 +1364,22 @@ title="Open an issue"
 
         <span class="c1"># Prepare settings</span>
         <span class="n">n_wind_direction_splits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span>
-        <span class="n">n_wind_direction_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_wind_direction_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">])</span>
+        <span class="n">n_wind_direction_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">n_wind_direction_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="n">n_wind_speed_splits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span>
         <span class="n">n_wind_speed_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_wind_speed_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">])</span>
     
         <span class="c1"># Prepare the input arguments for parallel execution</span>
         <span class="n">fi_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
-        <span class="n">wind_direction_id_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">),</span> <span class="n">n_wind_direction_splits</span><span class="p">)</span>
-        <span class="n">wind_speed_id_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">),</span> <span class="n">n_wind_speed_splits</span><span class="p">)</span>
+        <span class="n">wind_direction_id_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">),</span>
+            <span class="n">n_wind_direction_splits</span>
+        <span class="p">)</span>
+        <span class="n">wind_speed_id_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">),</span>
+            <span class="n">n_wind_speed_splits</span>
+        <span class="p">)</span>
         <span class="n">multiargs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">wd_id_split</span> <span class="ow">in</span> <span class="n">wind_direction_id_splits</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">ws_id_split</span> <span class="ow">in</span> <span class="n">wind_speed_id_splits</span><span class="p">:</span>
@@ -1368,7 +1394,12 @@ title="Open an issue"
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="p">,</span> <span class="n">FlorisInterface</span><span class="p">):</span>
                     <span class="n">fi_information</span> <span class="o">=</span> <span class="p">(</span><span class="n">fi_dict_split</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">het_map</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">fi_information</span> <span class="o">=</span> <span class="p">(</span><span class="n">fi_dict_split</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">het_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">unc_pmfs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">fix_yaw_in_relative_frame</span><span class="p">)</span>
+                    <span class="n">fi_information</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">fi_dict_split</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">het_map</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">unc_pmfs</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">fix_yaw_in_relative_frame</span>
+                    <span class="p">)</span>
                 <span class="n">multiargs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">fi_information</span><span class="p">,</span> <span class="n">yaw_angles_subset</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">multiargs</span></div>
@@ -1379,8 +1410,12 @@ title="Open an issue"
             <span class="p">[</span>  
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>  <span class="c1"># Merges wind directions</span>
                     <span class="p">[</span>
-                        <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;f.</span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span>
-                        <span class="n">subset</span><span class="p">[</span><span class="n">wii</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span><span class="p">:(</span><span class="n">wii</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span><span class="p">]</span>
+                        <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;f.</span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="p">))</span>
+                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">[</span>
+                            <span class="n">wii</span>
+                            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span><span class="p">:(</span><span class="n">wii</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span>
+                        <span class="p">]</span>
                     <span class="p">],</span>
                     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
                 <span class="p">)</span>
@@ -1397,7 +1432,10 @@ title="Open an issue"
         <span class="c1"># Retrieve and merge turbine power productions</span>
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">power_subsets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span><span class="o">*</span><span class="p">(</span><span class="n">ii</span><span class="p">):</span><span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span><span class="o">*</span><span class="p">(</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="n">power_subsets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span><span class="o">*</span><span class="p">(</span><span class="n">ii</span><span class="p">):</span><span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span><span class="o">*</span><span class="p">(</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
                 <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span><span class="p">)</span>
             <span class="p">],</span>
             <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
@@ -1412,12 +1450,16 @@ title="Open an issue"
             <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_subsets</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">flowfield_subsets</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_subsets</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">flowfield_subsets</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_subsets</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">flowfield_subsets</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_subsets</span><span class="p">(</span><span class="s2">&quot;turbulence_intensity_field&quot;</span><span class="p">,</span> <span class="n">flowfield_subsets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_subsets</span><span class="p">(</span>
+                <span class="s2">&quot;turbulence_intensity_field&quot;</span><span class="p">,</span>
+                <span class="n">flowfield_subsets</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">turbine_powers</span></div>
 
 <div class="viewcode-block" id="ParallelComputingInterface.calculate_wake"><a class="viewcode-back" href="../../../_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html#floris.tools.parallel_computing_interface.ParallelComputingInterface.calculate_wake">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_wake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># raise UserWarning(&quot;&#39;calculate_wake&#39; not supported. Please use &#39;get_turbine_powers&#39; or &#39;get_farm_power&#39; directly.&quot;)</span>
+        <span class="c1"># raise UserWarning(&quot;&#39;calculate_wake&#39; not supported. Please use</span>
+        <span class="c1"># &#39;get_turbine_powers&#39; or &#39;get_farm_power&#39; directly.&quot;)</span>
         <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Do nothing</span></div>
 
 <div class="viewcode-block" id="ParallelComputingInterface.get_turbine_powers"><a class="viewcode-back" href="../../../_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html#floris.tools.parallel_computing_interface.ParallelComputingInterface.get_turbine_powers">[docs]</a>    <span class="k">def</span> <span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1439,11 +1481,14 @@ title="Open an issue"
         <span class="n">t_total</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_timings</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==================================================================================&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total time spent for parallel calculation (</span><span class="si">{:d}</span><span class="s2"> workers): </span><span class="si">{:.3f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">,</span> <span class="n">t_total</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Time spent in parallel preprocessing: </span><span class="si">{:.3f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t_preparation</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Time spent in parallel loop execution: </span><span class="si">{:.3f}</span><span class="s2"> s.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t_execution</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Time spent in parallel postprocessing: </span><span class="si">{:.3f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t_postprocessing</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;===============================================================================&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Total time spent for parallel calculation &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="si">}</span><span class="s2"> workers): </span><span class="si">{</span><span class="n">t_total</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Time spent in parallel preprocessing: </span><span class="si">{</span><span class="n">t_preparation</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Time spent in parallel loop execution: </span><span class="si">{</span><span class="n">t_execution</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Time spent in parallel postprocessing: </span><span class="si">{</span><span class="n">t_postprocessing</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">turbine_powers</span></div>
 
@@ -1548,12 +1593,15 @@ title="Open an issue"
             <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-                <span class="s2">&quot;&#39;freq&#39; should be a two-dimensional array with dimensions (n_wind_directions, n_wind_speeds).&quot;</span>
+                <span class="s2">&quot;&#39;freq&#39; should be a two-dimensional array with dimensions &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;(n_wind_directions, n_wind_speeds).&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Check if frequency vector sums to 1.0. If not, raise a warning</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. &quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. &quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Copy the full wind speed array from the floris object and initialize</span>
         <span class="c1"># the the farm_power variable as an empty array.</span>
@@ -1624,12 +1672,17 @@ title="Open an issue"
         <span class="n">t2</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
 
         <span class="c1"># Combine all solutions from multiprocessing into single dataframe</span>
-        <span class="n">df_opt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_opt_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;wind_direction&quot;</span><span class="p">,</span> <span class="s2">&quot;wind_speed&quot;</span><span class="p">,</span> <span class="s2">&quot;turbulence_intensity&quot;</span><span class="p">])</span>
+        <span class="n">df_opt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_opt_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+            <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;wind_direction&quot;</span><span class="p">,</span> <span class="s2">&quot;wind_speed&quot;</span><span class="p">,</span> <span class="s2">&quot;turbulence_intensity&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="n">t3</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_timings</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==================================================================================&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total time spent for parallel calculation (</span><span class="si">{:d}</span><span class="s2"> workers): </span><span class="si">{:.3f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">,</span> <span class="n">t3</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;===============================================================================&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Total time spent for parallel calculation &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="si">}</span><span class="s2"> workers): </span><span class="si">{</span><span class="n">t3</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span>
+            <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Time spent in parallel preprocessing: </span><span class="si">{:.3f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Time spent in parallel loop execution: </span><span class="si">{:.3f}</span><span class="s2"> s.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Time spent in parallel postprocessing: </span><span class="si">{:.3f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t3</span> <span class="o">-</span> <span class="n">t2</span><span class="p">))</span>

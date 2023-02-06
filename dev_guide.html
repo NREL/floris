@@ -254,8 +254,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -625,6 +625,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1253,6 +1258,11 @@ title="Print to PDF"
      isort
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ruff">
+     Ruff
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -1316,6 +1326,11 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#isort">
      isort
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ruff">
+     Ruff
     </a>
    </li>
   </ul>
@@ -1425,8 +1440,24 @@ directly with the following command:</p>
 isort<span class="w"> </span>dir/*
 </pre></div>
 </div>
-<p>This tool was initially configured in <a class="reference external" href="https://github.com/NREL/floris/pull/535">#535</a>,
+<p>This tool was initially configured in <a class="reference external" href="https://github.com/NREL/floris/pull/535">PR#535</a>,
 and additional information on specific decisions can be found there.</p>
+</section>
+<section id="ruff">
+<h3>Ruff<a class="headerlink" href="#ruff" title="Permalink to this headline">#</a></h3>
+<p><a class="reference external" href="https://github.com/charliermarsh/ruff">Ruff</a> is a general linter and limited auto-formatter.
+It is configured in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> through various <code class="docutils literal notranslate"><span class="pre">[tool.ruff.*]</span></code> blocks. It is a command line
+tool and integrations into popular IDE's are available. A typical command to run Ruff is the
+following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ruff<span class="w"> </span>.<span class="w"> </span>--fix
+</pre></div>
+</div>
+<p>This sets the configuration from <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>, applies the selected rules to Python files,
+and fixes errors in-place where possible.</p>
+<p>Ruff was initially configured in <a class="reference external" href="https://github.com/NREL/floris/pull/562">PR#562</a>, and discussed
+in more detail in <a class="reference external" href="https://github.com/NREL/floris/discussions/561">D#561</a>. See the Ruff
+documentation for a list of <a class="reference external" href="https://github.com/charliermarsh/ruff#supported-rules">supported rules</a>
+and <a class="reference external" href="https://github.com/charliermarsh/ruff#reference">available options for various rules</a>.</p>
 </section>
 </section>
 <section id="testing">

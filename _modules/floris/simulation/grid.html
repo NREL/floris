@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1196,7 +1201,7 @@ title="Open an issue"
     <span class="n">floris_array_converter</span><span class="p">,</span>
     <span class="n">floris_float_type</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
-    <span class="n">NDArrayInt</span>
+    <span class="n">NDArrayInt</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">,</span> <span class="n">Vec3</span>
 
@@ -1225,10 +1230,12 @@ title="Open an issue"
 <span class="sd">    Args:</span>
 <span class="sd">        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.</span>
 <span class="sd">        reference_turbine_diameter (:py:obj:`float`): The reference turbine&#39;s rotor diameter.</span>
-<span class="sd">        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type.</span>
+<span class="sd">        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific</span>
+<span class="sd">            to each grid type.</span>
 <span class="sd">        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.</span>
 <span class="sd">        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.</span>
-<span class="sd">        time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind data is a time series.</span>
+<span class="sd">        time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind</span>
+<span class="sd">            data is a time series.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">turbine_coordinates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Vec3</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">reference_turbine_diameter</span><span class="p">:</span> <span class="nb">float</span>
@@ -1253,7 +1260,10 @@ title="Open an issue"
 
 <div class="viewcode-block" id="Grid.check_coordinates"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.Grid.html#floris.simulation.grid.Grid.check_coordinates">[docs]</a>    <span class="nd">@turbine_coordinates</span><span class="o">.</span><span class="n">validator</span>
     <span class="k">def</span> <span class="nf">check_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Vec3</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensures all elements are `Vec3` objects and keeps the `n_turbines` attribute up to date.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures all elements are `Vec3` objects and keeps the `n_turbines`</span>
+<span class="sd">        attribute up to date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Vec3</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">types</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;turbine_coordinates&#39; must be `Vec3` objects.&quot;</span><span class="p">)</span>
@@ -1318,7 +1328,8 @@ title="Open an issue"
 <span class="sd">        Create grid points at each turbine for each wind direction and wind speed in the simulation.</span>
 <span class="sd">        This creates the underlying data structure for the calculation.</span>
 
-<span class="sd">        arrays have shape (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)</span>
+<span class="sd">        arrays have shape</span>
+<span class="sd">        (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)</span>
 <span class="sd">        - dimension 1: each wind direction</span>
 <span class="sd">        - dimension 2: each wind speed</span>
 <span class="sd">        - dimension 3: each turbine</span>
@@ -1326,8 +1337,20 @@ title="Open an issue"
 <span class="sd">        - dimension 5: number of points in the vertical dimension (ngrid)</span>
 
 <span class="sd">        For example</span>
-<span class="sd">        - x is [n wind direction, n wind speeds, n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]</span>
-<span class="sd">        - y is [n wind direction, n wind speeds, n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]</span>
+<span class="sd">        - x is [</span>
+<span class="sd">            n wind direction,</span>
+<span class="sd">            n wind speeds,</span>
+<span class="sd">            n turbines,</span>
+<span class="sd">            x-component of the points in the spanwise direction,</span>
+<span class="sd">            x-component of the points in the vertical direction</span>
+<span class="sd">        ]</span>
+<span class="sd">        - y is [</span>
+<span class="sd">            n wind direction,</span>
+<span class="sd">            n wind speeds,</span>
+<span class="sd">            n turbines,</span>
+<span class="sd">            y-component of the points in the spanwise direction,</span>
+<span class="sd">            y-component of the points in the vertical direction</span>
+<span class="sd">        ]</span>
 
 <span class="sd">        The x,y,z arrays contain the actual locations in that direction.</span>
 
@@ -1336,9 +1359,11 @@ title="Open an issue"
 <span class="sd">        #             squared so that the points can be evenly distributed.</span>
 <span class="sd">        #             Defaults to 5.</span>
 
-<span class="sd">        If the grid conforms to the sequential solver interface, it must be sorted from upstream to downstream</span>
+<span class="sd">        If the grid conforms to the sequential solver interface,</span>
+<span class="sd">        it must be sorted from upstream to downstream</span>
 
-<span class="sd">        In a y-z plane on the rotor swept area, the -2 dimension is a column of points and the -1 dimension is the row number.</span>
+<span class="sd">        In a y-z plane on the rotor swept area, the -2 dimension is a column of</span>
+<span class="sd">        points and the -1 dimension is the row number.</span>
 <span class="sd">        So the following line prints the 0&#39;th column of the the 0&#39;th turbine&#39;s grid:</span>
 <span class="sd">        print(grid.y_sorted[0,0,0,0,:])</span>
 <span class="sd">        print(grid.z_sorted[0,0,0,0,:])</span>
@@ -1390,7 +1415,10 @@ title="Open an issue"
         <span class="c1"># Here, they are already rotated to the correct orientation for each wind direction</span>
         <span class="n">_x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">template_grid</span>
 
-        <span class="n">ones_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">floris_float_type</span><span class="p">)</span>
+        <span class="n">ones_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">),</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">floris_float_type</span>
+        <span class="p">)</span>
         <span class="n">_y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">template_grid</span> <span class="o">*</span> <span class="p">(</span> <span class="n">disc_grid</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">])</span>
         <span class="n">_z</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">template_grid</span> <span class="o">*</span> <span class="p">(</span> <span class="n">disc_grid</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">ones_grid</span> <span class="p">)</span>
 
@@ -1517,7 +1545,11 @@ title="Open an issue"
             <span class="n">x_points</span><span class="p">,</span> <span class="n">y_points</span><span class="p">,</span> <span class="n">z_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x1_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x2_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planar_coordinate</span><span class="p">)</span> <span class="o">-</span> <span class="mf">10.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planar_coordinate</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planar_coordinate</span><span class="p">)</span> <span class="o">+</span> <span class="mf">10.0</span><span class="p">]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planar_coordinate</span><span class="p">)</span> <span class="o">-</span> <span class="mf">10.0</span><span class="p">,</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planar_coordinate</span><span class="p">),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planar_coordinate</span><span class="p">)</span> <span class="o">+</span> <span class="mf">10.0</span>
+                <span class="p">]),</span>
                 <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span>
             <span class="p">)</span>
 
@@ -1588,7 +1620,10 @@ title="Open an issue"
         <span class="c1"># self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)</span>
         <span class="c1"># # print(self.x)</span>
 
-        <span class="c1"># self.x, self.y, self.z = self._rotated_grid(-1 * self.wind_directions, (x_center_of_rotation, y_center_of_rotation))</span>
+        <span class="c1"># self.x, self.y, self.z = self._rotated_grid(</span>
+        <span class="c1">#     -1 * self.wind_directions,</span>
+        <span class="c1">#     (x_center_of_rotation, y_center_of_rotation)</span>
+        <span class="c1"># )</span>
         <span class="c1"># TODO figure out how to un-rotate grid for plotting after it has been solved</span>
         <span class="c1"># pass</span>
 

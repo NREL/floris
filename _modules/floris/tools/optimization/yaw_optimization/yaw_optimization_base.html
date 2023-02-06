@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1303,10 +1308,12 @@ title="Open an issue"
             <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_baseline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_variable</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;INFO: Baseline yaw angles were not specified and were derived from the floris object.&quot;</span>
+                    <span class="s2">&quot;INFO: Baseline yaw angles were not specified and &quot;</span>
+                    <span class="s2">&quot;were derived from the floris object.&quot;</span>
                 <span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;INFO: The inherent yaw angles in the floris object are not all 0.0 degrees.&quot;</span>
+                    <span class="s2">&quot;INFO: The inherent yaw angles in the floris object &quot;</span>
+                    <span class="s2">&quot;are not all 0.0 degrees.&quot;</span>
                 <span class="p">)</span>
 
         <span class="c1"># Set optimization bounds</span>
@@ -1398,7 +1405,9 @@ title="Open an issue"
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">variable</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s2">&quot;Variable input must have shape (n_wind_directions, n_wind_speeds, nturbs)&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="s2">&quot;Variable input must have shape (n_wind_directions, n_wind_speeds, nturbs)&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">variable</span></div>
 
@@ -1495,8 +1504,14 @@ title="Open an issue"
         <span class="n">ub</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_maximum_yaw_angle_subset</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span> <span class="o">=</span> <span class="p">(</span><span class="n">ub</span> <span class="o">-</span> <span class="n">lb</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_x0_subset_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x0_subset</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_yaw_angle_subset_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_yaw_angle_subset</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_yaw_angle_subset_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_yaw_angle_subset</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_yaw_angle_subset_norm</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_minimum_yaw_angle_subset</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_yaw_angle_subset_norm</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_maximum_yaw_angle_subset</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="YawOptimization._calculate_farm_power"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization._calculate_farm_power">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wd_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1591,7 +1606,7 @@ title="Open an issue"
 
             <span class="n">wd_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span>
             <span class="n">sym_step</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;wd_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="mf">0.0</span> <span class="ow">in</span> <span class="n">wd_array</span><span class="p">)</span> <span class="ow">or</span><span class="p">(</span><span class="ow">not</span> <span class="n">sym_step</span> <span class="ow">in</span> <span class="n">wd_array</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">((</span><span class="mf">0.0</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">wd_array</span><span class="p">)</span> <span class="ow">or</span><span class="p">(</span><span class="n">sym_step</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">wd_array</span><span class="p">)):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Floris wind direction array does not &quot;</span> <span class="o">+</span>
                       <span class="s2">&quot;intersect </span><span class="si">{:.1f}</span><span class="s2"> and </span><span class="si">{:.1f}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sym_step</span><span class="p">))</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exploitation of symmetry has been disabled.&quot;</span><span class="p">)</span>
@@ -1675,7 +1690,7 @@ title="Open an issue"
                 <span class="s2">&quot;wind_direction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
                 <span class="s2">&quot;wind_speed&quot;</span><span class="p">:</span> <span class="n">wind_speed</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_wind_directions</span><span class="p">),</span>
                 <span class="s2">&quot;turbulence_intensity&quot;</span><span class="p">:</span> <span class="n">ti</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_wind_directions</span><span class="p">),</span>
-                <span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">yaw_angles</span> <span class="k">for</span> <span class="n">yaw_angles</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_opt</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">,</span> <span class="p">:]],</span>
+                <span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_opt</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">,</span> <span class="p">:]),</span>
                 <span class="s2">&quot;farm_power_opt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_opt</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">],</span>
                 <span class="s2">&quot;farm_power_baseline&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">],</span>
             <span class="p">}))</span>
@@ -1739,8 +1754,7 @@ title="Open an issue"
         <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">ydiff</span> <span class="o">&lt;</span> <span class="n">min_yaw_offset</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ydiff</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rounding </span><span class="si">{:d}</span><span class="s2"> insignificant yaw angles to their &quot;</span> <span class="o">+</span>
-                <span class="s2">&quot;baseline value.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rounding </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> insignificant yaw angles to their baseline value.&quot;</span><span class="p">)</span>
             <span class="n">yaw_angles_opt_subset</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span> <span class="o">=</span> <span class="n">yaw_angles_baseline_subset</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span>
             <span class="n">ydiff</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 

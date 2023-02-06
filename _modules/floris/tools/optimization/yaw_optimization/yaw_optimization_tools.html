@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1368,7 +1373,10 @@ title="Open an issue"
                     <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
                 <span class="p">)</span>
                 <span class="n">wd_eval_array</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">wd_eval</span><span class="p">,</span> <span class="n">wd_eval</span> <span class="o">+</span> <span class="n">wd</span><span class="p">))</span>
-                <span class="n">id_mapping</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xr</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yr</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">xr</span><span class="p">,</span> <span class="n">yr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_rot</span><span class="p">,</span> <span class="n">y_rot</span><span class="p">)]</span>
+                <span class="n">id_mapping</span> <span class="o">=</span> <span class="p">([</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xr</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yr</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">xr</span><span class="p">,</span> <span class="n">yr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_rot</span><span class="p">,</span> <span class="n">y_rot</span><span class="p">)</span>
+                <span class="p">])</span>
                 <span class="n">mapping_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_mapping</span><span class="p">)</span>
 
             <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;wd_range&quot;</span><span class="p">:</span> <span class="n">wd_eval_array</span><span class="p">,</span> <span class="s2">&quot;turbine_mapping&quot;</span><span class="p">:</span> <span class="n">mapping_array</span><span class="p">})</span>

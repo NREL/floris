@@ -251,8 +251,8 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.logging_manager.html">
-         floris.simulation.floris.logging_manager
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
@@ -622,6 +622,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
+         floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
@@ -1191,7 +1196,7 @@ title="Open an issue"
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
-    <span class="n">Turbine</span>
+    <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span><span class="p">,</span> <span class="n">sind</span>
 
@@ -1219,9 +1224,9 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
     <span class="c1"># @profile</span>
@@ -1280,7 +1285,8 @@ title="Open an issue"
 
 <span class="sd">        # yaw displacement</span>
 <span class="sd">        A = 15 * (2 * self.kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0</span>
-<span class="sd">        B = (30 * self.kd / rotor_diameter_i) * ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0</span>
+<span class="sd">        B = (30 * self.kd / rotor_diameter_i)</span>
+<span class="sd">        B *= ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0</span>
 <span class="sd">        C = xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)</span>
 <span class="sd">        D = 30 * self.kd</span>
 
@@ -1299,7 +1305,8 @@ title="Open an issue"
 
         <span class="n">delta_x</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;x - x_i&quot;</span><span class="p">)</span>
         <span class="n">A</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;15 * (2 * kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0&quot;</span><span class="p">)</span>
-        <span class="n">B</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(30 * kd / rotor_diameter_i) * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0&quot;</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;(30 * kd / rotor_diameter_i)&quot;</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;B * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0&quot;</span><span class="p">)</span>
         <span class="n">C</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)&quot;</span><span class="p">)</span>
         <span class="n">D</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;30 * kd&quot;</span><span class="p">)</span>
 
