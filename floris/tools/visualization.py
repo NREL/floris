@@ -515,11 +515,4 @@ def calculate_horizontal_plane_with_turbines(
         # Convert to a cut_plane
         horizontal_plane = CutPlane(df, x_resolution, y_resolution, "z")
 
-        # # Reset the fi object back to the turbine grid configuration
-        # fi.floris = Floris.from_dict(floris_dict)
-        # fi.floris.flow_field.het_map = fi.het_map
-
-        # # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        # fi.calculate_wake(yaw_angles=current_yaw_angles)
-
         return horizontal_plane
