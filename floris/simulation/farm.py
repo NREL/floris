@@ -82,7 +82,7 @@ class Farm(BaseClass):
     def check_y(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
-    
+
     @turbine_library.validator
     def check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
         """Ensures that the input to `library_path` exists and is a directory."""
