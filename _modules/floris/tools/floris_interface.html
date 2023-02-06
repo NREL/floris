@@ -1370,6 +1370,7 @@ title="Open an issue"
         <span class="n">solver_settings</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">layout</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArrayFloat</span><span class="p">,</span> <span class="n">NDArrayFloat</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">het_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Export the floris object recursively as a dictionary</span>
         <span class="n">floris_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
@@ -1393,6 +1394,8 @@ title="Open an issue"
             <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;turbulence_intensity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">turbulence_intensity</span>
         <span class="k">if</span> <span class="n">air_density</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;air_density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">air_density</span>
+        <span class="k">if</span> <span class="n">het_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="n">het_map</span>
 
         <span class="c1">## Farm</span>
         <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
