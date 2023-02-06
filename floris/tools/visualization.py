@@ -53,7 +53,10 @@ def plot_turbines(
         color = "k"
 
     coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(np.array([wind_direction]), coordinates_array)
+    layout_x, layout_y, _ = rotate_coordinates_rel_west(
+        np.array([wind_direction]),
+        coordinates_array
+    )
 
     for x, y, yaw, d in zip(layout_x[0,0], layout_y[0,0], yaw_angles, rotor_diameters):
         R = d / 2.0
@@ -93,19 +96,33 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
 def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
     """
     Adds index labels to a plot based on the given FlorisInterface.
-    See the pyplot.annotate docs for more info: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html.
-    kwargs are passed to Text (https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text).
+    See the pyplot.annotate docs for more info:
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html.
+    kwargs are passed to Text
+    (https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text).
 
     Args:
         fi (FlorisInterface): Simulation object to get the layout and index information.
         ax (plt.Axes): Axes object to add the labels.
     """
-    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(fi.layout_x, fi.layout_y))])
+    coordinates_array = np.array([
+        [x, y, 0.0]
+        for x, y in list(zip(fi.layout_x, fi.layout_y))
+    ])
     wind_direction = fi.floris.flow_field.wind_directions[0]
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(np.array([wind_direction]), coordinates_array)
+    layout_x, layout_y, _ = rotate_coordinates_rel_west(
+        np.array([wind_direction]),
+        coordinates_array
+    )
 
     for i in range(fi.floris.farm.n_turbines):
-        ax.annotate(i, (layout_x[0,0,i], layout_y[0,0,i]), xytext=(0,10), textcoords="offset points", **kwargs)
+        ax.annotate(
+            i,
+            (layout_x[0,0,i], layout_y[0,0,i]),
+            xytext=(0,10),
+            textcoords="offset points",
+            **kwargs
+        )
 
 
 def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwargs):
@@ -201,10 +218,26 @@ def visualize_cut_plane(
     Zm = np.ma.masked_where(np.isnan(vel_mesh), vel_mesh)
 
     # Plot the cut-through
-    im = ax.pcolormesh(x1_mesh, x2_mesh, Zm, cmap=cmap, vmin=min_speed, vmax=max_speed, shading="nearest")
+    im = ax.pcolormesh(
+        x1_mesh,
+        x2_mesh,
+        Zm,
+        cmap=cmap,
+        vmin=min_speed,
+        vmax=max_speed,
+        shading="nearest"
+    )
 
     # Add line contour
-    line_contour_cut_plane(cut_plane, ax=ax, levels=levels, colors="b", linewidths=0.8, alpha=0.3, **kwargs)
+    line_contour_cut_plane(
+        cut_plane,
+        ax=ax,
+        levels=levels,
+        colors="b",
+        linewidths=0.8,
+        alpha=0.3,
+        **kwargs
+    )
 
     if cut_plane.normal_vector == "x":
         ax.invert_xaxis()

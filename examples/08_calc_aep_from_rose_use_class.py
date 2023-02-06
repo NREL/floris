@@ -15,11 +15,7 @@
 import numpy as np
 
 import floris.tools.visualization as wakeviz
-from floris.tools import (
-    FlorisInterface,
-    wind_rose,
-    WindRose
-)
+from floris.tools import FlorisInterface, WindRose
 
 
 """

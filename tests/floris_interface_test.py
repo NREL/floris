@@ -24,11 +24,19 @@ def test_calculate_wake():
     that the yaw angles are correctly set in subsequent calls to calculate_wake.
     """
     fi = FlorisInterface(configuration=YAML_INPUT)
-    yaw_angles = 20 * np.ones((fi.floris.flow_field.n_wind_directions, fi.floris.flow_field.n_wind_speeds, fi.floris.farm.n_turbines))
+    yaw_angles = 20 * np.ones((
+        fi.floris.flow_field.n_wind_directions,
+        fi.floris.flow_field.n_wind_speeds,
+        fi.floris.farm.n_turbines
+    ))
     fi.calculate_wake(yaw_angles=yaw_angles)
     assert fi.floris.farm.yaw_angles == yaw_angles
 
-    yaw_angles = np.zeros((fi.floris.flow_field.n_wind_directions, fi.floris.flow_field.n_wind_speeds, fi.floris.farm.n_turbines))
+    yaw_angles = np.zeros((
+        fi.floris.flow_field.n_wind_directions,
+        fi.floris.flow_field.n_wind_speeds,
+        fi.floris.farm.n_turbines
+    ))
     fi.calculate_wake(yaw_angles=yaw_angles)
     assert fi.floris.farm.yaw_angles == yaw_angles
 

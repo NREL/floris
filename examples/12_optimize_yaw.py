@@ -24,14 +24,17 @@ from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptim
 
 
 """
-This example demonstrates how to perform a yaw optimization and evaluate the performance over a full wind rose.
+This example demonstrates how to perform a yaw optimization and evaluate the performance
+over a full wind rose.
 
-The beginning of the file contains the definition of several functions used in the main part of the script.
+The beginning of the file contains the definition of several functions used in the main part
+of the script.
 
-Within the main part of the script, we first load the wind rose information. We then initialize our Floris Interface
-object. We determine the baseline AEP using the wind rose information, and then perform the yaw optimization over 72
-wind directions with 1 wind speed per direction. The optimal yaw angles are then used to determine yaw angles across
-all the wind speeds included in the wind rose. Lastly, the final AEP is calculated and analysis of the results are
+Within the main part of the script, we first load the wind rose information. We then initialize
+our Floris Interface object. We determine the baseline AEP using the wind rose information, and
+then perform the yaw optimization over 72 wind directions with 1 wind speed per direction. The
+optimal yaw angles are then used to determine yaw angles across all the wind speeds included in
+the wind rose. Lastly, the final AEP is calculated and analysis of the results are
 shown in several plots.
 """
 
@@ -67,7 +70,7 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     nturbs = len(fi.layout_x)
     yaw_cols = ["yaw_{:03d}".format(ti) for ti in range(nturbs)]
 
-    if not "yaw_000" in df_windrose.columns:
+    if "yaw_000" not in df_windrose.columns:
         df_windrose[yaw_cols] = 0.0  # Add zeros
 
     # Derive the wind directions and speeds we need to evaluate in FLORIS

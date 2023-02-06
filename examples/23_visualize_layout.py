@@ -50,12 +50,25 @@ ax.set_title('Show wake lines')
 
 # Limit wake lines and use provided
 ax = axarr[1,0] 
-visualize_layout(fi, ax=ax, show_wake_lines=True, lim_lines_per_turbine=2, turbine_names=turbine_names)
+visualize_layout(
+    fi,
+    ax=ax,
+    show_wake_lines=True,
+    lim_lines_per_turbine=2,
+    turbine_names=turbine_names
+)
 ax.set_title('Show only nearest 2, use provided names')
 
 # Show rotors and use black and white
 ax = axarr[1,1] 
-visualize_layout(fi, ax=ax, show_wake_lines=True, lim_lines_per_turbine=2, plot_rotor=True, black_and_white=True)
+visualize_layout(
+    fi,
+    ax=ax,
+    show_wake_lines=True,
+    lim_lines_per_turbine=2,
+    plot_rotor=True,
+    black_and_white=True
+)
 ax.set_title('Plot rotors and use black and white option')
 
 

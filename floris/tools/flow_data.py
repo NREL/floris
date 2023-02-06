@@ -79,7 +79,7 @@ class FlowData:
         vtk_file.write("ASCII" + ln)
         vtk_file.write("DATASET STRUCTURED_POINTS" + ln)
         vtk_file.write("DIMENSIONS {}".format(self.dimensions) + ln)
-        vtk_file.write("ORIGIN {} {} {}".format(self.origin.x1, self.origin.x2, self.origin.x3) + ln)
+        vtk_file.write(f"ORIGIN {self.origin.x1} {self.origin.x2} {self.origin.x3}" + ln)
         vtk_file.write("SPACING {}".format(self.spacing) + ln)
         vtk_file.write("POINT_DATA {}".format(n_points) + ln)
         vtk_file.write("FIELD attributes 1" + ln)

@@ -18,7 +18,7 @@ from attrs import define, field
 from floris.simulation import (
     BaseModel,
     FlowField,
-    Grid
+    Grid,
 )
 
 
@@ -35,9 +35,9 @@ class NoneVelocityDeficit(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            u_initial=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "u_initial": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     def function(

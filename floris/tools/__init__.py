@@ -44,7 +44,7 @@ from .visualization import (
     plot_rotor_values,
     plot_turbines_with_fi,
     visualize_cut_plane,
-    visualize_quiver
+    visualize_quiver,
 )
 from .wind_rose import WindRose
 

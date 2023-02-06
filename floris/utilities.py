@@ -44,9 +44,13 @@ class Vec3:
     @components.validator
     def _check_components(self, attribute, value) -> None:        
         if np.ndim(value) > 1:
-            raise ValueError(f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given.")
+            raise ValueError(
+                f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given."
+            )
         if np.size(value) != 3:
-            raise ValueError(f"Vec3 must contain exactly 3 components, {np.size(value)} were given.")
+            raise ValueError(
+                f"Vec3 must contain exactly 3 components, {np.size(value)} were given."
+            )
 
     def __add__(self, arg):
         if type(arg) is Vec3:

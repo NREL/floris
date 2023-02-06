@@ -64,7 +64,10 @@ turbine_powers = fi.get_turbine_powers() / 1000.
 
 # Show the dimensions
 num_turbines = len(fi.layout_x)
-print('There are %d time samples, and %d turbines and so the resulting turbine power matrix has the shape:' % (len(time), num_turbines), turbine_powers.shape)
+print(
+    f'There are {len(time)} time samples, and {num_turbines} turbines and '
+    f'so the resulting turbine power matrix has the shape {turbine_powers.shape}.'
+)
 
 
 fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(7,8))

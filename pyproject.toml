@@ -21,23 +21,123 @@ filterwarnings = [
 ]
 
 
-[tool.black]
-target-version = ["py37", "py38", "py39"]
-line-length = 120
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+
+## Pyflakes (F)
+## pycodestyle (E, W)
+# mccabe (C90)
+# isort (I)     # Use isort directly until more isort features are included in ruff
+# pep8-naming (N)
+# pydocstyle (D)
+# pyupgrade (UP)
+# flake8-2020 (YTT)
+# flake8-annotations (ANN)
+# flake8-bandit (S)
+# flake8-blind-except (BLE)
+# flake8-boolean-trap (FBT)
+# flake8-bugbear (B)
+# flake8-builtins (A)
+# flake8-commas (COM)
+# flake8-comprehensions (C4)
+# flake8-datetimez (DTZ)
+# flake8-debugger (T10)
+# flake8-errmsg (EM)
+# flake8-executable (EXE)
+# flake8-implicit-str-concat (ISC)
+# flake8-import-conventions (ICN)
+# flake8-logging-format (G)
+# flake8-no-pep420 (INP)
+# flake8-pie (PIE)
+# flake8-print (T20)
+# flake8-pytest-style (PT)
+# flake8-quotes (Q)
+# flake8-return (RET)
+# flake8-simplify (SIM)
+# flake8-tidy-imports (TID)
+# flake8-type-checking (TCH)
+# flake8-unused-arguments (ARG)
+# flake8-use-pathlib (PTH)
+# eradicate (ERA)
+# pandas-vet (PD)
+# pygrep-hooks (PGH)
+# Pylint (PL)
+# - Convention (PLC)
+# - Error (PLE)
+# - Refactor (PLR)
+# - Warning (PLW)
+# tryceratops (TRY)
+# flake8-raise (RSE)
+# flake8-self (SLF)
+# Ruff-specific rules (RUF)
+
+[tool.ruff]
+src = ["floris", "tests"]
+line-length = 100
+target-version = "py310"
+
+# See https://github.com/charliermarsh/ruff#supported-rules
+# for rules included and matching to prefix.
+select = ["F", "E", "W", "C4", ] #"T20", "I"
+# I - isort is not fully implemented in ruff so there is not parity. Consider disabling I.
+
+# F401 unused-import: Ignore until all used isort flags are adopted in ruff
+ignore = ["F401"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+# fixable = ["A", "B", "C", "D", "E", "F"]
+fixable = ["F", "E", "W", "C4"] #"T20", "I"
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.per-file-ignores]
+# F841 unused-variable: ignore since this file uses numexpr and many variables look unused
+"floris/simulation/wake_deflection/jimenez.py" = ["F841"]
+"floris/simulation/wake_velocity/jensen.py" = ["F841"]
+"floris/simulation/wake_velocity/gauss.py" = ["F841"]
+
+# I001 unsorted-imports: ignore because the import order is meaningful to navigate
+# import dependencies
+"floris/simulation/__init__.py" = ["I001"]
+
+# FIXME
+"floris/tools/interface_utilities.py" = ["F821"]
+"floris/tools/wind_rose.py" = ["F821"]
+
+
+
+[tool.ruff.isort]
+combine-as-imports = true
+known-first-party = ["floris"]
+order-by-type = false
+# lines-after-imports = 2
+
+# [tool.ruff.mccabe]
+# # Unlike Flake8, default to a complexity level of 10.
+# max-complexity = 10
 
 
 [tool.isort]
@@ -54,7 +154,7 @@ known_first_party = [
 multi_line_output = 3
 combine_as_imports = true
 force_grid_wrap = 3
-include_trailing_comma = false
+include_trailing_comma = true
 use_parentheses = true
 lines_after_imports = 2
 line_length = 100

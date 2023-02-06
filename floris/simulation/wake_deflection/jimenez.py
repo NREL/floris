@@ -21,7 +21,7 @@ from floris.simulation import (
     Farm,
     FlowField,
     Grid,
-    Turbine
+    Turbine,
 )
 from floris.utilities import cosd, sind
 
@@ -49,9 +49,9 @@ class JimenezVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+        }
         return kwargs
 
     # @profile
@@ -110,7 +110,8 @@ class JimenezVelocityDeflection(BaseModel):
 
         # yaw displacement
         A = 15 * (2 * self.kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / rotor_diameter_i) * ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0
+        B = (30 * self.kd / rotor_diameter_i)
+        B *= ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0
         C = xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
@@ -129,7 +130,8 @@ class JimenezVelocityDeflection(BaseModel):
 
         delta_x = ne.evaluate("x - x_i")
         A = ne.evaluate("15 * (2 * kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0")
-        B = ne.evaluate("(30 * kd / rotor_diameter_i) * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0")
+        B = ne.evaluate("(30 * kd / rotor_diameter_i)")
+        B = ne.evaluate("B * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0")
         C = ne.evaluate("xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)")
         D = ne.evaluate("30 * kd")
 
