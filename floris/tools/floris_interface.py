@@ -189,6 +189,7 @@ class FlorisInterface(LoggerBase):
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
+        turbine_library: str | Path | None = None,
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
@@ -233,6 +234,8 @@ class FlorisInterface(LoggerBase):
             farm_dict["layout_y"] = layout_y
         if turbine_type is not None:
             farm_dict["turbine_type"] = turbine_type
+        if turbine_library is not None:
+            farm_dict["turbine_library"] = turbine_library
 
         if time_series:
             flow_field_dict["time_series"] = True

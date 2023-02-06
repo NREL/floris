@@ -26,11 +26,15 @@ from floris.simulation import (
     Turbine,
 )
 from floris.type_dec import (
+    convert_to_path,
     floris_array_converter,
     NDArrayFloat,
     NDArrayObject,
 )
 from floris.utilities import load_yaml, Vec3
+
+
+default_turbine_library = Path(__file__).parents[1] / "turbine_library"
 
 
 @define
@@ -50,6 +54,9 @@ class Farm(BaseClass):
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
     turbine_type: List = field()
+    turbine_library: Path = field(
+        default=default_turbine_library, converter=convert_to_path
+    )
 
     turbine_definitions: dict = field(init=False)
     yaw_angles: NDArrayFloat = field(init=False)
@@ -63,37 +70,50 @@ class Farm(BaseClass):
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
 
+    def __attrs_post_init__(self) -> None:
+        self.check_turbine_type()
+
     @layout_x.validator
-    def check_x(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_y):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
     @layout_y.validator
-    def check_y(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_y(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
+    
+    @turbine_library.validator
+    def check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
+        """Ensures that the input to `library_path` exists and is a directory."""
+        if not value.is_dir():
+            raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
 
-    @turbine_type.validator
     def check_turbine_type(self, instance: attrs.Attribute, value: Any) -> None:
-        if len(value) != len(self.layout_x):
-            if len(value) == 1:
-                value = self.turbine_type * len(self.layout_x)
+        if len(self.turbine_type) != len(self.layout_x):
+            if len(self.turbine_type) == 1:
+                self.turbine_type *= len(self.layout_x)
+            elif np.unique(self.turbine_type).size == 1:
+                self.turbine_type = [self.turbine_type[0]] * len(self.layout_x)
             else:
                 raise ValueError(
-                    "turbine_type must have the same number of entries as "
-                    "layout_x/layout_y or have a single turbine_type value."
+                    "turbine_type must have the same number of entries as layout_x/layout_y or have"
+                    " a single turbine_type value."
                 )
 
-        self.turbine_definitions = copy.deepcopy(value)
-        for i, val in enumerate(value):
+        self.turbine_definitions = copy.deepcopy(self.turbine_type)
+        for i, val in enumerate(self.turbine_type):
             if type(val) is str:
-                _floris_dir = Path(__file__).parent.parent
-                fname = _floris_dir / "turbine_library" / f"{val}.yaml"
-                if not Path.is_file(fname):
-                    raise ValueError(
-                        f"User-selected turbine definition `{val}` "
-                        "does not exist in pre-defined turbine library."
-                    )
+                fname = (self.turbine_library / val).with_suffix(".yaml")
+                if not fname.is_file():
+                    # Change to the internal turbine library and check again
+                    fname = (self.turbine_library / val).with_suffix(".yaml")
+                    if not fname.exists():
+                        raise FileNotFoundError(
+                            f"User-selected turbine defintion `{val}` does not exist in the"
+                            f" user-specified turbine library: {self.turbine_library} or the"
+                            f" internal FLORIS turbine library: {default_turbine_library}"
+                        )
                 self.turbine_definitions[i] = load_yaml(fname)
 
                 # This is a temporary block of code that catches that ref_density_cp_ct
@@ -110,6 +130,18 @@ class Farm(BaseClass):
                         "being set to the prior default value of 1.225."
                     )
                     self.turbine_definitions[i]['ref_density_cp_ct'] = 1.225
+
+        # If the user specified the default location, do not check against duplicated definitions
+        if self.turbine_library != default_turbine_library:
+            unique_turbines = np.unique(self.turbine_type)
+            for turbine_fn in unique_turbines:
+                in_external = (self.turbine_library / turbine_fn).with_suffix(".yaml").exists()
+                in_internal = (default_turbine_library / turbine_fn).with_suffix(".yaml").exists()
+                if in_external and in_internal:
+                    raise ValueError(
+                        f"The turbine type: {turbine_fn} exists in both the internal and external"
+                        " turbine library."
+                    )
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
