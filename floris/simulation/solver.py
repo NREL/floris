@@ -26,7 +26,11 @@ from floris.simulation import (
 )
 from floris.simulation.turbine import average_velocity
 from floris.simulation.wake import WakeModelManager
-from floris.simulation.wake_deflection.gauss import wake_added_yaw, yaw_added_turbulence_mixing
+from floris.simulation.wake_deflection.gauss import (
+    calculate_transverse_velocity,
+    wake_added_yaw,
+    yaw_added_turbulence_mixing,
+)
 
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
@@ -134,7 +138,13 @@ def sequential_solver(
         # Model calculations
         # NOTE: exponential
         deflection_field = model_manager.deflection_model.function(
-            x_i, y_i, effective_yaw_i, turbulence_intensity_i, ct_i, rotor_diameter_i, **deflection_model_args
+            x_i,
+            y_i,
+            effective_yaw_i,
+            turbulence_intensity_i,
+            ct_i,
+            rotor_diameter_i,
+            **deflection_model_args,
         )
 
         if model_manager.enable_transverse_velocities:
@@ -218,8 +228,12 @@ def sequential_solver(
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
 
-    flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3, 4))
-    flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:, :, :, None, None]
+    flow_field.turbulence_intensity_field = np.mean(
+        turbine_turbulence_intensity, axis=(3, 4)
+    )
+    flow_field.turbulence_intensity_field = (
+        flow_field.turbulence_intensity_field[:, :, :, None, None]
+    )
 
 
 def full_flow_sequential_solver(
@@ -404,7 +418,9 @@ def cc_solver(
 
     turbine_turbulence_intensity = (
         flow_field.turbulence_intensity
-        * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
+        * np.ones(
+            (flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1)
+        )
     )
     ambient_turbulence_intensity = flow_field.turbulence_intensity
 
@@ -412,7 +428,7 @@ def cc_solver(
     Ctmp = np.zeros((shape))
     # Ctmp = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))
 
-    sigma_i = np.zeros((shape))
+    # sigma_i = np.zeros((shape))
     # sigma_i = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
@@ -592,8 +608,12 @@ def cc_solver(
         flow_field.w_sorted += w_wake
     flow_field.u_sorted = turb_inflow_field
 
-    flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3, 4))
-    flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:, :, :, None, None]
+    flow_field.turbulence_intensity_field = np.mean(
+        turbine_turbulence_intensity, axis=(3, 4)
+    )
+    flow_field.turbulence_intensity_field = (
+        flow_field.turbulence_intensity_field[:, :, :, None, None]
+    )
 
 
 def full_flow_cc_solver(
@@ -881,7 +901,13 @@ def turbopark_solver(
                 rotor_diameter_ii = farm.rotor_diameters_sorted[:, :, ii : ii + 1, None, None]
 
                 deflection_field_ii = model_manager.deflection_model.function(
-                    x_ii, y_ii, yaw_ii, turbulence_intensity_ii, ct_ii, rotor_diameter_ii, **deflection_model_args
+                    x_ii,
+                    y_ii,
+                    yaw_ii,
+                    turbulence_intensity_ii,
+                    ct_ii,
+                    rotor_diameter_ii,
+                    **deflection_model_args,
                 )
 
                 deflection_field[:, :, ii : ii + 1, :, :] = deflection_field_ii[:, :, i:i+1, :, :]
@@ -966,8 +992,12 @@ def turbopark_solver(
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
 
-    flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3, 4))
-    flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:, :, :, None, None]
+    flow_field.turbulence_intensity_field = np.mean(
+        turbine_turbulence_intensity, axis=(3, 4)
+    )
+    flow_field.turbulence_intensity_field = (
+        flow_field.turbulence_intensity_field[:, :, :, None, None]
+    )
 
 
 def full_flow_turbopark_solver(

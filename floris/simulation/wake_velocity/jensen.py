@@ -148,11 +148,14 @@ class JensenVelocityDeficit(BaseModel):
 
         # C should be 0 everywhere outside of the lateral and vertical bounds defined
         # by the wake expansion parameter
-        boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < boundary_line")
+        boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < we * dx + rotor_radius")
 
-        mask = np.logical_and(downstream_mask, boundary_mask)
-        c[~mask] = 0.0
-        # c = ne.evaluate("c * downstream_mask * boundary_mask")
+        # Calculate C and fill invalid values with 0
+        c = np.where(  # noqa: F841
+            np.logical_and(downstream_mask, boundary_mask),
+            ne.evaluate("(rotor_radius / (rotor_radius + we * dx + NUM_EPS)) ** 2"),
+            0.0,
+        )
 
         velocity_deficit = ne.evaluate("2 * axial_induction_i * c")
 

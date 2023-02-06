@@ -14,8 +14,10 @@ from __future__ import annotations
 
 from typing import Any
 
+import numexpr as ne
 import numpy as np
 from attrs import define, field
+from numpy import pi
 
 from floris.simulation import (
     BaseModel,
@@ -100,7 +102,15 @@ class GaussVelocityDeflection(BaseModel):
         }
         return kwargs
 
-    def _initial_wake_expansion(self, tilt, yaw_i, ct_i, freestream_velocity, rotor_diameter_i, wind_veer):
+    def _initial_wake_expansion(
+        self,
+        tilt,
+        yaw_i,
+        ct_i,
+        freestream_velocity,
+        rotor_diameter_i,
+        wind_veer
+    ):
         # initial velocity deficits
         uR = (  # noqa: F841
             freestream_velocity
@@ -215,7 +225,11 @@ class GaussVelocityDeflection(BaseModel):
         ln_deltaDen = (1.6 - M0_sqrt) * (1.6 * middle_term + M0_sqrt)  # noqa: F841
 
         middle_term = ne.evaluate(
-            "theta_c0 * E0 / 5.2 * sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0)) * log(ln_deltaNum / ln_deltaDen)"
+            "theta_c0"
+            " * E0"
+            " / 5.2"
+            " * sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))"
+            " * log(ln_deltaNum / ln_deltaDen)"
         )
         delta_far_wake = delta0 + middle_term + (self.ad + self.bd * (x - x_i))
 
@@ -247,7 +261,7 @@ def gamma(
     Returns:
         [type]: [description]
     """
-    return scale * (np.pi / 8) * D * velocity * Uinf * Ct  # * cosd(yaw)  <- the cos is included in Ct
+    return scale * (np.pi / 8) * D * velocity * Uinf * Ct  # * cosd(yaw)  <- cos is included in Ct
 
 
 def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=False):
@@ -266,10 +280,19 @@ def _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR, yaw=1, with_scaling=F
 
 
 def _calculate_vortex(
-    z_i, HH, D, yLocs, eps, Gamma, decay=1, which: str | None = None, with_decay: bool = False, ground: bool = False
+    z_i,
+    HH,
+    D,
+    yLocs,
+    eps,
+    Gamma,
+    decay=1,
+    which: str | None = None,
+    with_decay: bool = False,
+    ground: bool = False,
 ):
-    """Calcuatues the V and W parameters for the top, bottom, or wake rotation, with or without a decay, or at the ground
-    boundary positions.
+    """Calcuatues the V and W parameters for the top, bottom, or wake rotation, with or without a
+    decay, or at the ground boundary positions.
 
     Args:
         z_i (_type_): _description_
@@ -293,7 +316,8 @@ def _calculate_vortex(
     """
     if which not in ("top", "bottom", "rotation"):
         raise ValueError(
-            "Cannot determine which vortex to calculate, please set `which` to one of: 'top', 'bottom', or 'rotation'."
+            "Cannot determine which vortex to calculate, please set `which` to one of:"
+            " 'top', 'bottom', or 'rotation'."
         )
 
     if not isinstance(with_decay, bool):
@@ -355,7 +379,9 @@ def wake_added_yaw(
     eps_gain = 0.2
     eps = eps_gain * D  # Use set value
 
-    Gamma_top, Gamma_bottom, Gamma_wake_rotation = _calculate_gamma(HH, D, Uinf, Ct, scale, u_i, aI, TSR)
+    Gamma_top, Gamma_bottom, Gamma_wake_rotation = _calculate_gamma(
+        HH, D, Uinf, Ct, scale, u_i, aI, TSR
+    )
 
     # compute the spanwise and vertical velocities induced by yaw
 
@@ -426,14 +452,18 @@ def calculate_transverse_velocity(
     lm = kappa * z / (1 + kappa * z / lmda)
     nu = lm ** 2 * np.abs(dudz_initial)  # noqa: F841
 
-    decay = ne.evaluate("eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)")  # This is the decay downstream
+    decay = ne.evaluate("eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)")  # downstream decay
     yLocs = delta_y + BaseModel.NUM_EPS
 
     # top vortex
-    V1, W1 = _calculate_vortex(z, HH, D, yLocs, eps, Gamma_top, decay=decay, which="top", with_decay=True)
+    V1, W1 = _calculate_vortex(
+        z, HH, D, yLocs, eps, Gamma_top, decay=decay, which="top", with_decay=True
+    )
 
     # bottom vortex
-    V2, W2 = _calculate_vortex(z, HH, D, yLocs, eps, Gamma_bottom, decay=decay, which="bottom", with_decay=True)
+    V2, W2 = _calculate_vortex(
+        z, HH, D, yLocs, eps, Gamma_bottom, decay=decay, which="bottom", with_decay=True
+    )
 
     # wake rotation vortex
     V5, W5 = _calculate_vortex(
@@ -443,16 +473,36 @@ def calculate_transverse_velocity(
     # Boundary condition - ground mirror vortex
 
     # top vortex - ground
-    V3, W3 = _calculate_vortex(z, HH, D, yLocs, eps, Gamma_top, decay=decay, which="top", with_decay=True, ground=True)
+    V3, W3 = _calculate_vortex(
+        z, HH, D, yLocs, eps, Gamma_top, decay=decay, which="top", with_decay=True, ground=True
+    )
 
     # bottom vortex - ground
     V4, W4 = _calculate_vortex(
-        z, HH, D, yLocs, eps, Gamma_bottom, decay=decay, which="bottom", with_decay=True, ground=True
+        z,
+        HH,
+        D,
+        yLocs,
+        eps,
+        Gamma_bottom,
+        decay=decay,
+        which="bottom",
+        with_decay=True,
+        ground=True,
     )
 
     # wake rotation vortex - ground effect
     V6, W6 = _calculate_vortex(
-        z, HH, D, yLocs, eps, Gamma_wake_rotation, decay=decay, which="rotation", with_decay=True, ground=True
+        z,
+        HH,
+        D,
+        yLocs,
+        eps,
+        Gamma_wake_rotation,
+        decay=decay,
+        which="rotation",
+        with_decay=True,
+        ground=True,
     )
 
     V = np.add.reduce((V1, V2, V3, V4, V5, V6))

@@ -12,6 +12,7 @@
 
 from typing import Any, Dict
 
+import numexpr as ne
 import numpy as np
 from attrs import define, field
 
@@ -88,7 +89,10 @@ class CrespoHernandez(BaseModel):
         initial = self.initial
         downstream = self.downstream
         ti = ne.evaluate(
-            "constant * axial_induction ** ai * ambient_TI ** initial * ((delta_x) / rotor_diameter) ** downstream"
+            "constant"
+            " * axial_induction ** ai"
+            " * ambient_TI ** initial"
+            " * ((delta_x) / rotor_diameter) ** downstream"
         )
         # Mask the 1 values from above with zeros
         return ti * downstream_mask
