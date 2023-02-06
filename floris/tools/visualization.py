@@ -396,7 +396,7 @@ def calculate_horizontal_plane_with_turbines(
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
-        yaw_angles = np.append(yaw_angles, [0])
+        yaw_angles = np.append(yaw_angles, np.zeros([len(wd), len(ws), 1]), axis=2)
 
 
         # Get a grid of points test test
