@@ -106,9 +106,13 @@ class Farm(BaseClass):
                 # will be required
                 if "ref_density_cp_ct" not in self.turbine_definitions[i]:
                     self.logger.warn("The value ref_density_cp_ct is not defined in the file: %s " % fname)
-                    self.logger.warn("This value is not the simulated air density but is the density at which the cp/ct curves are defined")
+                    self.logger.warn(
+                        "This value is not the simulated air density but is the density at which the cp/ct curves are defined"
+                    )
                     self.logger.warn("In previous versions this was assumed to be 1.225")
-                    self.logger.warn("Future versions of FLORIS will give an error if this value is not explicitly defined")
+                    self.logger.warn(
+                        "Future versions of FLORIS will give an error if this value is not explicitly defined"
+                    )
                     self.logger.warn("Currently this value is being set to the prior default value of 1.225")
                     self.turbine_definitions[i]["ref_density_cp_ct"] = 1.225
 
@@ -156,7 +160,9 @@ class Farm(BaseClass):
     def expand_farm_properties(self, n_wind_directions: int, n_wind_speeds: int, sorted_coord_indices):
         template_shape = np.ones_like(sorted_coord_indices)
         self.hub_heights_sorted = np.take_along_axis(self.hub_heights * template_shape, sorted_coord_indices, axis=2)
-        self.rotor_diameters_sorted = np.take_along_axis(self.rotor_diameters * template_shape, sorted_coord_indices, axis=2)
+        self.rotor_diameters_sorted = np.take_along_axis(
+            self.rotor_diameters * template_shape, sorted_coord_indices, axis=2
+        )
         self.TSRs_sorted = np.take_along_axis(self.TSRs * template_shape, sorted_coord_indices, axis=2)
         self.pPs_sorted = np.take_along_axis(self.pPs * template_shape, sorted_coord_indices, axis=2)
         self.turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]

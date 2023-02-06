@@ -32,11 +32,7 @@ def test_farm_init_homogenous_turbines():
 
     coordinates = np.array([Vec3([x, y, turbine_data["hub_height"]]) for x, y in zip(layout_x, layout_y)])
 
-    farm = Farm(
-        layout_x=layout_x,
-        layout_y=layout_y,
-        turbine_type=[turbine_data]
-    )
+    farm = Farm(layout_x=layout_x, layout_y=layout_y, turbine_type=[turbine_data])
     # TODO: these all pass on mac and fail on linux
     # turbine_type=[turbine_data]
     # turbine_type=[turbine_data["turbine_type"]]

@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from attrs import define, field
+from attrs import field, define
 
 from floris.type_dec import (
     FromDictMixin,
@@ -26,6 +26,7 @@ from floris.type_dec import (
     floris_array_converter,
 )
 
+
 @define
 class AttrsDemoClass(FromDictMixin):
     w: int
@@ -33,10 +34,7 @@ class AttrsDemoClass(FromDictMixin):
     y: float = field(converter=float, default=2.1)
     z: str = field(converter=str, default="z")
 
-    liststr: List[str] = field(
-        default=["qwerty", "asdf"],
-        validator=iter_validator(list, str)
-    )
+    liststr: List[str] = field(default=["qwerty", "asdf"], validator=iter_validator(list, str))
     array: np.ndarray = field(
         default=[1.0, 2.0],
         converter=floris_array_converter,
@@ -62,15 +60,7 @@ def test_FromDictMixin_defaults():
 
 
 def test_FromDictMixin_custom():
-
-    inputs = {
-        "w": 0,
-        "x": 1,
-        "y": 2.3,
-        "z": "asdf",
-        "liststr": ["a", "b"],
-        "array": np.array([[1,2,3], [4,5,6]])
-    }
+    inputs = {"w": 0, "x": 1, "y": 2.3, "z": "asdf", "liststr": ["a", "b"], "array": np.array([[1, 2, 3], [4, 5, 6]])}
 
     # Check that custom inputs are accepted
     AttrsDemoClass.from_dict(inputs)
@@ -87,7 +77,6 @@ def test_FromDictMixin_custom():
 
 
 def test_iter_validator():
-
     # Check the correct values work
     _ = AttrsDemoClass(w=0, x=1, liststr=["a", "b"])
 
@@ -118,7 +107,6 @@ def test_attrs_array_converter():
 
 
 def test_convert_to_path():
-    
     # Test that a string works
     str_input = "../tests"
     test_str_input = convert_to_path(str_input)
@@ -140,7 +128,7 @@ def test_convert_to_path():
     # Test that invalid data types fail
     with pytest.raises(TypeError):
         convert_to_path(1)
-    
+
     with pytest.raises(TypeError):
         convert_to_path(1.2)
 
