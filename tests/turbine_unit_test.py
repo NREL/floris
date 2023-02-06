@@ -366,7 +366,7 @@ def test_axial_induction():
 
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
-    
+
     turbine = Turbine.from_dict(sample_inputs_fixture.turbine)
     dict1 = turbine.as_dict()
 

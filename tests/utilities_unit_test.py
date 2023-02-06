@@ -90,7 +90,7 @@ def test_rotate_coordinates_rel_west():
     # For 270, the coordinates should not change.
     wind_directions = np.array([270.0])
     x_rotated, y_rotated, z_rotated = rotate_coordinates_rel_west(wind_directions, coordinates)
-    
+
     np.testing.assert_array_equal( X_COORDS, x_rotated[0,0] )
     np.testing.assert_array_equal( Y_COORDS, y_rotated[0,0] )
     np.testing.assert_array_equal( Z_COORDS, z_rotated[0,0] )

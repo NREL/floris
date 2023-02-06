@@ -55,7 +55,7 @@ def visualize_layout(
         black_and_white (bool, optional): if true print in black and white
         plot_rotor (bool, optional): if true plot the turbine rotors and offset the labels
         turbines_names (list, optional): optional list of turbine names
-        
+
     """
 
     # Build a dataframe of locations and names
@@ -83,7 +83,7 @@ def visualize_layout(
 
     # If turbine names passed in apply them
     if turbine_names is not None:
-        
+
         if len(turbine_names) != N_turbine:
             raise ValueError(
                 "Length of turbine names array must equal number of turbines within fi"
@@ -96,10 +96,10 @@ def visualize_layout(
         df_turbine['turbine_names'] = df_turbine['turbine_names'].astype(int)
 
     else:
-        
+
         df_turbine['turbine_names'] = list(range(N_turbine)) # 0-indexed list
         df_turbine['turbine_names'] = df_turbine['turbine_names'].astype(int)
-        
+
 
     # if no axes provided, make one
     if not ax:
@@ -194,7 +194,7 @@ def visualize_layout(
     # If plotting rotors, mark the location of the nacelle
     if plot_rotor:
         ax.plot(df_turbine.x, df_turbine.y,'o',ls='None', color='k')
-    
+
     # Also mark the place of each label to make sure figure is correct scale
     ax.plot(
         df_turbine.x + label_offset,
@@ -203,14 +203,14 @@ def visualize_layout(
         ls='None',
         color='w',
         alpha=0
-    
+
     )
 
     # Plot turbines
     for t1 in turbines:
 
         if plot_rotor:  # If plotting the rotors, draw these fist
-            
+
             if not turbine_face_north: # Plot turbines facing west
                 ax.plot(
                     [df_turbine.loc[t1].x, df_turbine.loc[t1].x],
@@ -244,7 +244,7 @@ def visualize_layout(
 
         # Now add the label
         ax.text(
-            
+
             df_turbine.loc[t1].x + label_offset,
             df_turbine.loc[t1].y + label_offset,
             df_turbine.turbine_names.values[t1],
@@ -425,4 +425,3 @@ def label_line(
                 put_label(i, ax)
     else:
         raise ValueError("Need one of near_i, near_x, near_y")
-

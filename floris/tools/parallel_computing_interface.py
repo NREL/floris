@@ -194,7 +194,7 @@ class ParallelComputingInterface(LoggerBase):
         )
         n_wind_speed_splits = self.n_wind_speed_splits
         n_wind_speed_splits = np.min([n_wind_speed_splits, self.fi.floris.flow_field.n_wind_speeds])
-    
+
         # Prepare the input arguments for parallel execution
         fi_dict = self.fi.floris.as_dict()
         wind_direction_id_splits = np.array_split(
@@ -232,7 +232,7 @@ class ParallelComputingInterface(LoggerBase):
     # Function to merge subsets in dictionaries
     def _merge_subsets(self, field, subset):
         return np.concatenate(  # Merges wind speeds
-            [  
+            [
                 np.concatenate(  # Merges wind directions
                     [
                         eval("f.{:s}".format(field))
@@ -378,7 +378,7 @@ class ParallelComputingInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -469,7 +469,7 @@ class ParallelComputingInterface(LoggerBase):
         exploit_layout_symmetry=True,
         verify_convergence=False,
         print_worker_progress=False,  # Recommended disabled to avoid clutter. Useful for debugging
-    ):   
+    ):
 
         # Prepare the inputs to each core for multiprocessing module
         t0 = timerpc()

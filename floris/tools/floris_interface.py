@@ -654,7 +654,7 @@ class FlorisInterface(LoggerBase):
         Args:
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -746,7 +746,7 @@ class FlorisInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -835,7 +835,7 @@ class FlorisInterface(LoggerBase):
         Args:
             wind_rose (wind_rose): An object of the wind rose class
             cut_in_wind_speed (float, optional): Wind speed in m/s below which
-                any calculations are ignored and the wind farm is known to 
+                any calculations are ignored and the wind farm is known to
                 produce 0.0 W of power. Note that to prevent problems with the
                 wake models at negative / zero wind speeds, this variable must
                 always have a positive value. Defaults to 0.001 [m/s].
@@ -849,7 +849,7 @@ class FlorisInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -866,7 +866,7 @@ class FlorisInterface(LoggerBase):
                 in AEP due to wakes. Defaults to *False*.
 
         Returns:
-            float: 
+            float:
                 The Annual Energy Production (AEP) for the wind farm in
                 watt-hours.
         """
@@ -902,7 +902,7 @@ class FlorisInterface(LoggerBase):
             wind_speeds=wind_speeds,
             wind_directions=wind_directions
         )
-        
+
 
         return aep
 

@@ -37,7 +37,7 @@ events = [
 def perf():
     """
     Benchmark this process with Linux's perf util.
-    
+
     Example usage:
 
         with perf():

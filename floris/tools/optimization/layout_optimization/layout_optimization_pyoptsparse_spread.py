@@ -226,5 +226,5 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
                 plt.plot(
                     [verts[i][0], verts[i + 1][0]], [verts[i][1], verts[i + 1][1]], "b"
                 )
-        
+
         plt.show()

@@ -28,7 +28,7 @@ class NoneVelocityDeficit(BaseModel):
     The None deficit model is a placeholder code that simple ignores any
     wake wind speed deficits and returns an array of zeroes.
     """
-    
+
     def prepare_function(
         self,
         grid: Grid,

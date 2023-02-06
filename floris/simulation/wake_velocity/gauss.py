@@ -138,7 +138,7 @@ class GaussVelocityDeficit(BaseModel):
             sigma_y += near_wake_ramp_up * sigma_y0
             sigma_y *= np.array(x >= xR)
             sigma_y += np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * rotor_diameter_i
-            
+
             sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
             sigma_z += near_wake_ramp_up * sigma_z0
             sigma_z *= np.array(x >= xR)
