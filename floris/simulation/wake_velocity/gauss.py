@@ -213,6 +213,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         deflection_field_y_i: np.ndarray,
         deflection_field_z_i: np.ndarray,
         yaw_angle_i: np.ndarray,
+        tilt_angle_i: np.ndarray,
         wake_induced_mixing_i: np.ndarray,
         ct_i: np.ndarray,
         hub_height_i: float,
@@ -244,7 +245,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         #sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
         # TODO: add a yawing component?
         sigma_y0 = self.sigma_y0_D * rotor_diameter_i * cosd(yaw_angle)
-        sigma_z0 = self.sigma_y0_D * rotor_diameter_i # * cosd(tilt_angle)
+        sigma_z0 = self.sigma_y0_D * rotor_diameter_i * cosd(tilt_angle_i)
 
         # No specific near, far wakes in this model
         downstream_mask = np.array(x > x_i + 0.1)
@@ -263,11 +264,9 @@ class GaussGeometricVelocityDeficit(BaseModel):
             self.smoothing_length_D*rotor_diameter_i,
             self.wim_gain_velocity*wake_induced_mixing_i,
         )
-        sigma_y[upstream_mask] = sigma_y0.flatten()[0] # Not very elegant
-        sigma_z = sigma_y # Do I want a separate z model eventually?
-        # TODO: sigma_z could stop growing, while sigma_y continues to grow...
-        # That could be quite elegant. 
-
+        sigma_y[upstream_mask] = sigma_y0.flatten()[0]
+        sigma_z = sigma_y # TODO: separate z deflection model
+        
         # 'Standard' wake component
         r, C = rCalt(
             wind_veer,
@@ -281,6 +280,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
             hub_height_i,
             ct_i,
             yaw_angle,
+            tilt_angle_i,
             rotor_diameter_i,
             sigma_y0,
             sigma_z0
@@ -304,6 +304,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
                 -hub_height_i, # Turbine at negative hub height location
                 ct_i,
                 yaw_angle,
+                tilt_angle_i,
                 rotor_diameter_i,
                 sigma_y0,
                 sigma_z0
@@ -355,7 +356,7 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
 
-def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta_y, delta_z, z, HH, Ct, yaw, D, sigma_y0, sigma_z0):
+def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta_y, delta_z, z, HH, Ct, yaw, tilt, D, sigma_y0, sigma_z0):
 
     ## Numexpr
     wind_veer = np.deg2rad(wind_veer)
@@ -363,7 +364,7 @@ def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta_y, delta_z, z, HH, Ct, yaw,
     b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
     c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
     r = ne.evaluate("a * ( (y - y_i - delta_y) ** 2) - 2 * b * (y - y_i - delta_y) * (z - HH - delta_z) + c * ((z - HH - delta_z) ** 2)")
-    d = 1 - Ct * (sigma_y0 * sigma_z0)/(sigma_y * sigma_z) * cosd(yaw) # TODO: should there be a cosine yaw factor in here? Are we then double counting it? and how about tilt?
+    d = 1 - Ct * (sigma_y0 * sigma_z0)/(sigma_y * sigma_z) * cosd(yaw) * cosd(tilt)
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
 

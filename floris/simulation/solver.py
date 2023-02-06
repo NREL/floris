@@ -1112,6 +1112,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             deflection_field_y,
             deflection_field_z,
             yaw_angle_i,
+            tilt_angle_i,
             wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None], # Differs from Gaussian
             ct_i,
             hub_height_i,
@@ -1265,6 +1266,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             deflection_field_y,
             deflection_field_z,
             yaw_angle_i,
+            tilt_angle_i,
             wake_induced_mixing_i.sum(axis=-1)[:,:,:,None,None],
             ct_i,
             hub_height_i,
