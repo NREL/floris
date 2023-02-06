@@ -14,12 +14,14 @@
 
 
 import copy
-import numpy as np
 import time
 import warnings
 
-from floris.simulation import Floris
+import numpy as np
 from linux_perf import perf
+
+from floris.simulation import Floris
+
 
 WIND_DIRECTIONS = np.arange(0, 360.0, 5)
 N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
@@ -46,8 +48,9 @@ def run_floris(input_dict):
         floris.steady_state_atmospheric_condition()
         end = time.perf_counter()
         return end - start
-    except KeyError as e:
-        # Catch the errors when an invalid wake model was given because the model was not yet implemented
+    except KeyError:
+        # Catch the errors when an invalid wake model was given because the model
+        # was not yet implemented
         return -1.0
 
 
@@ -102,7 +105,10 @@ def memory_profile(input_dict):
             floris.initialize_domain()
             floris.steady_state_atmospheric_condition()
 
-    print("Size of one data array:", 64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000), "MB")
+    print(
+        "Size of one data array: "
+        f"{64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000)} MB"
+    )
 
 
 def test_mem_jensen_jimenez(sample_inputs_fixture):

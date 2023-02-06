@@ -15,9 +15,9 @@
 
 import copy
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
 
@@ -113,9 +113,33 @@ class CutPlane:
             df (pandas.DataFrame): Pandas DataFrame of data with
                 columns x1, x2, u, v, w.
         """
-        self.df = df
-        self.normal_vector = normal_vector
+        self.df: pd.DataFrame = df
+        self.normal_vector: str = normal_vector
         self.resolution = (x1_resolution, x2_resolution)
+        self.df.set_index(["x1", "x2"])
+
+    def __sub__(self, other):
+
+        if self.normal_vector != other.normal_vector:
+            raise ValueError("Operands must have consistent normal vectors.")
+
+        # if self.normal_vector.df.
+        # DF must be of the same size
+        # resolution must be of the same size
+
+        df: pd.DataFrame = self.df.copy()
+        other_df: pd.DataFrame = other.df.copy()
+
+        df['u'] = self.df['u'] - other_df['u']
+        df['v'] = self.df['v'] - other_df['v']
+        df['w'] = self.df['w'] - other_df['w']
+
+        return CutPlane(
+            df,
+            self.resolution[0],
+            self.resolution[1],
+            self.normal_vector
+        )
 
 
 # Modification functions
@@ -321,37 +345,6 @@ def project_onto(cut_plane_a, cut_plane_b):
     return interpolate_onto_array(
         cut_plane_a, cut_plane_b.df.x1.unique(), cut_plane_b.df.x2.unique()
     )
-
-
-def subtract(cut_plane_a_in, cut_plane_b_in):
-    """
-    Subtract u,v,w terms of cut_plane_b from cut_plane_a
-
-    Args:
-        cut_plane_a_in (:py:class:`~.tools.cut_plane.CutPlane`):
-            Plane of data to subtract from.
-        cut_plane_b_in (:py:class:`~.tools.cut_plane.CutPlane`):
-            Plane of data to subtract b.
-
-    Returns:
-        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`):
-            Difference of cut_plane_a_in minus cut_plane_b_in.
-    """
-
-    # First make copies of original
-    cut_plane_a = copy.deepcopy(cut_plane_a_in)
-    cut_plane_b = copy.deepcopy(cut_plane_b_in)
-
-    # Sort x1 and x2 and make the index
-    cut_plane_a.df = cut_plane_a.df.set_index(["x1", "x2"])
-    cut_plane_b.df = cut_plane_b.df.set_index(["x1", "x2"])
-
-    # Do subtraction
-    cut_plane_a.df = cut_plane_a.df.subtract(
-        cut_plane_b.df
-    ).reset_index()  # .sort_values(['x2','x1'])# .dropna()
-    # cut_plane_a.df = cut_plane_a.df.sort_values(['x1','x2'])
-    return cut_plane_a
 
 
 def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):

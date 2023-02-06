@@ -1,11 +1,12 @@
 
 import copy
-import numpy as np
 import time
+
 import matplotlib.pyplot as plt
+import numpy as np
+from conftest import SampleInputs
 
 from floris.simulation import Floris
-from conftest import SampleInputs
 
 
 def time_vec(input_dict):
@@ -74,7 +75,11 @@ if __name__=="__main__":
         wind_directions = [270.0]
         wind_speeds = factor * [8.0]
 
-        serial_init[i], serial_calc[i] = time_serial(copy.deepcopy(serial_scaling_inputs), wind_directions, wind_speeds)
+        serial_init[i], serial_calc[i] = time_serial(
+            copy.deepcopy(serial_scaling_inputs),
+            wind_directions,
+            wind_speeds
+        )
         print("serial", i, serial_calc[i])
 
     plt.plot(simulation_size, vectorize_init, 'b--', label='vectorize init - 1 turbine')
@@ -107,7 +112,11 @@ if __name__=="__main__":
         speeds = factor * [8.0]
         wind_directions = [270.0]
 
-        serial_init[i], serial_calc[i] = time_serial(copy.deepcopy(serial_scaling_inputs), wind_directions, speeds)
+        serial_init[i], serial_calc[i] = time_serial(
+            copy.deepcopy(serial_scaling_inputs),
+            wind_directions,
+            speeds
+        )
         print("serial", i, serial_calc[i])
 
     plt.plot(simulation_size, vectorize_init, 'c--', label='vectorize init - 10 turbine')

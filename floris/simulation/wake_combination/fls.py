@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from attrs import define
 import numpy as np
+from attrs import define
 
 from floris.simulation import BaseModel
 
@@ -22,8 +22,6 @@ class FLS(BaseModel):
     FLS uses freestream linear superposition to apply the wake velocity
     deficits to the freestream flow field.
     """
-
-    model_string = "fls"
 
     def prepare_function(self) -> dict:
         pass

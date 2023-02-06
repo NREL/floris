@@ -12,15 +12,17 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numexpr as ne
 import numpy as np
+from attrs import define, field
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
 from floris.utilities import cosd, sind
 
 
@@ -31,7 +33,7 @@ class JimenezVelocityDeflection(BaseModel):
     :cite:`jdm-jimenez2010application`.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: jdm-
@@ -40,7 +42,6 @@ class JimenezVelocityDeflection(BaseModel):
     kd: float = field(default=0.05)
     ad: float = field(default=0.0)
     bd: float = field(default=0.0)
-    model_string = "jimenez"
 
     def prepare_function(
         self,
@@ -48,9 +49,9 @@ class JimenezVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+        }
         return kwargs
 
     # @profile
@@ -109,7 +110,8 @@ class JimenezVelocityDeflection(BaseModel):
 
         # yaw displacement
         A = 15 * (2 * self.kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0
-        B = (30 * self.kd / rotor_diameter_i) * ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0
+        B = (30 * self.kd / rotor_diameter_i)
+        B *= ( 2 * self.kd * delta_x / rotor_diameter_i + 1 ) ** 5.0
         C = xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)
         D = 30 * self.kd
 
@@ -128,7 +130,8 @@ class JimenezVelocityDeflection(BaseModel):
 
         delta_x = ne.evaluate("x - x_i")
         A = ne.evaluate("15 * (2 * kd * delta_x / rotor_diameter_i + 1) ** 4.0 + xi_init ** 2.0")
-        B = ne.evaluate("(30 * kd / rotor_diameter_i) * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0")
+        B = ne.evaluate("(30 * kd / rotor_diameter_i)")
+        B = ne.evaluate("B * ( 2 * kd * delta_x / rotor_diameter_i + 1 ) ** 5.0")
         C = ne.evaluate("xi_init * rotor_diameter_i * (15 + xi_init ** 2.0)")
         D = ne.evaluate("30 * kd")
 

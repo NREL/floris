@@ -14,14 +14,14 @@
 
 import numpy as np
 
-from tests.conftest import SampleInputs
-from floris.utilities import Vec3
 from floris.simulation import Farm
-
+from floris.utilities import Vec3
 from tests.conftest import (
-    N_WIND_SPEEDS,
     N_WIND_DIRECTIONS,
+    N_WIND_SPEEDS,
+    SampleInputs,
 )
+
 
 def test_farm_init_homogenous_turbines():
     farm_data = SampleInputs().farm
@@ -30,7 +30,10 @@ def test_farm_init_homogenous_turbines():
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
 
-    coordinates = np.array([Vec3([x, y, turbine_data["hub_height"]]) for x, y in zip(layout_x, layout_y)])
+    coordinates = np.array([
+        Vec3([x, y, turbine_data["hub_height"]])
+        for x, y in zip(layout_x, layout_y)
+    ])
 
     farm = Farm(
         layout_x=layout_x,

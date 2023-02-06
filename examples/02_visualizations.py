@@ -16,10 +16,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+import floris.tools.visualization as wakeviz
 from floris.tools import FlorisInterface
+
 from floris.tools.visualization import visualize_cut_plane
 from floris.tools.visualization import plot_rotor_values
 from floris.tools.visualization import calculate_horizontal_plane_with_turbines
+
 
 """
 This example initializes the FLORIS software, and then uses internal
@@ -53,9 +56,9 @@ cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100, downs
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
-visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
-visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
-visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
+wakeviz.visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
+wakeviz.visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
+wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
 
 # Some wake models may not yet have a visualization method included, for these cases can use
 # a slower version which scans a turbine model to produce the horizontal flow
@@ -72,7 +75,14 @@ visualize_cut_plane(horizontal_plane_scan_turbine, ax=ax, title="Horizontal (coa
 fi.calculate_wake()
 
 # Plot the values at each rotor
-fig, axes, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=3, return_fig_objects=True)
+fig, axes, _ , _ = wakeviz.plot_rotor_values(
+    fi.floris.flow_field.u,
+    wd_index=0,
+    ws_index=0,
+    n_rows=1,
+    n_cols=3,
+    return_fig_objects=True
+  )
 fig.suptitle("Rotor Plane Visualization, Original Resolution")
 
 # FLORIS supports multiple types of grids for capturing wind speed
@@ -94,7 +104,14 @@ fi.reinitialize(solver_settings=solver_settings)
 fi.calculate_wake()
 
 # Plot the values at each rotor
-fig, axes, _ , _ = plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=3, return_fig_objects=True)
+fig, axes, _ , _ = wakeviz.plot_rotor_values(
+    fi.floris.flow_field.u,
+    wd_index=0,
+    ws_index=0,
+    n_rows=1,
+    n_cols=3,
+    return_fig_objects=True
+  )
 fig.suptitle("Rotor Plane Visualization, 10x10 Resolution")
 
-plt.show()
+wakeviz.show_plots()

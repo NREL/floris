@@ -16,18 +16,22 @@ import attrs
 from attrs import define, field
 
 from floris.simulation import BaseClass, BaseModel
+from floris.simulation.wake_combination import (
+    FLS,
+    MAX,
+    SOSFS,
+)
 from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
     NoneVelocityDeflection,
 )
-from floris.simulation.wake_combination import FLS, MAX, SOSFS
 from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
 from floris.simulation.wake_velocity import (
-    NoneVelocityDeficit,
     CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
+    NoneVelocityDeficit,
     TurbOParkVelocityDeficit,
 )
 
@@ -85,38 +89,42 @@ class WakeModelManager(BaseClass):
     velocity_model: BaseModel = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        model: BaseModel = MODEL_MAP["velocity_model"][self.model_strings["velocity_model"]]
-        if self.model_strings["velocity_model"].lower() == "none":
+        velocity_model_string = self.model_strings["velocity_model"].lower()
+        model: BaseModel = MODEL_MAP["velocity_model"][velocity_model_string]
+        if velocity_model_string == "none":
             model_parameters = None
         else:
-            model_parameters = self.wake_velocity_parameters[self.model_strings["velocity_model"]]
+            model_parameters = self.wake_velocity_parameters[velocity_model_string]
         if model_parameters is None:
             # Use model defaults
             self.velocity_model = model()
         else:
             self.velocity_model = model.from_dict(model_parameters)
 
-        model: BaseModel = MODEL_MAP["deflection_model"][self.model_strings["deflection_model"]]
-        if self.model_strings["deflection_model"].lower() == "none":
+        deflection_model_string = self.model_strings["deflection_model"].lower()
+        model: BaseModel = MODEL_MAP["deflection_model"][deflection_model_string]
+        if deflection_model_string == "none":
             model_parameters = None
         else:
-            model_parameters = self.wake_deflection_parameters[self.model_strings["deflection_model"]]
+            model_parameters = self.wake_deflection_parameters[deflection_model_string]
         if model_parameters is None:
             self.deflection_model = model()
         else:
             self.deflection_model = model.from_dict(model_parameters)
 
-        model: BaseModel = MODEL_MAP["turbulence_model"][self.model_strings["turbulence_model"]]
-        if self.model_strings["turbulence_model"].lower() == "none":
+        turbulence_model_string = self.model_strings["turbulence_model"].lower()
+        model: BaseModel = MODEL_MAP["turbulence_model"][turbulence_model_string]
+        if turbulence_model_string == "none":
             model_parameters = None
         else:
-            model_parameters = self.wake_turbulence_parameters[self.model_strings["turbulence_model"]]
+            model_parameters = self.wake_turbulence_parameters[turbulence_model_string]
         if model_parameters is None:
             self.turbulence_model = model()
         else:
             self.turbulence_model = model.from_dict(model_parameters)
 
-        model: BaseModel = MODEL_MAP["combination_model"][self.model_strings["combination_model"]]
+        combination_model_string = self.model_strings["combination_model"].lower()
+        model: BaseModel = MODEL_MAP["combination_model"][combination_model_string]
         self.combination_model = model()
 
     @model_strings.validator
@@ -135,7 +143,10 @@ class WakeModelManager(BaseClass):
         # Check that no other strings are given
         for k in value.keys():
             if k not in required_strings:
-                raise KeyError(f"Wake: '{k}' was given as input but it is not a valid option. Required inputs are: {', '.join(required_strings)}")
+                raise KeyError((
+                    f"Wake: '{k}' was given as input but it is not a valid option."
+                    f"Required inputs are: {', '.join(required_strings)}"
+                ))
 
     @property
     def deflection_function(self):

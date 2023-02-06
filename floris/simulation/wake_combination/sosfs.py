@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from attrs import define
 import numpy as np
+from attrs import define
 
 from floris.simulation import BaseModel
 
@@ -22,8 +22,6 @@ class SOSFS(BaseModel):
     SOSFS uses sum of squares freestream superposition to combine the
     wake velocity deficits to the base flow field.
     """
-
-    model_string = "sosfs"
 
     def prepare_function(self) -> dict:
         pass

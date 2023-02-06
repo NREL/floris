@@ -12,12 +12,14 @@
 
 from typing import Any, Dict
 
-from attrs import define
 import numpy as np
+from attrs import define
 
-from floris.simulation import BaseModel
-from floris.simulation import FlowField
-from floris.simulation import Grid
+from floris.simulation import (
+    BaseModel,
+    FlowField,
+    Grid,
+)
 
 
 @define
@@ -26,7 +28,6 @@ class NoneVelocityDeflection(BaseModel):
     The None deflection model is a placeholder code that simple ignores any
     deflection and returns an array of zeroes.
     """
-    model_string = "none"
 
     def prepare_function(
         self,
@@ -34,9 +35,9 @@ class NoneVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            freestream_velocity=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "freestream_velocity": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     def function(

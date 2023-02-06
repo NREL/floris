@@ -12,8 +12,8 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
 from floris.simulation import BaseModel
 
@@ -24,8 +24,6 @@ class NoneWakeTurbulence(BaseModel):
     The None wake turbulence model is a placeholder code that simple ignores
     any wake turbulence and just returns an array of the ambient TIs.
     """
-
-    model_string = "none"
 
     def prepare_function(self) -> dict:
         pass

@@ -12,22 +12,37 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
-import numexpr as ne
 import numpy as np
-from numpy import newaxis as na
+from attrs import define, field
 from scipy.special import gamma
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand, pshape
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
+from floris.utilities import (
+    cosd,
+    sind,
+    tand,
+)
 
 
 @define
 class CumulativeGaussCurlVelocityDeficit(BaseModel):
+    """
+    The cumulative curl model is an implementation of the model described in
+    :cite:`gdm-bay_2022`, which itself is based on the cumulative model of
+    :cite:`bastankhah_2021`
+
+    References:
+    .. bibliography:: /references.bib
+        :style: unsrt
+        :filter: docname in docnames
+        :keyprefix: gdm-
+    """
 
     a_s: float = field(default=0.179367259)
     b_s: float = field(default=0.0118889215)
@@ -38,20 +53,18 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
     c_f: float = field(default=2.41)
     alpha_mod: float = field(default=1.0)
 
-    model_string = "cumulative_gauss_curl"
-
     def prepare_function(
         self,
         grid: Grid,
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            u_initial=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "u_initial": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     def function(
@@ -157,7 +170,8 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         #     Y = (y_i_loc - y_coord - deflection_field) ** 2 / (2 * S)
         #     Z = (z_i_loc - z_coord) ** 2 / (2 * S)
 
-        #     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2 / S * np.exp(-Y) * np.exp(-Z)
+        #     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2
+        #     lbda /= S * np.exp(-Y) * np.exp(-Z)
         #     sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)       
         # else:
         #     sum_lbda = 0.0
@@ -168,27 +182,31 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         # super gaussian
         # b_f = self.b_f1 * np.exp(self.b_f2 * TI) + self.b_f3
         x_tilde = np.abs(delta_x) / turbine_diameter[:,:,ii:ii+1]
-        r_tilde = np.sqrt((y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2) / turbine_diameter[:,:,ii:ii+1]
+        r_tilde = np.sqrt( (y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2 )
+        r_tilde /= turbine_diameter[:,:,ii:ii+1]
 
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
         a1 = 2 ** (2 / n - 1)
         a2 = 2 ** (4 / n - 2)
 
         # based on Blondel model, modified to include cumulative effects
-        C = a1 - np.sqrt(
-            a2
-            - (
-                (n * turbine_Ct[:,:,ii:ii+1])
-                * cosd(turbine_yaw)
-                / (
-                    16.0
-                    * gamma(2 / n)
-                    * np.sign(sigma_n)
-                    * (np.abs(sigma_n) ** (4 / n))
-                    * (1 - sum_lbda) ** 2
-                )
+        tmp = a2 - (
+            (n * turbine_Ct[:,:,ii:ii+1])
+            * cosd(turbine_yaw)
+            / (
+                16.0
+                * gamma(2 / n)
+                * np.sign(sigma_n)
+                * (np.abs(sigma_n) ** (4 / n))
+                * (1 - sum_lbda) ** 2
             )
         )
+
+        # for some low wind speeds, tmp can become slightly negative, which causes NANs,
+        # so replace the slightly negative values with zeros
+        tmp = tmp * np.array(tmp >= 0)
+
+        C = a1 - np.sqrt(tmp)
 
         C = C * (1 - sum_lbda)
 
@@ -233,4 +251,3 @@ def wake_expansion(
     # Do this ^^ in the main function
 
     return sigma_y
- 

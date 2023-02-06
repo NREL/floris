@@ -19,16 +19,17 @@ from abc import ABC, abstractmethod
 from typing import Iterable
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
-from floris.utilities import Vec3, rotate_coordinates_rel_west, cosd, sind
-from floris.type_dec import  (
-    floris_float_type,
+from floris.type_dec import (
     floris_array_converter,
+    floris_float_type,
     NDArrayFloat,
-    NDArrayInt
+    NDArrayInt,
 )
+from floris.utilities import rotate_coordinates_rel_west, Vec3
+
 
 @define
 class Grid(ABC):
@@ -54,13 +55,19 @@ class Grid(ABC):
     Args:
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific to each grid type
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific
+            to each grid type.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind
+            data is a time series.
     """
     turbine_coordinates: list[Vec3] = field()
     reference_turbine_diameter: float
     grid_resolution: int | Iterable = field()
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
+    time_series: bool = field()
 
     n_turbines: int = field(init=False)
     n_wind_speeds: int = field(init=False)
@@ -78,7 +85,10 @@ class Grid(ABC):
 
     @turbine_coordinates.validator
     def check_coordinates(self, instance: attrs.Attribute, value: list[Vec3]) -> None:
-        """Ensures all elements are `Vec3` objects and keeps the `n_turbines` attribute up to date."""
+        """
+        Ensures all elements are `Vec3` objects and keeps the `n_turbines`
+        attribute up to date.
+        """
         types = np.unique([isinstance(c, Vec3) for c in value])
         if not all(types):
             raise TypeError("'turbine_coordinates' must be `Vec3` objects.")
@@ -88,7 +98,10 @@ class Grid(ABC):
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
         """Using the validator method to keep the `n_wind_speeds` attribute up to date."""
-        self.n_wind_speeds = value.size
+        if self.time_series:
+            self.n_wind_speeds = 1
+        else:
+            self.n_wind_speeds = value.size
 
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
@@ -140,7 +153,8 @@ class TurbineGrid(Grid):
         Create grid points at each turbine for each wind direction and wind speed in the simulation.
         This creates the underlying data structure for the calculation.
 
-        arrays have shape (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)
+        arrays have shape
+        (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)
         - dimension 1: each wind direction
         - dimension 2: each wind speed
         - dimension 3: each turbine
@@ -148,8 +162,20 @@ class TurbineGrid(Grid):
         - dimension 5: number of points in the vertical dimension (ngrid)
 
         For example
-        - x is [n wind direction, n wind speeds, n turbines, x-component of the points in the spanwise direction, x-component of the points in the vertical direction]
-        - y is [n wind direction, n wind speeds, n turbines, y-component of the points in the spanwise direction, y-component of the points in the vertical direction]
+        - x is [
+            n wind direction,
+            n wind speeds,
+            n turbines,
+            x-component of the points in the spanwise direction,
+            x-component of the points in the vertical direction
+        ]
+        - y is [
+            n wind direction,
+            n wind speeds,
+            n turbines,
+            y-component of the points in the spanwise direction,
+            y-component of the points in the vertical direction
+        ]
 
         The x,y,z arrays contain the actual locations in that direction.
 
@@ -158,9 +184,11 @@ class TurbineGrid(Grid):
         #             squared so that the points can be evenly distributed.
         #             Defaults to 5.
 
-        If the grid conforms to the sequential solver interface, it must be sorted from upstream to downstream
+        If the grid conforms to the sequential solver interface,
+        it must be sorted from upstream to downstream
 
-        In a y-z plane on the rotor swept area, the -2 dimension is a column of points and the -1 dimension is the row number.
+        In a y-z plane on the rotor swept area, the -2 dimension is a column of
+        points and the -1 dimension is the row number.
         So the following line prints the 0'th column of the the 0'th turbine's grid:
         print(grid.y_sorted[0,0,0,0,:])
         print(grid.z_sorted[0,0,0,0,:])
@@ -212,7 +240,10 @@ class TurbineGrid(Grid):
         # Here, they are already rotated to the correct orientation for each wind direction
         _x = x[:, :, :, None, None] * template_grid
 
-        ones_grid = np.ones((self.n_turbines, self.grid_resolution, self.grid_resolution), dtype=floris_float_type)
+        ones_grid = np.ones(
+            (self.n_turbines, self.grid_resolution, self.grid_resolution),
+            dtype=floris_float_type
+        )
         _y = y[:, :, :, None, None] + template_grid * ( disc_grid[None, None, :, :, None])
         _z = z[:, :, :, None, None] + template_grid * ( disc_grid[:, None, :] * ones_grid )
 
@@ -339,7 +370,11 @@ class FlowFieldPlanarGrid(Grid):
             x_points, y_points, z_points = np.meshgrid(
                 np.linspace(self.x1_bounds[0], self.x1_bounds[1], int(self.grid_resolution[0])),
                 np.linspace(self.x2_bounds[0], self.x2_bounds[1], int(self.grid_resolution[1])),
-                np.array([float(self.planar_coordinate) - 10.0, float(self.planar_coordinate), float(self.planar_coordinate) + 10.0]),
+                np.array([
+                    float(self.planar_coordinate) - 10.0,
+                    float(self.planar_coordinate),
+                    float(self.planar_coordinate) + 10.0
+                ]),
                 indexing="ij"
             )
 
@@ -410,7 +445,10 @@ class FlowFieldPlanarGrid(Grid):
         # self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
         # # print(self.x)
 
-        # self.x, self.y, self.z = self._rotated_grid(-1 * self.wind_directions, (x_center_of_rotation, y_center_of_rotation))
+        # self.x, self.y, self.z = self._rotated_grid(
+        #     -1 * self.wind_directions,
+        #     (x_center_of_rotation, y_center_of_rotation)
+        # )
         # TODO figure out how to un-rotate grid for plotting after it has been solved
         # pass
 

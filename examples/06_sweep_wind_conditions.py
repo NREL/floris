@@ -13,11 +13,11 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import enum
 import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
+
 
 """
 06_sweep_wind_conditions
@@ -42,7 +42,7 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 D = 126.
 layout_x = np.array([0, D*6, D*12, D*18,D*24])
 layout_y = [0, 0, 0, 0, 0]
-fi.reinitialize(layout = [layout_x, layout_y])
+fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
 # Define a ws and wd to sweep
 # Note that all combinations will be computed
@@ -77,7 +77,8 @@ for ws_idx, ws in enumerate(ws_array):
 ax.set_xlabel('Wind Direction (deg)')
 
 # Sum across wind speeds and directions to show energy produced by turbine as bar plot
-energy_by_turbine = np.sum(turbine_powers, axis=(0,1)) # Sum over wind direction (0-axis) and wind speed (1-axis)
+# Sum over wind direction (0-axis) and wind speed (1-axis)
+energy_by_turbine = np.sum(turbine_powers, axis=(0,1))
 fig, ax = plt.subplots()
 ax.bar(['T%d' % t for t in range(num_turbine)],energy_by_turbine)
 ax.set_title('Energy Produced by Turbine')
