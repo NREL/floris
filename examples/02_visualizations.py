@@ -18,10 +18,11 @@ import numpy as np
 
 import floris.tools.visualization as wakeviz
 from floris.tools import FlorisInterface
-
-from floris.tools.visualization import visualize_cut_plane
-from floris.tools.visualization import plot_rotor_values
-from floris.tools.visualization import calculate_horizontal_plane_with_turbines
+from floris.tools.visualization import (
+    calculate_horizontal_plane_with_turbines,
+    plot_rotor_values,
+    visualize_cut_plane,
+)
 
 
 """
