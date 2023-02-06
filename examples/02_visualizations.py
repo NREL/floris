@@ -51,22 +51,22 @@ fi = FlorisInterface("inputs/gch.yaml")
 
 # Using the FlorisInterface functions, get 2D slices.
 horizontal_plane = fi.calculate_horizontal_plane(
-    x_resolution=200, 
-    y_resolution=100, 
-    height=90.0, 
+    x_resolution=200,
+    y_resolution=100,
+    height=90.0,
     yaw_angles=np.array([[[25.,0.,0.]]]),
   )
 
 y_plane = fi.calculate_y_plane(
-    x_resolution=200, 
-    z_resolution=100, 
-    crossstream_dist=630.0, 
+    x_resolution=200,
+    z_resolution=100,
+    crossstream_dist=630.0,
     yaw_angles=np.array([[[25.,0.,0.]]]),
   )
 cross_plane = fi.calculate_cross_plane(
-    y_resolution=100, 
-    z_resolution=100, 
-    downstream_dist=630.0, 
+    y_resolution=100,
+    z_resolution=100,
+    downstream_dist=630.0,
     yaw_angles=np.array([[[25.,0.,0.]]]),
   )
 
@@ -80,16 +80,16 @@ wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile"
 # Some wake models may not yet have a visualization method included, for these cases can use
 # a slower version which scans a turbine model to produce the horizontal flow
 horizontal_plane_scan_turbine = calculate_horizontal_plane_with_turbines(
-    fi, 
-    x_resolution=20, 
-    y_resolution=10, 
+    fi,
+    x_resolution=20,
+    y_resolution=10,
     yaw_angles=np.array([[[25.,0.,0.]]]),
   )
 
 fig, ax = plt.subplots()
 visualize_cut_plane(
-    horizontal_plane_scan_turbine, 
-    ax=ax, 
+    horizontal_plane_scan_turbine,
+    ax=ax,
     title="Horizontal (coarse turbine scan method)",
   )
 

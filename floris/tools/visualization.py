@@ -479,7 +479,7 @@ def calculate_horizontal_plane_with_turbines(
         x_points = np.linspace(x_bounds[0], x_bounds[1], x_resolution)
         y_points = np.linspace(y_bounds[0], y_bounds[1], y_resolution)
         num_points = len(x_points) * len(y_points)
-        
+
         # Now loop over the points
         x_results = np.zeros(num_points)
         y_results = np.zeros(num_points)
@@ -490,7 +490,7 @@ def calculate_horizontal_plane_with_turbines(
         idx = 0
         for y in y_points:
             for x in x_points:
-                
+
                 # Save the x and y results
                 x_results[idx] = x
                 y_results[idx] = y
@@ -517,7 +517,7 @@ def calculate_horizontal_plane_with_turbines(
             'v':v_results,
             'w':w_results,
         })
-        
+
         # Convert to a cut_plane
         horizontal_plane = CutPlane(df, x_resolution, y_resolution, "z")
 
