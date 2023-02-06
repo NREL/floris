@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator
 
-from floris.tools import FlorisInterface
-from floris.tools import ParallelComputingInterface
+from floris.tools import FlorisInterface, ParallelComputingInterface
+
 
 """
 This example demonstrates how to perform a yaw optimization using parallel computing.
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     farm_power_bl = fi_aep_parallel.get_farm_power()
     aep_bl = np.sum(24 * 365 * np.multiply(farm_power_bl, freq_grid))
 
-    # Alternatively to above code, we could calculate AEP using 
+    # Alternatively to above code, we could calculate AEP using
     # 'fi_aep_parallel.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 
@@ -127,8 +127,9 @@ if __name__ == "__main__":
     )
 
 
-    
-    # Assume linear ramp up at 5-6 m/s and ramp down at 13-14 m/s, add to table for linear interpolant
+
+    # Assume linear ramp up at 5-6 m/s and ramp down at 13-14 m/s,
+    # add to table for linear interpolant
     df_copy_lb = df_opt[df_opt["wind_speed"] == 6.0].copy()
     df_copy_ub = df_opt[df_opt["wind_speed"] == 13.0].copy()
     df_copy_lb["wind_speed"] = 5.0
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     aep_opt = np.sum(24 * 365 * np.multiply(farm_power_opt, freq_grid))
     aep_uplift = 100.0 * (aep_opt / aep_bl - 1)
 
-    # Alternatively to above code, we could calculate AEP using 
+    # Alternatively to above code, we could calculate AEP using
     # 'fi_aep_parallel.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 

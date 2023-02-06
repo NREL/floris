@@ -21,7 +21,7 @@ from attrs import define, field
 from floris.type_dec import (
     floris_array_converter,
     FromDictMixin,
-    iter_validator
+    iter_validator,
 )
 
 

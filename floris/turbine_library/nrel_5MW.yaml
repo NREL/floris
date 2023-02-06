@@ -113,7 +113,7 @@ power_thrust_table:
     - 0.0
     - 0.0
   wind_speed:
-    - 0.0 
+    - 0.0
     - 2.0
     - 2.5
     - 3.0

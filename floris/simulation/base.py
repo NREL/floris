@@ -22,7 +22,7 @@ from enum import Enum
 from typing import (
     Any,
     Dict,
-    Final
+    Final,
 )
 
 import attrs

@@ -40,7 +40,10 @@ class LayoutOptimization(LoggerBase):
 
         # If freq is not provided, give equal weight to all wind conditions
         if freq is None:
-            self.freq = np.ones((self.fi.floris.flow_field.n_wind_directions, self.fi.floris.flow_field.n_wind_speeds))
+            self.freq = np.ones((
+                self.fi.floris.flow_field.n_wind_directions,
+                self.fi.floris.flow_field.n_wind_speeds
+            ))
             self.freq = self.freq / self.freq.sum()
         else:
             self.freq = freq
@@ -91,7 +94,7 @@ class LayoutOptimization(LoggerBase):
                 plt.plot(
                     [verts[i][0], verts[i + 1][0]], [verts[i][1], verts[i + 1][1]], "b"
                 )
-        
+
         plt.show()
 
     ###########################################################################

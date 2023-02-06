@@ -64,13 +64,20 @@ wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile"
 fi.calculate_wake()
 
 # Plot the values at each rotor
-fig, axes, _ , _ = wakeviz.plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=3, return_fig_objects=True)
+fig, axes, _ , _ = wakeviz.plot_rotor_values(
+    fi.floris.flow_field.u,
+    wd_index=0,
+    ws_index=0,
+    n_rows=1,
+    n_cols=3,
+    return_fig_objects=True
+  )
 fig.suptitle("Rotor Plane Visualization, Original Resolution")
 
 # FLORIS supports multiple types of grids for capturing wind speed
 # information. The current input file is configured with a square grid
 # placed on each rotor plane with 9 points in a 3x3 layout. For visualization,
-# this resolution can be increased.  Note this operation, unlike the 
+# this resolution can be increased.  Note this operation, unlike the
 # calc_x_plane above operations does not automatically reset the grid to
 # the initial status as definied by the input file
 
@@ -86,7 +93,14 @@ fi.reinitialize(solver_settings=solver_settings)
 fi.calculate_wake()
 
 # Plot the values at each rotor
-fig, axes, _ , _ = wakeviz.plot_rotor_values(fi.floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, n_cols=3, return_fig_objects=True)
+fig, axes, _ , _ = wakeviz.plot_rotor_values(
+    fi.floris.flow_field.u,
+    wd_index=0,
+    ws_index=0,
+    n_rows=1,
+    n_cols=3,
+    return_fig_objects=True
+  )
 fig.suptitle("Rotor Plane Visualization, 10x10 Resolution")
 
 wakeviz.show_plots()

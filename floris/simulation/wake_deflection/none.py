@@ -18,7 +18,7 @@ from attrs import define
 from floris.simulation import (
     BaseModel,
     FlowField,
-    Grid
+    Grid,
 )
 
 
@@ -35,9 +35,9 @@ class NoneVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            freestream_velocity=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "freestream_velocity": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     def function(

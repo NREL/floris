@@ -20,16 +20,16 @@ from floris.simulation import (
     axial_induction,
     Ct,
     Floris,
-    power
+    power,
 )
+from floris.simulation.turbine import rotor_effective_velocity
 from tests.conftest import (
     assert_results_arrays,
     N_TURBINES,
     N_WIND_DIRECTIONS,
     N_WIND_SPEEDS,
-    print_test_values
+    print_test_values,
 )
-from floris.simulation.turbine import rotor_effective_velocity
 
 
 DEBUG = False
