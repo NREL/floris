@@ -433,7 +433,7 @@ class FlowFieldPlanarGrid(Grid):
         # # print(self.x)
 
         # x_coordinates, y_coordinates, _ = self.turbine_coordinates_array.T
-        
+
         # x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
         # y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
         # # print(x_center_of_rotation)

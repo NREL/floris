@@ -159,7 +159,7 @@ class YawOptimizationSR(YawOptimization):
         Calculate the yaw angles for every iteration in the SR algorithm, for turbine,
         for every wind direction, for every wind speed, for every TI. Basically, this
         should yield a grid of yaw angle sets to evaluate the wind farm AEP with 'Ny'
-        times. Then, for each ambient condition set, 
+        times. Then, for each ambient condition set,
         """
 
         # Initialize yaw angles to evaluate, 'Ny' times the wind rose
@@ -213,7 +213,7 @@ class YawOptimizationSR(YawOptimization):
         farm_powers = self._calc_powers_with_memory(evaluation_grid)
         return farm_powers
 
-    def optimize(self, print_progress=True): 
+    def optimize(self, print_progress=True):
         """
         Find the yaw angles that maximize the power production for every wind direction,
         wind speed and turbulence intensity.
@@ -249,7 +249,7 @@ class YawOptimizationSR(YawOptimization):
                 yaw_angles_opt_new = np.squeeze(
                     np.take_along_axis(
                         evaluation_grid,
-                        np.expand_dims(args_opt, axis=3), 
+                        np.expand_dims(args_opt, axis=3),
                         axis=0
                     ),
                     axis=0

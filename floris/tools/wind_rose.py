@@ -637,7 +637,7 @@ class WindRose:
         self.internal_resample_wind_direction(wd=wd)
 
         return self.df
-    
+
     def read_wind_rose_csv(
         self,
         filename

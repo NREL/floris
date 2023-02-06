@@ -43,4 +43,3 @@ def test_calculate_wake():
 
 def test_reinitialize():
     pass
-

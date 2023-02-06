@@ -84,7 +84,7 @@ class FlorisInterfaceLegacyV2(FlorisInterface):
 def _convert_v24_dictionary_to_v3(dict_legacy):
     """
     Converts a v2.4 floris input dictionary file to a v3.0-compatible
-    dictionary. See detailed instructions in the class 
+    dictionary. See detailed instructions in the class
     FlorisInterface_legacy_v24.
 
     Args:

@@ -114,7 +114,7 @@ fig.suptitle("Rotor Plane Visualization, Original Resolution")
 # FLORIS supports multiple types of grids for capturing wind speed
 # information. The current input file is configured with a square grid
 # placed on each rotor plane with 9 points in a 3x3 layout. For visualization,
-# this resolution can be increased.  Note this operation, unlike the 
+# this resolution can be increased.  Note this operation, unlike the
 # calc_x_plane above operations does not automatically reset the grid to
 # the initial status as definied by the input file
 

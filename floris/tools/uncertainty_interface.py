@@ -482,7 +482,7 @@ class UncertaintyInterface(LoggerBase):
         Args:
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -559,7 +559,7 @@ class UncertaintyInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those

@@ -160,7 +160,7 @@ if __name__=="__main__":
     #     factor = (i+1) * 50
     #     wind_direction_scaling_inputs.floris["farm"]["wind_directions"] = factor * [270.0]
     #     wind_direction_scaling_inputs.floris["farm"]["wind_speeds"] = [8.0]
-        
+
     #     wd_space[i] = memory_profile(wind_direction_scaling_inputs)
     #     print("wind direction", i, wd_space[i])
 

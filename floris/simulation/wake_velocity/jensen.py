@@ -115,7 +115,7 @@ class JensenVelocityDeficit(BaseModel):
         # when adding the wind direction dimension. Prior to that, the dimensions
         # worked out simply with i.
         c = ( rotor_radius / ( rotor_radius + self.we * dx + self.NUM_EPS ) ) ** 2
-        
+
         # using this causes nan's in the upstream turbine because it negates the mask
         # rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius,
         # c goes to infinity and then this line flips it to Nans rather than setting to 0.
@@ -154,7 +154,7 @@ class JensenVelocityDeficit(BaseModel):
         # C should be 0 everywhere outside of the lateral and vertical bounds defined
         # by the wake expansion parameter
         boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < boundary_line")
-        
+
         mask = np.logical_and(downstream_mask, boundary_mask)
         c[~mask] = 0.0
         # c = ne.evaluate("c * downstream_mask * boundary_mask")

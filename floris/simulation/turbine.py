@@ -309,9 +309,9 @@ class PowerThrustTable(FromDictMixin):
         if any(el.ndim > 1 for el in inputs):
             raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
 
-        if len( {self.power.size, self.thrust.size, self.wind_speed.size} ) > 1:        
+        if len( {self.power.size, self.thrust.size, self.wind_speed.size} ) > 1:
             raise ValueError("power, thrust, and wind_speed tables must be the same size.")
-        
+
         # Remove any duplicate wind speed entries
         _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
         object.__setattr__(self, "power", self.power[duplicate_filter])
@@ -416,7 +416,7 @@ class Turbine(BaseClass):
         to define the Turbine. The values are bound by the range of the input
         values. Any requested wind speeds outside of the range of input wind
         speeds are assigned Ct of 0.0001 or 0.9999.
-        
+
         The fill_value arguments sets (upper, lower) bounds for any values
         outside of the input range.
         """

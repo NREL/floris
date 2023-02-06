@@ -39,17 +39,17 @@ fig, axarr = plt.subplots(2,2, sharex=True, sharey=True, figsize=(14,10))
 # Show the layout with all defaults
 
 # Default visualization
-ax = axarr[0,0] 
+ax = axarr[0,0]
 visualize_layout(fi, ax=ax)
 ax.set_title('Default visualization')
 
 # With wake lines
-ax = axarr[0,1] 
+ax = axarr[0,1]
 visualize_layout(fi, ax=ax, show_wake_lines=True)
 ax.set_title('Show wake lines')
 
 # Limit wake lines and use provided
-ax = axarr[1,0] 
+ax = axarr[1,0]
 visualize_layout(
     fi,
     ax=ax,
@@ -60,7 +60,7 @@ visualize_layout(
 ax.set_title('Show only nearest 2, use provided names')
 
 # Show rotors and use black and white
-ax = axarr[1,1] 
+ax = axarr[1,1]
 visualize_layout(
     fi,
     ax=ax,
