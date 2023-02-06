@@ -24,7 +24,7 @@ Steps to reproduce the behavior:
 **Floris Version**
 <Please provide as much detail as possible including git commit or version from pip.>
 
-**System Information (please complete the following information):** 
+**System Information (please complete the following information):**
  - OS: <e.g. Ubuntu 14.04 or macOS 10.12>
  - Library versions
    * matplotlib

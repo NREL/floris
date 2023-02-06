@@ -19,7 +19,7 @@ from floris.utilities import Vec3
 from tests.conftest import (
     N_WIND_DIRECTIONS,
     N_WIND_SPEEDS,
-    SampleInputs
+    SampleInputs,
 )
 
 
@@ -30,7 +30,10 @@ def test_farm_init_homogenous_turbines():
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
 
-    coordinates = np.array([Vec3([x, y, turbine_data["hub_height"]]) for x, y in zip(layout_x, layout_y)])
+    coordinates = np.array([
+        Vec3([x, y, turbine_data["hub_height"]])
+        for x, y in zip(layout_x, layout_y)
+    ])
 
     farm = Farm(
         layout_x=layout_x,

@@ -77,7 +77,10 @@ if __name__=="__main__":
     # turbine_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 3
-    #     turbine_scaling_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(factor)]
+    #     turbine_scaling_inputs.floris["farm"]["layout_x"] = [
+    #         5 * TURBINE_DIAMETER * j
+    #         for j in range(factor)
+    #     ]
     #     turbine_scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
 
     #     turb_calc_time[i] = time_profile(copy.deepcopy(turbine_scaling_inputs))
@@ -89,7 +92,10 @@ if __name__=="__main__":
     # scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(5):
     #     factor = (i+1) * 2
-    #     scaling_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(factor)]
+    #     scaling_inputs.floris["farm"]["layout_x"] = [
+    #         5 * TURBINE_DIAMETER * j
+    #         for j in range(factor)
+    #     ]
     #     scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
     #     factor = (i+1) * 20
     #     scaling_inputs.floris["flow_field"]["wind_directions"] = factor * [270.0]
@@ -154,7 +160,7 @@ if __name__=="__main__":
     #     factor = (i+1) * 50
     #     wind_direction_scaling_inputs.floris["farm"]["wind_directions"] = factor * [270.0]
     #     wind_direction_scaling_inputs.floris["farm"]["wind_speeds"] = [8.0]
-        
+
     #     wd_space[i] = memory_profile(wind_direction_scaling_inputs)
     #     print("wind direction", i, wd_space[i])
 
@@ -174,7 +180,10 @@ if __name__=="__main__":
     # turbine_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     turbine_scaling_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(factor)]
+    #     turbine_scaling_inputs.floris["farm"]["layout_x"] = [
+    #         5 * TURBINE_DIAMETER * j
+    #         for j in range(factor)
+    #     ]
     #     turbine_scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
 
     #     turb_space[i] = memory_profile(turbine_scaling_inputs)

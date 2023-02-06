@@ -26,7 +26,7 @@ from floris.simulation.turbine import (
     average_velocity,
     axial_induction,
     Ct,
-    power
+    power,
 )
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
@@ -73,14 +73,26 @@ class FlorisInterface(LoggerBase):
 
         # Make a check on reference height and provide a helpful warning
         unique_heights = np.unique(np.round(self.floris.farm.hub_heights, decimals=6))
-        if (len(unique_heights) == 1) and (np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6):
-            err_msg = "The only unique hub-height is not the equal to the specified reference wind height.  If this was unintended use -1 as the reference hub height to indicate use of hub-height as reference wind height."
+        if ((
+            len(unique_heights) == 1) and
+            (np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6
+        )):
+            err_msg = (
+                "The only unique hub-height is not the equal to the specified reference "
+                "wind height. If this was unintended use -1 as the reference hub height to "
+                " indicate use of hub-height as reference wind height."
+            )
             self.logger.warning(err_msg, stack_info=True)
 
         # Check the turbine_grid_points is reasonable
         if self.floris.solver["type"] == "turbine_grid":
             if self.floris.solver["turbine_grid_points"] > 3:
-                self.logger.error(f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} which is larger than the recommended value of less than or equal to 3. High amounts of turbine grid points reduce the computational performance but have a small change on accuracy.")
+                self.logger.error(
+                    f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} "
+                    "which is larger than the recommended value of less than or equal to 3. "
+                    "High amounts of turbine grid points reduce the computational performance "
+                    "but have a small change on accuracy."
+                )
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
     def assign_hub_height_to_ref_height(self):
@@ -89,9 +101,9 @@ class FlorisInterface(LoggerBase):
         unique_heights = np.unique(self.floris.farm.hub_heights)
         if len(unique_heights) > 1:
             raise ValueError(
-                "To assign hub heights to reference height, can not have more than one specified height. Current length is {}.".format(
-                    len(unique_heights)
-                )
+                "To assign hub heights to reference height, can not have more than one "
+                "specified height. "
+                f"Current length is {unique_heights}."
             )
 
         self.floris.flow_field.reference_wind_height = unique_heights[0]
@@ -212,8 +224,10 @@ class FlorisInterface(LoggerBase):
 
         ## Farm
         if layout is not None:
-            msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` because the `layout` parameter will be deprecated in 3.3."
-            self.logger.warning(msg)
+            self.logger.warning(
+                "Use the `layout_x` and `layout_y` parameters in place of `layout` "
+                "because the `layout` parameter will be deprecated in 3.3."
+            )
             layout_x = layout[0]
             layout_y = layout[1]
         if layout_x is not None:
@@ -259,7 +273,8 @@ class FlorisInterface(LoggerBase):
         Args:
             normal_vector (string, optional): Vector normal to plane.
                 Defaults to z.
-            planar_coordinate (float, optional): Value of normal vector to slice through. Defaults to None.
+            planar_coordinate (float, optional): Value of normal vector
+                to slice through. Defaults to None.
 
 
         Returns:
@@ -382,14 +397,20 @@ class FlorisInterface(LoggerBase):
         self.floris.solve_for_viz()
 
         # Get the points of data in a dataframe
-        # TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
+        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="z",
             planar_coordinate=height,
         )
 
         # Compute the cutplane
-        horizontal_plane = CutPlane(df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1], "z")
+        horizontal_plane = CutPlane(
+            df,
+            self.floris.grid.grid_resolution[0],
+            self.floris.grid.grid_resolution[1],
+            "z"
+        )
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
@@ -460,7 +481,8 @@ class FlorisInterface(LoggerBase):
         self.floris.solve_for_viz()
 
         # Get the points of data in a dataframe
-        # TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
+        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="x",
             planar_coordinate=downstream_dist,
@@ -538,7 +560,8 @@ class FlorisInterface(LoggerBase):
         self.floris.solve_for_viz()
 
         # Get the points of data in a dataframe
-        # TODO this just seems to be flattening and storing the data in a df; is this necessary? It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
+        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="y",
             planar_coordinate=crossstream_dist,
@@ -559,12 +582,14 @@ class FlorisInterface(LoggerBase):
     def check_wind_condition_for_viz(self, wd=None, ws=None):
         if len(wd) > 1 or len(wd) < 1:
             raise ValueError(
-                "Wind direction input must be of length 1 for visualization. Current length is {}.".format(len(wd))
+                "Wind direction input must be of length 1 for visualization. "
+                f"Current length is {len(wd)}."
             )
 
         if len(ws) > 1 or len(ws) < 1:
             raise ValueError(
-                "Wind speed input must be of length 1 for visualization. Current length is {}.".format(len(ws))
+                "Wind speed input must be of length 1 for visualization. "
+                f"Current length is {len(ws)}."
             )
 
     def get_turbine_powers(self) -> NDArrayFloat:
@@ -576,7 +601,10 @@ class FlorisInterface(LoggerBase):
 
         # Confirm calculate wake has been run
         if self.floris.state is not State.USED:
-            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without first running `FlorisInterface.calculate_wake`.")
+            raise RuntimeError(
+                "Can't run function `FlorisInterface.get_turbine_powers` without "
+                "first running `FlorisInterface.calculate_wake`."
+            )
 
         turbine_powers = power(
             air_density=self.floris.flow_field.air_density,
@@ -629,7 +657,7 @@ class FlorisInterface(LoggerBase):
         Args:
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -656,7 +684,10 @@ class FlorisInterface(LoggerBase):
 
         # Confirm calculate wake has been run
         if self.floris.state is not State.USED:
-            raise RuntimeError(f"Can't run function `FlorisInterface.get_turbine_powers` without running `FlorisInterface.calculate_wake`.")
+            raise RuntimeError(
+                "Can't run function `FlorisInterface.get_turbine_powers` without "
+                "first running `FlorisInterface.calculate_wake`."
+            )
 
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None
@@ -718,7 +749,7 @@ class FlorisInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -747,12 +778,16 @@ class FlorisInterface(LoggerBase):
             & (len(np.shape(freq)) == 2)
         ):
             raise UserWarning(
-                "'freq' should be a two-dimensional array with dimensions" + " (n_wind_directions, n_wind_speeds)."
+                "'freq' should be a two-dimensional array with dimensions "
+                " (n_wind_directions, n_wind_speeds)."
             )
 
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
-            self.logger.warning("WARNING: The frequency array provided to get_farm_AEP() " + "does not sum to 1.0. ")
+            self.logger.warning(
+                "WARNING: The frequency array provided to get_farm_AEP() "
+                "does not sum to 1.0."
+            )
 
         # Copy the full wind speed array from the floris object and initialize
         # the the farm_power variable as an empty array.
@@ -803,7 +838,7 @@ class FlorisInterface(LoggerBase):
         Args:
             wind_rose (wind_rose): An object of the wind rose class
             cut_in_wind_speed (float, optional): Wind speed in m/s below which
-                any calculations are ignored and the wind farm is known to 
+                any calculations are ignored and the wind farm is known to
                 produce 0.0 W of power. Note that to prevent problems with the
                 wake models at negative / zero wind speeds, this variable must
                 always have a positive value. Defaults to 0.001 [m/s].
@@ -817,7 +852,7 @@ class FlorisInterface(LoggerBase):
                 zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power 
+                particular turbines and/or completely ignore the power
                 from other turbines. This is useful when, for example, you are
                 modeling multiple wind farms in a single floris object. If you
                 only want to calculate the power production for one of those
@@ -834,7 +869,7 @@ class FlorisInterface(LoggerBase):
                 in AEP due to wakes. Defaults to *False*.
 
         Returns:
-            float: 
+            float:
                 The Annual Energy Production (AEP) for the wind farm in
                 watt-hours.
         """
@@ -847,7 +882,10 @@ class FlorisInterface(LoggerBase):
         # over to those values in the wind rose class
         wind_speeds_wind_rose = wind_rose.df.ws.unique()
         wind_directions_wind_rose = wind_rose.df.wd.unique()
-        self.reinitialize(wind_speeds=wind_speeds_wind_rose, wind_directions=wind_directions_wind_rose)
+        self.reinitialize(
+            wind_speeds=wind_speeds_wind_rose,
+            wind_directions=wind_directions_wind_rose
+        )
 
         # Build the frequency matrix from wind rose
         freq = wind_rose.df.set_index(['wd','ws']).unstack().values
@@ -863,8 +901,11 @@ class FlorisInterface(LoggerBase):
 
 
         # Reset the FLORIS object to the original wind speed and directions
-        self.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
-        
+        self.reinitialize(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions
+        )
+
 
         return aep
 
@@ -900,7 +941,7 @@ class FlorisInterface(LoggerBase):
 
         Returns:
             np.array: lists of x, y, and (optionally) z coordinates of
-                      each turbine
+                each turbine
         """
         xcoords, ycoords, zcoords = np.array([c.elements for c in self.floris.farm.coordinates]).T
         if z:
@@ -914,23 +955,36 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
         # Compute the 3-dimensional interpolants for each wind diretion
         # Linear interpolation is used for points within the user-defined area of values,
         # while a nearest-neighbor interpolant is used for points outside that region
-        in_region = [LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=np.nan) for speed_up in speed_ups]
-        out_region = [NearestNDInterpolator(list(zip(x, y, z)), speed_up) for speed_up in speed_ups]
+        in_region = [
+            LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=np.nan)
+            for speed_up in speed_ups
+        ]
+        out_region = [
+            NearestNDInterpolator(list(zip(x, y, z)), speed_up)
+            for speed_up in speed_ups
+        ]
     else:
         # Compute the 2-dimensional interpolants for each wind diretion
         # Linear interpolation is used for points within the user-defined area of values,
         # while a nearest-neighbor interpolant is used for points outside that region
-        in_region = [LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=np.nan) for speed_up in speed_ups]
-        out_region = [NearestNDInterpolator(list(zip(x, y)), speed_up) for speed_up in speed_ups]
+        in_region = [
+            LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=np.nan)
+            for speed_up in speed_ups
+        ]
+        out_region = [
+            NearestNDInterpolator(list(zip(x, y)), speed_up)
+            for speed_up in speed_ups
+        ]
 
     return [in_region, out_region]
 
-    ## Functionality removed in v3
+## Functionality removed in v3
 
-    def set_rotor_diameter(self, rotor_diameter):
-        """
-        This function has been replaced and no longer works correctly, assigning an error
-        """
-        raise Exception(
-            "FlorinInterface.set_rotor_diameter has been removed in favor of FlorinInterface.change_turbine. See examples/change_turbine/."
-        )
+def set_rotor_diameter(self, rotor_diameter):
+    """
+    This function has been replaced and no longer works correctly, assigning an error
+    """
+    raise Exception(
+        "FlorinInterface.set_rotor_diameter has been removed in favor of "
+        "FlorinInterface.change_turbine. See examples/change_turbine/."
+    )

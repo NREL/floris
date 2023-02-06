@@ -135,7 +135,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         x = [
             self._unnorm(valx, self.xmin, self.xmax)
             for valx in x_in[0 : self.nturbs]
-        ] 
+        ]
         y =  [
             self._unnorm(valy, self.ymin, self.ymax)
             for valy in x_in[self.nturbs : 2 * self.nturbs]
@@ -164,7 +164,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         x = [
             self._unnorm(valx, self.xmin, self.xmax)
             for valx in x_in[0 : self.nturbs]
-        ] 
+        ]
         y =  [
             self._unnorm(valy, self.ymin, self.ymax)
             for valy in x_in[self.nturbs : 2 * self.nturbs]
@@ -173,7 +173,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         for i in range(self.nturbs):
             loc = Point(x[i], y[i])
             boundary_con[i] = loc.distance(self._boundary_line)
-            if self._boundary_polygon.contains(loc)==True:
+            if self._boundary_polygon.contains(loc) is True:
                 boundary_con[i] *= 1.0
 
         return boundary_con

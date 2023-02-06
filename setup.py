@@ -45,9 +45,20 @@ REQUIRED = [
 ]
 
 # What packages are optional?
+# To use: pip install -e ".[develop]" or pip install "floris[develop]"
 EXTRAS = {
-    "docs": {"readthedocs-sphinx-ext", "Sphinx", "sphinxcontrib-napoleon"},
-    "develop": {"pytest", "coverage[toml]", "pre-commit", "black", "isort"},
+    "docs": {
+        "jupyter-book",
+        "sphinx-book-theme",
+        "sphinx-autodoc-typehints",
+        "sphinxcontrib-autoyaml"
+    },
+    "develop": {
+        "pytest",
+        "pre-commit",
+        "ruff",
+        "isort"
+    },
 }
 
 ROOT = Path(__file__).parent
@@ -65,7 +76,9 @@ setup(
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
-    package_data={'floris': ['turbine_library/*.yaml', 'simulation/wake_velocity/turbopark_lookup_table.mat']},
+    package_data={
+        'floris': ['turbine_library/*.yaml', 'simulation/wake_velocity/turbopark_lookup_table.mat']
+    },
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,

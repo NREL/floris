@@ -56,9 +56,6 @@ class PowerRose:
             filename (str): Path and filename of pickle file to load.
         """
 
-        # self.name, self.df_power, self.df_yaw, self.df_turbine_power_no_wake, self.df_turbine_power_baseline, self.df_turbine_power_opt, self.df_combine = pickle.load(
-        #    open(filename, "rb"))
-
         (
             self.name,
             self.df_windrose,

@@ -18,7 +18,7 @@ from attrs import define, field
 from floris.simulation import (
     BaseModel,
     FlowField,
-    Grid
+    Grid,
 )
 
 
@@ -28,16 +28,16 @@ class NoneVelocityDeficit(BaseModel):
     The None deficit model is a placeholder code that simple ignores any
     wake wind speed deficits and returns an array of zeroes.
     """
-    
+
     def prepare_function(
         self,
         grid: Grid,
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            u_initial=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "u_initial": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     def function(
