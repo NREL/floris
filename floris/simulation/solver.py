@@ -83,7 +83,7 @@ def sequential_solver(
         # Get the current turbine quantities
         x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -296,7 +296,7 @@ def full_flow_sequential_solver(
         # Get the current turbine quantities
         x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -426,7 +426,7 @@ def cc_solver(
     shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
     Ctmp = np.zeros((shape))
     # Ctmp = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))
-    
+
     # sigma_i = np.zeros((shape))
     # sigma_i = np.zeros((len(x_coord), len(wd), len(ws), len(x_coord), y_ngrid, z_ngrid))
 
@@ -436,7 +436,7 @@ def cc_solver(
         # Get the current turbine quantities
         x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -471,7 +471,7 @@ def cc_solver(
             farm.turbine_fCts,
             turbine_type_map=farm.turbine_type_map_sorted,
         )
-        turb_Cts = turb_Cts[:, :, :, None, None]     
+        turb_Cts = turb_Cts[:, :, :, None, None]
         turb_aIs = axial_induction(
             turb_avg_vels,
             farm.yaw_angles_sorted,
@@ -677,7 +677,7 @@ def full_flow_cc_solver(
         # Get the current turbine quantities
         x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -813,7 +813,7 @@ def turbopark_solver(
         # Get the current turbine quantities
         x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))        
+        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
         z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
@@ -883,7 +883,7 @@ def turbopark_solver(
             for ii in range(i):
                 x_ii = np.mean(grid.x_sorted[:, :, ii:ii+1], axis=(3, 4))
                 x_ii = x_ii[:, :, :, None, None]
-                y_ii = np.mean(grid.y_sorted[:, :, ii:ii+1], axis=(3, 4))        
+                y_ii = np.mean(grid.y_sorted[:, :, ii:ii+1], axis=(3, 4))
                 y_ii = y_ii[:, :, :, None, None]
 
                 yaw_ii = farm.yaw_angles_sorted[:, :, ii:ii+1, None, None]
@@ -1010,7 +1010,7 @@ def full_flow_turbopark_solver(
     # TODO: Below is a first attempt at plotting, and uses just the values on the rotor.
     # The current TurbOPark model requires that points to be calculated are only at turbine
     # locations. Modification will be required to allow for full flow field calculations.
-    
+
     # # Get the flow quantities and turbine performance
     # turbine_grid_farm = copy.deepcopy(farm)
     # turbine_grid_flow_field = copy.deepcopy(flow_field)
@@ -1042,7 +1042,7 @@ def full_flow_turbopark_solver(
     # turbine_grid_farm.initialize(turbine_grid.sorted_indices)
     # turbopark_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
-    
+
 
     # flow_field.u = copy.deepcopy(turbine_grid_flow_field.u)
     # flow_field.v = copy.deepcopy(turbine_grid_flow_field.v)

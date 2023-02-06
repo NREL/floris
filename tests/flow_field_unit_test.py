@@ -57,7 +57,7 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture: Tur
 
 
 def test_asdict(flow_field_fixture: FlowField, turbine_grid_fixture: TurbineGrid):
-    
+
     flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
     dict1 = flow_field_fixture.as_dict()
 

@@ -446,9 +446,9 @@ class YawOptimization:
                 print("Exploitation of symmetry has been disabled.")
 
             self._sym_mapping_extrap = np.array(
-                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0] 
+                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0]
                 for x in wd_array_remn], dtype=int)
-            
+
             self._sym_mapping_reduce = copy.deepcopy(ids_minimal)
             self._sym_df = df
 
@@ -458,7 +458,7 @@ class YawOptimization:
         # Check if needed to un-reduce at all, if not, return directly
         if not self.exploit_layout_symmetry:
             return variable
-    
+
         if self._sym_df is None:
             return variable
 

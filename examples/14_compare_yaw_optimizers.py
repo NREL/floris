@@ -42,7 +42,7 @@ D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=np.arange(0.0, 360.0, 3.0), 
+    wind_directions=np.arange(0.0, 360.0, 3.0),
     wind_speeds=[8.0],
 )
 

@@ -41,7 +41,7 @@ commands in a terminal or shell will download and install FLORIS.
 
     # If using conda, be sure to activate your environment prior to installing
     # conda activate <env name>
-    
+
     # If using pyOptSpare, install it first
     conda install -c conda-forge pyoptsparse
 

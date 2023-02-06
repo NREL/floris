@@ -135,7 +135,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         x = [
             self._unnorm(valx, self.xmin, self.xmax)
             for valx in x_in[0 : self.nturbs]
-        ] 
+        ]
         y =  [
             self._unnorm(valy, self.ymin, self.ymax)
             for valy in x_in[self.nturbs : 2 * self.nturbs]
@@ -164,7 +164,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         x = [
             self._unnorm(valx, self.xmin, self.xmax)
             for valx in x_in[0 : self.nturbs]
-        ] 
+        ]
         y =  [
             self._unnorm(valy, self.ymin, self.ymax)
             for valy in x_in[self.nturbs : 2 * self.nturbs]

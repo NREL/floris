@@ -76,7 +76,7 @@ for t in turbines:
 
     # Try a few density
     for density in [1.15,1.225,1.3]:
-        
+
         fi.reinitialize(air_density=density)
 
         # POWER CURVE

@@ -172,7 +172,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
 
         #     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2
         #     lbda /= S * np.exp(-Y) * np.exp(-Z)
-        #     sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)       
+        #     sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)
         # else:
         #     sum_lbda = 0.0
 

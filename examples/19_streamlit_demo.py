@@ -78,7 +78,7 @@ for x_idx in range(n_turbine_per_row):
     for y_idx in range(n_row):
         X.append(D * spacing * x_idx)
         Y.append(D * spacing * y_idx)
-        
+
 turbine_labels = ['T%02d' % i for i in range(len(X))]
 
 # Set up the yaw angle values
@@ -113,7 +113,7 @@ farm_power_results = []
 
 # Now complete all these plots in a loop
 for fm in floris_models:
-    
+
     # Analyze the base case==================================================
     print('Loading: ',fm)
     fi = FlorisInterface("inputs/%s.yaml" % fm)

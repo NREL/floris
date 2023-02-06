@@ -206,5 +206,5 @@ def find_layout_symmetry(x, y, step_sizes = [15.0], eps=0.00001):
 
             df = pd.DataFrame({"wd_range": wd_eval_array, "turbine_mapping": mapping_array})
             return df
-    
+
     return pd.DataFrame()  # Return empty dataframe if completes without finding solution
