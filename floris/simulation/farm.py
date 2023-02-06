@@ -124,6 +124,7 @@ class Farm(BaseClass):
                     self.logger.warn("Currently this value is being set to the prior default value of 1.225")
                     self.turbine_definitions[i]["ref_density_cp_ct"] = 1.225
 
+        # If the user specified the default location, do not check against duplicated definitions
         if self.turbine_library != default_turbine_library:
             unique_turbines = np.unique(value)
             for turbine_fn in unique_turbines:
