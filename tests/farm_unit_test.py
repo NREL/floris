@@ -75,7 +75,7 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
 
     # Demonstrate a failing case with an incorrect library location
     farm_data["turbine_library"] = external_library / "turbine_library"
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileExistsError):
         Farm.from_dict(farm_data)
 
     # Demonstrate a failing case where a user expects the FLORIS data when not using the default
