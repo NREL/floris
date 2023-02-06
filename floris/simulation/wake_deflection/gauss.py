@@ -313,7 +313,6 @@ class GaussGeometricDeflection(BaseModel):
         # Apply downstream mask in the process
         deflection_y = theta_c_y*(-delta_0 + A_y * log_term)
         deflection_z = theta_c_z*(-delta_0 + A_z * log_term)
-        import ipdb; ipdb.set_trace()
 
         # Possible TODO: Add warning for points in the near wake x-x_i, where 
         # model won't be very good
