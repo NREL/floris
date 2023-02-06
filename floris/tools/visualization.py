@@ -384,6 +384,10 @@ def calculate_horizontal_plane_with_turbines(
         if yaw_angles is not None:
             fi.floris.farm.yaw_angles = yaw_angles
 
+        # Now place the yaw_angles back into yaw_angles
+        # to be sure not None
+        yaw_angles = fi.floris.farm.yaw_angles
+
         # Grab the turbine layout
         layout_x = copy.deepcopy(fi.layout_x)
         layout_y = copy.deepcopy(fi.layout_y)
@@ -392,6 +396,7 @@ def calculate_horizontal_plane_with_turbines(
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
+        yaw_angles = np.append(yaw_angles, [0])
 
 
         # Get a grid of points test test
