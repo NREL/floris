@@ -69,7 +69,7 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     # Demonstrate a passing case
     farm_data = deepcopy(SampleInputs().farm)
     farm_data["turbine_library"] = external_library
-    farm_data["turbine_type"] = ["nrel_5MW"] * len(farm_data["layout_x"])
+    farm_data["turbine_type"] = ["nrel_5MW_custom"] * len(farm_data["layout_x"])
     farm = Farm.from_dict(farm_data)
     assert farm.turbine_library == external_library
 
@@ -82,4 +82,12 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     farm_data["turbine_library"] = external_library
     farm_data["turbine_type"] = ["iea_10MW"] * len(farm_data["layout_x"])
     with pytest.raises(FileNotFoundError):
+        Farm.from_dict(farm_data)
+
+    # Demonstrate a failing case where there is a duplicated turbine between the internal
+    # and external turbine libraries
+    farm_data = deepcopy(SampleInputs().farm)
+    farm_data["turbine_library"] = external_library
+    farm_data["turbine_type"] = ["nrel_5MW"] * len(farm_data["layout_x"])
+    with pytest.raises(ValueError):
         Farm.from_dict(farm_data)
