@@ -12,15 +12,15 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import copy
 from itertools import repeat
 
-import copy
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from .yaw_wind_rose_clustered import YawOptimizationWindRoseClustered
 from ....logging_manager import LoggerBase
+from .yaw_wind_rose_clustered import YawOptimizationWindRoseClustered
 
 
 class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered, LoggerBase):

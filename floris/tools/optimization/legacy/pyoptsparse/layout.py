@@ -13,10 +13,15 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Polygon, Point, LineString
+import numpy as np
 from scipy.spatial.distance import cdist
+from shapely.geometry import (
+    LineString,
+    Point,
+    Polygon
+)
+
 
 def _norm(val, x1, x2):
         return (val - x1) / (x2 - x1)

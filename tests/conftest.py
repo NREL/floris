@@ -15,9 +15,13 @@
 
 import numpy as np
 import pytest
-from floris.simulation import Floris
-from floris.simulation import FlowField
-from floris.simulation import TurbineGrid, FlowFieldGrid
+
+from floris.simulation import (
+    Floris,
+    FlowField,
+    FlowFieldGrid,
+    TurbineGrid
+)
 from floris.utilities import Vec3
 
 

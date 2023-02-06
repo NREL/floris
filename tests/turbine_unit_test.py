@@ -18,9 +18,15 @@ import numpy as np
 import pytest
 from scipy.interpolate import interp1d
 
-from tests.conftest import WIND_SPEEDS, SampleInputs
-from floris.simulation import Ct, Turbine, power, axial_induction, average_velocity, _rotor_velocity_yaw_correction, _rotor_velocity_tilt_correction, _compute_tilt_angles_for_floating_turbines
-from floris.simulation.turbine import PowerThrustTable, _filter_convert
+from floris.simulation import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    power,
+    Turbine
+)
+from floris.simulation.turbine import _filter_convert, PowerThrustTable
+from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
 # size 3 x 4 x 1 x 1 x 1

@@ -12,12 +12,18 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from typing import Any, Iterable, Tuple, Union, Callable
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Tuple,
+    Union
+)
 
 import attrs
-from attrs import define, Attribute
 import numpy as np
 import numpy.typing as npt
+from attrs import Attribute, define
 
 
 ### Define general data types used throughout

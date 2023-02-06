@@ -18,6 +18,7 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
+
 """
 This example demonstrates running FLORIS in time series mode.
 

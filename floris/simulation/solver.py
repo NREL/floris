@@ -11,14 +11,19 @@
 # the License.
 
 import copy
-import numpy as np
-import time
 import sys
+import time
 
-from floris.simulation import Farm
-from floris.simulation import TurbineGrid, FlowFieldGrid
-from floris.simulation import Ct, axial_induction
-from floris.simulation import FlowField
+import numpy as np
+
+from floris.simulation import (
+    axial_induction,
+    Ct,
+    Farm,
+    FlowField,
+    FlowFieldGrid,
+    TurbineGrid
+)
 from floris.simulation.turbine import average_velocity
 from floris.simulation.wake import WakeModelManager
 from floris.simulation.wake_deflection.gauss import (

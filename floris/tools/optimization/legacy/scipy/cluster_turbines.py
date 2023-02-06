@@ -13,8 +13,8 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def cluster_turbines(fi, wind_direction=None, wake_slope=0.30, plot_lines=False):

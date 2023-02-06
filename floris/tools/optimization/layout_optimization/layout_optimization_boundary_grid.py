@@ -13,12 +13,17 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Point, Polygon, LineString
+import numpy as np
 from scipy.spatial.distance import cdist
+from shapely.geometry import (
+    LineString,
+    Point,
+    Polygon
+)
 
 from .layout_optimization_base import LayoutOptimization
+
 
 class LayoutOptimizationBoundaryGrid(LayoutOptimization):
     def __init__(
