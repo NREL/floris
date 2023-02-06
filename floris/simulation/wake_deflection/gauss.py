@@ -221,9 +221,10 @@ class GaussVelocityDeflection(BaseModel):
 @define
 class GaussGeometricDeflection(BaseModel):
 
-    deflection_gain_y: float = field(default=1.0) # TODO: check default
-    deflection_gain_z: float = field(default=1.0) # TODO: check default
+    deflection_gain_y_D: float = field(default=1.0) # TODO: check default
+    deflection_gain_z_D: float = field(default=1.0) # TODO: check default
     delta_0_D: float = field(default=0.0) # TODO: check default
+    deflection_rate: float = field(default=1.0) # TODO: check default
     wim_gain_deflection: float = field(default=0.0) # TODO: check default
 
     def prepare_function(
@@ -302,13 +303,15 @@ class GaussGeometricDeflection(BaseModel):
         delta_0 = self.delta_0_D*rotor_diameter_i
 
         A_y = (1/(1+self.wim_gain_deflection*wake_induced_mixing_i)) * \
-            self.deflection_gain_y
+            self.deflection_gain_y_D * rotor_diameter_i
 
         A_z = (1/(1+self.wim_gain_deflection*wake_induced_mixing_i)) * \
-            self.deflection_gain_z
+            self.deflection_gain_z_D * rotor_diameter_i
 
-        log_term = np.log(((x - x_i)*np.array(x > x_i + 0.1))\
-            /rotor_diameter_i + 1)
+        x_normalized = ((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i
+        
+        log_term = np.log((x_normalized - self.deflection_rate) \
+                          /(x_normalized + self.deflection_rate) + 2)
 
         # Apply downstream mask in the process
         deflection_y = theta_c_y*(-delta_0 + A_y * log_term)
