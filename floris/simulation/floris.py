@@ -156,6 +156,14 @@ class Floris(BaseClass):
         # <<interface>>
         # start = time.time()
 
+        if vel_model in ["gauss", "cc", "turbokpark", "jensen"] and \
+            (self.farm.correct_cp_ct_for_tilt == True).any():
+            self.logger.warn(
+                "The current model is not setup to account for vertical wake deflection due to " +
+                "tilt. Corrections to Cp and Ct can be included, but no vertical wake " +
+                "deflection will occur."
+            )
+
         if vel_model=="cc":
             elapsed_time = cc_solver(
                 self.farm,
