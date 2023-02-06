@@ -1217,7 +1217,7 @@ title="Open an issue"
         <span class="n">boundary_spacing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fi</span> <span class="o">=</span> <span class="n">fi</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">boundary_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">boundaries</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundary_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">boundaries</span><span class="p">])</span>
         <span class="n">boundary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_x</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
@@ -1399,7 +1399,7 @@ title="Open an issue"
         <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xlocs</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row_number</span><span class="p">])</span>
         <span class="n">layout_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xlocs</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ylocs</span><span class="p">])</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">y_spacing</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">shear</span><span class="p">)</span>
         <span class="n">layout_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xlocs</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ylocs</span><span class="p">])</span>
-        
+
         <span class="c1"># rotate</span>
         <span class="n">rotate_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span><span class="o">*</span><span class="n">layout_x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span><span class="o">*</span><span class="n">layout_y</span>
         <span class="n">rotate_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span><span class="o">*</span><span class="n">layout_x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span><span class="o">*</span><span class="n">layout_y</span>
@@ -1418,7 +1418,7 @@ title="Open an issue"
         <span class="c1"># arrange final x,y points</span>
         <span class="n">return_x</span> <span class="o">=</span> <span class="n">rotate_x</span><span class="p">[</span><span class="n">meets_constraints</span><span class="p">]</span>
         <span class="n">return_y</span> <span class="o">=</span> <span class="n">rotate_y</span><span class="p">[</span><span class="n">meets_constraints</span><span class="p">]</span>
-    
+
         <span class="k">return</span> <span class="n">return_x</span><span class="p">,</span> <span class="n">return_y</span></div>
 
 <div class="viewcode-block" id="LayoutOptimizationBoundaryGrid.find_lengths"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid.html#floris.tools.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid.find_lengths">[docs]</a>    <span class="k">def</span> <span class="nf">find_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">npoints</span><span class="p">):</span>
@@ -1502,7 +1502,7 @@ title="Open an issue"
         <span class="n">nBounds</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xBounds</span><span class="p">)</span>
         <span class="n">lenBound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_lengths</span><span class="p">(</span><span class="n">xBounds</span><span class="p">,</span> <span class="n">yBounds</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xBounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">circumference</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lenBound</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">nturbs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">spacing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># When the number of boundary turbines is specified</span>
             <span class="n">nturbs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nturbs</span><span class="p">)</span>

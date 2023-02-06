@@ -1263,6 +1263,11 @@ title="Print to PDF"
      Ruff
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pre-commit">
+     Pre-commit
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -1331,6 +1336,11 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#ruff">
      Ruff
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pre-commit">
+     Pre-commit
     </a>
    </li>
   </ul>
@@ -1447,8 +1457,8 @@ and additional information on specific decisions can be found there.</p>
 <h3>Ruff<a class="headerlink" href="#ruff" title="Permalink to this headline">#</a></h3>
 <p><a class="reference external" href="https://github.com/charliermarsh/ruff">Ruff</a> is a general linter and limited auto-formatter.
 It is configured in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> through various <code class="docutils literal notranslate"><span class="pre">[tool.ruff.*]</span></code> blocks. It is a command line
-tool and integrations into popular IDE's are available. A typical command to run Ruff is the
-following:</p>
+tool and integrations into popular IDE's are available. A typical command to run Ruff for all of
+FLORIS is the following:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ruff<span class="w"> </span>.<span class="w"> </span>--fix
 </pre></div>
 </div>
@@ -1458,6 +1468,39 @@ and fixes errors in-place where possible.</p>
 in more detail in <a class="reference external" href="https://github.com/NREL/floris/discussions/561">D#561</a>. See the Ruff
 documentation for a list of <a class="reference external" href="https://github.com/charliermarsh/ruff#supported-rules">supported rules</a>
 and <a class="reference external" href="https://github.com/charliermarsh/ruff#reference">available options for various rules</a>.</p>
+</section>
+<section id="pre-commit">
+<h3>Pre-commit<a class="headerlink" href="#pre-commit" title="Permalink to this headline">#</a></h3>
+<p><a class="reference external" href="https://pre-commit.com">Pre-commit</a> is a utility to execute a series of git-hooks to catch
+and fix formatting errors. It integrates easily with other tools, in our case isort and Ruff.
+Pre-commit is tightly integrated into git and is mostly not used directly by users.</p>
+<p>Once installed, the precommit hooks must be installed into each development environment with
+the following command from the <code class="docutils literal notranslate"><span class="pre">floris/</span></code> directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>Then, each commit creation with <code class="docutils literal notranslate"><span class="pre">git</span></code> will run the installed hooks and display where
+checks have failed. Pre-commit will typically modify the files directly to fix the issues. However,
+each file fixed by Pre-commit must be added to the git-commit again to capture the changes. A
+typical workflow is given below.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>add<span class="w"> </span>floris/simulation/turbine.py
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update so and so&quot;</span>
+&gt;<span class="w"> </span><span class="o">[</span>WARNING<span class="o">]</span><span class="w"> </span>Unstaged<span class="w"> </span>files<span class="w"> </span>detected.
+&gt;<span class="w"> </span><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Stashing<span class="w"> </span>unstaged<span class="w"> </span>files<span class="w"> </span>to<span class="w"> </span>/Users/rafmudaf/.cache/pre-commit/patch1675722485-25489.
+&gt;<span class="w"> </span>isort....................................................................Failed
+&gt;<span class="w"> </span>-<span class="w"> </span>hook<span class="w"> </span>id:<span class="w"> </span>isort
+&gt;<span class="w"> </span>-<span class="w"> </span>files<span class="w"> </span>were<span class="w"> </span>modified<span class="w"> </span>by<span class="w"> </span>this<span class="w"> </span>hook
+&gt;
+&gt;<span class="w"> </span>Fixing<span class="w"> </span>/Users/rafmudaf/Development/floris/floris/simulation/turbine.py
+
+<span class="c1"># Check that the error is fixed or fixed it manually</span>
+git<span class="w"> </span>status
+
+<span class="c1"># Stage the new changes and commit</span>
+git<span class="w"> </span>add<span class="w"> </span>floris/simulation/turbine.py
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update so and so&quot;</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="testing">

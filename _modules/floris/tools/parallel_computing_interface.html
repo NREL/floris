@@ -1369,7 +1369,7 @@ title="Open an issue"
         <span class="p">)</span>
         <span class="n">n_wind_speed_splits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span>
         <span class="n">n_wind_speed_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_wind_speed_splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">])</span>
-    
+
         <span class="c1"># Prepare the input arguments for parallel execution</span>
         <span class="n">fi_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="n">wind_direction_id_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span>
@@ -1407,7 +1407,7 @@ title="Open an issue"
     <span class="c1"># Function to merge subsets in dictionaries</span>
 <div class="viewcode-block" id="ParallelComputingInterface._merge_subsets"><a class="viewcode-back" href="../../../_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html#floris.tools.parallel_computing_interface.ParallelComputingInterface._merge_subsets">[docs]</a>    <span class="k">def</span> <span class="nf">_merge_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">subset</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>  <span class="c1"># Merges wind speeds</span>
-            <span class="p">[</span>  
+            <span class="p">[</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>  <span class="c1"># Merges wind directions</span>
                     <span class="p">[</span>
                         <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;f.</span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="p">))</span>
@@ -1553,7 +1553,7 @@ title="Open an issue"
 <span class="sd">                zero degrees for all conditions. Defaults to None.</span>
 <span class="sd">            turbine_weights (NDArrayFloat | list[float] | None, optional):</span>
 <span class="sd">                weighing terms that allow the user to emphasize power at</span>
-<span class="sd">                particular turbines and/or completely ignore the power </span>
+<span class="sd">                particular turbines and/or completely ignore the power</span>
 <span class="sd">                from other turbines. This is useful when, for example, you are</span>
 <span class="sd">                modeling multiple wind farms in a single floris object. If you</span>
 <span class="sd">                only want to calculate the power production for one of those</span>
@@ -1644,7 +1644,7 @@ title="Open an issue"
         <span class="n">exploit_layout_symmetry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">verify_convergence</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">print_worker_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Recommended disabled to avoid clutter. Useful for debugging</span>
-    <span class="p">):</span>   
+    <span class="p">):</span>
 
         <span class="c1"># Prepare the inputs to each core for multiprocessing module</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>

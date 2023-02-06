@@ -1484,9 +1484,9 @@ title="Open an issue"
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed inputs must be 1-D.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="o">.</span><span class="n">size</span><span class="p">}</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="o">.</span><span class="n">size</span><span class="p">}</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed tables must be the same size.&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># Remove any duplicate wind speed entries</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">duplicate_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">[</span><span class="n">duplicate_filter</span><span class="p">])</span>
@@ -1591,7 +1591,7 @@ title="Open an issue"
 <span class="sd">        to define the Turbine. The values are bound by the range of the input</span>
 <span class="sd">        values. Any requested wind speeds outside of the range of input wind</span>
 <span class="sd">        speeds are assigned Ct of 0.0001 or 0.9999.</span>
-<span class="sd">        </span>
+
 <span class="sd">        The fill_value arguments sets (upper, lower) bounds for any values</span>
 <span class="sd">        outside of the input range.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

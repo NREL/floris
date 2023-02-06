@@ -1217,7 +1217,7 @@ title="Open an issue"
     <span class="c1"># NOTE: this does not convert elements to float if they are given as int. Is this ok?</span>
 
 <div class="viewcode-block" id="Vec3._check_components"><a class="viewcode-back" href="../../_autosummary/floris.utilities.Vec3.html#floris.utilities.Vec3._check_components">[docs]</a>    <span class="nd">@components</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">_check_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>        
+    <span class="k">def</span> <span class="nf">_check_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Vec3 must contain exactly 1 dimension, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> were given.&quot;</span>
@@ -1359,7 +1359,7 @@ title="Open an issue"
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray | float | int: Shifted values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="mf">360.0</span></div>
 
 

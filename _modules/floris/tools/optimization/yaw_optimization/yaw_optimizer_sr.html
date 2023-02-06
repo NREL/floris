@@ -1334,7 +1334,7 @@ title="Open an issue"
 <span class="sd">        Calculate the yaw angles for every iteration in the SR algorithm, for turbine,</span>
 <span class="sd">        for every wind direction, for every wind speed, for every TI. Basically, this</span>
 <span class="sd">        should yield a grid of yaw angle sets to evaluate the wind farm AEP with &#39;Ny&#39;</span>
-<span class="sd">        times. Then, for each ambient condition set, </span>
+<span class="sd">        times. Then, for each ambient condition set,</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Initialize yaw angles to evaluate, &#39;Ny&#39; times the wind rose</span>
@@ -1388,7 +1388,7 @@ title="Open an issue"
         <span class="n">farm_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_powers_with_memory</span><span class="p">(</span><span class="n">evaluation_grid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">farm_powers</span></div>
 
-<div class="viewcode-block" id="YawOptimizationSR.optimize"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.html#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span> 
+<div class="viewcode-block" id="YawOptimizationSR.optimize"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.html#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the yaw angles that maximize the power production for every wind direction,</span>
 <span class="sd">        wind speed and turbulence intensity.</span>
@@ -1424,7 +1424,7 @@ title="Open an issue"
                 <span class="n">yaw_angles_opt_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span>
                         <span class="n">evaluation_grid</span><span class="p">,</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">args_opt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> 
+                        <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">args_opt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
                         <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
                     <span class="p">),</span>
                     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>

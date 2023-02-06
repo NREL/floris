@@ -1290,7 +1290,7 @@ title="Open an issue"
 <span class="sd">        # when adding the wind direction dimension. Prior to that, the dimensions</span>
 <span class="sd">        # worked out simply with i.</span>
 <span class="sd">        c = ( rotor_radius / ( rotor_radius + self.we * dx + self.NUM_EPS ) ) ** 2</span>
-<span class="sd">        </span>
+
 <span class="sd">        # using this causes nan&#39;s in the upstream turbine because it negates the mask</span>
 <span class="sd">        # rather than setting it to 0. When self.we * (x - x[:, :, i:i+1]) ) == the radius,</span>
 <span class="sd">        # c goes to infinity and then this line flips it to Nans rather than setting to 0.</span>
@@ -1329,7 +1329,7 @@ title="Open an issue"
         <span class="c1"># C should be 0 everywhere outside of the lateral and vertical bounds defined</span>
         <span class="c1"># by the wake expansion parameter</span>
         <span class="n">boundary_mask</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;sqrt(dy ** 2 + dz ** 2) &lt; boundary_line&quot;</span><span class="p">)</span>
-        
+
         <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">downstream_mask</span><span class="p">,</span> <span class="n">boundary_mask</span><span class="p">)</span>
         <span class="n">c</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="c1"># c = ne.evaluate(&quot;c * downstream_mask * boundary_mask&quot;)</span>
