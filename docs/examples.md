@@ -82,6 +82,9 @@ Define non-uniform (heterogeneous) atmospheric conditions by specifying
 speedups at locations throughout the farm. Show plots of the
 impact on wind turbine wakes.
 
+### 16b_heterogenaity_multiple_ws_wd.py
+Illustrate usage of heterogenaity with multiple wind speeds and directions
+
 ### 17_multiple_turbine_types.py
 Load an input file that describes a wind farm with two turbines
 of different types and plot the wake profiles.

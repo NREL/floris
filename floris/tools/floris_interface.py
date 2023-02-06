@@ -195,6 +195,7 @@ class FlorisInterface(LoggerBase):
         solver_settings: dict | None = None,
         time_series: bool | None = False,
         layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
+        het_map=None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -218,6 +219,8 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
+        if het_map is not None:
+            self.het_map = het_map
 
         ## Farm
         if layout is not None:

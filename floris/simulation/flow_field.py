@@ -150,6 +150,13 @@ class FlowField(FromDictMixin):
         self.w = np.take_along_axis(self.w_sorted, unsorted_indices, axis=2)
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
+
+        # Check that the het maps wd dimension matches
+        if self.n_wind_directions!= np.array(het_map).shape[1]:
+            raise ValueError(
+                "het_map's wind direction dimension not equal to number of wind directions"
+            )
+
         if z is not None:
             # Calculate the 3-dimensional speed ups; reshape is needed as the generator
             # adds an extra dimension
