@@ -390,43 +390,41 @@ def plot_rotor_values(
         plt.show()
 
 def calculate_horizontal_plane_with_turbines(
-        fi_in,
-        x_resolution=200,
-        y_resolution=200,
-        x_bounds=None,
-        y_bounds=None,
-        wd=None,
-        ws=None,
-        yaw_angles=None,
-    ):
+    fi_in,
+    x_resolution=200,
+    y_resolution=200,
+    x_bounds=None,
+    y_bounds=None,
+    wd=None,
+    ws=None,
+    yaw_angles=None,
+) -> CutPlane:
         """
-        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
-        object containing the velocity field in a horizontal plane cut through
-        using an approximation method of sweeping a turbine around the grid.  Much
-        slower than usual method but helpful for models where the visualization
-        capability is not in place yet
+        This function creates a :py:class:`~.tools.cut_plane.CutPlane` by
+        adding an additional turbine to the farm and moving it through every
+        a regular grid throughout the flow field. This method allows for
+        visualizing wake models that do not support the FullFlowGrid and
+        its associated solver. As the new turbine is moved around the flow
+        field, the velocities at its rotor are stored in local variables,
+        and the flow field is reset to its initial state for every new
+        location. Then, the local velocities are put into a DataFrame and
+        then into a CutPlane. This method is much slower than
+        `FlorisInterface.calculate_horizontal_plane`, but it is helpful
+        for models where the visualization capability is not yet available.
 
         Args:
             fi_in (:py:class:`floris.tools.floris_interface.FlorisInterface`):
-                FlorisInterface object.
-            x_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            y_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            x_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            y_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            wd (float, optional): Wind direction for visualization
-                Defaults to None.
-            ws (float, optional): Wind speed for visualization
-                Defaults to None.
-            yaw_angles ((np.ndarray), optional): Yaw angles for visualization
-                Defaults to None.
+                Preinitialized FlorisInterface object.
+            x_resolution (float, optional): Output array resolution. Defaults to 200 points.
+            y_resolution (float, optional): Output array resolution. Defaults to 200 points.
+            x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
+            y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
+            wd (float, optional): Wind direction setting. Defaults to None.
+            ws (float, optional): Wind speed setting. Defaults to None.
+            yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
 
         Returns:
-            :py:class:`~.tools.cut_plane.CutPlane`: containing values
-            of x, y, u, v, w
+            :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
         """
 
         # Make a local copy of fi to avoid editing passed in fi
@@ -440,9 +438,7 @@ def calculate_horizontal_plane_with_turbines(
         fi.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Set the ws and wd
-        fi.reinitialize(
-            wind_directions=wd, wind_speeds=ws
-        )
+        fi.reinitialize(wind_directions=wd, wind_speeds=ws)
 
         # Re-set yaw angles
         if yaw_angles is not None:
@@ -455,7 +451,7 @@ def calculate_horizontal_plane_with_turbines(
         # Grab the turbine layout
         layout_x = copy.deepcopy(fi.layout_x)
         layout_y = copy.deepcopy(fi.layout_y)
-        D = fi.floris.farm.rotor_diameters_sorted[0][0][0]
+        D = fi.floris.farm.rotor_diameters_sorted[0, 0, 0]
 
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])

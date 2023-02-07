@@ -20,7 +20,6 @@ import floris.tools.visualization as wakeviz
 from floris.tools import FlorisInterface
 from floris.tools.visualization import (
     calculate_horizontal_plane_with_turbines,
-    plot_rotor_values,
     visualize_cut_plane,
 )
 
@@ -32,6 +31,12 @@ we are plotting three slices of the resulting flow field:
 1. Horizontal slice parallel to the ground and located at the hub height
 2. Vertical slice of parallel with the direction of the wind
 3. Veritical slice parallel to to the turbine disc plane
+
+Additionally, an alternative method of plotting a horizontal slice
+is shown. Rather than calculating points in the domain behind a turbine,
+this method adds an additional turbine to the farm and moves it to
+locations throughout the farm while calculating the velocity at it's
+rotor.
 """
 
 # Initialize FLORIS with the given input file via FlorisInterface.
@@ -55,20 +60,20 @@ horizontal_plane = fi.calculate_horizontal_plane(
     y_resolution=100,
     height=90.0,
     yaw_angles=np.array([[[25.,0.,0.]]]),
-  )
+)
 
 y_plane = fi.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
     crossstream_dist=630.0,
     yaw_angles=np.array([[[25.,0.,0.]]]),
-  )
+)
 cross_plane = fi.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=630.0,
     yaw_angles=np.array([[[25.,0.,0.]]]),
-  )
+)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
@@ -81,17 +86,17 @@ wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile"
 # a slower version which scans a turbine model to produce the horizontal flow
 horizontal_plane_scan_turbine = calculate_horizontal_plane_with_turbines(
     fi,
-    x_resolution=20,
-    y_resolution=10,
+    x_resolution=200,
+    y_resolution=200,
     yaw_angles=np.array([[[25.,0.,0.]]]),
-  )
+)
 
 fig, ax = plt.subplots()
 visualize_cut_plane(
     horizontal_plane_scan_turbine,
     ax=ax,
     title="Horizontal (coarse turbine scan method)",
-  )
+)
 
 # FLORIS further includes visualization methods for visualing the rotor plane of each
 # Turbine in the simulation
@@ -108,7 +113,7 @@ fig, axes, _ , _ = wakeviz.plot_rotor_values(
     n_rows=1,
     n_cols=3,
     return_fig_objects=True
-  )
+)
 fig.suptitle("Rotor Plane Visualization, Original Resolution")
 
 # FLORIS supports multiple types of grids for capturing wind speed
@@ -120,8 +125,8 @@ fig.suptitle("Rotor Plane Visualization, Original Resolution")
 
 # Increase the resolution of points on each turbien plane
 solver_settings = {
-  "type": "turbine_grid",
-  "turbine_grid_points": 10
+    "type": "turbine_grid",
+    "turbine_grid_points": 10
 }
 fi.reinitialize(solver_settings=solver_settings)
 
@@ -137,7 +142,7 @@ fig, axes, _ , _ = wakeviz.plot_rotor_values(
     n_rows=1,
     n_cols=3,
     return_fig_objects=True
-  )
+)
 fig.suptitle("Rotor Plane Visualization, 10x10 Resolution")
 
 wakeviz.show_plots()

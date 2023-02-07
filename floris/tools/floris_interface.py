@@ -337,9 +337,6 @@ class FlorisInterface(LoggerBase):
 
         return df
 
-
-
-
     def calculate_horizontal_plane(
         self,
         height,
