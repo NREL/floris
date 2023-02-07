@@ -21,7 +21,7 @@ from floris.tools.visualization import plot_rotor_values
 #dh
 import numpy as np
 
-fi = FlorisInterface("floris/examples/inputs/gch.yaml") # 3.2.1.2.1.1
+fi = FlorisInterface("inputs/gch.yaml")
 
 # # Define 4 turbines
 layout_x = np.array([3000.0, 0.0, 1500.0, 3000.0])

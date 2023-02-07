@@ -22,7 +22,7 @@ from floris.tools.visualization import plot_rotor_values
 import numpy as np
 from floris.tools.visualization import plot_turbines_with_fi
 
-fi = FlorisInterface("floris/examples/inputs/gch.yaml")
+fi = FlorisInterface("inputs/gch.yaml")
 
 # # Define 4 turbines
 layout_x = np.array([3000.0, 0.0, 1500.0, 3000.0])
@@ -70,15 +70,14 @@ if 1 : # dh. 화면에 yaw, fi 정보도 출력
         # fi update with reinitialize
         turbine_yaw = fi.floris.farm.yaw_angles
         turbine_type= fi.floris.farm.turbine_type_names_sorted
-        turbine_avg_vel=fi.get_turbine_average_velocities()
+        turbine_avg_vel=fi.turbine_average_velocities
         turbine_powers = fi.get_turbine_powers()/1000.
         turbine_ais =fi.get_turbine_ais()
         turbine_Cts = fi.get_turbine_Cts()
 
         mytext = [f"yaw: {i:.1f}" for i in turbine_yaw[0,0]] 
         if 1: mytext = [f"T{i}: {turbine_type[i]} \n {mytext[i]}" for i in range(n_wtg)] 
-        if 1: mytext = [f"{mytext[i]} \n Vel: {turbine_avg_vel[0,0,i]:.1f}" for i in range(n_wtg)] 
-        if 1: mytext = [f"{mytext[i]} \n Pow: {turbine_powers[0,0,i]:.1f}" for i in range(n_wtg)] 
+        if 1: mytext = [f"{mytext[i]} \n Vel: {turbine_avg_vel[0,0,i]:.1f}" for i in range(n_wtg)]         if 1: mytext = [f"{mytext[i]} \n Pow: {turbine_powers[0,0,i]:.1f}" for i in range(n_wtg)] 
         if 0: mytext = [f"{mytext[i]} \n ai: {turbine_ais[0,0,i]:.1f}" for i in range(n_wtg)] 
         if 1: mytext = [f"{mytext[i]} \n ct: {turbine_Cts[0,0,i]:.1f}" for i in range(n_wtg)] 
         for j in range(fi.floris.farm.n_turbines):

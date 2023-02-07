@@ -24,7 +24,7 @@ from floris.tools.visualization import plot_turbines_with_fi
 from floris.utilities import rotate_coordinates_rel_west
 import math #dh. for drawing swept area
 
-fi = FlorisInterface("floris/examples/inputs/gch.yaml")
+fi = FlorisInterface("inputs/gch.yaml")
 flow_field=fi.floris.flow_field
 farm=fi.floris.farm
 grid=fi.floris.grid
