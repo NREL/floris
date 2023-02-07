@@ -14,11 +14,14 @@
 
 
 import os
+
 import numpy as np
 
 from floris.tools import FlorisInterface
+from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
+    LayoutOptimizationScipy,
+)
 
-from floris.tools.optimization.layout_optimization.layout_optimization_scipy import LayoutOptimizationScipy
 
 """
 This example shows a simple layout optimization using the python module Scipy.
@@ -39,7 +42,14 @@ wind_directions = np.arange(0, 360.0, 5.0)
 np.random.seed(1)
 wind_speeds = 8.0 + np.random.randn(1) * 0.5
 # Shape frequency distribution to match number of wind directions and wind speeds
-freq = np.abs(np.sort(np.random.randn(len(wind_directions)))).reshape((len(wind_directions), len(wind_speeds)))
+freq = (
+    np.abs(
+        np.sort(
+            np.random.randn(len(wind_directions))
+        )
+    )
+    .reshape( ( len(wind_directions), len(wind_speeds) ) )
+)
 freq = freq / freq.sum()
 
 fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
@@ -69,6 +79,9 @@ opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results
-print('Optimal layout: ', sol)
-print('Optimal layout improves AEP by %.1f%% from %.1f MWh to %.1f MWh' % (percent_gain, base_aep, opt_aep))
+print(f'Optimal layout: {sol}')
+print(
+    f'Optimal layout improves AEP by {percent_gain:.1f}% '
+    f'from {base_aep:.1f} MWh to {opt_aep:.1f} MWh'
+)
 layout_opt.plot_layout_opt_results()

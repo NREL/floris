@@ -19,6 +19,7 @@ from floris.tools import FlorisInterface
 from floris.tools.floris_interface import generate_heterogeneous_wind_map
 from floris.tools.visualization import visualize_cut_plane
 
+
 """
 This example showcases the heterogeneous inflow capabilities of FLORIS.
 Heterogeneous flow can be defined in either 2- or 3-dimensions.
@@ -55,9 +56,17 @@ fi_2d.reinitialize(wind_shear=0.0)
 
 # Using the FlorisInterface functions for generating plots, run FLORIS
 # and extract 2D planes of data.
-horizontal_plane_2d = fi_2d.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height=90.0)
+horizontal_plane_2d = fi_2d.calculate_horizontal_plane(
+    x_resolution=200,
+    y_resolution=100,
+    height=90.0
+)
 y_plane_2d = fi_2d.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=0.0)
-cross_plane_2d = fi_2d.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=500.0)
+cross_plane_2d = fi_2d.calculate_cross_plane(
+    y_resolution=100,
+    z_resolution=100,
+    downstream_dist=500.0
+)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
@@ -66,7 +75,12 @@ visualize_cut_plane(horizontal_plane_2d, ax=ax_list[0], title="Horizontal", colo
 ax_list[0].set_xlabel('x'); ax_list[0].set_ylabel('y')
 visualize_cut_plane(y_plane_2d, ax=ax_list[1], title="Streamwise profile", color_bar=True)
 ax_list[1].set_xlabel('x'); ax_list[1].set_ylabel('z')
-visualize_cut_plane(cross_plane_2d, ax=ax_list[2], title="Spanwise profile at 500m downstream", color_bar=True)
+visualize_cut_plane(
+    cross_plane_2d,
+    ax=ax_list[2],
+    title="Spanwise profile at 500m downstream",
+    color_bar=True
+)
 ax_list[2].set_xlabel('y'); ax_list[2].set_ylabel('z')
 
 
@@ -90,18 +104,45 @@ fi_3d.reinitialize(wind_shear=0.0)
 
 # Using the FlorisInterface functions for generating plots, run FLORIS
 # and extract 2D planes of data.
-horizontal_plane_3d = fi_3d.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height=90.0)
-y_plane_3d = fi_3d.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=0.0)
-cross_plane_3d = fi_3d.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=500.0)
+horizontal_plane_3d = fi_3d.calculate_horizontal_plane(
+    x_resolution=200,
+    y_resolution=100,
+    height=90.0
+)
+y_plane_3d = fi_3d.calculate_y_plane(
+    x_resolution=200,
+    z_resolution=100,
+    crossstream_dist=0.0
+)
+cross_plane_3d = fi_3d.calculate_cross_plane(
+    y_resolution=100,
+    z_resolution=100,
+    downstream_dist=500.0
+)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
-visualize_cut_plane(horizontal_plane_3d, ax=ax_list[0], title="Horizontal", color_bar=True)
+visualize_cut_plane(
+    horizontal_plane_3d,
+    ax=ax_list[0],
+    title="Horizontal",
+    color_bar=True
+)
 ax_list[0].set_xlabel('x'); ax_list[0].set_ylabel('y')
-visualize_cut_plane(y_plane_3d, ax=ax_list[1], title="Streamwise profile", color_bar=True)
+visualize_cut_plane(
+    y_plane_3d,
+    ax=ax_list[1],
+    title="Streamwise profile",
+    color_bar=True
+)
 ax_list[1].set_xlabel('x'); ax_list[1].set_ylabel('z')
-visualize_cut_plane(cross_plane_3d, ax=ax_list[2], title="Spanwise profile at 500m downstream", color_bar=True)
+visualize_cut_plane(
+    cross_plane_3d,
+    ax=ax_list[2],
+    title="Spanwise profile at 500m downstream",
+    color_bar=True
+)
 ax_list[2].set_xlabel('y'); ax_list[2].set_ylabel('z')
 
 plt.show()

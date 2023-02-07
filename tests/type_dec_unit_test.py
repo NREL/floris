@@ -12,17 +12,18 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import numpy as np
-import pytest
 from typing import List
 
+import numpy as np
+import pytest
 from attrs import define, field
 
 from floris.type_dec import (
+    floris_array_converter,
     FromDictMixin,
     iter_validator,
-    floris_array_converter,
 )
+
 
 @define
 class AttrsDemoClass(FromDictMixin):

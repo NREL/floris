@@ -17,14 +17,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
 
 
 """
 04_sweep_wind_directions
 
-This example demonstrates vectorization of wind direction.  
-A vector of wind directions is passed to the intialize function 
+This example demonstrates vectorization of wind direction.
+A vector of wind directions is passed to the intialize function
 and the powers of the two simulated turbines is computed for all
 wind directions in one call
 
@@ -52,7 +51,7 @@ fi.reinitialize(wind_directions=wd_array)
 num_wd = len(wd_array) # Number of wind directions
 num_ws = 1 # Number of wind speeds
 num_turbine = len(layout_x) #  Number of turbines
-yaw_angles = np.zeros((num_wd, num_ws, num_turbine)) 
+yaw_angles = np.zeros((num_wd, num_ws, num_turbine))
 
 # Calculate
 fi.calculate_wake(yaw_angles=yaw_angles)
@@ -72,4 +71,5 @@ ax.grid(True)
 ax.legend()
 ax.set_xlabel('Wind Direction (deg)')
 ax.set_ylabel('Power (kW)')
+
 plt.show()

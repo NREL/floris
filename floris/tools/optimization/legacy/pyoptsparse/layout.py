@@ -13,10 +13,15 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Polygon, Point, LineString
+import numpy as np
 from scipy.spatial.distance import cdist
+from shapely.geometry import (
+    LineString,
+    Point,
+    Polygon,
+)
+
 
 def _norm(val, x1, x2):
         return (val - x1) / (x2 - x1)
@@ -144,7 +149,7 @@ class Layout:
         for i in range(self.nturbs):
             loc = Point(self.x[i], self.y[i])
             boundary_con[i] = loc.distance(self.boundary_line)
-            if self.boundary_polygon.contains(loc)==True:
+            if self.boundary_polygon.contains(loc) is True:
                 boundary_con[i] *= -1.0
 
         return boundary_con

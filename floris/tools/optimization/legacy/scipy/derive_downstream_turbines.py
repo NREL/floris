@@ -13,8 +13,8 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=False):

@@ -12,8 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.optimize import minimize
 
 from .layout import LayoutOptimization

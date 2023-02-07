@@ -16,21 +16,34 @@
 import numpy as np
 import pytest
 
+from floris.utilities import Vec3
 from tests.conftest import (
     N_TURBINES,
+    N_WIND_DIRECTIONS,
     N_WIND_SPEEDS,
     TURBINE_GRID_RESOLUTION,
-    N_WIND_DIRECTIONS,
 )
-from floris.utilities import Vec3
+
 
 # TODO: test the dimension expansion
 
 
 def test_turbinegrid_set_grid(turbine_grid_fixture):
-    expected_x_grid = [[[0.0, 0.0], [0.0, 0.0]], [[630.0, 630.0], [630.0, 630.0]], [[1260.0, 1260.0], [1260.0, 1260.0]]]
-    expected_y_grid = [[[-31.5, -31.5], [31.5, 31.5]], [[-31.5, -31.5], [31.5, 31.5]], [[-31.5, -31.5], [31.5, 31.5]]]
-    expected_z_grid = [[[58.5, 121.5], [58.5, 121.5]], [[58.5, 121.5], [58.5, 121.5]], [[58.5, 121.5], [58.5, 121.5]]] 
+    expected_x_grid = [
+        [[0.0, 0.0], [0.0, 0.0]],
+        [[630.0, 630.0], [630.0, 630.0]],
+        [[1260.0, 1260.0], [1260.0, 1260.0]]
+    ]
+    expected_y_grid = [
+        [[-31.5, -31.5], [31.5, 31.5]],
+        [[-31.5, -31.5], [31.5, 31.5]],
+        [[-31.5, -31.5], [31.5, 31.5]]
+    ]
+    expected_z_grid = [
+        [[58.5, 121.5], [58.5, 121.5]],
+        [[58.5, 121.5], [58.5, 121.5]],
+        [[58.5, 121.5], [58.5, 121.5]]
+    ]
 
     # subtract the test and expected values which should result in 0's
     # then, search for any elements that are true and negate the results
@@ -70,11 +83,14 @@ def test_turbinegrid_dynamic_properties(turbine_grid_fixture):
     assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS
     assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS
 
-    # TODO: @Rob @Chris This breaks n_turbines since the validator is not run. Is this case ok? Do we enforce that turbine_coordinates must be set by =?
+    # TODO: @Rob @Chris This breaks n_turbines since the validator is not run.
+    # Is this case ok? Do we enforce that turbine_coordinates must be set by =?
     # turbine_grid_fixture.turbine_coordinates.append(Vec3([100.0, 200.0, 300.0]))
     # assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
 
-    turbine_grid_fixture.turbine_coordinates = [*turbine_grid_fixture.turbine_coordinates, Vec3([100.0, 200.0, 300.0])]
+    turbine_grid_fixture.turbine_coordinates = [
+        *turbine_grid_fixture.turbine_coordinates, Vec3([100.0, 200.0, 300.0])
+    ]
     assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
 
     turbine_grid_fixture.wind_speeds = [*turbine_grid_fixture.wind_speeds, 0.0]
@@ -82,8 +98,6 @@ def test_turbinegrid_dynamic_properties(turbine_grid_fixture):
 
     turbine_grid_fixture.wind_directions = [*turbine_grid_fixture.wind_directions, 0.0]
     assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS + 1
-
-
 
 
 
@@ -97,11 +111,67 @@ def test_turbinegrid_dynamic_properties(turbine_grid_fixture):
 
 
 # def test_flow_field_set_grid(flow_field_grid_fixture):
-#     assert [flow_field_grid_fixture.x[0][0][0], flow_field_grid_fixture.y[0][0][0], flow_field_grid_fixture.z[0][0][0]] == [ -252.0, -252.0, 0.1]
-#     assert [flow_field_grid_fixture.x[1][0][0], flow_field_grid_fixture.y[0][0][0], flow_field_grid_fixture.z[0][0][0]] == [ 2520.0, -252.0, 0.1]
-#     assert [flow_field_grid_fixture.x[0][0][0], flow_field_grid_fixture.y[0][1][0], flow_field_grid_fixture.z[0][0][0]] == [ -252.0,  252.0, 0.1]
-#     assert [flow_field_grid_fixture.x[1][0][0], flow_field_grid_fixture.y[0][1][0], flow_field_grid_fixture.z[0][0][0]] == [ 2520.0,  252.0, 0.1]
-#     assert [flow_field_grid_fixture.x[0][0][0], flow_field_grid_fixture.y[0][0][0], flow_field_grid_fixture.z[0][0][1]] == [ -252.0, -252.0, 540.0]
-#     assert [flow_field_grid_fixture.x[1][0][0], flow_field_grid_fixture.y[0][0][0], flow_field_grid_fixture.z[0][0][1]] == [ 2520.0, -252.0, 540.0]
-#     assert [flow_field_grid_fixture.x[0][0][0], flow_field_grid_fixture.y[0][1][0], flow_field_grid_fixture.z[0][0][1]] == [ -252.0,  252.0, 540.0]
-#     assert [flow_field_grid_fixture.x[1][0][0], flow_field_grid_fixture.y[0][1][0], flow_field_grid_fixture.z[0][0][1]] == [ 2520.0,  252.0, 540.0]
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[0][0][0],
+#             flow_field_grid_fixture.y[0][0][0],
+#             flow_field_grid_fixture.z[0][0][0]
+#         ]
+#         == [ -252.0, -252.0, 0.1]
+#     )
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[1][0][0],
+#             flow_field_grid_fixture.y[0][0][0],
+#             flow_field_grid_fixture.z[0][0][0]
+#         ]
+#         == [ 2520.0, -252.0, 0.1]
+#     )
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[0][0][0],
+#             flow_field_grid_fixture.y[0][1][0],
+#             flow_field_grid_fixture.z[0][0][0]
+#         ]
+#         == [ -252.0,  252.0, 0.1]
+#     )
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[1][0][0],
+#             flow_field_grid_fixture.y[0][1][0],
+#             flow_field_grid_fixture.z[0][0][0]
+#         ]
+#         == [ 2520.0,  252.0, 0.1]
+#     )
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[0][0][0],
+#             flow_field_grid_fixture.y[0][0][0],
+#             flow_field_grid_fixture.z[0][0][1]
+#         ]
+#         == [ -252.0, -252.0, 540.0]
+#     )
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[1][0][0],
+#             flow_field_grid_fixture.y[0][0][0],
+#             flow_field_grid_fixture.z[0][0][1]
+#         ]
+#         == [ 2520.0, -252.0, 540.0]
+#     )
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[0][0][0],
+#             flow_field_grid_fixture.y[0][1][0],
+#             flow_field_grid_fixture.z[0][0][1]
+#         ]
+#         == [ -252.0,  252.0, 540.0]
+#     )
+#     assert (
+#         [
+#             flow_field_grid_fixture.x[1][0][0],
+#             flow_field_grid_fixture.y[0][1][0],
+#             flow_field_grid_fixture.z[0][0][1]
+#         ]
+#         == [ 2520.0,  252.0, 540.0]
+#     )

@@ -19,14 +19,17 @@
 import os
 import pickle
 
-import numpy as np
-import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-# from pyproj import Proj
+import numpy as np
+import pandas as pd
 
 import floris.utilities as geo
+
+
+# from pyproj import Proj
+
 
 
 class WindRose:
@@ -40,7 +43,7 @@ class WindRose:
     for visualizing wind roses.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: wr-
@@ -634,7 +637,7 @@ class WindRose:
         self.internal_resample_wind_direction(wd=wd)
 
         return self.df
-    
+
     def read_wind_rose_csv(
         self,
         filename
@@ -1384,13 +1387,13 @@ class WindRose:
 
         # Set up figure
         if ax is None:
-            _, ax = plt.subplots(subplot_kw=dict(polar=True))
+            _, ax = plt.subplots(subplot_kw={"polar": True})
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ws_right_edges))
 
-        for wd_idx, wd in enumerate(wd_bins):
-            rects = list()
+        for wd in wd_bins:
+            rects = []
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ws_idx, ws in enumerate(ws_right_edges[::-1]):
                 plot_val = df_plot_sub[
@@ -1459,13 +1462,13 @@ class WindRose:
 
         # Set up figure
         if ax is None:
-            _, ax = plt.subplots(subplot_kw=dict(polar=True))
+            _, ax = plt.subplots(subplot_kw={"polar": True})
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ti_right_edges))
 
-        for wd_idx, wd in enumerate(wd_bins):
-            rects = list()
+        for wd in wd_bins:
+            rects = []
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ti_idx, ti in enumerate(ti_right_edges[::-1]):
                 plot_val = df_plot_sub[

@@ -18,68 +18,93 @@
 
 import math
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-import matplotlib.pyplot as plt
-from floris.utilities import wrap_360
 from scipy.spatial.distance import pdist, squareform
 
 
-# All functions assume a dataframe with index turbine, and columns x and y
-
-
-def build_turbine_loc(turbine_x, turbine_y):
-    """
-    Make a DataFrame containing plant layout info
-    (wind turbine locations).
-
-    Args:
-        turbine_x (np.array): wind turbine locations (east-west).
-        turbine_y (np.array): wind turbine locations (north-south).
-
-    Returns:
-        turbineLoc (pd.DataFrame): turbine location data
-    """
-    turbineLoc = pd.DataFrame({"x": turbine_x, "y": turbine_y})
-    return turbineLoc
-
-
 def visualize_layout(
-    turbineLoc,
-    D,
+    fi,
     ax=None,
     show_wake_lines=False,
-    limit_dist=None,
+    limit_dist_m=None,
+    lim_lines_per_turbine=None,
     turbine_face_north=False,
     one_index_turbine=False,
     black_and_white=False,
+    plot_rotor=False,
+    turbine_names=None
 ):
     """
     Make a plot which shows the turbine locations, and important wakes.
 
     Args:
-        turbineLoc (pd.DataFrame): turbine location data
-        D (float): wind turbine rotor diameter.
+        fi object
         ax (:py:class:`matplotlib.pyplot.axes` optional):
             figure axes. Defaults to None.
         show_wake_lines (bool, optional): flag to control plotting of
             wake boundaries. Defaults to False.
-        limit_dist (float, optional): Downstream limit to plot wakes. D
+        limit_dist_m (float, optional): Only plot distances less than this ammount (m)
             Defaults to None.
+        lim_lines_per_turbine (int, optional): Limit number of lines eminating from a turbine
         turbine_face_north (bool, optional): Force orientation of wind
             turbines. Defaults to False.
-        one_index_turbine (bool, optional): if true, 1st turbine is turbine 1
+        one_index_turbine (bool, optional): if true, 1st turbine is
+            turbine 1 (ignored if turbine names provided)
+        black_and_white (bool, optional): if true print in black and white
+        plot_rotor (bool, optional): if true plot the turbine rotors and offset the labels
+        turbines_names (list, optional): optional list of turbine names
+
     """
 
-    turbines = turbineLoc.index.values
+    # Build a dataframe of locations and names
+    df_turbine = pd.DataFrame({
+        'x':fi.layout_x,
+        'y':fi.layout_y
+    })
+
+    # Get some info
+    D = fi.floris.farm.rotor_diameters[0]
+    N_turbine = df_turbine.shape[0]
+    turbines = df_turbine.index
+
+    # Set some color information
+    if black_and_white:
+        ec_color = 'k'
+    else:
+        ec_color = 'r'
+
+    # If we're plotting the rotor, offset the label
+    if plot_rotor:
+        label_offset = D/2
+    else:
+        label_offset = 0.
+
+    # If turbine names passed in apply them
+    if turbine_names is not None:
+
+        if len(turbine_names) != N_turbine:
+            raise ValueError(
+                "Length of turbine names array must equal number of turbines within fi"
+            )
+
+        df_turbine['turbine_names'] = turbine_names
+
+    elif one_index_turbine:
+        df_turbine['turbine_names'] = list(range(1,N_turbine+1)) # 1-indexed list
+        df_turbine['turbine_names'] = df_turbine['turbine_names'].astype(int)
+
+    else:
+
+        df_turbine['turbine_names'] = list(range(N_turbine)) # 0-indexed list
+        df_turbine['turbine_names'] = df_turbine['turbine_names'].astype(int)
+
 
     # if no axes provided, make one
     if not ax:
         fig, ax = plt.subplots(figsize=(7, 7))
 
-    # Plot turbine points
-    # ax.scatter(turbineLoc.x,turbineLoc.y,alpha=0)
 
     # Make ordered list of pairs sorted by distance if the distance
     # and angle matrices are provided
@@ -87,18 +112,17 @@ def visualize_layout(
 
         # Make a dataframe of distances
         dist = pd.DataFrame(
-            squareform(pdist(turbineLoc)),
-            index=turbineLoc.index,
-            columns=turbineLoc.index,
+            squareform(pdist(df_turbine[['x','y']])),
+            index=df_turbine.index,
+            columns=df_turbine.index,
         )
 
         # Make a DF of turbine angles
         angle = pd.DataFrame()
-        turbines = turbineLoc.index
+
         for t1 in turbines:
             for t2 in turbines:
-                # d[t1,t2] = wakeAngle(turbineLoc,[t1,t2])
-                angle.loc[t1, t2] = wakeAngle(turbineLoc, [t1, t2])
+                angle.loc[t1, t2] = wakeAngle(df_turbine, [t1, t2])
         angle.index.name = "Turbine"
 
         # Now limit the matrix to only show waking from (row) to (column)
@@ -124,93 +148,122 @@ def visualize_layout(
         ordList.dropna(how="any", inplace=True)
         ordList.sort_values("Dist", inplace=True, ascending=False)
 
+        # If selected to limit the number of lines per turbine
+        if lim_lines_per_turbine is not None:
+            # Limit list to smallest lim_lines_per_turbine
+            ordList = ordList.groupby(['T1'])
+            ordList = ordList.apply(lambda x: x.nsmallest(n=lim_lines_per_turbine, columns='Dist'))
+            ordList = ordList.reset_index(drop=True)
+
+        # Add in the reflected version of each case (only postive directions will be
+        # plotted to help test show face up)
+        df_reflect = ordList.copy()
+        df_reflect.columns = ['T2','T1','Dist','angle'] # Reflect T2 and T1
+        ordList = pd.concat([ordList,df_reflect]).drop_duplicates().reset_index(drop=True)
+
+        # If limiting to less than a certain distance
+        if limit_dist_m is not None:
+            ordList = ordList[ordList.Dist < limit_dist_m]
+
         # Plot wake lines and details
         for t1, t2 in zip(ordList.T1, ordList.T2):
-            x = [turbineLoc.loc[t1, "x"], turbineLoc.loc[t2, "x"]]
-            y = [turbineLoc.loc[t1, "y"], turbineLoc.loc[t2, "y"]]
+            x = [df_turbine.loc[t1, "x"], df_turbine.loc[t2, "x"]]
+            y = [df_turbine.loc[t1, "y"], df_turbine.loc[t2, "y"]]
 
-            if limit_dist:
-                if dist.loc[t1, t2] > limit_dist:
-                    continue
 
             # Only plot positive x way
-            if x[1] > x[0]:
+            if x[1] >= x[0]:
                 continue
 
             if black_and_white:
-                (l,) = ax.plot(x, y, color="k")
+                (line,) = ax.plot(x, y, color="k")
             else:
-                (l,) = ax.plot(x, y)
-            # linetext = '%.2f m --- %.2f D --- %.2f Deg --- %.2f Deg' % (
-            #     dist.loc[t1,t2],
-            #     dist.loc[t1,t2]/D,
-            #     angle.loc[t1,t2],
-            #     angle.loc[t2,t1]
-            # )
-            # linetext = '%.2f D --- %.2f Deg' % (dist.loc[t1, t2] / D,
-            #                                     angle.loc[t2, t1])
+                (line,) = ax.plot(x, y)
+
             linetext = "%.2f D --- %.1f/%.1f" % (
                 dist.loc[t1, t2] / D,
                 np.min([angle.loc[t2, t1], angle.loc[t1, t2]]),
                 np.max([angle.loc[t2, t1], angle.loc[t1, t2]]),
             )
-            # wrap_360(angle.loc[t2, t1]-180.))
+
             label_line(
-                l, linetext, ax, near_i=1, near_x=None, near_y=None, rotation_offset=180
+                line, linetext, ax, near_i=1, near_x=None, near_y=None, rotation_offset=180
             )
+
+
+    # If plotting rotors, mark the location of the nacelle
+    if plot_rotor:
+        ax.plot(df_turbine.x, df_turbine.y,'o',ls='None', color='k')
+
+    # Also mark the place of each label to make sure figure is correct scale
+    ax.plot(
+        df_turbine.x + label_offset,
+        df_turbine.y + label_offset,
+        '.',
+        ls='None',
+        color='w',
+        alpha=0
+
+    )
 
     # Plot turbines
     for t1 in turbines:
-        # print(t1)
-        # ax.annotate(
-        #     t1,
-        #     (turbineLoc03.loc[t1].x,turbineLoc03.loc[t1].y),
-        #     xycoords='data'
-        # )
-        if not turbine_face_north:
+
+        if plot_rotor:  # If plotting the rotors, draw these fist
+
+            if not turbine_face_north: # Plot turbines facing west
+                ax.plot(
+                    [df_turbine.loc[t1].x, df_turbine.loc[t1].x],
+                    [
+                        df_turbine.loc[t1].y - 0.5 * D / 2.0,
+                        df_turbine.loc[t1].y + 0.5 * D / 2.0,
+                    ],
+                    color="k",
+                )
+            else: # Plot facing north
+                ax.plot(
+                    [
+                        df_turbine.loc[t1].x - 0.5 * D / 2.0,
+                        df_turbine.loc[t1].x + 0.5 * D / 2.0,
+                    ],
+                    [df_turbine.loc[t1].y, df_turbine.loc[t1].y],
+                    color="k",
+                )
+
+            # Draw a line from label to rotor
             ax.plot(
-                [turbineLoc.loc[t1].x, turbineLoc.loc[t1].x],
-                [
-                    turbineLoc.loc[t1].y - 0.5 * D / 2.0,
-                    turbineLoc.loc[t1].y + 0.5 * D / 2.0,
-                ],
-                color="k",
+                    [
+                        df_turbine.loc[t1].x,
+                        df_turbine.loc[t1].x + D/2,
+                    ],
+                    [df_turbine.loc[t1].y, df_turbine.loc[t1].y + D/2],
+                    color="k",
+                    ls='--'
             )
-        else:
-            ax.plot(
-                [
-                    turbineLoc.loc[t1].x - 0.5 * D / 2.0,
-                    turbineLoc.loc[t1].x + 0.5 * D / 2.0,
-                ],
-                [turbineLoc.loc[t1].y, turbineLoc.loc[t1].y],
-                color="k",
-            )
-        if not one_index_turbine:
-            ax.text(
-                turbineLoc.loc[t1].x + D / 2,
-                turbineLoc.loc[t1].y,
-                t1,
-                bbox=dict(boxstyle="round", ec="red", fc="white"),
-            )
-        else:
-            ax.text(
-                turbineLoc.loc[t1].x + D / 2,
-                turbineLoc.loc[t1].y,
-                t1 + 1,
-                bbox=dict(boxstyle="round", ec="red", fc="white"),
-            )
+
+
+        # Now add the label
+        ax.text(
+
+            df_turbine.loc[t1].x + label_offset,
+            df_turbine.loc[t1].y + label_offset,
+            df_turbine.turbine_names.values[t1],
+            ha="center",
+            bbox={"boxstyle": "round", "ec": ec_color, "fc": "white"}
+        )
+
     ax.set_aspect("equal")
 
 
 # Set wind direction
-def set_direction(turbineLoc, rotation_angle):
+def set_direction(df_turbine, rotation_angle):
     """
     Rotate wind farm CCW by the given angle provided in degrees
 
     #TODO add center of rotation? Default = center of farm?
 
     Args:
-        turbineLoc (pd.DataFrame): turbine location data
+        df_turbine (pd.DataFrame): turbine location data
         rotation_angle (float): rotation angle in degrees
 
     Returns:
@@ -219,13 +272,11 @@ def set_direction(turbineLoc, rotation_angle):
     theta = np.deg2rad(rotation_angle)
     R = np.matrix([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
 
-    xy = np.array([turbineLoc.x, turbineLoc.y])
+    xy = np.array([df_turbine.x, df_turbine.y])
 
     xy_rot = R * xy
-    # return xy_rot
-    # print(xy_rot)
-    # print(xy_rot[0][0][0])
-    df_return = turbineLoc.copy(deep=True)
+
+    df_return = df_turbine.copy(deep=True)
     df_return["x"] = np.squeeze(np.asarray(xy_rot[0, :]))
     df_return["y"] = np.squeeze(np.asarray(xy_rot[1, :]))
     return df_return
@@ -316,7 +367,7 @@ def label_line(
             insufficient information is passed in.
     """
 
-    def put_label(i):
+    def put_label(i, ax):
         """
         Add a label to index.
 
@@ -328,7 +379,7 @@ def label_line(
         dy = sy[i + 1] - sy[i]
         rotation = np.rad2deg(math.atan2(dy, dx)) + rotation_offset
         pos = [(x[i] + x[i + 1]) / 2.0 + offset[0], (y[i] + y[i + 1]) / 2 + offset[1]]
-        plt.text(
+        ax.text(
             pos[0],
             pos[1],
             label_text,
@@ -337,7 +388,7 @@ def label_line(
             color=line.get_color(),
             ha="center",
             va="center",
-            bbox=dict(ec="1", fc="1", alpha=0.8),
+            bbox={"ec": "1", "fc": "1", "alpha": 0.8},
         )
 
     # extract line data
@@ -359,99 +410,18 @@ def label_line(
         i = near_i
         if i < 0:  # sanitize negative i
             i = len(x) + i
-        put_label(i)
+        put_label(i, ax)
     elif near_x is not None:
         for i in range(len(x) - 2):
             if (x[i] < near_x and x[i + 1] >= near_x) or (
                 x[i + 1] < near_x and x[i] >= near_x
             ):
-                put_label(i)
+                put_label(i, ax)
     elif near_y is not None:
         for i in range(len(y) - 2):
             if (y[i] < near_y and y[i + 1] >= near_y) or (
                 y[i + 1] < near_y and y[i] >= near_y
             ):
-                put_label(i)
+                put_label(i, ax)
     else:
         raise ValueError("Need one of near_i, near_x, near_y")
-
-
-def make_turbine_array(x, y, filename="turbineArrayProperties", turbine="NREL5MWRef"):
-    """
-    Function to output a turbine array file given x and y locations.
-
-    Args:
-        x (np.array): wind turbine locations (east-west).
-        y (np.array): wind turbine locations (north-south).
-        filename (str, optional): write-to file path for wind turbine
-            array info. Defaults to 'turbineArrayProperties'.
-        turbine (str, optional): name of turbine to use within file.
-            Defaults to 'NREL5MWRef'.
-    """
-
-    # Open the file for writing
-    with open(filename, "w") as f:
-
-        # Write out the headerlines
-        f.write(
-            "/*--------------------------------*- C++ -*----------------------------------*\\\n"
-        )
-        f.write(
-            "| =========                 |                                                 |\n"
-        )
-        f.write(
-            "| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |\n"
-        )
-        f.write(
-            "|  \\    /   O peration     | Version:  1.6                                   |\n"
-        )
-        f.write(
-            "|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |\n"
-        )
-        f.write(
-            "|    \\/     M anipulation  |                                                 |\n"
-        )
-        f.write(
-            "\\*---------------------------------------------------------------------------*/\n"
-        )
-        f.write("FoamFile\n")
-        f.write("{\n")
-        f.write("    version     2.0;\n")
-        f.write("    format      ascii;\n")
-        f.write("    class       dictionary;\n")
-        f.write("    object      turbineProperties;\n")
-        f.write("}\n")
-        f.write(
-            "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //\n"
-        )
-        f.write("\n")
-        f.write("globalProperties\n")
-        f.write("{\n")
-        f.write('    outputControl       "timeStep";\n')
-        f.write("    outputInterval       1;\n")
-        f.write("}\n")
-
-        for idx, (x_val, y_val) in enumerate(zip(x, y)):
-            f.write("\n")
-            f.write("turbine%d\n" % idx)
-            f.write("{\n")
-            f.write('    turbineType         "%s";\n' % turbine)
-            f.write("    baseLocation        (%.1f %.1f 0.0);\n" % (x_val, y_val))
-            f.write("    nRadial              64;\n")
-            f.write("    azimuthMaxDis        2.0;\n")
-            f.write("    nAvgSector           1;\n")
-            f.write('    pointDistType       "uniform";\n')
-            f.write('    pointInterpType     "linear";\n')
-            f.write('    bladeUpdateType     "oldPosition";\n')
-            f.write("    epsilon              20.0;\n")
-            f.write("    forceScalar          1.0;\n")
-            f.write("    inflowVelocityScalar 0.94;\n")
-            f.write('    tipRootLossCorrType "Glauert";\n')
-            f.write('    rotationDir         "cw";\n')
-            f.write("    Azimuth              0.0;\n")
-            f.write("    RotSpeed             13.0;\n")
-            f.write("    TorqueGen            20000.0;\n")
-            f.write("    Pitch                0.0;\n")
-            f.write("    NacYaw               270.0;\n")
-            f.write("    fluidDensity         1.225;\n")
-            f.write("}\n")

@@ -17,13 +17,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
+
 
 """
 05_sweep_wind_speeds
 
-This example demonstrates vectorization of wind speed.  
-A vector of wind speeds is passed to the intialize function 
+This example demonstrates vectorization of wind speed.
+A vector of wind speeds is passed to the intialize function
 and the powers of the two simulated turbines is computed for all
 wind speeds in one call
 
@@ -52,7 +52,7 @@ fi.reinitialize(wind_speeds=ws_array)
 num_wd = 1
 num_ws = len(ws_array)
 num_turbine = len(layout_x)
-yaw_angles = np.zeros((num_wd, num_ws, num_turbine)) 
+yaw_angles = np.zeros((num_wd, num_ws, num_turbine))
 
 # Calculate
 fi.calculate_wake(yaw_angles=yaw_angles)

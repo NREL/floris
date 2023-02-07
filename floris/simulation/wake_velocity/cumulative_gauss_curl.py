@@ -12,20 +12,37 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 from scipy.special import gamma
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
+from floris.utilities import (
+    cosd,
+    sind,
+    tand,
+)
 
 
 @define
 class CumulativeGaussCurlVelocityDeficit(BaseModel):
+    """
+    The cumulative curl model is an implementation of the model described in
+    :cite:`gdm-bay_2022`, which itself is based on the cumulative model of
+    :cite:`bastankhah_2021`
+
+    References:
+    .. bibliography:: /references.bib
+        :style: unsrt
+        :filter: docname in docnames
+        :keyprefix: gdm-
+    """
 
     a_s: float = field(default=0.179367259)
     b_s: float = field(default=0.0118889215)
@@ -42,12 +59,12 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            u_initial=flow_field.u_initial_sorted,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "u_initial": flow_field.u_initial_sorted,
+        }
         return kwargs
 
     def function(
@@ -153,8 +170,9 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         #     Y = (y_i_loc - y_coord - deflection_field) ** 2 / (2 * S)
         #     Z = (z_i_loc - z_coord) ** 2 / (2 * S)
 
-        #     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2 / S * np.exp(-Y) * np.exp(-Z)
-        #     sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)       
+        #     lbda = self.alpha_mod * sigma_i[0:ii-1, :, :, :, :, :] ** 2
+        #     lbda /= S * np.exp(-Y) * np.exp(-Z)
+        #     sum_lbda = np.sum(lbda * (Ctmp[0:ii-1, :, :, :, :, :] / u_initial), axis=0)
         # else:
         #     sum_lbda = 0.0
 
@@ -164,7 +182,8 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         # super gaussian
         # b_f = self.b_f1 * np.exp(self.b_f2 * TI) + self.b_f3
         x_tilde = np.abs(delta_x) / turbine_diameter[:,:,ii:ii+1]
-        r_tilde = np.sqrt((y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2) / turbine_diameter[:,:,ii:ii+1]
+        r_tilde = np.sqrt( (y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2 )
+        r_tilde /= turbine_diameter[:,:,ii:ii+1]
 
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
         a1 = 2 ** (2 / n - 1)

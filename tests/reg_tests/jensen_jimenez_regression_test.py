@@ -14,9 +14,20 @@
 
 import numpy as np
 
-from tests.conftest import N_TURBINES, N_WIND_DIRECTIONS, N_WIND_SPEEDS
-from tests.conftest import print_test_values, assert_results_arrays
-from floris.simulation import Ct, Floris, power, axial_induction, average_velocity
+from floris.simulation import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    Floris,
+    power,
+)
+from tests.conftest import (
+    assert_results_arrays,
+    N_TURBINES,
+    N_WIND_DIRECTIONS,
+    N_WIND_SPEEDS,
+    print_test_values,
+)
 
 
 DEBUG = False
