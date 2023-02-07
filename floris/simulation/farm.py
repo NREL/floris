@@ -147,10 +147,14 @@ class Farm(BaseClass):
         ])
 
     def construct_turbine_ref_tilt_cp_cts(self):
-        self.ref_tilt_cp_cts = np.array([turb['ref_tilt_cp_ct'] for turb in self.turbine_definitions])
+        self.ref_tilt_cp_cts = np.array(
+            [turb['ref_tilt_cp_ct'] for turb in self.turbine_definitions]
+        )
 
     def construct_turbine_correct_cp_ct_for_tilt(self):
-        self.correct_cp_ct_for_tilt = np.array([turb.correct_cp_ct_for_tilt for turb in self.turbine_map])
+        self.correct_cp_ct_for_tilt = np.array(
+            [turb.correct_cp_ct_for_tilt for turb in self.turbine_map]
+        )
 
     def construct_turbine_map(self):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
@@ -242,8 +246,14 @@ class Farm(BaseClass):
         self.yaw_angles_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
 
     def set_tilt_to_ref_tilt(self, n_wind_directions: int, n_wind_speeds: int):
-        self.tilt_angles = np.ones((n_wind_directions, n_wind_speeds, self.n_turbines)) * np.array([tilt for tilt in self.ref_tilt_cp_cts])
-        self.tilt_angles_sorted = np.ones((n_wind_directions, n_wind_speeds, self.n_turbines)) * np.array([tilt for tilt in self.ref_tilt_cp_cts])
+        self.tilt_angles = (
+            np.ones((n_wind_directions, n_wind_speeds, self.n_turbines))
+            * self.ref_tilt_cp_cts
+        )
+        self.tilt_angles_sorted = (
+            np.ones((n_wind_directions, n_wind_speeds, self.n_turbines))
+            * self.ref_tilt_cp_cts
+        )
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
         tilt_angles = _compute_tilt_angles_for_floating_turbines(

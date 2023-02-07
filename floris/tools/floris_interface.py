@@ -145,7 +145,7 @@ class FlorisInterface(LoggerBase):
                 )
             )
         self.floris.farm.yaw_angles = yaw_angles
-        
+
         # TODO is this required?
         if tilt_angles is not None:
             self.floris.farm.tilt_angles = tilt_angles

@@ -175,7 +175,10 @@ def test_regression_tandem(sample_inputs_fixture):
     velocities = floris.flow_field.u
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
-    ref_tilt_cp_cts = np.ones((n_wind_directions, n_wind_speeds, n_turbines)) * floris.farm.ref_tilt_cp_cts
+    ref_tilt_cp_cts = (
+        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
+        * floris.farm.ref_tilt_cp_cts
+    )
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
@@ -340,7 +343,10 @@ def test_regression_yaw(sample_inputs_fixture):
     velocities = floris.flow_field.u
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
-    ref_tilt_cp_cts = np.ones((n_wind_directions, n_wind_speeds, n_turbines)) * floris.farm.ref_tilt_cp_cts
+    ref_tilt_cp_cts = (
+        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
+        * floris.farm.ref_tilt_cp_cts
+    )
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
@@ -433,7 +439,10 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     velocities = floris.flow_field.u
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
-    ref_tilt_cp_cts = np.ones((n_wind_directions, n_wind_speeds, n_turbines)) * floris.farm.ref_tilt_cp_cts
+    ref_tilt_cp_cts = (
+        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
+        * floris.farm.ref_tilt_cp_cts
+    )
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
@@ -525,7 +534,10 @@ def test_regression_secondary_steering(sample_inputs_fixture):
     velocities = floris.flow_field.u
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
-    ref_tilt_cp_cts = np.ones((n_wind_directions, n_wind_speeds, n_turbines)) * floris.farm.ref_tilt_cp_cts
+    ref_tilt_cp_cts = (
+        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
+        * floris.farm.ref_tilt_cp_cts
+    )
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(

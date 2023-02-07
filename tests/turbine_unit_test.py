@@ -294,7 +294,10 @@ def test_ct():
     )
 
     truth_index = turbine_floating_data["power_thrust_table"]["wind_speed"].index(wind_speed)
-    np.testing.assert_allclose(thrust, turbine_floating_data["power_thrust_table"]["thrust"][truth_index])
+    np.testing.assert_allclose(
+        thrust,
+        turbine_floating_data["power_thrust_table"]["thrust"][truth_index]
+    )
 
 
 def test_power():
@@ -512,7 +515,9 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, 1, N_TURBINES)),
         ref_tilt_cp_ct=np.array([turbine_floating.ref_tilt_cp_ct] * N_TURBINES),
         pT=np.array([turbine_floating.pT] * N_TURBINES),
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES),
+        tilt_interp=np.array(
+            [(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES
+        ),
         correct_cp_ct_for_tilt=np.array([[[True] * N_TURBINES]]),
         rotor_effective_velocities=wind_speed_N_TURBINES,
     )
@@ -525,7 +530,9 @@ def test_compute_tilt_angles_for_floating_turbines():
 
     wind_speed = 25.0
     rotor_effective_velocities = average_velocity(wind_speed * np.ones((1, 1, 1, 3, 3)))
-    rotor_effective_velocities_N_TURBINES = average_velocity(wind_speed * np.ones((1, 1, N_TURBINES, 3, 3)))
+    rotor_effective_velocities_N_TURBINES = average_velocity(
+        wind_speed * np.ones((1, 1, N_TURBINES, 3, 3))
+    )
 
     turbine_floating_data = SampleInputs().turbine_floating
     turbine_floating = Turbine.from_dict(turbine_floating_data)
@@ -549,7 +556,9 @@ def test_compute_tilt_angles_for_floating_turbines():
     tilt_N_turbines = _compute_tilt_angles_for_floating_turbines(
         turbine_type_map=np.array(turbine_type_map),
         tilt_angle=5.0*np.ones((1, 1, N_TURBINES)),
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES),
+        tilt_interp=np.array(
+            [(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES
+        ),
         rotor_effective_velocities=rotor_effective_velocities_N_TURBINES,
     )
 
