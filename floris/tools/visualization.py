@@ -13,14 +13,18 @@
 # See https://floris.readthedocs.io for documentation
 from __future__ import annotations
 
+import copy
 from typing import Union
 
 import matplotlib as mpl
 import matplotlib.colors as mplcolors
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from matplotlib import rcParams
 
+from floris.simulation import Floris
+from floris.tools.cut_plane import CutPlane
 from floris.tools.floris_interface import FlorisInterface
 from floris.utilities import rotate_coordinates_rel_west
 
@@ -384,3 +388,127 @@ def plot_rotor_values(
 
     if show:
         plt.show()
+
+def calculate_horizontal_plane_with_turbines(
+    fi_in,
+    x_resolution=200,
+    y_resolution=200,
+    x_bounds=None,
+    y_bounds=None,
+    wd=None,
+    ws=None,
+    yaw_angles=None,
+) -> CutPlane:
+        """
+        This function creates a :py:class:`~.tools.cut_plane.CutPlane` by
+        adding an additional turbine to the farm and moving it through every
+        a regular grid throughout the flow field. This method allows for
+        visualizing wake models that do not support the FullFlowGrid and
+        its associated solver. As the new turbine is moved around the flow
+        field, the velocities at its rotor are stored in local variables,
+        and the flow field is reset to its initial state for every new
+        location. Then, the local velocities are put into a DataFrame and
+        then into a CutPlane. This method is much slower than
+        `FlorisInterface.calculate_horizontal_plane`, but it is helpful
+        for models where the visualization capability is not yet available.
+
+        Args:
+            fi_in (:py:class:`floris.tools.floris_interface.FlorisInterface`):
+                Preinitialized FlorisInterface object.
+            x_resolution (float, optional): Output array resolution. Defaults to 200 points.
+            y_resolution (float, optional): Output array resolution. Defaults to 200 points.
+            x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
+            y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
+            wd (float, optional): Wind direction setting. Defaults to None.
+            ws (float, optional): Wind speed setting. Defaults to None.
+            yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
+
+        Returns:
+            :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
+        """
+
+        # Make a local copy of fi to avoid editing passed in fi
+        fi = copy.deepcopy(fi_in)
+
+        # If wd/ws not provided, use what is set in fi
+        if wd is None:
+            wd = fi.floris.flow_field.wind_directions
+        if ws is None:
+            ws = fi.floris.flow_field.wind_speeds
+        fi.check_wind_condition_for_viz(wd=wd, ws=ws)
+
+        # Set the ws and wd
+        fi.reinitialize(wind_directions=wd, wind_speeds=ws)
+
+        # Re-set yaw angles
+        if yaw_angles is not None:
+            fi.floris.farm.yaw_angles = yaw_angles
+
+        # Now place the yaw_angles back into yaw_angles
+        # to be sure not None
+        yaw_angles = fi.floris.farm.yaw_angles
+
+        # Grab the turbine layout
+        layout_x = copy.deepcopy(fi.layout_x)
+        layout_y = copy.deepcopy(fi.layout_y)
+        D = fi.floris.farm.rotor_diameters_sorted[0, 0, 0]
+
+        # Declare a new layout array with an extra turbine
+        layout_x_test = np.append(layout_x,[0])
+        layout_y_test = np.append(layout_y,[0])
+        yaw_angles = np.append(yaw_angles, np.zeros([len(wd), len(ws), 1]), axis=2)
+
+        # Get a grid of points test test
+        if x_bounds is None:
+            x_bounds = (np.min(layout_x) - 2 * D, np.max(layout_x) + 10 * D)
+
+        if y_bounds is None:
+            y_bounds = (np.min(layout_y) - 2 * D, np.max(layout_y) + 2 * D)
+
+        # Now generate a list of points
+        x_points = np.linspace(x_bounds[0], x_bounds[1], x_resolution)
+        y_points = np.linspace(y_bounds[0], y_bounds[1], y_resolution)
+        num_points = len(x_points) * len(y_points)
+
+        # Now loop over the points
+        x_results = np.zeros(num_points)
+        y_results = np.zeros(num_points)
+        z_results = np.zeros(num_points)
+        u_results = np.zeros(num_points)
+        v_results = np.zeros(num_points)
+        w_results = np.zeros(num_points)
+        idx = 0
+        for y in y_points:
+            for x in x_points:
+
+                # Save the x and y results
+                x_results[idx] = x
+                y_results[idx] = y
+
+                # Place the test turbine at this location and calculate wake
+                layout_x_test[-1] = x
+                layout_y_test[-1] = y
+                fi.reinitialize(layout_x = layout_x_test, layout_y = layout_y_test)
+                fi.calculate_wake(yaw_angles=yaw_angles)
+
+                # Get the velocity of that test turbines central point
+                center_point = int(np.floor(fi.floris.flow_field.u[0,0,-1].shape[0] / 2.0))
+                u_results[idx] = fi.floris.flow_field.u[0,0,-1,center_point,center_point]
+
+                # Increment index
+                idx = idx + 1
+
+        # Make a dataframe
+        df = pd.DataFrame({
+            'x1':x_results,
+            'x2':y_results,
+            'x3':z_results,
+            'u':u_results,
+            'v':v_results,
+            'w':w_results,
+        })
+
+        # Convert to a cut_plane
+        horizontal_plane = CutPlane(df, x_resolution, y_resolution, "z")
+
+        return horizontal_plane
