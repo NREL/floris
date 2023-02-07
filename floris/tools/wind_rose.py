@@ -22,7 +22,6 @@ import pickle
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-# from pyproj import Proj
 import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
@@ -481,6 +480,11 @@ class WindRose:
         Returns:
             scipy.interpolate.LinearNDInterpolant: Linear interpolant for the
             wind rose currently available in the class (self.df).
+
+        Example:
+            wr = wind_rose.WindRose()
+            wr.make_wind_rose_from_user_data(...)
+            freq_floris = wr.interpolate(floris_wind_direction_grid, floris_wind_speed_grid)
         """
         if method == "linear":
             interpolator = LinearNDInterpolator
