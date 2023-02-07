@@ -1047,11 +1047,11 @@ def full_flow_sequential_solver(
     for i in range(flow_field_grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
+        x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
         x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
+        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
         y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
+        z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
         z_i = z_i[:, :, :, None, None]
 
         u_i = turbine_grid_flow_field.u_sorted[:, :, i:i+1]
