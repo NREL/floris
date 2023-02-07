@@ -86,8 +86,8 @@ wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile"
 # a slower version which scans a turbine model to produce the horizontal flow
 horizontal_plane_scan_turbine = calculate_horizontal_plane_with_turbines(
     fi,
-    x_resolution=200,
-    y_resolution=200,
+    x_resolution=20,
+    y_resolution=10,
     yaw_angles=np.array([[[25.,0.,0.]]]),
 )
 
