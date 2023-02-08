@@ -484,9 +484,9 @@ class PowerThrustTable(FromDictMixin):
 
         # Remove any duplicate wind speed entries
         _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
-        object.__setattr__(self, "power", self.power[duplicate_filter])
-        object.__setattr__(self, "thrust", self.thrust[duplicate_filter])
-        object.__setattr__(self, "wind_speed", self.wind_speed[duplicate_filter])
+        self.power = self.power[duplicate_filter]
+        self.thrust = self.thrust[duplicate_filter]
+        self.wind_speed = self.wind_speed[duplicate_filter]
 
 
 @define
@@ -517,8 +517,8 @@ class TiltTable(FromDictMixin):
 
         # Remove any duplicate wind speed entries
         _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
-        object.__setattr__(self, "tilt", self.tilt[duplicate_filter])
-        object.__setattr__(self, "wind_speeds", self.wind_speeds[duplicate_filter])
+        self.tilt = self.tilt[duplicate_filter]
+        self.wind_speeds = self.wind_speeds[duplicate_filter]
 
 
 @define
