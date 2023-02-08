@@ -101,47 +101,47 @@ class Farm(BaseClass):
                     " a single turbine_type value."
                 )
 
-        self.turbine_definitions = copy.deepcopy(self.turbine_type)
-        for i, val in enumerate(self.turbine_type):
-            if type(val) is str:
-                fname = (self.turbine_library / val).with_suffix(".yaml")
-                if not fname.is_file():
-                    # Change to the internal turbine library and check again
-                    fname = (self.turbine_library / val).with_suffix(".yaml")
-                    if not fname.exists():
-                        raise FileNotFoundError(
-                            f"User-selected turbine defintion `{val}` does not exist in the"
-                            f" user-specified turbine library: {self.turbine_library} or the"
-                            f" internal FLORIS turbine library: {default_turbine_library}"
-                        )
-                self.turbine_definitions[i] = load_yaml(fname)
-
-                # This is a temporary block of code that catches that ref_density_cp_ct
-                # is not defined in the yaml file and forces it in
-                # A warning is issued letting the user know in future versions defining
-                # this value explicitly will be required
-                if "ref_density_cp_ct" not in self.turbine_definitions[i]:
-                    self.logger.warn(
-                        f"The value ref_density_cp_ct is not defined in the file {fname}."
-                        "This value is not the simulated air density but is the density "
-                        "at which the cp/ct curves are defined. In previous versions, this "
-                        "was assumed to be 1.225. Future versions of FLORIS will give an error "
-                        "if this value is not explicitly defined. Currently, this value is "
-                        "being set to the prior default value of 1.225."
-                    )
-                    self.turbine_definitions[i]['ref_density_cp_ct'] = 1.225
-
         # If the user specified the default location, do not check against duplicated definitions
-        if self.turbine_library != default_turbine_library:
-            unique_turbines = np.unique(self.turbine_type)
-            for turbine_fn in unique_turbines:
-                in_external = (self.turbine_library / turbine_fn).with_suffix(".yaml").exists()
-                in_internal = (default_turbine_library / turbine_fn).with_suffix(".yaml").exists()
-                if in_external and in_internal:
-                    raise ValueError(
-                        f"The turbine type: {turbine_fn} exists in both the internal and external"
-                        " turbine library."
-                    )
+        turbine_map = {}
+        unique_turbines = np.unique(self.turbine_type)
+        for turbine_fn in unique_turbines:
+            # Check if the file exists in the internal and/or external libary
+            internal_fn = (default_turbine_library / turbine_fn).with_suffix(".yaml")
+            external_fn = (self.turbine_library / turbine_fn).with_suffix(".yaml")
+            in_internal = internal_fn.exists()
+            in_external = external_fn.exists()
+
+            # If an external library is used, and the file is a duplicate with what already exists,
+            # then raise an error
+            if self.turbine_library != default_turbine_library and in_external and in_internal:
+                raise ValueError(
+                    f"The turbine type: {turbine_fn} exists in both the internal and external"
+                    " turbine library."
+                )
+            if in_internal:
+                full_path = internal_fn
+            elif in_external:
+                full_path = external_fn
+            else:
+                raise ValueError(
+                    f"The turbine type: {turbine_fn} exists in both the internal and external"
+                    " turbine library."
+                )
+            turbine_map[turbine_fn] = load_yaml(full_path)
+
+            # Log a warning if the reference air density doesn't exist
+            if "ref_density_cp_ct" not in turbine_map[turbine_fn]:
+                self.logger.warn(
+                    f"The value ref_density_cp_ct is not defined in the file {full_path}."
+                    "This value is not the simulated air density but is the density "
+                    "at which the cp/ct curves are defined. In previous versions, this "
+                    "was assumed to be 1.225. Future versions of FLORIS will give an error "
+                    "if this value is not explicitly defined. Currently, this value is "
+                    "being set to the prior default value of 1.225."
+                )
+                turbine_map[turbine_fn]['ref_density_cp_ct'] = 1.225
+
+        self.turbine_definitions = [copy.deepcopy(turbine_map[name]) for name in self.turbine_type]
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
