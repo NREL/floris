@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import copy
+import json
 from pathlib import Path
 from typing import Any, List
 
@@ -103,34 +104,39 @@ class Farm(BaseClass):
 
         # If the user specified the default location, do not check against duplicated definitions
         turbine_map = {}
-        unique_turbines = np.unique(self.turbine_type)
-        for turbine_fn in unique_turbines:
-            # Check if the file exists in the internal and/or external libary
-            internal_fn = (default_turbine_library / turbine_fn).with_suffix(".yaml")
-            external_fn = (self.turbine_library / turbine_fn).with_suffix(".yaml")
-            in_internal = internal_fn.exists()
-            in_external = external_fn.exists()
+        unique_turbines = [json.loads(el) for el in {json.dumps(el) for el in self.turbine_type}]
+        for turbine in unique_turbines:
 
-            # If an external library is used, and the file is a duplicate with what already exists,
-            # then raise an error
-            if self.turbine_library != default_turbine_library and in_external and in_internal:
-                raise ValueError(
-                    f"The turbine type: {turbine_fn} exists in both the internal and external"
-                    " turbine library."
-                )
-            if in_internal:
-                full_path = internal_fn
-            elif in_external:
-                full_path = external_fn
-            else:
-                raise ValueError(
-                    f"The turbine type: {turbine_fn} exists in both the internal and external"
-                    " turbine library."
-                )
-            turbine_map[turbine_fn] = load_yaml(full_path)
+            # If the passed data are already turbine dictionaries, skip the file loading
+            if isinstance(turbine, str):
+                # Check if the file exists in the internal and/or external libary
+                internal_fn = (default_turbine_library / turbine).with_suffix(".yaml")
+                external_fn = (self.turbine_library / turbine).with_suffix(".yaml")
+                in_internal = internal_fn.exists()
+                in_external = external_fn.exists()
+
+                # If an external library is used, and the file is a duplicate with what already
+                # exists, then raise an error
+                if self.turbine_library != default_turbine_library and in_external and in_internal:
+                    raise ValueError(
+                        f"The turbine type: {turbine} exists in both the internal and external"
+                        " turbine library."
+                    )
+                if in_internal:
+                    full_path = internal_fn
+                elif in_external:
+                    full_path = external_fn
+                else:
+                    raise ValueError(
+                        f"The turbine type: {turbine} exists in both the internal and external"
+                        " turbine library."
+                    )
+                turbine_map[turbine] = turbine = load_yaml(full_path)
+            elif isinstance(turbine, dict):
+                turbine_map[turbine["turbine_type"]] = turbine
 
             # Log a warning if the reference air density doesn't exist
-            if "ref_density_cp_ct" not in turbine_map[turbine_fn]:
+            if "ref_density_cp_ct" not in turbine:
                 self.logger.warn(
                     f"The value ref_density_cp_ct is not defined in the file {full_path}."
                     "This value is not the simulated air density but is the density "
@@ -139,9 +145,14 @@ class Farm(BaseClass):
                     "if this value is not explicitly defined. Currently, this value is "
                     "being set to the prior default value of 1.225."
                 )
-                turbine_map[turbine_fn]['ref_density_cp_ct'] = 1.225
+                turbine['ref_density_cp_ct'] = 1.225
+                turbine_map[turbine["turbine_type"]] = turbine
 
-        self.turbine_definitions = [copy.deepcopy(turbine_map[name]) for name in self.turbine_type]
+        self.turbine_definitions = [
+            copy.deepcopy(turbine_map[el]) if isinstance(el, str)
+            else copy.deepcopy(turbine_map[el["turbine_type"]])
+            for el in self.turbine_type
+        ]
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
