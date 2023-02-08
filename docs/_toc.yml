@@ -3,11 +3,21 @@
 
 format: jb-book
 root: intro
-chapters:
-- file: installation
-- file: background_concepts
-- file: examples
-- file: input_reference
-- file: dev_guide
-- file: api_docs
-- file: code_quality
+parts:
+  - caption: Getting Started
+    chapters:
+    # - file: intro
+    - file: installation
+    - file: dev_guide
+    - file: code_quality
+
+  - caption: User Referece
+    chapters:
+    - file: floris_101
+    - file: input_reference
+    - file: examples
+    - file: api_docs
+
+  - caption: Stience
+    chapters:
+    - file: reference_placeholder

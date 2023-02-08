@@ -1,17 +1,25 @@
 (installation)=
 # Installation
 
+FLORIS can be installed by downloading the source code or via the PyPI package manager with `pip`.
+The following sections detail how download and install FLORIS for each use case.
 
-```{note}
-If upgrading from v2, it is highly recommended to install FLORIS V3 into a new virtual environment.
-```
+(requirements)=
+## Requirements
+
+FLORIS is intended to be used with Python 3.8, 3.9, or 3.10, and it is highly recommended that users
+work within a virtual environment for both working with and working on FLORIS, to maintain a clean
+and sandboxed environment. The simplest way to get started with virtual environments is through
+[conda](https://docs.conda.io/en/latest/miniconda.html).
 
 Installing into a Python environment that contains FLORIS v2 may cause conflicts.
 If you intend to use [pyOptSparse](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/)
 with FLORIS, it is recommended to install that package first before installing FLORIS.
 
-FLORIS can be installed by downloading the source code or via the PyPI package manager with `pip`.
-The following sections detail how download and install FLORIS for each use case.
+
+```{note}
+If upgrading from v2, it is highly recommended to install FLORIS V3 into a new virtual environment.
+```
 
 (pip)=
 ## Pip
@@ -26,10 +34,7 @@ pip install floris
 ## Source Code Installation
 
 Developers and anyone who intends to inspect the source code can install FLORIS by downloading the
-git repository from GitHub with ``git`` and use ``pip`` to locally install it. It is highly
-recommended to use a Python virtual environment manager such as
-[conda](https://docs.conda.io/en/latest/miniconda.html) in order to maintain a clean and sandboxed
-environment. The following commands in a terminal or shell will download and install FLORIS.
+git repository from GitHub with ``git`` and use ``pip`` to locally install it. The following commands in a terminal or shell will download and install FLORIS.
 
 ```bash
 # Download the source code from the `main` branch
