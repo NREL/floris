@@ -6,6 +6,8 @@ root: intro
 chapters:
 - file: installation
 - file: background_concepts
+  sections:
+  - file: floating_wind_turbine
 - file: examples
 - file: input_reference
 - file: dev_guide

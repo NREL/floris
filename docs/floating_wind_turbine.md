@@ -1,0 +1,9 @@
+
+# FLoating Wind Turbine Modeling
+
+Here are the things to consider when modeling floating wind turbines.
+You can model tilt effects by ...
+There's a concept of reference values for tilt that have the effect of ...
+
+**NOTE** No models currently use this functionality, but it will be available with
+the inclusion of an upcoming wake model. See https://...
