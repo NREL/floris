@@ -71,7 +71,7 @@ but some may have a dedicated configuration file.
 
 Import lines can easily get out of hand and cause unnecessary distraction
 in source code files. [isort](https://pycqa.github.io/isort/index.html)
-it used to automatically manage imports in the source code. It can be run
+is used to automatically manage imports in the source code. It can be run
 directly with the following command:
 
 ```bash
