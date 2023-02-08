@@ -104,7 +104,7 @@ def _rotor_velocity_tilt_correction(
 ) -> NDArrayFloat:
     # Compute the tilt, if using floating turbines
     old_tilt_angle = copy.deepcopy(tilt_angle)
-    tilt_angle = _compute_tilt_angles_for_floating_turbines(
+    tilt_angle = compute_tilt_angles_for_floating_turbines(
         turbine_type_map,
         tilt_angle,
         tilt_interp,
@@ -121,7 +121,7 @@ def _rotor_velocity_tilt_correction(
     return rotor_effective_velocities
 
 
-def _compute_tilt_angles_for_floating_turbines(
+def compute_tilt_angles_for_floating_turbines(
     turbine_type_map: NDArrayObject,
     tilt_angle: NDArrayFloat,
     tilt_interp: NDArrayObject,
@@ -329,7 +329,7 @@ def Ct(
 
     # Compute the tilt, if using floating turbines
     old_tilt_angle = copy.deepcopy(tilt_angle)
-    tilt_angle = _compute_tilt_angles_for_floating_turbines(
+    tilt_angle = compute_tilt_angles_for_floating_turbines(
         turbine_type_map,
         tilt_angle,
         tilt_interp,

@@ -26,10 +26,10 @@ from floris.simulation import (
     Turbine,
 )
 from floris.simulation.turbine import (
-    _compute_tilt_angles_for_floating_turbines,
     _filter_convert,
     _rotor_velocity_tilt_correction,
     _rotor_velocity_yaw_correction,
+    compute_tilt_angles_for_floating_turbines,
     PowerThrustTable,
 )
 from tests.conftest import SampleInputs, WIND_SPEEDS
@@ -540,7 +540,7 @@ def test_compute_tilt_angles_for_floating_turbines():
     turbine_type_map = turbine_type_map[None, None, :]
 
     # Single turbine
-    tilt = _compute_tilt_angles_for_floating_turbines(
+    tilt = compute_tilt_angles_for_floating_turbines(
         turbine_type_map=np.array([turbine_type_map[:, :, 0]]),
         tilt_angle=5.0*np.ones((1, 1, 1)),
         tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
@@ -553,7 +553,7 @@ def test_compute_tilt_angles_for_floating_turbines():
     np.testing.assert_allclose(tilt, tilt_truth)
 
     # Mulitple turbines
-    tilt_N_turbines = _compute_tilt_angles_for_floating_turbines(
+    tilt_N_turbines = compute_tilt_angles_for_floating_turbines(
         turbine_type_map=np.array(turbine_type_map),
         tilt_angle=5.0*np.ones((1, 1, N_TURBINES)),
         tilt_interp=np.array(
