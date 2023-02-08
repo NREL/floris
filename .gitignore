@@ -32,9 +32,3 @@ examples/SLSQP.out
 
 # Log files
 *.log
-
-# User-specific files
-examples/ge*
-examples/q3_milestone
-examples/test_files*
-floris/simulation/wake_velocity/results*
