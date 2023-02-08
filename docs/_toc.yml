@@ -18,6 +18,6 @@ parts:
     - file: examples
     - file: api_docs
 
-  - caption: Stience
+  - caption: Theory and Background
     chapters:
     - file: reference_placeholder
