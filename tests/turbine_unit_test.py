@@ -576,8 +576,4 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     new_turb = Turbine.from_dict(dict1)
     dict2 = new_turb.as_dict()
 
-    print(dict1)
-    print(dict2)
-    print(dict1 == dict2)
-
     assert dict1 == dict2
