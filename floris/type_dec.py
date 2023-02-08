@@ -87,13 +87,15 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
 
 
 def convert_to_path(fn: str | Path) -> Path:
-    """Converts an input string or pathlib.Path object to a fully resolved pathlib.Path
+    """Converts an input string or pathlib.Path object to a fully resolved ``pathlib.Path``
     object.
+
     Args:
         fn (str | Path): The user input file path or file name.
+
     Raises:
-        AttributeError: _description_
-        AttributeError: _description_
+        TypeError: Raised if :py:attr:`fn` is neither a :py:obj:`str`, nor a :py:obj:`pathlib.Path`.
+
     Returns:
         Path: A resolved pathlib.Path object.
     """
