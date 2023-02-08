@@ -10,7 +10,7 @@ post your questions to [GitHub Discussions](https://github.com/NREL/floris/discu
 
 There are a few steps that nearly all contributors will need to go through to get started with
 making contributions to FLORIS. Each of these steps will be addressed in a later section of the
-developer's guide, so please read on to learn more about each of these steps
+developer's guide, so please read on to learn more about each of these steps.
 
 1. Create a fork of FLORIS on GitHub
 2. Clone the repository
