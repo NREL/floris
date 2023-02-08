@@ -24,8 +24,8 @@ jobs:
         pip install -e ".[develop]"
     - uses: pre-commit/action@v3.0.0
     - name: Run tests
+      if: success() || failure()  # Run this step even if the linting step fails
       run: |
-        # pytest tests/
         # -rA displays the captured output for all tests after they're run
         # See the docs: https://doc.pytest.org/en/latest/reference/reference.html#command-line-flags
         pytest -rA tests/ --ignore tests/timing.py --ignore tests/profiling.py
@@ -40,4 +40,5 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         fail_ci_if_error: true
