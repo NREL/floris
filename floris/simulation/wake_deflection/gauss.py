@@ -226,6 +226,7 @@ class GaussGeometricDeflection(BaseModel):
     delta_0_D: float = field(default=0.0) # TODO: check default
     deflection_rate: float = field(default=1.0) # TODO: check default
     wim_gain_deflection: float = field(default=0.0) # TODO: check default
+    yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default
 
     def prepare_function(
         self,
@@ -611,6 +612,14 @@ def yaw_added_turbulence_mixing(
 
     return I_mixing[:,:,None,None,None]
 
+def yaw_added_wake_mixing(
+    axial_induction_i,
+    yaw_angle_i,
+    downstream_distance_D_i,
+    yaw_added_mixing_gain
+):
+    return axial_induction_i * yaw_added_mixing_gain * (1 - cosd(yaw_angle_i))\
+        / downstream_distance_D_i
 
 # def yaw_added_recovery_correction(
 #     self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord

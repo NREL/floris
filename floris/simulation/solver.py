@@ -29,8 +29,10 @@ from floris.simulation.wake import WakeModelManager
 from floris.simulation.wake_deflection.gauss import (
     calculate_transverse_velocity,
     wake_added_yaw,
-    yaw_added_turbulence_mixing
+    yaw_added_turbulence_mixing,
+    yaw_added_wake_mixing
 )
+from floris.utilities import cosd
 
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
@@ -1082,7 +1084,20 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         # TODO: Does tilt affect other aspects of the model, as yaw does?
 
         if model_manager.enable_secondary_steering:
-            raise NotImplementedError("Secondary effects model not yet developed.")
+            raise NotImplementedError(
+                "Secondary steering not available for this model.")
+
+        if model_manager.enable_transverse_velocities:
+            raise NotImplementedError(
+                "Transverse velocities not used in this model.")
+
+        if model_manager.enable_yaw_added_recovery:
+            wake_induced_mixing_i += yaw_added_wake_mixing(
+                axial_induction_i,
+                yaw_angle_i,
+                1,
+                model_manager.deflection_model.yaw_added_mixing_gain
+            )
 
         # Model calculations
         # NOTE: exponential
@@ -1096,12 +1111,6 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             rotor_diameter_i,
             **deflection_model_args
         )
-
-        if model_manager.enable_transverse_velocities:
-            raise NotImplementedError("Secondary effects model not yet developed.")
-
-        if model_manager.enable_yaw_added_recovery:
-            raise NotImplementedError("Secondary effects model not yet developed.")
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
@@ -1126,10 +1135,21 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
-        area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4)) / (grid.grid_resolution * grid.grid_resolution)
-        if model_manager.model_strings["turbulence_model"] == "wake_induced_mixing":
-            wake_induced_mixing_factor[:,:,:,i] = area_overlap * \
-                axial_induction_i[:,:,:,0,0] / downstream_distance_D[:,:,:,i]
+        area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4))\
+            / (grid.grid_resolution * grid.grid_resolution)
+
+        # Compute wake induced mixing factor
+        wake_induced_mixing_factor[:,:,:,i] = \
+            area_overlap * axial_induction_i[:,:,:,0,0] \
+            / downstream_distance_D[:,:,:,i]
+        if model_manager.enable_yaw_added_recovery:
+            wake_induced_mixing_factor[:,:,:,i] += \
+                area_overlap * yaw_added_wake_mixing(
+                axial_induction_i[:,:,:,0,0],
+                yaw_angle_i[:,:,:,0,0],
+                downstream_distance_D[:,:,:,i],
+                model_manager.deflection_model.yaw_added_mixing_gain
+            )
         area_overlap = area_overlap[:, :, :, None, None]
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
