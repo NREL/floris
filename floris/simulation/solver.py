@@ -1073,8 +1073,6 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
-        wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :, None].\
-            sum(axis=3, keepdims=1)
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -1092,12 +1090,18 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
                 "Transverse velocities not used in this model.")
 
         if model_manager.enable_yaw_added_recovery:
-            wake_induced_mixing_i += yaw_added_wake_mixing(
-                axial_induction_i,
-                yaw_angle_i,
-                1,
-                model_manager.deflection_model.yaw_added_mixing_gain
-            )
+            # Influence of yawing on turbine's own wake
+            wake_induced_mixing_factor[:, :, i:i+1, i:i+1] += \
+                yaw_added_wake_mixing(
+                    axial_induction_i[:,:,:,:,0],
+                    yaw_angle_i[:,:,:,:,0],
+                    1,
+                    model_manager.deflection_model.yaw_added_mixing_gain
+                )
+            
+        # Extract total wake induced mixing for turbine i
+        wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :, None].\
+            sum(axis=3, keepdims=1)
 
         # Model calculations
         # NOTE: exponential
@@ -1139,7 +1143,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             / (grid.grid_resolution * grid.grid_resolution)
 
         # Compute wake induced mixing factor
-        wake_induced_mixing_factor[:,:,:,i] = \
+        wake_induced_mixing_factor[:,:,:,i] += \
             area_overlap * axial_induction_i[:,:,:,0,0] \
             / downstream_distance_D[:,:,:,i]
         if model_manager.enable_yaw_added_recovery:
@@ -1259,7 +1263,12 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             [:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
-            raise NotImplementedError("Secondary effects model not yet developed.")
+            raise NotImplementedError(
+                "Secondary steering not available for this model.")
+
+        if model_manager.enable_transverse_velocities:
+            raise NotImplementedError(
+                "Transverse velocities not used in this model.")
 
         # Model calculations
         # NOTE: exponential
@@ -1273,9 +1282,6 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             rotor_diameter_i,
             **deflection_model_args
         )
-
-        if model_manager.enable_transverse_velocities:
-            raise NotImplementedError("Secondary effects model not yet developed.")
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
