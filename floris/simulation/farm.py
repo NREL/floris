@@ -35,7 +35,7 @@ from floris.type_dec import (
 from floris.utilities import load_yaml, Vec3
 
 
-default_turbine_library = Path(__file__).parents[1] / "turbine_library"
+default_turbine_library_path = Path(__file__).parents[1] / "turbine_library_path"
 
 
 @define
@@ -55,8 +55,8 @@ class Farm(BaseClass):
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
     turbine_type: List = field()
-    turbine_library: Path = field(
-        default=default_turbine_library, converter=convert_to_path
+    turbine_library_path: Path = field(
+        default=default_turbine_library_path, converter=convert_to_path
     )
 
     turbine_definitions: dict = field(init=False)
@@ -84,7 +84,7 @@ class Farm(BaseClass):
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
-    @turbine_library.validator
+    @turbine_library_path.validator
     def check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
         """Ensures that the input to `library_path` exists and is a directory."""
         if not value.is_dir():
@@ -110,14 +110,15 @@ class Farm(BaseClass):
             # If the passed data are already turbine dictionaries, skip the file loading
             if isinstance(turbine, str):
                 # Check if the file exists in the internal and/or external libary
-                internal_fn = (default_turbine_library / turbine).with_suffix(".yaml")
-                external_fn = (self.turbine_library / turbine).with_suffix(".yaml")
+                internal_fn = (default_turbine_library_path / turbine).with_suffix(".yaml")
+                external_fn = (self.turbine_library_path / turbine).with_suffix(".yaml")
                 in_internal = internal_fn.exists()
                 in_external = external_fn.exists()
 
                 # If an external library is used, and the file is a duplicate with what already
                 # exists, then raise an error
-                if self.turbine_library != default_turbine_library and in_external and in_internal:
+                is_separate_path = self.turbine_library_path != default_turbine_library_path
+                if is_separate_path and in_external and in_internal:
                     raise ValueError(
                         f"The turbine type: {turbine} exists in both the internal and external"
                         " turbine library."
