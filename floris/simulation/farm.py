@@ -13,12 +13,12 @@
 from __future__ import annotations
 
 import copy
-import json
 from pathlib import Path
 from typing import Any, List
 
 import attrs
 import numpy as np
+import yaml
 from attrs import define, field
 
 from floris.simulation import (
@@ -104,7 +104,11 @@ class Farm(BaseClass):
 
         # If the user specified the default location, do not check against duplicated definitions
         turbine_map = {}
-        unique_turbines = [json.loads(el) for el in {json.dumps(el) for el in self.turbine_type}]
+        unique_turbines = [
+            yaml.safe_load(el_j)
+            for el_j in {yaml.dump(el_i, default_flow_style=False)
+            for el_i in self.turbine_type}
+        ]
         for turbine in unique_turbines:
 
             # If the passed data are already turbine dictionaries, skip the file loading
@@ -135,10 +139,11 @@ class Farm(BaseClass):
                 turbine_map[turbine] = turbine = load_yaml(full_path)
             elif isinstance(turbine, dict):
                 turbine_map[turbine["turbine_type"]] = turbine
+                full_path = turbine["turbine_type"]
 
             # Log a warning if the reference air density doesn't exist
             if "ref_density_cp_ct" not in turbine:
-                self.logger.warn(
+                self.logger.warning(
                     f"The value ref_density_cp_ct is not defined in the file {full_path}."
                     "This value is not the simulated air density but is the density "
                     "at which the cp/ct curves are defined. In previous versions, this "
