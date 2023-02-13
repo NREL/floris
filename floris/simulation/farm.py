@@ -35,7 +35,7 @@ from floris.type_dec import (
 from floris.utilities import load_yaml, Vec3
 
 
-default_turbine_library_path = Path(__file__).parents[1] / "turbine_library_path"
+default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
 
 
 @define
