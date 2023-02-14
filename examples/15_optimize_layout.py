@@ -51,7 +51,7 @@ boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 
 D = 126.0 # rotor diameter for the NREL 5MW
 layout_x = [0, 0, 6 * D, 6 * D]
 layout_y = [0, 4 * D, 0, 4 * D]
-fi.reinitialize(layout=(layout_x, layout_y))
+fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
 # Setup the optimization problem
 layout_opt = LayoutOptimizationScipy(fi, boundaries, freq=freq)
