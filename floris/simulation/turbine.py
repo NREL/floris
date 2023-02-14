@@ -252,11 +252,6 @@ def power(
     # TODO: check this - where is it?
     # P = 1/2 rho A V^3 Cp
 
-    # NOTE: The below has a trivial performance hit for floats being passed (3.4% longer
-    # on a meaningless test), but is actually faster when an array is passed through
-    # That said, it adds overhead to convert the floats to 1-D arrays, so I don't
-    # recommend just converting all values to arrays
-
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, rotor_effective_velocities)
