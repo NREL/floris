@@ -64,8 +64,15 @@ class Farm(BaseClass):
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
+    pPs: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+    pTs: NDArrayFloat = field(init=False, default=[])
     pTs_sorted: NDArrayFloat = field(init=False, default=[])
+    ref_tilt_cp_cts: NDArrayFloat = field(init=False, default=[])
+    ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
+    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
+    correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
+    turbine_fTilts: list = field(init=False, default=[])
 
     @layout_x.validator
     def check_x(self, instance: attrs.Attribute, value: Any) -> None:
