@@ -63,7 +63,7 @@ sol = layout_opt.optimize()
 print('... calcuating improvement in AEP')
 fi.calculate_wake()
 base_aep = fi.get_farm_AEP(freq=freq) / 1e6
-fi.reinitialize(layout=sol)
+fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
 fi.calculate_wake()
 opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
