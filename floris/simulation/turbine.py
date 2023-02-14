@@ -224,11 +224,9 @@ def power(
     given in Watts.
 
     Args:
-        air_density (NDArrayFloat[wd, ws, turbines]): The air density value(s) at each turbine.
         ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
-        velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at a turbine.
-        pP (NDArrayFloat[wd, ws, turbines]): The pP value(s) of the cosine exponent relating
-            the yaw misalignment angle to power for each turbine.
+        rotor_effective_velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The rotor
+            effective velocities at a turbine.
         power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
             for each turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
@@ -293,7 +291,15 @@ def Ct(
         velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at
             a turbine.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
-        fCt (NDArrayObject[wd, ws, turbines]): The thrust coefficient for each turbine.
+        tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
+        ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
+            that the Cp/Ct tables are defined at.
+        fCt (Iterable[tuple]): The thrust coefficient interpolation functions
+            for each turbine.
+        tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
+            turbine.
+        correct_cp_ct_for_tilt (NDArrayBool[wd, ws, turbines]): Boolean for determining if the
+            turbines Cp and Ct should be corrected for tilt.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
@@ -366,8 +372,16 @@ def axial_induction(
     Args:
         velocities (NDArrayFloat): The velocity field at each turbine; should be shape:
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
-        fCt (np.array): The thrust coefficient function for each
+        yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
+        tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
+        ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
+            that the Cp/Ct tables are defined at.
+        fCt (Iterable[tuple]): The thrust coefficient interpolation functions
+            for each turbine.
+        tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
+        correct_cp_ct_for_tilt (NDArrayBool[wd, ws, turbines]): Boolean for determining if the
+            turbines Cp and Ct should be corrected for tilt.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
@@ -566,10 +580,6 @@ class Turbine(BaseClass):
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
-    # floating_tilt_table: NDArrayFloat = field(
-    #     default={'tilt': [None], 'wind_speeds': [None]},
-    #     converter=TiltTable.from_dict,
-    # )
     floating_tilt_table = field(default=None)
     floating_correct_cp_ct_for_tilt = field(default=None)
 
