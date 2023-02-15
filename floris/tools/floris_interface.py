@@ -264,6 +264,7 @@ class FlorisInterface(LoggerBase):
         self,
         normal_vector="z",
         planar_coordinate=None,
+        rotate_to_inertial_frame=False,
     ):
         """
         Calculates velocity values through the
@@ -281,9 +282,15 @@ class FlorisInterface(LoggerBase):
             :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
         """
         # Get results vectors
-        x_flat = self.floris.grid.x_sorted[0, 0].flatten()
-        y_flat = self.floris.grid.y_sorted[0, 0].flatten()
-        z_flat = self.floris.grid.z_sorted[0, 0].flatten()
+        rotate_to_inertial_frame=True,
+        if (normal_vector == "z") and rotate_to_inertial_frame:
+            x_flat = self.floris.grid.x_sorted_inertial_frame[0, 0].flatten()
+            y_flat = self.floris.grid.y_sorted_inertial_frame[0, 0].flatten()
+            z_flat = self.floris.grid.z_sorted_inertial_frame[0, 0].flatten()
+        else:
+            x_flat = self.floris.grid.x_sorted[0, 0].flatten()
+            y_flat = self.floris.grid.y_sorted[0, 0].flatten()
+            z_flat = self.floris.grid.z_sorted[0, 0].flatten()
         u_flat = self.floris.flow_field.u_sorted[0, 0].flatten()
         v_flat = self.floris.flow_field.v_sorted[0, 0].flatten()
         w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
@@ -347,6 +354,7 @@ class FlorisInterface(LoggerBase):
         wd=None,
         ws=None,
         yaw_angles=None,
+        rotate_to_inertial_frame=False,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -402,6 +410,7 @@ class FlorisInterface(LoggerBase):
         df = self.get_plane_of_points(
             normal_vector="z",
             planar_coordinate=height,
+            rotate_to_inertial_frame=rotate_to_inertial_frame,
         )
 
         # Compute the cutplane

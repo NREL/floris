@@ -39,7 +39,8 @@ def plot_turbines(
     yaw_angles,
     rotor_diameters,
     color: str | None = None,
-    wind_direction: float = 270.0
+    wind_direction: float = 270.0,
+    rotate_to_inertial_frame=False,
 ):
     """
     Plot wind plant layout from turbine locations.
@@ -55,12 +56,16 @@ def plot_turbines(
     """
     if color is None:
         color = "k"
-
-    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(
-        np.array([wind_direction]),
-        coordinates_array
-    )
+    
+    if not rotate_to_inertial_frame:
+        coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
+        layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
+            np.array([wind_direction]),
+            coordinates_array
+        )
+    else:
+        layout_x = layout_x[None, None, :]
+        layout_y = layout_y[None, None, :]
 
     for x, y, yaw, d in zip(layout_x[0,0], layout_y[0,0], yaw_angles, rotor_diameters):
         R = d / 2.0
@@ -71,7 +76,7 @@ def plot_turbines(
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=None):
+def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=None, rotate_to_inertial_frame=False):
     """
     Wrapper function to plot turbines which extracts the data
     from a FLORIS interface object
@@ -86,6 +91,10 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
         fig, ax = plt.subplots()
     if yaw_angles is None:
         yaw_angles = fi.floris.farm.yaw_angles
+    
+    if rotate_to_inertial_frame:
+        yaw_angles = yaw_angles + (270.0 - fi.floris.flow_field.wind_directions[0])
+
     plot_turbines(
         ax,
         fi.layout_x,
@@ -94,10 +103,11 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
         fi.floris.farm.rotor_diameters[0, 0],
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
+        rotate_to_inertial_frame=rotate_to_inertial_frame,
     )
 
 
-def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
+def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, rotate_to_inertial_frame=False, **kwargs):
     """
     Adds index labels to a plot based on the given FlorisInterface.
     See the pyplot.annotate docs for more info:
@@ -109,15 +119,20 @@ def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
         fi (FlorisInterface): Simulation object to get the layout and index information.
         ax (plt.Axes): Axes object to add the labels.
     """
-    coordinates_array = np.array([
-        [x, y, 0.0]
-        for x, y in list(zip(fi.layout_x, fi.layout_y))
-    ])
-    wind_direction = fi.floris.flow_field.wind_directions[0]
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(
-        np.array([wind_direction]),
-        coordinates_array
-    )
+
+    if rotate_to_inertial_frame:
+        coordinates_array = np.array([
+            [x, y, 0.0]
+            for x, y in list(zip(fi.layout_x, fi.layout_y))
+        ])
+        wind_direction = fi.floris.flow_field.wind_directions[0]
+        layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
+            np.array([wind_direction]),
+            coordinates_array
+        )
+    else:
+        layout_x = fi.layout_x[None, None, :]
+        layout_y = fi.layout_y[None, None, :]
 
     for i in range(fi.floris.farm.n_turbines):
         ax.annotate(
@@ -148,15 +163,18 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
     if not ax:
         fig, ax = plt.subplots()
 
-    # Reshape UMesh internally
-    x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    u_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    Zm = np.ma.masked_where(np.isnan(u_mesh), u_mesh)
     rcParams["contour.negative_linestyle"] = "solid"
 
     # Plot the cut-through
-    contours = ax.contour(x1_mesh, x2_mesh, Zm, levels=levels, colors=colors, **kwargs)
+    contours = ax.tricontour(
+        cut_plane.df.x1,
+        cut_plane.df.x2,
+        cut_plane.df.u,
+        levels=levels,
+        colors=colors,
+        extend="both",
+        **kwargs,
+    )
 
     ax.clabel(contours, contours.levels, inline=True, fontsize=10, colors="black")
 
@@ -198,38 +216,34 @@ def visualize_cut_plane(
     if not ax:
         fig, ax = plt.subplots()
     if vel_component=='u':
-        vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        # vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if min_speed is None:
             min_speed = cut_plane.df.u.min()
         if max_speed is None:
             max_speed = cut_plane.df.u.max()
     elif vel_component=='v':
-        vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        # vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if min_speed is None:
             min_speed = cut_plane.df.v.min()
         if max_speed is None:
             max_speed = cut_plane.df.v.max()
     elif vel_component=='w':
-        vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        # vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if min_speed is None:
             min_speed = cut_plane.df.w.min()
         if max_speed is None:
             max_speed = cut_plane.df.w.max()
 
-    # Reshape to 2d for plotting
-    x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    Zm = np.ma.masked_where(np.isnan(vel_mesh), vel_mesh)
-
     # Plot the cut-through
-    im = ax.pcolormesh(
-        x1_mesh,
-        x2_mesh,
-        Zm,
-        cmap=cmap,
+    fig, ax = plt.subplots()
+    im = ax.tricontourf(
+        cut_plane.df.x1,
+        cut_plane.df.x2,
+        cut_plane.df.u,
         vmin=min_speed,
         vmax=max_speed,
-        shading="nearest"
+        cmap=cmap,
+        extend="both",
     )
 
     # Add line contour
