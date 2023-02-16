@@ -114,7 +114,15 @@ class FlowField(FromDictMixin):
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
-        self.turbulence_intensity_field = self.turbulence_intensity * np.ones((self.n_wind_directions, self.n_wind_speeds, len(grid.x_sorted), 1, 1))
+        self.turbulence_intensity_field = self.turbulence_intensity * np.ones(
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                np.shape(self.u_initial_sorted)[2],
+                1,
+                1,
+            )
+        )
         self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
 
     def finalize(self, unsorted_indices):
