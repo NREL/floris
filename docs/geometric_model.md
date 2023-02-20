@@ -1,0 +1,173 @@
+(theory/geometric model)=
+# Geometric model 
+
+FLORIS's "geometric" model has the same Gaussian wake shape as other popular 
+FLORIS models. However, the models that describe the wake width and deflection 
+have been reorganized to provide simpler tuning and data fitting.
+
+## Wake shape
+
+The velocity deficit at a point $(x, y, z)$ in the wake follows a Gaussian 
+curve, i.e.,
+$$ \frac{u}{U_\infty} = 1 - Ce^{-\frac{(y-\delta_y)^2}{2\sigma_y^2}
+   -\frac{(z-z_h-\delta_z)^2}{2\sigma_z^2}} $$
+where the $(x, y, z)$ origin is at the turbine location (at ground level).
+The terms $C$, $\sigma_y$, $\sigma_z$, $\delta_y$, and $\delta_z$ all depend 
+on the downstream location $x$.
+
+$C$ is the scaling factor for the Gaussian curve, defined as
+
+$$C = 1 - \sqrt{1 - \frac{\sigma_{y0} \sigma_{z0} C_T}{\sigma_y \sigma_z}}$$ 
+
+Here, $C_T$ is the turbine thrust coefficient, which includes any reduction 
+in thrust due to yaw or tilt of the turbine rotor. $\sigma_{y0}$ and 
+$\sigma_{z0}$ define the wake width at the turbine location $x=0$. Note that 
+this constrasts with FLORIS's 
+other Gaussian models, where $\sigma_{y0}$ and $\sigma_{z0}$ are defined at 
+the end of the near wake/beginning of the far wake, at some $x_0 > 0$.
+
+## Wake expansion
+The wake lateral and vertical widths, $\sigma_y$ and $\sigma_z$, respectively,
+are a function of downstream distance $x$. The expansion of the wake is 
+described by a user-tunable, piecewise linear function. This is simplest to 
+express as an integral of a piecewise constant wake expansion rate $k$, i.e.,
+
+$$ \sigma_{y}(x) = \int_{0}^x \sum_{i=0}^n k_i \mathbf{1}_{[b_{i}, b_{i+1})}
+(x') dx' + \sigma_{y0} $$
+
+Here, $\mathbf{1}_{[a, b)}(x)$ is the indicator function, which takes value 
+1 when $a \leq x < b$, and 0 otherwise. 
+The above function ensures that expansion rate $k_i$ applies only between 
+breakpoints $b_{i-1}$ and $b_i$, allowing $n+1$ varying rates of linear 
+expansion at different downstream ranges, determined by the $b_i$. Note that 
+$b_0 = 0$ and $b_{n+1} = \infty$ by design. 
+
+A slight modification is made to the above so that the wake width varies 
+smoothly. As stated above, the wake expansion rate contains jump 
+discountinuities that create "sharp" changes in the wake width. To avoid this,
+the indicator function $\mathbf{1}_{[a, b)}(x)$ is replaced with a pair of 
+logistic functions 
+$$\mathbf{1}_{[a, b)}(x) \approx \frac{1}{1 + e^{-(x-a)/d}} - 
+ \frac{1}{1 + e^{-(x-b)/d}} =: \ell_{[a,b)}(x)$$
+that vary smoothly with width parameter $d$. In the limit as 
+$d\rightarrow 0$, the approximation becomes exact.
+
+While the form of this wake expansion model seems complex, it is very simple 
+to tune to fit data: the user provides the $n+1$ expansion rates 
+$k_i, i=0,\dots,n+1$ 
+(defined as a list in the `wake_expansion_rates` field of the input yaml) 
+and 
+the $n$ 'break points' $b_i, i=1,\dots,n$ where those expansion rates should go 
+into effect (specified in terms of rotor diameters downstream as a list in the 
+`breakpoints_D` field of the input yaml. 
+
+As well as these, the initial width $\sigma_{y0}$ should be provided 
+as `sigma_y0_D` and the 
+logistic function width $d$ as `smoothing_length_D` (both specified in 
+terms of rotor diameters).
+
+We expect that the default values for $\sigma_{y0}$ and $d$ should be 
+satisfactory for most users. Further, we antipate that most users will not 
+need more than $n+1=3$ expansion rates (along with $n=2$ break points) to 
+describe the wake expansion.
+
+## Wake deflection
+
+The deflection of the wake centerline $\delta_y$ and $\delta_z$ due to 
+yawing and tilting, respectively, follow a simple model
+
+$$ \delta = \theta \left( k_\text{def} 
+\operatorname{ln}\left(\frac{x/D - c}{x/D + c} + 2\right) - \delta_0 \right)$$
+
+Here, $k_\text{def}$ is a user-tunable deflection gain and $\delta_0$ is an 
+offset deflection. Although the $\delta_0$ could be understood 
+as an "initial" deflection, we caution against this interpretation because the 
+logarithmic model above is designed to model the far wake only and may give 
+non-physical results very near to the turbine.
+
+The skew angle $\theta$ is taken directly from Bastankhah & Porté-Agel, and 
+is computed according to 
+$$ \theta = \frac{0.3 \alpha}{\cos(\alpha)} 
+\left(1- \sqrt{1-C_T \cos(\alpha)} \right) $$
+When computing the lateral wake deflection $\delta_y$ due to yaw misalignment,
+$\alpha$ should be the yaw misalignment _specified in radians, clockwise 
+positive from the wind direction_. When 
+computing the vertical wake deflection $\delta_z$ due to rotor tilt, 
+$\alpha$ should be the tilt angle _specified in radians, clockwise positive 
+when the rotor is tilted back_.
+
+Finally, $c$ in the above deflection model is a 'deflection rate'. This 
+specified how quickly the wake will reach it's maximum deflection 
+$\theta \left(k_\text{def} \operatorname{ln}(3) - \delta_0\right)$ for a given 
+yaw/tilt angle.
+
+User-tunable parameters of the model are as follows:
+- The deflection gain $k_\text{def}$, specified using `deflection_gain_D` 
+(specified in terms of rotor diameters)
+- The offset deflection $\delta_0$, specified using `delta_0_D` 
+(specified in terms of rotor diameters)
+- The deflection rate $c$, specified using `deflection_rate`.
+
+We anticipate that most users will be able to use the default values for 
+$\delta_0$ and $c$, but may need to tune $k_\text{def}$ to match their data.
+
+## Wake-induced mixing
+
+Finally, turbines contribute to mixing in the flow. In other models, this 
+extra mixing is accounted for by adding to the turbulence intensity value. In 
+the geometric model, explicit dependencies on turbulence intensity are removed 
+completely to aid in tuning. Instead, a non-physical "wake-induced mixing 
+factor" is specified for turbine $j$ as
+
+$$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i}
+ {(x_j - x_i)/D_i} $$
+
+where $T_T^{\text{up}}(j)$ is the set of turbines upstream from the turbine 
+$j$. Here, $A_{ij}$ is the area of overlap of the wake of turbine $i$ 
+onto turbine $j$; $a_i$ is the axial induction factor of the 
+turbine $i$; 
+and $(x_j - x_i)/D_i$ is the downstream distance of turbine $j$ from 
+the turbine $i$, normalized by turbine $i$'s rotor diameter.
+
+Wake-induced mixing can affect both the velocity deficit and wake deflection. 
+To account for wake-induced mixing, the wake width of turbine $j$ is adjusted 
+to 
+
+$$ \sigma_{y}(x) = \int_{0}^x \sum_{i=0}^n k_i \ell_{[b_{i}, b_{i+1})}
+(x') + w_v \text{WIM}_j   dx' + \sigma_{y0} $$
+
+Here, $w_v$ is the velocity deficit wake-induced mixing gain, which the 
+user can vary by setting `wim_gain_velocity` to represent different levels of 
+mixing caused by the turbines.
+
+The wake deflection model is similarly adjusted to 
+
+$$ \delta = \theta \left( \frac{k_\text{def}}{1 + w_d \text{WIM}_j}
+\operatorname{ln}\left(\frac{x/D - c}{x/D + c} + 2\right) - \delta_0 \right)$$
+
+where $w_d$ is the wake-induced mixing gain for delflection, provided by the 
+user by setting `wim_gain_deflection`.
+
+## Yaw added mixing
+
+Yaw misalignment can also add turbulence to the wake. In the geometric model,
+this effect, referred to as "yaw-added wake recovery" in other models, is 
+activated by setting 
+`enable_yaw_added_recovery` to `true`. Yaw-added mixing is represented 
+by updating the wake-induced mixing term as follows:
+
+$$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} 
+\frac{A_{ij} a_i (1 + g_\text{YAM} (1-\cos(\gamma_i)))}
+ {(x_j - x_i)/D_i} + a_j g_\text{YAM} (1-\cos(\gamma_j))$$
+
+Note that the second term means that, unlike when `enable_yaw_added_recovery` 
+is `false`, a turbine may affect the recovery of its own wake by yawing. 
+
+
+## Mirror wakes
+
+Mirror wakes are also enabled by default in the geometric model to model the 
+ground effect. Essentially, turbines are placed below the ground so that 
+the vertical expansion of their (mirror) wakes appears in the above-ground 
+flow some distance downstream, to model the reflection of the true turbine 
+wakes as they bounce off of the ground/sea surface.
