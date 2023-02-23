@@ -118,20 +118,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../../../installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../../../background_concepts.html">
+  <a class="reference internal" href="../../../floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -140,8 +147,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -868,6 +904,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1034,11 +1075,6 @@ const thebe_selector_output = ".output, .cell_output"
    </li>
   </ul>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../code_quality.html">
-   Code Quality
-  </a>
- </li>
 </ul>
 
     </div>
@@ -1188,14 +1224,18 @@ title="Open an issue"
 <span class="c1"># See https://floris.readthedocs.io for documentation</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mplcolors</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
 
+<span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">Floris</span>
+<span class="kn">from</span> <span class="nn">floris.tools.cut_plane</span> <span class="kn">import</span> <span class="n">CutPlane</span>
 <span class="kn">from</span> <span class="nn">floris.tools.floris_interface</span> <span class="kn">import</span> <span class="n">FlorisInterface</span>
 <span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">rotate_coordinates_rel_west</span>
 
@@ -1559,6 +1599,130 @@ title="Open an issue"
 
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="calculate_horizontal_plane_with_turbines"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html#floris.tools.visualization.calculate_horizontal_plane_with_turbines">[docs]</a><span class="k">def</span> <span class="nf">calculate_horizontal_plane_with_turbines</span><span class="p">(</span>
+    <span class="n">fi_in</span><span class="p">,</span>
+    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">y_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">x_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">y_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">wd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ws</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CutPlane</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function creates a :py:class:`~.tools.cut_plane.CutPlane` by</span>
+<span class="sd">        adding an additional turbine to the farm and moving it through every</span>
+<span class="sd">        a regular grid throughout the flow field. This method allows for</span>
+<span class="sd">        visualizing wake models that do not support the FullFlowGrid and</span>
+<span class="sd">        its associated solver. As the new turbine is moved around the flow</span>
+<span class="sd">        field, the velocities at its rotor are stored in local variables,</span>
+<span class="sd">        and the flow field is reset to its initial state for every new</span>
+<span class="sd">        location. Then, the local velocities are put into a DataFrame and</span>
+<span class="sd">        then into a CutPlane. This method is much slower than</span>
+<span class="sd">        `FlorisInterface.calculate_horizontal_plane`, but it is helpful</span>
+<span class="sd">        for models where the visualization capability is not yet available.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fi_in (:py:class:`floris.tools.floris_interface.FlorisInterface`):</span>
+<span class="sd">                Preinitialized FlorisInterface object.</span>
+<span class="sd">            x_resolution (float, optional): Output array resolution. Defaults to 200 points.</span>
+<span class="sd">            y_resolution (float, optional): Output array resolution. Defaults to 200 points.</span>
+<span class="sd">            x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.</span>
+<span class="sd">            y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.</span>
+<span class="sd">            wd (float, optional): Wind direction setting. Defaults to None.</span>
+<span class="sd">            ws (float, optional): Wind speed setting. Defaults to None.</span>
+<span class="sd">            yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Make a local copy of fi to avoid editing passed in fi</span>
+        <span class="n">fi</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fi_in</span><span class="p">)</span>
+
+        <span class="c1"># If wd/ws not provided, use what is set in fi</span>
+        <span class="k">if</span> <span class="n">wd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wd</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span>
+        <span class="k">if</span> <span class="n">ws</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ws</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_speeds</span>
+        <span class="n">fi</span><span class="o">.</span><span class="n">check_wind_condition_for_viz</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">ws</span><span class="o">=</span><span class="n">ws</span><span class="p">)</span>
+
+        <span class="c1"># Set the ws and wd</span>
+        <span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">ws</span><span class="p">)</span>
+
+        <span class="c1"># Re-set yaw angles</span>
+        <span class="k">if</span> <span class="n">yaw_angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span>
+
+        <span class="c1"># Now place the yaw_angles back into yaw_angles</span>
+        <span class="c1"># to be sure not None</span>
+        <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span>
+
+        <span class="c1"># Grab the turbine layout</span>
+        <span class="n">layout_x</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_x</span><span class="p">)</span>
+        <span class="n">layout_y</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_y</span><span class="p">)</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Declare a new layout array with an extra turbine</span>
+        <span class="n">layout_x_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layout_x</span><span class="p">,[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">layout_y_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layout_y</span><span class="p">,[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">wd</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">),</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Get a grid of points test test</span>
+        <span class="k">if</span> <span class="n">x_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">layout_x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">layout_x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">D</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">y_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">y_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">layout_y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">layout_y</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">D</span><span class="p">)</span>
+
+        <span class="c1"># Now generate a list of points</span>
+        <span class="n">x_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_resolution</span><span class="p">)</span>
+        <span class="n">y_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_resolution</span><span class="p">)</span>
+        <span class="n">num_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_points</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_points</span><span class="p">)</span>
+
+        <span class="c1"># Now loop over the points</span>
+        <span class="n">x_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span>
+        <span class="n">y_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span>
+        <span class="n">z_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span>
+        <span class="n">u_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span>
+        <span class="n">v_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span>
+        <span class="n">w_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">y_points</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_points</span><span class="p">:</span>
+
+                <span class="c1"># Save the x and y results</span>
+                <span class="n">x_results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="n">y_results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+                <span class="c1"># Place the test turbine at this location and calculate wake</span>
+                <span class="n">layout_x_test</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="n">layout_y_test</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+                <span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span> <span class="o">=</span> <span class="n">layout_x_test</span><span class="p">,</span> <span class="n">layout_y</span> <span class="o">=</span> <span class="n">layout_y_test</span><span class="p">)</span>
+                <span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
+
+                <span class="c1"># Get the velocity of that test turbines central point</span>
+                <span class="n">center_point</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+                <span class="n">u_results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">center_point</span><span class="p">,</span><span class="n">center_point</span><span class="p">]</span>
+
+                <span class="c1"># Increment index</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># Make a dataframe</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+            <span class="s1">&#39;x1&#39;</span><span class="p">:</span><span class="n">x_results</span><span class="p">,</span>
+            <span class="s1">&#39;x2&#39;</span><span class="p">:</span><span class="n">y_results</span><span class="p">,</span>
+            <span class="s1">&#39;x3&#39;</span><span class="p">:</span><span class="n">z_results</span><span class="p">,</span>
+            <span class="s1">&#39;u&#39;</span><span class="p">:</span><span class="n">u_results</span><span class="p">,</span>
+            <span class="s1">&#39;v&#39;</span><span class="p">:</span><span class="n">v_results</span><span class="p">,</span>
+            <span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="n">w_results</span><span class="p">,</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Convert to a cut_plane</span>
+        <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">CutPlane</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x_resolution</span><span class="p">,</span> <span class="n">y_resolution</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">horizontal_plane</span></div>
 </pre></div>
 
               </div>

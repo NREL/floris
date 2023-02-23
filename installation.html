@@ -52,7 +52,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Background and Concepts" href="background_concepts.html" />
+    <link rel="next" title="Background and Concepts" href="floris_101.html" />
     <link rel="prev" title="FLORIS Wake Modeling &amp; Wind Farm Controls" href="intro.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
@@ -121,20 +121,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="background_concepts.html">
+  <a class="reference internal" href="floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -143,8 +150,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -871,6 +907,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1036,11 +1077,6 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
   </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="code_quality.html">
-   Code Quality
-  </a>
  </li>
 </ul>
 
@@ -1214,12 +1250,68 @@ title="Print to PDF"
     </ul>
   </div>
 </div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
 
     </div>
 </div>
 
 <!-- Table of contents -->
 <div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#requirements">
+   Requirements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pip">
+   Pip
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#source-code-installation">
+   Source Code Installation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#developer-installation">
+   Developer Installation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#updating-floris">
+   Updating FLORIS
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pip-update">
+     Pip
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#from-source">
+     From Source
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
 </div>
     </div>
     <div class="article row">
@@ -1231,6 +1323,51 @@ title="Print to PDF"
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#requirements">
+   Requirements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pip">
+   Pip
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#source-code-installation">
+   Source Code Installation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#developer-installation">
+   Developer Installation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#updating-floris">
+   Updating FLORIS
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pip-update">
+     Pip
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#from-source">
+     From Source
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -1240,23 +1377,33 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h1>
-<p><strong>If upgrading from v2, it is highly recommended to install FLORIS V3 into a new virtual environment</strong>.
-Installing into a Python environment that contains FLORIS v2 may cause conflicts.
-If you intend to use <a class="reference external" href="https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/">pyOptSparse</a> with FLORIS,
-it is recommended to install that package first before installing FLORIS.</p>
-<p>FLORIS can be installed by downloading the source code or via the PyPI
-package manager with <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
+<p>FLORIS can be installed by downloading the source code or via the PyPI package manager with <code class="docutils literal notranslate"><span class="pre">pip</span></code>.
+The following sections detail how download and install FLORIS for each use case.</p>
+<section id="requirements">
+<span id="id2"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">#</a></h2>
+<p>FLORIS is intended to be used with Python 3.8, 3.9, or 3.10, and it is highly recommended that users
+work within a virtual environment for both working with and working on FLORIS, to maintain a clean
+and sandboxed environment. The simplest way to get started with virtual environments is through
+<a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">conda</a>.</p>
+<p>Installing into a Python environment that contains FLORIS v2 may cause conflicts.
+If you intend to use <a class="reference external" href="https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/">pyOptSparse</a>
+with FLORIS, it is recommended to install that package first before installing FLORIS.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If upgrading from v2, it is highly recommended to install FLORIS V3 into a new virtual environment.</p>
+</div>
+</section>
+<section id="pip">
+<span id="id3"></span><h2>Pip<a class="headerlink" href="#pip" title="Permalink to this headline">#</a></h2>
 <p>The simplest method is with <code class="docutils literal notranslate"><span class="pre">pip</span></code> by using this command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>floris
 </pre></div>
 </div>
-<p>Developers and anyone who intends to inspect the source code
-can install FLORIS by downloading the git repository
-from GitHub with <code class="docutils literal notranslate"><span class="pre">git</span></code> and use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to locally install it.
-It is highly recommended to use a Python virtual environment manager
-such as <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">conda</a>
-in order to maintain a clean and sandboxed environment. The following
-commands in a terminal or shell will download and install FLORIS.</p>
+</section>
+<section id="source-code-installation">
+<span id="source"></span><h2>Source Code Installation<a class="headerlink" href="#source-code-installation" title="Permalink to this headline">#</a></h2>
+<p>Developers and anyone who intends to inspect the source code can install FLORIS by downloading the
+git repository from GitHub with <code class="docutils literal notranslate"><span class="pre">git</span></code> and use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to locally install it. The following commands in a terminal or shell will download and install FLORIS.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download the source code from the `main` branch</span>
 git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>main<span class="w"> </span>https://github.com/NREL/floris.git
 
@@ -1299,8 +1446,37 @@ and importing FLORIS:</p>
 <span class="go">    ~/floris/floris/__init__.py</span>
 </pre></div>
 </div>
-<p>It is important to regularly check for new updates and releases as new
-features, improvements, and bug fixes will be issued on an ongoing basis.</p>
+</section>
+<section id="developer-installation">
+<span id="developers"></span><h2>Developer Installation<a class="headerlink" href="#developer-installation" title="Permalink to this headline">#</a></h2>
+<p>For users that will also be contributing to the FLORIS code repoistory, the process is similar to
+the source code installation, but with a few extra considerations. The steps are laid out in our
+<a class="reference internal" href="dev_guide.html"><span class="doc std std-doc">developer's guide</span></a>.</p>
+</section>
+<section id="updating-floris">
+<span id="updating"></span><h2>Updating FLORIS<a class="headerlink" href="#updating-floris" title="Permalink to this headline">#</a></h2>
+<p>It is important to regularly check for new updates and releases as new features, improvements, and
+bug fixes will be issued on an ongoing basis, and will require manually updating the software.</p>
+<section id="pip-update">
+<span id="id4"></span><h3>Pip<a class="headerlink" href="#pip-update" title="Permalink to this headline">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>floris
+
+<span class="c1"># Alternatively, users can specify a particular version, for example:</span>
+<span class="c1"># pip install --upgrade floris==3.2.1</span>
+</pre></div>
+</div>
+</section>
+<section id="from-source">
+<span id="source-update"></span><h3>From Source<a class="headerlink" href="#from-source" title="Permalink to this headline">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you&#39;re not already on the main branch, save your changes and move there</span>
+git<span class="w"> </span>checkout<span class="w"> </span>main
+
+<span class="c1"># Pull down the changes from GitHub</span>
+git<span class="w"> </span>pull<span class="w"> </span>main
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1315,7 +1491,7 @@ features, improvements, and bug fixes will be issued on an ongoing basis.</p>
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./."
         },
         predefinedOutput: true
@@ -1337,7 +1513,7 @@ features, improvements, and bug fixes will be issued on an ongoing basis.</p>
             <p class="prev-next-title">FLORIS Wake Modeling &amp; Wind Farm Controls</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="background_concepts.html" title="next page">
+    <a class='right-next' id="next-link" href="floris_101.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
         <p class="prev-next-title">Background and Concepts</p>

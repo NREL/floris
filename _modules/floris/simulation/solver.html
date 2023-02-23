@@ -118,20 +118,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../../../installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../../../background_concepts.html">
+  <a class="reference internal" href="../../../floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -140,8 +147,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -868,6 +904,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1033,11 +1074,6 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
   </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../code_quality.html">
-   Code Quality
-  </a>
  </li>
 </ul>
 
@@ -1405,8 +1441,11 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
 
-    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">turbine_turbulence_intensity</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
+    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span>
+    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+        <span class="n">turbine_turbulence_intensity</span><span class="p">,</span>
+        <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="p">)[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="full_flow_sequential_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_sequential_solver.html#floris.simulation.solver.full_flow_sequential_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_sequential_solver</span><span class="p">(</span>
@@ -1499,11 +1538,12 @@ title="Open an issue"
         <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
         <span class="c1"># get the first index here (0:1)</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">turbulence_intensity_i</span> <span class="o">=</span> \
+            <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
         <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
@@ -1785,8 +1825,11 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
     <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">turb_inflow_field</span>
 
-    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">turbine_turbulence_intensity</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
+    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span>
+    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+        <span class="n">turbine_turbulence_intensity</span><span class="p">,</span>
+        <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="full_flow_cc_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_cc_solver.html#floris.simulation.solver.full_flow_cc_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_cc_solver</span><span class="p">(</span>
@@ -1878,7 +1921,8 @@ title="Open an issue"
         <span class="p">)</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
-        <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">turbulence_intensity_i</span> <span class="o">=</span> \
+            <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -1941,7 +1985,7 @@ title="Open an issue"
             <span class="n">u_i</span><span class="p">,</span>
             <span class="n">deflection_field</span><span class="p">,</span>
             <span class="n">yaw_angle_i</span><span class="p">,</span>
-            <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">,</span>
+            <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span><span class="p">,</span>
             <span class="n">turb_Cts</span><span class="p">,</span>
             <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
             <span class="n">turb_u_wake</span><span class="p">,</span>
@@ -2170,8 +2214,11 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
 
-    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">turbine_turbulence_intensity</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span></div>
+    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span>
+    <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+        <span class="n">turbine_turbulence_intensity</span><span class="p">,</span>
+        <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="full_flow_turbopark_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_turbopark_solver.html#floris.simulation.solver.full_flow_turbopark_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_turbopark_solver</span><span class="p">(</span>

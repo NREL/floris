@@ -54,5 +54,7 @@ floris.simulation.flow\_field.FlowField
       ~FlowField.het_map
       ~FlowField.dudz_initial_sorted
       ~FlowField.turbulence_intensity_field
+      ~FlowField.turbulence_intensity_field_sorted
+      ~FlowField.turbulence_intensity_field_sorted_avg
    
    

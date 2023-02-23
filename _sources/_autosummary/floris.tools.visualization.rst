@@ -16,6 +16,7 @@ floris.tools.visualization
       :nosignatures:
    
       add_turbine_id_labels
+      calculate_horizontal_plane_with_turbines
       line_contour_cut_plane
       plot_rotor_values
       plot_turbines

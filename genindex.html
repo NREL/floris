@@ -118,20 +118,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="background_concepts.html">
+  <a class="reference internal" href="floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -140,8 +147,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -868,6 +904,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1033,11 +1074,6 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
   </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="code_quality.html">
-   Code Quality
-  </a>
  </li>
 </ul>
 
@@ -1673,6 +1709,8 @@ title="Open an issue"
         <li><a href="_autosummary/floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html#floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.calculate_horizontal_plane">(floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2 method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html#floris.tools.visualization.calculate_horizontal_plane_with_turbines">calculate_horizontal_plane_with_turbines() (in module floris.tools.visualization)</a>, <a href="_autosummary/floris.tools.visualization.html#floris.tools.visualization.calculate_horizontal_plane_with_turbines">[1]</a>
+</li>
       <li><a href="_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_no_wake">calculate_no_wake() (floris.tools.floris_interface.FlorisInterface method)</a>, <a href="_autosummary/floris.tools.floris_interface.html#floris.tools.floris_interface.FlorisInterface.calculate_no_wake">[1]</a>
 
       <ul>
@@ -2755,10 +2793,10 @@ title="Open an issue"
 </li>
       <li><a href="_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.initialize_domain">initialize_domain() (floris.simulation.floris.Floris method)</a>, <a href="_autosummary/floris.simulation.floris.html#floris.simulation.floris.Floris.initialize_domain">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField.initialize_velocity_field">initialize_velocity_field() (floris.simulation.flow_field.FlowField method)</a>, <a href="_autosummary/floris.simulation.flow_field.html#floris.simulation.flow_field.FlowField.initialize_velocity_field">[1]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.simulation.base.State.html#floris.simulation.base.State.INITIALIZED">INITIALIZED (floris.simulation.base.State attribute)</a>, <a href="_autosummary/floris.simulation.base.html#floris.simulation.base.State.INITIALIZED">[1]</a>
 </li>
       <li><a href="_autosummary/floris.tools.wind_rose.WindRose.html#floris.tools.wind_rose.WindRose.internal_resample_average_ws_by_wd">internal_resample_average_ws_by_wd() (floris.tools.wind_rose.WindRose method)</a>, <a href="_autosummary/floris.tools.wind_rose.html#floris.tools.wind_rose.WindRose.internal_resample_average_ws_by_wd">[1]</a>
@@ -2768,6 +2806,8 @@ title="Open an issue"
       <li><a href="_autosummary/floris.tools.wind_rose.WindRose.html#floris.tools.wind_rose.WindRose.internal_resample_wind_direction">internal_resample_wind_direction() (floris.tools.wind_rose.WindRose method)</a>, <a href="_autosummary/floris.tools.wind_rose.html#floris.tools.wind_rose.WindRose.internal_resample_wind_direction">[1]</a>
 </li>
       <li><a href="_autosummary/floris.tools.wind_rose.WindRose.html#floris.tools.wind_rose.WindRose.internal_resample_wind_speed">internal_resample_wind_speed() (floris.tools.wind_rose.WindRose method)</a>, <a href="_autosummary/floris.tools.wind_rose.html#floris.tools.wind_rose.WindRose.internal_resample_wind_speed">[1]</a>
+</li>
+      <li><a href="_autosummary/floris.tools.wind_rose.WindRose.html#floris.tools.wind_rose.WindRose.interpolate">interpolate() (floris.tools.wind_rose.WindRose method)</a>, <a href="_autosummary/floris.tools.wind_rose.html#floris.tools.wind_rose.WindRose.interpolate">[1]</a>
 </li>
       <li><a href="_autosummary/floris.tools.cut_plane.html#floris.tools.cut_plane.interpolate_onto_array">interpolate_onto_array() (in module floris.tools.cut_plane)</a>, <a href="_autosummary/floris.tools.cut_plane.interpolate_onto_array.html#floris.tools.cut_plane.interpolate_onto_array">[1]</a>
 </li>
@@ -3743,6 +3783,10 @@ title="Open an issue"
       <li><a href="_autosummary/floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField.turbulence_intensity">turbulence_intensity (floris.simulation.flow_field.FlowField attribute)</a>, <a href="_autosummary/floris.simulation.flow_field.html#floris.simulation.flow_field.FlowField.turbulence_intensity">[1]</a>
 </li>
       <li><a href="_autosummary/floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField.turbulence_intensity_field">turbulence_intensity_field (floris.simulation.flow_field.FlowField attribute)</a>, <a href="_autosummary/floris.simulation.flow_field.html#floris.simulation.flow_field.FlowField.turbulence_intensity_field">[1]</a>
+</li>
+      <li><a href="_autosummary/floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted">turbulence_intensity_field_sorted (floris.simulation.flow_field.FlowField attribute)</a>, <a href="_autosummary/floris.simulation.flow_field.html#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted">[1]</a>
+</li>
+      <li><a href="_autosummary/floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg">turbulence_intensity_field_sorted_avg (floris.simulation.flow_field.FlowField attribute)</a>, <a href="_autosummary/floris.simulation.flow_field.html#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg">[1]</a>
 </li>
       <li><a href="_autosummary/floris.simulation.wake.WakeModelManager.html#floris.simulation.wake.WakeModelManager.turbulence_model">turbulence_model (floris.simulation.wake.WakeModelManager attribute)</a>, <a href="_autosummary/floris.simulation.wake.html#floris.simulation.wake.WakeModelManager.turbulence_model">[1]</a>
 </li>

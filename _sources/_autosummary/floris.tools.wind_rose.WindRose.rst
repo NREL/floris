@@ -23,6 +23,7 @@ floris.tools.wind\_rose.WindRose
       ~WindRose.internal_resample_column
       ~WindRose.internal_resample_wind_direction
       ~WindRose.internal_resample_wind_speed
+      ~WindRose.interpolate
       ~WindRose.load
       ~WindRose.load_wind_toolkit_file
       ~WindRose.load_wind_toolkit_folder

@@ -52,7 +52,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Examples Index" href="examples.html" />
+    <link rel="next" title="Input File Reference" href="input_reference.html" />
     <link rel="prev" title="Installation" href="installation.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
@@ -121,20 +121,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -143,8 +150,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -871,6 +907,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1037,11 +1078,6 @@ const thebe_selector_output = ".output, .cell_output"
    </li>
   </ul>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="code_quality.html">
-   Code Quality
-  </a>
- </li>
 </ul>
 
     </div>
@@ -1101,7 +1137,7 @@ title="Toggle navigation"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://mybinder.org/v2/gh/nrel/floris/main?urlpath=tree/docs/background_concepts.ipynb"
+        <a href="https://mybinder.org/v2/gh/nrel/floris/main?urlpath=tree/docs/floris_101.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1161,7 +1197,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2Fbackground_concepts.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2Ffloris_101.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1178,7 +1214,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/background_concepts.ipynb"
+        <a href="https://github.com/nrel/floris/edit/main/docs/floris_101.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1206,7 +1242,7 @@ title="Edit this page"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/background_concepts.ipynb"
+        <a href="_sources/floris_101.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1423,8 +1459,9 @@ inspect the data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">floris.tools</span> <span class="kn">import</span> <span class="n">FlorisInterface</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">floris.tools</span> <span class="kn">import</span> <span class="n">FlorisInterface</span>
 
 <span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
 <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
@@ -1488,13 +1525,13 @@ direction with each speed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># One wind direction and one speed -&gt; one atmospheric condition</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">]</span> <span class="p">)</span>
+<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">])</span>
 
 <span class="c1"># Two wind directions and one speed -&gt; two atmospheric conditions</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">]</span> <span class="p">)</span>
+<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">])</span>
 
 <span class="c1"># Two wind directions and two speeds -&gt; four atmospheric conditions</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span> <span class="p">)</span>
+<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -1521,7 +1558,7 @@ space to get an idea of the overall form of our grid.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensions of grid x-components&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine 3 grid x-components for first wind direction and first wind speed&quot;</span><span class="p">)</span>
@@ -1535,6 +1572,7 @@ space to get an idea of the overall form of our grid.</p>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1548,10 +1586,7 @@ Turbine 3 grid x-components for first wind direction and first wind speed
  [800. 800. 800.]]
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 150.0)
-</pre></div>
-</div>
-<img alt="_images/background_concepts_8_2.png" src="_images/background_concepts_8_2.png" />
+<img alt="_images/floris_101_8_1.png" src="_images/floris_101_8_1.png" />
 </div>
 </div>
 </section>
@@ -1589,7 +1624,7 @@ turbines.</p>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind direction </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TURBINES</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Turbine </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">powers</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> kW&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Turbine </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">powers</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">7,.2f</span><span class="si">}</span><span class="s2"> kW&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers for all turbines at all wind conditions&quot;</span><span class="p">)</span>
@@ -1603,16 +1638,16 @@ turbines.</p>
 
 Turbine powers for 8 m/s
 Wind direction 0
-  Turbine 0 - 1691.33 kW
-  Turbine 1 - 1691.33 kW
-  Turbine 2 - 592.65 kW
-  Turbine 3 - 592.98 kW
+  Turbine 0 - 1,691.33 kW
+  Turbine 1 - 1,691.33 kW
+  Turbine 2 -  592.65 kW
+  Turbine 3 -  592.98 kW
 
 Wind direction 1
-  Turbine 0 - 1691.33 kW
-  Turbine 1 - 1691.33 kW
-  Turbine 2 - 1631.07 kW
-  Turbine 3 - 1629.76 kW
+  Turbine 0 - 1,691.33 kW
+  Turbine 1 - 1,691.33 kW
+  Turbine 2 - 1,631.07 kW
+  Turbine 3 - 1,629.76 kW
 
 Turbine powers for all turbines at all wind conditions
 [[[1691.32664838 1691.32664838  592.6531181   592.97842923]
@@ -1642,7 +1677,7 @@ a <code class="docutils literal notranslate"><span class="pre">Numpy.array</span
 turbine yaw settings, as shown below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Yaw angle array initialized with 0&#39;s&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
 
@@ -1777,14 +1812,13 @@ left (West) in both cases.</p>
 
 <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
 <span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;280 - Yawed&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7fe6bc1964c0&gt;
-</pre></div>
-</div>
-<img alt="_images/background_concepts_18_1.png" src="_images/background_concepts_18_1.png" />
+<img alt="_images/floris_101_18_0.png" src="_images/floris_101_18_0.png" />
 </div>
 </div>
 <p>We can also plot the streamwise inflow velocities on the turbine rotor
@@ -1800,15 +1834,14 @@ simply plots any data given as the first argument, so in this case
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">wd_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ws_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind direction 280&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Wind direction 280&#39;)
-</pre></div>
-</div>
-<img alt="_images/background_concepts_20_1.png" src="_images/background_concepts_20_1.png" />
-<img alt="_images/background_concepts_20_2.png" src="_images/background_concepts_20_2.png" />
+<img alt="_images/floris_101_20_0.png" src="_images/floris_101_20_0.png" />
+<img alt="_images/floris_101_20_1.png" src="_images/floris_101_20_1.png" />
 </div>
 </div>
 </section>
@@ -1842,6 +1875,8 @@ but retuning of some parameters might be required.</p>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">zs</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1850,10 +1885,7 @@ but retuning of some parameters might be required.</p>
   2 wd x 2 ws x 4 turbines x 3 x 3 grid points
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 150.0)
-</pre></div>
-</div>
-<img alt="_images/background_concepts_23_2.png" src="_images/background_concepts_23_2.png" />
+<img alt="_images/floris_101_23_1.png" src="_images/floris_101_23_1.png" />
 </div>
 </div>
 </section>
@@ -1937,9 +1969,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   843.237    2.517 
-GCH      843.904    4.417 
-CC       839.263    6.324 
+Jensen   843.237    2.869 
+GCH      843.904    4.995 
+CC       839.263    7.387 
 </pre></div>
 </div>
 </div>
@@ -2034,7 +2066,7 @@ Skipping 85/360 calculations: already in memory.
 Skipping 90/360 calculations: already in memory.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 2.358 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 2.613 s
 </pre></div>
 </div>
 </div>
@@ -2051,14 +2083,13 @@ Skipping 90/360 calculations: already in memory.
     <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">axarr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Wind Direction (Deg)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Wind Direction (Deg)&#39;)
-</pre></div>
-</div>
-<img alt="_images/background_concepts_33_1.png" src="_images/background_concepts_33_1.png" />
+<img alt="_images/floris_101_33_0.png" src="_images/floris_101_33_0.png" />
 </div>
 </div>
 </section>
@@ -2076,7 +2107,7 @@ Skipping 90/360 calculations: already in memory.
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./."
         },
         predefinedOutput: true
@@ -2098,10 +2129,10 @@ Skipping 90/360 calculations: already in memory.
             <p class="prev-next-title">Installation</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="examples.html" title="next page">
+    <a class='right-next' id="next-link" href="input_reference.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Examples Index</p>
+        <p class="prev-next-title">Input File Reference</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

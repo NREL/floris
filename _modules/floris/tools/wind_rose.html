@@ -118,20 +118,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../../../installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../../../background_concepts.html">
+  <a class="reference internal" href="../../../floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -140,8 +147,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 has-children">
@@ -868,6 +904,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1034,11 +1075,6 @@ const thebe_selector_output = ".output, .cell_output"
    </li>
   </ul>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../code_quality.html">
-   Code Quality
-  </a>
- </li>
 </ul>
 
     </div>
@@ -1199,6 +1235,7 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">LinearNDInterpolator</span><span class="p">,</span> <span class="n">NearestNDInterpolator</span>
 
 <span class="kn">import</span> <span class="nn">floris.utilities</span> <span class="k">as</span> <span class="nn">geo</span>
 
@@ -1620,6 +1657,68 @@ title="Open an issue"
 
         <span class="c1"># Update internal data frame</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample_average_ws_by_wd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WindRose.interpolate"><a class="viewcode-back" href="../../../_autosummary/floris.tools.wind_rose.WindRose.html#floris.tools.wind_rose.WindRose.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">wind_directions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">wind_speeds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">mirror_0_to_360</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method returns a linear interpolant that will return the occurrence</span>
+<span class="sd">        frequency for any given wind direction and wind speed combination(s).</span>
+<span class="sd">        This can be particularly useful when evaluating the wind rose at a</span>
+<span class="sd">        higher frequency than the input data is provided.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            wind_directions (np.ndarray): One or multi-dimensional array containing</span>
+<span class="sd">            the wind direction values at which the wind rose frequency of occurrence</span>
+<span class="sd">            should be evaluated.</span>
+<span class="sd">            wind_speeds (np.ndarray): One or multi-dimensional array containing</span>
+<span class="sd">            the wind speed values at which the wind rose frequency of occurrence</span>
+<span class="sd">            should be evaluated.</span>
+<span class="sd">            mirror_0_to_360 (bool, optional): This function copies the wind rose</span>
+<span class="sd">            frequency values from 0 deg to 360 deg. This can be useful when, for example,</span>
+<span class="sd">            the wind rose is only calculated until 357 deg but then interpolant is</span>
+<span class="sd">            requesting values at 359 deg. Defaults to True.</span>
+<span class="sd">            fill_value (float, optional): Fill value for the interpolant when</span>
+<span class="sd">            interpolating values outside of the data region. Defaults to 0.0.</span>
+<span class="sd">            method (str, optional): The interpolation method. Options are &#39;linear&#39; and</span>
+<span class="sd">            &#39;nearest&#39;. Recommended usage is &#39;linear&#39;. Defaults to &#39;linear&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            scipy.interpolate.LinearNDInterpolant: Linear interpolant for the</span>
+<span class="sd">            wind rose currently available in the class (self.df).</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            wr = wind_rose.WindRose()</span>
+<span class="sd">            wr.make_wind_rose_from_user_data(...)</span>
+<span class="sd">            freq_floris = wr.interpolate(floris_wind_direction_grid, floris_wind_speed_grid)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
+            <span class="n">interpolator</span> <span class="o">=</span> <span class="n">LinearNDInterpolator</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;nearest&quot;</span><span class="p">:</span>
+            <span class="n">interpolator</span> <span class="o">=</span> <span class="n">NearestNDInterpolator</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="ne">UserWarning</span><span class="p">(</span><span class="s2">&quot;Unknown interpolation method: &#39;</span><span class="si">{:s}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+
+        <span class="c1"># Load windrose information from self</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">mirror_0_to_360</span><span class="p">:</span>
+            <span class="c1"># Copy values from 0 deg over to 360 deg</span>
+            <span class="n">df_copy</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;wd&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">df_copy</span><span class="p">[</span><span class="s2">&quot;wd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">360.0</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">df_copy</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">interp</span> <span class="o">=</span> <span class="n">interpolator</span><span class="p">(</span>
+            <span class="n">points</span><span class="o">=</span><span class="n">df</span><span class="p">[[</span><span class="s2">&quot;wd&quot;</span><span class="p">,</span> <span class="s2">&quot;ws&quot;</span><span class="p">]],</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;freq_val&quot;</span><span class="p">],</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">interp</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WindRose.weibull"><a class="viewcode-back" href="../../../_autosummary/floris.tools.wind_rose.WindRose.html#floris.tools.wind_rose.WindRose.weibull">[docs]</a>    <span class="k">def</span> <span class="nf">weibull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="mf">8.0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

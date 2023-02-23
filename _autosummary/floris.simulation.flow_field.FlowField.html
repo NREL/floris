@@ -121,20 +121,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../background_concepts.html">
+  <a class="reference internal" href="../floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -143,8 +150,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="../dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 current active has-children">
@@ -871,6 +907,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1036,11 +1077,6 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
   </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../code_quality.html">
-   Code Quality
-  </a>
  </li>
 </ul>
 
@@ -1352,6 +1388,12 @@ title="Print to PDF"
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field_sorted</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field_sorted_avg</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 <dl class="field-list simple">
@@ -1481,6 +1523,16 @@ title="Print to PDF"
 <span class="sig-name descname"><span class="pre">turbulence_intensity_field</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted">
+<span class="sig-name descname"><span class="pre">turbulence_intensity_field_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg">
+<span class="sig-name descname"><span class="pre">turbulence_intensity_field_sorted_avg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.wind_speeds_validator">
 <span class="sig-name descname"><span class="pre">wind_speeds_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField.wind_speeds_validator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField.wind_speeds_validator" title="Permalink to this definition">#</a></dt>
@@ -1593,7 +1645,7 @@ The data dictionary to be mapped.</p>
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./_autosummary"
         },
         predefinedOutput: true

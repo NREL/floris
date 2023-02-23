@@ -121,20 +121,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../background_concepts.html">
+  <a class="reference internal" href="../floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -143,8 +150,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="../dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 current active has-children">
@@ -871,6 +907,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1036,11 +1077,6 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
   </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../code_quality.html">
-   Code Quality
-  </a>
  </li>
 </ul>
 
@@ -1559,6 +1595,58 @@ new wind conditions in the other columns.</p></li>
 <dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mirror_0_to_360</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.interpolate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.interpolate" title="Permalink to this definition">#</a></dt>
+<dd><p>This method returns a linear interpolant that will return the occurrence
+frequency for any given wind direction and wind speed combination(s).
+This can be particularly useful when evaluating the wind rose at a
+higher frequency than the input data is provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wind_directions</strong> (<em>np.ndarray</em>) -- One or multi-dimensional array containing</p></li>
+<li><p><strong>occurrence</strong> (<em>the wind speed values at which the wind rose frequency of</em>) -- </p></li>
+<li><p><strong>evaluated.</strong> (<em>should be</em>) -- </p></li>
+<li><p><strong>wind_speeds</strong> (<em>np.ndarray</em>) -- One or multi-dimensional array containing</p></li>
+<li><p><strong>occurrence</strong> -- </p></li>
+<li><p><strong>evaluated.</strong> -- </p></li>
+<li><p><strong>mirror_0_to_360</strong> (<em>bool</em><em>, </em><em>optional</em>) -- This function copies the wind rose</p></li>
+<li><p><strong>when</strong> (<em>frequency values from 0 deg to 360 deg. This can be useful</em>) -- </p></li>
+<li><p><strong>example</strong> (<em>for</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param the wind rose is only calculated until 357 deg but then interpolant is:
+:param requesting values at 359 deg. Defaults to True.:
+:param fill_value: Fill value for the interpolant when
+:type fill_value: float, optional
+:param interpolating values outside of the data region. Defaults to 0.0.:
+:param method: The interpolation method. Options are 'linear' and
+:type method: str, optional
+:param 'nearest'. Recommended usage is 'linear'. Defaults to 'linear'.:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Linear interpolant for the
+wind rose currently available in the class (self.df).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>scipy.interpolate.LinearNDInterpolant</p>
+</dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wind_directions</strong> (<em>numpy.ndarray</em>) -- </p></li>
+<li><p><strong>wind_speeds</strong> (<em>numpy.ndarray</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>wr = wind_rose.WindRose()
+wr.make_wind_rose_from_user_data(...)
+freq_floris = wr.interpolate(floris_wind_direction_grid, floris_wind_speed_grid)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2210,7 +2298,7 @@ wind rose DataFrame values.</p>
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./_autosummary"
         },
         predefinedOutput: true

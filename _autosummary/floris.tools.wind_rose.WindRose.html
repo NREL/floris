@@ -121,20 +121,27 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../installation.html">
    Installation
   </a>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../background_concepts.html">
+  <a class="reference internal" href="../floris_101.html">
    Background and Concepts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../examples.html">
-   Examples Index
   </a>
  </li>
  <li class="toctree-l1">
@@ -143,8 +150,37 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../reference.html">
+   Coming Soon!
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
   <a class="reference internal" href="../dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../code_quality.html">
+   Code Quality
   </a>
  </li>
  <li class="toctree-l1 current active has-children">
@@ -871,6 +907,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
@@ -1036,11 +1077,6 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
   </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../code_quality.html">
-   Code Quality
-  </a>
  </li>
 </ul>
 
@@ -1287,70 +1323,73 @@ for visualizing wind roses.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.internal_resample_wind_speed" title="floris.tools.wind_rose.WindRose.internal_resample_wind_speed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">internal_resample_wind_speed</span></code></a></p></td>
 <td><p>Internal method for resampling wind speed into desired bins.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load" title="floris.tools.wind_rose.WindRose.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.interpolate" title="floris.tools.wind_rose.WindRose.interpolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate</span></code></a></p></td>
+<td><p>This method returns a linear interpolant that will return the occurrence frequency for any given wind direction and wind speed combination(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load" title="floris.tools.wind_rose.WindRose.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a></p></td>
 <td><p>This method loads data from a previously saved WindRose pickle file into a WindRose object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_file" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_file</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_file" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_file</span></code></a></p></td>
 <td><p>This method imports raw wind direction and wind speed data saved in the specified csv file downloaded from the WIND Toolkit application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more information).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_folder" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_folder</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_folder" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_folder</span></code></a></p></td>
 <td><p>This method imports raw wind direction and wind speed data saved in csv files in the specified folder downloaded from the WIND Toolkit application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more information).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_hsds</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds" title="floris.tools.wind_rose.WindRose.load_wind_toolkit_hsds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wind_toolkit_hsds</span></code></a></p></td>
 <td><p>This method returns a pandas DataFrame containing hourly wind speed, wind direction, and optionally estimated turbulence intensity data using wind data from the WIND Toolkit dataset (<a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a>) for the specified lat/long coordinate in the continental US.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_user_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_user_data</span></code></a></p></td>
 <td><p>This method populates the WindRose object given user-specified observations of wind direction, wind speed, and additional optional variables.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_user_dist</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_user_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_user_dist</span></code></a></p></td>
 <td><p>This method populates the WindRose object given user-specified combinations of wind direction, wind speed, additional optional variables, and the corresponding frequencies of occurance.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_weibull</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull" title="floris.tools.wind_rose.WindRose.make_wind_rose_from_weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_wind_rose_from_weibull</span></code></a></p></td>
 <td><p>Populate WindRose object with an example wind rose with wind speed frequencies given by a Weibull distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.obkv_dset_to_L" title="floris.tools.wind_rose.WindRose.obkv_dset_to_L"><code class="xref py py-obj docutils literal notranslate"><span class="pre">obkv_dset_to_L</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.obkv_dset_to_L" title="floris.tools.wind_rose.WindRose.obkv_dset_to_L"><code class="xref py py-obj docutils literal notranslate"><span class="pre">obkv_dset_to_L</span></code></a></p></td>
 <td><p>This function returns an array containing hourly Obukhov lengths from the WIND Toolkit dataset for the specified Lat/Lon coordinate indices.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder" title="floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_wind_toolkit_folder</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder" title="floris.tools.wind_rose.WindRose.parse_wind_toolkit_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_wind_toolkit_folder</span></code></a></p></td>
 <td><p>This method populates the WindRose object given raw wind direction and wind speed data saved in csv files downloaded from the WIND Toolkit application (see <a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html">https://www.nrel.gov/grid/wind-toolkit.html</a> for more information).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_ti_ws" title="floris.tools.wind_rose.WindRose.plot_ti_ws"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_ti_ws</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_ti_ws" title="floris.tools.wind_rose.WindRose.plot_ti_ws"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_ti_ws</span></code></a></p></td>
 <td><p>This method plots the wind speed frequency distribution of the WindRose object for each turbulence intensity bin.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_rose" title="floris.tools.wind_rose.WindRose.plot_wind_rose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_rose</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_rose" title="floris.tools.wind_rose.WindRose.plot_wind_rose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_rose</span></code></a></p></td>
 <td><p>This method creates a wind rose plot showing the frequency of occurance of the specified wind direction and wind speed bins.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_rose_ti" title="floris.tools.wind_rose.WindRose.plot_wind_rose_ti"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_rose_ti</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_rose_ti" title="floris.tools.wind_rose.WindRose.plot_wind_rose_ti"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_rose_ti</span></code></a></p></td>
 <td><p>This method creates a wind rose plot showing the frequency of occurance of the specified wind direction and turbulence intensity bins.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_all" title="floris.tools.wind_rose.WindRose.plot_wind_speed_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_speed_all</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_all" title="floris.tools.wind_rose.WindRose.plot_wind_speed_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_speed_all</span></code></a></p></td>
 <td><p>This method plots the wind speed frequency distribution of the WindRose object averaged across all wind directions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction" title="floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_speed_by_direction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction" title="floris.tools.wind_rose.WindRose.plot_wind_speed_by_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_wind_speed_by_direction</span></code></a></p></td>
 <td><p>This method plots the wind speed frequency distribution of the WindRose object for each specified wind direction bin center.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.read_wind_rose_csv" title="floris.tools.wind_rose.WindRose.read_wind_rose_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_wind_rose_csv</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.read_wind_rose_csv" title="floris.tools.wind_rose.WindRose.read_wind_rose_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_wind_rose_csv</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_average_ws_by_wd" title="floris.tools.wind_rose.WindRose.resample_average_ws_by_wd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_average_ws_by_wd</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_average_ws_by_wd" title="floris.tools.wind_rose.WindRose.resample_average_ws_by_wd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_average_ws_by_wd</span></code></a></p></td>
 <td><p>This method calculates the mean wind speed for each wind direction bin and resamples the wind rose, resulting in a single mean wind speed per wind direction bin.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_column" title="floris.tools.wind_rose.WindRose.resample_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_column</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_column" title="floris.tools.wind_rose.WindRose.resample_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_column</span></code></a></p></td>
 <td><p>This method resamples the specified wind parameter column using the specified bin center values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_wind_direction" title="floris.tools.wind_rose.WindRose.resample_wind_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wind_direction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_wind_direction" title="floris.tools.wind_rose.WindRose.resample_wind_direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wind_direction</span></code></a></p></td>
 <td><p>This method resamples the wind direction bins using the specified wind direction bin center values.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_wind_speed" title="floris.tools.wind_rose.WindRose.resample_wind_speed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wind_speed</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.resample_wind_speed" title="floris.tools.wind_rose.WindRose.resample_wind_speed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wind_speed</span></code></a></p></td>
 <td><p>This method resamples the wind speed bins using the specified wind speed bin center values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.save" title="floris.tools.wind_rose.WindRose.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.save" title="floris.tools.wind_rose.WindRose.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a></p></td>
 <td><p>This method saves the WindRose data as a pickle file so that it can be imported into a WindRose object later.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.ti_calculator_IU2" title="floris.tools.wind_rose.WindRose.ti_calculator_IU2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ti_calculator_IU2</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.ti_calculator_IU2" title="floris.tools.wind_rose.WindRose.ti_calculator_IU2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ti_calculator_IU2</span></code></a></p></td>
 <td><p>This function estimates the turbulence intensity corresponding to each Obukhov length value in the input list using the relationship between Obukhov length bins and TI given in the I_U2SODAR column in Table 2 of <span id="id28">[<a class="reference internal" href="#id21" title="Sonia Wharton and JK Lundquist. Assessing atmospheric stability and the impacts on wind characteristics at an onshore wind farm. Technical Report, Lawrence Livermore National Lab.(LLNL), Livermore, CA (United States), 2010.">1</a>]</span>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.weibull" title="floris.tools.wind_rose.WindRose.weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weibull</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.tools.wind_rose.WindRose.weibull" title="floris.tools.wind_rose.WindRose.weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weibull</span></code></a></p></td>
 <td><p>This method returns a Weibull distribution corresponding to the input data array (typically wind speed) using the specified Weibull parameters.</p></td>
 </tr>
 </tbody>
@@ -1644,6 +1683,58 @@ new wind conditions in the other columns.</p></li>
 <dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.wind_rose.WindRose.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mirror_0_to_360</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/wind_rose.html#WindRose.interpolate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.wind_rose.WindRose.interpolate" title="Permalink to this definition">#</a></dt>
+<dd><p>This method returns a linear interpolant that will return the occurrence
+frequency for any given wind direction and wind speed combination(s).
+This can be particularly useful when evaluating the wind rose at a
+higher frequency than the input data is provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wind_directions</strong> (<em>np.ndarray</em>) -- One or multi-dimensional array containing</p></li>
+<li><p><strong>occurrence</strong> (<em>the wind speed values at which the wind rose frequency of</em>) -- </p></li>
+<li><p><strong>evaluated.</strong> (<em>should be</em>) -- </p></li>
+<li><p><strong>wind_speeds</strong> (<em>np.ndarray</em>) -- One or multi-dimensional array containing</p></li>
+<li><p><strong>occurrence</strong> -- </p></li>
+<li><p><strong>evaluated.</strong> -- </p></li>
+<li><p><strong>mirror_0_to_360</strong> (<em>bool</em><em>, </em><em>optional</em>) -- This function copies the wind rose</p></li>
+<li><p><strong>when</strong> (<em>frequency values from 0 deg to 360 deg. This can be useful</em>) -- </p></li>
+<li><p><strong>example</strong> (<em>for</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param the wind rose is only calculated until 357 deg but then interpolant is:
+:param requesting values at 359 deg. Defaults to True.:
+:param fill_value: Fill value for the interpolant when
+:type fill_value: float, optional
+:param interpolating values outside of the data region. Defaults to 0.0.:
+:param method: The interpolation method. Options are 'linear' and
+:type method: str, optional
+:param 'nearest'. Recommended usage is 'linear'. Defaults to 'linear'.:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Linear interpolant for the
+wind rose currently available in the class (self.df).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>scipy.interpolate.LinearNDInterpolant</p>
+</dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wind_directions</strong> (<em>numpy.ndarray</em>) -- </p></li>
+<li><p><strong>wind_speeds</strong> (<em>numpy.ndarray</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>wr = wind_rose.WindRose()
+wr.make_wind_rose_from_user_data(...)
+freq_floris = wr.interpolate(floris_wind_direction_grid, floris_wind_speed_grid)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2295,7 +2386,7 @@ wind rose DataFrame values.</p>
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./_autosummary"
         },
         predefinedOutput: true
