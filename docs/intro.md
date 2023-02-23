@@ -12,7 +12,7 @@ the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussi
 
 FLORIS is a Python package run on the command line typically by providing
 an input file with an initial configuration. It can be installed with
-```pip install floris``` (see [](installation)). The typical entry point is
+```pip install floris``` (see {ref}`installation`). The typical entry point is
 {py:class}`.FlorisInterface` which accepts the path to the
 input file as an argument. From there, changes can be made to the initial
 configuration through the {py:meth}`.FlorisInterface.reinitialize`
@@ -33,7 +33,7 @@ Finally, results can be analyzed via post-processing functions avilable within
 {py:meth}`.FlorisInterface.get_farm_AEP`, and
 a visualization package is available in {py:mod}`floris.tools.visualization`.
 A collection of examples are included in the [repository](https://github.com/NREL/floris/tree/main/examples)
-and described in detail in [](examples).
+and described in detail in {ref}`examples`.
 
 ## Engaging on GitHub
 
