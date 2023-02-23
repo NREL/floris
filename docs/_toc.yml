@@ -17,7 +17,7 @@ parts:
 
   - caption: Theory and Background
     chapters:
-    - file: reference_placeholder
+    - file: reference
 
   - caption: Developer Reference
     chapters:
