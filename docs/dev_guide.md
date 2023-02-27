@@ -6,6 +6,38 @@ processes and procedures to follow when contributing to the
 source code. For technical questions regarding FLORIS usage, please
 post your questions to [GitHub Discussions](https://github.com/NREL/floris/discussions).
 
+## Getting Started
+
+There are a few steps that nearly all contributors will need to go through to get started with
+making contributions to FLORIS. Each of these steps will be addressed in a later section of the
+developer's guide, so please read on to learn more about each of these steps.
+
+1. Create a fork of FLORIS on GitHub
+2. Clone the repository
+
+    ```bash
+    git clone -b develop https://github.com/<your-GitHub-username>/floris.git
+    ```
+
+3. Move into the FLORIS source code directory
+
+    ```bash
+    cd floris/
+    ```
+
+4. Install FLORIS in editable mode with the appropriate developer tools
+
+   - ``".[develop]"`` is for the linting and code checking tools
+   - ``".[docs]"`` is for the documentation building tools. Ideally, developers should also be
+     contributing to the documentation, and therefore checking that the documentation builds locally.
+
+    ```bash
+    pip install -e ".[develop, docs]"
+    ```
+5. Turn on the linting and code checking tools
+   ```bash
+   pre-commit install
+   ```
 
 ## Git and GitHub Workflows
 
@@ -71,7 +103,7 @@ but some may have a dedicated configuration file.
 
 Import lines can easily get out of hand and cause unnecessary distraction
 in source code files. [isort](https://pycqa.github.io/isort/index.html)
-it used to automatically manage imports in the source code. It can be run
+is used to automatically manage imports in the source code. It can be run
 directly with the following command:
 
 ```bash

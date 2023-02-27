@@ -3,13 +3,25 @@
 
 format: jb-book
 root: intro
-chapters:
-- file: installation
-- file: background_concepts
-  sections:
-  - file: floating_wind_turbine
-- file: examples
-- file: input_reference
-- file: dev_guide
-- file: api_docs
-- file: code_quality
+parts:
+  - caption: Getting Started
+    chapters:
+    # - file: intro
+    - file: installation
+
+  - caption: User Reference
+    chapters:
+    - file: floris_101
+    - file: floating_wind_turbine
+    - file: input_reference
+    - file: examples
+
+  - caption: Theory and Background
+    chapters:
+    - file: reference
+
+  - caption: Developer Reference
+    chapters:
+    - file: dev_guide
+    - file: code_quality
+    - file: api_docs
