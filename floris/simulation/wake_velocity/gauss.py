@@ -75,7 +75,6 @@ class GaussVelocityDeficit(BaseModel):
         u_initial: np.ndarray,
         wind_veer: float
     ) -> None:
-        #import ipdb; ipdb.set_trace()
 
         # yaw_angle is all turbine yaw angles for each wind speed
         # Extract and broadcast only the current turbine yaw setting
@@ -183,11 +182,11 @@ class GaussVelocityDeficit(BaseModel):
 @define
 class GaussGeometricVelocityDeficit(BaseModel):
 
-    wake_expansion_rates: list = field(default=[0.01]) # TODO: set default
-    breakpoints_D: list = field(default=[]) # TODO: set default
-    sigma_y0_D: float = field(default=1.0) # TODO: check default
-    smoothing_length_D: float = field(default=2.0) # TODO: check default
-    wim_gain_velocity: float = field(default=1.0) # TODO: check default
+    wake_expansion_rates: list = field(default=[0.03])
+    breakpoints_D: list = field(default=[])
+    sigma_y0_D: float = field(default=0.2)
+    smoothing_length_D: float = field(default=2.0)
+    wim_gain_velocity: float = field(default=1.5) # TODO: check default
 
     def prepare_function(
         self,
@@ -285,6 +284,8 @@ class GaussGeometricVelocityDeficit(BaseModel):
             sigma_y0,
             sigma_z0
         )
+        # Normalize to match end of acuator disk model tube
+        C = C / (8*(self.sigma_y0_D**2))
         
         wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
         
