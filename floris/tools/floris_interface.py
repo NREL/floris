@@ -619,19 +619,7 @@ class FlorisInterface(LoggerBase):
                 "first running `FlorisInterface.calculate_wake`."
             )
 
-        rotor_effective_velocities = rotor_effective_velocity(
-            air_density=self.floris.flow_field.air_density,
-            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
-            pP=self.floris.farm.pPs,
-            pT=self.floris.farm.pTs,
-            tilt_interp=self.floris.farm.turbine_fTilts,
-            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-        )
+        rotor_effective_velocities = self.turbine_effective_velocities()
 
         turbine_powers = power(
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
@@ -669,8 +657,24 @@ class FlorisInterface(LoggerBase):
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:
-        # TODO: Should we have a `turbine_effective_velocities` function?
         return average_velocity(velocities=self.floris.flow_field.u)
+
+    @property
+    def turbine_effective_velocities(self) -> NDArrayFloat:
+        rotor_effective_velocities = rotor_effective_velocity(
+            air_density=self.floris.flow_field.air_density,
+            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            velocities=self.floris.flow_field.u,
+            yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
+            pP=self.floris.farm.pPs,
+            pT=self.floris.farm.pTs,
+            tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
+            turbine_type_map=self.floris.farm.turbine_type_map,
+        )
+        return rotor_effective_velocities
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field
