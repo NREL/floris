@@ -37,6 +37,7 @@ def test_calculate_wake():
         fi.floris.flow_field.n_wind_speeds,
         fi.floris.farm.n_turbines
     ))
+
     fi.calculate_wake(yaw_angles=yaw_angles)
     assert fi.floris.farm.yaw_angles == yaw_angles
 

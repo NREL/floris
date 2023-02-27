@@ -89,6 +89,7 @@ unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
+    "floris/version.py",
     ".bzr",
     ".direnv",
     ".eggs",

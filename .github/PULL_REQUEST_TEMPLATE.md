@@ -20,9 +20,9 @@
 
 <!-- Release checklist:
 - Update the version in
-    - [ ] README.rst
-    - [ ] docs/index.rst
+    - [ ] README.md
+    - [ ] docs/index.md
     - [ ] floris/VERSION
-- [ ] Verify readthedocs builds correctly
+- [ ] Verify docs builds correctly
 - [ ] Create a tag in the NREL/FLORIS repository
 -->
