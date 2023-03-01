@@ -622,7 +622,7 @@ class FlorisInterface(LoggerBase):
                 "first running `FlorisInterface.calculate_wake`."
             )
 
-        rotor_effective_velocities = self.turbine_effective_velocities()
+        rotor_effective_velocities = self.turbine_effective_velocities
 
         turbine_powers = power(
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
