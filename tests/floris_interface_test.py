@@ -48,7 +48,8 @@ def test_calculate_no_wake():
     """
     In FLORIS v3.2, running calculate_no_wake twice incorrectly set the yaw angles when the first
     time has non-zero yaw settings but the second run had all-zero yaw settings. The test below
-    asserts that the yaw angles are correctly set in subsequent calls to calculate_wake.
+    asserts that the yaw angles are correctly set in subsequent calls to calculate_no_wake. After
+    that test are additional tests to check the final values of calculate_no_wake.
     """
     fi = FlorisInterface(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones(
@@ -83,7 +84,6 @@ def test_calculate_no_wake():
     fi_base.floris.farm.yaw_angles = yaw_angles
     fi_base.floris.flow_field.initialize_velocity_field(fi_base.floris.grid)
     fi_base.floris.farm.initialize(fi_base.floris.grid.sorted_indices)
-    fi_base.floris.state.INITIALIZED
     fi_base.floris.finalize()
 
     fi = FlorisInterface(configuration=YAML_INPUT)
