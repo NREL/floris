@@ -186,7 +186,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
     breakpoints_D: list = field(default=[5]) # []
     sigma_y0_D: float = field(default=0.28) # 0.2
     smoothing_length_D: float = field(default=2.0)
-    wim_gain_velocity: float = field(default=4.5) # 1.5 TODO: check default
+    mixing_gain_velocity: float = field(default=4.5) # 1.5 TODO: check default
 
     def prepare_function(
         self,
@@ -261,7 +261,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_y0, 
             self.smoothing_length_D*rotor_diameter_i,
-            self.wim_gain_velocity*mixing_i,
+            self.mixing_gain_velocity*mixing_i,
         )
         sigma_y[upstream_mask] = sigma_y0.flatten()[0]
         sigma_z = sigma_y # TODO: separate z deflection model

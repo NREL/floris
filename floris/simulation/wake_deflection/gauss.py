@@ -224,7 +224,7 @@ class GaussGeometricDeflection(BaseModel):
     deflection_gain_D: float = field(default=70.0)
     delta_0_D: float = field(default=0.0)
     deflection_rate: float = field(default=20)
-    wim_gain_deflection: float = field(default=900.)
+    mixing_gain_deflection: float = field(default=900.)
     yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default
 
     def prepare_function(
@@ -302,7 +302,7 @@ class GaussGeometricDeflection(BaseModel):
 
         delta_0 = self.delta_0_D*rotor_diameter_i
 
-        A = (1/(1+self.wim_gain_deflection*mixing_i)) * \
+        A = (1/(1+self.mixing_gain_deflection*mixing_i)) * \
             self.deflection_gain_D * rotor_diameter_i \
             * (np.sqrt(1-ct_i)/2 + 1/2)
 
