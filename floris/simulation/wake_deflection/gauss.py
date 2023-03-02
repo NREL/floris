@@ -222,7 +222,7 @@ class GaussVelocityDeflection(BaseModel):
 class GaussGeometricDeflection(BaseModel):
 
     deflection_gain_D: float = field(default=70.0)
-    delta_0_D: float = field(default=0.0)
+    delta_0_D: float = field(default=0.0) # Remove as a parameter?
     deflection_rate: float = field(default=20)
     mixing_gain_deflection: float = field(default=900.)
     yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default
@@ -286,19 +286,12 @@ class GaussGeometricDeflection(BaseModel):
         """
         # ==============================================================
 
-        def Bastankhah_skew(misalignment, ct):
+        def initial_skew(misalignment, ct):
             g = misalignment*np.pi/180
             return 0.3*g / np.cos(g) * (1 - np.sqrt(1 - ct*np.cos(g)))
 
-        # Alternative to Bastankhah_skew; To be discussed
-        # Remove that 0.2 gain eventually, as this gets superseded by the 
-        # deflection_rate_y/z tuning parameters.
-        def sine_skew(yaw, ct): 
-            g = yaw*np.pi/180
-            return 0.2*np.sin(ct*g)
-
-        theta_c_y = Bastankhah_skew(-yaw_i, ct_i)
-        theta_c_z = Bastankhah_skew(tilt_i, ct_i)
+        theta_c_y = initial_skew(-yaw_i, ct_i)
+        theta_c_z = initial_skew(tilt_i, ct_i)
 
         delta_0 = self.delta_0_D*rotor_diameter_i
 
