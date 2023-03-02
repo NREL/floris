@@ -251,6 +251,7 @@ class GaussGeometricDeflection(BaseModel):
         tilt_i: np.ndarray,
         mixing_i: np.ndarray,
         ct_i: np.ndarray,
+        axial_induction_i: np.ndarray,
         rotor_diameter_i: float,
         *,
         x: np.ndarray,
@@ -297,7 +298,7 @@ class GaussGeometricDeflection(BaseModel):
 
         A = (1/(1+self.mixing_gain_deflection*mixing_i)) * \
             self.deflection_gain_D * rotor_diameter_i \
-            * (np.sqrt(1-ct_i)/2 + 1/2)
+            * (1-axial_induction_i)
 
         x_normalized = ((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i
         
@@ -307,6 +308,7 @@ class GaussGeometricDeflection(BaseModel):
         # Apply downstream mask in the process
         deflection_y = theta_c_y*(-delta_0 + A * log_term)
         deflection_z = theta_c_z*(-delta_0 + A * log_term)
+        #import ipdb; ipdb.set_trace()
 
         # Possible TODO: Add warning for points in the near wake x-x_i, where 
         # model won't be very good
