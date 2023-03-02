@@ -186,7 +186,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
     breakpoints_D: list = field(default=[5]) # []
     sigma_y0_D: float = field(default=0.28) # 0.2
     smoothing_length_D: float = field(default=2.0)
-    wim_gain_velocity: float = field(default=1.5) # TODO: check default
+    wim_gain_velocity: float = field(default=4.5) # 1.5 TODO: check default
 
     def prepare_function(
         self,
@@ -213,7 +213,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
         deflection_field_z_i: np.ndarray,
         yaw_angle_i: np.ndarray,
         tilt_angle_i: np.ndarray,
-        wake_induced_mixing_i: np.ndarray,
+        mixing_i: np.ndarray,
         ct_i: np.ndarray,
         hub_height_i: float,
         rotor_diameter_i: np.ndarray,
@@ -261,7 +261,7 @@ class GaussGeometricVelocityDeficit(BaseModel):
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_y0, 
             self.smoothing_length_D*rotor_diameter_i,
-            self.wim_gain_velocity*wake_induced_mixing_i,
+            self.wim_gain_velocity*mixing_i,
         )
         sigma_y[upstream_mask] = sigma_y0.flatten()[0]
         sigma_z = sigma_y # TODO: separate z deflection model
@@ -310,6 +310,8 @@ class GaussGeometricVelocityDeficit(BaseModel):
                 sigma_y0,
                 sigma_z0
             )
+            # Normalize to match end of acuator disk model tube
+            C_mirr = C_mirr / (8*(self.sigma_y0_D**2))
             
             # ASSUME sum-of-squares superposition for the real and mirror wakes
             wake_deficit = np.sqrt(
@@ -387,13 +389,12 @@ def geometric_model_wake_width(
     breakpoints, 
     sigma_0, 
     smoothing_length,
-    wake_induced_mixing_final,
+    mixing_final,
     ):
     assert len(wake_expansion_rates) == len(breakpoints) + 1, \
         "Invalid combination of wake_expansion_rates and breakpoints."
 
-    #import ipdb; ipdb.set_trace()
-    sigma = (wake_expansion_rates[0] + wake_induced_mixing_final) * x + sigma_0
+    sigma = (wake_expansion_rates[0] + mixing_final) * x + sigma_0
     for ib, b in enumerate(breakpoints):
         sigma += (wake_expansion_rates[ib+1]-wake_expansion_rates[ib]) * \
             sigmoid_integral(x, center=b, width=smoothing_length) 

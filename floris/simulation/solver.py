@@ -1023,14 +1023,14 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
     turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
 
-    # TODO: check this works when mutliple ws, wd are passed. 
-    # (both transpose and divide)
     x_locs = np.mean(grid.x_sorted, axis=(3, 4))[:,:,:,None]
     downstream_distance_D = x_locs - np.transpose(x_locs, axes=(0,1,3,2))
     downstream_distance_D = downstream_distance_D / \
         np.repeat(farm.rotor_diameters_sorted[:,:,:,None], grid.n_turbines, axis=-1)
     downstream_distance_D = np.maximum(downstream_distance_D, 0.1) # For ease
-    wake_induced_mixing_factor = np.zeros_like(downstream_distance_D)
+    mixing_factor = np.zeros_like(downstream_distance_D)
+    mixing_factor[:,:,:,:] = model_manager.turbulence_model.ti_gain*\
+        flow_field.turbulence_intensity*np.eye(grid.n_turbines)
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -1079,7 +1079,6 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         tilt_angle_i = farm.calculate_tilt_for_eff_velocities(flow_field.u_sorted)\
             [:, :, i:i+1, None, None]
-        # TODO: Does tilt affect other aspects of the model, as yaw does?
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError(
@@ -1091,16 +1090,16 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         if model_manager.enable_yaw_added_recovery:
             # Influence of yawing on turbine's own wake
-            wake_induced_mixing_factor[:, :, i:i+1, i:i+1] += \
+            mixing_factor[:, :, i:i+1, i:i+1] += \
                 yaw_added_wake_mixing(
-                    axial_induction_i[:,:,:,:,0],
-                    yaw_angle_i[:,:,:,:,0],
+                    axial_induction_i,
+                    yaw_angle_i,
                     1,
                     model_manager.deflection_model.yaw_added_mixing_gain
                 )
             
         # Extract total wake induced mixing for turbine i
-        wake_induced_mixing_i = wake_induced_mixing_factor[:, :, i:i+1, :, None].\
+        mixing_i = mixing_factor[:, :, i:i+1, :, None].\
             sum(axis=3, keepdims=1)
 
         # Model calculations
@@ -1110,7 +1109,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             y_i,
             effective_yaw_i,
             tilt_angle_i,
-            wake_induced_mixing_i,
+            mixing_i,
             ct_i,
             rotor_diameter_i,
             **deflection_model_args
@@ -1126,7 +1125,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             deflection_field_z,
             yaw_angle_i,
             tilt_angle_i,
-            wake_induced_mixing_i,
+            mixing_i,
             ct_i,
             hub_height_i,
             rotor_diameter_i,
@@ -1143,14 +1142,15 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             / (grid.grid_resolution * grid.grid_resolution)
 
         # Compute wake induced mixing factor
-        wake_induced_mixing_factor[:,:,:,i] += \
-            area_overlap * axial_induction_i[:,:,:,0,0] \
-            / downstream_distance_D[:,:,:,i]
+        mixing_factor[:,:,:,i] += \
+            area_overlap * model_manager.turbulence_model.function(
+                axial_induction_i, downstream_distance_D[:,:,:,i]
+            )
         if model_manager.enable_yaw_added_recovery:
-            wake_induced_mixing_factor[:,:,:,i] += \
+            mixing_factor[:,:,:,i] += \
                 area_overlap * yaw_added_wake_mixing(
-                axial_induction_i[:,:,:,0,0],
-                yaw_angle_i[:,:,:,0,0],
+                axial_induction_i,
+                yaw_angle_i,
                 downstream_distance_D[:,:,:,i],
                 model_manager.deflection_model.yaw_added_mixing_gain
             )
@@ -1162,7 +1162,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
     flow_field.turbulence_intensity_field = np.mean(turbine_turbulence_intensity, axis=(3,4))
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
-    flow_field.wim_field = wake_induced_mixing_factor # This is used for full_flow calc
+    flow_field.wim_field = mixing_factor # This is used for full_flow calc
 
 def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
     

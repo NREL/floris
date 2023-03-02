@@ -27,7 +27,11 @@ from floris.simulation.wake_deflection import (
     NoneVelocityDeflection,
     GaussGeometricDeflection
 )
-from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
+from floris.simulation.wake_turbulence import (
+    CrespoHernandez, 
+    NoneWakeTurbulence,
+    WakeInducedMixing
+)
 from floris.simulation.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,
     GaussVelocityDeficit,
@@ -53,7 +57,7 @@ MODEL_MAP = {
     "turbulence_model": {
         "none": NoneWakeTurbulence,
         "crespo_hernandez": CrespoHernandez,
-        "wake_induced_mixing": NoneWakeTurbulence
+        "wake_induced_mixing": WakeInducedMixing
     },
     "velocity_model": {
         "none": NoneVelocityDeficit,
@@ -116,8 +120,7 @@ class WakeModelManager(BaseClass):
             self.deflection_model = model.from_dict(model_parameters)
 
         model: BaseModel = MODEL_MAP["turbulence_model"][self.model_strings["turbulence_model"]]
-        if self.model_strings["turbulence_model"].lower() == "none" or \
-            self.model_strings["turbulence_model"].lower() == "wake_induced_mixing":
+        if self.model_strings["turbulence_model"].lower() == "none":
             model_parameters = None
         else:
             model_parameters = self.wake_turbulence_parameters[self.model_strings["turbulence_model"]]
