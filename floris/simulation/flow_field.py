@@ -118,7 +118,7 @@ class FlowField(FromDictMixin):
             (
                 self.n_wind_directions,
                 self.n_wind_speeds,
-                np.shape(self.u_initial_sorted)[2],
+                grid.n_turbines,
                 1,
                 1,
             )
