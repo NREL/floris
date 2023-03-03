@@ -395,7 +395,7 @@ class SampleInputs:
             "wake": self.wake,
             "solver": {
                 "type": "turbine_grid",
-                "turbine_grid_points": 5,
+                "turbine_grid_points": 3,
             },
             "logging": {
                 "console": {"enable": True, "level": 1},
