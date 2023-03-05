@@ -1099,8 +1099,10 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
                 )
             
         # Extract total wake induced mixing for turbine i
-        mixing_i = mixing_factor[:, :, i:i+1, :, None].\
-            sum(axis=3, keepdims=1)
+        mixing_i = np.linalg.norm(
+            mixing_factor[:, :, i:i+1, :, None],
+            ord=2, axis=3, keepdims=True
+        )
 
         # Model calculations
         # NOTE: exponential

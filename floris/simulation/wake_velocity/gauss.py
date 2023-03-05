@@ -182,11 +182,11 @@ class GaussVelocityDeficit(BaseModel):
 @define
 class GaussGeometricVelocityDeficit(BaseModel):
 
-    wake_expansion_rates: list = field(default=[0.0, 0.012]) # [0.012]
-    breakpoints_D: list = field(default=[5]) # []
-    sigma_y0_D: float = field(default=0.28) # 0.2
+    wake_expansion_rates: list = field(default=[0.0, 0.012])
+    breakpoints_D: list = field(default=[5])
+    sigma_y0_D: float = field(default=0.28)
     smoothing_length_D: float = field(default=2.0)
-    mixing_gain_velocity: float = field(default=4.5) # 1.5 TODO: check default
+    mixing_gain_velocity: float = field(default=2.5) 
 
     def prepare_function(
         self,
