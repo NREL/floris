@@ -1090,7 +1090,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
 
         if model_manager.enable_yaw_added_recovery:
             # Influence of yawing on turbine's own wake
-            mixing_factor[:, :, i:i+1, i:i+1] += \
+            mixing_factor[:, :, i:i+1, i] += \
                 yaw_added_wake_mixing(
                     axial_induction_i,
                     yaw_angle_i,
