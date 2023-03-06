@@ -1011,14 +1011,3 @@ def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
         ]
 
     return [in_region, out_region]
-
-## Functionality removed in v3
-
-def set_rotor_diameter(self, rotor_diameter):
-    """
-    This function has been replaced and no longer works correctly, assigning an error
-    """
-    raise Exception(
-        "FlorinInterface.set_rotor_diameter has been removed in favor of "
-        "FlorinInterface.change_turbine. See examples/change_turbine/."
-    )
