@@ -150,9 +150,15 @@ class FlorisInterface(LoggerBase):
                 Defaults to None.
         """
 
-        # TODO decide where to handle this sign issue
-        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
-            self.floris.farm.yaw_angles = yaw_angles
+        if yaw_angles is None:
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            )
+        self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
         self.floris.initialize_domain()
