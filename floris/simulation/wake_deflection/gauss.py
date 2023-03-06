@@ -612,7 +612,7 @@ def yaw_added_wake_mixing(
 ):
     return axial_induction_i[:,:,:,0,0] * yaw_added_mixing_gain * \
         (1 - cosd(yaw_angle_i[:,:,:,0,0]))\
-        / downstream_distance_D_i
+        / downstream_distance_D_i**2
 
 # def yaw_added_recovery_correction(
 #     self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord
