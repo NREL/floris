@@ -19,14 +19,18 @@
 import os
 import pickle
 
-import numpy as np
-import pandas as pd
 import dateutil
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-# from pyproj import Proj
+import numpy as np
+import pandas as pd
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
 import floris.utilities as geo
+
+
+# from pyproj import Proj
+
 
 
 class WindRose:
@@ -40,7 +44,7 @@ class WindRose:
     for visualizing wind roses.
 
     References:
-        .. bibliography:: /source/zrefs.bib
+        .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
             :keyprefix: wr-
@@ -443,6 +447,68 @@ class WindRose:
         # Update internal data frame
         self.df = self.resample_average_ws_by_wd(self.df)
 
+    def interpolate(
+        self,
+        wind_directions: np.ndarray,
+        wind_speeds: np.ndarray,
+        mirror_0_to_360=True,
+        fill_value=0.0,
+        method="linear"
+    ):
+        """
+        This method returns a linear interpolant that will return the occurrence
+        frequency for any given wind direction and wind speed combination(s).
+        This can be particularly useful when evaluating the wind rose at a
+        higher frequency than the input data is provided.
+
+        Args:
+            wind_directions (np.ndarray): One or multi-dimensional array containing
+            the wind direction values at which the wind rose frequency of occurrence
+            should be evaluated.
+            wind_speeds (np.ndarray): One or multi-dimensional array containing
+            the wind speed values at which the wind rose frequency of occurrence
+            should be evaluated.
+            mirror_0_to_360 (bool, optional): This function copies the wind rose
+            frequency values from 0 deg to 360 deg. This can be useful when, for example,
+            the wind rose is only calculated until 357 deg but then interpolant is
+            requesting values at 359 deg. Defaults to True.
+            fill_value (float, optional): Fill value for the interpolant when
+            interpolating values outside of the data region. Defaults to 0.0.
+            method (str, optional): The interpolation method. Options are 'linear' and
+            'nearest'. Recommended usage is 'linear'. Defaults to 'linear'.
+
+        Returns:
+            scipy.interpolate.LinearNDInterpolant: Linear interpolant for the
+            wind rose currently available in the class (self.df).
+
+        Example:
+            wr = wind_rose.WindRose()
+            wr.make_wind_rose_from_user_data(...)
+            freq_floris = wr.interpolate(floris_wind_direction_grid, floris_wind_speed_grid)
+        """
+        if method == "linear":
+            interpolator = LinearNDInterpolator
+        elif method == "nearest":
+            interpolator = NearestNDInterpolator
+        else:
+            UserWarning("Unknown interpolation method: '{:s}'".format(method))
+
+        # Load windrose information from self
+        df = self.df.copy()
+
+        if mirror_0_to_360:
+            # Copy values from 0 deg over to 360 deg
+            df_copy = df[df["wd"] == 0.0].copy()
+            df_copy["wd"] = 360.0
+            df = pd.concat([df, df_copy], axis=0)
+
+        interp = interpolator(
+            points=df[["wd", "ws"]],
+            values=df["freq_val"],
+            fill_value=fill_value
+        )
+        return interp(wind_directions, wind_speeds)
+
     def weibull(self, x, k=2.5, lam=8.0):
         """
         This method returns a Weibull distribution corresponding to the input
@@ -634,7 +700,7 @@ class WindRose:
         self.internal_resample_wind_direction(wd=wd)
 
         return self.df
-    
+
     def read_wind_rose_csv(
         self,
         filename
@@ -1384,13 +1450,13 @@ class WindRose:
 
         # Set up figure
         if ax is None:
-            _, ax = plt.subplots(subplot_kw=dict(polar=True))
+            _, ax = plt.subplots(subplot_kw={"polar": True})
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ws_right_edges))
 
-        for wd_idx, wd in enumerate(wd_bins):
-            rects = list()
+        for wd in wd_bins:
+            rects = []
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ws_idx, ws in enumerate(ws_right_edges[::-1]):
                 plot_val = df_plot_sub[
@@ -1459,13 +1525,13 @@ class WindRose:
 
         # Set up figure
         if ax is None:
-            _, ax = plt.subplots(subplot_kw=dict(polar=True))
+            _, ax = plt.subplots(subplot_kw={"polar": True})
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ti_right_edges))
 
-        for wd_idx, wd in enumerate(wd_bins):
-            rects = list()
+        for wd in wd_bins:
+            rects = []
             df_plot_sub = df_plot[df_plot.wd == wd]
             for ti_idx, ti in enumerate(ti_right_edges[::-1]):
                 plot_val = df_plot_sub[

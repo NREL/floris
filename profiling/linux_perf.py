@@ -13,11 +13,15 @@
 # See https://floris.readthedocs.io for documentation
 
 from contextlib import contextmanager
-from subprocess import Popen
 from os import getpid
-from signal import SIGINT
-from time import sleep, time, perf_counter
 from resource import getrusage, RUSAGE_SELF
+from signal import SIGINT
+from subprocess import Popen
+from time import (
+    perf_counter,
+    sleep,
+    time,
+)
 
 
 # Additional events described here:
@@ -33,7 +37,7 @@ events = [
 def perf():
     """
     Benchmark this process with Linux's perf util.
-    
+
     Example usage:
 
         with perf():

@@ -1,6 +1,7 @@
 
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 from floris.tools.floris_interface import FlorisInterface
 
@@ -74,4 +75,3 @@ def test_calculate_no_wake():
 
 def test_reinitialize():
     pass
-

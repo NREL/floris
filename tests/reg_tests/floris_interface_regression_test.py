@@ -14,15 +14,20 @@
 
 import numpy as np
 
+from floris.simulation import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    power,
+)
 from floris.tools import FlorisInterface
 from tests.conftest import (
-    N_TURBINES,
-    N_WIND_SPEEDS,
-    N_WIND_DIRECTIONS,
-    print_test_values,
     assert_results_arrays,
+    N_TURBINES,
+    N_WIND_DIRECTIONS,
+    N_WIND_SPEEDS,
+    print_test_values,
 )
-from floris.simulation import Ct, power, axial_induction, average_velocity
 
 
 DEBUG = False

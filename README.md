@@ -3,18 +3,13 @@
 FLORIS is a controls-focused wind farm simulation software incorporating
 steady-state engineering wake models into a performance-focused Python
 framework. It has been in active development at NREL since 2013 and the latest
-release is [FLORIS v3.2.2](https://github.com/NREL/floris/releases/latest).
+release is [FLORIS v3.3](https://github.com/NREL/floris/releases/latest).
+Online documentation is available at https://nrel.github.io/floris.
 
 The software is in active development and engagement with the development team
 is highly encouraged. If you are interested in using FLORIS to conduct studies
 of a wind farm or extending FLORIS to include your own wake model, please join
-the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/categories/v3-design-discussion)!
-
-Since FLORIS v3, the documentation is migrating to https://nrel.github.io/floris,
-but this is a work in progress. For context and background on previous work in
-FLORIS, see the legacy documentation at http://floris.readthedocs.io/.
-
----
+the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/)!
 
 ## Installation
 
@@ -46,7 +41,7 @@ commands in a terminal or shell will download and install FLORIS.
 
     # If using conda, be sure to activate your environment prior to installing
     # conda activate <env name>
-    
+
     # If using pyOptSpare, install it first
     conda install -c conda-forge pyoptsparse
 
@@ -72,14 +67,10 @@ and importing FLORIS:
         tools (package)
         type_dec
         utilities
-
-    DATA
-        ROOT = PosixPath('/Users/rmudafor/Development/floris')
-        VERSION = '3.2.1'
-        version_file = <_io.TextIOWrapper name='/Users/rmudafor/Development/fl...
+        version
 
     VERSION
-        3.2.1
+        3.3
 
     FILE
         ~/floris/floris/__init__.py
@@ -88,18 +79,42 @@ and importing FLORIS:
 It is important to regularly check for new updates and releases as new
 features, improvements, and bug fixes will be issued on an ongoing basis.
 
+## Quick Start
 
-## Getting Started
+FLORIS is a Python package run on the command line typically by providing
+an input file with an initial configuration. It can be installed with
+```pip install floris``` (see [installation](https://github.nrel.io/floris/installation)).
+The typical entry point is
+[FlorisInterface](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface)
+which accepts the path to the input file as an argument. From there,
+changes can be made to the initial configuration through the
+[FlorisInterface.reinitialize](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.reinitialize)
+routine, and the simulation is executed with
+[FlorisInterface.calculate_wake](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_wake).
 
-A series of examples is included in the [examples/](https://github.com/NREL/floris/tree/main/examples)
-directory. These are ordered from simplest to most complex. They demonstrate various
-use cases of FLORIS, and generally provide a good starting point for building a more
-complex simulation.
+```python
+from floris.tools import FlorisInterface
+fi = FlorisInterface("path/to/input.yaml")
+fi.reinitialize(wind_directions=[i for i in range(10)])
+fi.calculate_wake()
+```
 
+Finally, results can be analyzed via post-processing functions available within
+[FlorisInterface](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface)
+such as
+- [FlorisInterface.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_layout)
+- [FlorisInterface.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_powers)
+- [FlorisInterface.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_farm_AEP)
+
+and in a visualization package at [floris.tools.visualization](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.visualization).
+A collection of examples describing the creation of simulations as well as
+analysis and post processing are included in the
+[repository](https://github.com/NREL/floris/tree/main/examples)
+and described in detail in [Examples Index](https://github.nrel.io/floris/examples).
 
 ## Engaging on GitHub
 
-FLORIS leverages the following features of GitHub to coordinate support and development efforts:
+FLORIS leverages the following GitHub features to coordinate support and development efforts:
 
 - [Discussions](https://github.com/NREL/floris/discussions): Collaborate to develop ideas for new use cases, features, and software designs, and get support for usage questions
 - [Issues](https://github.com/NREL/floris/issues): Report potential bugs and well-developed feature requests
@@ -112,6 +127,7 @@ details for a feature request. [Q&A](https://github.com/NREL/floris/discussions/
 is where to get usage support.
 [Show and tell](https://github.com/NREL/floris/discussions/categories/show-and-tell) is a free-form
 space to show off the things you are doing with FLORIS.
+
 
 # License
 

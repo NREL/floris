@@ -12,8 +12,8 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
 from floris.simulation import BaseModel
 

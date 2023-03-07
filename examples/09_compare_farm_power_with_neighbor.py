@@ -13,17 +13,21 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import numpy as np
-import pandas as pd
-from floris.tools import FlorisInterface
 import matplotlib.pyplot as plt
+import numpy as np
+
+from floris.tools import FlorisInterface
+
 
 """
-This example demonstrates how to use turbine_wieghts to define a set of turbines belonging to a neighboring farm which
-impacts the power production of the farm under consideration via wake losses, but whose own power production is not
+This example demonstrates how to use turbine_wieghts to define a set of turbines belonging
+to a neighboring farm which
+impacts the power production of the farm under consideration via wake losses, but whose own
+power production is not
 considered in farm power / aep production
 
-The use of neighboring farms in the context of wake steering design is considered in example examples/10_optimize_yaw_with_neighboring_farm.py
+The use of neighboring farms in the context of wake steering design is considered in example
+examples/10_optimize_yaw_with_neighboring_farm.py
 """
 
 
@@ -64,8 +68,18 @@ farm_power_neighbor = fi.get_farm_power(turbine_weights=turbine_weights) / 1E3 #
 
 # Show the farms
 fig, ax = plt.subplots()
-ax.scatter(layout_x[turbine_weights==1],layout_y[turbine_weights==1], color='k',label='Base Farm')
-ax.scatter(layout_x[turbine_weights==0],layout_y[turbine_weights==0], color='r',label='Neighboring Farm')
+ax.scatter(
+    layout_x[turbine_weights==1],
+    layout_y[turbine_weights==1],
+    color='k',
+    label='Base Farm'
+)
+ax.scatter(
+    layout_x[turbine_weights==0],
+    layout_y[turbine_weights==0],
+    color='r',
+    label='Neighboring Farm'
+)
 ax.legend()
 
 # Plot the power difference

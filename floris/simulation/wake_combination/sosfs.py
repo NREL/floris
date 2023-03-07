@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from attrs import define
 import numpy as np
+from attrs import define
 
 from floris.simulation import BaseModel
 

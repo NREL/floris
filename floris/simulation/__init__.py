@@ -33,17 +33,24 @@ isort:skip_file
 # that should be included in the simulation package.
 # Since some of these depend on each other, the order
 # that they are listed here does matter.
-from .base import BaseClass, BaseModel, State
-from .turbine import Turbine, Ct, power, axial_induction, average_velocity
-from .farm import Farm
-from .grid import Grid, TurbineGrid, FlowFieldGrid, FlowFieldPlanarGrid
-from .flow_field import FlowField
-from .wake import WakeModelManager
-from .solver import sequential_solver, full_flow_sequential_solver, cc_solver, full_flow_cc_solver, turbopark_solver, full_flow_turbopark_solver
-from .floris import Floris
 
-
-# initialize the logger
 import floris.logging_manager
 
+from .base import BaseClass, BaseModel, State
+from .turbine import average_velocity, axial_induction, Ct, power, Turbine
+from .farm import Farm
+from .grid import FlowFieldGrid, FlowFieldPlanarGrid, Grid, TurbineGrid
+from .flow_field import FlowField
+from .wake import WakeModelManager
+from .solver import (
+    cc_solver,
+    full_flow_cc_solver,
+    full_flow_sequential_solver,
+    full_flow_turbopark_solver,
+    sequential_solver,
+    turbopark_solver,
+)
+from .floris import Floris
+
+# initialize the logger
 floris.logging_manager._setup_logger()

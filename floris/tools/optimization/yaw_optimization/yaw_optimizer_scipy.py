@@ -87,7 +87,7 @@ class YawOptimizationScipy(YawOptimization):
         wd_array = self.fi_subset.floris.flow_field.wind_directions
         ws_array = self.fi_subset.floris.flow_field.wind_speeds
         for nwsi, ws in enumerate(ws_array):
-        
+
             self.fi_subset.reinitialize(wind_speeds=[ws])
 
             for nwdi, wd in enumerate(wd_array):

@@ -14,5 +14,4 @@ scipy
 shapely
 
 # utilities
-pytest
 coloredlogs

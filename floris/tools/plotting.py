@@ -13,10 +13,10 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
 
 
 class PlotDefaults:
@@ -35,7 +35,8 @@ class PlotDefaults:
         # most journals: 300dpi
         plt.rcParams["savefig.dpi"] = 300
 
-        # most journals: 9 cm (or 3.5 inch) for single column width and 18.5 cm (or 7.3 inch) for double column width.
+        # most journals: 9 cm (or 3.5 inch) for single column width and
+        # 18.5 cm (or 7.3 inch) for double column width.
         plt.rcParams["figure.autolayout"] = False
         plt.rcParams["figure.figsize"] = 7.3, 4
         plt.rcParams["axes.labelsize"] = 16
@@ -137,7 +138,8 @@ def data_plot(
 
             df_sub = df[(df.x >= x_cent - x_radius) & (df.x <= x_cent + x_radius)]
 
-            # TODO this conditional statement contains a lot of stuff to be cleaned up. Why all the commented content?
+            # TODO this conditional statement contains a lot of stuff to be cleaned up.
+            # Why all the commented content?
             if df_sub.shape[0] > min_vals:
 
                 # Get statistics via bootstrapping
@@ -157,13 +159,20 @@ def data_plot(
                 )
                 # mean_vals[x_idx] = np.median(ratio_array)
                 count_vals[x_idx] = df_sub.shape[0]
-                # ci_vals[x_idx] = scipy.stats.sem(ratio_array, ddof=1) * 1.96 # df_sub.y.apply(lambda x: scipy.stats.sem(x, ddof=1) * 1.96)
+                # ci_vals[x_idx] = (
+                #     scipy.stats.sem(ratio_array, ddof=1) * 1.96
+                #     # df_sub.y.apply(lambda x: scipy.stats.sem(x, ddof=1) * 1.96)
+                # )
                 # p_up_vals[x_idx] = p_up_func(ratio_array)# df_sub.y.apply(p_up_func)
                 # p_down_vals[x_idx] = p_down_func(ratio_array)#df_sub.y.apply(p_down_func)
                 # Get the confidence bounds
                 confidence = 95
                 conf_bounds = [50 + 0.5 * confidence, 50 - 0.5 * confidence]
-                # lower[x_idx], upper[x_idx] = (2*med_vals[x_idx]-np.percentile(med_array, conf_bounds))
+                # lower[x_idx], upper[x_idx] = (
+                #     2
+                #     * med_vals[x_idx]
+                #     - np.percentile(med_array, conf_bounds)
+                # )
                 lower[x_idx], upper[x_idx] = np.percentile(med_array, conf_bounds)
 
         # # Plot the underlying points
@@ -251,7 +260,7 @@ def stacked_plot(x, groups, x_bins, ax, color_array=None):
         if num_points > 0:
             for g_idx, g in enumerate(group_vals):
                 p_array[g_idx, x_idx] = np.sum(g_bin == g)  # / float(num_points)
-    p = list()
+    p = []
 
     if color_array is not None:
         p.append(
@@ -320,7 +329,7 @@ def stacked_percent_plot(x, groups, x_bins, ax, color_array=None):
         if num_points > 0:
             for g_idx, g in enumerate(group_vals):
                 p_array[g_idx, x_idx] = np.sum(g_bin == g) / float(num_points)
-    p = list()
+    p = []
 
     if color_array is not None:
         p.append(

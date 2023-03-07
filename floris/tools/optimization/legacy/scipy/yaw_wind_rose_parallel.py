@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from .yaw_wind_rose import YawOptimizationWindRose
 from ....logging_manager import LoggerBase
+from .yaw_wind_rose import YawOptimizationWindRose
 
 
 class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
@@ -106,7 +106,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
                 turbine's lower bound equal to its upper bound (i.e., an
                 equality constraint), as: bnds[ti] = (x, x), where x is the
                 fixed yaw angle assigned to the turbine. This works for both
-                zero and nonzero yaw angles. Moreover, if 
+                zero and nonzero yaw angles. Moreover, if
                 exclude_downstream_turbines=True, the yaw angles for all
                 downstream turbines will be 0.0 or a feasible value closest to
                 0.0. If none are specified, the bounds are set to

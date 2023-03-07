@@ -15,15 +15,15 @@
 from __future__ import annotations
 
 import attrs
-from attrs import define, field
 import numpy as np
+from attrs import define, field
 
+from floris.simulation import Grid
 from floris.type_dec import (
+    floris_array_converter,
     FromDictMixin,
     NDArrayFloat,
-    floris_array_converter
 )
-from floris.simulation import Grid
 
 
 @define
@@ -75,13 +75,18 @@ class FlowField(FromDictMixin):
         # be multiplied with the wind speeds to give the initial wind field.
         # Since we use grid.z, this is a vertical plane for each turbine
         # Here, the profile is of shape (# turbines, N grid points, M grid points)
-        # This velocity profile is 1.0 at the reference wind height and then follows wind shear as an exponent.
+        # This velocity profile is 1.0 at the reference wind height and then follows wind
+        # shear as an exponent.
         # NOTE: the convention of which dimension on the TurbineGrid is vertical and horizontal is
         # determined by this line. Since the right-most dimension on grid.z is storing the values
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
         wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
-        dwind_profile_plane = self.wind_shear * (1 / self.reference_wind_height) ** self.wind_shear * (grid.z_sorted) ** (self.wind_shear - 1)
+        dwind_profile_plane = (
+            self.wind_shear
+            * (1 / self.reference_wind_height) ** self.wind_shear
+            * (grid.z_sorted) ** (self.wind_shear - 1)
+        )
 
         # If no hetergeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
@@ -91,9 +96,18 @@ class FlowField(FromDictMixin):
         # grid locations are determined in either 2 or 3 dimensions.
         else:
             if len(self.het_map[0][0].points[0]) == 2:
-                speed_ups = self.calculate_speed_ups(self.het_map, grid.x_sorted, grid.y_sorted)
+                speed_ups = self.calculate_speed_ups(
+                    self.het_map,
+                    grid.x_sorted,
+                    grid.y_sorted
+                )
             elif len(self.het_map[0][0].points[0]) == 3:
-                speed_ups = self.calculate_speed_ups(self.het_map, grid.x_sorted, grid.y_sorted, grid.z_sorted)
+                speed_ups = self.calculate_speed_ups(
+                    self.het_map,
+                    grid.x_sorted,
+                    grid.y_sorted,
+                    grid.z_sorted
+                )
 
         # Create the sheer-law wind profile
         # This array is of shape (# wind directions, # wind speeds, grid.template_array)
@@ -102,13 +116,31 @@ class FlowField(FromDictMixin):
         # The result is an array the wind speed and wind direction dimensions on the left side
         # of the shape and the grid.template array on the right
         if self.time_series:
-            self.u_initial_sorted = (self.wind_speeds[:].T * wind_profile_plane.T).T * speed_ups
-            self.dudz_initial_sorted = (self.wind_speeds[:].T * dwind_profile_plane.T).T * speed_ups
+            self.u_initial_sorted = (
+                (self.wind_speeds[:].T * wind_profile_plane.T).T
+                * speed_ups
+            )
+            self.dudz_initial_sorted = (
+                (self.wind_speeds[:].T * dwind_profile_plane.T).T
+                * speed_ups
+            )
         else:
-            self.u_initial_sorted = (self.wind_speeds[None, :].T * wind_profile_plane.T).T * speed_ups
-            self.dudz_initial_sorted = (self.wind_speeds[None, :].T * dwind_profile_plane.T).T * speed_ups
-        self.v_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
-        self.w_initial_sorted = np.zeros(np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype)
+            self.u_initial_sorted = (
+                (self.wind_speeds[None, :].T * wind_profile_plane.T).T
+                * speed_ups
+            )
+            self.dudz_initial_sorted = (
+                (self.wind_speeds[None, :].T * dwind_profile_plane.T).T
+                * speed_ups
+            )
+        self.v_initial_sorted = np.zeros(
+            np.shape(self.u_initial_sorted),
+            dtype=self.u_initial_sorted.dtype
+        )
+        self.w_initial_sorted = np.zeros(
+            np.shape(self.u_initial_sorted),
+            dtype=self.u_initial_sorted.dtype
+        )
 
         self.u_sorted = self.u_initial_sorted.copy()
         self.v_sorted = self.v_initial_sorted.copy()
@@ -130,13 +162,31 @@ class FlowField(FromDictMixin):
         self.v = np.take_along_axis(self.v_sorted, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w_sorted, unsorted_indices, axis=2)
 
-        self.turbulence_intensity_field = np.mean(np.take_along_axis(self.turbulence_intensity_field_sorted, unsorted_indices, axis=2), axis=(3,4))
+        self.turbulence_intensity_field = np.mean(
+            np.take_along_axis(
+                self.turbulence_intensity_field_sorted,
+                unsorted_indices,
+                axis=2
+            ),
+            axis=(3,4)
+        )
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
+
+        # Check that the het maps wd dimension matches
+        if self.n_wind_directions!= np.array(het_map).shape[1]:
+            raise ValueError(
+                "het_map's wind direction dimension not equal to number of wind directions"
+            )
+
         if z is not None:
-            # Calculate the 3-dimensional speed ups; reshape is needed as the generator adds an extra dimension
+            # Calculate the 3-dimensional speed ups; reshape is needed as the generator
+            # adds an extra dimension
             speed_ups = np.reshape(
-                [het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:]) for i in range(len(het_map[0]))],
+                [
+                    het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:])
+                    for i in range(len(het_map[0]))
+                ],
                 np.shape(x)
             )
 
@@ -145,16 +195,23 @@ class FlowField(FromDictMixin):
             if np.isnan(speed_ups).any():
                 idx_nan = np.where(np.isnan(speed_ups))
                 speed_ups_out_of_region = np.reshape(
-                    [het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:]) for i in range(len(het_map[1]))],
+                    [
+                        het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:])
+                        for i in range(len(het_map[1]))
+                    ],
                     np.shape(x)
                 )
 
                 speed_ups[idx_nan] = speed_ups_out_of_region[idx_nan]
 
         else:
-            # Calculate the 2-dimensional speed ups; reshape is needed as the generator adds an extra dimension
+            # Calculate the 2-dimensional speed ups; reshape is needed as the generator
+            # adds an extra dimension
             speed_ups = np.reshape(
-                [het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:]) for i in range(len(het_map[0]))],
+                [
+                    het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:])
+                    for i in range(len(het_map[0]))
+                ],
                 np.shape(x)
             )
 
@@ -163,7 +220,10 @@ class FlowField(FromDictMixin):
             if np.isnan(speed_ups).any():
                 idx_nan = np.where(np.isnan(speed_ups))
                 speed_ups_out_of_region = np.reshape(
-                    [het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:]) for i in range(len(het_map[1]))],
+                    [
+                        het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:])
+                        for i in range(len(het_map[1]))
+                    ],
                     np.shape(x)
                 )
 

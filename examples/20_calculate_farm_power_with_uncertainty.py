@@ -47,7 +47,7 @@ fi_unc.reinitialize(layout_x=layout_x, layout_y=layout_y, wind_directions=wd_arr
 num_wd = len(wd_array) # Number of wind directions
 num_ws = 1 # Number of wind speeds
 num_turbine = len(layout_x) #  Number of turbines
-yaw_angles = np.zeros((num_wd, num_ws, num_turbine)) 
+yaw_angles = np.zeros((num_wd, num_ws, num_turbine))
 
 # Calculate the nominal wake solution
 fi.calculate_wake(yaw_angles=yaw_angles)

@@ -1,12 +1,12 @@
 # functions to couple floris with CCBlade and a controller
 
-import os
 import copy
+import os
 import pickle
 from os import path
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy import interpolate
 
 import floris.tools as wfct
@@ -159,7 +159,8 @@ def CCrotor(
 
 
 # Return the demanded generator torque for a given gen speed
-# This is based on the torque controller within SOWFA and using the control parameters within the SOWFA example
+# This is based on the torque controller within SOWFA and using the
+# control parameters within the SOWFA example
 def trq_cont(turbine_dict, genSpeedF):
     """
     Compute the torque control at a given gen speed (based on SOWFA)
@@ -217,7 +218,8 @@ def trq_cont(turbine_dict, genSpeedF):
 
 
 # Update the PI pitch controller
-# This is based on the pitch controller within SOWFA and using the control parameters within the SOWFA example
+# This is based on the pitch controller within SOWFA and using the control
+# parameters within the SOWFA example
 def pitch_control(turbine_dict, rotSpeedF, pitch_prev, dt, intSpeedError):
     min_pitch = 0.0
     max_pitch = 90.0
@@ -331,9 +333,9 @@ def show_torque_curve(turbine_dict, ax, label="_nolegend_"):
 def generate_base_lut(rotor, turbine_dict):
 
     # These dicts (keyed on yaw)
-    cp_dict = dict()
-    ct_dict = dict()
-    cq_dict = dict()
+    cp_dict = {}
+    ct_dict = {}
+    cq_dict = {}
 
     # for now, assume only one yaw angle, perhaps expand later
     yaw = 0.0
@@ -611,9 +613,9 @@ def get_steady_state(
 def get_wind_sweep_steady_values(turbine_dict, rotor, ws_array=np.arange(3, 21, 1.0)):
 
     # Get the steady values
-    pow_array = list()
-    cp_array = list()
-    ct_array = list()
+    pow_array = []
+    cp_array = []
+    ct_array = []
 
     for ws in ws_array:
         print(ws)
