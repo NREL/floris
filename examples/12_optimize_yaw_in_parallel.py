@@ -32,7 +32,7 @@ def load_floris():
     # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
-    N = 5  # number of turbines per row and per column
+    N = 4  # number of turbines per row and per column
     X, Y = np.meshgrid(
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # Load a FLORIS object for AEP calculations
     fi_aep = load_floris()
     wind_directions = np.arange(0.0, 360.0, 1.0)
-    wind_speeds=np.arange(1.0, 30.0, 1.0)
+    wind_speeds = np.arange(1.0, 25.0, 1.0)
     fi_aep.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,

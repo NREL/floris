@@ -53,6 +53,8 @@ class FlowField(FromDictMixin):
     dudz_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
+    turbulence_intensity_field_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(init=False, default=np.array([]))
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
@@ -144,12 +146,39 @@ class FlowField(FromDictMixin):
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
+        self.turbulence_intensity_field = self.turbulence_intensity * np.ones(
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                grid.n_turbines,
+                1,
+                1,
+            )
+        )
+        self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
+
     def finalize(self, unsorted_indices):
         self.u = np.take_along_axis(self.u_sorted, unsorted_indices, axis=2)
         self.v = np.take_along_axis(self.v_sorted, unsorted_indices, axis=2)
         self.w = np.take_along_axis(self.w_sorted, unsorted_indices, axis=2)
 
+        self.turbulence_intensity_field = np.mean(
+            np.take_along_axis(
+                self.turbulence_intensity_field_sorted,
+                unsorted_indices,
+                axis=2
+            ),
+            axis=(3,4)
+        )
+
     def calculate_speed_ups(self, het_map, x, y, z=None):
+
+        # Check that the het maps wd dimension matches
+        if self.n_wind_directions!= np.array(het_map).shape[1]:
+            raise ValueError(
+                "het_map's wind direction dimension not equal to number of wind directions"
+            )
+
         if z is not None:
             # Calculate the 3-dimensional speed ups; reshape is needed as the generator
             # adds an extra dimension

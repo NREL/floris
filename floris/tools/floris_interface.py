@@ -164,9 +164,15 @@ class FlorisInterface(LoggerBase):
                 Defaults to None.
         """
 
-        # TODO decide where to handle this sign issue
-        if (yaw_angles is not None) and not (np.all(yaw_angles==0.)):
-            self.floris.farm.yaw_angles = yaw_angles
+        if yaw_angles is None:
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            )
+        self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
         self.floris.initialize_domain()
@@ -189,12 +195,14 @@ class FlorisInterface(LoggerBase):
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
+        turbine_library_path: str | Path | None = None,
         # turbine_id: list[str] | None = None,
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
         solver_settings: dict | None = None,
         time_series: bool | None = False,
         layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
+        het_map=None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -218,6 +226,8 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
+        if het_map is not None:
+            self.het_map = het_map
 
         ## Farm
         if layout is not None:
@@ -233,6 +243,8 @@ class FlorisInterface(LoggerBase):
             farm_dict["layout_y"] = layout_y
         if turbine_type is not None:
             farm_dict["turbine_type"] = turbine_type
+        if turbine_library_path is not None:
+            farm_dict["turbine_library_path"] = turbine_library_path
 
         if time_series:
             flow_field_dict["time_series"] = True

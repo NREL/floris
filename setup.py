@@ -51,13 +51,13 @@ EXTRAS = {
         "jupyter-book",
         "sphinx-book-theme",
         "sphinx-autodoc-typehints",
-        "sphinxcontrib-autoyaml"
+        "sphinxcontrib-autoyaml",
     },
     "develop": {
         "pytest",
         "pre-commit",
         "ruff",
-        "isort"
+        "isort",
     },
 }
 

@@ -1,13 +1,6 @@
 
 repos:
 
-- repo: https://github.com/timothycrosley/isort
-  rev: 5.12.0
-  hooks:
-  - id: isort
-    name: isort
-    stages: [commit]
-
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0
   hooks:
@@ -26,3 +19,10 @@ repos:
   rev: v0.0.242
   hooks:
   - id: ruff
+
+- repo: https://github.com/timothycrosley/isort
+  rev: 5.12.0
+  hooks:
+  - id: isort
+    name: isort
+    stages: [commit]
