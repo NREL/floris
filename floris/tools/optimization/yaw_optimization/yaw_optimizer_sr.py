@@ -14,6 +14,7 @@
 
 
 import copy
+import warnings
 from time import perf_counter as timerpc
 
 import numpy as np
@@ -239,6 +240,12 @@ class YawOptimizationSR(YawOptimization):
 
                 # Evaluate grid of yaw angles, get farm powers and find optimal solutions
                 farm_powers = self._process_evaluation_grid()
+
+                # If farm powers contains any nans, then issue a warning
+                if np.any(np.isnan(farm_powers)):
+                    warnings.warn(
+                        "WARNING: NaNs found in farm powers. SR using max non-NaN "
+                    )
 
                 # Find optimal solutions in new evaluation grid
                 args_opt = np.expand_dims(np.nanargmax(farm_powers, axis=0), axis=0)
