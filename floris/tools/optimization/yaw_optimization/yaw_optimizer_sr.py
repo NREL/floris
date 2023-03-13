@@ -241,7 +241,7 @@ class YawOptimizationSR(YawOptimization):
                 farm_powers = self._process_evaluation_grid()
 
                 # Find optimal solutions in new evaluation grid
-                args_opt = np.expand_dims(np.argmax(farm_powers, axis=0), axis=0)
+                args_opt = np.expand_dims(np.nanargmax(farm_powers, axis=0), axis=0)
                 farm_powers_opt_new = np.squeeze(
                     np.take_along_axis(farm_powers, args_opt, axis=0),
                     axis=0,
