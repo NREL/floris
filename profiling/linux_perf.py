@@ -20,7 +20,7 @@ from subprocess import Popen
 from time import (
     perf_counter,
     sleep,
-    time
+    time,
 )
 
 
@@ -37,7 +37,7 @@ events = [
 def perf():
     """
     Benchmark this process with Linux's perf util.
-    
+
     Example usage:
 
         with perf():

@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator
 
-from floris.tools import FlorisInterface
-from floris.tools import ParallelComputingInterface
+from floris.tools import FlorisInterface, ParallelComputingInterface
+
 
 """
 This example demonstrates how to perform a yaw optimization using parallel computing.
@@ -32,7 +32,7 @@ def load_floris():
     # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
-    N = 5  # number of turbines per row and per column
+    N = 4  # number of turbines per row and per column
     X, Y = np.meshgrid(
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # Load a FLORIS object for AEP calculations
     fi_aep = load_floris()
     wind_directions = np.arange(0.0, 360.0, 1.0)
-    wind_speeds=np.arange(1.0, 30.0, 1.0)
+    wind_speeds = np.arange(1.0, 25.0, 1.0)
     fi_aep.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     farm_power_bl = fi_aep_parallel.get_farm_power()
     aep_bl = np.sum(24 * 365 * np.multiply(farm_power_bl, freq_grid))
 
-    # Alternatively to above code, we could calculate AEP using 
+    # Alternatively to above code, we could calculate AEP using
     # 'fi_aep_parallel.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 
@@ -127,8 +127,9 @@ if __name__ == "__main__":
     )
 
 
-    
-    # Assume linear ramp up at 5-6 m/s and ramp down at 13-14 m/s, add to table for linear interpolant
+
+    # Assume linear ramp up at 5-6 m/s and ramp down at 13-14 m/s,
+    # add to table for linear interpolant
     df_copy_lb = df_opt[df_opt["wind_speed"] == 6.0].copy()
     df_copy_ub = df_opt[df_opt["wind_speed"] == 13.0].copy()
     df_copy_lb["wind_speed"] = 5.0
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     aep_opt = np.sum(24 * 365 * np.multiply(farm_power_opt, freq_grid))
     aep_uplift = 100.0 * (aep_opt / aep_bl - 1)
 
-    # Alternatively to above code, we could calculate AEP using 
+    # Alternatively to above code, we could calculate AEP using
     # 'fi_aep_parallel.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 

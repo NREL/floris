@@ -20,9 +20,12 @@ from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptim
 
 
 """
-This example demonstrates how to perform a yaw optimization for multiple wind directions and multiple wind speeds.
+This example demonstrates how to perform a yaw optimization for multiple wind directions
+and multiple wind speeds.
 
-First, we initialize our Floris Interface, and then generate a 3 turbine wind farm. Next, we create the yaw optimization object `yaw_opt` and perform the optimization using the SerialRefine method. Finally, we plot the results.
+First, we initialize our Floris Interface, and then generate a 3 turbine wind farm.
+Next, we create the yaw optimization object `yaw_opt` and perform the optimization using
+the SerialRefine method. Finally, we plot the results.
 """
 
 # Load the default example floris object
@@ -34,7 +37,7 @@ D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=np.arange(0.0, 360.0, 3.0), 
+    wind_directions=np.arange(0.0, 360.0, 3.0),
     wind_speeds=np.arange(2.0, 18.0, 1.0),
 )
 

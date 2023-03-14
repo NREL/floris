@@ -1,43 +1,28 @@
+
 repos:
--   repo: https://github.com/timothycrosley/isort
-    rev: 5.10.1
-    hooks:
-        - id: isort
-          name: isort
-          stages: [commit]
 
--   repo: https://github.com/psf/black
-    rev: 22.6.0
-    hooks:
-        - id: black
-          name: black
-          stages: [commit]
-          language_version: python3
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-executables-have-shebangs
+  - id: check-json
+  - id: check-yaml
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: mixed-line-ending
+  # - id: pretty-format-json
+  #   args: [--autofix, --no-sort-keys]
 
-# TODO: Once, v3 is mostly sorted, I'm going to enable this to do static type checking
-# on the library to ensure commits are sound.
-# -   repo: https://github.com/pre-commit/mirrors-mypy
-#     rev: ""
-#     hooks:
-#         - id: mypy
-#           args: [--no-strict-optional, --ignore-missing-imports]
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.0.241
+  hooks:
+  - id: ruff
 
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
-    hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-executables-have-shebangs
-    -   id: check-json
-    -   id: check-yaml
-    -   id: check-merge-conflict
-    -   id: check-symlinks
-    -   id: mixed-line-ending
-    -   id: pretty-format-json
-        args: [--autofix]
-
--   repo: https://github.com/pycqa/flake8
-    rev: '4.0.1'
-    hooks:
-    -   id: flake8
-        args: [--max-line-length=120]
+- repo: https://github.com/timothycrosley/isort
+  rev: 5.12.0
+  hooks:
+  - id: isort
+    name: isort
+    stages: [commit]

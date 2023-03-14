@@ -12,12 +12,15 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
+
+from pathlib import Path
 from typing import (
     Any,
     Callable,
     Iterable,
     Tuple,
-    Union
+    Union,
 )
 
 import attrs
@@ -83,6 +86,30 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
     )
     return validator
 
+
+def convert_to_path(fn: str | Path) -> Path:
+    """Converts an input string or pathlib.Path object to a fully resolved ``pathlib.Path``
+    object.
+
+    Args:
+        fn (str | Path): The user input file path or file name.
+
+    Raises:
+        TypeError: Raised if :py:attr:`fn` is neither a :py:obj:`str`, nor a :py:obj:`pathlib.Path`.
+
+    Returns:
+        Path: A resolved pathlib.Path object.
+    """
+    if isinstance(fn, str):
+        fn = Path(fn)
+
+    if isinstance(fn, Path):
+        fn.resolve()
+    else:
+        raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
+    return fn
+
+
 @define
 class FromDictMixin:
     """
@@ -108,16 +135,25 @@ class FromDictMixin:
         class_attr_names = [a.name for a in cls.__attrs_attrs__]
         extra_args = [d for d in data if d not in class_attr_names]
         if len(extra_args):
-            raise AttributeError(f"The initialization for {cls.__name__} was given extraneous inputs: {extra_args}")
+            raise AttributeError(
+                f"The initialization for {cls.__name__} was given extraneous inputs: {extra_args}"
+            )
 
         kwargs = {a.name: data[a.name] for a in cls.__attrs_attrs__ if a.name in data and a.init}
 
         # Map the inputs must be provided: 1) must be initialized, 2) no default value defined
-        required_inputs = [a.name for a in cls.__attrs_attrs__ if a.init and a.default is attrs.NOTHING]
+        required_inputs = [
+            a.name
+            for a in cls.__attrs_attrs__
+            if a.init and a.default is attrs.NOTHING
+        ]
         undefined = sorted(set(required_inputs) - set(kwargs))
 
         if undefined:
-            raise AttributeError(f"The class defintion for {cls.__name__} is missing the following inputs: {undefined}")
+            raise AttributeError(
+                f"The class defintion for {cls.__name__} "
+                "is missing the following inputs: {undefined}"
+            )
         return cls(**kwargs)
 
     def as_dict(self) -> dict:
@@ -139,7 +175,7 @@ class FromDictMixin:
 #     if attribute.default != value:
 #         raise ValueError(f"{attribute.name} should never be set manually.")
 
-# model_attrib = partial(field, on_setattr=attrs.setters.frozen, validator=is_default)  # type: ignore
+# model_attrib = partial(field, on_setattr=attrs.setters.frozen, validator=is_default)
 # update_wrapper(model_attrib, field)
 
 # float_attrib = partial(
@@ -165,4 +201,3 @@ class FromDictMixin:
 #     kw_only=True,
 # )
 # update_wrapper(int_attrib, attr.ib)
-

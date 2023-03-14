@@ -6,6 +6,38 @@ processes and procedures to follow when contributing to the
 source code. For technical questions regarding FLORIS usage, please
 post your questions to [GitHub Discussions](https://github.com/NREL/floris/discussions).
 
+## Getting Started
+
+There are a few steps that nearly all contributors will need to go through to get started with
+making contributions to FLORIS. Each of these steps will be addressed in a later section of the
+developer's guide, so please read on to learn more about each of these steps.
+
+1. Create a fork of FLORIS on GitHub
+2. Clone the repository
+
+    ```bash
+    git clone -b develop https://github.com/<your-GitHub-username>/floris.git
+    ```
+
+3. Move into the FLORIS source code directory
+
+    ```bash
+    cd floris/
+    ```
+
+4. Install FLORIS in editable mode with the appropriate developer tools
+
+   - ``".[develop]"`` is for the linting and code checking tools
+   - ``".[docs]"`` is for the documentation building tools. Ideally, developers should also be
+     contributing to the documentation, and therefore checking that the documentation builds locally.
+
+    ```bash
+    pip install -e ".[develop, docs]"
+    ```
+5. Turn on the linting and code checking tools
+   ```bash
+   pre-commit install
+   ```
 
 ## Git and GitHub Workflows
 
@@ -71,7 +103,7 @@ but some may have a dedicated configuration file.
 
 Import lines can easily get out of hand and cause unnecessary distraction
 in source code files. [isort](https://pycqa.github.io/isort/index.html)
-it used to automatically manage imports in the source code. It can be run
+is used to automatically manage imports in the source code. It can be run
 directly with the following command:
 
 ```bash
@@ -79,9 +111,64 @@ isort <path to file>
 isort dir/*
 ```
 
-This tool was initially configured in [#535](https://github.com/NREL/floris/pull/535),
+This tool was initially configured in [PR#535](https://github.com/NREL/floris/pull/535),
 and additional information on specific decisions can be found there.
 
+### Ruff
+
+[Ruff](https://github.com/charliermarsh/ruff) is a general linter and limited auto-formatter.
+It is configured in `pyproject.toml` through various `[tool.ruff.*]` blocks. It is a command line
+tool and integrations into popular IDE's are available. A typical command to run Ruff for all of
+FLORIS is the following:
+
+```bash
+ruff . --fix
+```
+
+This sets the configuration from `pyproject.toml`, applies the selected rules to Python files,
+and fixes errors in-place where possible.
+
+Ruff was initially configured in [PR#562](https://github.com/NREL/floris/pull/562), and discussed
+in more detail in [D#561](https://github.com/NREL/floris/discussions/561). See the Ruff
+documentation for a list of [supported rules](https://github.com/charliermarsh/ruff#supported-rules)
+and [available options for various rules](https://github.com/charliermarsh/ruff#reference).
+
+### Pre-commit
+
+[Pre-commit](https://pre-commit.com) is a utility to execute a series of git-hooks to catch
+and fix formatting errors. It integrates easily with other tools, in our case isort and Ruff.
+Pre-commit is tightly integrated into git and is mostly not used directly by users.
+
+Once installed, the precommit hooks must be installed into each development environment with
+the following command from the `floris/` directory:
+
+```bash
+pre-commit install
+```
+
+Then, each commit creation with `git` will run the installed hooks and display where
+checks have failed. Pre-commit will typically modify the files directly to fix the issues. However,
+each file fixed by Pre-commit must be added to the git-commit again to capture the changes. A
+typical workflow is given below.
+
+```bash
+git add floris/simulation/turbine.py
+git commit -m "Update so and so"
+> [WARNING] Unstaged files detected.
+> [INFO] Stashing unstaged files to /Users/rafmudaf/.cache/pre-commit/patch1675722485-25489.
+> isort....................................................................Failed
+> - hook id: isort
+> - files were modified by this hook
+>
+> Fixing /Users/rafmudaf/Development/floris/floris/simulation/turbine.py
+
+# Check that the error is fixed or fixed it manually
+git status
+
+# Stage the new changes and commit
+git add floris/simulation/turbine.py
+git commit -m "Update so and so"
+```
 
 ## Testing
 

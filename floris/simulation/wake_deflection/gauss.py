@@ -20,7 +20,7 @@ from floris.simulation import (
     Farm,
     FlowField,
     Grid,
-    Turbine
+    Turbine,
 )
 # TODO: remove following import after removing this form of deflection model
 from floris.simulation.wake_velocity.gauss import geometric_model_wake_width
@@ -90,13 +90,13 @@ class GaussVelocityDeflection(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            freestream_velocity=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer,
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "freestream_velocity": flow_field.u_initial_sorted,
+            "wind_veer": flow_field.wind_veer,
+        }
         return kwargs
 
     # @profile
@@ -162,8 +162,9 @@ class GaussVelocityDeflection(BaseModel):
         x0 = (
             rotor_diameter_i
             * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
-            / (np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))))
-            + x_i
+            / (np.sqrt(2) * (
+                4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))
+            )) + x_i
         )
 
         # wake expansion parameters
@@ -178,12 +179,13 @@ class GaussVelocityDeflection(BaseModel):
         sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (freestream_velocity + u0))
         sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(wind_veer)
 
-        yR = y - y_i
+        # yR = y - y_i
         xR = x_i # yR * tand(yaw) + x_i
 
         # yaw parameters (skew angle and distance from centerline)
         # skew angle in radians
-        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i)) * (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
+        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i))
+        theta_c0 *= (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
         delta0 = np.tan(theta_c0) * (x0 - x_i)  # initial wake deflection;
         # NOTE: use np.tan here since theta_c0 is radians
 
@@ -338,7 +340,8 @@ def gamma(
     Returns:
         [type]: [description]
     """
-    return scale * (np.pi / 8) * D * velocity * Uinf * Ct # * cosd(yaw)  <- the cos is included in Ct
+    # NOTE the cos commented below is included in Ct
+    return scale * (np.pi / 8) * D * velocity * Uinf * Ct # * cosd(yaw)
 
 
 # def calculate_effective_yaw(
@@ -411,7 +414,9 @@ def wake_added_yaw(
     # NOTE: this is the top of the grid, not the top of the rotor
     zT = z_i - (HH + D / 2) + BaseModel.NUM_EPS  # distance from the top of the grid
     rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
-    core_shape = 1 - np.exp(-rT / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+    # This looks like spanwise decay;
+    # it defines the vortex profile in the spanwise directions
+    core_shape = 1 - np.exp(-rT / (eps ** 2))
     v_top = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape
     v_top = np.mean( v_top, axis=(3,4) )
     # w_top = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
@@ -512,7 +517,9 @@ def calculate_transverse_velocity(
     # top vortex
     zT = z - (HH + D / 2) + BaseModel.NUM_EPS
     rT = yLocs ** 2 + zT ** 2  # TODO: This is - in the paper
-    core_shape = 1 - np.exp(-rT / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+    # This looks like spanwise decay;
+    # it defines the vortex profile in the spanwise directions
+    core_shape = 1 - np.exp(-rT / (eps ** 2))
     V1 = (Gamma_top * zT) / (2 * np.pi * rT) * core_shape * decay
     W1 = (-1 * Gamma_top * yLocs) / (2 * np.pi * rT) * core_shape * decay
 
@@ -536,7 +543,9 @@ def calculate_transverse_velocity(
     # top vortex - ground
     zTb = z + (HH + D / 2) + BaseModel.NUM_EPS
     rTb = yLocs ** 2 + zTb ** 2
-    core_shape = 1 - np.exp(-rTb / (eps ** 2))  # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
+    # This looks like spanwise decay;
+    # it defines the vortex profile in the spanwise directions
+    core_shape = 1 - np.exp(-rTb / (eps ** 2))
     V3 = (-1 * Gamma_top * zTb) / (2 * np.pi * rTb) * core_shape * decay
     W3 = (Gamma_top * yLocs) / (2 * np.pi * rTb) * core_shape * decay
 

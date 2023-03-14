@@ -46,7 +46,10 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture: Tur
     # which is the input wind speed.
     shape = np.shape(flow_field_fixture.u_sorted[0, 0, 0, :, :])
     n_elements = shape[0] * shape[1]
-    average = np.sum(flow_field_fixture.u_sorted[:, :, 0, :, :], axis=(-2, -1)) / np.array([n_elements])
+    average = (
+        np.sum(flow_field_fixture.u_sorted[:, :, 0, :, :], axis=(-2, -1))
+        / np.array([n_elements])
+    )
     baseline = np.reshape(flow_field_fixture.wind_speeds, (1, -1)) * np.ones(
         (flow_field_fixture.n_wind_directions, flow_field_fixture.n_wind_speeds)
     )
@@ -54,7 +57,7 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture: Tur
 
 
 def test_asdict(flow_field_fixture: FlowField, turbine_grid_fixture: TurbineGrid):
-    
+
     flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
     dict1 = flow_field_fixture.as_dict()
 
