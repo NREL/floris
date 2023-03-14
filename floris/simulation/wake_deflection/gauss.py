@@ -225,7 +225,8 @@ class GaussGeometricDeflection(BaseModel):
     delta_0_D: float = field(default=0.0) # Remove as a parameter?
     deflection_rate: float = field(default=20)
     mixing_gain_deflection: float = field(default=900.)
-    yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default
+    yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default. 
+    # consider naming yaw_added_mixing_multiplier? Or similar?
 
     def prepare_function(
         self,
