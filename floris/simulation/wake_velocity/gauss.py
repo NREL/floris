@@ -251,10 +251,6 @@ class GaussGeometricVelocityDeficit(BaseModel):
         upstream_mask = np.array(x < x_i - 0.1)
 
         # Wake expansion in the lateral (y) and the vertical (z)
-        #ky = self.ky[0]  # wake expansion parameters
-        #kz = self.ky[0]  # wake expansion parameters
-        #sigma_y = ky * (x - x_i) + sigma_y0
-        #sigma_z = kz * (x - x_i) + sigma_z0
         sigma_y = geometric_model_wake_width(
             x-x_i, 
             self.wake_expansion_rates, 
@@ -264,7 +260,16 @@ class GaussGeometricVelocityDeficit(BaseModel):
             self.mixing_gain_velocity*mixing_i,
         )
         sigma_y[upstream_mask] = sigma_y0.flatten()[0]
-        sigma_z = sigma_y # TODO: separate z deflection model
+        
+        sigma_z = geometric_model_wake_width(
+            x-x_i, 
+            self.wake_expansion_rates, 
+            [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
+            sigma_z0, 
+            self.smoothing_length_D*rotor_diameter_i,
+            self.mixing_gain_velocity*mixing_i,
+        )
+        sigma_z[upstream_mask] = sigma_z0.flatten()[0]
         
         # 'Standard' wake component
         r, C = rCalt(

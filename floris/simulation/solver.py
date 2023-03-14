@@ -1157,7 +1157,6 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
                 downstream_distance_D[:,:,:,i],
                 model_manager.deflection_model.yaw_added_mixing_gain
             )
-        area_overlap = area_overlap[:, :, :, None, None]
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
