@@ -72,8 +72,6 @@ class Grid(ABC):
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     time_series: bool = field()
 
-    _xc_rot: float = field(init=False)
-    _yc_rot: float = field(init=False)
     n_turbines: int = field(init=False)
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
@@ -298,11 +296,6 @@ class TurbineGrid(Grid):
                 y_center_of_rotation=yc_rot,
             )
 
-        # Save center of rotation to self
-        self._xc_rot = xc_rot
-        self._yc_rot = yc_rot
-
-
 @define
 class FlowFieldGrid(Grid):
     """
@@ -366,10 +359,6 @@ class FlowFieldGrid(Grid):
                 x_center_of_rotation=xc_rot,
                 y_center_of_rotation=yc_rot,
             )
-
-        # Save center of rotation to self
-        self._xc_rot = xc_rot
-        self._yc_rot = yc_rot
 
 @define
 class FlowFieldPlanarGrid(Grid):
