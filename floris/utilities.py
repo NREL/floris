@@ -214,7 +214,8 @@ def wind_delta(wind_directions: NDArrayFloat | float):
         NDArrayFloat | float: The delta between the given wind direction and 270 in positive
         quantities between 0 and 360. The returned type is the same as wind_directions.
     """
-    return ((wind_directions - 270) % 360 + 360) % 360
+
+    return (wind_directions - 270) % 360
 
 
 def rotate_coordinates_rel_west(
