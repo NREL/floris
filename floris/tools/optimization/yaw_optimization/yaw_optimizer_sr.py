@@ -14,7 +14,6 @@
 
 
 import copy
-import logging
 from time import perf_counter as timerpc
 
 import numpy as np
@@ -246,9 +245,9 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
                 # If farm powers contains any nans, then issue a warning
                 if np.any(np.isnan(farm_powers)):
                     err_msg = (
-                       "NaNs found in farm powers during SerialRefine "
-                       "optimization routine. Proceeding to maximize over yaw "
-                       "settings that produce valid powers."
+                        "NaNs found in farm powers during SerialRefine "
+                        "optimization routine. Proceeding to maximize over yaw "
+                        "settings that produce valid powers."
                     )
                     self.logger.warning(err_msg, stack_info=True)
 
