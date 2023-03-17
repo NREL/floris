@@ -248,7 +248,7 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
                     err_msg = (
                        "NaNs found in farm powers during SerialRefine "
                        "optimization routine. Proceeding to maximize over yaw "
-                       "settings that produce valid powers." 
+                       "settings that produce valid powers."
                     )
                     self.logger.warning(err_msg, stack_info=True)
 
