@@ -196,11 +196,6 @@ class Farm(BaseClass):
             turb.turbine_type: turb.fCt_interp for turb in self.turbine_map
         }
 
-    def construct_turbine_fCps(self):
-        self.turbine_fCps = {
-            turb.turbine_type: turb.fCp_interp for turb in self.turbine_map
-        }
-
     def construct_turbine_power_interps(self):
         self.turbine_power_interps = {
             turb.turbine_type: turb.power_interp for turb in self.turbine_map
