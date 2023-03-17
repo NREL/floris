@@ -256,7 +256,7 @@ def power(
         rotor_effective_velocities = rotor_effective_velocities[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
 
-    # Loop over each turbine type given to get thrust coefficient for all turbines
+    # Loop over each turbine type given to get power for all turbines
     p = np.zeros(np.shape(rotor_effective_velocities))
     power_interp = dict(power_interp)
     turb_types = np.unique(turbine_type_map)
@@ -468,9 +468,9 @@ class PowerThrustTable(FromDictMixin):
     """Helper class to convert the dictionary and list-based inputs to a object of arrays.
 
     Args:
-        power (NDArrayFloat): The power produced at a given windspeed.
-        thrust (NDArrayFloat): The thrust at a given windspeed.
-        wind_speed (NDArrayFloat): Windspeed values, m/s.
+        power (NDArrayFloat): The power produced at a given wind speed.
+        thrust (NDArrayFloat): The thrust at a given wind speed.
+        wind_speed (NDArrayFloat): Wind speed values, m/s.
 
     Raises:
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.

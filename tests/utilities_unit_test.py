@@ -76,11 +76,13 @@ def test_wrap_360():
     assert wrap_360(361.0) == 1.0
 
 
-def test_wind_deviation_from_west():
+def test_wind_delta():
     assert wind_delta(270.0) == 0.0
     assert wind_delta(280.0) == 10.0
     assert wind_delta(360.0) == 90.0
     assert wind_delta(180.0) == 270.0
+    assert wind_delta(-10.0) == 80.0
+    assert wind_delta(-100.0) == 350.0
 
 
 def test_rotate_coordinates_rel_west():
