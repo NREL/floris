@@ -240,7 +240,7 @@ def test_ct():
     thrust = Ct(
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
-        fCt=np.array([(turbine.turbine_type, turbine.fCt_interp)]),
+        fCt={turbine.turbine_type: turbine.fCt_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
@@ -252,7 +252,7 @@ def test_ct():
     thrusts = Ct(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, N_TURBINES)),
-        fCt=np.array([(turbine.turbine_type, turbine.fCt_interp)]),
+        fCt={turbine.turbine_type: turbine.fCt_interp},
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
     )
@@ -283,7 +283,7 @@ def test_power():
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         pP=turbine.pP * np.ones((1, 1, 1)),
-        power_interp=np.array([(turbine.turbine_type, turbine.fCp_interp)]),
+        power_interp={turbine.turbine_type: turbine.fCp_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
@@ -306,7 +306,7 @@ def test_power():
     #     velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
     #     yaw_angle=np.zeros((1, 1, N_TURBINES)),
     #     pP=turbine.pP * np.ones((3, 4, N_TURBINES)),
-    #     power_interp=np.array([(turbine.turbine_type, turbine.fCp_interp)]),
+    #     power_interp={turbine.turbine_type: turbine.fCp_interp},
     #     turbine_type_map=turbine_type_map,
     #     ix_filter=INDEX_FILTER,
     # )
@@ -345,7 +345,7 @@ def test_axial_induction():
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
-        fCt=np.array([(turbine.turbine_type, turbine.fCt_interp)]),
+        fCt={turbine.turbine_type: turbine.fCt_interp},
         turbine_type_map=turbine_type_map[0,0,0],
     )
     np.testing.assert_allclose(ai, baseline_ai)
@@ -354,7 +354,7 @@ def test_axial_induction():
     ai = axial_induction(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, N_TURBINES)),
-        fCt=np.array([(turbine.turbine_type, turbine.fCt_interp)]),
+        fCt={turbine.turbine_type: turbine.fCt_interp},
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
     )

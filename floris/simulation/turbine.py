@@ -147,7 +147,6 @@ def power(
 
     # Loop over each turbine type given to get power for all turbines
     p = np.zeros(np.shape(yaw_effective_velocity))
-    power_interp = dict(power_interp)
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
@@ -201,7 +200,6 @@ def Ct(
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     thrust_coefficient = np.zeros(np.shape(average_velocities))
-    fCt = dict(fCt)
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
