@@ -133,8 +133,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         return optProb
 
     def add_con_group(self, optProb):
-        optProb.addConGroup("boundary_con", self.nturbs, upper=-1.0, scale=self.scale_con)
-        optProb.addConGroup("spacing_con", 1, upper=0.0, scale=self.scale_con)
+        optProb.addConGroup("boundary_con", self.nturbs, upper=0.0, scale=self.scale_con)
+        optProb.addConGroup("spacing_con", self.nturbs, upper=0.0, scale=self.scale_con)
 
         return optProb
 
@@ -156,13 +156,13 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
         # Following code copied from OpenMDAO KSComp().
         # Constraint is satisfied when KS_constraint <= 0
-        g_max = np.max(np.atleast_2d(g), axis=-1)[:, np.newaxis]
-        g_diff = g - g_max
-        exponents = np.exp(rho * g_diff)
-        summation = np.sum(exponents, axis=-1)[:, np.newaxis]
-        KS_constraint = g_max + 1.0 / rho * np.log(summation)
+        # g_max = np.max(np.atleast_2d(g), axis=-1)[:, np.newaxis]
+        # g_diff = g - g_max
+        # exponents = np.exp(rho * g_diff)
+        # summation = np.sum(exponents, axis=-1)[:, np.newaxis]
+        # KS_constraint = g_max + 1.0 / rho * np.log(summation)
 
-        return KS_constraint[0][0]
+        return g
 
     def distance_from_boundaries(self, x, y):
         boundary_con = np.zeros(self.nturbs)
