@@ -275,7 +275,7 @@ def Ct(
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt_cp_ct: NDArrayFloat,
-    fCt: NDArrayObject,
+    fCt: dict,
     tilt_interp: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
@@ -293,8 +293,8 @@ def Ct(
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
         ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
             that the Cp/Ct tables are defined at.
-        fCt (Iterable[tuple]): The thrust coefficient interpolation functions
-            for each turbine.
+        fCt (dict): The thrust coefficient interpolation functions for each turbine. Keys are
+            the turbine type string and values are the interpolation functions.
         tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         correct_cp_ct_for_tilt (NDArrayBool[wd, ws, turbines]): Boolean for determining if the
@@ -358,7 +358,7 @@ def axial_induction(
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     tilt_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     ref_tilt_cp_ct: NDArrayFloat,
-    fCt: NDArrayObject,  # (turbines)
+    fCt: dict,  # (turbines)
     tilt_interp: NDArrayObject,  # (turbines)
     correct_cp_ct_for_tilt: NDArrayBool, # (wind directions, wind speeds, turbines)
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
@@ -374,8 +374,8 @@ def axial_induction(
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
         ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
             that the Cp/Ct tables are defined at.
-        fCt (Iterable[tuple]): The thrust coefficient interpolation functions
-            for each turbine.
+        fCt (dict): The thrust coefficient interpolation functions for each turbine. Keys are
+            the turbine type string and values are the interpolation functions.
         tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         correct_cp_ct_for_tilt (NDArrayBool[wd, ws, turbines]): Boolean for determining if the

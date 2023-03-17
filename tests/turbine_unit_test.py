@@ -287,7 +287,7 @@ def test_ct():
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
-        fCt=np.array([(turbine_floating.turbine_type, turbine_floating.fCt_interp)]),
+        fCt={turbine.turbine_type: turbine_floating.fCt_interp},
         tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
         correct_cp_ct_for_tilt=np.array([[[True]]]),
         turbine_type_map=turbine_type_map[:,:,0]
@@ -410,7 +410,7 @@ def test_axial_induction():
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
-        fCt=np.array([(turbine_floating.turbine_type, turbine_floating.fCt_interp)]),
+        fCt={turbine.turbine_type: turbine_floating.fCt_interp},
         tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
         correct_cp_ct_for_tilt=np.array([[[True]]]),
         turbine_type_map=turbine_type_map[0,0,0],

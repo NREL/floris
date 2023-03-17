@@ -258,7 +258,6 @@ def full_flow_sequential_solver(
 
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_fCts()
-    turbine_grid_farm.construct_turbine_fCps()
     turbine_grid_farm.construct_turbine_power_interps()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_rotor_diameters()
@@ -666,7 +665,6 @@ def full_flow_cc_solver(
 
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_fCts()
-    turbine_grid_farm.construct_turbine_fCps()
     turbine_grid_farm.construct_turbine_power_interps()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_rotor_diameters()
@@ -1090,7 +1088,6 @@ def full_flow_turbopark_solver(
 
     # turbine_grid_farm.construct_turbine_map()
     # turbine_grid_farm.construct_turbine_fCts()
-    # turbine_grid_farm.construct_turbine_fCps()
     # turbine_grid_farm.construct_turbine_power_interps()
     # turbine_grid_farm.construct_hub_heights()
     # turbine_grid_farm.construct_rotor_diameters()
