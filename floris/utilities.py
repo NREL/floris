@@ -12,6 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
+
 import os
 from typing import Tuple
 
@@ -188,14 +190,50 @@ def wrap_360(x):
     return x % 360.0
 
 
-def wind_delta(wind_directions):
+def wind_delta(wind_directions: NDArrayFloat | float):
     """
-    This is included as a function in order to facilitate testing.
+    This function calculates the deviation from West (270) for a given wind direction or series
+    of wind directions. First, 270 is subtracted from the input wind direction, and then the
+    remainder after dividing by 360 is retained (modulo). The table below lists examples of
+    results.
+
+    | Input | Result |
+    | ----- | ------ |
+    | 270.0 | 0.0    |
+    | 280.0 | 10.0   |
+    | 360.0 | 90.0   |
+    | 180.0 | 270.0  |
+    | -10.0 | 80.0   |
+    |-100.0 | 350.0  |
+
+    Args:
+        wind_directions (NDArrayFloat | float): A single or series of wind directions. They can be
+        any number, negative or positive, but it is typically between 0 and 360.
+
+    Returns:
+        NDArrayFloat | float: The delta between the given wind direction and 270 in positive
+        quantities between 0 and 360. The returned type is the same as wind_directions.
     """
     return ((wind_directions - 270) % 360 + 360) % 360
 
 
-def rotate_coordinates_rel_west(wind_directions, coordinates):
+def rotate_coordinates_rel_west(
+    wind_directions: NDArrayFloat,
+    coordinates: NDArrayFloat
+):
+    """
+    This function rotates the given coordinates so that they are aligned with West (270) rather
+    than North (0). The rotation happens about the centroid of the coordinates.
+
+    Args:
+        wind_directions (NDArrayFloat): Series of wind directions to base the rotation
+        coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)
+            so that each element of the array coordinates[i] yields a three-component coordinate
+
+    Returns:
+        (NDArrayFloat, NDArrayFloat, NDArrayFloat): x, y, and z components of the rotated
+            coordinates with shape (N wind directions, 1, N coordinates)
+    """
     # Calculate the difference in given wind direction from 270 / West
     wind_deviation_from_west = wind_delta(wind_directions)
     wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))

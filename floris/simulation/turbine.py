@@ -137,6 +137,7 @@ def power(
         turbine_type_map = turbine_type_map[:, :, ix_filter]
 
     # Compute the yaw effective velocity
+    # For 0 yaw and air_density = ref_density_cp_ct, this reduces to `velocities`
     pW = pP / 3.0  # Convert from pP to w
     yaw_effective_velocity = (
         (air_density/ref_density_cp_ct)**(1/3)
@@ -144,7 +145,7 @@ def power(
         * cosd(yaw_angle) ** pW
     )
 
-    # Loop over each turbine type given to get thrust coefficient for all turbines
+    # Loop over each turbine type given to get power for all turbines
     p = np.zeros(np.shape(yaw_effective_velocity))
     power_interp = dict(power_interp)
     turb_types = np.unique(turbine_type_map)
@@ -289,9 +290,9 @@ class PowerThrustTable(FromDictMixin):
     """Helper class to convert the dictionary and list-based inputs to a object of arrays.
 
     Args:
-        power (NDArrayFloat): The power produced at a given windspeed.
-        thrust (NDArrayFloat): The thrust at a given windspeed.
-        wind_speed (NDArrayFloat): Windspeed values, m/s.
+        power (NDArrayFloat): The power produced at a given wind speed.
+        thrust (NDArrayFloat): The thrust at a given wind speed.
+        wind_speed (NDArrayFloat): Wind speed values, m/s.
 
     Raises:
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.

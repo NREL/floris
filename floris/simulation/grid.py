@@ -53,14 +53,14 @@ class Grid(ABC):
     all of these arrays are the same size
 
     Args:
-        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
-        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific
-            to each grid type.
+        turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.
+        reference_turbine_diameter (:py:obj:`float`): A reference turbine's rotor diameter.
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution with values
+            specific to each grid type.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
-        time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind
-            data is a time series.
+        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
+            series.
     """
     turbine_coordinates: list[Vec3] = field()
     reference_turbine_diameter: float
@@ -133,11 +133,15 @@ class TurbineGrid(Grid):
     """See `Grid` for more details.
 
     Args:
-        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
-        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        wind_directions (`list[float]`): The input wind directions
-        wind_speeds (`list[float]`): The input wind speeds
-        grid_resolution (:py:obj:`int`): The number of points on each turbine
+        turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.
+        reference_turbine_diameter (:py:obj:`float`): A reference turbine's rotor diameter.
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points in each
+            direction of the square grid on the rotor plane. For example, grid_resolution=3
+            creates a 3x3 grid within the rotor swept area.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
+            series.
     """
     # TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`
     sorted_indices: NDArrayInt = field(init=False)
@@ -256,7 +260,9 @@ class TurbineGrid(Grid):
         self.sorted_coord_indices = x.argsort(axis=2)
         self.unsorted_indices = self.sorted_indices.argsort(axis=2)
 
-        # Put the turbines into the final arrays in their sorted order
+        # Put the turbine coordinates into the final arrays in their sorted order
+        # These are the coordinates that should be used within the internal calculations
+        # such as the wake models and the solvers.
         self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=2)
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=2)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=2)

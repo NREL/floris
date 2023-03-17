@@ -276,7 +276,7 @@ class FlorisInterface(LoggerBase):
     ):
         """
         Calculates velocity values through the
-        :py:meth:`~.FlowField.calculate_wake` method at points in plane
+        :py:meth:`FlorisInterface.calculate_wake` method at points in plane
         specified by inputs.
 
         Args:
@@ -285,9 +285,8 @@ class FlorisInterface(LoggerBase):
             planar_coordinate (float, optional): Value of normal vector
                 to slice through. Defaults to None.
 
-
         Returns:
-            :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
+            :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w
         """
         # Get results vectors
         x_flat = self.floris.grid.x_sorted[0, 0].flatten()
