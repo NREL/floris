@@ -11,8 +11,6 @@
 # the License.
 
 import copy
-import sys
-import time
 
 import numpy as np
 
@@ -22,6 +20,8 @@ from floris.simulation import (
     Farm,
     FlowField,
     FlowFieldGrid,
+    FlowFieldPlanarGrid,
+    PointsGrid,
     TurbineGrid,
 )
 from floris.simulation.turbine import average_velocity
@@ -240,7 +240,7 @@ def sequential_solver(
 def full_flow_sequential_solver(
     farm: Farm,
     flow_field: FlowField,
-    flow_field_grid: FlowFieldGrid,
+    flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     model_manager: WakeModelManager
 ) -> None:
 
@@ -257,7 +257,6 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construc_turbine_pPs()
     turbine_grid_farm.construc_turbine_ref_density_cp_cts()
     turbine_grid_farm.construct_coordinates()
-
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
