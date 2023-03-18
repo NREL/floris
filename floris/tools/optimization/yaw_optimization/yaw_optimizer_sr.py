@@ -20,11 +20,13 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
+from floris.logging_manager import LoggerBase
+
 # from .yaw_optimizer_scipy import YawOptimizationScipy
 from .yaw_optimization_base import YawOptimization
 
 
-class YawOptimizationSR(YawOptimization):
+class YawOptimizationSR(YawOptimization, LoggerBase):
     def __init__(
         self,
         fi,
@@ -243,9 +245,12 @@ class YawOptimizationSR(YawOptimization):
 
                 # If farm powers contains any nans, then issue a warning
                 if np.any(np.isnan(farm_powers)):
-                    warnings.warn(
-                        "WARNING: NaNs found in farm powers. SR using max non-NaN "
+                    err_msg = (
+                        "NaNs found in farm powers during SerialRefine "
+                        "optimization routine. Proceeding to maximize over yaw "
+                        "settings that produce valid powers."
                     )
+                    self.logger.warning(err_msg, stack_info=True)
 
                 # Find optimal solutions in new evaluation grid
                 args_opt = np.expand_dims(np.nanargmax(farm_powers, axis=0), axis=0)
