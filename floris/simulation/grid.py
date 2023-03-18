@@ -121,6 +121,8 @@ class Grid(ABC):
             assert type(value[0]) is int
             assert type(value[1]) is int
             assert type(value[2]) is int
+        elif type(self) is PointsGrid:
+            return
         else:
             raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
 
@@ -473,3 +475,31 @@ class FlowFieldPlanarGrid(Grid):
     #         xoffset * sind(angle) + yoffset * cosd(angle) + center_of_rotation[1]
     #     )
     #     return rotated_x, rotated_y, self.z
+@define
+class PointsGrid(Grid):
+    """
+    Args:
+        grid_resolution (`Vec3`): The number of grid points to be created in each direction.
+        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
+        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        grid_resolution (:py:obj:`int`): The number of points on each turbine
+    """
+    points_x: NDArrayFloat = field()
+    points_y: NDArrayFloat = field()
+    points_z: NDArrayFloat = field()
+
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
+        self.set_grid()
+
+    def set_grid(self) -> None:
+        """
+        Set points for calculation based on a series of user-supplied coordinates.
+        """
+        point_coordinates = np.array(list(zip(self.points_x, self.points_y, self.points_z)))
+
+        # These are the rotated coordinates of the wind turbines based on the wind direction
+        x, y, z = rotate_coordinates_rel_west(self.wind_directions, point_coordinates)
+        self.x_sorted = x
+        self.y_sorted = y
+        self.z_sorted = z
