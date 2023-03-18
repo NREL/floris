@@ -213,7 +213,7 @@ class FlorisInterface(LoggerBase):
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
         solver_settings: dict | None = None,
-        time_series: bool | None = False,
+        time_series: bool = False,
         layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
         het_map=None,
     ):
@@ -259,10 +259,7 @@ class FlorisInterface(LoggerBase):
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
 
-        if time_series:
-            flow_field_dict["time_series"] = True
-        else:
-            flow_field_dict["time_series"] = False
+        flow_field_dict["time_series"] = time_series
 
         ## Wake
         # if wake is not None:
