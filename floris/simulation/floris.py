@@ -20,7 +20,7 @@ from pathlib import Path
 import yaml
 from attrs import define, field
 
-import floris.logging_manager as logging_manager
+from floris import logging_manager
 from floris.simulation import (
     BaseClass,
     cc_solver,
@@ -32,6 +32,7 @@ from floris.simulation import (
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     Grid,
+    PointsGrid,
     sequential_solver,
     State,
     TurbineGrid,
@@ -104,9 +105,21 @@ class Floris(BaseClass):
                 normal_vector=self.solver["normal_vector"],
                 planar_coordinate=self.solver["planar_coordinate"],
                 grid_resolution=self.solver["flow_field_grid_points"],
+                time_series=self.flow_field.time_series,
                 x1_bounds=self.solver["flow_field_bounds"][0],
                 x2_bounds=self.solver["flow_field_bounds"][1],
+            )
+        elif self.solver["type"] == "points_grid":
+            self.grid = PointsGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.rotor_diameters,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                grid_resolution=1,
                 time_series=self.flow_field.time_series,
+                points_x=self.solver["points_x"],
+                points_y=self.solver["points_y"],
+                points_z=self.solver["points_z"],
             )
         else:
             raise ValueError(
