@@ -130,7 +130,8 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
         if use_memory:
             idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
             farm_powers[idx, :] = farm_power_opt_subset[idx, :]
-            print(f"Skipping {np.sum(idx)}/{len(idx)} calculations: already in memory.")
+            if self.print_progress:
+                print(f"Skipping {np.sum(idx)}/{len(idx)} calculations: already in memory.")
         else:
             idx = np.zeros(yaw_angles_subset.shape[0], dtype=bool)
 
@@ -221,6 +222,8 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
         Find the yaw angles that maximize the power production for every wind direction,
         wind speed and turbulence intensity.
         """
+        self.print_progress = print_progress
+
         # For each pass, from front to back
         ii = 0
         for Nii in range(len(self.Ny_passes)):
@@ -228,7 +231,7 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
             for turbine_depth in range(self.nturbs):
                 p = 100.0 * ii / (len(self.Ny_passes) * self.nturbs)
                 ii += 1
-                if print_progress:
+                if self.print_progress:
                     print(
                         f"[Serial Refine] Processing pass={Nii}, "
                         f"turbine_depth={turbine_depth} ({p:.1f}%)"
