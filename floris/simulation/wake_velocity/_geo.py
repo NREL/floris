@@ -79,20 +79,10 @@ class _GaussGeometricVelocityDeficit(BaseModel):
 
         include_mirror_wake = True # Could add this as a user preference.
 
-        # yaw_angle is all turbine yaw angles for each wind speed
-        # Extract and broadcast only the current turbine yaw setting
-        # for all wind speeds
-
-        # Only symmetric terms using yaw in this model, but anyway:
+        # Only symmetric terms using yaw, but keep for consistency
         yaw_angle = -1 * yaw_angle_i
 
-        # Initialize the velocity deficit
-        uR = u_initial * ct_i / ( 2.0 * (1 - np.sqrt(1 - ct_i) ) )
-        u0 = u_initial * np.sqrt(1 - ct_i)
-
-        # Initial lateral bounds
-        #sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-        # TODO: add a yawing component?
+        # Initial wake widths
         sigma_y0 = self.sigma_y0_D * rotor_diameter_i * cosd(yaw_angle)
         sigma_z0 = self.sigma_y0_D * rotor_diameter_i * cosd(tilt_angle_i)
 
@@ -103,7 +93,7 @@ class _GaussGeometricVelocityDeficit(BaseModel):
         # Wake expansion in the lateral (y) and the vertical (z)
         # TODO: could compute shared components in sigma_z, sigma_y 
         # with one function call.
-        sigma_y = geometric_model_wake_width(
+        sigma_y = _geometric_model_wake_width(
             x-x_i, 
             self.wake_expansion_rates, 
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
@@ -114,7 +104,7 @@ class _GaussGeometricVelocityDeficit(BaseModel):
         sigma_y[upstream_mask] = \
             np.tile(sigma_y0, np.shape(sigma_y)[2:])[upstream_mask]
         
-        sigma_z = geometric_model_wake_width(
+        sigma_z = _geometric_model_wake_width(
             x-x_i, 
             self.wake_expansion_rates, 
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
@@ -201,7 +191,7 @@ def sigmoid_integral(x, center=0, width=1):
     w = width/(2*np.log(0.95/0.05))
     return w*np.log(np.exp((x-center)/w) + 1)
 
-def geometric_model_wake_width(
+def _geometric_model_wake_width(
     x, 
     wake_expansion_rates, 
     breakpoints, 
