@@ -18,4 +18,4 @@ from floris.simulation.wake_velocity.gauss import GaussVelocityDeficit
 from floris.simulation.wake_velocity.jensen import JensenVelocityDeficit
 from floris.simulation.wake_velocity.none import NoneVelocityDeficit
 from floris.simulation.wake_velocity.turbopark import TurbOParkVelocityDeficit
-from floris.simulation.wake_velocity.gauss import GaussGeometricVelocityDeficit
+from floris.simulation.wake_velocity._geo import _GaussGeometricVelocityDeficit
