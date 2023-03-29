@@ -31,8 +31,8 @@ from floris.simulation import (
     full_flow_cc_solver,
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
-    geometric_solver,
-    full_flow_geometric_solver,
+    _geometric_solver,
+    _full_flow_geometric_solver,
     Grid,
     sequential_solver,
     State,
@@ -184,8 +184,8 @@ class Floris(BaseClass):
                 self.grid,
                 self.wake
             )
-        elif vel_model=="geometric":
-            elapsed_time = geometric_solver(
+        elif vel_model=="_geometric":
+            elapsed_time = _geometric_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
@@ -219,8 +219,8 @@ class Floris(BaseClass):
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
-        elif vel_model=="geometric":
-            full_flow_geometric_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="_geometric":
+            _full_flow_geometric_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 

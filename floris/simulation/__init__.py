@@ -55,10 +55,10 @@ from .wake import WakeModelManager
 from .solver import (
     cc_solver,
     full_flow_cc_solver,
-    full_flow_geometric_solver,
+    _full_flow_geometric_solver,
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
-    geometric_solver,
+    _geometric_solver,
     sequential_solver,
     turbopark_solver,
 )

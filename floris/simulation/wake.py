@@ -52,7 +52,7 @@ MODEL_MAP = {
         "jimenez": JimenezVelocityDeflection,
         "gauss": GaussVelocityDeflection,
         "none": NoneVelocityDeflection,
-        "geometric": _GaussGeometricDeflection
+        "_geometric": _GaussGeometricDeflection
     },
     "turbulence_model": {
         "none": NoneWakeTurbulence,
@@ -65,7 +65,7 @@ MODEL_MAP = {
         "gauss": GaussVelocityDeficit,
         "jensen": JensenVelocityDeficit,
         "turbopark": TurbOParkVelocityDeficit,
-        "geometric": _GaussGeometricVelocityDeficit,
+        "_geometric": _GaussGeometricVelocityDeficit,
     },
 }
 
