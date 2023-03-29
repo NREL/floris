@@ -223,9 +223,9 @@ class GaussVelocityDeflection(BaseModel):
 @define
 class GaussGeometricDeflection(BaseModel):
 
-    horizontal_deflection_gain_D: float = field(default=10.0)
+    horizontal_deflection_gain_D: float = field(default=9.5)
     vertical_deflection_gain_D: float = field(default=-1)
-    deflection_rate: float = field(default=20)
+    deflection_rate: float = field(default=15)
     mixing_gain_deflection: float = field(default=900.)
     yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default. 
     # consider naming yaw_added_mixing_multiplier? Or similar?
