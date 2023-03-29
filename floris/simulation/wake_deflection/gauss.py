@@ -223,9 +223,8 @@ class GaussVelocityDeflection(BaseModel):
 @define
 class GaussGeometricDeflection(BaseModel):
 
-    horizontal_deflection_gain_D: float = field(default=70.0)
+    horizontal_deflection_gain_D: float = field(default=10.0)
     vertical_deflection_gain_D: float = field(default=-1)
-    delta_0_D: float = field(default=0.0) # Remove as a parameter?
     deflection_rate: float = field(default=20)
     mixing_gain_deflection: float = field(default=900.)
     yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default. 
@@ -255,7 +254,6 @@ class GaussGeometricDeflection(BaseModel):
         tilt_i: np.ndarray,
         mixing_i: np.ndarray,
         ct_i: np.ndarray,
-        axial_induction_i: np.ndarray,
         rotor_diameter_i: float,
         *,
         x: np.ndarray,
@@ -291,36 +289,31 @@ class GaussGeometricDeflection(BaseModel):
         """
         # ==============================================================
 
-        def initial_skew(misalignment, ct):
-            g = misalignment*np.pi/180
-            return 0.3*g / np.cos(g) * (1 - np.sqrt(1 - ct*np.cos(g)))
-
-        theta_c_y = initial_skew(-yaw_i, ct_i)
-        theta_c_z = initial_skew(tilt_i, ct_i)
-
-        delta_0 = self.delta_0_D*rotor_diameter_i
-
         deflection_gain_y = self.horizontal_deflection_gain_D*rotor_diameter_i
         if self.vertical_deflection_gain_D == -1:
             deflection_gain_z = deflection_gain_y
         else:
             deflection_gain_z = self.vertical_deflection_gain_D * \
                 rotor_diameter_i
+        
+        # Convert to radians, CW yaw for consistency with other models
+        yaw_r = np.pi/180 * -yaw_i
+        tilt_r = np.pi/180 * tilt_i
 
-        A_y = (1/(1+self.mixing_gain_deflection*mixing_i)) * \
-            deflection_gain_y * (1-axial_induction_i)
-
-        A_z = (1/(1+self.mixing_gain_deflection*mixing_i)) * \
-            deflection_gain_z * (1-axial_induction_i)
-
+        A_y = (deflection_gain_y*ct_i*yaw_r)/\
+              (1+self.mixing_gain_deflection*mixing_i)
+        
+        A_z = (deflection_gain_z*ct_i*tilt_r)/\
+              (1+self.mixing_gain_deflection*mixing_i)
+            
+        # Apply downstream mask in the process
         x_normalized = ((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i
         
         log_term = np.log((x_normalized - self.deflection_rate) \
                           /(x_normalized + self.deflection_rate) + 2)
 
-        # Apply downstream mask in the process
-        deflection_y = theta_c_y*(-delta_0 + A_y * log_term)
-        deflection_z = theta_c_z*(-delta_0 + A_z * log_term)
+        deflection_y = A_y * log_term
+        deflection_z = A_z * log_term
 
         return deflection_y, deflection_z        
 

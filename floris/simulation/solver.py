@@ -1236,7 +1236,6 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             tilt_angle_i,
             mixing_i,
             ct_i,
-            axial_induction_i,
             rotor_diameter_i,
             **deflection_model_args
         )
@@ -1404,7 +1403,6 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             tilt_angle_i,
             wake_induced_mixing_i,
             ct_i,
-            axial_induction_i,
             rotor_diameter_i,
             **deflection_model_args
         )
