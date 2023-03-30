@@ -189,7 +189,14 @@ def gaussian_function(C, r, n, sigma):
 
 def sigmoid_integral(x, center=0, width=1):
     w = width/(2*np.log(0.95/0.05))
-    return w*np.log(np.exp((x-center)/w) + 1)
+
+    # np.exp causes numerical issues; simply return the limit value if x large
+    y1 = np.zeros_like(x)
+    eval_sig_int = ((x-center/w) <= 10000)
+    y1[eval_sig_int] = (w*np.log(np.exp((x[eval_sig_int]-center)/w) + 1)).flatten()
+    y1[~eval_sig_int] = (x[~eval_sig_int]-center).flatten()
+
+    return y1
 
 def _geometric_model_wake_width(
     x, 
