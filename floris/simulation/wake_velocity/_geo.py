@@ -35,7 +35,7 @@ class _GaussGeometricVelocityDeficit(BaseModel):
     wake_expansion_rates: list = field(default=[0.0, 0.012])
     breakpoints_D: list = field(default=[5])
     sigma_y0_D: float = field(default=0.28)
-    smoothing_length_D: float = field(default=2.0)
+    smoothing_length_D: float = field(default=3.0)
     mixing_gain_velocity: float = field(default=2.5) 
 
     def prepare_function(
@@ -188,15 +188,11 @@ def gaussian_function(C, r, n, sigma):
     return C * np.exp(-1 * r ** n / (2 * sigma ** 2))
 
 def sigmoid_integral(x, center=0, width=1):
-    w = width/(2*np.log(0.95/0.05))
-
-    # np.exp causes numerical issues; simply return the limit value if x large
-    y1 = np.zeros_like(x)
-    eval_sig_int = ((x-center/w) <= 10000)
-    y1[eval_sig_int] = (w*np.log(np.exp((x[eval_sig_int]-center)/w) + 1)).flatten()
-    y1[~eval_sig_int] = (x[~eval_sig_int]-center).flatten()
-
-    return y1
+    z = (x-center)/width + 0.5
+    y = width*(z**6 - 3*z**5 + 5/2*z**4)
+    y = np.where((x-center) < -width/2, 0, y)
+    y = np.where((x-center) > width/2, (x-center), y)
+    return y 
 
 def _geometric_model_wake_width(
     x, 
