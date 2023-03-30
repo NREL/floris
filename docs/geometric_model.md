@@ -76,40 +76,33 @@ describe the wake expansion.
 The deflection of the wake centerline $\delta_y$ and $\delta_z$ due to 
 yawing and tilting, respectively, follow a simple model
 
-$$ \delta = \theta \left( k_\text{def} 
-\operatorname{ln}\left(\frac{x/D - c}{x/D + c} + 2\right) - \delta_0 \right)$$
+$$ \delta = k_\text{def} C_T \alpha
+\operatorname{ln}\left(\frac{x/D - c}{x/D + c} + 2\right)$$
 
-Here, $k_\text{def}$ is a user-tunable deflection gain and $\delta_0$ is an 
-offset deflection. Although the $\delta_0$ could be understood 
-as an "initial" deflection, we caution against this interpretation because the 
-logarithmic model above is designed to model the far wake only and may give 
-non-physical results very near to the turbine.
-
-The skew angle $\theta$ is taken directly from Bastankhah & Porté-Agel, and 
-is computed according to 
-$$ \theta = \frac{0.3 \alpha}{\cos(\alpha)} 
-\left(1- \sqrt{1-C_T \cos(\alpha)} \right) $$
-When computing the lateral wake deflection $\delta_y$ due to yaw misalignment,
-$\alpha$ should be the yaw misalignment _specified in radians, clockwise 
-positive from the wind direction_. When 
+Here, $k_\text{def}$ is a user-tunable deflection gain and $\alpha$ is the 
+misalignment. When computing the lateral wake deflection $\delta_y$ due to 
+yaw misalignment, $\alpha$ should be the yaw misalignment _specified in 
+radians, clockwise positive from the wind direction_. When 
 computing the vertical wake deflection $\delta_z$ due to rotor tilt, 
 $\alpha$ should be the tilt angle _specified in radians, clockwise positive 
 when the rotor is tilted back_.
 
 Finally, $c$ in the above deflection model is a 'deflection rate'. This 
 specified how quickly the wake will reach it's maximum deflection 
-$\theta \left(k_\text{def} \operatorname{ln}(3) - \delta_0\right)$ for a given 
+$k_\text{def} C_T \alpha \operatorname{ln}(3)$ for a given 
 yaw/tilt angle.
 
 User-tunable parameters of the model are as follows:
-- The deflection gain $k_\text{def}$, specified using `deflection_gain_D` 
-(specified in terms of rotor diameters)
-- The offset deflection $\delta_0$, specified using `delta_0_D` 
-(specified in terms of rotor diameters)
+- A separately tunable deflection gain $k_\text{def}$ for each of 
+lateral deflections (due to yaw misalignments) and vertical deflections 
+(due to nonzero tilt), specified using `horizontal_deflection_gain_D` and 
+`vertical_deflection_gain_D` (specified in terms of rotor diameters)
 - The deflection rate $c$, specified using `deflection_rate`.
 
-We anticipate that most users will be able to use the default values for 
-$\delta_0$ and $c$, but may need to tune $k_\text{def}$ to match their data.
+We anticipate that most users will be able to use the default value for $c$, 
+and set `vertical_deflection_gain_D` to the same value as 
+`horizontal_deflection_gain_D` (which can also be acheived by providing 
+`vertical_deflection_gain_D = -1`).
 
 ## Wake-induced mixing
 
@@ -142,8 +135,8 @@ mixing caused by the turbines.
 
 The wake deflection model is similarly adjusted to 
 
-$$ \delta = \theta \left( \frac{k_\text{def}}{1 + w_d \text{WIM}_j}
-\operatorname{ln}\left(\frac{x/D - c}{x/D + c} + 2\right) - \delta_0 \right)$$
+$$ \delta = \frac{k_\text{def} C_T \alpha}{1 + w_d \text{WIM}_j}
+\operatorname{ln}\left(\frac{x/D - c}{x/D + c} + 2\right)$$
 
 where $w_d$ is the wake-induced mixing gain for delflection, provided by the 
 user by setting `wim_gain_deflection`.

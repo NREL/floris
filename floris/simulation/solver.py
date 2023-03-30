@@ -30,8 +30,8 @@ from floris.simulation.wake_deflection.gauss import (
     calculate_transverse_velocity,
     wake_added_yaw,
     yaw_added_turbulence_mixing,
-    yaw_added_wake_mixing
 )
+from floris.simulation.wake_deflection._geo import yaw_added_wake_mixing
 from floris.utilities import cosd
 
 
@@ -1128,7 +1128,7 @@ def full_flow_turbopark_solver(
     # flow_field_grid.z = copy.deepcopy(turbine_grid.z)
 
 
-def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
+def _geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
     # For the current turbine, we are calculating the deficit that it adds to downstream turbines.
@@ -1236,7 +1236,6 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
             tilt_angle_i,
             mixing_i,
             ct_i,
-            axial_induction_i,
             rotor_diameter_i,
             **deflection_model_args
         )
@@ -1289,7 +1288,7 @@ def geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
     flow_field.wim_field = mixing_factor # This is used for full_flow calc
 
-def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
+def _full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
     
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
@@ -1325,7 +1324,7 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-    geometric_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
+    _geometric_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
@@ -1404,7 +1403,6 @@ def full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gri
             tilt_angle_i,
             wake_induced_mixing_i,
             ct_i,
-            axial_induction_i,
             rotor_diameter_i,
             **deflection_model_args
         )

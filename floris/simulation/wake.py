@@ -25,7 +25,7 @@ from floris.simulation.wake_deflection import (
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
     NoneVelocityDeflection,
-    GaussGeometricDeflection
+    _GaussGeometricDeflection
 )
 from floris.simulation.wake_turbulence import (
     CrespoHernandez, 
@@ -38,7 +38,7 @@ from floris.simulation.wake_velocity import (
     JensenVelocityDeficit,
     NoneVelocityDeficit,
     TurbOParkVelocityDeficit,
-    GaussGeometricVelocityDeficit
+    _GaussGeometricVelocityDeficit
 )
 
 
@@ -52,7 +52,7 @@ MODEL_MAP = {
         "jimenez": JimenezVelocityDeflection,
         "gauss": GaussVelocityDeflection,
         "none": NoneVelocityDeflection,
-        "geometric": GaussGeometricDeflection
+        "_geometric": _GaussGeometricDeflection
     },
     "turbulence_model": {
         "none": NoneWakeTurbulence,
@@ -65,7 +65,7 @@ MODEL_MAP = {
         "gauss": GaussVelocityDeficit,
         "jensen": JensenVelocityDeficit,
         "turbopark": TurbOParkVelocityDeficit,
-        "geometric": GaussGeometricVelocityDeficit,
+        "_geometric": _GaussGeometricVelocityDeficit,
     },
 }
 

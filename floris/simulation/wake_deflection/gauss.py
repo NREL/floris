@@ -22,8 +22,6 @@ from floris.simulation import (
     Grid,
     Turbine,
 )
-# TODO: remove following import after removing this form of deflection model
-from floris.simulation.wake_velocity.gauss import geometric_model_wake_width
 from floris.utilities import cosd, sind
 
 
@@ -219,105 +217,6 @@ class GaussVelocityDeflection(BaseModel):
         deflection = delta_near_wake + delta_far_wake
 
         return deflection
-
-@define
-class GaussGeometricDeflection(BaseModel):
-
-    deflection_gain_D: float = field(default=70.0)
-    delta_0_D: float = field(default=0.0) # Remove as a parameter?
-    deflection_rate: float = field(default=20)
-    mixing_gain_deflection: float = field(default=900.)
-    yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default. 
-    # consider naming yaw_added_mixing_multiplier? Or similar?
-
-    def prepare_function(
-        self,
-        grid: Grid,
-        flow_field: FlowField,
-    ) -> Dict[str, Any]:
-
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            freestream_velocity=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer,
-        )
-        return kwargs
-
-    # @profile
-    def function(
-        self,
-        x_i: np.ndarray,
-        y_i: np.ndarray,
-        yaw_i: np.ndarray,
-        tilt_i: np.ndarray,
-        mixing_i: np.ndarray,
-        ct_i: np.ndarray,
-        axial_induction_i: np.ndarray,
-        rotor_diameter_i: float,
-        *,
-        x: np.ndarray,
-        y: np.ndarray,
-        z: np.ndarray,
-        freestream_velocity: np.ndarray,
-        wind_veer: float,
-    ):
-        """
-        Calculates the deflection field of the wake. See
-        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls`
-        for details on the methods used.
-
-        Args:
-            x_locations (np.array): An array of floats that contains the
-                streamwise direction grid coordinates of the flow field
-                domain (m).
-            y_locations (np.array): An array of floats that contains the grid
-                coordinates of the flow field domain in the direction normal to
-                x and parallel to the ground (m).
-            z_locations (np.array): An array of floats that contains the grid
-                coordinates of the flow field domain in the vertical
-                direction (m).
-            turbine (:py:obj:`floris.simulation.turbine`): Object that
-                represents the turbine creating the wake.
-            coord (:py:obj:`floris.utilities.Vec3`): Object containing
-                the coordinate of the turbine creating the wake (m).
-            flow_field (:py:class:`floris.simulation.flow_field`): Object
-                containing the flow field information for the wind farm.
-
-        Returns:
-            np.array: Deflection field for the wake.
-        """
-        # ==============================================================
-
-        def initial_skew(misalignment, ct):
-            g = misalignment*np.pi/180
-            return 0.3*g / np.cos(g) * (1 - np.sqrt(1 - ct*np.cos(g)))
-
-        theta_c_y = initial_skew(-yaw_i, ct_i)
-        theta_c_z = initial_skew(tilt_i, ct_i)
-
-        delta_0 = self.delta_0_D*rotor_diameter_i
-
-        A = (1/(1+self.mixing_gain_deflection*mixing_i)) * \
-            self.deflection_gain_D * rotor_diameter_i \
-            * (1-axial_induction_i)
-
-        x_normalized = ((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i
-        
-        log_term = np.log((x_normalized - self.deflection_rate) \
-                          /(x_normalized + self.deflection_rate) + 2)
-
-        # Apply downstream mask in the process
-        deflection_y = theta_c_y*(-delta_0 + A * log_term)
-        deflection_z = theta_c_z*(-delta_0 + A * log_term)
-        #import ipdb; ipdb.set_trace()
-
-        # Possible TODO: Add warning for points in the near wake x-x_i, where 
-        # model won't be very good
-
-        return deflection_y, deflection_z
-
 
 ## GCH components
 
@@ -613,16 +512,6 @@ def yaw_added_turbulence_mixing(
     I_mixing = I_total - I_i
 
     return I_mixing[:,:,None,None,None]
-
-def yaw_added_wake_mixing(
-    axial_induction_i,
-    yaw_angle_i,
-    downstream_distance_D_i,
-    yaw_added_mixing_gain
-):
-    return axial_induction_i[:,:,:,0,0] * yaw_added_mixing_gain * \
-        (1 - cosd(yaw_angle_i[:,:,:,0,0]))\
-        / downstream_distance_D_i**2
 
 # def yaw_added_recovery_correction(
 #     self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord

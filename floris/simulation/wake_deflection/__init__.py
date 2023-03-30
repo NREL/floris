@@ -13,6 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
-from floris.simulation.wake_deflection.gauss import GaussVelocityDeflection, GaussGeometricDeflection
+from floris.simulation.wake_deflection.gauss import GaussVelocityDeflection
 from floris.simulation.wake_deflection.jimenez import JimenezVelocityDeflection
 from floris.simulation.wake_deflection.none import NoneVelocityDeflection
+from floris.simulation.wake_deflection._geo import _GaussGeometricDeflection
