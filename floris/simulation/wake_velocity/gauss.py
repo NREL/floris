@@ -410,8 +410,11 @@ def gaussian_function(C, r, n, sigma):
     return C * np.exp(-1 * r ** n / (2 * sigma ** 2))
 
 def sigmoid_integral(x, center=0, width=1):
-    w = width/(2*np.log(0.95/0.05))
-    return w*np.log(np.exp((x-center)/w) + 1)
+    z = (x-center)/width + 0.5
+    y = width*(z**6 - 3*z**5 + 5/2*z**4)
+    y = np.where((x-center) < -width/2, 0, y)
+    y = np.where((x-center) > width/2, (x-center), y)
+    return y 
 
 def geometric_model_wake_width(
     x, 
