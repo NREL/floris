@@ -132,7 +132,7 @@ class Farm(BaseClass):
                 elif in_external:
                     full_path = external_fn
                 else:
-                    raise ValueError(
+                    raise FileNotFoundError(
                         f"The turbine type: {turbine} does not exist in either the internal or"
                         " external turbine library."
                     )
