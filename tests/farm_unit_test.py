@@ -80,14 +80,14 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     # Demonstrate a passing case
     farm_data = deepcopy(SampleInputs().farm)
     farm_data["turbine_library_path"] = external_library
-    farm_data["turbine_type"] = ["nrel_5MW_custom"] * len(farm_data["layout_x"])
+    farm_data["turbine_type"] = ["nrel_5MW_custom"] * farm_data.n_turbines
     farm = Farm.from_dict(farm_data)
     assert farm.turbine_library_path == external_library
 
     # Demonstrate a file not existing in the user library, but exists in the internal library, so
     # the loading is successful
     farm_data["turbine_library_path"] = external_library
-    farm_data["turbine_type"] = ["iea_10MW"] * len(farm_data["layout_x"])
+    farm_data["turbine_type"] = ["iea_10MW"] * farm_data.n_turbines
     farm = Farm.from_dict(farm_data)
     assert farm.turbine_definitions[0]["turbine_type"] == "iea_10MW"
 
@@ -100,14 +100,14 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     # and external turbine libraries
     farm_data = deepcopy(SampleInputs().farm)
     farm_data["turbine_library_path"] = external_library
-    farm_data["turbine_type"] = ["nrel_5MW"] * len(farm_data["layout_x"])
+    farm_data["turbine_type"] = ["nrel_5MW"] * farm_data.n_turbines
     with pytest.raises(ValueError):
         Farm.from_dict(farm_data)
 
     # Demonstrate a failing case where there a turbine does not exist in either
     farm_data = deepcopy(SampleInputs().farm)
     farm_data["turbine_library_path"] = external_library
-    farm_data["turbine_type"] = ["FAKE_TURBINE"] * len(farm_data["layout_x"])
+    farm_data["turbine_type"] = ["FAKE_TURBINE"] * farm_data.n_turbines
     with pytest.raises(FileNotFoundError):
         Farm.from_dict(farm_data)
 
