@@ -107,7 +107,7 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     # Demonstrate a failing case where there a turbine does not exist in either
     farm_data = deepcopy(SampleInputs().farm)
     farm_data["turbine_library_path"] = external_library
-    farm_data["turbine_type"] = ["nrel_15MW"] * len(farm_data["layout_x"])
+    farm_data["turbine_type"] = ["FAKE_TURBINE"] * len(farm_data["layout_x"])
     with pytest.raises(FileNotFoundError):
         Farm.from_dict(farm_data)
 
