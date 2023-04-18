@@ -77,6 +77,28 @@ def _filter_convert(
     # so cast it to Numpy array and return
     return np.array(ix_filter)
 
+def get_mit_power_ratio(
+    yaw_angle: NDArrayFloat,
+    ct_prime: float,
+) -> NDArrayFloat:
+    """Work out the power ratio in (reduction in power because of yawing)
+    using the MIT method
+
+    Args:
+        yaw_angle (NDArrayFloat): _description_
+        ct_prime (float): _description_
+
+    Returns:
+        NDArrayFloat: _description_
+    """
+
+    # Follow equation 2.22a in Modelling the induction, thrust and power of a
+    # yaw-misaligned actuator disk
+
+    # Exception is removing the cube to place this within the wind speed term
+    return ( ((4 + ct_prime) * cosd(yaw_angle)) / (4 + ct_prime * cosd(yaw_angle)**2) ) #**3
+
+
 
 def power(
     air_density: float,
@@ -87,6 +109,8 @@ def power(
     power_interp: NDArrayObject,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
+    use_mit_method = False,
+    ct_prime = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
@@ -125,6 +149,20 @@ def power(
     # That said, it adds overhead to convert the floats to 1-D arrays, so I don't
     # recommend just converting all values to arrays
 
+
+    turb_name = ct_prime[0][0]
+    if 'mit' in turb_name:
+        use_mit_method = True
+        print('Using MIT Method')
+
+    # If using the MIT method, confirm ct_prime is not None
+    if use_mit_method and ct_prime is None:
+        raise ValueError("ct_prime must be provided if using the MIT method")
+
+    print('CT Prime: ', ct_prime)
+    ct_prime = ct_prime[0][1]
+    print('CT Prime: ', ct_prime)
+
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
@@ -136,13 +174,22 @@ def power(
         pP = pP[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
 
-    # Compute the yaw effective velocity
-    pW = pP / 3.0  # Convert from pP to w
-    yaw_effective_velocity = (
-        (air_density/ref_density_cp_ct)**(1/3)
-        * average_velocity(velocities)
-        * cosd(yaw_angle) ** pW
-    )
+    if not use_mit_method: # Compute using standard pP
+        # Compute the yaw effective velocity
+        pW = pP / 3.0  # Convert from pP to w
+        yaw_effective_velocity = (
+            (air_density/ref_density_cp_ct)**(1/3)
+            * average_velocity(velocities)
+            * cosd(yaw_angle) ** pW
+        )
+    else: # Compute using the MIT method
+        pr = get_mit_power_ratio(yaw_angle, ct_prime)
+        yaw_effective_velocity = (
+            (air_density/ref_density_cp_ct)**(1/3)
+            * average_velocity(velocities)
+            * pr
+        )
+
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     p = np.zeros(np.shape(yaw_effective_velocity))
@@ -380,6 +427,7 @@ class Turbine(BaseClass):
     fCp_interp: interp1d = field(init=False)
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
+    yaw_invariant_ct_prime: float = field(init=False)
 
 
     # For the following parameters, use default values if not user-specified
@@ -409,6 +457,15 @@ class Turbine(BaseClass):
             wind_speeds,
             inner_power
         )
+
+        # Work out ct_prime based on ct
+        # In initial version assume 8 m/s wind
+
+        # find the index of wind_speeds with value closest to 8
+        idx_8 = (np.abs(wind_speeds - 8)).argmin()
+        ct_8 = self.power_thrust_table.thrust[idx_8]
+        a_yaw_0 = 0.5 * (1 - np.sqrt( 1 - ct_8 ) )
+        self.ct_prime = ct_8 / (1 - a_yaw_0)**2
 
         """
         Given an array of wind speeds, this function returns an array of the
