@@ -257,6 +257,7 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construc_turbine_pPs()
     turbine_grid_farm.construc_turbine_ref_density_cp_cts()
+    turbine_grid_farm.construct_turbine_ct_prime()
     turbine_grid_farm.construct_coordinates()
 
 
@@ -640,6 +641,7 @@ def full_flow_cc_solver(
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construc_turbine_pPs()
     turbine_grid_farm.construc_turbine_ref_density_cp_cts()
+    turbine_grid_farm.construct_turbine_ct_prime()
     turbine_grid_farm.construct_coordinates()
 
     turbine_grid = TurbineGrid(

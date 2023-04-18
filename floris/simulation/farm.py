@@ -191,6 +191,9 @@ class Farm(BaseClass):
     def construct_turbine_map(self):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
+    def construct_turbine_ct_prime(self):
+        self.ct_prime = [(turb.turbine_type, turb.ct_prime) for turb in self.turbine_map]
+
     def construct_turbine_fCts(self):
         self.turbine_fCts = [(turb.turbine_type, turb.fCt_interp) for turb in self.turbine_map]
 
