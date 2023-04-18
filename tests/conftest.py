@@ -15,9 +15,13 @@
 
 import numpy as np
 import pytest
-from floris.simulation import Floris
-from floris.simulation import FlowField
-from floris.simulation import TurbineGrid, FlowFieldGrid
+
+from floris.simulation import (
+    Floris,
+    FlowField,
+    FlowFieldGrid,
+    TurbineGrid,
+)
 from floris.utilities import Vec3
 
 
@@ -44,7 +48,12 @@ def assert_results(test: list, baseline: list):
             assert t == pytest.approx(b)
 
 
-def print_test_values(average_velocities: list, thrusts: list, powers: list, axial_inductions: list):
+def print_test_values(
+    average_velocities: list,
+    thrusts: list,
+    powers: list,
+    axial_inductions: list
+):
     n_wd, n_ws, n_turb = np.shape(average_velocities)
     i=0
     for j in range(n_ws):
@@ -52,7 +61,8 @@ def print_test_values(average_velocities: list, thrusts: list, powers: list, axi
         for k in range(n_turb):
             print(
                 "    [{:.7f}, {:.7f}, {:.7f}, {:.7f}],".format(
-                    average_velocities[i,j,k], thrusts[i,j,k], powers[i,j,k], axial_inductions[i,j,k]
+                    average_velocities[i,j,k], thrusts[i,j,k], powers[i,j,k],
+                    axial_inductions[i,j,k]
                 )
             )
         print("],")
@@ -108,7 +118,8 @@ def flow_field_fixture(sample_inputs_fixture):
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
     turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
 
-    # TODO: The TurbineGrid requires that the rotor diameters be 1d but the Farm constructs them as 3d
+    # TODO: The TurbineGrid requires that the rotor diameters be 1d but the
+    # Farm constructs them as 3d
     #   Can we make this consistent?
 
     rotor_diameters = ROTOR_DIAMETER * np.ones( (N_TURBINES) )
@@ -156,6 +167,7 @@ class SampleInputs:
             "pP": 1.88,
             "pT": 1.88,
             "generator_efficiency": 1.0,
+            "ref_density_cp_ct": 1.225,
             "power_thrust_table": {
                 "power": [
                     0.000000,
@@ -394,7 +406,7 @@ class SampleInputs:
             "wake": self.wake,
             "solver": {
                 "type": "turbine_grid",
-                "turbine_grid_points": 5,
+                "turbine_grid_points": 3,
             },
             "logging": {
                 "console": {"enable": True, "level": 1},

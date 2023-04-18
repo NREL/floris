@@ -1,0 +1,26 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+parts:
+  - caption: Getting Started
+    chapters:
+    # - file: intro
+    - file: installation
+
+  - caption: User Reference
+    chapters:
+    - file: floris_101
+    - file: input_reference
+    - file: examples
+
+  - caption: Theory and Background
+    chapters:
+    - file: reference
+
+  - caption: Developer Reference
+    chapters:
+    - file: dev_guide
+    - file: code_quality
+    - file: api_docs

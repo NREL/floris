@@ -14,11 +14,9 @@
 
 
 import numpy as np
-
 from shapely.geometry import Point, Polygon
 
 
-# def discontinuous_grid(nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,boundary_mult,boundary_x,boundary_y):
 def discontinuous_grid(
     nrows,
     ncols,
@@ -34,10 +32,12 @@ def discontinuous_grid(
     eps=1e-3,
 ):
     """
-    Map from grid design variables to turbine x and y locations. Includes integer design variables and the formulation
+    Map from grid design variables to turbine x and y locations.
+    Includes integer design variables and the formulation
     results in a discontinous design space.
 
-    TODO: shrink_boundary doesn't work well with concave boundaries, or with boundary angles less than 90 deg
+    TODO: shrink_boundary doesn't work well with concave boundaries,
+    or with boundary angles less than 90 deg
 
     Args:
         nrows (Int): number of rows in the grid.
@@ -216,7 +216,8 @@ def boundary_grid(
 
     Args:
     n_boundary_turbs,start: boundary variables
-    nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,shrink_boundary,eps: grid variables
+    nrows,ncols,farm_width,farm_height,shear,
+        rotation,center_x,center_y,shrink_boundary,eps: grid variables
     boundary_x,boundary_y: boundary points
 
     Returns
@@ -381,7 +382,6 @@ if __name__ == "__main__":
             600.0,
         ]
     )
-    # x,y = discontinuous_grid(nrows,ncols,farm_width,farm_height,shear,rotation,center_x,center_y,boundary_mult,boundary_x,boundary_y)
     x, y = discontinuous_grid(
         nrows,
         ncols,

@@ -12,16 +12,22 @@
 
 from typing import Any, Dict
 
-from attrs import define, field
 import numexpr as ne
 import numpy as np
+from attrs import define, field
 
-from floris.simulation import BaseModel
-from floris.simulation import Farm
-from floris.simulation import FlowField
-from floris.simulation import Grid
-from floris.simulation import Turbine
-from floris.utilities import cosd, sind, tand
+from floris.simulation import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
+from floris.utilities import (
+    cosd,
+    sind,
+    tand,
+)
 
 
 @define
@@ -38,13 +44,13 @@ class GaussVelocityDeficit(BaseModel):
         flow_field: FlowField,
     ) -> Dict[str, Any]:
 
-        kwargs = dict(
-            x=grid.x_sorted,
-            y=grid.y_sorted,
-            z=grid.z_sorted,
-            u_initial=flow_field.u_initial_sorted,
-            wind_veer=flow_field.wind_veer
-        )
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "u_initial": flow_field.u_initial_sorted,
+            "wind_veer": flow_field.wind_veer
+        }
         return kwargs
 
     # @profile
@@ -94,16 +100,22 @@ class GaussVelocityDeficit(BaseModel):
         # Start of the far wake
         x0 = np.ones_like(u_initial)
         x0 *= rotor_diameter_i * cosd(yaw_angle) * (1 + np.sqrt(1 - ct_i) )
-        x0 /= np.sqrt(2) * (4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) ) )
+        x0 /= np.sqrt(2) * (
+            4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i) )
+        )
         x0 += x_i
 
         # Initialize the velocity deficit array
         velocity_deficit = np.zeros_like(u_initial)
 
         # Masks
-        # When we have only an inequality, the current turbine may be applied its own wake in cases where numerical precision
-        # cause in incorrect comparison. We've applied a small bump to avoid this. "0.1" is arbitrary but it is a small, non zero value.
-        near_wake_mask = np.array(x > xR + 0.1) * np.array(x < x0)  # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
+        # When we have only an inequality, the current turbine may be applied its own
+        # wake in cases where numerical precision cause in incorrect comparison. We've
+        # applied a small bump to avoid this. "0.1" is arbitrary but it is a small, non
+        # zero value.
+
+        # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
+        near_wake_mask = np.array(x > xR + 0.1) * np.array(x < x0)
         far_wake_mask = np.array(x >= x0)
 
         # Compute the velocity deficit in the NEAR WAKE region
@@ -113,15 +125,24 @@ class GaussVelocityDeficit(BaseModel):
         if np.sum(near_wake_mask):
 
             # Calculate the wake expansion
-            near_wake_ramp_up = (x - xR) / (x0 - xR)  # This is a linear ramp from 0 to 1 from the start of the near wake to the start of the far wake.
-            near_wake_ramp_down = (x0 - x) / (x0 - xR)  # Another linear ramp, but positive upstream of the far wake and negative in the far wake; 0 at the start of the far wake
+
+            # This is a linear ramp from 0 to 1 from the start of the near wake to the start
+            # of the far wake.
+            near_wake_ramp_up = (x - xR) / (x0 - xR)
+            # Another linear ramp, but positive upstream of the far wake and negative in the
+            # far wake; 0 at the start of the far wake
+            near_wake_ramp_down = (x0 - x) / (x0 - xR)
             # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
 
-            sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_y0
-            sigma_y = sigma_y * np.array(x >= xR) + np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * rotor_diameter_i
-            
-            sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0) + near_wake_ramp_up * sigma_z0
-            sigma_z = sigma_z * np.array(x >= xR) + np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * rotor_diameter_i
+            sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
+            sigma_y += near_wake_ramp_up * sigma_y0
+            sigma_y *= np.array(x >= xR)
+            sigma_y += np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * rotor_diameter_i
+
+            sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
+            sigma_z += near_wake_ramp_up * sigma_z0
+            sigma_z *= np.array(x >= xR)
+            sigma_z += np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * rotor_diameter_i
 
             r, C = rC(
                 wind_veer,
@@ -186,7 +207,7 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     #     - 2 * b * (y - y_i - delta) * (z - HH)
     #     + c * (z - HH) ** 2
     # )
-    # C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0) )
+    # C = 1 - np.sqrt(np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / D ** 2)), 0.0, 1.0))
 
     ## Precalculate some parts
     # twox_sigmay_2 = 2 * sigma_y ** 2
@@ -197,14 +218,22 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     # delta_y = y - y_i - delta
     # delta_z = z - HH
     # r = (a * (delta_y ** 2) - 2 * b * (delta_y) * (delta_z) + c * (delta_z ** 2))
-    # C = 1 - np.sqrt( np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0) )
+    # C = 1 - np.sqrt(np.clip(1 - (Ct * cosd(yaw) / (8.0 * sigma_y * sigma_z / (D * D))), 0.0, 1.0))
 
     ## Numexpr
     wind_veer = np.deg2rad(wind_veer)
-    a = ne.evaluate("cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)")
-    b = ne.evaluate("-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)")
-    c = ne.evaluate("sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)")
-    r = ne.evaluate("a * ( (y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)")
+    a = ne.evaluate(
+        "cos(wind_veer) ** 2 / (2 * sigma_y ** 2) + sin(wind_veer) ** 2 / (2 * sigma_z ** 2)"
+    )
+    b = ne.evaluate(
+        "-sin(2 * wind_veer) / (4 * sigma_y ** 2) + sin(2 * wind_veer) / (4 * sigma_z ** 2)"
+    )
+    c = ne.evaluate(
+        "sin(wind_veer) ** 2 / (2 * sigma_y ** 2) + cos(wind_veer) ** 2 / (2 * sigma_z ** 2)"
+    )
+    r = ne.evaluate(
+        "a * ((y - y_i - delta) ** 2) - 2 * b * (y - y_i - delta) * (z - HH) + c * ((z - HH) ** 2)"
+    )
     d = np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0)
     C = ne.evaluate("1 - sqrt(d)")
     return r, C

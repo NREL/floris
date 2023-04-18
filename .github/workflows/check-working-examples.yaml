@@ -13,9 +13,9 @@ jobs:
       fail-fast: False
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install project
@@ -36,10 +36,10 @@ jobs:
         for i in *.py; do
 
           # Skip these examples since they have additional dependencies
-          if [[ $i == *11* ]]; then
+          if [[ $i == *15* ]]; then
             continue
           fi
-          if [[ $i == *16* ]]; then
+          if [[ $i == *19* ]]; then
             continue
           fi
 

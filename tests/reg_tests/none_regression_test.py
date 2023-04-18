@@ -1,4 +1,4 @@
-# Copyright 2020 NREL
+# Copyright 2022 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -15,9 +15,20 @@
 import numpy as np
 import pytest
 
-from tests.conftest import N_TURBINES, N_WIND_DIRECTIONS, N_WIND_SPEEDS
-from tests.conftest import print_test_values, assert_results_arrays
-from floris.simulation import Ct, Floris, power, axial_induction, average_velocity
+from floris.simulation import (
+    average_velocity,
+    axial_induction,
+    Ct,
+    Floris,
+    power,
+)
+from tests.conftest import (
+    assert_results_arrays,
+    N_TURBINES,
+    N_WIND_DIRECTIONS,
+    N_WIND_SPEEDS,
+    print_test_values,
+)
 
 
 DEBUG = False
@@ -29,28 +40,28 @@ baseline = np.array(
     [
         # 8 m/s
         [
-            [7.9803783, 0.7634300, 1695368.6455473, 0.2568077],
-            [7.9803783, 0.7634300, 1695368.6455473, 0.2568077],
-            [7.9803783, 0.7634300, 1695368.6455473, 0.2568077],
+            [7.9736330, 0.7636044, 1691326.6483808, 0.2568973],
+            [7.9736330, 0.7636044, 1691326.6483808, 0.2568973],
+            [7.9736330, 0.7636044, 1691326.6483808, 0.2568973],
         ],
         # 9 m/s
         [
-            [8.9779256, 0.7625731, 2413659.0651694, 0.2563676],
-            [8.9779256, 0.7625731, 2413659.0651694, 0.2563676],
-            [8.9779256, 0.7625731, 2413659.0651694, 0.2563676],
+            [8.9703371, 0.7625570, 2407841.6718785, 0.2563594],
+            [8.9703371, 0.7625570, 2407841.6718785, 0.2563594],
+            [8.9703371, 0.7625570, 2407841.6718785, 0.2563594],
         ],
         # 10 m/s
         [
-            [9.9754729, 0.7527803, 3306006.9741814, 0.2513940],
-            [9.9754729, 0.7527803, 3306006.9741814, 0.2513940],
-            [9.9754729, 0.7527803, 3306006.9741814, 0.2513940],
+            [9.9670412, 0.7529384, 3298067.1555604, 0.2514735],
+            [9.9670412, 0.7529384, 3298067.1555604, 0.2514735],
+            [9.9670412, 0.7529384, 3298067.1555604, 0.2514735],
         ],
         # 11 m/s
         [
-            [10.9730201, 0.7304328, 4373591.7174990, 0.2404007],
-            [10.9730201, 0.7304328, 4373591.7174990, 0.2404007],
-            [10.9730201, 0.7304328, 4373591.7174990, 0.2404007],
-        ]
+            [10.9637454, 0.7306256, 4363191.9880631, 0.2404936],
+            [10.9637454, 0.7306256, 4363191.9880631, 0.2404936],
+            [10.9637454, 0.7306256, 4363191.9880631, 0.2404936],
+        ],
     ]
 )
 
@@ -118,6 +129,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,
@@ -283,6 +295,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
 
     farm_powers = power(
         floris.flow_field.air_density,
+        floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
         floris.farm.pPs,

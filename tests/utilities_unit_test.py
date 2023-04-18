@@ -21,14 +21,18 @@ import pytest
 
 from floris.utilities import (
     cosd,
+    rotate_coordinates_rel_west,
     sind,
     tand,
+    wind_delta,
     wrap_180,
     wrap_360,
-    wind_delta,
-    rotate_coordinates_rel_west
 )
-from tests.conftest import X_COORDS, Y_COORDS, Z_COORDS
+from tests.conftest import (
+    X_COORDS,
+    Y_COORDS,
+    Z_COORDS,
+)
 
 
 def test_cosd():
@@ -55,8 +59,8 @@ def test_tand():
 
 
 def test_wrap_180():
-    assert wrap_180(-180.0) == 180.0
-    assert wrap_180(180.0) == 180.0
+    assert wrap_180(-180.0) == -180.0
+    assert wrap_180(180.0) == -180.0
     assert wrap_180(-181.0) == 179.0
     assert wrap_180(-179.0) == -179.0
     assert wrap_180(179.0) == 179.0
@@ -86,7 +90,7 @@ def test_rotate_coordinates_rel_west():
     # For 270, the coordinates should not change.
     wind_directions = np.array([270.0])
     x_rotated, y_rotated, z_rotated = rotate_coordinates_rel_west(wind_directions, coordinates)
-    
+
     np.testing.assert_array_equal( X_COORDS, x_rotated[0,0] )
     np.testing.assert_array_equal( Y_COORDS, y_rotated[0,0] )
     np.testing.assert_array_equal( Z_COORDS, z_rotated[0,0] )
@@ -104,7 +108,10 @@ def test_rotate_coordinates_rel_west():
     x_rotated, y_rotated, z_rotated = rotate_coordinates_rel_west(wind_directions, coordinates)
     np.testing.assert_almost_equal( Y_COORDS, x_rotated[0,0] - np.min(x_rotated[0,0]))
     np.testing.assert_almost_equal( X_COORDS, y_rotated[0,0] - np.min(y_rotated[0,0]))
-    np.testing.assert_almost_equal( Z_COORDS + np.min(Z_COORDS), z_rotated[0,0] + np.min(z_rotated[0,0]))
+    np.testing.assert_almost_equal(
+        Z_COORDS + np.min(Z_COORDS),
+        z_rotated[0,0] + np.min(z_rotated[0,0])
+    )
 
     wind_directions = np.array([90.0])
     x_rotated, y_rotated, z_rotated = rotate_coordinates_rel_west(wind_directions, coordinates)

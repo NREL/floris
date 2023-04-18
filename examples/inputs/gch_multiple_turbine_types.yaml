@@ -13,7 +13,7 @@ logging:
 
 solver:
   type: turbine_grid
-  turbine_grid_points: 5
+  turbine_grid_points: 3
 
 farm:
   layout_x:
