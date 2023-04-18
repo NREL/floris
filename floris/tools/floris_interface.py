@@ -623,6 +623,7 @@ class FlorisInterface(LoggerBase):
             pP=self.floris.farm.pPs,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            ct_prime=self.floris.farm.ct_prime,
         )
         return turbine_powers
 
