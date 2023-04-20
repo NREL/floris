@@ -91,12 +91,32 @@ def get_mit_power_ratio(
     Returns:
         NDArrayFloat: _description_
     """
+    # Neglect vw if True (vw << uw, not recommended to set neglect_vw=True)
+    neglect_vw = False
+    # Number of iterations (usually converages in 5)
+    maxIt = 5
+    if neglect_vw == True:
+        # Follow equation 2.22a in Modelling the induction, thrust and power of a
+        # yaw-misaligned actuator disk
+        pr = ( ((4 + ct_prime) * cosd(yaw_angle)) / (4 + ct_prime * cosd(yaw_angle)**2) ) **3
+    else:
+        # Initialize as the indution in the limit of vw<<uw
+        a = (ct_prime * cosd(yaw_angle)**2) / (4 + ct_prime*cosd(yaw_angle)**2)
+        # Compute u4 and v4 according to Eq. (2.15)
+        u4 = 1 - (1/2) * ct_prime * (1 - a) * cosd(yaw_angle)**2
+        v4 = -(1/4) * ct_prime * (1-a)**2 * np.sin(yaw_angle*np.pi/180) * cosd(yaw_angle)**2
+        # Iterate below using Eq. (2.15)
+        for i in range(maxIt):
+            a = 1 - ( np.sqrt(1 - u4**2 - v4**2) / (np.sqrt(ct_prime) * cosd(yaw_angle)) )
+            u4 = 1 - (1/2) * ct_prime * (1 - a) * cosd(yaw_angle)**2
+            v4 = -(1/4) * ct_prime * (1-a)**2 * np.sin(yaw_angle*np.pi/180) * cosd(yaw_angle)**2
+        pr = ( (1+(1/4)*ct_prime) * (1-a) * cosd(yaw_angle) ) **3
 
-    # Follow equation 2.22a in Modelling the induction, thrust and power of a
-    # yaw-misaligned actuator disk
 
-    # Exception is removing the cube to place this within the wind speed term
-    return ( ((4 + ct_prime) * cosd(yaw_angle)) / (4 + ct_prime * cosd(yaw_angle)**2) ) #**3
+    # To enable consistency with FLORIS's use of the power curve, recast the power ratio as a velocity ratio
+    ur = pr **(1/3)
+    
+    return ur
 
 
 
@@ -183,11 +203,11 @@ def power(
             * cosd(yaw_angle) ** pW
         )
     else: # Compute using the MIT method
-        pr = get_mit_power_ratio(yaw_angle, ct_prime)
+        ur = get_mit_power_ratio(yaw_angle, ct_prime)
         yaw_effective_velocity = (
             (air_density/ref_density_cp_ct)**(1/3)
             * average_velocity(velocities)
-            * pr
+            * ur
         )
 
 

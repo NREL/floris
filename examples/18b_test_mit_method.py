@@ -26,7 +26,7 @@ For each turbine in the turbine library, make a small figure showing that its po
 curve and power loss to yaw are reasonable and  reasonably smooth
 """
 ws_array = np.arange(0.1,30,0.2)
-yaw_angles = np.linspace(-30,30,60)
+yaw_angles = np.linspace(-30,30,61)
 wind_speed_to_test_yaw = 8
 
 # Grab the gch model
@@ -90,6 +90,11 @@ for t in turbines:
 
     # Power loss to yaw, try a range of yaw angles
     ax = axarr[2]
+    
+    # Report performance of the model
+    idx_0 = (np.abs(yaw_angles - 0)).argmin()
+    print(yaw_angles)
+    print(yaw_result/yaw_result[idx_0])
 
     fi.reinitialize(wind_speeds=[12.0])
     yaw_result = []
@@ -107,5 +112,6 @@ for t in turbines:
     ax.set_title('Wind Speed = %.1f' % 12 )
     # Give a suptitle
     fig.suptitle(t)
+
 
 plt.show()
