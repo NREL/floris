@@ -24,15 +24,15 @@ import floris.logging_manager as logging_manager
 from floris.simulation import (
     BaseClass,
     cc_solver,
+    empirical_gauss_solver,
     Farm,
     FlowField,
     FlowFieldGrid,
     FlowFieldPlanarGrid,
     full_flow_cc_solver,
+    full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
-    _geometric_solver,
-    _full_flow_geometric_solver,
     Grid,
     sequential_solver,
     State,
@@ -184,8 +184,8 @@ class Floris(BaseClass):
                 self.grid,
                 self.wake
             )
-        elif vel_model=="_geometric":
-            elapsed_time = _geometric_solver(
+        elif vel_model=="empirical_gauss":
+            elapsed_time = empirical_gauss_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
@@ -219,8 +219,8 @@ class Floris(BaseClass):
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
-        elif vel_model=="_geometric":
-            _full_flow_geometric_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="empirical_gauss":
+            full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 

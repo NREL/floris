@@ -28,7 +28,7 @@ from floris.utilities import cosd, sind
 @define
 class WakeInducedMixing(BaseModel):
     """
-    TO REWRITE FOR GEOMETRIC MODEL
+    TODO REWRITE FOR EMPIRICAL MODEL
 
     CrespoHernandez is a wake-turbulence model that is used to compute
     additional variability introduced to the flow field by operation of a wind

@@ -30,7 +30,7 @@ from floris.utilities import (
 )
 
 @define
-class _GaussGeometricVelocityDeficit(BaseModel):
+class EmpiricalGaussVelocityDeficit(BaseModel):
 
     wake_expansion_rates: list = field(default=[0.0, 0.012])
     breakpoints_D: list = field(default=[5])
@@ -93,7 +93,7 @@ class _GaussGeometricVelocityDeficit(BaseModel):
         # Wake expansion in the lateral (y) and the vertical (z)
         # TODO: could compute shared components in sigma_z, sigma_y 
         # with one function call.
-        sigma_y = _geometric_model_wake_width(
+        sigma_y = empirical_guass_model_wake_width(
             x-x_i, 
             self.wake_expansion_rates, 
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
@@ -104,7 +104,7 @@ class _GaussGeometricVelocityDeficit(BaseModel):
         sigma_y[upstream_mask] = \
             np.tile(sigma_y0, np.shape(sigma_y)[2:])[upstream_mask]
         
-        sigma_z = _geometric_model_wake_width(
+        sigma_z = empirical_guass_model_wake_width(
             x-x_i, 
             self.wake_expansion_rates, 
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
@@ -199,7 +199,7 @@ def sigmoid_integral(x, center=0, width=1):
     y[in_smoothing_zone] = (width*(z**6 - 3*z**5 + 5/2*z**4)).flatten()
     return y
 
-def _geometric_model_wake_width(
+def empirical_guass_model_wake_width(
     x, 
     wake_expansion_rates, 
     breakpoints, 

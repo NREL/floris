@@ -31,7 +31,9 @@ from floris.simulation.wake_deflection.gauss import (
     wake_added_yaw,
     yaw_added_turbulence_mixing,
 )
-from floris.simulation.wake_deflection._geo import yaw_added_wake_mixing
+from floris.simulation.wake_deflection.empirical_gauss import (
+    yaw_added_wake_mixing
+)
 from floris.utilities import cosd
 
 
@@ -1128,7 +1130,7 @@ def full_flow_turbopark_solver(
     # flow_field_grid.z = copy.deepcopy(turbine_grid.z)
 
 
-def _geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
+def empirical_gauss_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
     # For the current turbine, we are calculating the deficit that it adds to downstream turbines.
@@ -1288,7 +1290,7 @@ def _geometric_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid, mode
     flow_field.turbulence_intensity_field = flow_field.turbulence_intensity_field[:,:,:,None,None]
     flow_field.wim_field = mixing_factor # This is used for full_flow calc
 
-def _full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
+def full_flow_empirical_gauss_solver(farm: Farm, flow_field: FlowField, flow_field_grid: FlowFieldGrid, model_manager: WakeModelManager) -> None:
     
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
@@ -1324,7 +1326,7 @@ def _full_flow_geometric_solver(farm: Farm, flow_field: FlowField, flow_field_gr
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-    _geometric_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
+    empirical_gauss_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 

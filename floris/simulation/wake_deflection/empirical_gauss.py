@@ -25,7 +25,7 @@ from floris.simulation import (
 from floris.utilities import cosd, sind
 
 @define
-class _GaussGeometricDeflection(BaseModel):
+class EmpiricalGaussVelocityDeflection(BaseModel):
 
     horizontal_deflection_gain_D: float = field(default=9.5)
     vertical_deflection_gain_D: float = field(default=-1)
