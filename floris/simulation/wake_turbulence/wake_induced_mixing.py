@@ -57,7 +57,7 @@ class WakeInducedMixing(BaseModel):
             :filter: docname in docnames
             :keyprefix: cht-
     """
-    ti_gain: float = field(converter=float, default=0.05)
+    atmospheric_ti_gain: float = field(converter=float, default=0.05)
     # Consider naming ti_multiplier? or similar?
     
     def prepare_function(self) -> dict:

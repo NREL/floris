@@ -1154,7 +1154,7 @@ def empirical_gauss_solver(farm: Farm, flow_field: FlowField, grid: TurbineGrid,
         np.repeat(farm.rotor_diameters_sorted[:,:,:,None], grid.n_turbines, axis=-1)
     downstream_distance_D = np.maximum(downstream_distance_D, 0.1) # For ease
     mixing_factor = np.zeros_like(downstream_distance_D)
-    mixing_factor[:,:,:,:] = model_manager.turbulence_model.ti_gain*\
+    mixing_factor[:,:,:,:] = model_manager.turbulence_model.atmospheric_ti_gain*\
         flow_field.turbulence_intensity*np.eye(grid.n_turbines)
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
