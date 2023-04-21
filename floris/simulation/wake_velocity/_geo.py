@@ -194,6 +194,8 @@ def sigmoid_integral(x, center=0, width=1):
     y[above_smoothing_zone] = (x-center)[above_smoothing_zone]
     in_smoothing_zone = (((x-center) >= -width/2) & ((x-center) <= width/2))
     z = ((x-center)/width + 0.5)[in_smoothing_zone]
+    if width.shape[0] > 1: # multiple turbine sizes
+        width = np.broadcast_to(width, x.shape)[in_smoothing_zone]
     y[in_smoothing_zone] = (width*(z**6 - 3*z**5 + 5/2*z**4)).flatten()
     return y
 
