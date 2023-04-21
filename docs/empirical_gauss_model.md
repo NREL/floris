@@ -1,7 +1,7 @@
-(theory/geometric model)=
-# Geometric model 
+(theory/empirical gauss model)=
+# Empirical Gaussian model
 
-FLORIS's "geometric" model has the same Gaussian wake shape as other popular 
+FLORIS's "empirical" model has the same Gaussian wake shape as other popular 
 FLORIS models. However, the models that describe the wake width and deflection 
 have been reorganized to provide simpler tuning and data fitting.
 
@@ -108,7 +108,7 @@ and set `vertical_deflection_gain_D` to the same value as
 
 Finally, turbines contribute to mixing in the flow. In other models, this 
 extra mixing is accounted for by adding to the turbulence intensity value. In 
-the geometric model, explicit dependencies on turbulence intensity are removed 
+the empirical model, explicit dependencies on turbulence intensity are removed 
 completely to aid in tuning. Instead, a non-physical "wake-induced mixing 
 factor" is specified for turbine $j$ as
 
@@ -143,9 +143,9 @@ user by setting `wim_gain_deflection`.
 
 ## Yaw added mixing
 
-Yaw misalignment can also add turbulence to the wake. In the geometric model,
-this effect, referred to as "yaw-added wake recovery" in other models, is 
-activated by setting 
+Yaw misalignment can also add turbulence to the wake. In the empirical Gaussian 
+model, this effect, referred to as "yaw-added wake recovery" in other models, 
+is activated by setting 
 `enable_yaw_added_recovery` to `true`. Yaw-added mixing is represented 
 by updating the wake-induced mixing term as follows:
 
@@ -159,7 +159,7 @@ is `false`, a turbine may affect the recovery of its own wake by yawing.
 
 ## Mirror wakes
 
-Mirror wakes are also enabled by default in the geometric model to model the 
+Mirror wakes are also enabled by default in the empirical model to model the 
 ground effect. Essentially, turbines are placed below the ground so that 
 the vertical expansion of their (mirror) wakes appears in the above-ground 
 flow some distance downstream, to model the reflection of the true turbine 

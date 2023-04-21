@@ -56,7 +56,7 @@ class FlowField(FromDictMixin):
     turbulence_intensity_field_sorted: NDArrayFloat = field(init=False, default=np.array([]))
     turbulence_intensity_field_sorted_avg: NDArrayFloat = field(init=False, default=np.array([]))
 
-    # Only used in geometric model
+    # Only used in empirical_gauss model
     wim_field: NDArrayFloat = field(init=False, default=np.array([]))
 
     @wind_speeds.validator
