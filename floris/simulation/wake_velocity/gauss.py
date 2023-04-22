@@ -245,32 +245,3 @@ def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine
 
 def gaussian_function(C, r, n, sigma):
     return C * np.exp(-1 * r ** n / (2 * sigma ** 2))
-
-def sigmoid_integral(x, center=0, width=1):
-    y = np.zeros_like(x)
-    above_smoothing_zone = ((x-center) > width/2)
-    y[above_smoothing_zone] = (x-center)[above_smoothing_zone]
-    in_smoothing_zone = (((x-center) >= -width/2) & ((x-center) <= width/2))
-    z = ((x-center)/width + 0.5)[in_smoothing_zone]
-    if width.shape[0] > 1: # multiple turbine sizes
-        width = np.broadcast_to(width, x.shape)[in_smoothing_zone]
-    y[in_smoothing_zone] = (width*(z**6 - 3*z**5 + 5/2*z**4)).flatten()
-    return y 
-
-def geometric_model_wake_width(
-    x, 
-    wake_expansion_rates, 
-    breakpoints, 
-    sigma_0, 
-    smoothing_length,
-    mixing_final,
-    ):
-    assert len(wake_expansion_rates) == len(breakpoints) + 1, \
-        "Invalid combination of wake_expansion_rates and breakpoints."
-
-    sigma = (wake_expansion_rates[0] + mixing_final) * x + sigma_0
-    for ib, b in enumerate(breakpoints):
-        sigma += (wake_expansion_rates[ib+1]-wake_expansion_rates[ib]) * \
-            sigmoid_integral(x, center=b, width=smoothing_length) 
-
-    return sigma
