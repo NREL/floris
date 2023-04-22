@@ -135,9 +135,9 @@ class Farm(BaseClass):
                 elif in_external:
                     full_path = external_fn
                 else:
-                    raise ValueError(
-                        f"The turbine type: {turbine} exists in both the internal and external"
-                        " turbine library."
+                    raise FileNotFoundError(
+                        f"The turbine type: {turbine} does not exist in either the internal or"
+                        " external turbine library."
                     )
                 turbine_map[turbine] = turbine = load_yaml(full_path)
             elif isinstance(turbine, dict):
