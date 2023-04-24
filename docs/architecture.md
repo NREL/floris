@@ -1,12 +1,13 @@
 
 # Architecture and Design
 
-There are a few fundamental characteristics that define the FLORIS software:
+Two fundamental ideas define the design of the FLORIS software:
 
-- Modularity in two places:
-    - Wake model mathematical formulation
-    - Grouping of packages at the highest organization level
-- Management of abstraction:
+- Modularity in wake model formulation
+    - Mathematical formulation should be straightforward to include
+    - Requisite solver and grid data structures should not conflict with other existing
+        wake models
+- Management of abstraction
     - Low level code is opaque but well tested and exercised; it should be very computationally
         efficient with low algorithmic complexity
     - High level code should be expressive and clear even if it results in verbose or less
