@@ -15,7 +15,7 @@ pip-wheel-metadata
 # macOS files
 .DS_Store
 
-# macOS files
+# Jupyter files
 *.ipynb_checkpoints
 
 # IDE settings and files
