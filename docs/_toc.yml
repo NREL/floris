@@ -17,7 +17,6 @@ parts:
 
   - caption: Theory and Background
     chapters:
-    - file: reference
     - file: wake_comparison
 
   - caption: Developer Reference
