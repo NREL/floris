@@ -38,25 +38,67 @@ from floris.tools.visualization import (
 
 #### Gauss
 The Gauss deflection model is a blend of the models described in
-:cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for calculating
+{cite:t}`bastankhah2016experimental` and {cite:t}`King2019Controls` for calculating
 the deflection field in turbine wakes.
+
+#### Jimenez
+
+Jiménez wake deflection model, dervied from {cite:t}`jimenez2010application`.
 
 #### Jensen
 
 #### Wake Velocity
 
+##### Cumulative Gaussian Curl (CC)
+
+The cumulative curl model is an implementation of the model described in {cite:t}`gdm-bay_2022`, which itself is based on the cumulative model of  {cite:t}`bastankhah_2021`
+
+##### Gauss
+
+The Gaussian velocity model....
+
+##### Jensen
+
+The Jensen model computes the wake velocity deficit based on the classic Jensen/Park model {cite:t}`jensen1983note`.
+
+##### TurbOPark
+
+Model based on the TurbOPark model. For model details see https://github.com/OrstedRD/TurbOPark, https://github.com/OrstedRD/TurbOPark/blob/main/TurbOPark%20description.pdf, and Nygaard, Nicolai Gayle, et al. "Modelling cluster wakes and wind farm blockage." 2020.
+
 #### Wake Turbulence
+
+##### CrespoHernandez
+
+CrespoHernandez is a wake-turbulence model that is used to compute additional variability introduced to the flow field by operation of a wind turbine. Implementation of the model follows the original formulation and limitations outlined in {cite:t}`crespo1996turbulence`.
 
 #### Wake Combination
 
+##### FLS
+
+FLS uses freestream linear superposition to apply the wake velocity deficits to the freestream flow field.
+
+##### MAX
+
+MAX uses the maximum wake velocity deficit to add to the base flow field. For more information, refer to {cite:t}`gunn2016limitations`.
+
+##### SOSFS
+
+SOSFS uses sum of squares freestream superposition to combine the wake velocity deficits to the base flow field.
 
 ### Shorthand Model Naming
 
 #### Jensen
 
+The Jensen model uses the Jensen velocity model, Jimenez deflection model, CrespoHernandez turbulence model, and SOSFS combination model.
+
 #### GCH
 
+The Gauss-Curl-Hybrid model combines Gaussian wake models to capture second-order effects of wake
+steering using curl-based methods, as described in {cite:t}`King2019Controls`
+
 #### CC
+
+The CC model uses the Cumulative Curl velocity model, CrespoHernandez turbulence model, the Gaussian deflection model, and the SOSFS combination model.
 
 ## Model Setup
 
@@ -66,19 +108,19 @@ def get_plot_parameters(fi):
         x_resolution=200,
         y_resolution=100,
         height=90.0,
-        yaw_angles=np.array([[[25.,0.,0.]]]),
+        yaw_angles=np.array([[[25.,0.,0., 25.,0.,0., 25.,0.,0.]]]),
     )
     y_plane = fi.calculate_y_plane(
         x_resolution=200,
         z_resolution=100,
         crossstream_dist=630.0,
-        yaw_angles=np.array([[[25.,0.,0.]]]),
+        # yaw_angles=np.array([[[25.,0.,0.],[25.,0.,0.],[25.,0.,0.]]]),
     )
     cross_plane = fi.calculate_cross_plane(
         y_resolution=100,
         z_resolution=100,
         downstream_dist=630.0,
-        yaw_angles=np.array([[[25.,0.,0.]]]),
+        # yaw_angles=np.array([[[50.,0.,0.],[50.,0.,0.],[50.,0.,0.]]]),
     )
     return horizontal_plane, y_plane, cross_plane
 ```
@@ -89,27 +131,30 @@ solver_settings = {
     "turbine_grid_points": 10
 }
 
+layout_x = np.arange(3) * np.ones((3, 3)) * 700
+layout_x[1] += 250
+layout_x[2] += 500
+layout_x = layout_x.flatten()
+
+layout_y = (np.arange(0, 601, 300).reshape(-1, 1) * np.ones((3, 3))).flatten()
+
 fi_cc = FlorisInterface("../examples/inputs/cc.yaml")
 fi_gch = FlorisInterface("../examples/inputs/gch.yaml")
 fi_jensen = FlorisInterface("../examples/inputs/jensen.yaml")
-# fi_turbopark = FlorisInterface("../examples/inputs/turbopark.yaml")
 
-fi_cc.reinitialize(solver_settings=solver_settings)
-fi_gch.reinitialize(solver_settings=solver_settings)
-fi_jensen.reinitialize(solver_settings=solver_settings)
-# fi_turbopark.reinitialize(solver_settings=solver_settings)
+fi_cc.reinitialize(solver_settings=solver_settings, layout_x=layout_x, layout_y=layout_y)
+fi_gch.reinitialize(solver_settings=solver_settings, layout_x=layout_x, layout_y=layout_y)
+fi_jensen.reinitialize(solver_settings=solver_settings, layout_x=layout_x, layout_y=layout_y)
 
 fi_cc.calculate_wake()
 fi_gch.calculate_wake()
 fi_jensen.calculate_wake()
-# fi_turbopark.calculate_wake()
 ```
 
 ```{code-cell}
 horizontal_cc, y_cc, cross_cc = get_plot_parameters(fi_cc)
 horizontal_gch, y_gch, cross_gch = get_plot_parameters(fi_gch)
 horizontal_jensen, y_jensen, cross_jensen = get_plot_parameters(fi_jensen)
-# horizontal_turbopark, y_turbopark, cross_turbopark = get_plot_parameters(fi_turbopark)
 ```
 
 ## Plot the Results
@@ -120,15 +165,13 @@ In the below plot we demonstrate the horizontal wake profile.
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8), dpi=200, sharex=True, sharey=True)
 ax_list = ax_list.flatten()
 
-visualize_cut_plane(horizontal_cc, ax=ax_list[0], title="CC", fontsize=12)
-visualize_cut_plane(horizontal_gch, ax=ax_list[1], title="GCH", fontsize=12)
-visualize_cut_plane(horizontal_jensen, ax=ax_list[2], title="Jensen", fontsize=12)
-# horizontal_plane_scan_turbine = calculate_horizontal_plane_with_turbines(
-#     fi,
-#     x_resolution=20,
-#     y_resolution=10,
-#     yaw_angles=np.array([[[25.,0.,0.]]]),
-# )
+visualize_cut_plane(horizontal_cc, ax=ax_list[0])
+visualize_cut_plane(horizontal_gch, ax=ax_list[1])
+visualize_cut_plane(horizontal_jensen, ax=ax_list[2])
+
+ax_list[0].set_title("CC", fontsize=12)
+ax_list[1].set_title("GCH", fontsize=12)
+ax_list[2].set_title("Jensen", fontsize=12)
 
 fig.suptitle("Horizontal Wake Profile", fontsize=16)
 fig.tight_layout()
@@ -145,7 +188,7 @@ fig, axes, _ , _ = plot_rotor_values(
     n_cols=3,
     return_fig_objects=True
 )
-fig.suptitle("Rotor Plane Visualization for CC, 10x10 Resolution")
+fig.suptitle("CC Rotor Plane Visualization, 10x10 Resolution")
 show_plots()
 
 fig, axes, _ , _ = plot_rotor_values(
@@ -156,7 +199,7 @@ fig, axes, _ , _ = plot_rotor_values(
     n_cols=3,
     return_fig_objects=True
 )
-fig.suptitle("Rotor Plane Visualization for GCH, 10x10 Resolution")
+fig.suptitle("GCH Rotor Plane Visualization, 10x10 Resolution")
 show_plots()
 
 fig, axes, _ , _ = plot_rotor_values(
@@ -167,6 +210,9 @@ fig, axes, _ , _ = plot_rotor_values(
     n_cols=3,
     return_fig_objects=True
 )
-fig.suptitle("Rotor Plane Visualization for Jensen, 10x10 Resolution")
+fig.suptitle("Jensen Rotor Plane Visualization, 10x10 Resolution")
 show_plots()
+```
+
+```{bibliography}
 ```
