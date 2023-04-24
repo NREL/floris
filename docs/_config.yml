@@ -23,7 +23,7 @@ bibtex_bibfiles:
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/nrel/floris
+  url: https://github.com/NREL/FLORIS
   path_to_book: docs
   branch: main
 
