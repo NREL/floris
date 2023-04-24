@@ -19,6 +19,7 @@ parts:
   - caption: Theory and Background
     chapters:
     - file: reference
+    - file: solvers
 
   - caption: Developer Reference
     chapters:
