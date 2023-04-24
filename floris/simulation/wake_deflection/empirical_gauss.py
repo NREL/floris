@@ -27,12 +27,11 @@ from floris.utilities import cosd, sind
 @define
 class EmpiricalGaussVelocityDeflection(BaseModel):
 
-    horizontal_deflection_gain_D: float = field(default=9.5)
+    horizontal_deflection_gain_D: float = field(default=3.0)
     vertical_deflection_gain_D: float = field(default=-1)
     deflection_rate: float = field(default=15)
-    mixing_gain_deflection: float = field(default=900.)
-    yaw_added_mixing_gain: float = field(default=0.0) # TODO: check default. 
-    # consider naming yaw_added_mixing_multiplier? Or similar?
+    mixing_gain_deflection: float = field(default=0.0)
+    yaw_added_mixing_gain: float = field(default=0.0)
 
     def prepare_function(
         self,

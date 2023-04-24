@@ -57,8 +57,16 @@ class WakeInducedMixing(BaseModel):
             :filter: docname in docnames
             :keyprefix: cht-
     """
-    atmospheric_ti_gain: float = field(converter=float, default=0.05)
-    # Consider naming ti_multiplier? or similar?
+    atmospheric_ti_gain: float = field(converter=float, default=0.0)
+
+    def __attrs_post_init__(self) -> None:
+        if self.atmospheric_ti_gain != 0.0:
+            nonzero_err_msg = \
+                "Running wake_induced_mixing model with mixing contributions"+\
+                " from the atmospheric turbulence intensity has not been"+\
+                " vetted. To avoid this warning, set atmospheric_ti_gain=0."+\
+                " in the FLORIS input yaml."
+            self.logger.warning(nonzero_err_msg, stack_info=True)
     
     def prepare_function(self) -> dict:
         pass

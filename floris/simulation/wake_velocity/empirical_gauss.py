@@ -32,11 +32,11 @@ from floris.utilities import (
 @define
 class EmpiricalGaussVelocityDeficit(BaseModel):
 
-    wake_expansion_rates: list = field(default=[0.0, 0.012])
-    breakpoints_D: list = field(default=[5])
+    wake_expansion_rates: list = field(default=[0.01, 0.005])
+    breakpoints_D: list = field(default=[10])
     sigma_y0_D: float = field(default=0.28)
-    smoothing_length_D: float = field(default=3.0)
-    mixing_gain_velocity: float = field(default=2.5) 
+    smoothing_length_D: float = field(default=2.0)
+    mixing_gain_velocity: float = field(default=2.0) 
 
     def prepare_function(
         self,
