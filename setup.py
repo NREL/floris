@@ -48,7 +48,7 @@ REQUIRED = [
 # To use: pip install -e ".[develop]" or pip install "floris[develop]"
 EXTRAS = {
     "docs": {
-        "jupyter-book",
+        "jupyter-book<=0.13.3",
         "sphinx-book-theme",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
