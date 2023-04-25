@@ -13,7 +13,7 @@ performance curve, and corrections must be included to accurately predict the po
 production.
 
 Support for modeling this impact on a floating wind turbine were added in
-[PR#518](https://github.com/NREL/floris/pull/518/files) and allow for correcting the 
+[PR#518](https://github.com/NREL/floris/pull/518/files) and allow for correcting the
 user-supplied performance curve for the average tilt. This is accomplished by including
 an additional input, `floating_tilt_table`, in the turbine definition which sets the
 steady tilt angle of the turbine based on wind speed. An interpolation is created and
