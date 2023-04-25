@@ -48,29 +48,29 @@ def generate_wake_visualization(fi, title=None):
     # Contour plot colors
     min_ws = 4
     max_ws = 10
-    
+
     horizontal_plane = fi.calculate_horizontal_plane(
-        x_resolution=200, 
-        y_resolution=100, 
-        height=horizontal_plane_location, 
-        x_bounds=x_bounds, 
-        y_bounds=y_bounds, 
+        x_resolution=200,
+        y_resolution=100,
+        height=horizontal_plane_location,
+        x_bounds=x_bounds,
+        y_bounds=y_bounds,
         yaw_angles=yaw_angles
     )
     y_plane = fi.calculate_y_plane(
-        x_resolution=200, 
-        z_resolution=100, 
-        crossstream_dist=streamwise_plane_location, 
-        x_bounds=x_bounds, 
-        z_bounds=z_bounds, 
+        x_resolution=200,
+        z_resolution=100,
+        crossstream_dist=streamwise_plane_location,
+        x_bounds=x_bounds,
+        z_bounds=z_bounds,
         yaw_angles=yaw_angles
     )
     cross_planes = []
     for cpl in cross_plane_locations:
         cross_planes.append(
             fi.calculate_cross_plane(
-                y_resolution=100, 
-                z_resolution=100, 
+                y_resolution=100,
+                z_resolution=100,
                 downstream_dist=cpl
             )
         )
@@ -84,27 +84,27 @@ def generate_wake_visualization(fi, title=None):
     fig.set_size_inches(12, 12)
     # Horizontal profile
     ax = fig.add_subplot(311)
-    visualize_cut_plane(horizontal_plane, ax=ax, title="Top-down profile", 
+    visualize_cut_plane(horizontal_plane, ax=ax, title="Top-down profile",
         min_speed=min_ws, max_speed=max_ws)
-    ax.plot(x_bounds, [streamwise_plane_location]*2, color=cp_clr, 
+    ax.plot(x_bounds, [streamwise_plane_location]*2, color=cp_clr,
         linewidth=cp_lw, linestyle=cp_ls)
     for cpl in cross_plane_locations:
-        ax.plot([cpl]*2, y_bounds, color=cp_clr, linewidth=cp_lw, 
+        ax.plot([cpl]*2, y_bounds, color=cp_clr, linewidth=cp_lw,
             linestyle=cp_ls)
 
     ax = fig.add_subplot(312)
-    visualize_cut_plane(y_plane, ax=ax, title="Streamwise profile", 
+    visualize_cut_plane(y_plane, ax=ax, title="Streamwise profile",
         min_speed=min_ws, max_speed=max_ws)
-    ax.plot(x_bounds, [horizontal_plane_location]*2, color=cp_clr, 
+    ax.plot(x_bounds, [horizontal_plane_location]*2, color=cp_clr,
         linewidth=cp_lw, linestyle=cp_ls)
     for cpl in cross_plane_locations:
-        ax.plot([cpl, cpl], z_bounds, color=cp_clr, linewidth=cp_lw, 
+        ax.plot([cpl, cpl], z_bounds, color=cp_clr, linewidth=cp_lw,
             linestyle=cp_ls)
 
     # Spanwise profiles
     for i, (cp, cpl) in enumerate(zip(cross_planes, cross_plane_locations)):
-        visualize_cut_plane(cp, ax=fig.add_subplot(3, len(cross_planes), i+7), 
-            title="Loc: {:.0f}m".format(cpl), min_speed=min_ws, 
+        visualize_cut_plane(cp, ax=fig.add_subplot(3, len(cross_planes), i+7),
+            title="Loc: {:.0f}m".format(cpl), min_speed=min_ws,
             max_speed=max_ws)
 
     # Add overall figure title
@@ -119,12 +119,12 @@ D = fi.floris.farm.rotor_diameters[0]
 fi.reinitialize(
     layout_x=[x*5.0*D for x in range(num_in_row)],
     layout_y=[0.0]*num_in_row,
-    wind_speeds=[8.0], 
+    wind_speeds=[8.0],
     wind_directions=[270.0]
 )
 
 # Save dictionary to modify later
-fi_dict = fi.floris.as_dict() 
+fi_dict = fi.floris.as_dict()
 
 # Run wake calculation
 fi.calculate_wake()
@@ -152,7 +152,7 @@ fi_dict_mod['wake']['wake_velocity_parameters']['empirical_gauss']\
     ['wake_expansion_rates'] = [0.02, 0.01]
 fi = FlorisInterface(fi_dict_mod)
 fi.reinitialize(
-    wind_speeds=[8.0], 
+    wind_speeds=[8.0],
     wind_directions=[270.0]
 )
 
@@ -176,10 +176,10 @@ fi_dict_mod['wake']['wake_velocity_parameters']['empirical_gauss']\
             ['wake_expansion_rates'] + [0.0]
 fi_dict_mod['wake']['wake_velocity_parameters']['empirical_gauss']\
     ['breakpoints_D'] = [5, 10]
-        
+
 fi = FlorisInterface(fi_dict_mod)
 fi.reinitialize(
-    wind_speeds=[8.0], 
+    wind_speeds=[8.0],
     wind_directions=[270.0]
 )
 
@@ -201,7 +201,7 @@ fi_dict_mod['wake']['wake_velocity_parameters']['empirical_gauss']\
     ['mixing_gain_velocity'] = 3.0
 fi = FlorisInterface(fi_dict_mod)
 fi.reinitialize(
-    wind_speeds=[8.0], 
+    wind_speeds=[8.0],
     wind_directions=[270.0]
 )
 

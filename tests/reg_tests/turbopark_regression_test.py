@@ -22,7 +22,6 @@ from floris.simulation import (
     Floris,
     power,
 )
-from floris.simulation.turbine import rotor_effective_velocity
 from tests.conftest import (
     assert_results_arrays,
     N_TURBINES,
@@ -30,7 +29,6 @@ from tests.conftest import (
     N_WIND_SPEEDS,
     print_test_values,
 )
-from floris.simulation.turbine import rotor_effective_velocity
 
 
 DEBUG = False

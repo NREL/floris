@@ -24,8 +24,6 @@ from floris.simulation import (
     Ct,
     power,
     Turbine,
-    _rotor_velocity_yaw_correction, 
-    _rotor_velocity_tilt_correction, 
     _compute_tilt_angles_for_floating_turbines
 )
 from floris.simulation.turbine import (

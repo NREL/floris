@@ -201,12 +201,6 @@ class Farm(BaseClass):
         self.ref_density_cp_cts = np.array([
             turb['ref_density_cp_ct'] for turb in self.turbine_definitions
         ])
-    
-    def construct_turbine_ref_tilt_cp_cts(self):
-        self.ref_tilt_cp_cts = np.array([turb['ref_tilt_cp_ct'] for turb in self.turbine_definitions])
-
-    def construct_turbine_correct_cp_ct_for_tilt(self):
-        self.correct_cp_ct_for_tilt = np.array([turb.correct_cp_ct_for_tilt for turb in self.turbine_map])
 
     def construct_turbine_ref_tilt_cp_cts(self):
         self.ref_tilt_cp_cts = np.array(
@@ -229,9 +223,6 @@ class Farm(BaseClass):
     def construct_turbine_fTilts(self):
         self.turbine_fTilts = [(turb.turbine_type, turb.fTilt_interp) for turb in self.turbine_map]
 
-    def construct_turbine_fTilts(self):
-        self.turbine_fTilts = [(turb.turbine_type, turb.fTilt_interp) for turb in self.turbine_map]
-
     def construct_turbine_power_interps(self):
         self.turbine_power_interps = {
             turb.turbine_type: turb.power_interp for turb in self.turbine_map
@@ -248,7 +239,7 @@ class Farm(BaseClass):
         n_wind_speeds: int,
         sorted_coord_indices
     ):
-        template_shape = np.ones_like(sorted_coord_indices)        
+        template_shape = np.ones_like(sorted_coord_indices)
         self.hub_heights_sorted = np.take_along_axis(
             self.hub_heights * template_shape,
             sorted_coord_indices,

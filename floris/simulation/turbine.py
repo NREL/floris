@@ -22,7 +22,6 @@ import attrs
 import numpy as np
 from attrs import define, field
 from scipy.interpolate import interp1d
-import copy
 
 from floris.simulation import BaseClass
 from floris.type_dec import (
@@ -33,7 +32,6 @@ from floris.type_dec import (
     NDArrayFloat,
     NDArrayInt,
     NDArrayObject,
-    NDArrayBool,
 )
 from floris.utilities import cosd
 
@@ -527,38 +525,6 @@ class TiltTable(FromDictMixin):
         _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
         self.tilt = self.tilt[duplicate_filter]
         self.wind_speeds = self.wind_speeds[duplicate_filter]
-
-
-@define
-class TiltTable(FromDictMixin):
-    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
-
-    Args:
-        tilt (NDArrayFloat): The tilt angle at a given windspeed.
-        wind_speeds (NDArrayFloat): Windspeed values, m/s.
-
-    Raises:
-        ValueError: Raised if tilt and wind_speeds are not all 1-d array-like shapes.
-        ValueError: Raised if tilt and wind_speeds don't have the same number of values.
-    """
-    tilt: NDArrayFloat = field(converter=floris_array_converter)
-    wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
-
-    def __attrs_post_init__(self) -> None:
-        # Validate the power, thrust, and wind speed inputs.
-
-        inputs = (self.tilt, self.wind_speeds)
-
-        if any(el.ndim > 1 for el in inputs):
-            raise ValueError("tilt and wind_speed inputs must be 1-D.")
-
-        if len( set( (self.tilt.size, self.wind_speeds.size) ) ) > 1:        
-            raise ValueError("tilt and wind_speed tables must be the same size.")
-        
-        # Remove any duplicate wind speed entries
-        _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
-        object.__setattr__(self, "tilt", self.tilt[duplicate_filter])
-        object.__setattr__(self, "wind_speeds", self.wind_speeds[duplicate_filter])
 
 
 @define

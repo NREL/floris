@@ -28,7 +28,7 @@ from floris.simulation.wake_deflection import (
     NoneVelocityDeflection,
 )
 from floris.simulation.wake_turbulence import (
-    CrespoHernandez, 
+    CrespoHernandez,
     NoneWakeTurbulence,
     WakeInducedMixing
 )
