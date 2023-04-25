@@ -28,34 +28,25 @@ from floris.utilities import cosd, sind
 @define
 class WakeInducedMixing(BaseModel):
     """
-    TODO REWRITE FOR EMPIRICAL MODEL
-
-    CrespoHernandez is a wake-turbulence model that is used to compute
-    additional variability introduced to the flow field by operation of a wind
-    turbine. Implementation of the model follows the original formulation and
-    limitations outlined in :cite:`cht-crespo1996turbulence`.
+    WakeInducedMixing is a model used to generalize wake-added turbulence 
+    in the Empirical Gaussian wake model. It computes the contribution of each 
+    turbine to a "wake-induced mixing" term that in turn is used in the 
+    velocity deficit and deflection models.
 
     Args:
         parameter_dictionary (dict): Model-specific parameters.
             Default values are used when a parameter is not included
             in `parameter_dictionary`. Possible key-value pairs include:
 
-            -   **initial** (*float*): The initial ambient turbulence
-                intensity, expressed as a decimal fraction.
-            -   **constant** (*float*): The constant used to scale the
-                wake-added turbulence intensity.
-            -   **ai** (*float*): The axial induction factor exponent used
-                in in the calculation of wake-added turbulence.
-            -   **downstream** (*float*): The exponent applied to the
-                distance downstream of an upstream turbine normalized by
-                the rotor diameter used in the calculation of wake-added
-                turbulence.
-
+            -   **atmospheric_ti_gain** (*float*): The contribution of ambient 
+                turbulent intensity to the wake-induced mixing term. Currently
+                throws a warning if nonzero.
+    
     References:
         .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
-            :keyprefix: cht-
+            :keyprefix: wim-
     """
     atmospheric_ti_gain: float = field(converter=float, default=0.0)
 
@@ -76,6 +67,21 @@ class WakeInducedMixing(BaseModel):
         axial_induction_i: np.ndarray,
         downstream_distance_D_i: np.ndarray,
     ) -> None:
+        """
+        Calculates the contribution of turbine i to all other turbines'
+        mixing terms.
+
+        Args:
+            axial_induction_i (np.array): Axial induction factor of 
+                the ith turbine (-).
+            downstream_distance_D_i (np.array): The distance downstream
+                from turbine i to all other turbines (speficied in terms
+                of multiples of turbine i's rotor diameter) (D).
+            
+        Returns:
+            np.array: Components of the wake-induced mixing term due to
+                the ith turbine.
+        """
 
         wake_induced_mixing = axial_induction_i[:,:,:,0,0] \
             / downstream_distance_D_i**2

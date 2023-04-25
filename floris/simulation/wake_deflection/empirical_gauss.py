@@ -26,7 +26,38 @@ from floris.utilities import cosd, sind
 
 @define
 class EmpiricalGaussVelocityDeflection(BaseModel):
+    """
+    The Empirical Gauss deflection model is based on the form of previous the 
+    Guass deflection model (see :cite:`gdm-bastankhah2016experimental` and 
+    :cite:`gdm-King2019Controls`) but simplifies the formulation for simpler 
+    tuning and more independence from the velocity deficit model.
 
+    parameter_dictionary (dict): Model-specific parameters.
+        Default values are used when a parameter is not included
+        in `parameter_dictionary`. Possible key-value pairs include:
+
+            -   **horizontal_deflection_gain_D** (*float*): Gain for the 
+                maximum (y-direction) deflection acheived far downstream
+                of a yawed turbine.
+            -   **vertical_deflection_gain_D** (*float*): Gain for the 
+                maximum vertical (z-direction) deflection acheived at a 
+                far downstream location due to rotor tilt. Specifying as
+                -1 will mean that vertical deflections due to tilt match
+                horizontal deflections due to yaw.
+            -   **deflection_rate** (*float*): Rate at which the 
+                deflected wake center approaches its maximum deflection.
+            -   **mixing_gain_deflection** (*float*): Gain to set the 
+                reduction in deflection due to wake-induced mixing.
+            -   **yaw_added_mixing_gain** (*float*): Sets the 
+                contribution of turbine yaw misalignment to the mixing 
+                in that turbine's wake (similar to yaw-added recovery).
+
+    References:
+        .. bibliography:: /references.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: egdm-
+    """
     horizontal_deflection_gain_D: float = field(default=3.0)
     vertical_deflection_gain_D: float = field(default=-1)
     deflection_rate: float = field(default=15)
@@ -66,27 +97,31 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         wind_veer: float,
     ):
         """
-        Calculates the deflection field of the wake. See
-        :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls`
-        for details on the methods used.
+        Calculates the deflection field of the wake.
 
         Args:
-            x_locations (np.array): An array of floats that contains the
-                streamwise direction grid coordinates of the flow field
-                domain (m).
-            y_locations (np.array): An array of floats that contains the grid
-                coordinates of the flow field domain in the direction normal to
-                x and parallel to the ground (m).
-            z_locations (np.array): An array of floats that contains the grid
-                coordinates of the flow field domain in the vertical
-                direction (m).
-            turbine (:py:obj:`floris.simulation.turbine`): Object that
-                represents the turbine creating the wake.
-            coord (:py:obj:`floris.utilities.Vec3`): Object containing
-                the coordinate of the turbine creating the wake (m).
-            flow_field (:py:class:`floris.simulation.flow_field`): Object
-                containing the flow field information for the wind farm.
-
+            x_i (np.array): Streamwise direction grid coordinates of 
+                the ith turbine (m).
+            y_i (np.array): Cross stream direction grid coordinates of 
+                the ith turbine (m) [not used].
+            yaw_i (np.array): Yaw angle of the ith turbine (deg).
+            tilt_i (np.array): Tilt angle of the ith turbine (deg).
+            mixing_i (np.array): The wake-induced mixing term for the 
+                ith turbine.
+            ct_i (np.array): Thrust coefficient for the ith turbine (-).
+            rotor_diameter_i (np.array): Rotor diamter for the ith 
+                turbine (m).
+            
+            x (np.array): Streamwise direction grid coordinates of the 
+                flow field domain (m).
+            y (np.array): Cross stream direction grid coordinates of the 
+                flow field domain (m) [not used].
+            z (np.array): Vertical direction grid coordinates of the 
+                flow field domain (m) [not used].
+            freestream_velocity (np.array): Free stream wind speed (m/s)
+                [not used].
+            wind_veer (np.array): Wind veer (deg) [not used].
+            
         Returns:
             np.array: Deflection field for the wake.
         """

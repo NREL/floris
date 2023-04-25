@@ -31,10 +31,42 @@ from floris.utilities import (
 
 @define
 class EmpiricalGaussVelocityDeficit(BaseModel):
+    """
+    The Empirical Gauss velocity model has a Gaussian profile 
+    (see :cite:`gdm-bastankhah2016experimental` and 
+    :cite:`gdm-King2019Controls`) throughout and expands in a (smoothed) 
+    piecewise linear fashion.
 
+    parameter_dictionary (dict): Model-specific parameters.
+        Default values are used when a parameter is not included
+        in `parameter_dictionary`. Possible key-value pairs include:
+
+            -   **wake_expansion_rates** (*list*): List of expansion 
+                rates for the Gaussian wake width. Must be of length 1 
+                or greater.
+            -   **breakpoints_D** (*list*): List of downstream 
+                locations, specified in terms of rotor diameters, where 
+                the expansion rates go into effect. Must be one element 
+                shorter than wake_expansion_rates. May be empty.
+            -   **sigma_0_D** (*float*): Initial width of the Gaussian 
+                wake at the turbine location, specified as a multiplier 
+                of the rotor diameter.
+            -   **smoothing_length_D** (*float*): Distance over which 
+                the corners in the piece-wise linear wake expansion rate
+                are smoothed (specified as a multiplier of the rotor 
+                diameter).
+            -   **mixing_gain_deflection** (*float*): Gain to set the 
+                increase in wake expansion due to wake-induced mixing.
+
+    References:
+        .. bibliography:: /references.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: egvm-
+    """
     wake_expansion_rates: list = field(default=[0.01, 0.005])
     breakpoints_D: list = field(default=[10])
-    sigma_y0_D: float = field(default=0.28)
+    sigma_0_D: float = field(default=0.28)
     smoothing_length_D: float = field(default=2.0)
     mixing_gain_velocity: float = field(default=2.0) 
 
@@ -76,6 +108,45 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         u_initial: np.ndarray,
         wind_veer: float
     ) -> None:
+        """
+        Calculates the velocity deficits in the wake.
+
+        Args:
+            x_i (np.array): Streamwise direction grid coordinates of 
+                the ith turbine (m).
+            y_i (np.array): Cross stream direction grid coordinates of 
+                the ith turbine (m).
+            z_i (np.array): Vertical direction grid coordinates of 
+                the ith turbine (m) [not used].
+            axial_induction_i (np.array): Axial induction factor of the 
+                ith turbine (-) [not used].
+            deflection_field_y_i (np.array): Horizontal wake deflections
+                due to the ith turbine's yaw misalignment (m).
+            deflection_field_z_i (np.array): Vertical wake deflections
+                due to the ith turbine's tilt angle (m).
+            yaw_angle_i (np.array): Yaw angle of the ith turbine (deg).
+            tilt_angle_i (np.array): Tilt angle of the ith turbine 
+                (deg).
+            mixing_i (np.array): The wake-induced mixing term for the 
+                ith turbine.
+            ct_i (np.array): Thrust coefficient for the ith turbine (-).
+            hub_height_i (float): Hub height for the ith turbine (m).
+            rotor_diameter_i (np.array): Rotor diamter for the ith 
+                turbine (m).
+            
+            x (np.array): Streamwise direction grid coordinates of the 
+                flow field domain (m).
+            y (np.array): Cross stream direction grid coordinates of the 
+                flow field domain (m).
+            z (np.array): Vertical direction grid coordinates of the 
+                flow field domain (m).
+            u_initial (np.array): Free stream wind speed (m/s)
+                [not used].
+            wind_veer (np.array): Wind veer (deg).
+            
+        Returns:
+            np.array: Deflection field for the wake.
+        """
 
         include_mirror_wake = True # Could add this as a user preference.
 
@@ -83,8 +154,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         yaw_angle = -1 * yaw_angle_i
 
         # Initial wake widths
-        sigma_y0 = self.sigma_y0_D * rotor_diameter_i * cosd(yaw_angle)
-        sigma_z0 = self.sigma_y0_D * rotor_diameter_i * cosd(tilt_angle_i)
+        sigma_y0 = self.sigma_0_D * rotor_diameter_i * cosd(yaw_angle)
+        sigma_z0 = self.sigma_0_D * rotor_diameter_i * cosd(tilt_angle_i)
 
         # No specific near, far wakes in this model
         downstream_mask = np.array(x > x_i + 0.1)
@@ -134,7 +205,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             sigma_z0
         )
         # Normalize to match end of acuator disk model tube
-        C = C / (8*(self.sigma_y0_D**2))
+        # TODO: include yaw, tilt correction?
+        C = C / (8*(self.sigma_0_D**2))
         
         wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
         
@@ -160,7 +232,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
                 sigma_z0
             )
             # Normalize to match end of acuator disk model tube
-            C_mirr = C_mirr / (8*(self.sigma_y0_D**2))
+            # TODO: include yaw, tilt correction?
+            C_mirr = C_mirr / (8*(self.sigma_0_D**2))
             
             # ASSUME sum-of-squares superposition for the real and mirror wakes
             wake_deficit = np.sqrt(
