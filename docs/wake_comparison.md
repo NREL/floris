@@ -55,7 +55,7 @@ The Jensen model computes the wake velocity deficit based on the classic Jensen/
 ##### Gauss
 
 The Gaussian velocity model is implemented based on {cite:t}`bastankhah2016experimental` and
-{cite:t}`niayifar2015`
+{cite:t}`niayifar2016analytical`
 
 ##### Cumulative Curl (CC)
 
