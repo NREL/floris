@@ -89,7 +89,7 @@ wake:
     empirical_gauss:
       wake_expansion_rates: [0.01, 0.005]
       breakpoints_D: [10]
-      sigma_y0_D: 0.28
+      sigma_0_D: 0.28
       smoothing_length_D: 2.0
       mixing_gain_velocity: 2.0
   wake_turbulence_parameters:
