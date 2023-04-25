@@ -34,7 +34,7 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import load_yaml, Vec3
-from floris.simulation.turbine import _compute_tilt_angles_for_floating_turbines
+
 
 default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
 
