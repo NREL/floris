@@ -204,7 +204,6 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             sigma_z0
         )
         # Normalize to match end of acuator disk model tube
-        # TODO: include yaw, tilt correction?
         C = C / (8*(self.sigma_0_D**2))
         
         wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
@@ -231,7 +230,6 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
                 sigma_z0
             )
             # Normalize to match end of acuator disk model tube
-            # TODO: include yaw, tilt correction?
             C_mirr = C_mirr / (8*(self.sigma_0_D**2))
             
             # ASSUME sum-of-squares superposition for the real and mirror wakes
