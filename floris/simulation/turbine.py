@@ -80,15 +80,73 @@ def _filter_convert(
     # so cast it to Numpy array and return
     return np.array(ix_filter)
 
+def get_mit_power_ratio(
+    yaw_angle: NDArrayFloat,
+    ct_prime: float,
+    neglect_vw: bool = True,
+) -> NDArrayFloat:
+    """Work out the power ratio in (reduction in power because of yawing)
+    using the MIT method
+    Args:
+        yaw_angle (NDArrayFloat): _description_
+        ct_prime (float): _description_
+    Returns:
+        NDArrayFloat: _description_
+    """
+    # Neglect vw if True (vw << uw, not recommended to set neglect_vw=True)
+    ct_prime = np.mean(ct_prime)
+    # Number of iterations (usually converages in 5)
+    maxIt = 5
+    if neglect_vw:
+        # Follow equation 2.22a in Modelling the induction, thrust and power of a
+        # yaw-misaligned actuator disk
+        pr = ( ((4 + ct_prime) * cosd(yaw_angle)) / (4 + ct_prime * cosd(yaw_angle)**2) ) **3
+    else:
+        # Initialize as the indution in the limit of vw<<uw
+        a = (ct_prime * cosd(yaw_angle)**2) / (4 + ct_prime*cosd(yaw_angle)**2)
+        # Compute u4 and v4 according to Eq. (2.15)
+        u4 = 1 - (1/2) * ct_prime * (1 - a) * cosd(yaw_angle)**2
+        v4 = -(1/4) * ct_prime * (1-a)**2 * np.sin(yaw_angle*np.pi/180) * cosd(yaw_angle)**2
+        # Iterate below using Eq. (2.15)
+        for i in range(maxIt):
+            a = 1 - ( np.sqrt(1 - u4**2 - v4**2) / (np.sqrt(ct_prime) * cosd(yaw_angle)) )
+            u4 = 1 - (1/2) * ct_prime * (1 - a) * cosd(yaw_angle)**2
+            v4 = -(1/4) * ct_prime * (1-a)**2 * np.sin(yaw_angle*np.pi/180) * cosd(yaw_angle)**2
+        pr = ( (1+(1/4)*ct_prime) * (1-a) * cosd(yaw_angle) ) **3
+
+
+    # To enable consistency with FLORIS's use of the power curve,
+    # recast the power ratio as a velocity ratio
+    ur = pr **(1/3)
+
+    return ur
 
 def _rotor_velocity_yaw_correction(
-    pP: float,
+    pP: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     rotor_effective_velocities: NDArrayFloat,
+    ct_prime: NDArrayFloat,
 ) -> NDArrayFloat:
-    # Compute the rotor effective velocity adjusting for yaw settings
-    pW = pP / 3.0  # Convert from pP to w
-    rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angle) ** pW
+
+    pP_mean = np.mean(pP)
+
+    if pP_mean >= 0.0: # Use standard cos^pP approach
+        # Compute the rotor effective velocity adjusting for yaw settings
+        pW = pP / 3.0  # Convert from pP to w
+        rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angle) ** pW
+
+    elif pP_mean == -1.0: # Use non-iterative MIT approach
+        rotor_effective_velocities = rotor_effective_velocities * get_mit_power_ratio(yaw_angle,
+                                                                                      ct_prime,
+                                                                                      neglect_vw=True)
+
+    elif pP_mean == -2.0: # Use iterative MIT approach
+        rotor_effective_velocities = rotor_effective_velocities * get_mit_power_ratio(yaw_angle,
+                                                                                       ct_prime,
+                                                                                         neglect_vw=False)
+
+    else:
+        raise ValueError("pP must be either -2, -1, or >= 0")
 
     return rotor_effective_velocities
 
@@ -167,6 +225,7 @@ def rotor_effective_velocity(
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
+    ct_prime: NDArrayFloat | None = None,
 ) -> NDArrayFloat:
 
     if isinstance(yaw_angle, list):
@@ -181,6 +240,7 @@ def rotor_effective_velocity(
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
+        ct_prime = ct_prime[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
         pP = pP[:, :, ix_filter]
         pT = pT[:, :, ix_filter]
@@ -196,7 +256,7 @@ def rotor_effective_velocity(
 
     # Compute the rotor effective velocity adjusting for yaw settings
     rotor_effective_velocities = _rotor_velocity_yaw_correction(
-        pP, yaw_angle, rotor_effective_velocities
+        pP, yaw_angle, rotor_effective_velocities, ct_prime
     )
 
     # Compute the tilt, if using floating turbines
@@ -233,6 +293,7 @@ def power(
             each turbine.
         ix_filter (NDArrayInt, optional): The boolean array, or
             integer indices to filter out before calculation. Defaults to None.
+        fCt_prime_interp (NDArrayObject, optional): The fCt_prime interpolation function
 
     Returns:
         NDArrayFloat: The power, in Watts, for each turbine after adjusting for yaw and tilt.
@@ -593,6 +654,8 @@ class Turbine(BaseClass):
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
     tilt_interp: interp1d = field(init=False)
+    ct_prime: float = field(init=False)
+
 
 
     # For the following parameters, use default values if not user-specified
@@ -622,6 +685,12 @@ class Turbine(BaseClass):
             wind_speeds,
             inner_power
         )
+
+        # find the index of wind_speeds with value closest to 8
+        idx_8 = (np.abs(wind_speeds - 8)).argmin()
+        ct_8 = self.power_thrust_table.thrust[idx_8]
+        a_yaw_0 = 0.5 * (1 - np.sqrt( 1 - ct_8 ) )
+        self.ct_prime = ct_8 / (1 - a_yaw_0)**2
 
         """
         Given an array of wind speeds, this function returns an array of the

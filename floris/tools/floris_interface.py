@@ -682,6 +682,7 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            ct_prime=self.floris.farm.ct_primes
         )
         return rotor_effective_velocities
 
