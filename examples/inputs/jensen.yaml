@@ -45,9 +45,9 @@ wake:
     turbulence_model: crespo_hernandez
     velocity_model: jensen
 
-  enable_secondary_steering: true
-  enable_yaw_added_recovery: true
-  enable_transverse_velocities: true
+  enable_secondary_steering: false
+  enable_yaw_added_recovery: false
+  enable_transverse_velocities: false
 
   wake_deflection_parameters:
     gauss:
