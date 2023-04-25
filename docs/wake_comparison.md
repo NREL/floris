@@ -34,7 +34,7 @@ from floris.tools.visualization import (
 
 ### Wake Model Availability and Explainers
 
-#### Wake Velocity Deflection
+#### Wake Deflection
 
 #### Gauss
 The Gauss deflection model is a blend of the models described in
@@ -47,11 +47,6 @@ Jiménez wake deflection model, dervied from {cite:t}`jimenez2010application`.
 
 #### Wake Velocity
 
-##### Cumulative Gaussian Curl (CC)
-
-The cumulative curl model is an implementation of the model described in {cite:t}`gdm-bay_2022`,
-which itself is based on the cumulative model of  {cite:t}`bastankhah_2021`
-
 ##### Jensen
 
 The Jensen model computes the wake velocity deficit based on the classic Jensen/Park model
@@ -59,7 +54,13 @@ The Jensen model computes the wake velocity deficit based on the classic Jensen/
 
 ##### Gauss
 
-The Gaussian velocity model....
+The Gaussian velocity model is implemented based on {cite:t}`bastankhah2016experimental` and
+{cite:t}`niayifar2015`
+
+##### Cumulative Curl (CC)
+
+The cumulative curl model is an implementation of the model described in {cite:t}`gdm-bay_2022`,
+which itself is based on the cumulative model of  {cite:t}`bastankhah_2021`
 
 ##### TurbOPark
 
