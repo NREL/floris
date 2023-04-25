@@ -266,8 +266,10 @@ potential = fi_cc.get_farm_AEP(frequency, no_wake=True) / 1e6
 
 results_df.loc[:, "Wake Losses (%)"] = (np.full(3, potential) - results_df["AEP (GWh)"]) / potential
 results_df.style \
-    .format(precision=2, thousands=",") \
-    .format({"Wake Losses (%)": "{:.1%}".format})
+    .format({
+        "Wake Losses (%)": "{:.1%}".format,
+        "AEP (GWh)": "{:,.2f}".format,
+    })
 ```
 
 ```{bibliography}
