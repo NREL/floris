@@ -46,7 +46,6 @@ class WakeInducedMixing(BaseModel):
         .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
-            :keyprefix: wim-
     """
     atmospheric_ti_gain: float = field(converter=float, default=0.0)
 

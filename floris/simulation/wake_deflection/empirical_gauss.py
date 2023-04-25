@@ -28,8 +28,8 @@ from floris.utilities import cosd, sind
 class EmpiricalGaussVelocityDeflection(BaseModel):
     """
     The Empirical Gauss deflection model is based on the form of previous the 
-    Guass deflection model (see :cite:`gdm-bastankhah2016experimental` and 
-    :cite:`gdm-King2019Controls`) but simplifies the formulation for simpler 
+    Guass deflection model (see :cite:`bastankhah2016experimental` and 
+    :cite:`King2019Controls`) but simplifies the formulation for simpler 
     tuning and more independence from the velocity deficit model.
 
     parameter_dictionary (dict): Model-specific parameters.
@@ -56,7 +56,6 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
-            :keyprefix: egdm-
     """
     horizontal_deflection_gain_D: float = field(default=3.0)
     vertical_deflection_gain_D: float = field(default=-1)

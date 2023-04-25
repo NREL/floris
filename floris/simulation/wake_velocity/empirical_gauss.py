@@ -33,8 +33,8 @@ from floris.utilities import (
 class EmpiricalGaussVelocityDeficit(BaseModel):
     """
     The Empirical Gauss velocity model has a Gaussian profile 
-    (see :cite:`gdm-bastankhah2016experimental` and 
-    :cite:`gdm-King2019Controls`) throughout and expands in a (smoothed) 
+    (see :cite:`bastankhah2016experimental` and 
+    :cite:`King2019Controls`) throughout and expands in a (smoothed) 
     piecewise linear fashion.
 
     parameter_dictionary (dict): Model-specific parameters.
@@ -62,7 +62,6 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         .. bibliography:: /references.bib
             :style: unsrt
             :filter: docname in docnames
-            :keyprefix: egvm-
     """
     wake_expansion_rates: list = field(default=[0.01, 0.005])
     breakpoints_D: list = field(default=[10])
@@ -145,7 +144,7 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             wind_veer (np.array): Wind veer (deg).
             
         Returns:
-            np.array: Deflection field for the wake.
+            np.array: Velocity deficits (-).
         """
 
         include_mirror_wake = True # Could add this as a user preference.
