@@ -224,7 +224,6 @@ jupyter-book build docs/
 open docs/_build/html/index.html
 ```
 
-
 ## Deploying to pip
 
 Generally, only NREL developers will have appropriate permissions to deploy
