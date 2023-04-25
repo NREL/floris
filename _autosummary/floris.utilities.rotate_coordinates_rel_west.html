@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1279,7 +1304,28 @@ title="Print to PDF"
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.utilities.rotate_coordinates_rel_west">
 <span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">rotate_coordinates_rel_west</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#rotate_coordinates_rel_west"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.rotate_coordinates_rel_west" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>This function rotates the given coordinates so that they are aligned with West (270) rather
+than North (0). The rotation happens about the centroid of the coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wind_directions</strong> (<em>NDArrayFloat</em>) -- Series of wind directions to base the rotation</p></li>
+<li><p><strong>coordinates</strong> (<em>NDArrayFloat</em>) -- Series of coordinates to rotate with shape (N coordinates, 3)
+so that each element of the array coordinates[i] yields a three-component coordinate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>x, y, and z components of the rotated</dt><dd><p>coordinates with shape (N wind directions, 1, N coordinates)</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(NDArrayFloat, NDArrayFloat, NDArrayFloat)</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

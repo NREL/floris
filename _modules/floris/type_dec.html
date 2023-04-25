@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../input_reference.html">
    Input File Reference
   </a>
@@ -415,13 +420,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -990,6 +1010,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1223,6 +1248,9 @@ title="Open an issue"
 
 <span class="c1"># See https://floris.readthedocs.io for documentation</span>
 
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
@@ -1245,6 +1273,7 @@ title="Open an issue"
 <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span>
 <span class="n">NDArrayFilter</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]]</span>
 <span class="n">NDArrayObject</span> <span class="o">=</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">object_</span><span class="p">]</span>
+<span class="n">NDArrayBool</span> <span class="o">=</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]</span>
 
 
 <span class="c1">### Custom callables for attrs objects and functions</span>
@@ -1292,6 +1321,30 @@ title="Open an issue"
         <span class="n">iterable_validator</span><span class="o">=</span><span class="n">attrs</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="n">iter_type</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">validator</span></div>
+
+
+<div class="viewcode-block" id="convert_to_path"><a class="viewcode-back" href="../../_autosummary/floris.type_dec.convert_to_path.html#floris.type_dec.convert_to_path">[docs]</a><span class="k">def</span> <span class="nf">convert_to_path</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts an input string or pathlib.Path object to a fully resolved ``pathlib.Path``</span>
+<span class="sd">    object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fn (str | Path): The user input file path or file name.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: Raised if :py:attr:`fn` is neither a :py:obj:`str`, nor a :py:obj:`pathlib.Path`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path: A resolved pathlib.Path object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">fn</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The passed input: </span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2"> could not be converted to a pathlib.Path object&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fn</span></div>
+
 
 <div class="viewcode-block" id="FromDictMixin"><a class="viewcode-back" href="../../_autosummary/floris.type_dec.FromDictMixin.html#floris.type_dec.FromDictMixin">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">FromDictMixin</span><span class="p">:</span>

@@ -22,4 +22,10 @@ floris.tools.optimization.yaw\_optimization.yaw\_optimizer\_sr.YawOptimizationSR
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~YawOptimizationSR.logger
+   
    

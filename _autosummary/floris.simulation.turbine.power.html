@@ -52,8 +52,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="floris.simulation.turbine.PowerThrustTable" href="floris.simulation.turbine.PowerThrustTable.html" />
-    <link rel="prev" title="floris.simulation.turbine.axial_induction" href="floris.simulation.turbine.axial_induction.html" />
+    <link rel="next" title="floris.simulation.turbine.rotor_effective_velocity" href="floris.simulation.turbine.rotor_effective_velocity.html" />
+    <link rel="prev" title="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
     
@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
  <li class="toctree-l1">
   <a class="reference internal" href="../floris_101.html">
    Background and Concepts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
   </a>
  </li>
  <li class="toctree-l1">
@@ -417,14 +422,29 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.turbine.axial_induction
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
        <li class="toctree-l4 current active">
         <a class="current reference internal" href="#">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1278,17 +1303,15 @@ title="Print to PDF"
 <h1>floris.simulation.turbine.power<a class="headerlink" href="#floris-simulation-turbine-power" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.simulation.turbine.power">
-<span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">air_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_interp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.power" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_effective_velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_interp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.power" title="Permalink to this definition">#</a></dt>
 <dd><p>Power produced by a turbine adjusted for yaw and tilt. Value
 given in Watts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>air_density</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The air density value(s) at each turbine.</p></li>
 <li><p><strong>ref_density_cp_cts</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The reference density for each turbine</p></li>
-<li><p><strong>velocities</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>, </em><em>grid1</em><em>, </em><em>grid2</em><em>]</em>) -- The velocity field at a turbine.</p></li>
-<li><p><strong>pP</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The pP value(s) of the cosine exponent relating
-the yaw misalignment angle to power for each turbine.</p></li>
+<li><p><strong>rotor_effective_velocities</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>, </em><em>grid1</em><em>, </em><em>grid2</em><em>]</em>) -- The rotor
+effective velocities at a turbine.</p></li>
 <li><p><strong>power_interp</strong> (<em>NDArrayObject</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The power interpolation function
 for each turbine.</p></li>
 <li><p><strong>turbine_type_map</strong> -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
@@ -1335,17 +1358,17 @@ integer indices to filter out before calculation. Defaults to None.</p></li>
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="floris.simulation.turbine.axial_induction.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">floris.simulation.turbine.axial_induction</p>
+            <p class="prev-next-title">floris.simulation.turbine.compute_tilt_angles_for_floating_turbines</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="floris.simulation.turbine.PowerThrustTable.html" title="next page">
+    <a class='right-next' id="next-link" href="floris.simulation.turbine.rotor_effective_velocity.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">floris.simulation.turbine.PowerThrustTable</p>
+        <p class="prev-next-title">floris.simulation.turbine.rotor_effective_velocity</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

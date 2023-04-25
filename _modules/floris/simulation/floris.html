@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../input_reference.html">
    Input File Reference
   </a>
@@ -415,13 +420,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -990,6 +1010,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1279,15 +1304,22 @@ title="Open an issue"
         <span class="c1"># Initialize farm quanitities that depend on other objects</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_map</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_fCts</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_fCps</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_power_interps</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_hub_heights</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_rotor_diameters</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_TSRs</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construc_turbine_pPs</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construc_turbine_ref_density_cp_cts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_pPs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_pTs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_ref_density_cp_cts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_coordinates</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">set_yaw_angles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;turbine_grid&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">TurbineGrid</span><span class="p">(</span>
@@ -1365,6 +1397,14 @@ title="Open an issue"
 
         <span class="c1"># &lt;&lt;interface&gt;&gt;</span>
         <span class="c1"># start = time.time()</span>
+
+        <span class="k">if</span> <span class="n">vel_model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gauss&quot;</span><span class="p">,</span> <span class="s2">&quot;cc&quot;</span><span class="p">,</span> <span class="s2">&quot;turbokpark&quot;</span><span class="p">,</span> <span class="s2">&quot;jensen&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;The current model does not account for vertical wake deflection due to &quot;</span> <span class="o">+</span>
+                <span class="s2">&quot;tilt. Corrections to Cp and Ct can be included, but no vertical wake &quot;</span> <span class="o">+</span>
+                <span class="s2">&quot;deflection will occur.&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;cc&quot;</span><span class="p">:</span>
             <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">cc_solver</span><span class="p">(</span>

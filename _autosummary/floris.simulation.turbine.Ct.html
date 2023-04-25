@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1278,7 +1303,7 @@ title="Print to PDF"
 <h1>floris.simulation.turbine.Ct<a class="headerlink" href="#floris-simulation-turbine-ct" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Ct">
-<span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">Ct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fCt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Ct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Ct" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">Ct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fCt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_interp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Ct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Ct" title="Permalink to this definition">#</a></dt>
 <dd><p>Thrust coefficient of a turbine incorporating the yaw angle.
 The value is interpolated from the coefficient of thrust vs
 wind speed table using the rotor swept area average velocity.</p>
@@ -1288,7 +1313,15 @@ wind speed table using the rotor swept area average velocity.</p>
 <li><p><strong>velocities</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>, </em><em>grid1</em><em>, </em><em>grid2</em><em>]</em>) -- The velocity field at
 a turbine.</p></li>
 <li><p><strong>yaw_angle</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The yaw angle for each turbine.</p></li>
-<li><p><strong>fCt</strong> (<em>NDArrayObject</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The thrust coefficient for each turbine.</p></li>
+<li><p><strong>tilt_angle</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The tilt angle for each turbine.</p></li>
+<li><p><strong>ref_tilt_cp_ct</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The reference tilt angle for each turbine
+that the Cp/Ct tables are defined at.</p></li>
+<li><p><strong>fCt</strong> (<em>dict</em>) -- The thrust coefficient interpolation functions for each turbine. Keys are
+the turbine type string and values are the interpolation functions.</p></li>
+<li><p><strong>tilt_interp</strong> (<em>Iterable</em><em>[</em><em>tuple</em><em>]</em>) -- The tilt interpolation functions for each
+turbine.</p></li>
+<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>NDArrayBool</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- Boolean for determining if the
+turbines Cp and Ct should be corrected for tilt.</p></li>
 <li><p><strong>turbine_type_map</strong> -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition
 for each turbine.</p></li>
 <li><p><strong>ix_filter</strong> (<em>NDArrayFilter</em><em> | </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) -- The boolean array, or

@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1290,7 +1315,7 @@ title="Print to PDF"
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.farm.</span></span><span class="sig-name descname"><span class="pre">Farm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.farm.</span></span><span class="sig-name descname"><span class="pre">Farm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/floris/floris/floris/turbine_library')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm" title="Permalink to this definition">#</a></dt>
 <dd><p>Farm is where wind power plants should be instantiated from a YAML configuration
 file. The Farm will create a heterogenous set of turbines that compose a windfarm,
 validate the inputs, and then create a vectorized representation of the the turbine
@@ -1306,6 +1331,7 @@ for generating output.</p>
 <li><p><strong>layout_x</strong> (<em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>]</em>) -- </p></li>
 <li><p><strong>layout_y</strong> (<em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>]</em>) -- </p></li>
 <li><p><strong>turbine_type</strong> (<em>List</em>) -- </p></li>
+<li><p><strong>turbine_library_path</strong> (<em>pathlib.Path</em>) -- </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1328,6 +1354,11 @@ for generating output.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.turbine_library_path">
+<span class="sig-name descname"><span class="pre">turbine_library_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></em><a class="headerlink" href="#floris.simulation.farm.Farm.turbine_library_path" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.turbine_definitions">
 <span class="sig-name descname"><span class="pre">turbine_definitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#floris.simulation.farm.Farm.turbine_definitions" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
@@ -1340,6 +1371,16 @@ for generating output.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.yaw_angles_sorted">
 <span class="sig-name descname"><span class="pre">yaw_angles_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.yaw_angles_sorted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.tilt_angles">
+<span class="sig-name descname"><span class="pre">tilt_angles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.tilt_angles" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.tilt_angles_sorted">
+<span class="sig-name descname"><span class="pre">tilt_angles_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.tilt_angles_sorted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1378,20 +1419,60 @@ for generating output.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.pPs">
+<span class="sig-name descname"><span class="pre">pPs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.pPs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.pPs_sorted">
 <span class="sig-name descname"><span class="pre">pPs_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.pPs_sorted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.pTs">
+<span class="sig-name descname"><span class="pre">pTs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.pTs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.pTs_sorted">
+<span class="sig-name descname"><span class="pre">pTs_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.pTs_sorted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.ref_tilt_cp_cts">
+<span class="sig-name descname"><span class="pre">ref_tilt_cp_cts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.ref_tilt_cp_cts" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.ref_tilt_cp_cts_sorted">
+<span class="sig-name descname"><span class="pre">ref_tilt_cp_cts_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.ref_tilt_cp_cts_sorted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.correct_cp_ct_for_tilt">
+<span class="sig-name descname"><span class="pre">correct_cp_ct_for_tilt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.correct_cp_ct_for_tilt" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.correct_cp_ct_for_tilt_sorted">
+<span class="sig-name descname"><span class="pre">correct_cp_ct_for_tilt_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.correct_cp_ct_for_tilt_sorted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.turbine_fTilts">
+<span class="sig-name descname"><span class="pre">turbine_fTilts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#floris.simulation.farm.Farm.turbine_fTilts" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_x">
-<span class="sig-name descname"><span class="pre">check_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_x" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">check_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_x" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 <dt class="field-even">Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>instance</strong> (<em>attr._make.Attribute</em>) -- </p></li>
+<li><p><strong>attribute</strong> (<em>attr._make.Attribute</em>) -- </p></li>
 <li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
 </ul>
 </dd>
@@ -1400,14 +1481,14 @@ for generating output.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_y">
-<span class="sig-name descname"><span class="pre">check_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_y" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">check_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_y" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 <dt class="field-even">Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>instance</strong> (<em>attr._make.Attribute</em>) -- </p></li>
+<li><p><strong>attribute</strong> (<em>attr._make.Attribute</em>) -- </p></li>
 <li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
 </ul>
 </dd>
@@ -1415,17 +1496,28 @@ for generating output.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_turbine_type">
-<span class="sig-name descname"><span class="pre">check_turbine_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_turbine_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_turbine_type" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_library_path">
+<span class="sig-name descname"><span class="pre">check_library_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_library_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_library_path" title="Permalink to this definition">#</a></dt>
+<dd><p>Ensures that the input to <cite>library_path</cite> exists and is a directory.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 <dt class="field-even">Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>instance</strong> (<em>attr._make.Attribute</em>) -- </p></li>
-<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+<li><p><strong>attribute</strong> (<em>attr._make.Attribute</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>pathlib.Path</em>) -- </p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_turbine_type">
+<span class="sig-name descname"><span class="pre">check_turbine_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_turbine_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_turbine_type" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1451,13 +1543,28 @@ for generating output.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construc_turbine_pPs">
-<span class="sig-name descname"><span class="pre">construc_turbine_pPs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construc_turbine_pPs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construc_turbine_pPs" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_pPs">
+<span class="sig-name descname"><span class="pre">construct_turbine_pPs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_pPs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_pPs" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construc_turbine_ref_density_cp_cts">
-<span class="sig-name descname"><span class="pre">construc_turbine_ref_density_cp_cts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construc_turbine_ref_density_cp_cts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construc_turbine_ref_density_cp_cts" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_pTs">
+<span class="sig-name descname"><span class="pre">construct_turbine_pTs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_pTs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_pTs" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_ref_density_cp_cts">
+<span class="sig-name descname"><span class="pre">construct_turbine_ref_density_cp_cts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_ref_density_cp_cts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_ref_density_cp_cts" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_ref_tilt_cp_cts">
+<span class="sig-name descname"><span class="pre">construct_turbine_ref_tilt_cp_cts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_ref_tilt_cp_cts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_ref_tilt_cp_cts" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_correct_cp_ct_for_tilt">
+<span class="sig-name descname"><span class="pre">construct_turbine_correct_cp_ct_for_tilt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_correct_cp_ct_for_tilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_correct_cp_ct_for_tilt" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1471,8 +1578,8 @@ for generating output.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_fCps">
-<span class="sig-name descname"><span class="pre">construct_turbine_fCps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_fCps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_fCps" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_fTilts">
+<span class="sig-name descname"><span class="pre">construct_turbine_fTilts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_fTilts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_fTilts" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1510,6 +1617,24 @@ for generating output.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.set_tilt_to_ref_tilt">
+<span class="sig-name descname"><span class="pre">set_tilt_to_ref_tilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_wind_speeds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.set_tilt_to_ref_tilt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.set_tilt_to_ref_tilt" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_wind_directions</strong> (<em>int</em>) -- </p></li>
+<li><p><strong>n_wind_speeds</strong> (<em>int</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.calculate_tilt_for_eff_velocities">
+<span class="sig-name descname"><span class="pre">calculate_tilt_for_eff_velocities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rotor_effective_velocities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.calculate_tilt_for_eff_velocities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.calculate_tilt_for_eff_velocities" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.finalize">

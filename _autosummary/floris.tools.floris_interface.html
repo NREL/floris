@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1339,13 +1364,15 @@ or YAML file. The configuration should have the following inputs specified.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.calculate_wake">
-<span class="sig-name descname"><span class="pre">calculate_wake</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.calculate_wake"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.calculate_wake" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">calculate_wake</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.calculate_wake"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.calculate_wake" title="Permalink to this definition">#</a></dt>
 <dd><p>Wrapper to the <a class="reference internal" href="floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.set_yaw_angles" title="floris.simulation.farm.Farm.set_yaw_angles"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_yaw_angles()</span></code></a> and
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">calculate_wake()</span></code> methods.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yaw_angles</strong> (<em>NDArrayFloat</em><em> | </em><em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) -- Turbine yaw angles.
+Defaults to None.</p></li>
+<li><p><strong>tilt_angles</strong> (<em>NDArrayFloat</em><em> | </em><em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) -- Turbine tilt angles.
 Defaults to None.</p></li>
 <li><p><strong>points</strong> -- (NDArrayFloat | list[float] | None, optional): The x, y, and z
 coordinates at which the flow field velocity is to be recorded. Defaults
@@ -1381,7 +1408,7 @@ Defaults to None.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.reinitialize">
-<span class="sig-name descname"><span class="pre">reinitialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">het_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.reinitialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.reinitialize" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">reinitialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">het_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.reinitialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.reinitialize" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1395,8 +1422,9 @@ Defaults to None.</p>
 <li><p><strong>layout_x</strong> (<em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
 <li><p><strong>layout_y</strong> (<em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
 <li><p><strong>turbine_type</strong> (<em>list</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>turbine_library_path</strong> (<em>str</em><em> | </em><em>Path</em><em> | </em><em>None</em>) -- </p></li>
 <li><p><strong>solver_settings</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>time_series</strong> (<em>bool</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>time_series</strong> (<em>bool</em>) -- </p></li>
 <li><p><strong>layout</strong> (<em>tuple</em><em>[</em><em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>list</em><em>[</em><em>float</em><em>]</em><em>] </em><em>| </em><em>tuple</em><em>[</em><em>NDArrayFloat</em><em>, </em><em>NDArrayFloat</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
 </ul>
 </dd>
@@ -1407,7 +1435,7 @@ Defaults to None.</p>
 <dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.get_plane_of_points">
 <span class="sig-name descname"><span class="pre">get_plane_of_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normal_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'z'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planar_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.get_plane_of_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.get_plane_of_points" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculates velocity values through the
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">calculate_wake()</span></code> method at points in plane
+<a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_wake" title="floris.tools.floris_interface.FlorisInterface.calculate_wake"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FlorisInterface.calculate_wake()</span></code></a> method at points in plane
 specified by inputs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1419,7 +1447,7 @@ to slice through. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>containing values of x1, x2, u, v, w</p>
+<dd class="field-even"><p>containing values of x1, x2, x3, u, v, w</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></p>
@@ -1562,6 +1590,17 @@ of x, y, u, v, w</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.turbine_average_velocities">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">turbine_average_velocities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.turbine_average_velocities" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>rtype</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.turbine_effective_velocities">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">turbine_effective_velocities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.turbine_effective_velocities" title="Permalink to this definition">#</a></dt>
 <dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>

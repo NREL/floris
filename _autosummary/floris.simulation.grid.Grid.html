@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1297,14 +1322,14 @@ all of these arrays are the same size</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The collection of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
-<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The reference turbine's rotor diameter.</p></li>
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution specific
-to each grid type.</p></li>
+<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The series of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
+<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- A reference turbine's rotor diameter.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution with values
+specific to each grid type.</p></li>
 <li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
 <li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
-<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- True/false flag to indicate whether the supplied wind
-data is a time series.</p></li>
+<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Flag to indicate whether the supplied wind data is a time
+series.</p></li>
 </ul>
 </dd>
 </dl>

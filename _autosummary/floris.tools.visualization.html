@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1472,17 +1497,20 @@ used for inspection of what values are differing, and under what conditions.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>values</strong> (<em>np.ndarray</em>) -- The 5-dimensional array of values to plot. Should be:
 N wind directions x N wind speeds x N turbines X N rotor points X N rotor points.</p></li>
-<li><p><strong>cmap</strong> (<em>str</em>) -- The matplotlib colormap to be used, default &quot;coolwarm&quot;.</p></li>
-<li><p><strong>return_fig_objects</strong> (<em>bool</em>) -- Indicator to return the primary figure objects for
+<li><p><strong>wd_index</strong> (<em>int</em>) -- The index for the wind direction to plot.</p></li>
+<li><p><strong>ws_index</strong> (<em>int</em>) -- The index of the wind speed to plot.</p></li>
+<li><p><strong>n_rows</strong> (<em>int</em>) -- The number of rows to include for subplots. With ncols, this should
+generally add up to the number of turbines in the farm.</p></li>
+<li><p><strong>n_cols</strong> (<em>int</em>) -- The number of columns to include for subplots. With ncols, this should
+generally add up to the number of turbines in the farm.</p></li>
+<li><p><strong>t_range</strong> (<em>range</em><em> | </em><em>None</em>) -- Optional. The turbine count used to create the title for each
+subplot. If not provided, the size of the 2-th dimension of <cite>values</cite> is used.</p></li>
+<li><p><strong>cmap</strong> (<em>str</em>) -- Optional. The matplotlib colormap to be used, default &quot;coolwarm&quot;.</p></li>
+<li><p><strong>return_fig_objects</strong> (<em>bool</em>) -- Optional. Flag to return the primary figure objects for
 further editing, default False.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em><em> | </em><em>None</em>) -- Where to save the figure, if a value is provided.</p></li>
-<li><p><strong>over</strong> (<em>t_range is turbine range; i.e. the turbine index to loop</em>) -- </p></li>
-<li><p><strong>wd_index</strong> (<em>int</em>) -- </p></li>
-<li><p><strong>ws_index</strong> (<em>int</em>) -- </p></li>
-<li><p><strong>n_rows</strong> (<em>int</em>) -- </p></li>
-<li><p><strong>n_cols</strong> (<em>int</em>) -- </p></li>
-<li><p><strong>t_range</strong> (<em>range</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>show</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em> | </em><em>None</em>) -- Optional. Where to save the figure, if a value is provided.</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) -- Optional. Flag to run <cite>plt.show()</cite> to present all the plots
+currently created with matplotlib.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1496,9 +1524,9 @@ figure objects are returned for custom editing.</p>
 </dl>
 <p class="rubric">Example</p>
 <p>from floris.tools.visualization import plot_rotor_values
-plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0)
-plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0)
-plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, show=True)</p>
+plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, ncols=4)
+plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0, n_rows=1, ncols=4)
+plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, n_rows=1, ncols=4, show=True)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Union[None, tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]]</p>

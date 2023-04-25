@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1279,7 +1304,37 @@ title="Print to PDF"
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.utilities.wind_delta">
 <span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">wind_delta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#wind_delta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.wind_delta" title="Permalink to this definition">#</a></dt>
-<dd><p>This is included as a function in order to facilitate testing.</p>
+<dd><p>This function calculates the deviation from West (270) for a given wind direction or series
+of wind directions. First, 270 is subtracted from the input wind direction, and then the
+remainder after dividing by 360 is retained (modulo). The table below lists examples of
+results.</p>
+<div class="line-block">
+<div class="line">Input | Result |</div>
+<div class="line">----- | ------ |</div>
+<div class="line">270.0 | 0.0    |</div>
+<div class="line">280.0 | 10.0   |</div>
+<div class="line">360.0 | 90.0   |</div>
+<div class="line">180.0 | 270.0  |</div>
+<div class="line">-10.0 | 80.0   |</div>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">|</span></a>-100.0 | 350.0  |</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wind_directions</strong> (<em>NDArrayFloat</em><em> | </em><em>float</em>) -- A single or series of wind directions. They can be</p></li>
+<li><p><strong>number</strong> (<em>any</em>) -- </p></li>
+<li><p><strong>positive</strong> (<em>negative or</em>) -- </p></li>
+<li><p><strong>360.</strong> (<em>but it is typically between 0 and</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The delta between the given wind direction and 270 in positive
+quantities between 0 and 360. The returned type is the same as wind_directions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NDArrayFloat | float</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

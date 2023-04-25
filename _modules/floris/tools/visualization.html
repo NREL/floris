@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../input_reference.html">
    Input File Reference
   </a>
@@ -415,13 +420,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -990,6 +1010,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1538,18 +1563,28 @@ title="Open an issue"
     <span class="n">save_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the gridded turbine rotor values. This is intended to be used for</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots the gridded turbine rotor values. This is intended to be used for</span>
 <span class="sd">    understanding the differences between two sets of values, so each subplot can be</span>
 <span class="sd">    used for inspection of what values are differing, and under what conditions.</span>
 
 <span class="sd">    Parameters:</span>
 <span class="sd">        values (np.ndarray): The 5-dimensional array of values to plot. Should be:</span>
 <span class="sd">            N wind directions x N wind speeds x N turbines X N rotor points X N rotor points.</span>
-<span class="sd">        cmap (str): The matplotlib colormap to be used, default &quot;coolwarm&quot;.</span>
-<span class="sd">        return_fig_objects (bool): Indicator to return the primary figure objects for</span>
+<span class="sd">        wd_index (int): The index for the wind direction to plot.</span>
+<span class="sd">        ws_index (int): The index of the wind speed to plot.</span>
+<span class="sd">        n_rows (int): The number of rows to include for subplots. With ncols, this should</span>
+<span class="sd">            generally add up to the number of turbines in the farm.</span>
+<span class="sd">        n_cols (int): The number of columns to include for subplots. With ncols, this should</span>
+<span class="sd">            generally add up to the number of turbines in the farm.</span>
+<span class="sd">        t_range (range | None): Optional. The turbine count used to create the title for each</span>
+<span class="sd">            subplot. If not provided, the size of the 2-th dimension of `values` is used.</span>
+<span class="sd">        cmap (str): Optional. The matplotlib colormap to be used, default &quot;coolwarm&quot;.</span>
+<span class="sd">        return_fig_objects (bool): Optional. Flag to return the primary figure objects for</span>
 <span class="sd">            further editing, default False.</span>
-<span class="sd">        save_path (str | None): Where to save the figure, if a value is provided.</span>
-<span class="sd">        t_range is turbine range; i.e. the turbine index to loop over</span>
+<span class="sd">        save_path (str | None): Optional. Where to save the figure, if a value is provided.</span>
+<span class="sd">        show (bool): Optional. Flag to run `plt.show()` to present all the plots</span>
+<span class="sd">            currently created with matplotlib.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        None | tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]: If</span>
@@ -1558,9 +1593,9 @@ title="Open an issue"
 
 <span class="sd">    Example:</span>
 <span class="sd">        from floris.tools.visualization import plot_rotor_values</span>
-<span class="sd">        plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0)</span>
-<span class="sd">        plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0)</span>
-<span class="sd">        plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, show=True)</span>
+<span class="sd">        plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, ncols=4)</span>
+<span class="sd">        plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0, n_rows=1, ncols=4)</span>
+<span class="sd">        plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, n_rows=1, ncols=4, show=True)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
@@ -1570,6 +1605,11 @@ title="Open an issue"
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">axes</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">)</span>
+
+    <span class="c1"># For 1x1, fig.subplots returns an Axes object, but for more than 1x1 it returns a np.array.</span>
+    <span class="c1"># In this case, convert to an array so that the rest of this function can be simplified.</span>
+    <span class="k">if</span> <span class="n">n_rows</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n_cols</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">axes</span><span class="p">])</span>
 
     <span class="n">titles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;T</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t_range</span><span class="p">])</span>
 

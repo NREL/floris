@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1279,7 +1304,7 @@ title="Print to PDF"
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.</span></span><span class="sig-name descname"><span class="pre">YawOptimizationSR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_yaw_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum_yaw_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles_baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ny_passes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[5,</span> <span class="pre">4]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_downstream_turbines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exploit_layout_symmetry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_convergence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/optimization/yaw_optimization/yaw_optimizer_sr.html#YawOptimizationSR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization" title="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization" title="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization</span></code></a>, <a class="reference internal" href="floris.logging_manager.LoggerBase.html#floris.logging_manager.LoggerBase" title="floris.logging_manager.LoggerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.logging_manager.LoggerBase</span></code></a></p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <colgroup>
@@ -1289,6 +1314,18 @@ title="Print to PDF"
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.optimize" title="floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.optimize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize</span></code></a></p></td>
 <td><p>Find the yaw angles that maximize the power production for every wind direction, wind speed and turbulence intensity.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.logger" title="floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -1487,6 +1524,11 @@ provided input yaw_angles_opt.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.logger">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.logger" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

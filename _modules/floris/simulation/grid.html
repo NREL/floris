@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../input_reference.html">
    Input File Reference
   </a>
@@ -415,13 +420,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -990,6 +1010,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1264,14 +1289,14 @@ title="Open an issue"
 <span class="sd">    all of these arrays are the same size</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.</span>
-<span class="sd">        reference_turbine_diameter (:py:obj:`float`): The reference turbine&#39;s rotor diameter.</span>
-<span class="sd">        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution specific</span>
-<span class="sd">            to each grid type.</span>
+<span class="sd">        turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.</span>
+<span class="sd">        reference_turbine_diameter (:py:obj:`float`): A reference turbine&#39;s rotor diameter.</span>
+<span class="sd">        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution with values</span>
+<span class="sd">            specific to each grid type.</span>
 <span class="sd">        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.</span>
 <span class="sd">        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.</span>
-<span class="sd">        time_series (:py:obj:`bool`): True/false flag to indicate whether the supplied wind</span>
-<span class="sd">            data is a time series.</span>
+<span class="sd">        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time</span>
+<span class="sd">            series.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">turbine_coordinates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Vec3</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">reference_turbine_diameter</span><span class="p">:</span> <span class="nb">float</span>
@@ -1344,11 +1369,15 @@ title="Open an issue"
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;See `Grid` for more details.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.</span>
-<span class="sd">        reference_turbine_diameter (:py:obj:`float`): The reference turbine&#39;s rotor diameter.</span>
-<span class="sd">        wind_directions (`list[float]`): The input wind directions</span>
-<span class="sd">        wind_speeds (`list[float]`): The input wind speeds</span>
-<span class="sd">        grid_resolution (:py:obj:`int`): The number of points on each turbine</span>
+<span class="sd">        turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.</span>
+<span class="sd">        reference_turbine_diameter (:py:obj:`float`): A reference turbine&#39;s rotor diameter.</span>
+<span class="sd">        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points in each</span>
+<span class="sd">            direction of the square grid on the rotor plane. For example, grid_resolution=3</span>
+<span class="sd">            creates a 3x3 grid within the rotor swept area.</span>
+<span class="sd">        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.</span>
+<span class="sd">        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.</span>
+<span class="sd">        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time</span>
+<span class="sd">            series.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`</span>
     <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1467,7 +1496,9 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">sorted_coord_indices</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unsorted_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="c1"># Put the turbines into the final arrays in their sorted order</span>
+        <span class="c1"># Put the turbine coordinates into the final arrays in their sorted order</span>
+        <span class="c1"># These are the coordinates that should be used within the internal calculations</span>
+        <span class="c1"># such as the wake models and the solvers.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>

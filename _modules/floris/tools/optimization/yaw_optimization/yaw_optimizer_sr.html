@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../../../input_reference.html">
    Input File Reference
   </a>
@@ -415,13 +420,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -990,6 +1010,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../../../../_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1230,11 +1255,13 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
+<span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggerBase</span>
+
 <span class="c1"># from .yaw_optimizer_scipy import YawOptimizationScipy</span>
 <span class="kn">from</span> <span class="nn">.yaw_optimization_base</span> <span class="kn">import</span> <span class="n">YawOptimization</span>
 
 
-<div class="viewcode-block" id="YawOptimizationSR"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.html#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR">[docs]</a><span class="k">class</span> <span class="nc">YawOptimizationSR</span><span class="p">(</span><span class="n">YawOptimization</span><span class="p">):</span>
+<div class="viewcode-block" id="YawOptimizationSR"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR.html#floris.tools.optimization.yaw_optimization.yaw_optimizer_sr.YawOptimizationSR">[docs]</a><span class="k">class</span> <span class="nc">YawOptimizationSR</span><span class="p">(</span><span class="n">YawOptimization</span><span class="p">,</span> <span class="n">LoggerBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">fi</span><span class="p">,</span>
@@ -1338,7 +1365,9 @@ title="Open an issue"
         <span class="k">if</span> <span class="n">use_memory</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yaw_angles_opt_subset</span> <span class="o">-</span> <span class="n">yaw_angles_subset</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">farm_powers</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">farm_power_opt_subset</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s2"> calculations: already in memory.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Skipping </span><span class="si">{:d}</span><span class="s2">/</span><span class="si">{:d}</span><span class="s2"> calculations: already in memory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yaw_angles_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
@@ -1451,8 +1480,17 @@ title="Open an issue"
                 <span class="c1"># Evaluate grid of yaw angles, get farm powers and find optimal solutions</span>
                 <span class="n">farm_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_evaluation_grid</span><span class="p">()</span>
 
+                <span class="c1"># If farm powers contains any nans, then issue a warning</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">farm_powers</span><span class="p">)):</span>
+                    <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="s2">&quot;NaNs found in farm powers during SerialRefine &quot;</span>
+                        <span class="s2">&quot;optimization routine. Proceeding to maximize over yaw &quot;</span>
+                        <span class="s2">&quot;settings that produce valid powers.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">err_msg</span><span class="p">,</span> <span class="n">stack_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
                 <span class="c1"># Find optimal solutions in new evaluation grid</span>
-                <span class="n">args_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">farm_powers</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">args_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanargmax</span><span class="p">(</span><span class="n">farm_powers</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">farm_powers_opt_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">farm_powers</span><span class="p">,</span> <span class="n">args_opt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
                     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>

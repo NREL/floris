@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../input_reference.html">
    Input File Reference
   </a>
@@ -415,13 +420,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -990,6 +1010,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1223,6 +1248,8 @@ title="Open an issue"
 
 <span class="c1"># See https://floris.readthedocs.io for documentation</span>
 
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
@@ -1399,14 +1426,51 @@ title="Open an issue"
     <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="mf">360.0</span></div>
 
 
-<div class="viewcode-block" id="wind_delta"><a class="viewcode-back" href="../../_autosummary/floris.utilities.wind_delta.html#floris.utilities.wind_delta">[docs]</a><span class="k">def</span> <span class="nf">wind_delta</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">):</span>
+<div class="viewcode-block" id="wind_delta"><a class="viewcode-back" href="../../_autosummary/floris.utilities.wind_delta.html#floris.utilities.wind_delta">[docs]</a><span class="k">def</span> <span class="nf">wind_delta</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This is included as a function in order to facilitate testing.</span>
+<span class="sd">    This function calculates the deviation from West (270) for a given wind direction or series</span>
+<span class="sd">    of wind directions. First, 270 is subtracted from the input wind direction, and then the</span>
+<span class="sd">    remainder after dividing by 360 is retained (modulo). The table below lists examples of</span>
+<span class="sd">    results.</span>
+
+<span class="sd">    | Input | Result |</span>
+<span class="sd">    | ----- | ------ |</span>
+<span class="sd">    | 270.0 | 0.0    |</span>
+<span class="sd">    | 280.0 | 10.0   |</span>
+<span class="sd">    | 360.0 | 90.0   |</span>
+<span class="sd">    | 180.0 | 270.0  |</span>
+<span class="sd">    | -10.0 | 80.0   |</span>
+<span class="sd">    |-100.0 | 350.0  |</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        wind_directions (NDArrayFloat | float): A single or series of wind directions. They can be</span>
+<span class="sd">        any number, negative or positive, but it is typically between 0 and 360.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        NDArrayFloat | float: The delta between the given wind direction and 270 in positive</span>
+<span class="sd">        quantities between 0 and 360. The returned type is the same as wind_directions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">((</span><span class="n">wind_directions</span> <span class="o">-</span> <span class="mi">270</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">360</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span></div>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">wind_directions</span> <span class="o">-</span> <span class="mi">270</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span></div>
 
 
-<div class="viewcode-block" id="rotate_coordinates_rel_west"><a class="viewcode-back" href="../../_autosummary/floris.utilities.rotate_coordinates_rel_west.html#floris.utilities.rotate_coordinates_rel_west">[docs]</a><span class="k">def</span> <span class="nf">rotate_coordinates_rel_west</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">):</span>
+<div class="viewcode-block" id="rotate_coordinates_rel_west"><a class="viewcode-back" href="../../_autosummary/floris.utilities.rotate_coordinates_rel_west.html#floris.utilities.rotate_coordinates_rel_west">[docs]</a><span class="k">def</span> <span class="nf">rotate_coordinates_rel_west</span><span class="p">(</span>
+    <span class="n">wind_directions</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">coordinates</span><span class="p">:</span> <span class="n">NDArrayFloat</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function rotates the given coordinates so that they are aligned with West (270) rather</span>
+<span class="sd">    than North (0). The rotation happens about the centroid of the coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        wind_directions (NDArrayFloat): Series of wind directions to base the rotation</span>
+<span class="sd">        coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)</span>
+<span class="sd">            so that each element of the array coordinates[i] yields a three-component coordinate</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (NDArrayFloat, NDArrayFloat, NDArrayFloat): x, y, and z components of the rotated</span>
+<span class="sd">            coordinates with shape (N wind directions, 1, N coordinates)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Calculate the difference in given wind direction from 270 / West</span>
     <span class="n">wind_deviation_from_west</span> <span class="o">=</span> <span class="n">wind_delta</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span>
     <span class="n">wind_deviation_from_west</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">wind_deviation_from_west</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>

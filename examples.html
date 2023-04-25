@@ -145,6 +145,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="input_reference.html">
    Input File Reference
   </a>
@@ -418,13 +423,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -993,6 +1013,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1357,6 +1382,11 @@ title="Print to PDF"
      23_visualize_layout.py
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#floating-turbine-models-py">
+     24_floating_turbine_models.py
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -1522,6 +1552,11 @@ title="Print to PDF"
      23_visualize_layout.py
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#floating-turbine-models-py">
+     24_floating_turbine_models.py
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -1595,7 +1630,8 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="examples-index">
 <span id="examples"></span><h1>Examples Index<a class="headerlink" href="#examples-index" title="Permalink to this headline">#</a></h1>
-<p>The FLORIS software repository includes a set of <a class="reference external" href="https://github.com/NREL/floris/tree/main/examples">examples/</a>
+<p>The FLORIS software repository includes a set of
+<a class="reference external" href="https://github.com/NREL/floris/tree/main/examples">examples/</a>
 intended to describe most features as well as provide a starting point
 for various analysis methods. These are generally ordered from simplest
 to most complex. The examples and their content are described below.
@@ -1617,7 +1653,8 @@ simulation with multiple wind conditions.</p>
 </section>
 <section id="visualizations-py">
 <h3>02_visualizations.py<a class="headerlink" href="#visualizations-py" title="Permalink to this headline">#</a></h3>
-<p>Create visualizations for x, y, and z planes in the whole farm as well as plots of the grid points on each turbine rotor.</p>
+<p>Create visualizations for x, y, and z planes in the whole farm as well as plots of the grid points
+on each turbine rotor.</p>
 </section>
 <section id="making-adjustments-py">
 <h3>03_making_adjustments.py<a class="headerlink" href="#making-adjustments-py" title="Permalink to this headline">#</a></h3>
@@ -1656,7 +1693,7 @@ Evaluate the individual turbine powers.</p>
 </section>
 <section id="sweep-wind-conditions-py">
 <h3>06_sweep_wind_conditions.py<a class="headerlink" href="#sweep-wind-conditions-py" title="Permalink to this headline">#</a></h3>
-<p>Simulate a wind farm with multiple wind speeds and wind directions</p>
+<p>Simulate a wind farm with multiple wind speeds and wind directions.</p>
 <ul class="simple">
 <li><p>Setting up a problem considering the vectorization of the calculations</p>
 <ul>
@@ -1678,7 +1715,7 @@ a wind farm.</p>
 </section>
 <section id="calc-aep-from-rose-use-class-py">
 <h3>08_calc_aep_from_rose_use_class.py<a class="headerlink" href="#calc-aep-from-rose-use-class-py" title="Permalink to this headline">#</a></h3>
-<p>Do the above but use the included WindRose class</p>
+<p>Do the above but use the included WindRose class.</p>
 </section>
 <section id="compare-farm-power-with-neighbor-py">
 <h3>09_compare_farm_power_with_neighbor.py<a class="headerlink" href="#compare-farm-power-with-neighbor-py" title="Permalink to this headline">#</a></h3>
@@ -1707,7 +1744,7 @@ impact on wind turbine wakes.</p>
 </section>
 <section id="b-heterogenaity-multiple-ws-wd-py">
 <h3>16b_heterogenaity_multiple_ws_wd.py<a class="headerlink" href="#b-heterogenaity-multiple-ws-wd-py" title="Permalink to this headline">#</a></h3>
-<p>Illustrate usage of heterogenaity with multiple wind speeds and directions</p>
+<p>Illustrate usage of heterogenaity with multiple wind speeds and directions.</p>
 </section>
 <section id="multiple-turbine-types-py">
 <h3>17_multiple_turbine_types.py<a class="headerlink" href="#multiple-turbine-types-py" title="Permalink to this headline">#</a></h3>
@@ -1717,7 +1754,12 @@ of different types and plot the wake profiles.</p>
 <section id="visualize-layout-py">
 <h3>23_visualize_layout.py<a class="headerlink" href="#visualize-layout-py" title="Permalink to this headline">#</a></h3>
 <p>Use the visualize_layout function to provide diagram visualization
-of a turbine layout within FLORIS</p>
+of a turbine layout within FLORIS.</p>
+</section>
+<section id="floating-turbine-models-py">
+<h3>24_floating_turbine_models.py<a class="headerlink" href="#floating-turbine-models-py" title="Permalink to this headline">#</a></h3>
+<p>Demonstrates the definition of a floating turbine and how to enable the effects of tilt
+on Cp and Ct.</p>
 </section>
 </section>
 <section id="optimization">

@@ -47,5 +47,6 @@ floris.tools.floris\_interface.FlorisInterface
       ~FlorisInterface.layout_y
       ~FlorisInterface.logger
       ~FlorisInterface.turbine_average_velocities
+      ~FlorisInterface.turbine_effective_velocities
    
    

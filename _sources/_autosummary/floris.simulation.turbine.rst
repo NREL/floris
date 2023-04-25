@@ -18,7 +18,9 @@ floris.simulation.turbine
       Ct
       average_velocity
       axial_induction
+      compute_tilt_angles_for_floating_turbines
       power
+      rotor_effective_velocity
    
    
 
@@ -32,6 +34,7 @@ floris.simulation.turbine
       :nosignatures:
    
       PowerThrustTable
+      TiltTable
       Turbine
    
    

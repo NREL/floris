@@ -142,6 +142,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../../input_reference.html">
    Input File Reference
   </a>
@@ -415,13 +420,28 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
@@ -990,6 +1010,11 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
@@ -1238,6 +1263,7 @@ title="Open an issue"
     <span class="n">axial_induction</span><span class="p">,</span>
     <span class="n">Ct</span><span class="p">,</span>
     <span class="n">power</span><span class="p">,</span>
+    <span class="n">rotor_effective_velocity</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.tools.cut_plane</span> <span class="kn">import</span> <span class="n">CutPlane</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
@@ -1326,6 +1352,7 @@ title="Open an issue"
 <div class="viewcode-block" id="FlorisInterface.calculate_wake"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_wake">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_wake</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tilt_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="c1"># points: NDArrayFloat | list[float] | None = None,</span>
         <span class="c1"># track_n_upstream_wakes: bool = False,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1335,6 +1362,8 @@ title="Open an issue"
 
 <span class="sd">        Args:</span>
 <span class="sd">            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            tilt_angles (NDArrayFloat | list[float] | None, optional): Turbine tilt angles.</span>
 <span class="sd">                Defaults to None.</span>
 <span class="sd">            points: (NDArrayFloat | list[float] | None, optional): The x, y, and z</span>
 <span class="sd">                coordinates at which the flow field velocity is to be recorded. Defaults</span>
@@ -1352,6 +1381,15 @@ title="Open an issue"
                 <span class="p">)</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span>
+
+        <span class="c1"># TODO is this required?</span>
+        <span class="k">if</span> <span class="n">tilt_angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles</span> <span class="o">=</span> <span class="n">tilt_angles</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span>
+            <span class="p">)</span>
 
         <span class="c1"># Initialize solution space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">initialize_domain</span><span class="p">()</span>
@@ -1375,9 +1413,15 @@ title="Open an issue"
 <span class="sd">                Defaults to None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># TODO decide where to handle this sign issue</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">yaw_angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">==</span><span class="mf">0.</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span>
+        <span class="k">if</span> <span class="n">yaw_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span>
 
         <span class="c1"># Initialize solution space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">initialize_domain</span><span class="p">()</span>
@@ -1400,11 +1444,12 @@ title="Open an issue"
         <span class="n">layout_x</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">layout_y</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_type</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">turbine_library_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="c1"># turbine_id: list[str] | None = None,</span>
         <span class="c1"># wtg_id: list[str] | None = None,</span>
         <span class="c1"># with_resolution: float | None = None,</span>
         <span class="n">solver_settings</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">layout</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArrayFloat</span><span class="p">,</span> <span class="n">NDArrayFloat</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">het_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -1447,11 +1492,10 @@ title="Open an issue"
             <span class="n">farm_dict</span><span class="p">[</span><span class="s2">&quot;layout_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layout_y</span>
         <span class="k">if</span> <span class="n">turbine_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">farm_dict</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">turbine_type</span>
+        <span class="k">if</span> <span class="n">turbine_library_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">farm_dict</span><span class="p">[</span><span class="s2">&quot;turbine_library_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">turbine_library_path</span>
 
-        <span class="k">if</span> <span class="n">time_series</span><span class="p">:</span>
-            <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_series</span>
 
         <span class="c1">## Wake</span>
         <span class="c1"># if wake is not None:</span>
@@ -1478,7 +1522,7 @@ title="Open an issue"
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates velocity values through the</span>
-<span class="sd">        :py:meth:`~.FlowField.calculate_wake` method at points in plane</span>
+<span class="sd">        :py:meth:`FlorisInterface.calculate_wake` method at points in plane</span>
 <span class="sd">        specified by inputs.</span>
 
 <span class="sd">        Args:</span>
@@ -1487,9 +1531,8 @@ title="Open an issue"
 <span class="sd">            planar_coordinate (float, optional): Value of normal vector</span>
 <span class="sd">                to slice through. Defaults to None.</span>
 
-
 <span class="sd">        Returns:</span>
-<span class="sd">            :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w</span>
+<span class="sd">            :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get results vectors</span>
         <span class="n">x_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -1817,12 +1860,11 @@ title="Open an issue"
                 <span class="s2">&quot;first running `FlorisInterface.calculate_wake`.&quot;</span>
             <span class="p">)</span>
 
+        <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_effective_velocities</span>
+
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">power</span><span class="p">(</span>
-            <span class="n">air_density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">air_density</span><span class="p">,</span>
             <span class="n">ref_density_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_density_cp_cts</span><span class="p">,</span>
-            <span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
-            <span class="n">yaw_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span><span class="p">,</span>
-            <span class="n">pP</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">pPs</span><span class="p">,</span>
+            <span class="n">rotor_effective_velocities</span><span class="o">=</span><span class="n">rotor_effective_velocities</span><span class="p">,</span>
             <span class="n">power_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_power_interps</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1832,7 +1874,11 @@ title="Open an issue"
         <span class="n">turbine_Cts</span> <span class="o">=</span> <span class="n">Ct</span><span class="p">(</span>
             <span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
             <span class="n">yaw_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span><span class="p">,</span>
+            <span class="n">tilt_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles</span><span class="p">,</span>
+            <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">turbine_Cts</span></div>
@@ -1841,7 +1887,11 @@ title="Open an issue"
         <span class="n">turbine_ais</span> <span class="o">=</span> <span class="n">axial_induction</span><span class="p">(</span>
             <span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
             <span class="n">yaw_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span><span class="p">,</span>
+            <span class="n">tilt_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles</span><span class="p">,</span>
+            <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">turbine_ais</span></div>
@@ -1849,6 +1899,23 @@ title="Open an issue"
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">turbine_average_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">turbine_effective_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
+        <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="n">rotor_effective_velocity</span><span class="p">(</span>
+            <span class="n">air_density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">air_density</span><span class="p">,</span>
+            <span class="n">ref_density_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_density_cp_cts</span><span class="p">,</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
+            <span class="n">yaw_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span><span class="p">,</span>
+            <span class="n">tilt_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles</span><span class="p">,</span>
+            <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts</span><span class="p">,</span>
+            <span class="n">pP</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">pPs</span><span class="p">,</span>
+            <span class="n">pT</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">pTs</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
+            <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">rotor_effective_velocities</span>
 
 <div class="viewcode-block" id="FlorisInterface.get_turbine_TIs"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_TIs">[docs]</a>    <span class="k">def</span> <span class="nf">get_turbine_TIs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field</span></div>
