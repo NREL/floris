@@ -19,6 +19,7 @@ differ between each model.
 
 ```{code-cell}
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from floris.tools import FlorisInterface
@@ -49,7 +50,7 @@ Jiménez wake deflection model, dervied from {cite:t}`jimenez2010application`.
 
 ##### Cumulative Gaussian Curl (CC)
 
-The cumulative curl model is an implementation of the model described in {cite:t}`gdm-bay_2022`,
+The cumulative curl model is an implementation of the model described in {cite:t}`bay_2022`,
 which itself is based on the cumulative model of  {cite:t}`bastankhah_2021`
 
 ##### Jensen
@@ -187,7 +188,8 @@ horizontal_gch, y_gch, cross_gch = get_plot_parameters(fi_gch)
 horizontal_jensen, y_jensen, cross_jensen = get_plot_parameters(fi_jensen)
 ```
 
-## Plot the Results
+## Impacts on Performance
+### Plot the Results
 
 In the below plot we demonstrate the horizontal wake profile.
 
@@ -242,6 +244,27 @@ fig, axes, _ , _ = plot_rotor_values(
 )
 fig.suptitle("Jensen Rotor Plane Visualization, 10x10 Resolution")
 show_plots()
+```
+
+### AEP Comparison
+
+```{code-cell}
+# Gather the AEPs and display in a table
+frequency = np.array([[1.0]])
+results_df = pd.DataFrame(
+    [
+        ["CC", fi_cc.get_farm_AEP(frequency)],
+        ["GCH", fi_gch.get_farm_AEP(frequency)],
+        ["Jensen", fi_jensen.get_farm_AEP(frequency)],
+    ],
+    columns=["Model", "AEP (GWh)"],
+).set_index("Model") / 1e6
+
+# Compute the potential (same for all models)
+potential = fi_cc.get_farm_AEP(frequency, no_wake=True) / 1e6
+
+results_df.loc[:, "Wake Losses (GWh)"] = np.full(3, potential) - results_df["AEP (GWh)"]
+results_df.style.format(precision=2, thousands=",")
 ```
 
 ```{bibliography}
