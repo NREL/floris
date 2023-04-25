@@ -503,8 +503,8 @@ class TiltTable(FromDictMixin):
     """Helper class to convert the dictionary and list-based inputs to a object of arrays.
 
     Args:
-        tilt (NDArrayFloat): The tilt angle at a given windspeed.
-        wind_speeds (NDArrayFloat): Windspeed values, m/s.
+        tilt (NDArrayFloat): The tilt angle at a given wind speed.
+        wind_speeds (NDArrayFloat): Wind speed values, m/s.
 
     Raises:
         ValueError: Raised if tilt and wind_speeds are not all 1-d array-like shapes.
