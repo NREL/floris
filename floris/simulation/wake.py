@@ -30,7 +30,7 @@ from floris.simulation.wake_deflection import (
 from floris.simulation.wake_turbulence import (
     CrespoHernandez,
     NoneWakeTurbulence,
-    WakeInducedMixing
+    WakeInducedMixing,
 )
 from floris.simulation.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,

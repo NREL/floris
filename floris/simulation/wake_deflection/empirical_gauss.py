@@ -24,6 +24,7 @@ from floris.simulation import (
 )
 from floris.utilities import cosd, sind
 
+
 @define
 class EmpiricalGaussVelocityDeflection(BaseModel):
     """

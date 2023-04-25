@@ -13,13 +13,14 @@
 # See https://nrel.github.io/floris/intro.html for documentation
 
 
-import matplotlib.pyplot as plt
-import numpy as np
 import copy
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
-from floris.tools.visualization import plot_rotor_values
+from floris.tools.visualization import plot_rotor_values, visualize_cut_plane
+
 
 """
 This example illustrates the main parameters of the Empirical Guassian

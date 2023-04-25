@@ -19,12 +19,12 @@ import pytest
 from scipy.interpolate import interp1d
 
 from floris.simulation import (
+    _compute_tilt_angles_for_floating_turbines,
     average_velocity,
     axial_induction,
     Ct,
     power,
     Turbine,
-    _compute_tilt_angles_for_floating_turbines
 )
 from floris.simulation.turbine import (
     _filter_convert,

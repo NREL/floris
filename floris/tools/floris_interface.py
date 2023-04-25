@@ -32,6 +32,7 @@ from floris.simulation.turbine import (
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
 
+
 class FlorisInterface(LoggerBase):
     """
     FlorisInterface provides a high-level user interface to many of the

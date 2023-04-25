@@ -29,6 +29,7 @@ from floris.utilities import (
     tand,
 )
 
+
 @define
 class EmpiricalGaussVelocityDeficit(BaseModel):
     """

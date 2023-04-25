@@ -26,13 +26,11 @@ from floris.simulation import (
 )
 from floris.simulation.turbine import average_velocity
 from floris.simulation.wake import WakeModelManager
+from floris.simulation.wake_deflection.empirical_gauss import yaw_added_wake_mixing
 from floris.simulation.wake_deflection.gauss import (
     calculate_transverse_velocity,
     wake_added_yaw,
     yaw_added_turbulence_mixing,
-)
-from floris.simulation.wake_deflection.empirical_gauss import (
-    yaw_added_wake_mixing
 )
 from floris.utilities import cosd
 

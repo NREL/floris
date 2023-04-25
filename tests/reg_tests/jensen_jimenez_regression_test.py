@@ -17,10 +17,10 @@ import numpy as np
 from floris.simulation import (
     average_velocity,
     axial_induction,
-    rotor_effective_velocity,
     Ct,
     Floris,
     power,
+    rotor_effective_velocity,
 )
 from tests.conftest import (
     assert_results_arrays,
