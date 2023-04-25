@@ -19,7 +19,6 @@ import pytest
 from scipy.interpolate import interp1d
 
 from floris.simulation import (
-    _compute_tilt_angles_for_floating_turbines,
     average_velocity,
     axial_induction,
     Ct,
@@ -576,9 +575,5 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
 
     new_turb = Turbine.from_dict(dict1)
     dict2 = new_turb.as_dict()
-
-    print(dict1)
-    print(dict2)
-    print(dict1 == dict2)
 
     assert dict1 == dict2
