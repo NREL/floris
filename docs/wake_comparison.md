@@ -60,7 +60,7 @@ The Gaussian velocity model is implemented based on {cite:t}`bastankhah2016exper
 
 ##### Cumulative Curl (CC)
 
-The cumulative curl model is an implementation of the model described in {cite:t}`gdm-bay_2022`,
+The cumulative curl model is an implementation of the model described in {cite:t}`bay_2022`,
 which itself is based on the cumulative model of  {cite:t}`bastankhah_2021`
 
 ##### TurbOPark
@@ -264,8 +264,10 @@ results_df = pd.DataFrame(
 # Compute the potential (same for all models)
 potential = fi_cc.get_farm_AEP(frequency, no_wake=True) / 1e6
 
-results_df.loc[:, "Wake Losses (GWh)"] = np.full(3, potential) - results_df["AEP (GWh)"]
-results_df.style.format(precision=2, thousands=",")
+results_df.loc[:, "Wake Losses (%)"] = (np.full(3, potential) - results_df["AEP (GWh)"]) / potential
+results_df.style \
+    .format(precision=2, thousands=",") \
+    .format({"Wake Losses (%)": "{:.1%}".format})
 ```
 
 ```{bibliography}
