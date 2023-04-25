@@ -12,6 +12,7 @@ parts:
   - caption: User Reference
     chapters:
     - file: floris_101
+    - file: floating_wind_turbine
     - file: input_reference
     - file: examples
 

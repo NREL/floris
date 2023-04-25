@@ -20,6 +20,7 @@ from floris.simulation import (
     Ct,
     power,
 )
+from floris.simulation.turbine import rotor_effective_velocity
 from floris.tools import FlorisInterface
 from tests.conftest import (
     assert_results_arrays,
@@ -86,30 +87,53 @@ def test_calculate_no_wake(sample_inputs_fixture):
 
     velocities = fi.floris.flow_field.u
     yaw_angles = fi.floris.farm.yaw_angles
+    tilt_angles = fi.floris.farm.tilt_angles
+    ref_tilt_cp_cts = (
+        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
+        * fi.floris.farm.ref_tilt_cp_cts
+    )
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        fi.floris.farm.turbine_fCts,
-        fi.floris.farm.turbine_type_map,
-    )
-    farm_powers = power(
+    farm_eff_velocities = rotor_effective_velocity(
         fi.floris.flow_field.air_density,
         fi.floris.farm.ref_density_cp_cts,
         velocities,
         yaw_angles,
+        tilt_angles,
+        ref_tilt_cp_cts,
         fi.floris.farm.pPs,
+        fi.floris.farm.pTs,
+        fi.floris.farm.turbine_fTilts,
+        fi.floris.farm.correct_cp_ct_for_tilt,
+        fi.floris.farm.turbine_type_map,
+    )
+    farm_cts = Ct(
+        velocities,
+        yaw_angles,
+        tilt_angles,
+        ref_tilt_cp_cts,
+        fi.floris.farm.turbine_fCts,
+        fi.floris.farm.turbine_fTilts,
+        fi.floris.farm.correct_cp_ct_for_tilt,
+        fi.floris.farm.turbine_type_map,
+    )
+    farm_powers = power(
+        fi.floris.farm.ref_density_cp_cts,
+        farm_eff_velocities,
         fi.floris.farm.turbine_power_interps,
         fi.floris.farm.turbine_type_map,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
+        tilt_angles,
+        ref_tilt_cp_cts,
         fi.floris.farm.turbine_fCts,
+        fi.floris.farm.turbine_fTilts,
+        fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
     )
     for i in range(n_wind_directions):

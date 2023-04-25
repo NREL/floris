@@ -186,10 +186,7 @@ class FlowField(FromDictMixin):
             # Calculate the 3-dimensional speed ups; reshape is needed as the generator
             # adds an extra dimension
             speed_ups = np.reshape(
-                [
-                    het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:])
-                    for i in range(len(het_map[0]))
-                ],
+                [het_map[0][i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range( len(het_map[0]))],
                 np.shape(x)
             )
 
@@ -198,10 +195,7 @@ class FlowField(FromDictMixin):
             if np.isnan(speed_ups).any():
                 idx_nan = np.where(np.isnan(speed_ups))
                 speed_ups_out_of_region = np.reshape(
-                    [
-                        het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:])
-                        for i in range(len(het_map[1]))
-                    ],
+                    [het_map[1][i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range(len(het_map[1]))],
                     np.shape(x)
                 )
 
@@ -211,10 +205,7 @@ class FlowField(FromDictMixin):
             # Calculate the 2-dimensional speed ups; reshape is needed as the generator
             # adds an extra dimension
             speed_ups = np.reshape(
-                [
-                    het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:])
-                    for i in range(len(het_map[0]))
-                ],
+                [het_map[0][i](x[i:i+1], y[i:i+1]) for i in range(len(het_map[0]))],
                 np.shape(x)
             )
 
@@ -223,10 +214,7 @@ class FlowField(FromDictMixin):
             if np.isnan(speed_ups).any():
                 idx_nan = np.where(np.isnan(speed_ups))
                 speed_ups_out_of_region = np.reshape(
-                    [
-                        het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:])
-                        for i in range(len(het_map[1]))
-                    ],
+                    [het_map[1][i](x[i:i+1], y[i:i+1]) for i in range(len(het_map[1]))],
                     np.shape(x)
                 )
 

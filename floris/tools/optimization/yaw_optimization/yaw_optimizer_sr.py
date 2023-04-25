@@ -131,7 +131,10 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
             idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
             farm_powers[idx, :] = farm_power_opt_subset[idx, :]
             if self.print_progress:
-                print(f"Skipping {np.sum(idx)}/{len(idx)} calculations: already in memory.")
+                self.logger.info(
+                    "Skipping {:d}/{:d} calculations: already in memory.".format(
+                        np.sum(idx), len(idx))
+                )
         else:
             idx = np.zeros(yaw_angles_subset.shape[0], dtype=bool)
 

@@ -70,7 +70,6 @@ class Floris(BaseClass):
         # Initialize farm quanitities that depend on other objects
         self.farm.construct_turbine_map()
         self.farm.construct_turbine_fCts()
-        self.farm.construct_turbine_fCps()
         self.farm.construct_turbine_power_interps()
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
@@ -83,7 +82,10 @@ class Floris(BaseClass):
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
         self.farm.construct_coordinates()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
-        self.farm.set_tilt_to_ref_tilt(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
+        self.farm.set_tilt_to_ref_tilt(
+            self.flow_field.n_wind_directions,
+            self.flow_field.n_wind_speeds,
+        )
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
@@ -163,9 +165,9 @@ class Floris(BaseClass):
         # start = time.time()
 
         if vel_model in ["gauss", "cc", "turbokpark", "jensen"] and \
-            (self.farm.correct_cp_ct_for_tilt == True).any():
+            self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warn(
-                "The current model is not setup to account for vertical wake deflection due to " +
+                "The current model does not account for vertical wake deflection due to " +
                 "tilt. Corrections to Cp and Ct can be included, but no vertical wake " +
                 "deflection will occur."
             )
