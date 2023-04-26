@@ -34,7 +34,7 @@ def round_nearest_2_or_5(x: int | float) -> int:
     return min(base_2 * ceil((x + 0.5) / base_2), base_5 * ceil((x + 0.5) / base_5))
 
 
-def round_nearest_5(x: int | float) -> int:
+def round_nearest(x: int | float, base: int = 5) -> int:
     """Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.
 
     Args:
@@ -43,8 +43,7 @@ def round_nearest_5(x: int | float) -> int:
     Returns:
         int: The rounded number.
     """
-    base_5 = 5
-    return base_5 * ceil((x + 0.5) / base_5)
+    return base * ceil((x + 0.5) / base)
 
 
 @define(auto_attribs=True)
@@ -260,7 +259,7 @@ class TurbineInterface:
         ax.legend()
 
         ax.set_xlim(min_windspeed, max_windspeed)
-        ax.set_ylim(0, 1)
+        ax.set_ylim(0, round_nearest(max(power_c) * 100, base=10) / 100)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Power Coefficient")
@@ -311,7 +310,7 @@ class TurbineInterface:
         ax.legend()
 
         ax.set_xlim(min_windspeed, max_windspeed)
-        ax.set_ylim(0, 1)
+        ax.set_ylim(0, round_nearest(max(thrust) * 100, base=10) / 100)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Thrust Coefficient")
@@ -322,12 +321,11 @@ class TurbineInterface:
         fig.tight_layout()
 
 
-
-
 @define(auto_attribs=True)
 class TurbineLibrary:
     turbine_map: dict[str: TurbineInterface] = field(factory=dict)
     power_curves: dict[str, tuple[NDArrayFloat, NDArrayFloat]] = field(factory=dict)
+    Cp_curves: dict[str, tuple[NDArrayFloat, NDArrayFloat]] = field(factory=dict)
     Ct_curves: dict[str, tuple[NDArrayFloat, NDArrayFloat]] = field(factory=dict)
 
     def load_internal_library(self, which: list[str] = [], exclude: list[str] = []) -> None:
@@ -398,6 +396,25 @@ class TurbineLibrary:
             wind_speed = DEFAULT_WIND_SPEEDS
         self.power_curves = {
             name: t.power_curve(wind_speed) for name, t in self.turbine_map.items()
+        }
+
+    def compute_Cp_curves(
+            self,
+            which: list[str] = [],
+            exclude: list[str] = [],
+            wind_speed: NDArrayFloat | None = None,
+        ) -> None:
+        """Computes the power coefficient curves for each turbine in ``turbine_map`` and sets the
+        ``Ct_curves`` attribute.
+
+        Args:
+            wind_speed (`NDArrayFloat`): A 1-D array of wind speeds, in m/s, to compute the
+                thrust coefficient curve for, for each turbine in ``turbine_map``.
+        """
+        if wind_speed is None:
+            wind_speed = DEFAULT_WIND_SPEEDS
+        self.Cp_curves = {
+            name: t.Cp_curve(wind_speed) for name, t in self.turbine_map.items()
         }
 
     def compute_Ct_curves(
@@ -484,12 +501,88 @@ class TurbineLibrary:
         ax.set_axisbelow(True)
         ax.legend()
 
-        max_power = round_nearest_2_or_5(max_power)
+        max_power = round_nearest(max_power, base=5)
         ax.set_xlim(min_windspeed, max_windspeed)
         ax.set_ylim(min_power, max_power)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Power (MW)")
+
+        if return_fig:
+            return fig, ax
+
+        if show:
+            fig.tight_layout()
+
+    def plot_Cp_curves(
+        self,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
+        which: list[str] = [],
+        exclude: list[str] = [],
+        wind_speed: NDArrayFloat | None = None,
+        fig_kwargs: dict = {},
+        plot_kwargs = {},
+        return_fig: bool = False,
+        show: bool = False,
+    ) -> None | tuple[plt.Figure, plt.Axes]:
+        """Plots each power coefficient curve in ``turbine_map`` in a single plot.
+
+        Args:
+            fig (plt.figure, optional): A pre-made figure where the plot should exist.
+            ax (plt.Axes, optional): A pre-initialized axes object that should be used for the plot.
+            which (list[str], optional): A list of which turbine types/names to include. Defaults to
+                [].
+            exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
+                to [].
+            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+                to None.
+            fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
+                Defaults to {}.
+            plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
+                Defaults to {}.
+            return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
+                returned. Defaults to False.
+            show (bool, optional): Indicator if the figure should be automatically displayed.
+                Defaults to False.
+
+        Returns:
+            None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
+                a tuple of the Figure and Axes objects are returned.
+        """
+        if self.Cp_curves == {} or wind_speed is None:
+            self.compute_Cp_curves(which=which, exclude=exclude, wind_speed=wind_speed)
+
+        which = [*self.turbine_map] if which == [] else which
+
+        # Set the figure defaults if none are provided
+        if fig is None:
+            fig_kwargs.setdefault("dpi", 200)
+            fig_kwargs.setdefault("figsize", (5, 4))
+
+            fig = plt.figure(**fig_kwargs)
+        if ax is None:
+            ax = fig.add_subplot(111)
+
+        min_windspeed = 0
+        max_windspeed = 0
+        max_power = 0
+        for name, (ws, p) in self.Cp_curves.items():
+            if name in exclude or name not in which:
+                continue
+            max_windspeed = max(ws.max(), max_windspeed)
+            max_power = max(p.max(), max_power)
+            ax.plot(ws, p, label=name, **plot_kwargs)
+
+        ax.grid()
+        ax.set_axisbelow(True)
+        ax.legend()
+
+        ax.set_xlim(min_windspeed, max_windspeed)
+        ax.set_ylim(0, round_nearest(max_power * 100, base=10) / 100)
+
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Power Coefficient")
 
         if return_fig:
             return fig, ax
@@ -509,7 +602,7 @@ class TurbineLibrary:
         return_fig: bool = False,
         show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
-        """Plots each thrust curve in ``turbine_map`` in a single plot.
+        """Plots each thrust coefficient curve in ``turbine_map`` in a single plot.
 
         Args:
             fig (plt.figure, optional): A pre-made figure where the plot should exist.
@@ -549,18 +642,20 @@ class TurbineLibrary:
 
         min_windspeed = 0
         max_windspeed = 0
-        for name, (ws, p) in self.Ct_curves.items():
+        max_thrust = 0
+        for name, (ws, t) in self.Ct_curves.items():
             if name in exclude or name not in which:
                 continue
             max_windspeed = max(ws.max(), max_windspeed)
-            ax.plot(ws, p, label=name, **plot_kwargs)
+            max_thrust = max(t.max(), max_thrust)
+            ax.plot(ws, t, label=name, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
         ax.legend()
 
         ax.set_xlim(min_windspeed, max_windspeed)
-        ax.set_ylim(0, 1)
+        ax.set_ylim(0, round_nearest(max_thrust * 100, base=10) / 100)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Thrust Coefficient")
@@ -629,7 +724,7 @@ class TurbineLibrary:
         ax.set_axisbelow(True)
 
         ax.set_xlim(-0.5, len(x) - 0.5)
-        ax.set_ylim(0, round_nearest_5(max(y) / 10) * 10)
+        ax.set_ylim(0, round_nearest(max(y) / 10, base=5) * 10)
 
         ax.set_xticks(x)
         ax.set_xticklabels(np.array([*subset_map])[ix_sort])
@@ -699,7 +794,7 @@ class TurbineLibrary:
         ax.set_axisbelow(True)
 
         ax.set_xlim(-0.5, len(x) - 0.5)
-        ax.set_ylim(0, round_nearest_5(max(y) / 10) * 10)
+        ax.set_ylim(0, round_nearest(max(y) / 10, base=5) * 10)
 
         ax.set_xticks(x)
         ax.set_xticklabels(np.array([*subset_map])[ix_sort])
