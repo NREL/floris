@@ -246,50 +246,18 @@ def sequential_solver(
         axis=(3,4)
     )[:, :, :, None, None]
 
-
 def full_flow_sequential_solver(
     farm: Farm,
     flow_field: FlowField,
     flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     model_manager: WakeModelManager,
     turbine_grid: TurbineGrid,
+    turbine_grid_flow_field: FlowField
 ) -> None:
 
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
-    turbine_grid_flow_field = copy.deepcopy(flow_field)
-
-    turbine_grid_farm.construct_turbine_map()
-    turbine_grid_farm.construct_turbine_fCts()
-    turbine_grid_farm.construct_turbine_power_interps()
-    turbine_grid_farm.construct_hub_heights()
-    turbine_grid_farm.construct_rotor_diameters()
-    turbine_grid_farm.construct_turbine_TSRs()
-    turbine_grid_farm.construct_turbine_pPs()
-    turbine_grid_farm.construct_turbine_pTs()
-    turbine_grid_farm.construct_turbine_ref_density_cp_cts()
-    turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
-    turbine_grid_farm.construct_turbine_fTilts()
-    turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
-
-    turbine_grid = TurbineGrid(
-        turbine_coordinates=turbine_grid_farm.coordinates,
-        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
-        wind_directions=turbine_grid_flow_field.wind_directions,
-        wind_speeds=turbine_grid_flow_field.wind_speeds,
-        grid_resolution=3,
-        time_series=turbine_grid_flow_field.time_series,
-    )
-    turbine_grid_farm.expand_farm_properties(
-        turbine_grid_flow_field.n_wind_directions,
-        turbine_grid_flow_field.n_wind_speeds,
-        turbine_grid.sorted_coord_indices
-    )
-    # turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    # turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-    # sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
+    # turbine_grid_flow_field = copy.deepcopy(flow_field)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
@@ -389,6 +357,7 @@ def full_flow_sequential_solver(
         if model_manager.enable_transverse_velocities:
             v_wake, w_wake = calculate_transverse_velocity(
                 u_i,
+                # turbine_grid_flow_field.u_initial_sorted,
                 flow_field.u_initial_sorted,
                 flow_field.dudz_initial_sorted,
                 flow_field_grid.x_sorted - x_i,
