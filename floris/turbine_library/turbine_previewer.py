@@ -47,24 +47,6 @@ def round_nearest_5(x: int | float) -> int:
     return base_5 * ceil((x + 0.5) / base_5)
 
 
-def round_scientific(x: float) -> float:
-    """Rounds a number in scientific notation up to the nearest 2 or 5 on the same decimal
-    scale.
-
-    Args:
-        x (float): The number in scientific notation to round.
-
-    Returns:
-        float: The rounded scientific notation number.
-    """
-    x_str = f"{x:.20f}"
-    n_zeros = len(re.search("\d+\.(0*)", x_str).group(1))  # noqa: disable=W605
-    x_crop = x_str.replace("1".zfill(n_zeros + 1)[:-1], "")
-    x_round = round_nearest_2_or_5(float(x_crop) * 10)
-    x_round = float(f"0.{str(x_round).zfill(n_zeros + 1)}")
-    return x_round
-
-
 @define(auto_attribs=True)
 class TurbineInterface:
     turbine: Turbine = field(validator=attrs.validators.instance_of(Turbine))
@@ -157,7 +139,7 @@ class TurbineInterface:
             tilt_interp=[(self.turbine.turbine_type, self.turbine.fTilt_interp)],
             correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
             turbine_type_map=np.full(shape, self.turbine.turbine_type),
-        ).flatten() / 1e6
+        ).flatten()
         return wind_speed, ct_curve
 
     def plot_power_curve(
@@ -248,17 +230,14 @@ class TurbineInterface:
 
         min_windspeed = 0
         max_windspeed = max(wind_speed)
-        min_thrust = 0
-        max_thrust = max(thrust)
         ax.plot(wind_speed, thrust, label=self.turbine.turbine_type, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
         ax.legend()
 
-        max_thrust = round_scientific(max_thrust)
         ax.set_xlim(min_windspeed, max_windspeed)
-        ax.set_ylim(min_thrust, max_thrust)
+        ax.set_ylim(0, 1)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Thrust Coefficient")
@@ -494,12 +473,9 @@ class TurbineLibrary:
 
         min_windspeed = 0
         max_windspeed = 0
-        min_power = 0
-        max_thrust = 0
         for name, (ws, p) in self.thrust_curves.items():
             if name in exclude or name not in which:
                 continue
-            max_thrust = max(p.max(), max_thrust)
             max_windspeed = max(ws.max(), max_windspeed)
             ax.plot(ws, p, label=name, **plot_kwargs)
 
@@ -507,9 +483,8 @@ class TurbineLibrary:
         ax.set_axisbelow(True)
         ax.legend()
 
-        max_thrust = round_scientific(max_thrust)
         ax.set_xlim(min_windspeed, max_windspeed)
-        ax.set_ylim(min_power, max_thrust)
+        ax.set_ylim(0, 1)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Thrust Coefficient")
