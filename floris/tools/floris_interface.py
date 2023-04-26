@@ -355,6 +355,7 @@ class FlorisInterface(LoggerBase):
 
         return df
 
+    # New version using points
     def calculate_horizontal_plane(
         self,
         height,
@@ -386,64 +387,145 @@ class FlorisInterface(LoggerBase):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        # TODO update docstring
+
         if wd is None:
             wd = self.floris.flow_field.wind_directions
         if ws is None:
             ws = self.floris.flow_field.wind_speeds
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
+        self.reinitialize(wind_directions=wd, wind_speeds=ws)
 
-        # Store the current state for reinitialization
-        floris_dict = self.floris.as_dict()
-        current_yaw_angles = self.floris.farm.yaw_angles
-
-        # Set the solver to a flow field planar grid
-        solver_settings = {
-            "type": "flow_field_planar_grid",
-            "normal_vector": "z",
-            "planar_coordinate": height,
-            "flow_field_grid_points": [x_resolution, y_resolution],
-            "flow_field_bounds": [x_bounds, y_bounds],
-        }
-        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
-
-        # TODO this has to be done here as it seems to be lost with reinitialize
-        if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
-
-        # Calculate wake
-        self.floris.solve_for_viz()
+        # Use the provided yaw angles to calculate wake
+        #TODO: Tilt?
+        self.calculate_wake(yaw_angles=yaw_angles)
 
 
-        print(self.floris.flow_field.u_sorted.shape)
+        # Get a grid of points test test
+        D = self.floris.farm.rotor_diameters_sorted[0, 0, 0]
+        if x_bounds is None:
+            x_bounds = (np.min(self.layout_x) - 2 * D, np.max(self.layout_x) + 10 * D)
 
-        self.floris.grid = self.floris.field_grid
+        if y_bounds is None:
+            y_bounds = (np.min(self.layout_y) - 2 * D, np.max(self.layout_y) + 2 * D)
 
-        # Get the points of data in a dataframe
-        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
-        df = self.get_plane_of_points(
-            normal_vector="z",
-            planar_coordinate=height,
-        )
+        # Now generate a list of points
+        x = np.linspace(x_bounds[0], x_bounds[1], x_resolution)
+        y = np.linspace(y_bounds[0], y_bounds[1], y_resolution)
 
-        # Compute the cutplane
-        horizontal_plane = CutPlane(
-            df,
-            self.floris.grid.grid_resolution[0],
-            self.floris.grid.grid_resolution[1],
-            "z"
-        )
+        points_x, points_y = np.meshgrid(x, y)#, indexing='ij')
+        points_x = points_x.flatten()
+        points_y = points_y.flatten()
+        points_z = height * np.ones_like(points_x)
 
-        # Reset the fi object back to the turbine grid configuration
-        self.floris = Floris.from_dict(floris_dict)
-        self.floris.flow_field.het_map = self.het_map
+        u = self.floris.solve_for_points(points_x, points_y, points_z)
 
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        # TODO THIS SHOULD INCLUDE TILT?
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        # Make a dataframe
+        df = pd.DataFrame({
+            'x1':points_x,
+            'x2':points_y,
+            'x3':points_z,
+            'u':u,
+            'v':0,
+            'w':0,
+        })
+
+        # Convert to a cut_plane
+        horizontal_plane = CutPlane(df, x_resolution, y_resolution, "z")
 
         return horizontal_plane
+
+
+
+    # # OLD VERSION
+    # def calculate_horizontal_plane(
+    #     self,
+    #     height,
+    #     x_resolution=200,
+    #     y_resolution=200,
+    #     x_bounds=None,
+    #     y_bounds=None,
+    #     wd=None,
+    #     ws=None,
+    #     yaw_angles=None,
+    # ):
+    #     """
+    #     Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
+    #     object containing the velocity field in a horizontal plane cut through
+    #     the simulation domain at a specific height.
+
+    #     Args:
+    #         height (float): Height of cut plane. Defaults to Hub-height.
+    #         x_resolution (float, optional): Output array resolution.
+    #             Defaults to 200 points.
+    #         y_resolution (float, optional): Output array resolution.
+    #             Defaults to 200 points.
+    #         x_bounds (tuple, optional): Limits of output array (in m).
+    #             Defaults to None.
+    #         y_bounds (tuple, optional): Limits of output array (in m).
+    #             Defaults to None.
+
+    #     Returns:
+    #         :py:class:`~.tools.cut_plane.CutPlane`: containing values
+    #         of x, y, u, v, w
+    #     """
+    #     # TODO update docstring
+    #     if wd is None:
+    #         wd = self.floris.flow_field.wind_directions
+    #     if ws is None:
+    #         ws = self.floris.flow_field.wind_speeds
+    #     self.check_wind_condition_for_viz(wd=wd, ws=ws)
+
+    #     # Store the current state for reinitialization
+    #     floris_dict = self.floris.as_dict()
+    #     current_yaw_angles = self.floris.farm.yaw_angles
+
+    #     # Set the solver to a flow field planar grid
+    #     solver_settings = {
+    #         "type": "flow_field_planar_grid",
+    #         "normal_vector": "z",
+    #         "planar_coordinate": height,
+    #         "flow_field_grid_points": [x_resolution, y_resolution],
+    #         "flow_field_bounds": [x_bounds, y_bounds],
+    #     }
+    #     self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
+
+    #     # TODO this has to be done here as it seems to be lost with reinitialize
+    #     if yaw_angles is not None:
+    #         self.floris.farm.yaw_angles = yaw_angles
+
+    #     # Calculate wake
+    #     self.floris.solve_for_viz()
+
+
+    #     print(self.floris.flow_field.u_sorted.shape)
+
+    #     self.floris.grid = self.floris.field_grid
+
+    #     # Get the points of data in a dataframe
+    #     # TODO this just seems to be flattening and storing the data in a df; is this necessary?
+    #     # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+    #     df = self.get_plane_of_points(
+    #         normal_vector="z",
+    #         planar_coordinate=height,
+    #     )
+
+    #     # Compute the cutplane
+    #     horizontal_plane = CutPlane(
+    #         df,
+    #         self.floris.grid.grid_resolution[0],
+    #         self.floris.grid.grid_resolution[1],
+    #         "z"
+    #     )
+
+    #     # Reset the fi object back to the turbine grid configuration
+    #     self.floris = Floris.from_dict(floris_dict)
+    #     self.floris.flow_field.het_map = self.het_map
+
+    #     # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+    #     # TODO THIS SHOULD INCLUDE TILT?
+    #     self.calculate_wake(yaw_angles=current_yaw_angles)
+
+    #     return horizontal_plane
 
 
     def sample_flow_at_points(
