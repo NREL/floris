@@ -243,7 +243,8 @@ def full_flow_sequential_solver(
     farm: Farm,
     flow_field: FlowField,
     flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
-    model_manager: WakeModelManager
+    model_manager: WakeModelManager,
+    turbine_grid: TurbineGrid,
 ) -> None:
 
     # Get the flow quantities and turbine performance
@@ -273,9 +274,9 @@ def full_flow_sequential_solver(
         turbine_grid_flow_field.n_wind_speeds,
         turbine_grid.sorted_coord_indices
     )
-    turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-    sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
+    # turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
+    # turbine_grid_farm.initialize(turbine_grid.sorted_indices)
+    # sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
