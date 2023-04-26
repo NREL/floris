@@ -24,14 +24,27 @@ def round_nearest_2_or_5(x: int | float) -> int:
     """Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 2 or 5.
 
     Args:
-        x (int | float): The number to be rounded
+        x (int | float): The number to be rounded.
 
     Returns:
-        int: The rounded number
+        int: The rounded number.
     """
     base_2 = 2
     base_5 = 5
     return min(base_2 * ceil((x + 0.5) / base_2), base_5 * ceil((x + 0.5) / base_5))
+
+
+def round_nearest_5(x: int | float) -> int:
+    """Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.
+
+    Args:
+        x (int | float): The number to be rounded.
+
+    Returns:
+        int: The rounded number.
+    """
+    base_5 = 5
+    return base_5 * ceil((x + 0.5) / base_5)
 
 
 def round_scientific(x: float) -> float:
@@ -367,14 +380,54 @@ class TurbineLibrary:
         ax.set_axisbelow(True)
         ax.legend()
 
-        # n_zeros = len(re.search('\d+\.(0*)', f"{max_thrust:f}").group(1))
-        # max_thrust = float(f"0.{'1'.zfill(n_zeros + 1)}")
         max_thrust = round_scientific(max_thrust)
         ax.set_xlim(min_windspeed, max_windspeed)
         ax.set_ylim(min_power, max_thrust)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Thrust Coefficient")
+
+        if return_fig:
+            return fig, ax
+
+        fig.tight_layout()
+
+    def plot_rotor_diameters(
+        self,
+        which: list[str] = [],
+        exclude: list[str] = [],
+        fig_kwargs: dict = {},
+        bar_kwargs = {},
+        return_fig: bool = False,
+    ) -> None | tuple[plt.Figure, plt.Axes]:
+        which = [*self.turbine_map] if which == [] else which
+
+        # Set the figure defaults if none are provided
+        fig_kwargs.setdefault("dpi", 200)
+        fig_kwargs.setdefault("figsize", (10, 8))
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        subset_map = {
+            name: t for name, t in self.turbine_map.items()
+            if name not in exclude or name in which
+        }
+        x = np.arange(len(subset_map))
+        y = [ti.turbine.rotor_diameter for ti in subset_map.values()]
+        ix_sort = np.argsort(y)
+        y_sorted = np.array(y)[ix_sort]
+        ax.bar(x, y_sorted, **bar_kwargs)
+
+        ax.grid(axis="y")
+        ax.set_axisbelow(True)
+
+        ax.set_xlim(-0.5, len(x) - 0.5)
+        ax.set_ylim(0, round_nearest_5(max(y) / 10) * 10)
+
+        ax.set_xticks(x)
+        ax.set_xticklabels(np.array([*subset_map])[ix_sort])
+        ax.set_ylabel("Rotor Diameter (m)")
 
         if return_fig:
             return fig, ax
