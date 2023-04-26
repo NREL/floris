@@ -12,6 +12,11 @@
 
 # See https://floris.readthedocs.io for documentation
 
+"""
+Plots the primary turbine characteristics for each of the turbines in FLORIS `turbine_library`.
+Additionally, this demonstrates how a user can further interact with turbine configuration files
+in both the internal turbine library and a user provided turbine library.
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np
