@@ -10,10 +10,94 @@ jupytext:
     jupytext_version: 1.13.8
 ---
 
-# Wake Model Comparison
+# FLORIS Wake Model
 
-This page will explain the different wake models available in FLORIS and show how the results will
-differ between each model.
+FLORIS generally considers a wake model as a combination of components of a wake model.
+At minimum, the velocity deficit profile behind a wind turbine is required. For most models,
+an additional wake deflection model is included to model the effect of yaw misalignment.
+Turbulence models are also available to couple with the deficit and deflection components.
+Finally, methods for combining wakes with the rest of the flow field are available.
+
+Computationally, the solver algorithm and grid-type supported by each wake model can also
+be considered as part of the model itself. As shown in the diagram below, the mathematical
+formulations can be considered as the main components of the model. These are typically
+associated directly to each other and in some cases they are bundled together into
+a single mathematical formulation. The solver algorithm and grid type are associated
+to the math formulation, but they are typically more generic.
+
+```{mermaid}
+flowchart LR
+    A["Deficit"]
+    B["Deflection"]
+    C["Turbulence"]
+    D["Velocity"]
+    E["Solver"]
+    F["Grid"]
+
+    subgraph H[FLORIS Wake Model]
+        direction LR
+        subgraph G[Math Model]
+            direction LR
+            A---B
+            B---C
+            C---D
+        end
+        G---E
+        E---F
+    end
+```
+
+## Wake deflection and velocity deficit
+
+### Gauss and GCH
+The Gauss deflection model is a blend of the models described in
+{cite:t}`bastankhah2016experimental` and {cite:t}`King2019Controls` for calculating
+the deflection field in turbine wakes.
+The Gaussian velocity model is implemented based on {cite:t}`bastankhah2016experimental` and
+{cite:t}`niayifar2016analytical`
+
+### Jensen and Jimenez
+The Jensen model computes the wake velocity deficit based on the classic Jensen/Park model
+{cite:t}`jensen1983note`.
+Jiménez wake deflection model, derived from {cite:t}`jimenez2010application`.
+
+### Cumulative Curl
+The cumulative curl model is an implementation of the model described in {cite:t}`bay_2022`,
+which itself is based on the cumulative model of  {cite:t}`bastankhah_2021`
+
+### TurbOPark
+
+Model based on the TurbOPark model. For model details see https://github.com/OrstedRD/TurbOPark,
+https://github.com/OrstedRD/TurbOPark/blob/main/TurbOPark%20description.pdf, and Nygaard, Nicolai
+Gayle, et al. "Modelling cluster wakes and wind farm blockage." 2020.
+
+
+## Turbulence Models
+
+### CrespoHernandez
+
+CrespoHernandez is a wake-turbulence model that is used to compute additional variability introduced
+to the flow field by operation of a wind turbine. Implementation of the model follows the original
+formulation and limitations outlined in {cite:t}`crespo1996turbulence`.
+
+## Combination Models
+
+### FLS
+
+FLS uses freestream linear superposition to apply the wake velocity deficits to the freestream
+flow field.
+
+### MAX
+
+MAX uses the maximum wake velocity deficit to add to the base flow field. For more information,
+refer to {cite:t}`gunn2016limitations`.
+
+### SOSFS
+
+SOSFS uses sum of squares freestream superposition to combine the wake velocity deficits to the base
+flow field.
+
+
 
 ## Setup
 
@@ -31,68 +115,7 @@ from floris.tools.visualization import (
 )
 ```
 
-## Intro to Wake Models
 
-### Wake Model Availability and Explainers
-
-#### Wake Deflection
-
-#### Gauss
-The Gauss deflection model is a blend of the models described in
-{cite:t}`bastankhah2016experimental` and {cite:t}`King2019Controls` for calculating
-the deflection field in turbine wakes.
-
-#### Jimenez
-
-Jiménez wake deflection model, dervied from {cite:t}`jimenez2010application`.
-
-#### Wake Velocity
-
-##### Jensen
-
-The Jensen model computes the wake velocity deficit based on the classic Jensen/Park model
-{cite:t}`jensen1983note`.
-
-##### Gauss
-
-The Gaussian velocity model is implemented based on {cite:t}`bastankhah2016experimental` and
-{cite:t}`niayifar2016analytical`
-
-##### Cumulative Curl (CC)
-
-The cumulative curl model is an implementation of the model described in {cite:t}`bay_2022`,
-which itself is based on the cumulative model of  {cite:t}`bastankhah_2021`
-
-##### TurbOPark
-
-Model based on the TurbOPark model. For model details see https://github.com/OrstedRD/TurbOPark,
-https://github.com/OrstedRD/TurbOPark/blob/main/TurbOPark%20description.pdf, and Nygaard, Nicolai
-Gayle, et al. "Modelling cluster wakes and wind farm blockage." 2020.
-
-#### Wake Turbulence
-
-##### CrespoHernandez
-
-CrespoHernandez is a wake-turbulence model that is used to compute additional variability introduced
-to the flow field by operation of a wind turbine. Implementation of the model follows the original
-formulation and limitations outlined in {cite:t}`crespo1996turbulence`.
-
-#### Wake Combination
-
-##### FLS
-
-FLS uses freestream linear superposition to apply the wake velocity deficits to the freestream
-flow field.
-
-##### MAX
-
-MAX uses the maximum wake velocity deficit to add to the base flow field. For more information,
-refer to {cite:t}`gunn2016limitations`.
-
-##### SOSFS
-
-SOSFS uses sum of squares freestream superposition to combine the wake velocity deficits to the base
-flow field.
 
 ### Shorthand Model Naming
 
