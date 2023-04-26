@@ -400,6 +400,24 @@ class TurbineLibrary:
         bar_kwargs = {},
         return_fig: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
+        """Plots a bar chart of rotor diameters for each turbine in ``turbine_map``.
+
+        Args:
+            which (list[str], optional): A list of which turbine types/names to include. Defaults to
+                [].
+            exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
+                to [].
+            fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
+                Defaults to {}.
+            bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
+                Defaults to {}.
+            return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
+                returned. Defaults to False.
+
+        Returns:
+            None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
+                a tuple of the Figure and Axes objects are returned.
+        """
         which = [*self.turbine_map] if which == [] else which
 
         # Set the figure defaults if none are provided
@@ -415,6 +433,66 @@ class TurbineLibrary:
         }
         x = np.arange(len(subset_map))
         y = [ti.turbine.rotor_diameter for ti in subset_map.values()]
+        ix_sort = np.argsort(y)
+        y_sorted = np.array(y)[ix_sort]
+        ax.bar(x, y_sorted, **bar_kwargs)
+
+        ax.grid(axis="y")
+        ax.set_axisbelow(True)
+
+        ax.set_xlim(-0.5, len(x) - 0.5)
+        ax.set_ylim(0, round_nearest_5(max(y) / 10) * 10)
+
+        ax.set_xticks(x)
+        ax.set_xticklabels(np.array([*subset_map])[ix_sort])
+        ax.set_ylabel("Rotor Diameter (m)")
+
+        if return_fig:
+            return fig, ax
+
+        fig.tight_layout()
+
+    def plot_hub_heights(
+        self,
+        which: list[str] = [],
+        exclude: list[str] = [],
+        fig_kwargs: dict = {},
+        bar_kwargs = {},
+        return_fig: bool = False,
+    ) -> None | tuple[plt.Figure, plt.Axes]:
+        """Plots a bar chart of hub heights for each turbine in ``turbine_map``.
+
+        Args:
+            which (list[str], optional): A list of which turbine types/names to include. Defaults to
+                [].
+            exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
+                to [].
+            fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
+                Defaults to {}.
+            bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
+                Defaults to {}.
+            return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
+                returned. Defaults to False.
+
+        Returns:
+            None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
+                a tuple of the Figure and Axes objects are returned.
+        """
+        which = [*self.turbine_map] if which == [] else which
+
+        # Set the figure defaults if none are provided
+        fig_kwargs.setdefault("dpi", 200)
+        fig_kwargs.setdefault("figsize", (10, 8))
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        subset_map = {
+            name: t for name, t in self.turbine_map.items()
+            if name not in exclude or name in which
+        }
+        x = np.arange(len(subset_map))
+        y = [ti.turbine.hub_height for ti in subset_map.values()]
         ix_sort = np.argsort(y)
         y_sorted = np.array(y)[ix_sort]
         ax.bar(x, y_sorted, **bar_kwargs)
