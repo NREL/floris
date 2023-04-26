@@ -127,3 +127,16 @@ Alternatively, these can all be plot individually with (book reading order):
 - `plot_Cp_curves()`
 - `plot_hub_heights()`
 - `plot_Ct_curves()`
+
+For a text based approach, we can access the attributes like the following:
+
+```{code-cell}
+header = f"{'Turbine':>15} | Rotor Diameter (m) | Hub Height (m) | Air Density (ρ)"
+print(header)
+print("-" * len(header))
+for name, t in tl.turbine_map.items():
+    print(f"{name:>15}", end=" | ")
+    print(f"{t.turbine.rotor_diameter:>18,.2f}", end=" | ")
+    print(f"{t.turbine.hub_height:>14,.1f}", end=" | ")
+    print(f"{t.turbine.ref_density_cp_ct:>15,.3f}")
+```
