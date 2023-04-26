@@ -160,6 +160,114 @@ class TurbineInterface:
         ).flatten() / 1e6
         return wind_speed, ct_curve
 
+    def plot_power_curve(
+        self,
+        wind_speed: NDArrayFloat | None = None,
+        fig_kwargs: dict = {},
+        plot_kwargs = {},
+        return_fig: bool = False
+    ) -> None | tuple[plt.Figure, plt.Axes]:
+        """Plots each power curve in ``turbine_map`` in a single plot.
+
+        Args:
+            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+                to None.
+            fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
+                Defaults to {}.
+            plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
+                Defaults to {}.
+            return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
+                returned. Defaults to False.
+
+        Returns:
+            None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
+                a tuple of the Figure and Axes objects are returned.
+        """
+        wind_speed, power_mw = self.power_curve(wind_speed=wind_speed)
+
+        # Set the figure defaults if none are provided
+        fig_kwargs.setdefault("dpi", 200)
+        fig_kwargs.setdefault("figsize", (10, 8))
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        min_windspeed = 0
+        max_windspeed = max(wind_speed)
+        min_power = 0
+        max_power = max(power_mw)
+        ax.plot(wind_speed, power_mw, label=self.turbine.turbine_type, **plot_kwargs)
+
+        ax.grid()
+        ax.set_axisbelow(True)
+        ax.legend()
+
+        max_power = round_nearest_2_or_5(max_power)
+        ax.set_xlim(min_windspeed, max_windspeed)
+        ax.set_ylim(min_power, max_power)
+
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Power (MW)")
+
+        if return_fig:
+            return fig, ax
+
+        fig.tight_layout()
+
+    def plot_thrust_curve(
+        self,
+        wind_speed: NDArrayFloat | None = None,
+        fig_kwargs: dict = {},
+        plot_kwargs = {},
+        return_fig: bool = False
+    ) -> None | tuple[plt.Figure, plt.Axes]:
+        """Plots each thrust curve in ``turbine_map`` in a single plot.
+
+        Args:
+            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+                to None.
+            fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
+                Defaults to {}.
+            plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
+                Defaults to {}.
+            return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
+                returned. Defaults to False.
+
+        Returns:
+            None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
+                a tuple of the Figure and Axes objects are returned.
+        """
+        wind_speed, thrust = self.thrust_curve(wind_speed=wind_speed)
+
+        # Set the figure defaults if none are provided
+        fig_kwargs.setdefault("dpi", 200)
+        fig_kwargs.setdefault("figsize", (10, 8))
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        min_windspeed = 0
+        max_windspeed = max(wind_speed)
+        min_thrust = 0
+        max_thrust = max(thrust)
+        ax.plot(wind_speed, thrust, label=self.turbine.turbine_type, **plot_kwargs)
+
+        ax.grid()
+        ax.set_axisbelow(True)
+        ax.legend()
+
+        max_thrust = round_scientific(max_thrust)
+        ax.set_xlim(min_windspeed, max_windspeed)
+        ax.set_ylim(min_thrust, max_thrust)
+
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Thrust Coefficient")
+
+        if return_fig:
+            return fig, ax
+
+        fig.tight_layout()
+
 
 @define(auto_attribs=True)
 class TurbineLibrary:
