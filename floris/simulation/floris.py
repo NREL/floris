@@ -74,10 +74,18 @@ class Floris(BaseClass):
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
-        self.farm.construc_turbine_pPs()
-        self.farm.construc_turbine_ref_density_cp_cts()
+        self.farm.construct_turbine_pPs()
+        self.farm.construct_turbine_pTs()
+        self.farm.construct_turbine_ref_density_cp_cts()
+        self.farm.construct_turbine_ref_tilt_cp_cts()
+        self.farm.construct_turbine_fTilts()
+        self.farm.construct_turbine_correct_cp_ct_for_tilt()
         self.farm.construct_coordinates()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
+        self.farm.set_tilt_to_ref_tilt(
+            self.flow_field.n_wind_directions,
+            self.flow_field.n_wind_speeds,
+        )
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
@@ -175,6 +183,14 @@ class Floris(BaseClass):
 
         # <<interface>>
         # start = time.time()
+
+        if vel_model in ["gauss", "cc", "turbokpark", "jensen"] and \
+            self.farm.correct_cp_ct_for_tilt.any():
+            self.logger.warn(
+                "The current model does not account for vertical wake deflection due to " +
+                "tilt. Corrections to Cp and Ct can be included, but no vertical wake " +
+                "deflection will occur."
+            )
 
         if vel_model=="cc":
             elapsed_time = cc_solver(

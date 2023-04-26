@@ -210,20 +210,19 @@ is located at `floris/.github/workflows/continuous-integration-workflow.yaml`.
 The online documentation is built with Jupyter Book which uses Sphinx
 as a framework. It is automatically built and hosted by GitHub, but it
 can also be compiled locally. Additional dependencies are required
-for the documentation, and they are listed in ``docs/requirements.txt``.
+for the documentation, and they are listed in the `EXTRAS` of `setup.py`.
 The commands to build the docs are given below. After successfully
 compiling, a file should be located at ``docs/_build/html/index.html``.
 This file can be opened in any browser.
 
 ```bash
-pip install -r docs/requirements.txt
+pip install -e .["docs"]
 jupyter-book build docs/
 
 # Lots of output to the terminal here...
 
 open docs/_build/html/index.html
 ```
-
 
 ## Deploying to pip
 

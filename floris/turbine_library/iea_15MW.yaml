@@ -6,6 +6,7 @@ pT: 1.88
 rotor_diameter: 242.24
 TSR: 8.0
 ref_density_cp_ct: 1.225
+ref_tilt_cp_ct: 6.0
 power_thrust_table:
   power:
     - 0.000000

@@ -37,6 +37,7 @@ NDArrayFloat = npt.NDArray[floris_float_type]
 NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
+NDArrayBool = npt.NDArray[np.bool_]
 
 
 ### Custom callables for attrs objects and functions
@@ -151,7 +152,7 @@ class FromDictMixin:
         if undefined:
             raise AttributeError(
                 f"The class defintion for {cls.__name__} "
-                "is missing the following inputs: {undefined}"
+                f"is missing the following inputs: {undefined}"
             )
         return cls(**kwargs)
 
