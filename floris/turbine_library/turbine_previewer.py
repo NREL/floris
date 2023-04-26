@@ -187,9 +187,9 @@ class TurbineInterface:
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (10, 8))
+        fig_kwargs.setdefault("figsize", (5, 4))
 
-        fig = plt.figure()
+        fig = plt.figure(**fig_kwargs)
         ax = fig.add_subplot(111)
 
         min_windspeed = 0
@@ -241,9 +241,9 @@ class TurbineInterface:
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (10, 8))
+        fig_kwargs.setdefault("figsize", (5, 4))
 
-        fig = plt.figure()
+        fig = plt.figure(**fig_kwargs)
         ax = fig.add_subplot(111)
 
         min_windspeed = 0
@@ -366,16 +366,21 @@ class TurbineLibrary:
 
     def plot_power_curves(
         self,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
         wind_speed: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
-        return_fig: bool = False
+        return_fig: bool = False,
+        show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
         """Plots each power curve in ``turbine_map`` in a single plot.
 
         Args:
+            fig (plt.figure, optional): A pre-made figure where the plot should exist.
+            ax (plt.Axes, optional): A pre-initialized axes object that should be used for the plot.
             which (list[str], optional): A list of which turbine types/names to include. Defaults to
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
@@ -388,6 +393,8 @@ class TurbineLibrary:
                 Defaults to {}.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
+            show (bool, optional): Indicator if the figure should be automatically displayed.
+                Defaults to False.
 
         Returns:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
@@ -399,11 +406,13 @@ class TurbineLibrary:
         which = [*self.turbine_map] if which == [] else which
 
         # Set the figure defaults if none are provided
-        fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (10, 8))
+        if fig is None:
+            fig_kwargs.setdefault("dpi", 200)
+            fig_kwargs.setdefault("figsize", (5, 4))
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+            fig = plt.figure(**fig_kwargs)
+        if ax is None:
+            ax = fig.add_subplot(111)
 
         min_windspeed = 0
         max_windspeed = 0
@@ -430,20 +439,26 @@ class TurbineLibrary:
         if return_fig:
             return fig, ax
 
-        fig.tight_layout()
+        if show:
+            fig.tight_layout()
 
     def plot_thrust_curves(
         self,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
         wind_speed: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
-        return_fig: bool = False
+        return_fig: bool = False,
+        show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
         """Plots each thrust curve in ``turbine_map`` in a single plot.
 
         Args:
+            fig (plt.figure, optional): A pre-made figure where the plot should exist.
+            ax (plt.Axes, optional): A pre-initialized axes object that should be used for the plot.
             which (list[str], optional): A list of which turbine types/names to include. Defaults to
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
@@ -456,6 +471,8 @@ class TurbineLibrary:
                 Defaults to {}.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
+            show (bool, optional): Indicator if the figure should be automatically displayed.
+                Defaults to False.
 
         Returns:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
@@ -467,11 +484,13 @@ class TurbineLibrary:
         which = [*self.turbine_map] if which == [] else which
 
         # Set the figure defaults if none are provided
-        fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (10, 8))
+        if fig is None:
+            fig_kwargs.setdefault("dpi", 200)
+            fig_kwargs.setdefault("figsize", (5, 4))
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+            fig = plt.figure(**fig_kwargs)
+        if ax is None:
+            ax = fig.add_subplot(111)
 
         min_windspeed = 0
         max_windspeed = 0
@@ -498,19 +517,25 @@ class TurbineLibrary:
         if return_fig:
             return fig, ax
 
-        fig.tight_layout()
+        if show:
+            fig.tight_layout()
 
     def plot_rotor_diameters(
         self,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
         fig_kwargs: dict = {},
         bar_kwargs = {},
         return_fig: bool = False,
+        show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
         """Plots a bar chart of rotor diameters for each turbine in ``turbine_map``.
 
         Args:
+            fig (plt.figure, optional): A pre-made figure where the plot should exist.
+            ax (plt.Axes, optional): A pre-initialized axes object that should be used for the plot.
             which (list[str], optional): A list of which turbine types/names to include. Defaults to
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
@@ -521,6 +546,8 @@ class TurbineLibrary:
                 Defaults to {}.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
+            show (bool, optional): Indicator if the figure should be automatically displayed.
+                Defaults to False.
 
         Returns:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
@@ -529,11 +556,13 @@ class TurbineLibrary:
         which = [*self.turbine_map] if which == [] else which
 
         # Set the figure defaults if none are provided
-        fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (10, 8))
+        if fig is None:
+            fig_kwargs.setdefault("dpi", 200)
+            fig_kwargs.setdefault("figsize", (5, 4))
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+            fig = plt.figure(**fig_kwargs)
+        if ax is None:
+            ax = fig.add_subplot(111)
 
         subset_map = {
             name: t for name, t in self.turbine_map.items()
@@ -558,19 +587,25 @@ class TurbineLibrary:
         if return_fig:
             return fig, ax
 
-        fig.tight_layout()
+        if show:
+            fig.tight_layout()
 
     def plot_hub_heights(
         self,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
         fig_kwargs: dict = {},
         bar_kwargs = {},
         return_fig: bool = False,
+        show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
         """Plots a bar chart of hub heights for each turbine in ``turbine_map``.
 
         Args:
+            fig (plt.figure, optional): A pre-made figure where the plot should exist.
+            ax (plt.Axes, optional): A pre-initialized axes object that should be used for the plot.
             which (list[str], optional): A list of which turbine types/names to include. Defaults to
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
@@ -581,6 +616,8 @@ class TurbineLibrary:
                 Defaults to {}.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
+            show (bool, optional): Indicator if the figure should be automatically displayed.
+                Defaults to False.
 
         Returns:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
@@ -589,11 +626,13 @@ class TurbineLibrary:
         which = [*self.turbine_map] if which == [] else which
 
         # Set the figure defaults if none are provided
-        fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (10, 8))
+        if fig is None:
+            fig_kwargs.setdefault("dpi", 200)
+            fig_kwargs.setdefault("figsize", (5, 4))
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+            fig = plt.figure(**fig_kwargs)
+        if ax is None:
+            ax = fig.add_subplot(111)
 
         subset_map = {
             name: t for name, t in self.turbine_map.items()
@@ -613,9 +652,83 @@ class TurbineLibrary:
 
         ax.set_xticks(x)
         ax.set_xticklabels(np.array([*subset_map])[ix_sort])
-        ax.set_ylabel("Rotor Diameter (m)")
+        ax.set_ylabel("Hub Height (m)")
 
         if return_fig:
             return fig, ax
+
+        if show:
+            fig.tight_layout()
+
+    def plot_comparison(
+        self,
+        which: list[str] = [],
+        exclude: list[str] = [],
+        wind_speed: NDArrayFloat | None = None,
+        fig_kwargs: dict = {},
+        plot_kwargs = {},
+        bar_kwargs = {},
+        return_fig: bool = False
+    ) -> None | tuple[plt.Figure, list[plt.Axes]]:
+        """Plots each thrust curve in ``turbine_map`` in a single plot.
+
+        Args:
+            which (list[str], optional): A list of which turbine types/names to include. Defaults to
+                [].
+            exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
+                to [].
+            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+                to None.
+            fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
+                Defaults to {}.
+            plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
+                Defaults to {}.
+            bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.bar()``.
+                Defaults to {}.
+            return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
+                returned. Defaults to False.
+
+        Returns:
+            None | tuple[plt.Figure, list[plt.Axes]]: None, if :py:attr:`return_fig` is False,
+                otherwise a tuple of the Figure and Axes objects are returned.
+        """
+        # Set the figure defaults if none are provided
+        fig_kwargs.setdefault("dpi", 200)
+        fig_kwargs.setdefault("figsize", (7, 5))
+
+        fig = plt.figure(**fig_kwargs)
+        ax1 = fig.add_subplot(221)
+        ax2 = fig.add_subplot(222)
+        ax3 = fig.add_subplot(223)
+        ax4 = fig.add_subplot(224)
+        ax_list = [ax1, ax2, ax3, ax4]
+
+        self.plot_power_curves(
+            fig,
+            ax1,
+            which=which,
+            wind_speed=wind_speed,
+            plot_kwargs=plot_kwargs,
+        )
+        self.plot_thrust_curves(
+            fig,
+            ax2,
+            which=which,
+            wind_speed=wind_speed,
+            plot_kwargs=plot_kwargs,
+        )
+        self.plot_rotor_diameters(fig, ax3, which=which, bar_kwargs=bar_kwargs)
+        self.plot_hub_heights(fig, ax4, which=which, bar_kwargs=bar_kwargs)
+
+        for ax in ax_list:
+            ax.tick_params(axis='both', which='major', labelsize=7)
+            ax.xaxis.label.set_size(8)
+            ax.yaxis.label.set_size(8)
+
+        for ax in (ax1, ax2):
+            ax.legend(fontsize=7)
+
+        if return_fig:
+            return fig, ax_list
 
         fig.tight_layout()
