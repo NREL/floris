@@ -14,6 +14,7 @@ parts:
     - file: floris_101
     - file: floating_wind_turbine
     - file: input_reference
+    - file: turbine_interaction
     - file: examples
 
   - caption: Theory and Background
