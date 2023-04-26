@@ -4,7 +4,7 @@
 title: FLORIS
 author: National Renewable Energy Laboratory
 logo: gch.gif
-copyright: '2022'
+copyright: '2023'
 only_build_toc_files: true
 
 # Force re-execution of notebooks on each build.
@@ -47,6 +47,7 @@ sphinx:
   - 'sphinx_autodoc_typehints'
   - 'sphinxcontrib.autoyaml'
   - 'sphinx.ext.napoleon'       # Formats google and numpy docstring styles
+  - 'sphinxcontrib.mermaid'
   config:
     html_theme: sphinx_book_theme
     templates_path:

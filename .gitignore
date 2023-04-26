@@ -8,6 +8,7 @@ __pycache__/
 dist
 build
 .pytest_cache
+.ruff_cache
 
 # pip meta data
 pip-wheel-metadata
