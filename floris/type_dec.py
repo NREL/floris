@@ -49,12 +49,12 @@ def floris_array_converter(data: Iterable) -> np.ndarray:
         raise TypeError(e.args[0] + f". Data given: {data}")
     return a
 
-def attr_serializer(inst: type, field: Attribute, value: Any):
+def _attr_serializer(inst: type, field: Attribute, value: Any):
     if isinstance(value, np.ndarray):
         return value.tolist()
     return value
 
-def attr_floris_filter(inst: Attribute, value: Any) -> bool:
+def _attr_floris_filter(inst: Attribute, value: Any) -> bool:
     if inst.init is False:
         return False
     if value is None:
@@ -85,7 +85,6 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
         iterable_validator=attrs.validators.instance_of(iter_type),
     )
     return validator
-
 
 def convert_to_path(fn: str | Path) -> Path:
     """Converts an input string or pathlib.Path object to a fully resolved ``pathlib.Path``
@@ -164,7 +163,7 @@ class FromDictMixin:
         Returns:
             dict: All key, vaue pais required for class recreation.
         """
-        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
+        return attrs.asdict(self, filter=_attr_floris_filter, value_serializer=_attr_serializer)
 
 
 # Avoids constant redefinition of the same attr.ib properties for model attributes
