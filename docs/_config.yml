@@ -25,7 +25,7 @@ bibliography:
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/NREL/FLORIS
+  url: https://github.com/NREL/floris
   path_to_book: docs
   branch: main
 
