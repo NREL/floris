@@ -50,9 +50,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="floris.type_dec.attr_floris_filter" href="floris.type_dec.attr_floris_filter.html" />
+    <link rel="next" title="floris.type_dec.convert_to_path" href="floris.type_dec.convert_to_path.html" />
     <link rel="prev" title="floris.tools.wind_rose.WindRose" href="floris.tools.wind_rose.WindRose.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
@@ -181,6 +183,11 @@ const thebe_selector_output = ".output, .cell_output"
  <li class="toctree-l1">
   <a class="reference internal" href="../dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../architecture.html">
+   Architecture and Design
   </a>
  </li>
  <li class="toctree-l1">
@@ -1003,16 +1010,6 @@ const thebe_selector_output = ".output, .cell_output"
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.type_dec.attr_floris_filter.html">
-       floris.type_dec.attr_floris_filter
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="floris.type_dec.attr_serializer.html">
-       floris.type_dec.attr_serializer
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="floris.type_dec.convert_to_path.html">
        floris.type_dec.convert_to_path
       </a>
@@ -1308,17 +1305,6 @@ title="Print to PDF"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="floris.type_dec.attr_floris_filter.html#floris.type_dec.attr_floris_filter" title="floris.type_dec.attr_floris_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attr_floris_filter</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">rtype</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
-</dd>
-</dl>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="floris.type_dec.attr_serializer.html#floris.type_dec.attr_serializer" title="floris.type_dec.attr_serializer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attr_serializer</span></code></a></p></td>
-<td><p></p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="floris.type_dec.convert_to_path.html#floris.type_dec.convert_to_path" title="floris.type_dec.convert_to_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_to_path</span></code></a></p></td>
 <td><p>Converts an input string or pathlib.Path object to a fully resolved <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> object.</p></td>
 </tr>
@@ -1361,8 +1347,8 @@ title="Print to PDF"
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="floris.type_dec.attr_serializer">
-<span class="sig-prename descclassname"><span class="pre">floris.type_dec.</span></span><span class="sig-name descname"><span class="pre">attr_serializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/type_dec.html#attr_serializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.type_dec.attr_serializer" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.type_dec._attr_serializer">
+<span class="sig-prename descclassname"><span class="pre">floris.type_dec.</span></span><span class="sig-name descname"><span class="pre">_attr_serializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/type_dec.html#_attr_serializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.type_dec._attr_serializer" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1375,8 +1361,8 @@ title="Print to PDF"
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="floris.type_dec.attr_floris_filter">
-<span class="sig-prename descclassname"><span class="pre">floris.type_dec.</span></span><span class="sig-name descname"><span class="pre">attr_floris_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/type_dec.html#attr_floris_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.type_dec.attr_floris_filter" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.type_dec._attr_floris_filter">
+<span class="sig-prename descclassname"><span class="pre">floris.type_dec.</span></span><span class="sig-name descname"><span class="pre">_attr_floris_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/type_dec.html#_attr_floris_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.type_dec._attr_floris_filter" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
@@ -1526,10 +1512,10 @@ proper <cite>Turbine</cite> formats.</p>
             <p class="prev-next-title">floris.tools.wind_rose.WindRose</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="floris.type_dec.attr_floris_filter.html" title="next page">
+    <a class='right-next' id="next-link" href="floris.type_dec.convert_to_path.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">floris.type_dec.attr_floris_filter</p>
+        <p class="prev-next-title">floris.type_dec.convert_to_path</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
@@ -1542,7 +1528,7 @@ proper <cite>Turbine</cite> formats.</p>
   
     By National Renewable Energy Laboratory<br/>
   
-      &copy; Copyright 2022.<br/>
+      &copy; Copyright 2023.<br/>
 </p>
         </footer>
     </div>

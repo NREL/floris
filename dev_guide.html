@@ -50,9 +50,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Code Quality" href="code_quality.html" />
+    <link rel="next" title="Architecture and Design" href="architecture.html" />
     <link rel="prev" title="Coming Soon!" href="reference.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
@@ -181,6 +183,11 @@ const thebe_selector_output = ".output, .cell_output"
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="architecture.html">
+   Architecture and Design
   </a>
  </li>
  <li class="toctree-l1">
@@ -1003,16 +1010,6 @@ const thebe_selector_output = ".output, .cell_output"
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="_autosummary/floris.type_dec.attr_floris_filter.html">
-       floris.type_dec.attr_floris_filter
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="_autosummary/floris.type_dec.attr_serializer.html">
-       floris.type_dec.attr_serializer
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="_autosummary/floris.type_dec.convert_to_path.html">
        floris.type_dec.convert_to_path
       </a>
@@ -1698,10 +1695,10 @@ is available <a class="reference external" href="https://medium.freecodecamp.org
             <p class="prev-next-title">Coming Soon!</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="code_quality.html" title="next page">
+    <a class='right-next' id="next-link" href="architecture.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Code Quality</p>
+        <p class="prev-next-title">Architecture and Design</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
@@ -1714,7 +1711,7 @@ is available <a class="reference external" href="https://medium.freecodecamp.org
   
     By National Renewable Energy Laboratory<br/>
   
-      &copy; Copyright 2022.<br/>
+      &copy; Copyright 2023.<br/>
 </p>
         </footer>
     </div>

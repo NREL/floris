@@ -6,54 +6,56 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>floris.type_dec.attr_serializer &#8212; FLORIS</title>
+    <title>Architecture and Design &#8212; FLORIS</title>
     
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
-    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="floris.type_dec.convert_to_path" href="floris.type_dec.convert_to_path.html" />
-    <link rel="prev" title="floris.type_dec.attr_floris_filter" href="floris.type_dec.attr_floris_filter.html" />
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code Quality" href="code_quality.html" />
+    <link rel="prev" title="Developer&#39;s Guide" href="dev_guide.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
     
@@ -96,19 +98,19 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="bd-sidebar noprint" id="site-navigation">
     <div class="bd-sidebar__content">
         <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="../index.html">
+    <a class="navbar-brand text-wrap" href="index.html">
       
         <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
         
       
       
-      <img src="../_static/gch.gif" class="logo" alt="logo">
+      <img src="_static/gch.gif" class="logo" alt="logo">
       
       
       <h1 class="site-logo" id="site-title">FLORIS</h1>
       
     </a>
-</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -116,7 +118,7 @@ const thebe_selector_output = ".output, .cell_output"
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
-                <a class="reference internal" href="../intro.html">
+                <a class="reference internal" href="intro.html">
                     FLORIS Wake Modeling & Wind Farm Controls
                 </a>
             </li>
@@ -128,7 +130,7 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../installation.html">
+  <a class="reference internal" href="installation.html">
    Installation
   </a>
  </li>
@@ -140,22 +142,22 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../floris_101.html">
+  <a class="reference internal" href="floris_101.html">
    Background and Concepts
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../floating_wind_turbine.html">
+  <a class="reference internal" href="floating_wind_turbine.html">
    Floating Wind Turbine Modeling
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../input_reference.html">
+  <a class="reference internal" href="input_reference.html">
    Input File Reference
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../examples.html">
+  <a class="reference internal" href="examples.html">
    Examples Index
   </a>
  </li>
@@ -167,7 +169,7 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../reference.html">
+  <a class="reference internal" href="reference.html">
    Coming Soon!
   </a>
  </li>
@@ -179,27 +181,32 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../dev_guide.html">
+  <a class="reference internal" href="dev_guide.html">
    Developer's Guide
   </a>
  </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Architecture and Design
+  </a>
+ </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../code_quality.html">
+  <a class="reference internal" href="code_quality.html">
    Code Quality
   </a>
  </li>
- <li class="toctree-l1 current active has-children">
-  <a class="reference internal" href="../api_docs.html">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="api_docs.html">
    API Documentation
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
   <label for="toctree-checkbox-1">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul class="current">
+  <ul>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="floris.logging_manager.html">
+    <a class="reference internal" href="_autosummary/floris.logging_manager.html">
      floris.logging_manager
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
@@ -209,29 +216,29 @@ const thebe_selector_output = ".output, .cell_output"
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.logging_manager.configure_console_log.html">
+      <a class="reference internal" href="_autosummary/floris.logging_manager.configure_console_log.html">
        floris.logging_manager.configure_console_log
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.logging_manager.configure_file_log.html">
+      <a class="reference internal" href="_autosummary/floris.logging_manager.configure_file_log.html">
        floris.logging_manager.configure_file_log
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.logging_manager.LoggerBase.html">
+      <a class="reference internal" href="_autosummary/floris.logging_manager.LoggerBase.html">
        floris.logging_manager.LoggerBase
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.logging_manager.TracebackInfoFilter.html">
+      <a class="reference internal" href="_autosummary/floris.logging_manager.TracebackInfoFilter.html">
        floris.logging_manager.TracebackInfoFilter
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="floris.simulation.html">
+    <a class="reference internal" href="_autosummary/floris.simulation.html">
      floris.simulation
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
@@ -241,7 +248,7 @@ const thebe_selector_output = ".output, .cell_output"
     </label>
     <ul>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.base.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.base.html">
        floris.simulation.base
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
@@ -251,24 +258,24 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.base.BaseClass.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.base.BaseClass.html">
          floris.simulation.base.BaseClass
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.base.BaseModel.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.base.BaseModel.html">
          floris.simulation.base.BaseModel
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.base.State.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.base.State.html">
          floris.simulation.base.State
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.farm.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.farm.html">
        floris.simulation.farm
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
@@ -278,14 +285,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.farm.Farm.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.farm.Farm.html">
          floris.simulation.farm.Farm
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.floris.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.floris.html">
        floris.simulation.floris
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
@@ -295,14 +302,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.floris.Floris.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.floris.Floris.html">
          floris.simulation.floris.Floris
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.flow_field.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.flow_field.html">
        floris.simulation.flow_field
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
@@ -312,14 +319,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.flow_field.FlowField.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.flow_field.FlowField.html">
          floris.simulation.flow_field.FlowField
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.grid.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.grid.html">
        floris.simulation.grid
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
@@ -329,29 +336,29 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.grid.FlowFieldGrid.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.grid.FlowFieldGrid.html">
          floris.simulation.grid.FlowFieldGrid
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.grid.FlowFieldPlanarGrid.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.grid.FlowFieldPlanarGrid.html">
          floris.simulation.grid.FlowFieldPlanarGrid
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.grid.Grid.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.grid.Grid.html">
          floris.simulation.grid.Grid
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.solver.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.solver.html">
        floris.simulation.solver
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
@@ -361,44 +368,44 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.solver.calculate_area_overlap.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.calculate_area_overlap.html">
          floris.simulation.solver.calculate_area_overlap
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.solver.cc_solver.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.cc_solver.html">
          floris.simulation.solver.cc_solver
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.solver.full_flow_cc_solver.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.solver.full_flow_sequential_solver.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_sequential_solver.html">
          floris.simulation.solver.full_flow_sequential_solver
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.solver.full_flow_turbopark_solver.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_turbopark_solver.html">
          floris.simulation.solver.full_flow_turbopark_solver
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.solver.sequential_solver.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.sequential_solver.html">
          floris.simulation.solver.sequential_solver
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.solver.turbopark_solver.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.turbopark_solver.html">
          floris.simulation.solver.turbopark_solver
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.turbine.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.turbine.html">
        floris.simulation.turbine
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
@@ -408,54 +415,54 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.Ct.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.Ct.html">
          floris.simulation.turbine.Ct
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.average_velocity.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.average_velocity.html">
          floris.simulation.turbine.average_velocity
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.axial_induction.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.axial_induction.html">
          floris.simulation.turbine.axial_induction
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
          floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.power.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.PowerThrustTable.html">
          floris.simulation.turbine.PowerThrustTable
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.TiltTable.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.TiltTable.html">
          floris.simulation.turbine.TiltTable
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.turbine.Turbine.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.turbine.Turbine.html">
          floris.simulation.turbine.Turbine
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.wake.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.wake.html">
        floris.simulation.wake
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
@@ -465,14 +472,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake.WakeModelManager.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake.WakeModelManager.html">
          floris.simulation.wake.WakeModelManager
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.wake_combination.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.wake_combination.html">
        floris.simulation.wake_combination
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
@@ -482,24 +489,24 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_combination.fls.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_combination.fls.html">
          floris.simulation.wake_combination.fls
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_combination.max.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_combination.max.html">
          floris.simulation.wake_combination.max
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_combination.sosfs.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_combination.sosfs.html">
          floris.simulation.wake_combination.sosfs
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.wake_deflection.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.html">
        floris.simulation.wake_deflection
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
@@ -509,24 +516,24 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_deflection.gauss.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_deflection.jimenez.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.jimenez.html">
          floris.simulation.wake_deflection.jimenez
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_deflection.none.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.none.html">
          floris.simulation.wake_deflection.none
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.wake_turbulence.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.html">
        floris.simulation.wake_turbulence
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/>
@@ -536,19 +543,19 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_turbulence.crespo_hernandez.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.crespo_hernandez.html">
          floris.simulation.wake_turbulence.crespo_hernandez
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_turbulence.none.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.none.html">
          floris.simulation.wake_turbulence.none
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.simulation.wake_velocity.html">
+      <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.html">
        floris.simulation.wake_velocity
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/>
@@ -558,27 +565,27 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_velocity.cumulative_gauss_curl.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_velocity.gauss.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.gauss.html">
          floris.simulation.wake_velocity.gauss
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_velocity.jensen.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.jensen.html">
          floris.simulation.wake_velocity.jensen
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_velocity.none.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.none.html">
          floris.simulation.wake_velocity.none
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.simulation.wake_velocity.turbopark.html">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.turbopark.html">
          floris.simulation.wake_velocity.turbopark
         </a>
        </li>
@@ -587,7 +594,7 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="floris.tools.html">
+    <a class="reference internal" href="_autosummary/floris.tools.html">
      floris.tools
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/>
@@ -597,7 +604,7 @@ const thebe_selector_output = ".output, .cell_output"
     </label>
     <ul>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.cut_plane.html">
+      <a class="reference internal" href="_autosummary/floris.tools.cut_plane.html">
        floris.tools.cut_plane
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/>
@@ -607,69 +614,69 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.calculate_power.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.calculate_power.html">
          floris.tools.cut_plane.calculate_power
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.calculate_wind_speed.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.calculate_wind_speed.html">
          floris.tools.cut_plane.calculate_wind_speed
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.change_resolution.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.change_resolution.html">
          floris.tools.cut_plane.change_resolution
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.get_plane_from_flow_data.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.get_plane_from_flow_data.html">
          floris.tools.cut_plane.get_plane_from_flow_data
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.get_power_profile.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.get_power_profile.html">
          floris.tools.cut_plane.get_power_profile
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.interpolate_onto_array.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.interpolate_onto_array.html">
          floris.tools.cut_plane.interpolate_onto_array
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.nudge_outward.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.nudge_outward.html">
          floris.tools.cut_plane.nudge_outward
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.project_onto.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.project_onto.html">
          floris.tools.cut_plane.project_onto
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.rescale_axis.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.rescale_axis.html">
          floris.tools.cut_plane.rescale_axis
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.set_origin.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.set_origin.html">
          floris.tools.cut_plane.set_origin
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.wind_speed_profile.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.wind_speed_profile.html">
          floris.tools.cut_plane.wind_speed_profile
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.cut_plane.CutPlane.html">
+        <a class="reference internal" href="_autosummary/floris.tools.cut_plane.CutPlane.html">
          floris.tools.cut_plane.CutPlane
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.floris_interface.html">
+      <a class="reference internal" href="_autosummary/floris.tools.floris_interface.html">
        floris.tools.floris_interface
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/>
@@ -679,24 +686,24 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
+        <a class="reference internal" href="_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
          floris.tools.floris_interface.generate_heterogeneous_wind_map
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
+        <a class="reference internal" href="_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
          floris.tools.floris_interface.set_rotor_diameter
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
+        <a class="reference internal" href="_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.floris_interface_legacy_reader.html">
+      <a class="reference internal" href="_autosummary/floris.tools.floris_interface_legacy_reader.html">
        floris.tools.floris_interface_legacy_reader
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/>
@@ -706,14 +713,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html">
+        <a class="reference internal" href="_autosummary/floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html">
          floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.interface_utilities.html">
+      <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.html">
        floris.tools.interface_utilities
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/>
@@ -723,44 +730,44 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.interface_utilities.get_params.html">
+        <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.get_params.html">
          floris.tools.interface_utilities.get_params
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.interface_utilities.get_prop_values.html">
+        <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.get_prop_values.html">
          floris.tools.interface_utilities.get_prop_values
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.interface_utilities.get_props_subset.html">
+        <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.get_props_subset.html">
          floris.tools.interface_utilities.get_props_subset
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.interface_utilities.print_prop_docs.html">
+        <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.print_prop_docs.html">
          floris.tools.interface_utilities.print_prop_docs
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.interface_utilities.print_props.html">
+        <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.print_props.html">
          floris.tools.interface_utilities.print_props
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.interface_utilities.set_params.html">
+        <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.set_params.html">
          floris.tools.interface_utilities.set_params
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.interface_utilities.show_params.html">
+        <a class="reference internal" href="_autosummary/floris.tools.interface_utilities.show_params.html">
          floris.tools.interface_utilities.show_params
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.layout_functions.html">
+      <a class="reference internal" href="_autosummary/floris.tools.layout_functions.html">
        floris.tools.layout_functions
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/>
@@ -770,34 +777,34 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.label_line.html">
+        <a class="reference internal" href="_autosummary/floris.tools.layout_functions.label_line.html">
          floris.tools.layout_functions.label_line
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.set_direction.html">
+        <a class="reference internal" href="_autosummary/floris.tools.layout_functions.set_direction.html">
          floris.tools.layout_functions.set_direction
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.turbineDist.html">
+        <a class="reference internal" href="_autosummary/floris.tools.layout_functions.turbineDist.html">
          floris.tools.layout_functions.turbineDist
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.visualize_layout.html">
+        <a class="reference internal" href="_autosummary/floris.tools.layout_functions.visualize_layout.html">
          floris.tools.layout_functions.visualize_layout
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.layout_functions.wakeAngle.html">
+        <a class="reference internal" href="_autosummary/floris.tools.layout_functions.wakeAngle.html">
          floris.tools.layout_functions.wakeAngle
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.optimization.html">
+      <a class="reference internal" href="_autosummary/floris.tools.optimization.html">
        floris.tools.optimization
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/>
@@ -807,29 +814,29 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.optimization.layout_optimization.html">
+        <a class="reference internal" href="_autosummary/floris.tools.optimization.layout_optimization.html">
          floris.tools.optimization.layout_optimization
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.optimization.legacy.html">
+        <a class="reference internal" href="_autosummary/floris.tools.optimization.legacy.html">
          floris.tools.optimization.legacy
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.optimization.other.html">
+        <a class="reference internal" href="_autosummary/floris.tools.optimization.other.html">
          floris.tools.optimization.other
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.optimization.yaw_optimization.html">
+        <a class="reference internal" href="_autosummary/floris.tools.optimization.yaw_optimization.html">
          floris.tools.optimization.yaw_optimization
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.parallel_computing_interface.html">
+      <a class="reference internal" href="_autosummary/floris.tools.parallel_computing_interface.html">
        floris.tools.parallel_computing_interface
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/>
@@ -839,14 +846,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.parallel_computing_interface.ParallelComputingInterface.html">
+        <a class="reference internal" href="_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html">
          floris.tools.parallel_computing_interface.ParallelComputingInterface
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.power_rose.html">
+      <a class="reference internal" href="_autosummary/floris.tools.power_rose.html">
        floris.tools.power_rose
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/>
@@ -856,14 +863,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.power_rose.PowerRose.html">
+        <a class="reference internal" href="_autosummary/floris.tools.power_rose.PowerRose.html">
          floris.tools.power_rose.PowerRose
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.rews.html">
+      <a class="reference internal" href="_autosummary/floris.tools.rews.html">
        floris.tools.rews
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/>
@@ -873,29 +880,29 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.rews.compute_rews.html">
+        <a class="reference internal" href="_autosummary/floris.tools.rews.compute_rews.html">
          floris.tools.rews.compute_rews
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.rews.determine_rews_weights.html">
+        <a class="reference internal" href="_autosummary/floris.tools.rews.determine_rews_weights.html">
          floris.tools.rews.determine_rews_weights
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.rews.log_law_interpolate.html">
+        <a class="reference internal" href="_autosummary/floris.tools.rews.log_law_interpolate.html">
          floris.tools.rews.log_law_interpolate
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.rews.rews_from_df.html">
+        <a class="reference internal" href="_autosummary/floris.tools.rews.rews_from_df.html">
          floris.tools.rews.rews_from_df
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.uncertainty_interface.html">
+      <a class="reference internal" href="_autosummary/floris.tools.uncertainty_interface.html">
        floris.tools.uncertainty_interface
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
@@ -905,14 +912,14 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.uncertainty_interface.UncertaintyInterface.html">
+        <a class="reference internal" href="_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html">
          floris.tools.uncertainty_interface.UncertaintyInterface
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.visualization.html">
+      <a class="reference internal" href="_autosummary/floris.tools.visualization.html">
        floris.tools.visualization
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/>
@@ -922,59 +929,59 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.add_turbine_id_labels.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.add_turbine_id_labels.html">
          floris.tools.visualization.add_turbine_id_labels
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
          floris.tools.visualization.calculate_horizontal_plane_with_turbines
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.line_contour_cut_plane.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
          floris.tools.visualization.line_contour_cut_plane
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.plot_rotor_values.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.plot_rotor_values.html">
          floris.tools.visualization.plot_rotor_values
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.plot_turbines.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.plot_turbines.html">
          floris.tools.visualization.plot_turbines
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.plot_turbines_with_fi.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.plot_turbines_with_fi.html">
          floris.tools.visualization.plot_turbines_with_fi
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
          floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.show_plots.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.show_plots.html">
          floris.tools.visualization.show_plots
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.visualize_cut_plane.html">
          floris.tools.visualization.visualize_cut_plane
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">
+        <a class="reference internal" href="_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
        </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="floris.tools.wind_rose.html">
+      <a class="reference internal" href="_autosummary/floris.tools.wind_rose.html">
        floris.tools.wind_rose
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/>
@@ -984,7 +991,7 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.wind_rose.WindRose.html">
+        <a class="reference internal" href="_autosummary/floris.tools.wind_rose.WindRose.html">
          floris.tools.wind_rose.WindRose
         </a>
        </li>
@@ -992,50 +999,40 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 current active has-children">
-    <a class="reference internal" href="floris.type_dec.html">
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="_autosummary/floris.type_dec.html">
      floris.type_dec
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
+    <input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
     <label for="toctree-checkbox-29">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul class="current">
+    <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.type_dec.attr_floris_filter.html">
-       floris.type_dec.attr_floris_filter
-      </a>
-     </li>
-     <li class="toctree-l3 current active">
-      <a class="current reference internal" href="#">
-       floris.type_dec.attr_serializer
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="floris.type_dec.convert_to_path.html">
+      <a class="reference internal" href="_autosummary/floris.type_dec.convert_to_path.html">
        floris.type_dec.convert_to_path
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.type_dec.floris_array_converter.html">
+      <a class="reference internal" href="_autosummary/floris.type_dec.floris_array_converter.html">
        floris.type_dec.floris_array_converter
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.type_dec.iter_validator.html">
+      <a class="reference internal" href="_autosummary/floris.type_dec.iter_validator.html">
        floris.type_dec.iter_validator
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.type_dec.FromDictMixin.html">
+      <a class="reference internal" href="_autosummary/floris.type_dec.FromDictMixin.html">
        floris.type_dec.FromDictMixin
       </a>
      </li>
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="floris.utilities.html">
+    <a class="reference internal" href="_autosummary/floris.utilities.html">
      floris.utilities
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
@@ -1045,57 +1042,57 @@ const thebe_selector_output = ".output, .cell_output"
     </label>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.cosd.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.cosd.html">
        floris.utilities.cosd
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.load_yaml.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.load_yaml.html">
        floris.utilities.load_yaml
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.pshape.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.rotate_coordinates_rel_west.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.rotate_coordinates_rel_west.html">
        floris.utilities.rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.sind.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.sind.html">
        floris.utilities.sind
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.tand.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.tand.html">
        floris.utilities.tand
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.wind_delta.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.wind_delta.html">
        floris.utilities.wind_delta
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.wrap_180.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.wrap_180.html">
        floris.utilities.wrap_180
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.wrap_360.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.wrap_360.html">
        floris.utilities.wrap_360
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.Loader.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.Loader.html">
        floris.utilities.Loader
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="floris.utilities.Vec3.html">
+      <a class="reference internal" href="_autosummary/floris.utilities.Vec3.html">
        floris.utilities.Vec3
       </a>
      </li>
@@ -1193,7 +1190,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.type_dec.attr_serializer.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2Farchitecture.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1210,7 +1207,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.type_dec.attr_serializer.rst"
+        <a href="https://github.com/nrel/floris/edit/main/docs/architecture.md"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1238,7 +1235,7 @@ title="Edit this page"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../_sources/_autosummary/floris.type_dec.attr_serializer.rst"
+        <a href="_sources/architecture.md"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1249,7 +1246,7 @@ title="Download source file"
 <span class="headerbtn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.rst</span>
+<span class="headerbtn__text-container">.md</span>
 </a>
 
       </li>
@@ -1275,23 +1272,70 @@ title="Print to PDF"
     </ul>
   </div>
 </div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
 
     </div>
 </div>
 
 <!-- Table of contents -->
 <div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#floris-tools">
+   floris.tools
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#floris-simulation">
+   floris.simulation
+  </a>
+ </li>
+</ul>
+
+    </nav>
 </div>
     </div>
     <div class="article row">
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>floris.type_dec.attr_serializer</h1>
+                <h1>Architecture and Design</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#floris-tools">
+   floris.tools
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#floris-simulation">
+   floris.simulation
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -1299,22 +1343,127 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="floris-type-dec-attr-serializer">
-<h1>floris.type_dec.attr_serializer<a class="headerlink" href="#floris-type-dec-attr-serializer" title="Permalink to this headline">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="floris.type_dec.attr_serializer">
-<span class="sig-prename descclassname"><span class="pre">floris.type_dec.</span></span><span class="sig-name descname"><span class="pre">attr_serializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/type_dec.html#attr_serializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.type_dec.attr_serializer" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inst</strong> (<em>type</em>) -- </p></li>
-<li><p><strong>field</strong> (<em>attr._make.Attribute</em>) -- </p></li>
-<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+  <section class="tex2jax_ignore mathjax_ignore" id="architecture-and-design">
+<h1>Architecture and Design<a class="headerlink" href="#architecture-and-design" title="Permalink to this headline">#</a></h1>
+<p>Two fundamental ideas define the design of the FLORIS software:</p>
+<ul class="simple">
+<li><p>Modularity in wake model formulation</p>
+<ul>
+<li><p>Mathematical formulation should be straightforward to include</p></li>
+<li><p>Requisite solver and grid data structures should not conflict with other existing
+wake models</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
+</li>
+<li><p>Management of abstraction</p>
+<ul>
+<li><p>Low level code is opaque but well tested and exercised; it should be very computationally
+efficient with low algorithmic complexity</p></li>
+<li><p>High level code should be expressive and clear even if it results in verbose or less
+efficient code</p></li>
+</ul>
+</li>
+</ul>
+<p>The FLORIS software consists of two primary high-level packages and a few other low level
+packages. The internal structure and hierarchy is described below.</p>
+<div class="mermaid">
+            classDiagram
 
+    class tools {
+        +FlorisInterface
+    }
+
+    class simulation {
+        +Floris
+    }
+
+    class logging_manager
+    class type_dec
+    class utilities
+
+    tools &lt;-- logging_manager
+    simulation &lt;-- logging_manager
+    tools &lt;-- type_dec
+    simulation &lt;-- type_dec
+    tools &lt;-- utilities
+    simulation &lt;-- utilities
+    tools &lt;-- simulation
+        </div><section id="floris-tools">
+<h2>floris.tools<a class="headerlink" href="#floris-tools" title="Permalink to this headline">#</a></h2>
+<p>This is the user interface. Most operations at the user level will happen through <code class="docutils literal notranslate"><span class="pre">floris.tools</span></code>.
+This package contains a wide variety of functionality including but not limited to:</p>
+<ul class="simple">
+<li><p>Initializing and driving a simulation with <code class="docutils literal notranslate"><span class="pre">tools.floris_interface</span></code></p></li>
+<li><p>Wake field visualization through <code class="docutils literal notranslate"><span class="pre">tools.visualization</span></code></p></li>
+<li><p>Yaw and layout optimization in <code class="docutils literal notranslate"><span class="pre">tools.optimization</span></code></p></li>
+<li><p>Parallelizing work load with <code class="docutils literal notranslate"><span class="pre">tools.parallel_computing_interface</span></code></p></li>
+</ul>
+</section>
+<section id="floris-simulation">
+<h2>floris.simulation<a class="headerlink" href="#floris-simulation" title="Permalink to this headline">#</a></h2>
+<p>This is the core simulation package. This should primarily be used within <code class="docutils literal notranslate"><span class="pre">floris.simulation</span></code> and
+<code class="docutils literal notranslate"><span class="pre">floris.tools</span></code>, and user scripts generally won't interact directly with this package.</p>
+<div class="mermaid">
+            classDiagram
+
+    class Floris
+
+    class Farm
+
+    class FlowField {
+        array u
+        array v
+        array w
+    }
+
+    class Grid {
+        &lt;&lt;interface&gt;&gt;
+    }
+    class TurbineGrid
+    class FlowFieldPlanarGrid
+
+    class WakeModelManager {
+        &lt;&lt;interface&gt;&gt;
+    }
+    class WakeCombination {
+        dict parameters
+        function()
+    }
+    class WakeDeflection {
+        dict parameters
+        function()
+    }
+    class WakeTurbulence {
+        dict parameters
+        function()
+    }
+    class WakeVelocity {
+        dict parameters
+        function()
+    }
+
+    class Solver {
+        &lt;&lt;interface&gt;&gt;
+        dict parameters
+    }
+
+    Floris o-- Farm
+    Floris o-- FlowField
+    Floris o-- Grid
+    Floris o-- WakeModelManager
+    Floris *-- Solver
+    WakeModelManager o-- WakeCombination
+    WakeModelManager o-- WakeDeflection
+    WakeModelManager o-- WakeTurbulence
+    WakeModelManager o-- WakeVelocity
+
+    Grid &lt;|-- TurbineGrid
+    Grid &lt;|-- FlowFieldPlanarGrid
+
+    Solver --&gt; Farm
+    Solver --&gt; FlowField
+    Solver --&gt; Grid
+    Solver --&gt; WakeModelManager
+        </div></section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1330,7 +1479,7 @@ title="Print to PDF"
         },
         kernelOptions: {
             name: "python3",
-            path: "./_autosummary"
+            path: "./."
         },
         predefinedOutput: true
     }
@@ -1344,17 +1493,17 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="floris.type_dec.attr_floris_filter.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="dev_guide.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">floris.type_dec.attr_floris_filter</p>
+            <p class="prev-next-title">Developer's Guide</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="floris.type_dec.convert_to_path.html" title="next page">
+    <a class='right-next' id="next-link" href="code_quality.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">floris.type_dec.convert_to_path</p>
+        <p class="prev-next-title">Code Quality</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
@@ -1367,7 +1516,7 @@ title="Print to PDF"
   
     By National Renewable Energy Laboratory<br/>
   
-      &copy; Copyright 2022.<br/>
+      &copy; Copyright 2023.<br/>
 </p>
         </footer>
     </div>
@@ -1379,7 +1528,7 @@ title="Print to PDF"
     </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
 
   </body>

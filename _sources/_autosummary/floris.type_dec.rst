@@ -15,8 +15,6 @@
       :toctree:
       :nosignatures:
    
-      attr_floris_filter
-      attr_serializer
       convert_to_path
       floris_array_converter
       iter_validator

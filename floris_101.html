@@ -50,6 +50,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Floating Wind Turbine Modeling" href="floating_wind_turbine.html" />
@@ -181,6 +183,11 @@ const thebe_selector_output = ".output, .cell_output"
  <li class="toctree-l1">
   <a class="reference internal" href="dev_guide.html">
    Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="architecture.html">
+   Architecture and Design
   </a>
  </li>
  <li class="toctree-l1">
@@ -1002,16 +1009,6 @@ const thebe_selector_output = ".output, .cell_output"
      </i>
     </label>
     <ul>
-     <li class="toctree-l3">
-      <a class="reference internal" href="_autosummary/floris.type_dec.attr_floris_filter.html">
-       floris.type_dec.attr_floris_filter
-      </a>
-     </li>
-     <li class="toctree-l3">
-      <a class="reference internal" href="_autosummary/floris.type_dec.attr_serializer.html">
-       floris.type_dec.attr_serializer
-      </a>
-     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="_autosummary/floris.type_dec.convert_to_path.html">
        floris.type_dec.convert_to_path
@@ -1995,8 +1992,8 @@ Number of turbines = 25
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
 Jensen   843.620    0.908 
-GCH      843.904    4.562 
-CC       839.263    6.578 
+GCH      843.904    4.579 
+CC       839.263    6.756 
 </pre></div>
 </div>
 </div>
@@ -2074,9 +2071,7 @@ CC       839.263    6.578
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=1 (57.1%)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=2 (64.3%)
+[Serial Refine] Processing pass=1, turbine_depth=2 (64.3%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=3 (71.4%)
@@ -2091,7 +2086,7 @@ CC       839.263    6.578
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 1.658 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 1.584 s
 </pre></div>
 </div>
 </div>
@@ -2170,7 +2165,7 @@ CC       839.263    6.578
   
     By National Renewable Energy Laboratory<br/>
   
-      &copy; Copyright 2022.<br/>
+      &copy; Copyright 2023.<br/>
 </p>
         </footer>
     </div>
