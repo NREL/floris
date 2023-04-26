@@ -55,6 +55,7 @@ EXTRAS = {
         "sphinx-book-theme",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
+        "sphinxcontrib.mermaid",
     },
     "develop": {
         "pytest",
