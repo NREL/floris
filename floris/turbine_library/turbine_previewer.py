@@ -840,14 +840,15 @@ class TurbineLibrary:
         """
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (7, 5))
+        fig_kwargs.setdefault("figsize", (6, 5))
 
         fig = plt.figure(**fig_kwargs)
-        ax1 = fig.add_subplot(221)
-        ax2 = fig.add_subplot(222)
-        ax3 = fig.add_subplot(223)
-        ax4 = fig.add_subplot(224)
-        ax_list = [ax1, ax2, ax3, ax4]
+        ax1 = fig.add_subplot(321)
+        ax2 = fig.add_subplot(322)
+        ax3 = fig.add_subplot(323)
+        ax4 = fig.add_subplot(324)
+        ax5 = fig.add_subplot(325)
+        ax_list = [ax1, ax2, ax3, ax4, ax5]
 
         self.plot_power_curves(
             fig,
@@ -856,23 +857,30 @@ class TurbineLibrary:
             wind_speed=wind_speed,
             plot_kwargs=plot_kwargs,
         )
-        self.plot_Ct_curves(
+        self.plot_Cp_curves(
             fig,
-            ax2,
+            ax3,
             which=which,
             wind_speed=wind_speed,
             plot_kwargs=plot_kwargs,
         )
-        self.plot_rotor_diameters(fig, ax3, which=which, bar_kwargs=bar_kwargs)
+        self.plot_Ct_curves(
+            fig,
+            ax5,
+            which=which,
+            wind_speed=wind_speed,
+            plot_kwargs=plot_kwargs,
+        )
+        self.plot_rotor_diameters(fig, ax2, which=which, bar_kwargs=bar_kwargs)
         self.plot_hub_heights(fig, ax4, which=which, bar_kwargs=bar_kwargs)
 
         for ax in ax_list:
             ax.tick_params(axis='both', which='major', labelsize=7)
-            ax.xaxis.label.set_size(8)
+            ax.xaxis.label.set_size(7)
             ax.yaxis.label.set_size(8)
 
-        for ax in (ax1, ax2):
-            ax.legend(fontsize=7)
+        for ax in (ax1, ax3, ax5):
+            ax.legend(fontsize=6)
 
         if return_fig:
             return fig, ax_list
