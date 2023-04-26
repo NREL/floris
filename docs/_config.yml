@@ -20,8 +20,6 @@ latex:
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
   - references.bib
-bibliography:
-  - references.bib
 
 # Information about where the book exists on the web
 repository:
