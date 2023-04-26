@@ -32,7 +32,8 @@ tl.plot_comparison(wind_speed=ws_array, plot_kwargs={"linewidth": 1})
 
 # Each of the subpllots can also be produced individually
 # tl.plot_power_curves(wind_speed=ws_array, show=True)
-# tl.plot_thrust_curves(wind_speed=ws_array, show=True)
+# tl.plot_Cp_curves(wind_speed=ws_array, show=True)
+# tl.plot_Ct_curves(wind_speed=ws_array, show=True)
 # tl.plot_rotor_diameters(show=True)
 # tl.plot_hub_heights(show=True)
 
