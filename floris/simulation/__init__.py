@@ -37,7 +37,7 @@ isort:skip_file
 import floris.logging_manager
 
 from .base import BaseClass, BaseModel, State
-from .turbine import average_velocity, axial_induction, Ct, power, Turbine
+from .turbine import average_velocity, axial_induction, Ct, power, rotor_effective_velocity, Turbine
 from .farm import Farm
 from .grid import FlowFieldGrid, FlowFieldPlanarGrid, Grid, TurbineGrid
 from .flow_field import FlowField
