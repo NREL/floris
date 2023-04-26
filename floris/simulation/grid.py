@@ -500,6 +500,6 @@ class PointsGrid(Grid):
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z = rotate_coordinates_rel_west(self.wind_directions, point_coordinates)
-        self.x_sorted = x
-        self.y_sorted = y
-        self.z_sorted = z
+        self.x_sorted = x[:,:,:,None,None]
+        self.y_sorted = y[:,:,:,None,None]
+        self.z_sorted = z[:,:,:,None,None]
