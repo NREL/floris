@@ -51,6 +51,23 @@ class TurbineInterface:
     turbine: Turbine = field(validator=attrs.validators.instance_of(Turbine))
 
     @classmethod
+    def from_internal_library(cls, file_name: str):
+        """Loads the turbine defintion from a YAML configuration file located in
+        ``floris/floris/turbine_library/``.
+
+        Parameters
+        ----------
+        file_name : str | Path
+            The file name of the turbine configuration file.
+
+        Returns
+        -------
+        TurbineInterface
+            Creates a new ``TurbineInterface`` object.
+        """
+        return cls(turbine=Turbine.from_dict(load_yaml(INTERNAL_LIBRARY / file_name)))
+
+    @classmethod
     def from_yaml(cls, file_path: str | Path):
         """Loads the turbine defintion from a YAML configuration file.
 
