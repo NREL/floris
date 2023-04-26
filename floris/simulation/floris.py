@@ -97,15 +97,7 @@ class Floris(BaseClass):
                 time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "flow_field_grid":
-            self.grid = TurbineGrid(
-                turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameters,
-                wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
-                grid_resolution=self.solver["turbine_grid_points"],
-                time_series=self.flow_field.time_series,
-            )
-            self.field_grid = FlowFieldGrid(
+            self.grid = FlowFieldGrid(
                 turbine_coordinates=self.farm.coordinates,
                 reference_turbine_diameter=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
@@ -114,7 +106,15 @@ class Floris(BaseClass):
                 time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "flow_field_planar_grid":
-            self.grid = FlowFieldPlanarGrid(
+            self.grid = TurbineGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.rotor_diameters,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                grid_resolution=3,
+                time_series=self.flow_field.time_series,
+            )
+            self.field_grid = FlowFieldPlanarGrid(
                 turbine_coordinates=self.farm.coordinates,
                 reference_turbine_diameter=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
@@ -127,7 +127,15 @@ class Floris(BaseClass):
                 x2_bounds=self.solver["flow_field_bounds"][1],
             )
         elif self.solver["type"] == "points_grid":
-            self.grid = PointsGrid(
+            self.grid = TurbineGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.rotor_diameters,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                grid_resolution=3,
+                time_series=self.flow_field.time_series,
+            )
+            self.field_grid = PointsGrid(
                 turbine_coordinates=self.farm.coordinates,
                 reference_turbine_diameter=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
@@ -245,9 +253,15 @@ class Floris(BaseClass):
             turbine_grid_farm.construct_hub_heights()
             turbine_grid_farm.construct_rotor_diameters()
             turbine_grid_farm.construct_turbine_TSRs()
-            turbine_grid_farm.construc_turbine_pPs()
-            turbine_grid_farm.construc_turbine_ref_density_cp_cts()
+            turbine_grid_farm.construct_turbine_pPs()
+            turbine_grid_farm.construct_turbine_pTs()
+            turbine_grid_farm.construct_turbine_ref_density_cp_cts()
+            turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+            turbine_grid_farm.construct_turbine_fTilts()
+            turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
             turbine_grid_farm.construct_coordinates()
+            turbine_grid_farm.set_tilt_to_ref_tilt(self.flow_field.n_wind_directions,
+                                                   self.flow_field.n_wind_speeds)
 
             turbine_grid_farm.expand_farm_properties(
                 turbine_grid_flow_field.n_wind_directions,
@@ -255,12 +269,91 @@ class Floris(BaseClass):
                 self.grid.sorted_coord_indices
             )
 
+            turbine_grid_flow_field.initialize_velocity_field(self.grid)
+            turbine_grid_farm.initialize(self.grid.sorted_indices)
             sequential_solver(turbine_grid_farm, self.flow_field, self.grid, self.wake)
-            full_flow_sequential_solver(self.farm,
+
+            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg = \
+                                        self.flow_field.turbulence_intensity_field_sorted_avg
+
+            full_flow_sequential_solver(turbine_grid_farm,
                                         self.flow_field,
                                         self.field_grid,
                                         self.wake,
-                                        self.grid)
+                                        self.grid,
+                                        turbine_grid_flow_field
+                                        )
+
+    def solve_for_points(self, points_x, points_y, points_z):
+        # Do the calculation with the TurbineGrid for a single wind speed
+        # and wind direction and 1 point on the grid. Then, use the result
+        # to construct the full flow field grid.
+        # This function call should be for a single wind direction and wind speed
+        # since the memory consumption is very large.
+
+        # self.flow_field.initialize_velocity_field(self.grid)
+
+        vel_model = self.wake.model_strings["velocity_model"]
+
+        if vel_model=="cc":
+            full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="turbopark":
+            full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
+        else:
+
+            # Instantiate the flow_grid
+            field_grid = PointsGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.rotor_diameters,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                grid_resolution=1,
+                time_series=self.flow_field.time_series,
+                points_x=points_x,
+                points_y=points_y,
+                points_z=points_z,
+            )
+
+            # turbine_grid_farm = copy.deepcopy(self.farm)
+            # turbine_grid_flow_field = copy.deepcopy(self.flow_field)
+
+            # turbine_grid_farm.construct_turbine_map()
+            # turbine_grid_farm.construct_turbine_fCts()
+            # turbine_grid_farm.construct_turbine_power_interps()
+            # turbine_grid_farm.construct_hub_heights()
+            # turbine_grid_farm.construct_rotor_diameters()
+            # turbine_grid_farm.construct_turbine_TSRs()
+            # turbine_grid_farm.construct_turbine_pPs()
+            # turbine_grid_farm.construct_turbine_pTs()
+            # turbine_grid_farm.construct_turbine_ref_density_cp_cts()
+            # turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+            # turbine_grid_farm.construct_turbine_fTilts()
+            # turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
+            # turbine_grid_farm.construct_coordinates()
+            # turbine_grid_farm.set_tilt_to_ref_tilt(self.flow_field.n_wind_directions,
+            #                                       self.flow_field.n_wind_speeds)
+
+            # turbine_grid_farm.expand_farm_properties(
+            #     turbine_grid_flow_field.n_wind_directions,
+            #     turbine_grid_flow_field.n_wind_speeds,
+            #     self.grid.sorted_coord_indices
+            # )
+
+            # DON"T RERUN sequential_solver
+            #sequential_solver(turbine_grid_farm, self.flow_field, self.grid, self.wake)
+
+            turbine_grid_flow_field = copy.deepcopy(self.flow_field)
+            self.flow_field.initialize_velocity_field(field_grid)
+
+            full_flow_sequential_solver(self.farm,
+                                        self.flow_field,
+                                        field_grid,
+                                        self.wake,
+                                        self.grid,
+                                        turbine_grid_flow_field)
+
+            return self.flow_field.u_sorted.squeeze() #TODO: This returns an
+                           # indeterminate number of dimensions, maybe bad
 
     def finalize(self):
         # Once the wake calculation is finished, unsort the values to match
