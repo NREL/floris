@@ -54,6 +54,10 @@ fi = FlorisInterface("inputs/gch.yaml")
 # Note this visualization grid created within the calculate_horizontal_plane function will be reset
 # to what existed previously at the end of the function
 
+fi.reinitialize(wind_directions=[240])
+
+# fi.calculate_wake()
+
 # Using the FlorisInterface functions, get 2D slices.
 horizontal_plane = fi.calculate_horizontal_plane(
     x_resolution=200,
@@ -65,7 +69,10 @@ horizontal_plane = fi.calculate_horizontal_plane(
 # Create the plots
 fig, ax = plt.subplots(1, 1, figsize=(10, 8))
 
+
+
 wakeviz.visualize_cut_plane(horizontal_plane, ax=ax, title="Horizontal")
 
+print(fi.get_turbine_powers())
 
 plt.show()
