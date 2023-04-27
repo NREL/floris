@@ -54,7 +54,7 @@ fi = FlorisInterface("inputs/gch.yaml")
 # Note this visualization grid created within the calculate_horizontal_plane function will be reset
 # to what existed previously at the end of the function
 
-fi.reinitialize(wind_directions=[240])
+fi.reinitialize(wind_directions=[270])
 
 # fi.calculate_wake()
 
@@ -63,7 +63,7 @@ horizontal_plane = fi.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=90.0,
-    yaw_angles=np.array([[[30.,0.,0.]]]),
+    yaw_angles=np.array([[[0.,0.,0.]]]),
 )
 
 # Create the plots

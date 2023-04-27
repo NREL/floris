@@ -36,7 +36,7 @@ fi = FlorisInterface("inputs/gch.yaml")
 
 # Set up a two-turbine farm
 D = 126
-fi.reinitialize(layout_x=[0, 7*D], layout_y=[0, 0])
+fi.reinitialize(layout_x=[0, 3*D], layout_y=[0, 3*D])
 
 # Set the wind direction to run 360 degrees
 wd_array = np.arange(0, 360, 1)
