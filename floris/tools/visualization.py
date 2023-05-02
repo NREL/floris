@@ -99,8 +99,8 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
         ax,
         fi.layout_x,
         fi.layout_y,
-        yaw_angles[0, 0],
-        fi.floris.farm.rotor_diameters[0, 0],
+        yaw_angles.flatten(),
+        fi.floris.farm.rotor_diameters.flatten(),
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
         rotate_to_inertial_frame=rotate_to_inertial_frame,
@@ -190,6 +190,7 @@ def visualize_cut_plane(
     max_speed=None,
     cmap="coolwarm",
     levels=None,
+    clevels=None,
     color_bar=False,
     title="",
     **kwargs
@@ -215,6 +216,7 @@ def visualize_cut_plane(
 
     if not ax:
         fig, ax = plt.subplots()
+
     if vel_component=='u':
         # vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if min_speed is None:
@@ -234,14 +236,18 @@ def visualize_cut_plane(
         if max_speed is None:
             max_speed = cut_plane.df.w.max()
 
+    # Allow separate number of levels for tricontourf and for line_contour
+    if clevels is None:
+        clevels = levels
+
     # Plot the cut-through
-    fig, ax = plt.subplots()
     im = ax.tricontourf(
         cut_plane.df.x1,
         cut_plane.df.x2,
         cut_plane.df.u,
         vmin=min_speed,
         vmax=max_speed,
+        levels=clevels,
         cmap=cmap,
         extend="both",
     )
