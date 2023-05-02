@@ -27,6 +27,7 @@ from floris.simulation.turbine import (
     axial_induction,
     Ct,
     power,
+    rotor_effective_velocity,
 )
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
@@ -115,6 +116,7 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
+        tilt_angles: NDArrayFloat | list[float] | None = None,
         # points: NDArrayFloat | list[float] | None = None,
         # track_n_upstream_wakes: bool = False,
     ) -> None:
@@ -124,6 +126,8 @@ class FlorisInterface(LoggerBase):
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+            tilt_angles (NDArrayFloat | list[float] | None, optional): Turbine tilt angles.
                 Defaults to None.
             points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
                 coordinates at which the flow field velocity is to be recorded. Defaults
@@ -141,6 +145,15 @@ class FlorisInterface(LoggerBase):
                 )
             )
         self.floris.farm.yaw_angles = yaw_angles
+
+        # TODO is this required?
+        if tilt_angles is not None:
+            self.floris.farm.tilt_angles = tilt_angles
+        else:
+            self.floris.farm.set_tilt_to_ref_tilt(
+                self.floris.flow_field.n_wind_directions,
+                self.floris.flow_field.n_wind_speeds
+            )
 
         # Initialize solution space
         self.floris.initialize_domain()
@@ -200,7 +213,7 @@ class FlorisInterface(LoggerBase):
         # wtg_id: list[str] | None = None,
         # with_resolution: float | None = None,
         solver_settings: dict | None = None,
-        time_series: bool | None = False,
+        time_series: bool = False,
         layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
         het_map=None,
     ):
@@ -246,10 +259,7 @@ class FlorisInterface(LoggerBase):
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
 
-        if time_series:
-            flow_field_dict["time_series"] = True
-        else:
-            flow_field_dict["time_series"] = False
+        flow_field_dict["time_series"] = time_series
 
         ## Wake
         # if wake is not None:
@@ -277,7 +287,7 @@ class FlorisInterface(LoggerBase):
     ):
         """
         Calculates velocity values through the
-        :py:meth:`~.FlowField.calculate_wake` method at points in plane
+        :py:meth:`FlorisInterface.calculate_wake` method at points in plane
         specified by inputs.
 
         Args:
@@ -286,9 +296,8 @@ class FlorisInterface(LoggerBase):
             planar_coordinate (float, optional): Value of normal vector
                 to slice through. Defaults to None.
 
-
         Returns:
-            :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
+            :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w
         """
         # Get results vectors
         rotate_to_inertial_frame=True,
@@ -624,12 +633,11 @@ class FlorisInterface(LoggerBase):
                 "first running `FlorisInterface.calculate_wake`."
             )
 
+        rotor_effective_velocities = self.turbine_effective_velocities
+
         turbine_powers = power(
-            air_density=self.floris.flow_field.air_density,
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            pP=self.floris.farm.pPs,
+            rotor_effective_velocities=rotor_effective_velocities,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
@@ -639,7 +647,11 @@ class FlorisInterface(LoggerBase):
         turbine_Cts = Ct(
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
+            tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_Cts
@@ -648,7 +660,11 @@ class FlorisInterface(LoggerBase):
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
+            tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
         return turbine_ais
@@ -656,6 +672,23 @@ class FlorisInterface(LoggerBase):
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:
         return average_velocity(velocities=self.floris.flow_field.u)
+
+    @property
+    def turbine_effective_velocities(self) -> NDArrayFloat:
+        rotor_effective_velocities = rotor_effective_velocity(
+            air_density=self.floris.flow_field.air_density,
+            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            velocities=self.floris.flow_field.u,
+            yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
+            pP=self.floris.farm.pPs,
+            pT=self.floris.farm.pTs,
+            tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
+            turbine_type_map=self.floris.farm.turbine_type_map,
+        )
+        return rotor_effective_velocities
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field

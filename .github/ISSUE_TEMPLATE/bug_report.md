@@ -17,6 +17,10 @@ This form is written in GitHub's Markdown format. For a reference on this type
 of syntax, see GitHub's documentation:
 https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
 
+This template contains guidance for your submission within the < ! - -, - - > blocks.
+These are comments in HTML syntax and will not appear in the submission.
+Be sure to use the "Preview" feature on GitHub to ensure your submission is formatted as intended.
+
 When including code snippets, please paste the text itself and wrap the code block with
 ticks (see the other character on the tilde ~ key in a US keyboard) to format it as code.
 For example, Python code should be wrapped in ticks like this:

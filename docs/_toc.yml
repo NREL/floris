@@ -12,6 +12,7 @@ parts:
   - caption: User Reference
     chapters:
     - file: floris_101
+    - file: floating_wind_turbine
     - file: input_reference
     - file: examples
 
@@ -22,5 +23,6 @@ parts:
   - caption: Developer Reference
     chapters:
     - file: dev_guide
+    - file: architecture
     - file: code_quality
     - file: api_docs

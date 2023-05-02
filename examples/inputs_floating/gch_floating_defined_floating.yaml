@@ -1,6 +1,6 @@
 
-name: Jensen-Jimenez
-description: Three turbines using Jensen / Jimenez models
+name: GCH
+description: Example of single floating turbine where the cp/ct is calculated with floating tilt included
 floris_version: v3.0.0
 
 logging:
@@ -18,18 +18,14 @@ solver:
 farm:
   layout_x:
   - 0.0
-  - 630.0
-  - 1260.0
   layout_y:
   - 0.0
-  - 0.0
-  - 0.0
   turbine_type:
-  - nrel_5MW
+  - !include turbine_files/nrel_5MW_floating_defined_floating.yaml
 
 flow_field:
   air_density: 1.225
-  reference_wind_height: -1 # -1 is code for use the hub height
+  reference_wind_height: -1
   turbulence_intensity: 0.06
   wind_directions:
   - 270.0
@@ -41,13 +37,13 @@ flow_field:
 wake:
   model_strings:
     combination_model: sosfs
-    deflection_model: jimenez
+    deflection_model: gauss
     turbulence_model: crespo_hernandez
-    velocity_model: jensen
+    velocity_model: gauss
 
-  enable_secondary_steering: false
-  enable_yaw_added_recovery: false
-  enable_transverse_velocities: false
+  enable_secondary_steering: true
+  enable_yaw_added_recovery: true
+  enable_transverse_velocities: true
 
   wake_deflection_parameters:
     gauss:

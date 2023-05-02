@@ -341,18 +341,28 @@ def plot_rotor_values(
     save_path: Union[str, None] = None,
     show: bool = False
 ) -> Union[None, tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]]:
-    """Plots the gridded turbine rotor values. This is intended to be used for
+    """
+    Plots the gridded turbine rotor values. This is intended to be used for
     understanding the differences between two sets of values, so each subplot can be
     used for inspection of what values are differing, and under what conditions.
 
     Parameters:
         values (np.ndarray): The 5-dimensional array of values to plot. Should be:
             N wind directions x N wind speeds x N turbines X N rotor points X N rotor points.
-        cmap (str): The matplotlib colormap to be used, default "coolwarm".
-        return_fig_objects (bool): Indicator to return the primary figure objects for
+        wd_index (int): The index for the wind direction to plot.
+        ws_index (int): The index of the wind speed to plot.
+        n_rows (int): The number of rows to include for subplots. With ncols, this should
+            generally add up to the number of turbines in the farm.
+        n_cols (int): The number of columns to include for subplots. With ncols, this should
+            generally add up to the number of turbines in the farm.
+        t_range (range | None): Optional. The turbine count used to create the title for each
+            subplot. If not provided, the size of the 2-th dimension of `values` is used.
+        cmap (str): Optional. The matplotlib colormap to be used, default "coolwarm".
+        return_fig_objects (bool): Optional. Flag to return the primary figure objects for
             further editing, default False.
-        save_path (str | None): Where to save the figure, if a value is provided.
-        t_range is turbine range; i.e. the turbine index to loop over
+        save_path (str | None): Optional. Where to save the figure, if a value is provided.
+        show (bool): Optional. Flag to run `plt.show()` to present all the plots
+            currently created with matplotlib.
 
     Returns:
         None | tuple[plt.figure, plt.axes, plt.axis, plt.colorbar]: If
@@ -361,9 +371,9 @@ def plot_rotor_values(
 
     Example:
         from floris.tools.visualization import plot_rotor_values
-        plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0)
-        plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0)
-        plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, show=True)
+        plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, ncols=4)
+        plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0, n_rows=1, ncols=4)
+        plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, n_rows=1, ncols=4, show=True)
     """
 
     cmap = plt.cm.get_cmap(name=cmap)
@@ -373,6 +383,11 @@ def plot_rotor_values(
 
     fig = plt.figure()
     axes = fig.subplots(n_rows, n_cols)
+
+    # For 1x1, fig.subplots returns an Axes object, but for more than 1x1 it returns a np.array.
+    # In this case, convert to an array so that the rest of this function can be simplified.
+    if n_rows == 1 and n_cols == 1:
+        axes = np.array([axes])
 
     titles = np.array([f"T{i}" for i in t_range])
 
