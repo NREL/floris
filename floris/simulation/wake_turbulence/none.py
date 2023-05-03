@@ -37,7 +37,7 @@ class NoneWakeTurbulence(BaseModel):
         axial_induction: np.ndarray,
     ) -> None:
         """Return unchanged field of turbulence intensities"""
-        # self.logger.info(
-        #     "The wake-turbulence model is set to 'none'. Turbulence model disabled."
-        # )
+        self.logger.info(
+            "The wake-turbulence model is set to 'none'. Turbulence model disabled."
+        )
         return np.ones_like(x) * ambient_TI
