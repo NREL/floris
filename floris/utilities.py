@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import os
 from typing import Tuple
+from xmlrpc.client import Boolean
 
 import numpy as np
 import yaml
@@ -220,7 +221,9 @@ def wind_delta(wind_directions: NDArrayFloat | float):
 
 def rotate_coordinates_rel_west(
     wind_directions: NDArrayFloat,
-    coordinates: NDArrayFloat
+    coordinates: NDArrayFloat,
+    center_of_rotation: NDArrayFloat | None = None,
+    return_center_of_rotation: Boolean = False
 ):
     """
     This function rotates the given coordinates so that they are aligned with West (270) rather
@@ -243,8 +246,16 @@ def rotate_coordinates_rel_west(
     x_coordinates, y_coordinates, z_coordinates = coordinates.T
 
     # Find center of rotation - this is the center of box bounding all of the turbines
-    x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
-    y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+    if center_of_rotation is None:
+        x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
+        y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+    else:
+        x_center_of_rotation = center_of_rotation[0]
+        y_center_of_rotation = center_of_rotation[1]
+        
+    #x_center_of_rotation = 378.0
+    #y_center_of_rotation = 0
+    #import ipdb; ipdb.set_trace()
 
     # Rotate turbine coordinates about the center
     x_coord_offset = x_coordinates - x_center_of_rotation
@@ -260,7 +271,12 @@ def rotate_coordinates_rel_west(
         + y_center_of_rotation
     )
     z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
-    return x_coord_rotated, y_coord_rotated, z_coord_rotated
+    
+    if return_center_of_rotation:
+        cor = np.array([x_center_of_rotation, y_center_of_rotation])
+        return x_coord_rotated, y_coord_rotated, z_coord_rotated, cor
+    else:
+        return x_coord_rotated, y_coord_rotated, z_coord_rotated
 
 
 class Loader(yaml.SafeLoader):

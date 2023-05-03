@@ -145,6 +145,7 @@ class Floris(BaseClass):
                 points_x=self.solver["points_x"],
                 points_y=self.solver["points_y"],
                 points_z=self.solver["points_z"],
+                center_of_rotation=self.grid.center_of_rotation
             )
         else:
             raise ValueError(
@@ -312,6 +313,7 @@ class Floris(BaseClass):
                 points_x=points_x,
                 points_y=points_y,
                 points_z=points_z,
+                center_of_rotation=self.grid.center_of_rotation
             )
 
             # turbine_grid_farm = copy.deepcopy(self.farm)

@@ -38,6 +38,10 @@ fi = FlorisInterface("inputs/gch.yaml")
 D = 126
 fi.reinitialize(layout_x=[0, 3*D], layout_y=[0, 3*D])
 
+fig, ax = plt.subplots(1,2)
+fig.set_size_inches(10,4)
+ax[0].scatter(fi.layout_x, fi.layout_y, color="black", label="turbine")
+
 # Set the wind direction to run 360 degrees
 wd_array = np.arange(0, 360, 1)
 fi.reinitialize(wind_directions=wd_array)
@@ -46,9 +50,28 @@ fi.reinitialize(wind_directions=wd_array)
 fi.calculate_wake()
 
 # Simulate a met mast in between the turbines
-points_x = [3*D, 3*D, 3*D, 3*D]
-points_y = [0, 0, 0, 0]
+met_mast_option = 0 # or try 1, 2, 3 (requires python >= 3.10)
+match met_mast_option:
+    case 0:
+        points_x = [3*D]*4
+        points_y = [0]*4
+    case 1:
+        points_x = [200.]*4
+        points_y = [200.]*4
+    case 2:
+        points_x = [20.]*4
+        points_y = [20.]*4
+    case 3:
+        points_x = [305.]*4
+        points_y = [158.]*4
+
 points_z = [30, 90, 150, 250]
+    
+ax[0].scatter(points_x, points_y, color="red", marker="x", label="test point")
+ax[0].grid()
+ax[0].set_xlabel("x [m]")
+ax[0].set_ylabel("y [m]")
+ax[0].legend()
 
 # Collect the points
 u_at_points = fi.sample_flow_at_points(points_x = points_x,
@@ -57,12 +80,11 @@ u_at_points = fi.sample_flow_at_points(points_x = points_x,
 
 
 # Plot the velocities
-fig, ax = plt.subplots()
 for z_idx, z in enumerate(points_z):
-    ax.plot(wd_array, u_at_points[:, z_idx].flatten(), label=f'Speed at {z} m')
-ax.grid()
-ax.legend()
-ax.set_xlabel('Wind Direction (deg)')
-ax.set_ylabel('Wind Speed (m/s)')
+    ax[1].plot(wd_array, u_at_points[:, z_idx].flatten(), label=f'Speed at {z} m')
+ax[1].grid()
+ax[1].legend()
+ax[1].set_xlabel('Wind Direction (deg)')
+ax[1].set_ylabel('Wind Speed (m/s)')
 
 plt.show()

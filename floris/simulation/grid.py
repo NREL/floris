@@ -149,6 +149,7 @@ class TurbineGrid(Grid):
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
+    center_of_rotation: NDArrayFloat = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -208,7 +209,12 @@ class TurbineGrid(Grid):
         # the foot of the turbine where the tower meets the ground.
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, cor = rotate_coordinates_rel_west(
+            self.wind_directions, 
+            self.turbine_coordinates_array, 
+            return_center_of_rotation=True
+        )
+        self.center_of_rotation = cor
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
@@ -487,6 +493,7 @@ class PointsGrid(Grid):
     points_x: NDArrayFloat = field()
     points_y: NDArrayFloat = field()
     points_z: NDArrayFloat = field()
+    center_of_rotation: NDArrayFloat | None = field(default=None)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -499,7 +506,11 @@ class PointsGrid(Grid):
         point_coordinates = np.array(list(zip(self.points_x, self.points_y, self.points_z)))
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, point_coordinates)
+        x, y, z = rotate_coordinates_rel_west(
+            self.wind_directions, 
+            point_coordinates,
+            self.center_of_rotation
+        )
         self.x_sorted = x[:,:,:,None,None]
         self.y_sorted = y[:,:,:,None,None]
         self.z_sorted = z[:,:,:,None,None]
