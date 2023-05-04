@@ -157,7 +157,7 @@ def compute_tilt_angles_for_floating_turbines(
 def rotor_effective_velocity(
     air_density: float,
     ref_density_cp_ct: float,
-    velocities: NDArrayFloat,
+    average_velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt_cp_ct: NDArrayFloat,
@@ -178,7 +178,7 @@ def rotor_effective_velocity(
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, yaw_angle)
-        velocities = velocities[:, :, ix_filter]
+        average_velocities = average_velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
@@ -189,10 +189,7 @@ def rotor_effective_velocity(
     # Compute the rotor effective velocity adjusting for air density
     # TODO: This correction is currently split across two functions: this one and `power`, where in
     # `power` the returned power is multiplied by the reference air density
-    rotor_effective_velocities = (
-        ((air_density/ref_density_cp_ct)**(1/3))
-        * average_velocity(velocities)
-    )
+    rotor_effective_velocities = (air_density/ref_density_cp_ct)**(1/3) * average_velocities
 
     # Compute the rotor effective velocity adjusting for yaw settings
     rotor_effective_velocities = _rotor_velocity_yaw_correction(
@@ -218,9 +215,7 @@ def power(
     rotor_effective_velocities: NDArrayFloat,
     power_interp: NDArrayObject,
     turbine_type_map: NDArrayObject,
-    interpolation_method: str = "simple-cubature",
     ix_filter: NDArrayInt | Iterable[int] | None = None,
-    cubature_coefficients: dict | None = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
@@ -273,7 +268,7 @@ def power(
 
 
 def Ct(
-    velocities: NDArrayFloat,
+    average_velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt_cp_ct: NDArrayFloat,
@@ -282,7 +277,6 @@ def Ct(
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
-    cubature_coefficients: NDArrayFloat | Iterable[int] | None = None,
 ) -> NDArrayFloat:
 
     """Thrust coefficient of a turbine incorporating the yaw angle.
@@ -321,18 +315,12 @@ def Ct(
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, yaw_angle)
-        velocities = velocities[:, :, ix_filter]
+        average_velocities = average_velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, :, ix_filter]
-
-    average_velocities = average_velocity(
-        velocities,
-        method="simple-cubature",
-        cubature_coefficients=cubature_coefficients
-    )
 
     # Compute the tilt, if using floating turbines
     old_tilt_angle = copy.deepcopy(tilt_angle)
@@ -361,7 +349,7 @@ def Ct(
 
 
 def axial_induction(
-    velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
+    average_velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     tilt_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     ref_tilt_cp_ct: NDArrayFloat,
@@ -370,7 +358,6 @@ def axial_induction(
     correct_cp_ct_for_tilt: NDArrayBool, # (wind directions, wind speeds, turbines)
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
-    cubature_coefficients: dict | None = None,
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
@@ -408,7 +395,7 @@ def axial_induction(
 
     # Get Ct first before modifying any data
     thrust_coefficient = Ct(
-        velocities,
+        average_velocities,
         yaw_angle,
         tilt_angle,
         ref_tilt_cp_ct,
@@ -416,8 +403,7 @@ def axial_induction(
         tilt_interp,
         correct_cp_ct_for_tilt,
         turbine_type_map,
-        ix_filter,
-        cubature_coefficients
+        ix_filter
     )
 
     # Then, process the input arguments as needed for this function

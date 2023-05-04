@@ -624,20 +624,17 @@ class FlorisInterface(LoggerBase):
                 "first running `FlorisInterface.calculate_wake`."
             )
 
-        rotor_effective_velocities = self.turbine_effective_velocities
-
         turbine_powers = power(
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
-            rotor_effective_velocities=rotor_effective_velocities,
+            rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
-            cubature_coefficients=self.floris.grid.cubature_coefficients,
         )
         return turbine_powers
 
     def get_turbine_Cts(self) -> NDArrayFloat:
         turbine_Cts = Ct(
-            velocities=self.floris.flow_field.u,
+            average_velocities=self.turbine_average_velocities,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
@@ -645,13 +642,12 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
-            cubature_coefficients=self.floris.grid.cubature_coefficients,
         )
         return turbine_Cts
 
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
-            velocities=self.floris.flow_field.u,
+            average_velocities=self.turbine_average_velocities,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
@@ -659,20 +655,23 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
-            cubature_coefficients=self.floris.grid.cubature_coefficients,
         )
         return turbine_ais
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:
-        return average_velocity(velocities=self.floris.flow_field.u)
+        return average_velocity(
+            velocities=self.floris.flow_field.u,
+            method="simple-cubature",
+            cubature_coefficients=self.floris.grid.cubature_coefficients
+        )
 
     @property
     def turbine_effective_velocities(self) -> NDArrayFloat:
         rotor_effective_velocities = rotor_effective_velocity(
             air_density=self.floris.flow_field.air_density,
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
-            velocities=self.floris.flow_field.u,
+            average_velocities=self.turbine_average_velocities,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
@@ -953,8 +952,6 @@ class FlorisInterface(LoggerBase):
 
 
         return aep
-
-
 
     @property
     def layout_x(self):

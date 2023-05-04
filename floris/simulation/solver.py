@@ -91,8 +91,14 @@ def sequential_solver(
         u_i = flow_field.u_sorted[:, :, i:i+1]
         v_i = flow_field.v_sorted[:, :, i:i+1]
 
+        average_velocities = average_velocity(
+            flow_field.u_sorted,
+            method="simple-cubature",
+            cubature_coefficients=grid.cubature_coefficients
+        )
+
         ct_i = Ct(
-            velocities=flow_field.u_sorted,
+            average_velocities=average_velocities,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
             ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
@@ -101,13 +107,12 @@ def sequential_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
-            cubature_coefficients=grid.cubature_coefficients,
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)
         ct_i = ct_i[:, :, 0:1, None, None]
         axial_induction_i = axial_induction(
-            velocities=flow_field.u_sorted,
+            average_velocities=average_velocities,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
             ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
@@ -115,8 +120,7 @@ def sequential_solver(
             tilt_interp=farm.turbine_fTilts,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-            cubature_coefficients=grid.cubature_coefficients,
+            ix_filter=[i]
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
