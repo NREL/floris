@@ -29,10 +29,11 @@ from floris.type_dec import (
     NDArrayInt,
 )
 from floris.utilities import (
-    rotate_coordinates_rel_west,
     reverse_rotate_coordinates_rel_west,
-    Vec3
+    rotate_coordinates_rel_west,
+    Vec3,
 )
+
 
 @define
 class Grid(ABC):
@@ -215,7 +216,10 @@ class TurbineGrid(Grid):
         # the foot of the turbine where the tower meets the ground.
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array,
+        )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
@@ -247,7 +251,7 @@ class TurbineGrid(Grid):
                 disc_area_radius,
                 self.grid_resolution,
                 dtype=floris_float_type,
-                axis=1
+                axis=1,
             )
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
@@ -275,21 +279,6 @@ class TurbineGrid(Grid):
         self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=2)
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=2)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=2)
-
-        self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=2)
-        self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=2)
-        self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
-
-        # Now calculate grid coordinates in original frame (from 270 deg perspective)
-        self.x_inertial_frame, self.y_inertial_frame, self.z_inertial_frame = \
-            reverse_rotate_coordinates_rel_west(
-                wind_directions=self.wind_directions,
-                grid_x=self.x,
-                grid_y=self.y,
-                grid_z=self.z,
-                x_center_of_rotation=xc_rot,
-                y_center_of_rotation=yc_rot,
-            )
 
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
@@ -333,7 +322,10 @@ class FlowFieldGrid(Grid):
         """
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array,
+        )
 
         # Construct the arrays storing the grid points
         eps = 0.01
@@ -403,7 +395,10 @@ class FlowFieldPlanarGrid(Grid):
         Then, create the grid based on this wind-from-left orientation
         """
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array,
+        )
         max_diameter = np.max(self.reference_turbine_diameter)
 
         if self.normal_vector == "z":  # Rules of thumb for horizontal plane
