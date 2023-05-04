@@ -27,7 +27,7 @@ from scipy.spatial import ConvexHull
 from floris.simulation import Floris
 from floris.tools.cut_plane import CutPlane
 from floris.tools.floris_interface import FlorisInterface
-from floris.utilities import rotate_coordinates_rel_west
+from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
 def show_plots():
@@ -81,6 +81,7 @@ def plot_turbines_with_fi(
     fi: FlorisInterface,
     ax=None,
     color=None,
+    wd=None,
     yaw_angles=None,
     rotate_to_inertial_frame=False,
 ):
@@ -98,9 +99,11 @@ def plot_turbines_with_fi(
         fig, ax = plt.subplots()
     if yaw_angles is None:
         yaw_angles = fi.floris.farm.yaw_angles
+    if wd is None:
+        wd = fi.floris.flow_field.wind_directions[0]
 
-    if rotate_to_inertial_frame:
-        yaw_angles = yaw_angles + (270.0 - fi.floris.flow_field.wind_directions[0])
+    # Rotate yaw angles to inertial frame for plotting turbines relative to wind direction
+    yaw_angles = yaw_angles - wind_delta(np.array(wd))
 
     plot_turbines(
         ax,
