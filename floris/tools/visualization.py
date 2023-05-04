@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib import rcParams
+from scipy.spatial import ConvexHull
 
 from floris.simulation import Floris
 from floris.tools.cut_plane import CutPlane
@@ -56,7 +57,7 @@ def plot_turbines(
     """
     if color is None:
         color = "k"
-    
+
     if not rotate_to_inertial_frame:
         coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
         layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
@@ -76,7 +77,13 @@ def plot_turbines(
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=None, rotate_to_inertial_frame=False):
+def plot_turbines_with_fi(
+    fi: FlorisInterface,
+    ax=None,
+    color=None,
+    yaw_angles=None,
+    rotate_to_inertial_frame=False,
+):
     """
     Wrapper function to plot turbines which extracts the data
     from a FLORIS interface object
@@ -91,7 +98,7 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
         fig, ax = plt.subplots()
     if yaw_angles is None:
         yaw_angles = fi.floris.farm.yaw_angles
-    
+
     if rotate_to_inertial_frame:
         yaw_angles = yaw_angles + (270.0 - fi.floris.flow_field.wind_directions[0])
 
@@ -107,7 +114,12 @@ def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=N
     )
 
 
-def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, rotate_to_inertial_frame=False, **kwargs):
+def add_turbine_id_labels(
+    fi: FlorisInterface,
+    ax: plt.Axes,
+    rotate_to_inertial_frame=False,
+    **kwargs,
+):
     """
     Adds index labels to a plot based on the given FlorisInterface.
     See the pyplot.annotate docs for more info:
@@ -262,6 +274,111 @@ def visualize_cut_plane(
         alpha=0.3,
         **kwargs
     )
+
+    if cut_plane.normal_vector == "x":
+        ax.invert_xaxis()
+
+    if color_bar:
+        cbar = plt.colorbar(im, ax=ax)
+        cbar.set_label('m/s')
+
+    # Set the title
+    ax.set_title(title)
+
+    # Make equal axis
+    ax.set_aspect("equal")
+
+    return im
+
+
+def visualize_heterogeneous_cut_plane(
+    cut_plane,
+    fi,
+    ax=None,
+    vel_component='u',
+    min_speed=None,
+    max_speed=None,
+    cmap="coolwarm",
+    levels=None,
+    color_bar=False,
+    title="",
+    plot_het_bounds=True,
+    **kwargs
+):
+    """
+    Generate pseudocolor mesh plot of the cut_plane.
+
+    Args:
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
+            plane through wind plant.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
+            to None.
+        min_speed (float, optional): Minimum value of wind speed for
+            contours. Defaults to None.
+        max_speed (float, optional): Maximum value of wind speed for
+            contours. Defaults to None.
+        cmap (str, optional): Colormap specifier. Defaults to
+            'coolwarm'.
+
+    Returns:
+        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
+    """
+
+    if not ax:
+        fig, ax = plt.subplots()
+    if vel_component=='u':
+        # vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if min_speed is None:
+            min_speed = cut_plane.df.u.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.u.max()
+    elif vel_component=='v':
+        # vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if min_speed is None:
+            min_speed = cut_plane.df.v.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.v.max()
+    elif vel_component=='w':
+        # vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if min_speed is None:
+            min_speed = cut_plane.df.w.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.w.max()
+
+    # Plot the cut-through
+    im = ax.tricontourf(
+        cut_plane.df.x1,
+        cut_plane.df.x2,
+        cut_plane.df.u,
+        vmin=min_speed,
+        vmax=max_speed,
+        cmap=cmap,
+        extend="both",
+    )
+
+    # Add line contour
+    line_contour_cut_plane(
+        cut_plane,
+        ax=ax,
+        levels=levels,
+        colors="b",
+        linewidths=0.8,
+        alpha=0.3,
+        **kwargs
+    )
+
+    # Plot the user-defined heterogeneous flow area
+    if plot_het_bounds:
+        points = np.array(list(zip(fi.het_config['x_locs'], fi.het_config['y_locs'])))
+        hull = ConvexHull(points)
+        h = ax.plot(
+            points[np.append(hull.vertices, hull.vertices[0]),0],
+            points[np.append(hull.vertices, hull.vertices[0]), 1],
+            'k--',
+            lw=2,
+        )
+        ax.plot(points[hull.vertices,0], points[hull.vertices,1], 'ko')
+        ax.legend(h, ["defined heterogeneous bounds"], loc=1)
 
     if cut_plane.normal_vector == "x":
         ax.invert_xaxis()
