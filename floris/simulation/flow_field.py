@@ -98,14 +98,14 @@ class FlowField(FromDictMixin):
             if len(self.het_map[0][0].points[0]) == 2:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
-                    grid.x_sorted,
-                    grid.y_sorted
+                    grid.x_sorted_inertial_frame,
+                    grid.y_sorted_inertial_frame
                 )
             elif len(self.het_map[0][0].points[0]) == 3:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
-                    grid.x_sorted,
-                    grid.y_sorted,
+                    grid.x_sorted_inertial_frame,
+                    grid.y_sorted_inertial_frame,
                     grid.z_sorted
                 )
 
