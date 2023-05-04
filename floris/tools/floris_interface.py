@@ -300,7 +300,6 @@ class FlorisInterface(LoggerBase):
             :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w
         """
         # Get results vectors
-        rotate_to_inertial_frame=True,
         if (normal_vector == "z") and rotate_to_inertial_frame:
             x_flat = self.floris.grid.x_sorted_inertial_frame[0, 0].flatten()
             y_flat = self.floris.grid.y_sorted_inertial_frame[0, 0].flatten()
