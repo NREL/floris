@@ -1026,29 +1026,21 @@ class FlorisInterface(LoggerBase):
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind diretion
             # Linear interpolation is used for points within the user-defined area of values,
-            # while a nearest-neighbor interpolant is used for points outside that region
+            # while the freestream wind speed is used for points outside that region
             in_region = [
                 LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=1.0)
-                for speed_up in speed_ups
-            ]
-            out_region = [
-                NearestNDInterpolator(list(zip(x, y, z)), speed_up)
                 for speed_up in speed_ups
             ]
         else:
             # Compute the 2-dimensional interpolants for each wind diretion
             # Linear interpolation is used for points within the user-defined area of values,
-            # while a nearest-neighbor interpolant is used for points outside that region
+            # while the freestream wind speed is used for points outside that region
             in_region = [
                 LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=1.0)
                 for speed_up in speed_ups
             ]
-            out_region = [
-                NearestNDInterpolator(list(zip(x, y)), speed_up)
-                for speed_up in speed_ups
-            ]
 
-        return [in_region, out_region]
+        return in_region
 
 
     @property

@@ -95,13 +95,13 @@ class FlowField(FromDictMixin):
         # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
         else:
-            if len(self.het_map[0][0].points[0]) == 2:
+            if len(self.het_map[0].points[0]) == 2:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
                     grid.x_sorted_inertial_frame,
                     grid.y_sorted_inertial_frame
                 )
-            elif len(self.het_map[0][0].points[0]) == 3:
+            elif len(self.het_map[0].points[0]) == 3:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
                     grid.x_sorted_inertial_frame,
@@ -174,7 +174,7 @@ class FlowField(FromDictMixin):
     def calculate_speed_ups(self, het_map, x, y, z=None):
 
         # Check that the het maps wd dimension matches
-        if self.n_wind_directions!= np.array(het_map).shape[1]:
+        if self.n_wind_directions!= np.array(het_map).shape[0]:
             raise ValueError(
                 "het_map's wind direction dimension not equal to number of wind directions"
             )
@@ -183,38 +183,16 @@ class FlowField(FromDictMixin):
             # Calculate the 3-dimensional speed ups; reshape is needed as the generator
             # adds an extra dimension
             speed_ups = np.reshape(
-                [het_map[0][i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range( len(het_map[0]))],
+                [het_map[i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range( len(het_map))],
                 np.shape(x)
             )
-
-            # If there are any points requested outside the user-defined area, use the
-            # nearest-neighbor interplonat to determine those speed up values
-            if np.isnan(speed_ups).any():
-                idx_nan = np.where(np.isnan(speed_ups))
-                speed_ups_out_of_region = np.reshape(
-                    [het_map[1][i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range(len(het_map[1]))],
-                    np.shape(x)
-                )
-
-                speed_ups[idx_nan] = speed_ups_out_of_region[idx_nan]
 
         else:
             # Calculate the 2-dimensional speed ups; reshape is needed as the generator
             # adds an extra dimension
             speed_ups = np.reshape(
-                [het_map[0][i](x[i:i+1], y[i:i+1]) for i in range(len(het_map[0]))],
+                [het_map[i](x[i:i+1], y[i:i+1]) for i in range(len(het_map))],
                 np.shape(x)
             )
-
-            # If there are any points requested outside the user-defined area, use the
-            # nearest-neighbor interplonat to determine those speed up values
-            if np.isnan(speed_ups).any():
-                idx_nan = np.where(np.isnan(speed_ups))
-                speed_ups_out_of_region = np.reshape(
-                    [het_map[1][i](x[i:i+1], y[i:i+1]) for i in range(len(het_map[1]))],
-                    np.shape(x)
-                )
-
-                speed_ups[idx_nan] = speed_ups_out_of_region[idx_nan]
 
         return speed_ups
