@@ -85,10 +85,11 @@ def plot_turbines_with_fi(
     from a FLORIS interface object
 
     Args:
-        fi (:py:class:`floris.tools.flow_data.FlowData`):
-                FlowData object.
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.
-        color (str, optional): Color to plot turbines
+        fi (:py:class:`floris.tools.floris_interface.FlorisIntreface`): FlorisIntreface object.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults to None.
+        color (str, optional): Color to plot turbines. Defaults to None.
+        wd (list, optional): The wind direction to plot the turbines relative to. Defaults to None.
+        yaw_angles (NDArray, optional): The yaw angles for the turbines. Defaults to None.
     """
     if not ax:
         fig, ax = plt.subplots()
@@ -210,6 +211,14 @@ def visualize_cut_plane(
             contours. Defaults to None.
         cmap (str, optional): Colormap specifier. Defaults to
             'coolwarm'.
+        levels (np.array, optional): Contour levels for line contour plot.
+            Defaults to None.
+        clevels (np.array, optional): Contour levels for tricontourf plot.
+            Defaults to None.
+        color_bar (Boolean, optional): Flag to include a color bar on the plot.
+            Defaults to False.
+        title (str, optional): User-supplied title for the plot. Defaults to "".
+        **kwargs: Additional parameters to pass to line contour plot.
 
     Returns:
         im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
