@@ -15,19 +15,22 @@
 from __future__ import annotations
 
 import attrs
+import matplotlib.path as mpltPath
 import numpy as np
 from attrs import define, field
 
-from floris.simulation import Grid
+from floris.simulation import (
+    BaseClass,
+    Grid,
+)
 from floris.type_dec import (
     floris_array_converter,
-    FromDictMixin,
     NDArrayFloat,
 )
 
 
 @define
-class FlowField(FromDictMixin):
+class FlowField(BaseClass):
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_veer: float = field(converter=float)
@@ -95,6 +98,24 @@ class FlowField(FromDictMixin):
         # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
         else:
+
+            path = mpltPath.Path(self.het_map[0].points)
+            points = np.column_stack(
+                (
+                    grid.x_sorted_inertial_frame.flatten(),
+                    grid.y_sorted_inertial_frame.flatten(),
+                )
+            )
+            inside = path.contains_points(points)
+            if not np.all(inside):
+                self.logger.warning(
+                    "The calculated flow field contains points outside of the the user-defined "
+                    "heterogeneous inflow bounds. For these points, the interpolated value has "
+                    "been filled with the freestream wind speed. If this is not the desired "
+                    "behavior, the user will need to expand the heterogeneous inflow bounds to "
+                    "fully cover the calculated flow field area."
+                )
+
             if len(self.het_map[0].points[0]) == 2:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
