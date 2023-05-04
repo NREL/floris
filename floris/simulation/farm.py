@@ -152,19 +152,6 @@ class Farm(BaseClass):
                 turbine_map[turbine["turbine_type"]] = turbine
                 full_path = turbine["turbine_type"]
 
-            # Log a warning if the reference air density doesn't exist
-            if "ref_density_cp_ct" not in turbine:
-                self.logger.warning(
-                    f"The value ref_density_cp_ct is not defined in the file {full_path}."
-                    "This value is not the simulated air density but is the density "
-                    "at which the cp/ct curves are defined. In previous versions, this "
-                    "was assumed to be 1.225. Future versions of FLORIS will give an error "
-                    "if this value is not explicitly defined. Currently, this value is "
-                    "being set to the prior default value of 1.225."
-                )
-                turbine['ref_density_cp_ct'] = 1.225
-                turbine_map[turbine["turbine_type"]] = turbine
-
         self.turbine_definitions = [
             copy.deepcopy(turbine_map[el]) if isinstance(el, str)
             else copy.deepcopy(turbine_map[el["turbine_type"]])

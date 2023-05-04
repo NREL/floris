@@ -115,19 +115,3 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     farm_data["turbine_type"] = ["FAKE_TURBINE"] * N_TURBINES
     with pytest.raises(FileNotFoundError):
         Farm.from_dict(farm_data)
-
-
-def test_farm_unique_loading(sample_inputs_fixture: SampleInputs, caplog):
-    # Setup the current location and the logging capture
-    ROOT = Path(__file__).parent
-    caplog.set_level(logging.WARNING)
-
-    # Setup the turbine data
-    turbine = load_yaml(ROOT / "../floris/turbine_library/x_20MW.yaml")
-    farm_data = sample_inputs_fixture.farm
-    farm_data["turbine_type"] = [turbine, turbine, turbine]
-    _ = Farm.from_dict(farm_data)
-
-    # The x_20MW turbine is missing air density, so a warning is logged, make sure this
-    # is only logged once, per the unique turbine checking
-    assert len(caplog.records) == 1
