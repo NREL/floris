@@ -41,7 +41,6 @@ def plot_turbines(
     rotor_diameters,
     color: str | None = None,
     wind_direction: float = 270.0,
-    rotate_to_inertial_frame=False,
 ):
     """
     Plot wind plant layout from turbine locations.
@@ -58,15 +57,12 @@ def plot_turbines(
     if color is None:
         color = "k"
 
-    if not rotate_to_inertial_frame:
-        coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
-        layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
-            np.array([wind_direction]),
-            coordinates_array
-        )
-    else:
-        layout_x = layout_x[None, None, :]
-        layout_y = layout_y[None, None, :]
+    # Rotate layout to inertial frame for plotting turbines relative to wind direction
+    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
+    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
+        np.array([wind_direction]),
+        coordinates_array
+    )
 
     for x, y, yaw, d in zip(layout_x[0,0], layout_y[0,0], yaw_angles, rotor_diameters):
         R = d / 2.0
@@ -83,7 +79,6 @@ def plot_turbines_with_fi(
     color=None,
     wd=None,
     yaw_angles=None,
-    rotate_to_inertial_frame=False,
 ):
     """
     Wrapper function to plot turbines which extracts the data
@@ -113,16 +108,10 @@ def plot_turbines_with_fi(
         fi.floris.farm.rotor_diameters.flatten(),
         color=color,
         wind_direction=fi.floris.flow_field.wind_directions[0],
-        rotate_to_inertial_frame=rotate_to_inertial_frame,
     )
 
 
-def add_turbine_id_labels(
-    fi: FlorisInterface,
-    ax: plt.Axes,
-    rotate_to_inertial_frame=False,
-    **kwargs,
-):
+def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
     """
     Adds index labels to a plot based on the given FlorisInterface.
     See the pyplot.annotate docs for more info:
@@ -135,19 +124,16 @@ def add_turbine_id_labels(
         ax (plt.Axes): Axes object to add the labels.
     """
 
-    if rotate_to_inertial_frame:
-        coordinates_array = np.array([
-            [x, y, 0.0]
-            for x, y in list(zip(fi.layout_x, fi.layout_y))
-        ])
-        wind_direction = fi.floris.flow_field.wind_directions[0]
-        layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
-            np.array([wind_direction]),
-            coordinates_array
-        )
-    else:
-        layout_x = fi.layout_x[None, None, :]
-        layout_y = fi.layout_y[None, None, :]
+    # Rotate layout to intertial frame for plotting turbines relative to wind direction
+    coordinates_array = np.array([
+        [x, y, 0.0]
+        for x, y in list(zip(fi.layout_x, fi.layout_y))
+    ])
+    wind_direction = fi.floris.flow_field.wind_directions[0]
+    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
+        np.array([wind_direction]),
+        coordinates_array
+    )
 
     for i in range(fi.floris.farm.n_turbines):
         ax.annotate(
