@@ -83,6 +83,8 @@ class Grid(ABC):
     x_sorted_inertial_frame: NDArrayFloat = field(init=False)
     y_sorted_inertial_frame: NDArrayFloat = field(init=False)
     z_sorted_inertial_frame: NDArrayFloat = field(init=False)
+    xc_rot: NDArrayFloat = field(init=False)
+    yc_rot: NDArrayFloat = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
@@ -210,7 +212,7 @@ class TurbineGrid(Grid):
         # the foot of the turbine where the tower meets the ground.
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(
+        x, y, z, self.xc_rot, self.yc_rot = rotate_coordinates_rel_west(
             self.wind_directions,
             self.turbine_coordinates_array,
         )
@@ -281,8 +283,8 @@ class TurbineGrid(Grid):
                 grid_x=self.x_sorted,
                 grid_y=self.y_sorted,
                 grid_z=self.z_sorted,
-                x_center_of_rotation=xc_rot,
-                y_center_of_rotation=yc_rot,
+                x_center_of_rotation=self.xc_rot,
+                y_center_of_rotation=self.yc_rot,
             )
 
 @define
@@ -316,7 +318,7 @@ class FlowFieldGrid(Grid):
         """
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(
+        x, y, z, self.xc_rot, self.yc_rot = rotate_coordinates_rel_west(
             self.wind_directions,
             self.turbine_coordinates_array,
         )
@@ -348,8 +350,8 @@ class FlowFieldGrid(Grid):
                 grid_x=self.x_sorted,
                 grid_y=self.y_sorted,
                 grid_z=self.z_sorted,
-                x_center_of_rotation=xc_rot,
-                y_center_of_rotation=yc_rot,
+                x_center_of_rotation=self.xc_rot,
+                y_center_of_rotation=self.yc_rot,
             )
 
 @define
@@ -389,7 +391,7 @@ class FlowFieldPlanarGrid(Grid):
         Then, create the grid based on this wind-from-left orientation
         """
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z, xc_rot, yc_rot = rotate_coordinates_rel_west(
+        x, y, z, self.xc_rot, self.yc_rot = rotate_coordinates_rel_west(
             self.wind_directions,
             self.turbine_coordinates_array,
         )
@@ -461,8 +463,8 @@ class FlowFieldPlanarGrid(Grid):
                 grid_x=self.x_sorted,
                 grid_y=self.y_sorted,
                 grid_z=self.z_sorted,
-                x_center_of_rotation=xc_rot,
-                y_center_of_rotation=yc_rot,
+                x_center_of_rotation=self.xc_rot,
+                y_center_of_rotation=self.yc_rot,
             )
 
         # self.sorted_indices = self.x.argsort(axis=2)
