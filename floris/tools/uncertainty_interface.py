@@ -26,7 +26,7 @@ class UncertaintyInterface(LoggerBase):
     def __init__(
         self,
         configuration,
-        het_conifg=None,
+        het_config=None,
         unc_options=None,
         unc_pmfs=None,
         fix_yaw_in_relative_frame=False,
@@ -110,7 +110,7 @@ class UncertaintyInterface(LoggerBase):
         if isinstance(configuration, FlorisInterface):
             self.fi = configuration
         else:
-            self.fi = FlorisInterface(configuration, het_config=het_conifg)
+            self.fi = FlorisInterface(configuration, het_config=het_config)
 
         self.reinitialize_uncertainty(
             unc_options=unc_options,
