@@ -203,8 +203,10 @@ def visualize_cut_plane(
     Args:
         cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
             plane through wind plant.
-        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
+        ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes. Defaults
             to None.
+        vel_component (str, optional): The velocity component that the cut plane is
+            perpendicular to.
         min_speed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
         max_speed (float, optional): Maximum value of wind speed for
@@ -298,25 +300,39 @@ def visualize_heterogeneous_cut_plane(
     max_speed=None,
     cmap="coolwarm",
     levels=None,
+    clevels=None,
     color_bar=False,
     title="",
     plot_het_bounds=True,
     **kwargs
 ):
     """
-    Generate pseudocolor mesh plot of the cut_plane.
+    Generate pseudocolor mesh plot of the heterogeneous cut_plane.
 
     Args:
         cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
             plane through wind plant.
+        fi (:py:class:`~.tools.floris_interface.FlorisInterface`): FlorisInterface object.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
             to None.
+        vel_component (str, optional): The velocity component that the cut plane is
+            perpendicular to.
         min_speed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
         max_speed (float, optional): Maximum value of wind speed for
             contours. Defaults to None.
         cmap (str, optional): Colormap specifier. Defaults to
             'coolwarm'.
+        levels (np.array, optional): Contour levels for line contour plot.
+            Defaults to None.
+        clevels (np.array, optional): Contour levels for tricontourf plot.
+            Defaults to None.
+        color_bar (Boolean, optional): Flag to include a color bar on the plot.
+            Defaults to False.
+        title (str, optional): User-supplied title for the plot. Defaults to "".
+        plot_het_bonds (boolean, optional): Flag to include the user-defined bounds of the
+            heterogeneous wind speed area. Defaults to True.
+        **kwargs: Additional parameters to pass to line contour plot.
 
     Returns:
         im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
@@ -343,6 +359,10 @@ def visualize_heterogeneous_cut_plane(
         if max_speed is None:
             max_speed = cut_plane.df.w.max()
 
+    # Allow separate number of levels for tricontourf and for line_contour
+    if clevels is None:
+        clevels = levels
+
     # Plot the cut-through
     im = ax.tricontourf(
         cut_plane.df.x1,
@@ -350,6 +370,7 @@ def visualize_heterogeneous_cut_plane(
         cut_plane.df.u,
         vmin=min_speed,
         vmax=max_speed,
+        levels=clevels,
         cmap=cmap,
         extend="both",
     )
