@@ -214,98 +214,54 @@ class TurbineGrid(Grid):
         #         the rotor radius.
         #         Defaults to 0.5.
 
+        # Coefficients
+        coeff = {
+            "r": [-0.8164965809277260327324280, 0.0000000000000000000000000, 0.8164965809277260327324280],
+            "t": [-0.8660254037844386467637232, 0.0000000000000000000000000, 0.8660254037844386467637232],
+            "q": [ 0.5000000000000000000000000, 1.0000000000000000000000000, 0.5000000000000000000000000],
+            "A": [ 0.3750000000000000000000000, 0.2500000000000000000000000, 0.3750000000000000000000000],
+            "B": 1.047197551196598,
+        }
 
-        method = "simple-cubature"
-        self.cubature_coefficients = None
-        if method == "turbine_grid":
-            # Create the data for the turbine grids
-            radius_ratio = 0.5
-            disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
-            template_grid = np.ones(
-                (
-                    self.n_wind_directions,
-                    self.n_wind_speeds,
-                    self.n_turbines,
-                    self.grid_resolution,
-                    self.grid_resolution,
-                ),
-                dtype=floris_float_type
-            )
-            # Calculate the radial distance from the center of the turbine rotor.
-            # If a grid resolution of 1 is selected, create a disc_grid of zeros, as
-            # np.linspace would just return the starting value of -1 * disc_area_radius
-            # which would place the point below the center of the rotor.
-            if self.grid_resolution == 1:
-                disc_grid = np.zeros((np.shape(disc_area_radius)[0], 1 ))
-            else:
-                disc_grid = np.linspace(
-                    -1 * disc_area_radius,
-                    disc_area_radius,
-                    self.grid_resolution,
-                    dtype=floris_float_type,
-                    axis=1
-                )
-            # Construct the turbine grids
-            # Here, they are already rotated to the correct orientation for each wind direction
-            _x = x[:, :, :, None, None] * template_grid
+        self.cubature_coefficients = coeff
+        yv = np.kron(coeff["r"], coeff["q"])
+        zv = np.kron(coeff["r"], coeff["t"])
 
-            ones_grid = np.ones(
-                (self.n_turbines, self.grid_resolution, self.grid_resolution),
-                dtype=floris_float_type
-            )
-            _y = y[:, :, :, None, None] + template_grid * ( disc_grid[None, None, :, :, None])
-            _z = z[:, :, :, None, None] + template_grid * ( disc_grid[:, None, :] * ones_grid )
+        # Here, they are already rotated to the correct orientation for each wind direction
+        template_grid = np.ones(
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                self.n_turbines,
+                len(yv),  # Number of coordinates
+                1,
+            ),
+            dtype=floris_float_type
+        )
+        _x = x[:, :, :, None, None] * template_grid
+        _y = y[:, :, :, None, None] * template_grid
+        _z = z[:, :, :, None, None] * template_grid
+        for ti in range(self.n_turbines):
+            _y[:, :, ti, :, :] += yv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
+            _z[:, :, ti, :, :] += zv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
 
-        elif ((method == "simple-cubature") or (method == "cubic-cubature")):
-            # Coefficients
-            coeff = {
-                "r": [-0.8164965809277260327324280, 0.0000000000000000000000000, 0.8164965809277260327324280],
-                "t": [-0.8660254037844386467637232, 0.0000000000000000000000000, 0.8660254037844386467637232],
-                "q": [ 0.5000000000000000000000000, 1.0000000000000000000000000, 0.5000000000000000000000000],
-                "A": [ 0.3750000000000000000000000, 0.2500000000000000000000000, 0.3750000000000000000000000],
-                "B": 1.047197551196598,
-            }
-            # n = len(coeff["r"])
-            self.cubature_coefficients = coeff
-            yv = np.kron(coeff["r"], coeff["q"])
-            zv = np.kron(coeff["r"], coeff["t"])
+        # import matplotlib.pyplot as plt
+        # fig, ax = plt.subplots()
+        # ax.plot(y, z, 'o')
+        # ax.axis("equal")
+        # theta = np.linspace(0.0, 2*np.pi, 1000)
+        # ax.plot(np.cos(theta), np.sin(theta), 'k--')
+        # plt.show()
 
-            # Here, they are already rotated to the correct orientation for each wind direction
-            template_grid = np.ones(
-                (
-                    self.n_wind_directions,
-                    self.n_wind_speeds,
-                    self.n_turbines,
-                    len(yv),  # Number of coordinates
-                    1,
-                ),
-                dtype=floris_float_type
-            )
-            _x = x[:, :, :, None, None] * template_grid
-            _y = y[:, :, :, None, None] * template_grid
-            _z = z[:, :, :, None, None] * template_grid
-            for ti in range(self.n_turbines):
-                _y[:, :, ti, :, :] += yv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
-                _z[:, :, ti, :, :] += zv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
+        # y_interp = rotor_radius * y - Yc
+        # z_interp = rotor_radius * z - Zc
+        # s = np.sum(
+        #     np.multiply(
+        #         np.kron(coeff["A"], np.ones(1, n)),
+        #         funct(y_interp, z_interp)
+        #     )
+        # ) *  coeff["B"] * rotor_radius**2.0;
 
-            # import matplotlib.pyplot as plt
-            # fig, ax = plt.subplots()
-            # ax.plot(y, z, 'o')
-            # ax.axis("equal")
-            # theta = np.linspace(0.0, 2*np.pi, 1000)
-            # ax.plot(np.cos(theta), np.sin(theta), 'k--')
-            # plt.show()
-
-            # y_interp = rotor_radius * y - Yc
-            # z_interp = rotor_radius * z - Zc
-            # s = np.sum(
-            #     np.multiply(
-            #         np.kron(coeff["A"], np.ones(1, n)),
-            #         funct(y_interp, z_interp)
-            #     )
-            # ) *  coeff["B"] * rotor_radius**2.0;
-        else:
-            raise UserWarning("'{:s}' is not a valid interpolation scheme.".format(method))
         # Sort the turbines at each wind direction
 
         # Get the sorted indices for the x coordinates. These are the indices
