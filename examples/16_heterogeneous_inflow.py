@@ -16,7 +16,6 @@
 import matplotlib.pyplot as plt
 
 from floris.tools import FlorisInterface
-from floris.tools.floris_interface import generate_heterogeneous_wind_map
 from floris.tools.visualization import visualize_cut_plane
 
 
@@ -44,12 +43,16 @@ speed_ups = [[2.0, 2.0, 1.0, 1.0]]
 x_locs = [-300.0, -300.0, 2600.0, 2600.0]
 y_locs = [ -300.0, 300.0, -300.0, 300.0]
 
-# Generate the linear interpolation to be used for the heterogeneous inflow.
-het_map_2d = generate_heterogeneous_wind_map(speed_ups, x_locs, y_locs)
+# Create the configuration dictionary to be used for the heterogeneous inflow.
+het_config_2d = {
+    'speed_ups': speed_ups,
+    'x_locs': x_locs,
+    'y_locs': y_locs,
+}
 
 # Initialize FLORIS with the given input file via FlorisInterface.
 # Also, pass the heterogeneous map into the FlorisInterface.
-fi_2d = FlorisInterface("inputs/gch.yaml", het_map=het_map_2d)
+fi_2d = FlorisInterface("inputs/gch.yaml", het_config=het_config_2d)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fi_2d.reinitialize(wind_shear=0.0)
@@ -92,12 +95,17 @@ x_locs = [-300.0, -300.0, -300.0, -300.0, 2600.0, 2600.0, 2600.0, 2600.0]
 y_locs = [-300.0, 300.0, -300.0, 300.0, -300.0, 300.0, -300.0, 300.0]
 z_locs = [540.0, 540.0, 0.0, 0.0, 540.0, 540.0, 0.0, 0.0]
 
-# Generate the linear interpolation to be used for the heterogeneous inflow.
-het_map_3d = generate_heterogeneous_wind_map(speed_ups, x_locs, y_locs, z_locs)
+# Create the configuration dictionary to be used for the heterogeneous inflow.
+het_config_3d = {
+    'speed_ups': speed_ups,
+    'x_locs': x_locs,
+    'y_locs': y_locs,
+    'z_locs': z_locs,
+}
 
 # Initialize FLORIS with the given input file via FlorisInterface.
 # Also, pass the heterogeneous map into the FlorisInterface.
-fi_3d = FlorisInterface("inputs/gch.yaml", het_map=het_map_3d)
+fi_3d = FlorisInterface("inputs/gch.yaml", het_config=het_config_3d)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fi_3d.reinitialize(wind_shear=0.0)
