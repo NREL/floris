@@ -50,7 +50,7 @@ class FlorisInterface(LoggerBase):
                 - **logging**: See `floris.simulation.floris.Floris` for more details.
     """
 
-    def __init__(self, configuration: dict | str | Path, het_map=None):
+    def __init__(self, configuration: dict | str | Path, het_config: dict | None = None):
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
@@ -62,7 +62,28 @@ class FlorisInterface(LoggerBase):
         else:
             raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
 
-        # Store the heterogeneous map for use after reinitailization
+        # Create the heterogeneous wind map interpolant if het_config is supplied
+        # Check that the correct keys are supplied for the het_config dict
+        if het_config is not None:
+            for k in ["speed_ups", "x_locs", "y_locs"]:
+                if k not in het_config.keys():
+                    raise ValueError(
+                        "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
+                        f" with 'z_locs' as optional. Missing '{k}'."
+                    )
+            if "z_locs" not in het_config:
+                het_config["z_locs"] = None
+            # Create the heterogeneous wind map interpolant
+            het_map = self.generate_heterogeneous_wind_map(
+                speed_ups=het_config['speed_ups'],
+                x=het_config['x_locs'],
+                y=het_config['y_locs'],
+                z=het_config['z_locs'],
+            )
+        else:
+            het_map = None
+        # Store the heterogeneous info and map for use after reinitailization
+        self.het_config = het_config
         self.het_map = het_map
         # Assign the heterogeneous map to the flow field
         # Needed for a direct call to fi.calculate_wake without fi.reinitialize
@@ -960,6 +981,34 @@ class FlorisInterface(LoggerBase):
         return aep
 
 
+    def generate_heterogeneous_wind_map(self, speed_ups, x, y, z=None):
+        if z is not None:
+            # Compute the 3-dimensional interpolants for each wind diretion
+            # Linear interpolation is used for points within the user-defined area of values,
+            # while a nearest-neighbor interpolant is used for points outside that region
+            in_region = [
+                LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=1.0)
+                for speed_up in speed_ups
+            ]
+            out_region = [
+                NearestNDInterpolator(list(zip(x, y, z)), speed_up)
+                for speed_up in speed_ups
+            ]
+        else:
+            # Compute the 2-dimensional interpolants for each wind diretion
+            # Linear interpolation is used for points within the user-defined area of values,
+            # while a nearest-neighbor interpolant is used for points outside that region
+            in_region = [
+                LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=1.0)
+                for speed_up in speed_ups
+            ]
+            out_region = [
+                NearestNDInterpolator(list(zip(x, y)), speed_up)
+                for speed_up in speed_ups
+            ]
+
+        return [in_region, out_region]
+
 
     @property
     def layout_x(self):
@@ -999,34 +1048,6 @@ class FlorisInterface(LoggerBase):
         else:
             return xcoords, ycoords
 
-
-def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
-    if z is not None:
-        # Compute the 3-dimensional interpolants for each wind diretion
-        # Linear interpolation is used for points within the user-defined area of values,
-        # while a nearest-neighbor interpolant is used for points outside that region
-        in_region = [
-            LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=np.nan)
-            for speed_up in speed_ups
-        ]
-        out_region = [
-            NearestNDInterpolator(list(zip(x, y, z)), speed_up)
-            for speed_up in speed_ups
-        ]
-    else:
-        # Compute the 2-dimensional interpolants for each wind diretion
-        # Linear interpolation is used for points within the user-defined area of values,
-        # while a nearest-neighbor interpolant is used for points outside that region
-        in_region = [
-            LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=np.nan)
-            for speed_up in speed_ups
-        ]
-        out_region = [
-            NearestNDInterpolator(list(zip(x, y)), speed_up)
-            for speed_up in speed_ups
-        ]
-
-    return [in_region, out_region]
 
 ## Functionality removed in v3
 
