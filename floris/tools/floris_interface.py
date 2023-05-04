@@ -48,6 +48,17 @@ class FlorisInterface(LoggerBase):
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
                 - **logging**: See `floris.simulation.floris.Floris` for more details.
+        het_config (:py:obj:`dict`, optional): The heterogeneous inflow configuration dictionary.
+            The configuration should have the following inputs specified.
+                - **speed_ups**: See `floris.tools.floris_interface.generate_heterogeneous_wind_map'
+                    for more details.
+                - **x_locs**: See `floris.tools.floris_interface.generate_heterogeneous_wind_map'
+                    for more details.
+                - **y_locs**: See `floris.tools.floris_interface.generate_heterogeneous_wind_map'
+                    for more details.
+                - **z_locs** (optional): See
+                    `floris.tools.floris_interface.generate_heterogeneous_wind_map'
+                    for more details.
     """
 
     def __init__(self, configuration: dict | str | Path, het_config: dict | None = None):
@@ -63,23 +74,8 @@ class FlorisInterface(LoggerBase):
             raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
 
         # Create the heterogeneous wind map interpolant if het_config is supplied
-        # Check that the correct keys are supplied for the het_config dict
         if het_config is not None:
-            for k in ["speed_ups", "x_locs", "y_locs"]:
-                if k not in het_config.keys():
-                    raise ValueError(
-                        "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
-                        f" with 'z_locs' as optional. Missing '{k}'."
-                    )
-            if "z_locs" not in het_config:
-                het_config["z_locs"] = None
-            # Create the heterogeneous wind map interpolant
-            het_map = self.generate_heterogeneous_wind_map(
-                speed_ups=het_config['speed_ups'],
-                x=het_config['x_locs'],
-                y=het_config['y_locs'],
-                z=het_config['z_locs'],
-            )
+            het_map = self.generate_heterogeneous_wind_map(het_config=het_config)
         else:
             het_map = None
         # Store the heterogeneous info and map for use after reinitailization
@@ -132,7 +128,7 @@ class FlorisInterface(LoggerBase):
 
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
-        return FlorisInterface(self.floris.as_dict(), het_map=self.het_map)
+        return FlorisInterface(self.floris.as_dict(), het_config=self.het_config)
 
     def calculate_wake(
         self,
@@ -236,7 +232,7 @@ class FlorisInterface(LoggerBase):
         solver_settings: dict | None = None,
         time_series: bool = False,
         layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
-        het_map=None,
+        het_config=None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -260,8 +256,8 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
-        if het_map is not None:
-            self.het_map = het_map
+        if het_config is not None:
+            self.het_config = het_config
 
         ## Farm
         if layout is not None:
@@ -298,7 +294,12 @@ class FlorisInterface(LoggerBase):
         # Create a new instance of floris and attach to self
         self.floris = Floris.from_dict(floris_dict)
         # Re-assign the hetergeneous inflow map to flow field
-        self.floris.flow_field.het_map = self.het_map
+        if self.het_config is not None:
+            het_map = self.generate_heterogeneous_wind_map(het_config=self.het_config)
+        else:
+            het_map = None
+        self.het_map = het_map
+        self.floris.flow_field.het_map = het_map
 
     def get_plane_of_points(
         self,
@@ -978,7 +979,50 @@ class FlorisInterface(LoggerBase):
         return aep
 
 
-    def generate_heterogeneous_wind_map(self, speed_ups, x, y, z=None):
+    def generate_heterogeneous_wind_map(self, het_config):
+        """This function creates the heterogeneous interpolant used to calculate heterogeneous
+        inflows.
+
+        Args:
+            het_config (dict): The heterogeneous inflow configuration dictionary.
+            The configuration should have the following inputs specified.
+                - **speed_ups** (list): A list of speed up factors that will multiply the specified
+                    freestream wind speed. This 2-dimensional array should have an array of
+                    multiplicative factors defined for each wind direction.
+                - **x_locs** (list): A list of x locations at which the speed up factors are
+                    defined.
+                - **y_locs**: A list of y locations at which the speed up factors are
+                    defined.
+                - **z_locs** (optional): A list of z locations at which the speed up factors are
+                    defined.
+
+        Raises:
+            ValueError: ("het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
+                f" with 'z_locs' as optional. Missing '{k}'.") raised if the configuration
+                dictionary is missing one of the required key-value pairs.
+
+        Returns:
+            LinearNDInterpolator: Returns a linear interpolant for computing wind speed based on an
+                x and y location in the flow field. This is computed using Scipy's
+                LinearNDInterpolator and uses a fill value equal to the freestream for interpolated
+                values outside of the user-defined heterogeneous map bounds.
+        """
+        # Check that the correct keys are supplied for the het_config dict
+        for k in ["speed_ups", "x_locs", "y_locs"]:
+            if k not in het_config.keys():
+                raise ValueError(
+                    "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
+                    f" with 'z_locs' as optional. Missing '{k}'."
+                )
+        if "z_locs" not in het_config:
+            # If only a 2D case, add "None" for the z locations
+            het_config["z_locs"] = None
+
+        speed_ups = het_config['speed_ups']
+        x = het_config['x_locs']
+        y = het_config['y_locs']
+        z = het_config['z_locs']
+
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind diretion
             # Linear interpolation is used for points within the user-defined area of values,
