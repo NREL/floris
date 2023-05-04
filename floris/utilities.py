@@ -218,7 +218,12 @@ def wind_delta(wind_directions: NDArrayFloat | float):
     return (wind_directions - 270) % 360
 
 
-def rotate_coordinates_rel_west(wind_directions, coordinates, x_center_of_rotation=None, y_center_of_rotation=None):
+def rotate_coordinates_rel_west(
+    wind_directions,
+    coordinates,
+    x_center_of_rotation=None,
+    y_center_of_rotation=None
+):
     """
     This function rotates the given coordinates so that they are aligned with West (270) rather
     than North (0). The rotation happens about the centroid of the coordinates.
@@ -256,12 +261,20 @@ def rotate_coordinates_rel_west(wind_directions, coordinates, x_center_of_rotati
         + y_center_of_rotation
     )
     z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
-    return x_coord_rotated, y_coord_rotated, z_coord_rotated, x_center_of_rotation, y_center_of_rotation
+    return x_coord_rotated, y_coord_rotated, z_coord_rotated, x_center_of_rotation, \
+        y_center_of_rotation
 
 
-def reverse_rotate_coordinates_rel_west(wind_directions, grid_x, grid_y, grid_z, x_center_of_rotation, y_center_of_rotation):
+def reverse_rotate_coordinates_rel_west(
+    wind_directions,
+    grid_x, grid_y,
+    grid_z,
+    x_center_of_rotation,
+    y_center_of_rotation
+):
     # Calculate the difference in given wind direction from 270 / West
-    wind_deviation_from_west = -1.0 * wind_delta(wind_directions)  # We are rotating in the other direction
+    # We are rotating in the other direction
+    wind_deviation_from_west = -1.0 * wind_delta(wind_directions)
 
     # Construct the arrays storing the turbine locations
     grid_x_reversed = np.zeros_like(grid_x)
