@@ -439,6 +439,31 @@ def axial_induction(
     )
 
 
+def simple_mean(array, axis=0):
+    return np.mean(array, axis=axis)
+
+def cubic_mean(array, axis=0):
+    return np.cbrt(np.mean(array ** 3.0, axis=axis))
+
+def simple_cubature(array, cubature_coefficients, axis=0):
+    A = cubature_coefficients["A"]
+    B = cubature_coefficients["B"]
+    n = len(cubature_coefficients["r"])
+    weights = np.kron(A, np.ones((1, n))).flatten()
+    weights = weights / np.mean(weights)
+    product = (array * weights[None, None, None, :, None])
+    return simple_mean(product, axis)
+
+def cubic_cubature(array, cubature_coefficients, axis=0):
+    A = cubature_coefficients["A"]
+    B = cubature_coefficients["B"]
+    n = len(cubature_coefficients["r"])
+    weights = np.kron(A, np.ones((1, n))).flatten()
+    weights = weights / np.mean(weights)
+    product = (array * weights[None, None, None, :, None])
+    return cubic_mean(product, axis)
+
+
 def average_velocity(
     velocities: NDArrayFloat,
     method: str,
@@ -467,28 +492,16 @@ def average_velocity(
 
     axis = tuple([3 + i for i in range(velocities.ndim - 3)])
     if method == "simple-mean":
-        s = (np.mean(velocities, axis=axis))
+        return simple_mean(velocities, axis=axis)
 
     elif method == "cubic-mean":
-        s = np.cbrt(np.mean(velocities ** 3.0, axis=axis))
+        return cubic_mean(velocities, axis=axis)
 
-    elif ((method == "simple-cubature") or (method == "cubic-cubature")):
-        A = cubature_coefficients["A"]
-        B = cubature_coefficients["B"]
-        n = len(cubature_coefficients["r"])
-        weights = np.kron(A, np.ones((1, n))).flatten()
-        weights = weights / np.mean(weights)
-        product = (velocities * weights[None, None, None, :, None])
-        if method == "cubic-cubature":
-            s = np.cbrt(np.mean(product ** 3.0, axis=axis))
-        elif method == "simple-cubature":
-            s = np.mean(product, axis=axis)
+    elif method == "simple-cubature":
+        return simple_cubature(velocities, cubature_coefficients=cubature_coefficients, axis=axis)
     
-    else:
-        raise UserWarning("Not a valid method specified.")
-
-    return s
-
+    elif method == "cubic-cubature":
+        return cubic_cubature(velocities, cubature_coefficients=cubature_coefficients, axis=axis)
 
 @define
 class PowerThrustTable(FromDictMixin):
