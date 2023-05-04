@@ -231,7 +231,6 @@ class FlorisInterface(LoggerBase):
         # with_resolution: float | None = None,
         solver_settings: dict | None = None,
         time_series: bool = False,
-        layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
         het_config=None,
     ):
         # Export the floris object recursively as a dictionary
@@ -260,13 +259,6 @@ class FlorisInterface(LoggerBase):
             self.het_config = het_config
 
         ## Farm
-        if layout is not None:
-            self.logger.warning(
-                "Use the `layout_x` and `layout_y` parameters in place of `layout` "
-                "because the `layout` parameter will be deprecated in 3.3."
-            )
-            layout_x = layout[0]
-            layout_y = layout[1]
         if layout_x is not None:
             farm_dict["layout_x"] = layout_x
         if layout_y is not None:

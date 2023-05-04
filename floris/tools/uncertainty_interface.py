@@ -335,7 +335,6 @@ class UncertaintyInterface(LoggerBase):
         reference_wind_height=None,
         turbulence_intensity=None,
         air_density=None,
-        layout=None,
         layout_x=None,
         layout_y=None,
         turbine_type=None,
@@ -344,14 +343,6 @@ class UncertaintyInterface(LoggerBase):
         """Pass to the FlorisInterface reinitialize function. To allow users
         to directly replace a FlorisInterface object with this
         UncertaintyInterface object, this function is required."""
-
-        if layout is not None:
-            self.logger.warning(
-                "Use the `layout_x` and `layout_y` parameters in place of `layout` "
-                "because the `layout` parameter will be deprecated in 3.3."
-            )
-            layout_x = layout[0]
-            layout_y = layout[1]
 
         # Just passes arguments to the floris object
         self.fi.reinitialize(
