@@ -215,7 +215,7 @@ class ParallelComputingInterface(LoggerBase):
 
                 # Prepare lightweight data to pass along
                 if isinstance(self.fi, FlorisInterface):
-                    fi_information = (fi_dict_split, self.fi.het_map, None, None)
+                    fi_information = (fi_dict_split, None, None)
                 else:
                     fi_information = (
                         fi_dict_split,
