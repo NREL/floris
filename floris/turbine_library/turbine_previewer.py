@@ -884,6 +884,7 @@ class TurbineLibrary:
             fig,
             ax1,
             which=which,
+            exclude=exclude,
             wind_speeds=wind_speeds,
             plot_kwargs=plot_kwargs,
         )
@@ -891,6 +892,7 @@ class TurbineLibrary:
             fig,
             ax3,
             which=which,
+            exclude=exclude,
             wind_speeds=wind_speeds,
             plot_kwargs=plot_kwargs,
         )
@@ -898,10 +900,11 @@ class TurbineLibrary:
             fig,
             ax5,
             which=which,
+            exclude=exclude,
             wind_speeds=wind_speeds,
             plot_kwargs=plot_kwargs,
         )
-        self.plot_rotor_diameters(fig, ax2, which=which, bar_kwargs=bar_kwargs)
+        self.plot_rotor_diameters(fig, ax2, which=which, exclude=exclude, bar_kwargs=bar_kwargs)
         self.plot_hub_heights(fig, ax4, which=which, bar_kwargs=bar_kwargs)
 
         for ax in ax_list:
