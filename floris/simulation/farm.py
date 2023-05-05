@@ -148,7 +148,8 @@ class Farm(BaseClass):
         # class with a different layout but not a new self.turbine_type could cause the data
         # to be out of sync.
         _turbine_types = [
-            t["turbine_type"] if isinstance(t, dict) else t for t in self.turbine_type
+            copy.deepcopy(t["turbine_type"]) if isinstance(t, dict) else t
+            for t in self.turbine_type
         ]
 
         # If 1 turbine definition is given, expand to N turbines; this covers a 1-turbine
