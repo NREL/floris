@@ -20,12 +20,10 @@ latex:
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
   - references.bib
-bibliography:
-  - references.bib
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/NREL/FLORIS
+  url: https://github.com/NREL/floris
   path_to_book: docs
   branch: main
 

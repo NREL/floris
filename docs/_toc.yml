@@ -19,7 +19,7 @@ parts:
 
   - caption: Theory and Background
     chapters:
-    - file: wake_comparison
+    - file: wake_models
 
   - caption: Developer Reference
     chapters:
