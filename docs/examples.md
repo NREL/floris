@@ -150,11 +150,6 @@ listed here!
 Plot power and thrust curves for each turbine type included in the
 turbine library. Additionally, plot the losses due to yaw.
 
-### 18b_compare_turbines.py
-Plots the primary turbine characteristics for each of the turbines in FLORIS `turbine_library`.
-Additionally, this demonstrates how a user can further interact with turbine configuration files
-in both the internal turbine library and a user provided turbine library.
-
 ### 19_streamlit_demo.py
 Creates a Streamlit dashboard to quickly modify the layout and
 atmospheric conditions of a wind farm.
