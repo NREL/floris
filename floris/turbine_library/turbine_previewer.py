@@ -12,7 +12,6 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from math import ceil
 from pathlib import Path
 
 import attrs
@@ -26,37 +25,15 @@ from floris.simulation import (
     Turbine,
 )
 from floris.type_dec import NDArrayFloat
-from floris.utilities import load_yaml
+from floris.utilities import (
+    load_yaml,
+    round_nearest,
+    round_nearest_2_or_5,
+)
 
 
 INTERNAL_LIBRARY = Path(__file__).parent
 DEFAULT_WIND_SPEEDS = np.linspace(0, 40, 81)
-
-
-def round_nearest_2_or_5(x: int | float) -> int:
-    """Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 2 or 5.
-
-    Args:
-        x (int | float): The number to be rounded.
-
-    Returns:
-        int: The rounded number.
-    """
-    base_2 = 2
-    base_5 = 5
-    return min(base_2 * ceil((x + 0.5) / base_2), base_5 * ceil((x + 0.5) / base_5))
-
-
-def round_nearest(x: int | float, base: int = 5) -> int:
-    """Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.
-
-    Args:
-        x (int | float): The number to be rounded.
-
-    Returns:
-        int: The rounded number.
-    """
-    return base * ceil((x + 0.5) / base)
 
 
 @define(auto_attribs=True)
