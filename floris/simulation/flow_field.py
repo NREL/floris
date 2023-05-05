@@ -100,17 +100,9 @@ class FlowField(BaseClass):
         """
         if value is not None:
             if self.n_wind_directions!= np.array(value).shape[0]:
-                if np.array(value).shape[0]:
-                    self.logger.warning(
-                        "Multiple wind directions defined with just one hetergeneous speed up "
-                        "map. The same speed up values are being used for all the wind directions."
-                    )
-                else:
-                    raise ValueError(
-                        "The het_map's wind direction dimension not equal to number of wind "
-                        "directions. Either the dimensions must be equal, or just one set up "
-                        "of speed ups must be defined to be used across all wind directions."
-                    )
+                raise ValueError(
+                    "The het_map's wind direction dimension not equal to number of wind directions."
+                )
 
 
     def __attrs_post_init__(self) -> None:
