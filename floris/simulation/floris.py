@@ -64,6 +64,9 @@ class Floris(BaseClass):
 
     def __attrs_post_init__(self) -> None:
 
+        # Check for deprecated inputs
+        self.check_deprecated_inputs()
+
         # Initialize farm quanitities that depend on other objects
         self.farm.construct_turbine_map()
         self.farm.construct_turbine_fCts()
@@ -137,6 +140,51 @@ class Floris(BaseClass):
             self.logging["file"]["enable"],
             self.logging["file"]["level"],
         )
+
+    def check_deprecated_inputs(self):
+        """ This function can be used when new inputs are added to FLORIS input files
+         to provide an informative error and suggest a fix to the user. """
+
+        # Check for missing values add in version 3.2 and 3.4
+        for turb in self.farm.turbine_definitions:
+
+            try:
+                turb['ref_density_cp_ct']
+            except KeyError:
+                # Raise an error that ref_density_cp_ct is not defined in the input file
+                raise KeyError(
+                    "Beginning in FLORIS v3.2, the turbine definition file must include "
+                    "'ref_density_cp_ct'.  This value represents the air density at which "
+                    "the provided Cp and Ct values were definied.  Previously this was "
+                    "implicitly assumed to be 1.225 kg/m^3, and other air density values "
+                    "applied were assumed to be a deviation from the defined level.  However, "
+                    "this is not always true so FLORIS now requires the user to explicitly "
+                    "define the reference density.  Please add 'ref_density_cp_ct' to your "
+                    "turbine definition file and try again. "
+                    "    "
+                    "For an example see floris/turbine_library/nrel_5MW.yaml where "
+                    "the entry "
+                    "ref_density_cp_ct: 1.225 "
+                    "has been added to the file. "
+                )
+
+            try:
+                turb['ref_tilt_cp_ct']
+            except KeyError:
+                # Raise an error that ref_density_cp_ct is not defined in the input file
+                raise KeyError(
+                "Beginning in FLORIS v3.4, the turbine definition file must include "
+                "'ref_tilt_cp_ct'. This value represents the tilt angle at which "
+                "the provided Cp and Ct values were definied.  This added parameter "
+                "is important as FLORIS v3.4 now supports tilting turbines. "
+                "  Please add 'ref_tilt_cp_ct' to your "
+                "turbine definition file and try again. "
+                "For an example see floris/turbine_library/nrel_5MW.yaml where "
+                "the entry "
+                "ref_tilt_cp_ct: 5.0 "
+                "has been added to the file. "
+                )
+
 
     # @profile
     def initialize_domain(self):
