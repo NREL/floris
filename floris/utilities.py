@@ -297,7 +297,5 @@ class Loader(yaml.SafeLoader):
 Loader.add_constructor('!include', Loader.include)
 
 def load_yaml(filename, loader=Loader):
-    if isinstance(filename, dict):
-        return filename  # filename already yaml dict
     with open(filename) as fid:
         return yaml.load(fid, loader)
