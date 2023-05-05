@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import os
 from typing import Tuple
-from xmlrpc.client import Boolean
 
 import numpy as np
 import yaml
@@ -223,7 +222,7 @@ def rotate_coordinates_rel_west(
     wind_directions: NDArrayFloat,
     coordinates: NDArrayFloat,
     center_of_rotation: NDArrayFloat | None = None,
-    return_center_of_rotation: Boolean = False
+    return_center_of_rotation: bool = False
 ):
     """
     This function rotates the given coordinates so that they are aligned with West (270) rather
