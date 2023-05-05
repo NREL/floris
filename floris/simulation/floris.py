@@ -244,4 +244,9 @@ class Floris(BaseClass):
             output_file_path (str): The full path and filename for where to save the file.
         """
         with open(output_file_path, "w+") as f:
-            yaml.dump(self.as_dict(), f, default_flow_style=False)
+            yaml.dump(
+                self.as_dict(),
+                f,
+                sort_keys=False,
+                default_flow_style=False
+            )
