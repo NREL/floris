@@ -229,9 +229,13 @@ def rotate_coordinates_rel_west(
     than North (0). The rotation happens about the centroid of the coordinates.
 
     Args:
-        wind_directions (NDArrayFloat): Series of wind directions to base the rotation
+        wind_directions (NDArrayFloat): Series of wind directions to base the rotation.
         coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)
-            so that each element of the array coordinates[i] yields a three-component coordinate
+            so that each element of the array coordinates[i] yields a three-component coordinate.
+        x_center_of_rotation (float, optional): The x-coordinate for the rotation center of the
+            input coordinates. Defaults to None.
+        y_center_of_rotation (float, optional): The y-coordinate for the rotational center of the
+            input coordinates. Defaults to None.
     """
 
     # Calculate the difference in given wind direction from 270 / West
@@ -267,11 +271,28 @@ def rotate_coordinates_rel_west(
 
 def reverse_rotate_coordinates_rel_west(
     wind_directions,
-    grid_x, grid_y,
+    grid_x,
+    grid_y,
     grid_z,
     x_center_of_rotation,
     y_center_of_rotation
 ):
+    """
+    This function reverses the rotation of the given grid so that the coordinates are aligned with
+    the original wind direction. The rotation happens about the centroid of the coordinates.
+
+    Args:
+        wind_directions (NDArrayFloat): Series of wind directions to base the rotation.
+        coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)
+            so that each element of the array coordinates[i] yields a three-component coordinate.
+        grid_x (NDArrayFloat): X-coordinates to be rotated.
+        grid_y (NDArrayFloat): Y-coordinates to be rotated.
+        grid_z (NDArrayFloat): Z-coordinates to be rotated.
+        x_center_of_rotation (float): The x-coordinate for the rotation center of the
+            input coordinates.
+        y_center_of_rotation (float): The y-coordinate for the rotational center of the
+            input coordinates.
+    """
     # Calculate the difference in given wind direction from 270 / West
     # We are rotating in the other direction
     wind_deviation_from_west = -1.0 * wind_delta(wind_directions)

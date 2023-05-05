@@ -125,7 +125,7 @@ def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
         ax (plt.Axes): Axes object to add the labels.
     """
 
-    # Rotate layout to intertial frame for plotting turbines relative to wind direction
+    # Rotate layout to inertial frame for plotting turbines relative to wind direction
     coordinates_array = np.array([
         [x, y, 0.0]
         for x, y in list(zip(fi.layout_x, fi.layout_y))
