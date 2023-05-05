@@ -156,7 +156,7 @@ class FromDictMixin:
         return cls(**kwargs)
 
     def as_dict(self) -> dict:
-        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        """Creates a YAML friendly dictionary that can be saved for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
         proper `Turbine` formats.
 

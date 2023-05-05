@@ -41,8 +41,8 @@ class FlorisInterface(LoggerBase):
     methods on objects within FLORIS.
 
     Args:
-        configuration (:py:obj:`dict`): The Floris configuration dictarionary, JSON file,
-            or YAML file. The configuration should have the following inputs specified.
+        configuration (:py:obj:`dict`): The Floris configuration dictarionary or YAML file.
+            The configuration should have the following inputs specified.
                 - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
