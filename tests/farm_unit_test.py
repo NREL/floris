@@ -81,7 +81,7 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
 def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     # 1 definition for multiple turbines in the farm
     farm_data = deepcopy(sample_inputs_fixture.farm)
-    farm_data["turbine_type"] = ["nrel_5mw"]
+    farm_data["turbine_type"] = ["nrel_5MW"]
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
     farm = Farm.from_dict(farm_data)
@@ -90,7 +90,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
 
     # N definitions for M turbines
     farm_data = deepcopy(sample_inputs_fixture.farm)
-    farm_data["turbine_type"] = ["nrel_5mw", "nrel_5mw"]
+    farm_data["turbine_type"] = ["nrel_5MW", "nrel_5MW"]
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
     with pytest.raises(ValueError):
@@ -98,7 +98,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
 
     # All list of strings from internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
-    farm_data["turbine_type"] = ["nrel_5mw", "iea_10mw", "iea_15mw", "x_20mw", "nrel_5mw"]
+    farm_data["turbine_type"] = ["nrel_5MW", "iea_10MW", "iea_15MW", "x_20MW", "nrel_5MW"]
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
     farm = Farm.from_dict(farm_data)
@@ -128,7 +128,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data = deepcopy(sample_inputs_fixture.farm)
     external_library = Path(__file__).parent / "data"
     farm_data["turbine_library_path"] = external_library
-    farm_data["turbine_type"] = ["nrel_5mw"]
+    farm_data["turbine_type"] = ["nrel_5MW"]
     with pytest.raises(ValueError):
         Farm.from_dict(farm_data)
 
@@ -139,7 +139,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["turbine_type"] = [turbine_def] * 5
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
-    farm_data["turbine_type"] = ["nrel_5mw", turbine_def, "nrel_5mw", turbine_def, "nrel_5mw"]
+    farm_data["turbine_type"] = ["nrel_5MW", turbine_def, "nrel_5MW", turbine_def, "nrel_5MW"]
     Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 5
     assert len(farm.turbine_definitions) == 5
@@ -148,7 +148,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data = deepcopy(sample_inputs_fixture.farm)
     external_library = Path(__file__).parent / "data"
     farm_data["turbine_library_path"] = external_library
-    farm_data["turbine_type"] = 4 * ["iea_10mw"] + ["nrel_5mw_custom"]
+    farm_data["turbine_type"] = 4 * ["iea_10MW"] + ["nrel_5MW_custom"]
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
     Farm.from_dict(farm_data)
