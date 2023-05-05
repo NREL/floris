@@ -35,14 +35,14 @@ y_locs = [ -300.0, 300.0, -300.0, 300.0]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
 het_config_2d = {
-    'speed_ups': speed_ups,
-    'x_locs': x_locs,
-    'y_locs': y_locs,
+    'speed_ups': [[2.0, 1.0, 2.0, 1.0]],
+    'x_locs': [-300.0, -300.0, 2600.0, 2600.0],
+    'y_locs': [ -300.0, 300.0, -300.0, 300.0],
 }
 
 # Initialize FLORIS with the given input file via FlorisInterface.
-# Also, pass the heterogeneous map into the FlorisInterface.
-fi = FlorisInterface("inputs/gch.yaml", het_config=het_config_2d)
+# Note the heterogeneous inflow is defined in the input file.
+fi = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fi.reinitialize(
@@ -50,7 +50,7 @@ fi.reinitialize(
     wind_speeds=[8.0],
     wind_directions=[270.],
     layout_x=[0, 0],
-    layout_y=[-300, 300],
+    layout_y=[-299., 299.],
 )
 fi.calculate_wake()
 turbine_powers = fi.get_turbine_powers().flatten() / 1000.
