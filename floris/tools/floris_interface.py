@@ -105,7 +105,7 @@ class FlorisInterface(LoggerBase):
 
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
-        return FlorisInterface(self.floris.as_dict(), het_config=self.het_config)
+        return FlorisInterface(self.floris.as_dict())
 
     def calculate_wake(
         self,
@@ -936,60 +936,6 @@ class FlorisInterface(LoggerBase):
 
 
         return aep
-
-
-    def generate_heterogeneous_wind_map(self, het_config):
-        """This function creates the heterogeneous interpolant used to calculate heterogeneous
-        inflows.
-
-        Args:
-            het_config (dict): The heterogeneous inflow configuration dictionary.
-            The configuration should have the following inputs specified.
-                - **speed_ups** (list): A list of speed up factors that will multiply the specified
-                    freestream wind speed. This 2-dimensional array should have an array of
-                    multiplicative factors defined for each wind direction.
-                - **x_locs** (list): A list of x locations at which the speed up factors are
-                    defined.
-                - **y_locs**: A list of y locations at which the speed up factors are
-                    defined.
-                - **z_locs** (optional): A list of z locations at which the speed up factors are
-                    defined.
-
-        Raises:
-            ValueError: ("het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
-                f" with 'z_locs' as optional. Missing '{k}'.") raised if the configuration
-                dictionary is missing one of the required key-value pairs.
-
-        Returns:
-            LinearNDInterpolator: Returns a linear interpolant for computing wind speed based on an
-                x and y location in the flow field. This is computed using Scipy's
-                LinearNDInterpolator and uses a fill value equal to the freestream for interpolated
-                values outside of the user-defined heterogeneous map bounds.
-        """
-        speed_ups = het_config['speed_ups']
-        x = het_config['x_locs']
-        y = het_config['y_locs']
-        z = het_config['z_locs']
-
-        if z is not None:
-            # Compute the 3-dimensional interpolants for each wind diretion
-            # Linear interpolation is used for points within the user-defined area of values,
-            # while the freestream wind speed is used for points outside that region
-            in_region = [
-                LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=1.0)
-                for speed_up in speed_ups
-            ]
-        else:
-            # Compute the 2-dimensional interpolants for each wind diretion
-            # Linear interpolation is used for points within the user-defined area of values,
-            # while the freestream wind speed is used for points outside that region
-            in_region = [
-                LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=1.0)
-                for speed_up in speed_ups
-            ]
-
-        return in_region
-
 
     @property
     def layout_x(self):

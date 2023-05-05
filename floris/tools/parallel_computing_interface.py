@@ -12,17 +12,15 @@ from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInter
 
 def _load_local_floris_object(
     fi_dict,
-    het_config=None,
     unc_pmfs=None,
     fix_yaw_in_relative_frame=False
 ):
     # Load local FLORIS object
     if unc_pmfs is None:
-        fi = FlorisInterface(fi_dict, het_config=het_config)
+        fi = FlorisInterface(fi_dict)
     else:
         fi = UncertaintyInterface(
             fi_dict,
-            het_config=het_config,
             unc_pmfs=unc_pmfs,
             fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
         )
