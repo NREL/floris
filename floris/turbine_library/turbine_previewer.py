@@ -367,8 +367,6 @@ class TurbineLibrary:
 
     def compute_power_curves(
             self,
-            which: list[str] = [],
-            exclude: list[str] = [],
             wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
         ) -> None:
         """Computes the power curves for each turbine in ``turbine_map`` and sets the
@@ -384,8 +382,6 @@ class TurbineLibrary:
 
     def compute_Cp_curves(
             self,
-            which: list[str] = [],
-            exclude: list[str] = [],
             wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
         ) -> None:
         """Computes the power coefficient curves for each turbine in ``turbine_map`` and sets the
@@ -401,8 +397,6 @@ class TurbineLibrary:
 
     def compute_Ct_curves(
             self,
-            which: list[str] = [],
-            exclude: list[str] = [],
             wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
         ) -> None:
         """Computes the thrust curves for each turbine in ``turbine_map`` and sets the
