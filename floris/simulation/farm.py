@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import copy
 from pathlib import Path
-from typing import Any, List
+from typing import Any, List, Union
 
 import attrs
 import numpy as np
@@ -29,6 +29,7 @@ from floris.simulation.turbine import compute_tilt_angles_for_floating_turbines
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
+    iter_validator,
     NDArrayFloat,
     NDArrayObject,
 )
@@ -54,12 +55,13 @@ class Farm(BaseClass):
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
-    turbine_type: List = field()  # TODO: Should be immutable
+    # TODO: turbine_type should be immutable
+    turbine_type: List = field(validator=iter_validator(list, Union[dict, str]))
     turbine_library_path: Path = field(
         default=default_turbine_library_path, converter=convert_to_path
     )
 
-    turbine_definitions: list = field(init=False)
+    turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
     tilt_angles: NDArrayFloat = field(init=False)
