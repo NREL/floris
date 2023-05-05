@@ -1,4 +1,17 @@
-import re
+# Copyright 2023 NREL
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See https://floris.readthedocs.io for documentation
+
 from math import ceil
 from pathlib import Path
 
@@ -52,7 +65,7 @@ class TurbineInterface:
 
     @classmethod
     def from_internal_library(cls, file_name: str):
-        """Loads the turbine defintion from a YAML configuration file located in
+        """Loads the turbine definition from a YAML configuration file located in
         ``floris/floris/turbine_library/``.
 
         Parameters
@@ -69,7 +82,7 @@ class TurbineInterface:
 
     @classmethod
     def from_yaml(cls, file_path: str | Path):
-        """Loads the turbine defintion from a YAML configuration file.
+        """Loads the turbine definition from a YAML configuration file.
 
         Parameters
         ----------
@@ -85,7 +98,7 @@ class TurbineInterface:
 
     @classmethod
     def from_turbine_dict(cls, config_dict: dict):
-        """Loads the turbine defintion from a dictionary.
+        """Loads the turbine definition from a dictionary.
 
         Args:
             config_dict : dict
