@@ -18,7 +18,6 @@ from typing import Any, List
 
 import attrs
 import numpy as np
-import yaml
 from attrs import define, field
 
 from floris.simulation import (
@@ -42,7 +41,7 @@ default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
 @define
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
-    file. The Farm will create a heterogenous set of turbines that compose a windfarm,
+    file. The Farm will create a heterogenous set of turbines that compose a wind farm,
     validate the inputs, and then create a vectorized representation of the the turbine
     data.
 
@@ -55,7 +54,7 @@ class Farm(BaseClass):
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
-    turbine_type: List = field()
+    turbine_type: List = field()  # TODO: Should be immutable
     turbine_library_path: Path = field(
         default=default_turbine_library_path, converter=convert_to_path
     )
@@ -92,7 +91,7 @@ class Farm(BaseClass):
         # - A string selecting an turbine that exists in an external turbine library
         #   specified in `turbine_library_path`
 
-        # Load all the turbine types into a cache to be mapped to specific turbine indeces later.
+        # Load all the turbine types into a cache to be mapped to specific turbine indices later.
         # This allows to read the yaml input files once rather than every time they're given.
         # In other words, if the turbine type is already in the cache, skip that iteration of
         # the for-loop.
@@ -112,7 +111,7 @@ class Farm(BaseClass):
                 if t in turbine_definition_cache:
                     continue
 
-                # Check if the file exists in the internal and/or external libary
+                # Check if the file exists in the internal and/or external library
                 internal_fn = (default_turbine_library_path / t).with_suffix(".yaml")
                 external_fn = (self.turbine_library_path / t).with_suffix(".yaml")
                 in_internal = internal_fn.exists()
@@ -141,17 +140,22 @@ class Farm(BaseClass):
         # Convert any dict entries in the turbine_type list to the type string. Since the
         # definition is saved above, we can make the whole list consistent now to use it
         # for mapping turbines later.
-        self.turbine_type = [
+        # We use a private variable here instead of self.turbine_type because self.turbine_type
+        # should always retain the input data. When this class is exported as_dict, the input
+        # types must be used. If we modify that directly and change its shape, recreating this
+        # class with a different layout but not a new self.turbine_type could cause the data
+        # to be out of sync.
+        _turbine_types = [
             t["turbine_type"] if isinstance(t, dict) else t for t in self.turbine_type
         ]
 
         # If 1 turbine definition is given, expand to N turbines; this covers a 1-turbine
         # farm and 1 definition for multiple turbines
-        if len(self.turbine_type) == 1:
-            self.turbine_type *= self.n_turbines
+        if len(_turbine_types) == 1:
+            _turbine_types *= self.n_turbines
 
         # Map each turbine definition to its index in this list
-        self.turbine_definitions = [turbine_definition_cache[t] for t in self.turbine_type]
+        self.turbine_definitions = [turbine_definition_cache[t] for t in _turbine_types]
 
     @layout_x.validator
     def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
@@ -177,62 +181,6 @@ class Farm(BaseClass):
         """Ensures that the input to `library_path` exists and is a directory."""
         if not value.is_dir():
             raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
-
-    # def load_turbines(self) -> None:
-    #     if len(self.turbine_type) != len(self.layout_x):
-    #         if len(self.turbine_type) == 1:
-    #             self.turbine_type *= len(self.layout_x)
-    #         elif np.unique(self.turbine_type).size == 1:
-    #             self.turbine_type = [self.turbine_type[0]] * len(self.layout_x)
-    #         else:
-    #             raise ValueError(
-    #                 "turbine_type must have the same number of entries as layout_x/layout_y or have"
-    #                 " a single turbine_type value."
-    #             )
-
-    #     # If the user specified the default location, do not check against duplicated definitions
-    #     turbine_map = {}
-    #     unique_turbines = [
-    #         yaml.safe_load(el_j)
-    #         for el_j in {yaml.dump(el_i, default_flow_style=False) for el_i in self.turbine_type}
-    #     ]
-    #     for turbine in unique_turbines:
-
-    #         # If the passed data are already turbine dictionaries, skip the file loading
-    #         if isinstance(turbine, str):
-    #             # Check if the file exists in the internal and/or external libary
-    #             internal_fn = (default_turbine_library_path / turbine).with_suffix(".yaml")
-    #             external_fn = (self.turbine_library_path / turbine).with_suffix(".yaml")
-    #             in_internal = internal_fn.exists()
-    #             in_external = external_fn.exists()
-
-    #             # If an external library is used, and the file is a duplicate with what already
-    #             # exists, then raise an error
-    #             is_separate_path = self.turbine_library_path != default_turbine_library_path
-    #             if is_separate_path and in_external and in_internal:
-    #                 raise ValueError(
-    #                     f"The turbine type: {turbine} exists in both the internal and external"
-    #                     " turbine library."
-    #                 )
-    #             if in_internal:
-    #                 full_path = internal_fn
-    #             elif in_external:
-    #                 full_path = external_fn
-    #             else:
-    #                 raise FileNotFoundError(
-    #                     f"The turbine type: {turbine} does not exist in either the internal or"
-    #                     " external turbine library."
-    #                 )
-    #             turbine_map[turbine] = load_yaml(full_path)
-    #         elif isinstance(turbine, dict):
-    #             turbine_map[turbine["turbine_type"]] = turbine
-    #             full_path = turbine["turbine_type"]
-
-    #     self.turbine_definitions = [
-    #         copy.deepcopy(turbine_map[el]) if isinstance(el, str)
-    #         else copy.deepcopy(turbine_map[el["turbine_type"]])
-    #         for el in self.turbine_type
-    #     ]
 
     def initialize(self, sorted_indices):
         # Sort yaw angles from most upstream to most downstream wind turbine
