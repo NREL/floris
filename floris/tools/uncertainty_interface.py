@@ -39,7 +39,7 @@ class UncertaintyInterface(LoggerBase):
 
         Args:
         configuration (:py:obj:`dict` or FlorisInterface object): The Floris
-            object, configuration dictarionary, JSON file, or YAML file. The
+            object, configuration dictarionary, or YAML file. The
             configuration should have the following inputs specified.
                 - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
