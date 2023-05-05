@@ -204,8 +204,8 @@ class TurbineInterface:
         """Plots the power curve for a given set of wind speeds.
 
         Args:
-            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
-                to None.
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s.
+                Defaults to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
@@ -258,8 +258,8 @@ class TurbineInterface:
         """Plots the power coefficient curve for a given set of wind speeds.
 
         Args:
-            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
-                to None.
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s.
+                Defaults to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
@@ -309,8 +309,8 @@ class TurbineInterface:
         """Plots the thrust coefficient curve for a given set of wind speeds.
 
         Args:
-            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
-                to None.
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s.
+                Defaults to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
@@ -365,8 +365,8 @@ class TurbineLibrary:
         Args:
             which (list[str], optional): A list of which file names to include from loading.
                 Defaults to [].
-            exclude (list[str], optional): A list of file names to exclude from loading. Defaults to
-                [].
+            exclude (list[str], optional): A list of file names to exclude from loading.
+                Defaults to [].
         """
         include = [el for el in INTERNAL_LIBRARY.iterdir() if el.suffix in (".yaml", ".yml")]
         which = [INTERNAL_LIBRARY / el for el in which] if which != [] else include
@@ -394,8 +394,8 @@ class TurbineLibrary:
                 The external turbine library that should be used for loading the turbines.
             which (list[str], optional): A list of which file names to include from loading.
                 Defaults to [].
-            exclude (list[str], optional): A list of file names to exclude from loading. Defaults to
-                [].
+            exclude (list[str], optional): A list of file names to exclude from loading.
+                Defaults to [].
         """
         library_path = Path(library_path).resolve()
         include = [el for el in library_path.iterdir() if el.suffix in (".yaml", ".yml")]
@@ -487,8 +487,8 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
-                to None.
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s.
+                Defaults to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
@@ -565,8 +565,8 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
-                to None.
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s.
+                Defaults to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
@@ -641,8 +641,8 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
-                to None.
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s.
+                Defaults to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
@@ -853,8 +853,8 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
-                to None.
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s.
+                Defaults to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
