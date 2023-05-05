@@ -111,7 +111,7 @@ class TurbineInterface:
 
     def power_curve(
         self,
-        wind_speed: NDArrayFloat | None = None
+        wind_speeds: NDArrayFloat | None = None
     ) -> tuple[NDArrayFloat, NDArrayFloat]:
         """Produces a plot-ready power curve for the turbine for wind speed vs power (MW), assuming
         no tilt or yaw effects.
@@ -127,27 +127,27 @@ class TurbineInterface:
         tuple[NDArrayFloat, NDArrayFloat]
             Returns the wind speed array and the power array.
         """
-        if wind_speed is None:
-            wind_speed = DEFAULT_WIND_SPEEDS
-        shape = (1, wind_speed.size, 1)
+        if wind_speeds is None:
+            wind_speeds = DEFAULT_WIND_SPEEDS
+        shape = (1, wind_speeds.size, 1)
         power_mw = power(
             ref_density_cp_ct=np.full(shape, self.turbine.ref_density_cp_ct),
-            rotor_effective_velocities=wind_speed.reshape(shape),
+            rotor_effective_velocities=wind_speeds.reshape(shape),
             power_interp={self.turbine.turbine_type: self.turbine.power_interp},
             turbine_type_map=np.full(shape, self.turbine.turbine_type)
         ).flatten() / 1e6
-        return wind_speed, power_mw
+        return wind_speeds, power_mw
 
     def Cp_curve(
         self,
-        wind_speed: NDArrayFloat | None = None
+        wind_speeds: NDArrayFloat | None = None
     ) -> tuple[NDArrayFloat, NDArrayFloat]:
         """Produces a plot-ready thrust curve for the turbine for wind speed vs power coefficient
         assuming no tilt or yaw effects.
 
         Parameters
         ----------
-        wind_speed : NDArrayFloat | None, optional
+        wind_speeds : NDArrayFloat | None, optional
             The wind speed conditions to produce the power curve for. If None, then the default wind
             conditions are used (0 m/s -> 40 m/s, every 0.5 m/s), by default None.
 
@@ -156,21 +156,21 @@ class TurbineInterface:
         tuple[NDArrayFloat, NDArrayFloat]
             Returns the wind speed array and the power coefficient array.
         """
-        if wind_speed is None:
-            wind_speed = DEFAULT_WIND_SPEEDS
-        cp_curve = self.turbine.fCp_interp(wind_speed)
-        return wind_speed, cp_curve
+        if wind_speeds is None:
+            wind_speeds = DEFAULT_WIND_SPEEDS
+        cp_curve = self.turbine.fCp_interp(wind_speeds)
+        return wind_speeds, cp_curve
 
     def Ct_curve(
         self,
-        wind_speed: NDArrayFloat | None = None
+        wind_speeds: NDArrayFloat | None = None
     ) -> tuple[NDArrayFloat, NDArrayFloat]:
         """Produces a plot-ready thrust curve for the turbine for wind speed vs thrust coefficient
         assuming no tilt or yaw effects.
 
         Parameters
         ----------
-        wind_speed : NDArrayFloat | None, optional
+        wind_speeds : NDArrayFloat | None, optional
             The wind speed conditions to produce the power curve for. If None, then the default wind
             conditions are used (0 m/s -> 40 m/s, every 0.5 m/s), by default None.
 
@@ -179,11 +179,11 @@ class TurbineInterface:
         tuple[NDArrayFloat, NDArrayFloat]
             Returns the wind speed array and the thrust coefficient array.
         """
-        if wind_speed is None:
-            wind_speed = DEFAULT_WIND_SPEEDS
-        shape = (1, wind_speed.size, 1)
+        if wind_speeds is None:
+            wind_speeds = DEFAULT_WIND_SPEEDS
+        shape = (1, wind_speeds.size, 1)
         ct_curve = Ct(
-            velocities=wind_speed.reshape(shape),
+            velocities=wind_speeds.reshape(shape),
             yaw_angle=np.zeros(shape),
             tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
             ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),
@@ -192,11 +192,11 @@ class TurbineInterface:
             correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
             turbine_type_map=np.full(shape, self.turbine.turbine_type),
         ).flatten()
-        return wind_speed, ct_curve
+        return wind_speeds, ct_curve
 
     def plot_power_curve(
         self,
-        wind_speed: NDArrayFloat | None = None,
+        wind_speeds: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
         return_fig: bool = False
@@ -204,7 +204,7 @@ class TurbineInterface:
         """Plots the power curve for a given set of wind speeds.
 
         Args:
-            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
                 to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
@@ -217,7 +217,7 @@ class TurbineInterface:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        wind_speed, power_mw = self.power_curve(wind_speed=wind_speed)
+        wind_speeds, power_mw = self.power_curve(wind_speeds=wind_speeds)
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
@@ -227,10 +227,10 @@ class TurbineInterface:
         ax = fig.add_subplot(111)
 
         min_windspeed = 0
-        max_windspeed = max(wind_speed)
+        max_windspeed = max(wind_speeds)
         min_power = 0
         max_power = max(power_mw)
-        ax.plot(wind_speed, power_mw, label=self.turbine.turbine_type, **plot_kwargs)
+        ax.plot(wind_speeds, power_mw, label=self.turbine.turbine_type, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
@@ -250,7 +250,7 @@ class TurbineInterface:
 
     def plot_Cp_curve(
         self,
-        wind_speed: NDArrayFloat | None = None,
+        wind_speeds: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
         return_fig: bool = False
@@ -258,7 +258,7 @@ class TurbineInterface:
         """Plots the power coefficient curve for a given set of wind speeds.
 
         Args:
-            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
                 to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
@@ -271,7 +271,7 @@ class TurbineInterface:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        wind_speed, power_c = self.Cp_curve(wind_speed=wind_speed)
+        wind_speeds, power_c = self.Cp_curve(wind_speeds=wind_speeds)
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
@@ -281,8 +281,8 @@ class TurbineInterface:
         ax = fig.add_subplot(111)
 
         min_windspeed = 0
-        max_windspeed = max(wind_speed)
-        ax.plot(wind_speed, power_c, label=self.turbine.turbine_type, **plot_kwargs)
+        max_windspeed = max(wind_speeds)
+        ax.plot(wind_speeds, power_c, label=self.turbine.turbine_type, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
@@ -301,7 +301,7 @@ class TurbineInterface:
 
     def plot_Ct_curve(
         self,
-        wind_speed: NDArrayFloat | None = None,
+        wind_speeds: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
         return_fig: bool = False
@@ -309,7 +309,7 @@ class TurbineInterface:
         """Plots the thrust coefficient curve for a given set of wind speeds.
 
         Args:
-            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
                 to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
@@ -322,7 +322,7 @@ class TurbineInterface:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        wind_speed, thrust = self.Ct_curve(wind_speed=wind_speed)
+        wind_speeds, thrust = self.Ct_curve(wind_speeds=wind_speeds)
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
@@ -332,8 +332,8 @@ class TurbineInterface:
         ax = fig.add_subplot(111)
 
         min_windspeed = 0
-        max_windspeed = max(wind_speed)
-        ax.plot(wind_speed, thrust, label=self.turbine.turbine_type, **plot_kwargs)
+        max_windspeed = max(wind_speeds)
+        ax.plot(wind_speeds, thrust, label=self.turbine.turbine_type, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
@@ -413,57 +413,57 @@ class TurbineLibrary:
             self,
             which: list[str] = [],
             exclude: list[str] = [],
-            wind_speed: NDArrayFloat | None = None,
+            wind_speeds: NDArrayFloat | None = None,
         ) -> None:
         """Computes the power curves for each turbine in ``turbine_map`` and sets the
         ``power_curves`` attribute.
 
         Args:
-            wind_speed (`NDArrayFloat`): A 1-D array of wind speeds, in m/s, to compute the
+            wind_speeds (`NDArrayFloat`): A 1-D array of wind speeds, in m/s, to compute the
                 power curve for, for each turbine in ``turbine_map``.
         """
-        if wind_speed is None:
-            wind_speed = DEFAULT_WIND_SPEEDS
+        if wind_speeds is None:
+            wind_speeds = DEFAULT_WIND_SPEEDS
         self.power_curves = {
-            name: t.power_curve(wind_speed) for name, t in self.turbine_map.items()
+            name: t.power_curve(wind_speeds) for name, t in self.turbine_map.items()
         }
 
     def compute_Cp_curves(
             self,
             which: list[str] = [],
             exclude: list[str] = [],
-            wind_speed: NDArrayFloat | None = None,
+            wind_speeds: NDArrayFloat | None = None,
         ) -> None:
         """Computes the power coefficient curves for each turbine in ``turbine_map`` and sets the
         ``Ct_curves`` attribute.
 
         Args:
-            wind_speed (`NDArrayFloat`): A 1-D array of wind speeds, in m/s, to compute the
+            wind_speeds (`NDArrayFloat`): A 1-D array of wind speeds, in m/s, to compute the
                 thrust coefficient curve for, for each turbine in ``turbine_map``.
         """
-        if wind_speed is None:
-            wind_speed = DEFAULT_WIND_SPEEDS
+        if wind_speeds is None:
+            wind_speeds = DEFAULT_WIND_SPEEDS
         self.Cp_curves = {
-            name: t.Cp_curve(wind_speed) for name, t in self.turbine_map.items()
+            name: t.Cp_curve(wind_speeds) for name, t in self.turbine_map.items()
         }
 
     def compute_Ct_curves(
             self,
             which: list[str] = [],
             exclude: list[str] = [],
-            wind_speed: NDArrayFloat | None = None,
+            wind_speeds: NDArrayFloat | None = None,
         ) -> None:
         """Computes the thrust curves for each turbine in ``turbine_map`` and sets the
         ``Ct_curves`` attribute.
 
         Args:
-            wind_speed (`NDArrayFloat`): A 1-D array of wind speeds, in m/s, to compute the
+            wind_speeds (`NDArrayFloat`): A 1-D array of wind speeds, in m/s, to compute the
                 thrust curve for, for each turbine in ``turbine_map``.
         """
-        if wind_speed is None:
-            wind_speed = DEFAULT_WIND_SPEEDS
+        if wind_speeds is None:
+            wind_speeds = DEFAULT_WIND_SPEEDS
         self.Ct_curves = {
-            name: t.Ct_curve(wind_speed) for name, t in self.turbine_map.items()
+            name: t.Ct_curve(wind_speeds) for name, t in self.turbine_map.items()
         }
 
     def plot_power_curves(
@@ -472,7 +472,7 @@ class TurbineLibrary:
         ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
-        wind_speed: NDArrayFloat | None = None,
+        wind_speeds: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
         return_fig: bool = False,
@@ -487,7 +487,7 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
                 to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
@@ -502,8 +502,8 @@ class TurbineLibrary:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        if self.power_curves == {} or wind_speed is not None:
-            self.compute_power_curves(which=which, exclude=exclude, wind_speed=wind_speed)
+        if self.power_curves == {} or wind_speeds is not None:
+            self.compute_power_curves(which=which, exclude=exclude, wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
 
@@ -550,7 +550,7 @@ class TurbineLibrary:
         ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
-        wind_speed: NDArrayFloat | None = None,
+        wind_speeds: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
         return_fig: bool = False,
@@ -565,7 +565,7 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
                 to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
@@ -580,8 +580,8 @@ class TurbineLibrary:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        if self.Cp_curves == {} or wind_speed is None:
-            self.compute_Cp_curves(which=which, exclude=exclude, wind_speed=wind_speed)
+        if self.Cp_curves == {} or wind_speeds is None:
+            self.compute_Cp_curves(which=which, exclude=exclude, wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
 
@@ -626,7 +626,7 @@ class TurbineLibrary:
         ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
-        wind_speed: NDArrayFloat | None = None,
+        wind_speeds: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
         return_fig: bool = False,
@@ -641,7 +641,7 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
                 to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
@@ -656,8 +656,8 @@ class TurbineLibrary:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        if self.Ct_curves == {} or wind_speed is None:
-            self.compute_Ct_curves(which=which, exclude=exclude, wind_speed=wind_speed)
+        if self.Ct_curves == {} or wind_speeds is None:
+            self.compute_Ct_curves(which=which, exclude=exclude, wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
 
@@ -840,7 +840,7 @@ class TurbineLibrary:
         self,
         which: list[str] = [],
         exclude: list[str] = [],
-        wind_speed: NDArrayFloat | None = None,
+        wind_speeds: NDArrayFloat | None = None,
         fig_kwargs: dict = {},
         plot_kwargs = {},
         bar_kwargs = {},
@@ -853,7 +853,7 @@ class TurbineLibrary:
                 [].
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
-            wind_speed (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
+            wind_speeds (NDArrayFloat | None, optional): A 1-D array of wind speeds, in m/s. Defaults
                 to None.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
                 Defaults to {}.
@@ -884,21 +884,21 @@ class TurbineLibrary:
             fig,
             ax1,
             which=which,
-            wind_speed=wind_speed,
+            wind_speeds=wind_speeds,
             plot_kwargs=plot_kwargs,
         )
         self.plot_Cp_curves(
             fig,
             ax3,
             which=which,
-            wind_speed=wind_speed,
+            wind_speeds=wind_speeds,
             plot_kwargs=plot_kwargs,
         )
         self.plot_Ct_curves(
             fig,
             ax5,
             which=which,
-            wind_speed=wind_speed,
+            wind_speeds=wind_speeds,
             plot_kwargs=plot_kwargs,
         )
         self.plot_rotor_diameters(fig, ax2, which=which, bar_kwargs=bar_kwargs)
