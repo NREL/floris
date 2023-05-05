@@ -158,7 +158,7 @@ class FromDictMixin:
     def as_dict(self) -> dict:
         """Creates a YAML friendly dictionary that can be saved for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
-        proper formats. Note that 
+        proper formats. Note that
 
         Returns:
             dict: All key, value pairs required for class recreation.

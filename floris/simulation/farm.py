@@ -14,7 +14,11 @@ from __future__ import annotations
 
 import copy
 from pathlib import Path
-from typing import Any, List, Union
+from typing import (
+    Any,
+    List,
+    Union,
+)
 
 import attrs
 import numpy as np
@@ -106,7 +110,7 @@ class Farm(BaseClass):
                 if t["turbine_type"] in turbine_definition_cache:
                     continue
                 turbine_definition_cache[t["turbine_type"]] = t
-            
+
             # If a turbine type is a string, then it is expected in the internal or external
             # turbine library
             if isinstance(t, str):
