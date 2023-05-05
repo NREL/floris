@@ -388,7 +388,14 @@ def visualize_heterogeneous_cut_plane(
 
     # Plot the user-defined heterogeneous flow area
     if plot_het_bounds:
-        points = np.array(list(zip(fi.het_config['x_locs'], fi.het_config['y_locs'])))
+        points = np.array(
+            list(
+                zip(
+                    fi.floris.flow_field.het_config['x_locs'],
+                    fi.floris.flow_field.het_config['y_locs'],
+                )
+            )
+        )
         hull = ConvexHull(points)
         h = ax.plot(
             points[np.append(hull.vertices, hull.vertices[0]),0],

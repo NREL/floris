@@ -48,20 +48,9 @@ class FlorisInterface(LoggerBase):
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
                 - **logging**: See `floris.simulation.floris.Floris` for more details.
-        het_config (:py:obj:`dict`, optional): The heterogeneous inflow configuration dictionary.
-            The configuration should have the following inputs specified.
-                - **speed_ups**: See `floris.tools.floris_interface.generate_heterogeneous_wind_map'
-                    for more details.
-                - **x_locs**: See `floris.tools.floris_interface.generate_heterogeneous_wind_map'
-                    for more details.
-                - **y_locs**: See `floris.tools.floris_interface.generate_heterogeneous_wind_map'
-                    for more details.
-                - **z_locs** (optional): See
-                    `floris.tools.floris_interface.generate_heterogeneous_wind_map'
-                    for more details.
     """
 
-    def __init__(self, configuration: dict | str | Path, het_config: dict | None = None):
+    def __init__(self, configuration: dict | str | Path):
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
@@ -72,18 +61,6 @@ class FlorisInterface(LoggerBase):
 
         else:
             raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
-
-        # Create the heterogeneous wind map interpolant if het_config is supplied
-        if het_config is not None:
-            het_map = self.generate_heterogeneous_wind_map(het_config=het_config)
-        else:
-            het_map = None
-        # Store the heterogeneous info and map for use after reinitailization
-        self.het_config = het_config
-        self.het_map = het_map
-        # Assign the heterogeneous map to the flow field
-        # Needed for a direct call to fi.calculate_wake without fi.reinitialize
-        self.floris.flow_field.het_map = het_map
 
         # If ref height is -1, assign the hub height
         if np.abs(self.floris.flow_field.reference_wind_height + 1.0) < 1.0e-6:
@@ -256,7 +233,7 @@ class FlorisInterface(LoggerBase):
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
         if het_config is not None:
-            self.het_config = het_config
+            flow_field_dict["het_config"] = het_config
 
         ## Farm
         if layout_x is not None:
@@ -285,13 +262,6 @@ class FlorisInterface(LoggerBase):
 
         # Create a new instance of floris and attach to self
         self.floris = Floris.from_dict(floris_dict)
-        # Re-assign the hetergeneous inflow map to flow field
-        if self.het_config is not None:
-            het_map = self.generate_heterogeneous_wind_map(het_config=self.het_config)
-        else:
-            het_map = None
-        self.het_map = het_map
-        self.floris.flow_field.het_map = het_map
 
     def get_plane_of_points(
         self,
@@ -451,7 +421,6 @@ class FlorisInterface(LoggerBase):
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
-        self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake(yaw_angles=current_yaw_angles)
@@ -530,7 +499,6 @@ class FlorisInterface(LoggerBase):
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
-        self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake(yaw_angles=current_yaw_angles)
@@ -609,7 +577,6 @@ class FlorisInterface(LoggerBase):
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
-        self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake(yaw_angles=current_yaw_angles)
