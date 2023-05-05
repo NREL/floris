@@ -966,17 +966,6 @@ class FlorisInterface(LoggerBase):
                 LinearNDInterpolator and uses a fill value equal to the freestream for interpolated
                 values outside of the user-defined heterogeneous map bounds.
         """
-        # Check that the correct keys are supplied for the het_config dict
-        for k in ["speed_ups", "x_locs", "y_locs"]:
-            if k not in het_config.keys():
-                raise ValueError(
-                    "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
-                    f" with 'z_locs' as optional. Missing '{k}'."
-                )
-        if "z_locs" not in het_config:
-            # If only a 2D case, add "None" for the z locations
-            het_config["z_locs"] = None
-
         speed_ups = het_config['speed_ups']
         x = het_config['x_locs']
         y = het_config['y_locs']

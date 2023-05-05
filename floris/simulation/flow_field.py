@@ -19,6 +19,8 @@ import matplotlib.path as mpltPath
 import numpy as np
 from attrs import define, field
 from scipy.interpolate import LinearNDInterpolator
+from scipy.spatial import ConvexHull
+from shapely.geometry import Polygon
 
 from floris.simulation import (
     BaseClass,
@@ -74,6 +76,41 @@ class FlowField(BaseClass):
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
+    @het_config.validator
+    def het_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
+        """Using the validator method to check that the het_config dictionary has the correct
+        key-value pairs.
+        """
+        if value is not None:
+            # Check that the correct keys are supplied for the het_config dict
+            for k in ["speed_ups", "x_locs", "y_locs"]:
+                if k not in value.keys():
+                    raise ValueError(
+                        "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
+                        f" with 'z_locs' as optional. Missing '{k}'."
+                    )
+            if "z_locs" not in value:
+                # If only a 2D case, add "None" for the z locations
+                value["z_locs"] = None
+
+    @het_map.validator
+    def het_map_validator(self, instance: attrs.Attribute, value: list | None) -> None:
+        """Using this validator to make sure that the het_map has an interpolant defined for
+        each wind direction.
+        """
+        if value is not None:
+            if self.n_wind_directions!= np.array(value).shape[0]:
+                if np.array(value).shape[0]:
+                    self.logger.warning(
+                        "Multiple wind directions defined with just one hetergeneous speed up "
+                        "map. The same speed up values are being used for all the wind directions."
+                    )
+                else:
+                    raise ValueError(
+                        "The het_map's wind direction dimension not equal to number of wind "
+                        "directions. Either the dimensions must be equal, or just one set up "
+                        "of speed ups must be defined to be used across all wind directions."
+                    )
 
 
     def __attrs_post_init__(self) -> None:
@@ -107,8 +144,17 @@ class FlowField(BaseClass):
         # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
         else:
-
-            path = mpltPath.Path(self.het_map[0].points)
+            bounds = np.array(
+                list(
+                    zip(
+                        self.het_config['x_locs'],
+                        self.het_config['y_locs'],
+                    )
+                )
+            )
+            hull = ConvexHull(bounds)
+            polygon = Polygon(bounds[hull.vertices])
+            path = mpltPath.Path(polygon.boundary.coords)
             points = np.column_stack(
                 (
                     grid.x_sorted_inertial_frame.flatten(),
