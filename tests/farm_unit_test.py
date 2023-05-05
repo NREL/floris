@@ -12,7 +12,6 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import logging
 from copy import deepcopy
 from pathlib import Path
 
@@ -77,6 +76,84 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2
+
+
+def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
+    # 1 definition for multiple turbines in the farm
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    farm_data["turbine_type"] = ["nrel_5mw"]
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    farm = Farm.from_dict(farm_data)
+    assert len(farm.turbine_type) == 1
+    assert len(farm.turbine_definitions) == 5
+
+    # N definitions for M turbines
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    farm_data["turbine_type"] = ["nrel_5mw", "nrel_5mw"]
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    with pytest.raises(ValueError):
+        Farm.from_dict(farm_data)
+
+    # All list of strings from internal library
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    farm_data["turbine_type"] = ["nrel_5mw", "iea_10mw", "iea_15mw", "x_20mw", "nrel_5mw"]
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    farm = Farm.from_dict(farm_data)
+    assert len(farm.turbine_type) == 5
+    assert len(farm.turbine_definitions) == 5
+
+    # String not found in internal library
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    farm_data["turbine_type"] = ["asdf"]
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    with pytest.raises(FileNotFoundError):
+        Farm.from_dict(farm_data)
+
+    # All list of dicts from external library
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    turbine_def = load_yaml(external_library / "nrel_5MW_custom.yaml")
+    farm_data["turbine_type"] = [turbine_def] * 5
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    Farm.from_dict(farm_data)
+    assert len(farm.turbine_type) == 5
+    assert len(farm.turbine_definitions) == 5
+
+    # Duplicate type found in external and internal library
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    farm_data["turbine_library_path"] = external_library
+    farm_data["turbine_type"] = ["nrel_5mw"]
+    with pytest.raises(ValueError):
+        Farm.from_dict(farm_data)
+
+    # 1 turbine as string from internal library, 1 turbine as dict from external library
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    turbine_def = load_yaml(external_library / "nrel_5MW_custom.yaml")
+    farm_data["turbine_type"] = [turbine_def] * 5
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    farm_data["turbine_type"] = ["nrel_5mw", turbine_def, "nrel_5mw", turbine_def, "nrel_5mw"]
+    Farm.from_dict(farm_data)
+    assert len(farm.turbine_type) == 5
+    assert len(farm.turbine_definitions) == 5
+
+    # 1 turbine as string from internal library, 1 turbine as string from external library
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    farm_data["turbine_library_path"] = external_library
+    farm_data["turbine_type"] = 4 * ["iea_10mw"] + ["nrel_5mw_custom"]
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    Farm.from_dict(farm_data)
+    assert len(farm.turbine_type) == 5
+    assert len(farm.turbine_definitions) == 5
 
 
 def test_farm_external_library(sample_inputs_fixture: SampleInputs):
