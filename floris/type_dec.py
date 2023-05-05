@@ -113,7 +113,7 @@ def convert_to_path(fn: str | Path) -> Path:
 class FromDictMixin:
     """
     A Mixin class to allow for kwargs overloading when a data class doesn't
-    have a specific parameter definied. This allows passing of larger dictionaries
+    have a specific parameter defined. This allows passing of larger dictionaries
     to a data class without throwing an error.
     """
 
@@ -150,7 +150,7 @@ class FromDictMixin:
 
         if undefined:
             raise AttributeError(
-                f"The class defintion for {cls.__name__} "
+                f"The class definition for {cls.__name__} "
                 f"is missing the following inputs: {undefined}"
             )
         return cls(**kwargs)
@@ -158,10 +158,10 @@ class FromDictMixin:
     def as_dict(self) -> dict:
         """Creates a YAML friendly dictionary that can be saved for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
-        proper `Turbine` formats.
+        proper formats. Note that 
 
         Returns:
-            dict: All key, vaue pais required for class recreation.
+            dict: All key, value pairs required for class recreation.
         """
         return attrs.asdict(self, filter=_attr_floris_filter, value_serializer=_attr_serializer)
 
