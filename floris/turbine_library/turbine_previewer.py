@@ -330,7 +330,6 @@ class TurbineLibrary:
         include = set(which).intersection(include).difference(exclude)
         for fn in include:
             turbine_dict = load_yaml(fn)
-            turbine_dict.setdefault("ref_density_cp_ct", 1.225)
             self.turbine_map.update({
                 turbine_dict["turbine_type"]: TurbineInterface.from_turbine_dict(turbine_dict)
             })
@@ -360,7 +359,6 @@ class TurbineLibrary:
         include = set(which).intersection(include).difference(exclude)
         for fn in include:
             turbine_dict = load_yaml(fn)
-            turbine_dict.setdefault("ref_density_cp_ct", 1.225)
             self.turbine_map.update({
                 turbine_dict["turbine_type"]: TurbineInterface.from_turbine_dict(turbine_dict)
             })
