@@ -157,8 +157,13 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../input_reference.html">
-   Input File Reference
+  <a class="reference internal" href="../input_reference_main.html">
+   Main Input File Reference
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../input_reference_turbine.html">
+   Turbine Input File Reference
   </a>
  </li>
  <li class="toctree-l1">
@@ -1392,6 +1397,13 @@ access other objects within the model.</p>
 <dt class="sig sig-object py" id="floris.simulation.floris.Floris.grid">
 <span class="sig-name descname"><span class="pre">grid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.grid.Grid.html#floris.simulation.grid.Grid" title="floris.simulation.grid.Grid"><span class="pre">floris.simulation.grid.Grid</span></a></em><a class="headerlink" href="#floris.simulation.floris.Floris.grid" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.floris.Floris.check_deprecated_inputs">
+<span class="sig-name descname"><span class="pre">check_deprecated_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/floris.html#Floris.check_deprecated_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.floris.Floris.check_deprecated_inputs" title="Permalink to this definition">#</a></dt>
+<dd><p>This function should used when the FLORIS input file changes in order to provide
+an informative error and suggest a fix.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.floris.Floris.initialize_domain">

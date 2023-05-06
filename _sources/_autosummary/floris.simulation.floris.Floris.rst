@@ -17,6 +17,7 @@ floris.simulation.floris.Floris
       :nosignatures:
    
       ~Floris.as_dict
+      ~Floris.check_deprecated_inputs
       ~Floris.finalize
       ~Floris.from_dict
       ~Floris.from_file

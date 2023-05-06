@@ -157,8 +157,13 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../input_reference.html">
-   Input File Reference
+  <a class="reference internal" href="../input_reference_main.html">
+   Main Input File Reference
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../input_reference_turbine.html">
+   Turbine Input File Reference
   </a>
  </li>
  <li class="toctree-l1">
@@ -1330,28 +1335,31 @@ access other objects within the model.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.as_dict" title="floris.simulation.floris.Floris.as_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_dict</span></code></a></p></td>
 <td><p>Creates a YAML friendly dictionary that can be saved for future reloading.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.finalize" title="floris.simulation.floris.Floris.finalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.check_deprecated_inputs" title="floris.simulation.floris.Floris.check_deprecated_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_deprecated_inputs</span></code></a></p></td>
+<td><p>This function should used when the FLORIS input file changes in order to provide an informative error and suggest a fix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.finalize" title="floris.simulation.floris.Floris.finalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finalize</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.from_dict" title="floris.simulation.floris.Floris.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.from_dict" title="floris.simulation.floris.Floris.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></p></td>
 <td><p>Maps a data dictionary to an <cite>attr</cite>-defined class.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.from_file" title="floris.simulation.floris.Floris.from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_file</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.from_file" title="floris.simulation.floris.Floris.from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_file</span></code></a></p></td>
 <td><p>Creates a <cite>Floris</cite> instance from an input file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.get_model_defaults" title="floris.simulation.floris.Floris.get_model_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_defaults</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.get_model_defaults" title="floris.simulation.floris.Floris.get_model_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_defaults</span></code></a></p></td>
 <td><p>Produces a dictionary of the keyword arguments and their defaults.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.initialize_domain" title="floris.simulation.floris.Floris.initialize_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_domain</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.initialize_domain" title="floris.simulation.floris.Floris.initialize_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_domain</span></code></a></p></td>
 <td><p>Initialize solution space prior to wake calculations</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.solve_for_viz" title="floris.simulation.floris.Floris.solve_for_viz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_for_viz</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.solve_for_viz" title="floris.simulation.floris.Floris.solve_for_viz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_for_viz</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.steady_state_atmospheric_condition" title="floris.simulation.floris.Floris.steady_state_atmospheric_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">steady_state_atmospheric_condition</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.steady_state_atmospheric_condition" title="floris.simulation.floris.Floris.steady_state_atmospheric_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">steady_state_atmospheric_condition</span></code></a></p></td>
 <td><p>Perform the steady-state wind farm wake calculations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.to_file" title="floris.simulation.floris.Floris.to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_file</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.to_file" title="floris.simulation.floris.Floris.to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_file</span></code></a></p></td>
 <td><p>Converts the <cite>Floris</cite> object to an input-ready YAML file at <cite>output_file_path</cite>.</p></td>
 </tr>
 </tbody>
@@ -1459,6 +1467,13 @@ access other objects within the model.</p>
 <dt class="sig sig-object py" id="floris.simulation.floris.Floris.grid">
 <span class="sig-name descname"><span class="pre">grid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.grid.Grid.html#floris.simulation.grid.Grid" title="floris.simulation.grid.Grid"><span class="pre">floris.simulation.grid.Grid</span></a></em><a class="headerlink" href="#floris.simulation.floris.Floris.grid" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.floris.Floris.check_deprecated_inputs">
+<span class="sig-name descname"><span class="pre">check_deprecated_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/floris.html#Floris.check_deprecated_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.floris.Floris.check_deprecated_inputs" title="Permalink to this definition">#</a></dt>
+<dd><p>This function should used when the FLORIS input file changes in order to provide
+an informative error and suggest a fix.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.floris.Floris.initialize_domain">

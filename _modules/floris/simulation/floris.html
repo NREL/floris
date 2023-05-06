@@ -154,8 +154,13 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../../../input_reference.html">
-   Input File Reference
+  <a class="reference internal" href="../../../input_reference_main.html">
+   Main Input File Reference
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../input_reference_turbine.html">
+   Turbine Input File Reference
   </a>
  </li>
  <li class="toctree-l1">
@@ -1312,6 +1317,8 @@ title="Open an issue"
 
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_deprecated_inputs</span><span class="p">()</span>
+
         <span class="c1"># Initialize farm quanitities that depend on other objects</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_map</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_fCts</span><span class="p">()</span>
@@ -1385,6 +1392,43 @@ title="Open an issue"
             <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;level&quot;</span><span class="p">],</span>
         <span class="p">)</span>
+
+<div class="viewcode-block" id="Floris.check_deprecated_inputs"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.check_deprecated_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">check_deprecated_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function should used when the FLORIS input file changes in order to provide</span>
+<span class="sd">        an informative error and suggest a fix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">error_messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Check for missing values add in version 3.2 and 3.4</span>
+        <span class="k">for</span> <span class="n">turbine</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="s2">&quot;ref_density_cp_ct&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">turbine</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">error_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;From FLORIS v3.2, the turbine definition must include &#39;ref_density_cp_ct&#39;. &quot;</span>
+                    <span class="s2">&quot;This value represents the air density at which the provided Cp and Ct &quot;</span>
+                    <span class="s2">&quot;curves are defined. Previously, this was assumed to be 1.225 kg/m^3, &quot;</span>
+                    <span class="s2">&quot;and other air density values applied were assumed to be a deviation &quot;</span>
+                    <span class="s2">&quot;from the defined level. FLORIS now requires the user to explicitly &quot;</span>
+                    <span class="s2">&quot;define the reference density. Add &#39;ref_density_cp_ct&#39; to your &quot;</span>
+                    <span class="s2">&quot;turbine definition and try again. For a description of the turbine inputs, &quot;</span>
+                    <span class="s2">&quot;see https://nrel.github.io/floris/input_reference_turbine.html.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="s2">&quot;ref_tilt_cp_ct&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">turbine</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">error_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;From FLORIS v3.4, the turbine definition must include &#39;ref_tilt_cp_ct&#39;. &quot;</span>
+                    <span class="s2">&quot;This value represents the tilt angle at which the provided Cp and Ct &quot;</span>
+                    <span class="s2">&quot;curves are defined. Add &#39;ref_tilt_cp_ct&#39; to your turbine definition and &quot;</span>
+                    <span class="s2">&quot;try again. For a description of the turbine inputs, &quot;</span>
+                    <span class="s2">&quot;see https://nrel.github.io/floris/input_reference_turbine.html.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">error_messages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">turbine</span><span class="p">[</span><span class="s1">&#39;turbine_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> turbine model</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
+                    <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_messages</span><span class="p">)</span>
+                <span class="p">)</span></div>
 
     <span class="c1"># @profile</span>
 <div class="viewcode-block" id="Floris.initialize_domain"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.initialize_domain">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
