@@ -64,6 +64,8 @@ class Floris(BaseClass):
 
     def __attrs_post_init__(self) -> None:
 
+        self.check_deprecated_inputs()
+
         # Initialize farm quanitities that depend on other objects
         self.farm.construct_turbine_map()
         self.farm.construct_turbine_fCts()
@@ -137,6 +139,43 @@ class Floris(BaseClass):
             self.logging["file"]["enable"],
             self.logging["file"]["level"],
         )
+
+    def check_deprecated_inputs(self):
+        """
+        This function should used when the FLORIS input file changes in order to provide
+        an informative error and suggest a fix.
+        """
+
+        error_messages = []
+        # Check for missing values add in version 3.2 and 3.4
+        for turbine in self.farm.turbine_definitions:
+
+            if "ref_density_cp_ct" not in turbine.keys():
+                error_messages.append(
+                    "From FLORIS v3.2, the turbine definition must include 'ref_density_cp_ct'. "
+                    "This value represents the air density at which the provided Cp and Ct "
+                    "curves are defined. Previously, this was assumed to be 1.225 kg/m^3, "
+                    "and other air density values applied were assumed to be a deviation "
+                    "from the defined level. FLORIS now requires the user to explicitly "
+                    "define the reference density. Add 'ref_density_cp_ct' to your "
+                    "turbine definition and try again. For a description of the turbine inputs, "
+                    "see https://nrel.github.io/floris/input_reference_turbine.html."
+                )
+
+            if "ref_tilt_cp_ct" not in turbine.keys():
+                error_messages.append(
+                    "From FLORIS v3.4, the turbine definition must include 'ref_tilt_cp_ct'. "
+                    "This value represents the tilt angle at which the provided Cp and Ct "
+                    "curves are defined. Add 'ref_tilt_cp_ct' to your turbine definition and "
+                    "try again. For a description of the turbine inputs, "
+                    "see https://nrel.github.io/floris/input_reference_turbine.html."
+                )
+
+            if len(error_messages) > 0:
+                raise ValueError(
+                    f"{turbine['turbine_type']} turbine model\n" +
+                    "\n\n".join(error_messages)
+                )
 
     # @profile
     def initialize_domain(self):
