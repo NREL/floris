@@ -18,7 +18,8 @@ parts:
 
   - caption: Theory and Background
     chapters:
-    - file: reference
+    - file: wake_models
+    - file: bibliography
 
   - caption: Developer Reference
     chapters:
