@@ -447,7 +447,7 @@ class TurbineLibrary:
                 a tuple of the Figure and Axes objects are returned.
         """
         if self.power_curves == {} or wind_speeds is not None:
-            self.compute_power_curves(which=which, exclude=exclude, wind_speeds=wind_speeds)
+            self.compute_power_curves(wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
 
@@ -525,7 +525,7 @@ class TurbineLibrary:
                 a tuple of the Figure and Axes objects are returned.
         """
         if self.Cp_curves == {} or wind_speeds is None:
-            self.compute_Cp_curves(which=which, exclude=exclude, wind_speeds=wind_speeds)
+            self.compute_Cp_curves(wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
 
@@ -601,7 +601,7 @@ class TurbineLibrary:
                 a tuple of the Figure and Axes objects are returned.
         """
         if self.Ct_curves == {} or wind_speeds is None:
-            self.compute_Ct_curves(which=which, exclude=exclude, wind_speeds=wind_speeds)
+            self.compute_Ct_curves(wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
 
