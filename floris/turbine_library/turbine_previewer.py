@@ -177,7 +177,7 @@ class TurbineInterface:
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (5, 4))
+        fig_kwargs.setdefault("figsize", (4, 3))
 
         fig = plt.figure(**fig_kwargs)
         ax = fig.add_subplot(111)
@@ -231,7 +231,7 @@ class TurbineInterface:
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (5, 4))
+        fig_kwargs.setdefault("figsize", (4, 3))
 
         fig = plt.figure(**fig_kwargs)
         ax = fig.add_subplot(111)
@@ -282,7 +282,7 @@ class TurbineInterface:
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
-        fig_kwargs.setdefault("figsize", (5, 4))
+        fig_kwargs.setdefault("figsize", (4, 3))
 
         fig = plt.figure(**fig_kwargs)
         ax = fig.add_subplot(111)
@@ -454,7 +454,7 @@ class TurbineLibrary:
         # Set the figure defaults if none are provided
         if fig is None:
             fig_kwargs.setdefault("dpi", 200)
-            fig_kwargs.setdefault("figsize", (5, 4))
+            fig_kwargs.setdefault("figsize", (4, 3))
 
             fig = plt.figure(**fig_kwargs)
         if ax is None:
@@ -532,7 +532,7 @@ class TurbineLibrary:
         # Set the figure defaults if none are provided
         if fig is None:
             fig_kwargs.setdefault("dpi", 200)
-            fig_kwargs.setdefault("figsize", (5, 4))
+            fig_kwargs.setdefault("figsize", (4, 3))
 
             fig = plt.figure(**fig_kwargs)
         if ax is None:
@@ -608,7 +608,7 @@ class TurbineLibrary:
         # Set the figure defaults if none are provided
         if fig is None:
             fig_kwargs.setdefault("dpi", 200)
-            fig_kwargs.setdefault("figsize", (5, 4))
+            fig_kwargs.setdefault("figsize", (4, 3))
 
             fig = plt.figure(**fig_kwargs)
         if ax is None:
@@ -678,7 +678,7 @@ class TurbineLibrary:
         # Set the figure defaults if none are provided
         if fig is None:
             fig_kwargs.setdefault("dpi", 200)
-            fig_kwargs.setdefault("figsize", (5, 4))
+            fig_kwargs.setdefault("figsize", (4, 3))
 
             fig = plt.figure(**fig_kwargs)
         if ax is None:
@@ -748,7 +748,7 @@ class TurbineLibrary:
         # Set the figure defaults if none are provided
         if fig is None:
             fig_kwargs.setdefault("dpi", 200)
-            fig_kwargs.setdefault("figsize", (5, 4))
+            fig_kwargs.setdefault("figsize", (4, 3))
 
             fig = plt.figure(**fig_kwargs)
         if ax is None:
