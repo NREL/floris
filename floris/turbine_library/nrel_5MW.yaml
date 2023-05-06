@@ -31,7 +31,7 @@ TSR: 8.0
 
 ###
 # The air density at which the Cp and Ct curves are defined.
-# ref_density_cp_ct: 1.225
+ref_density_cp_ct: 1.225
 
 ###
 # The tilt angle at which the Cp and Ct curves are defined. This is used to capture
