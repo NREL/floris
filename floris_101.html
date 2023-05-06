@@ -169,8 +169,13 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="reference.html">
-   Coming Soon!
+  <a class="reference internal" href="wake_models.html">
+   Wake Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   Bibliography
   </a>
  </li>
 </ul>
@@ -691,11 +696,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="_autosummary/floris.tools.floris_interface.set_rotor_diameter.html">
-         floris.tools.floris_interface.set_rotor_diameter
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
         </a>
@@ -1159,7 +1159,7 @@ title="Toggle navigation"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://mybinder.org/v2/gh/nrel/floris/main?urlpath=tree/docs/floris_101.ipynb"
+        <a href="https://mybinder.org/v2/gh/NREL/floris/main?urlpath=tree/docs/floris_101.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1202,7 +1202,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://github.com/nrel/floris"
+        <a href="https://github.com/NREL/floris"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1219,7 +1219,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2Ffloris_101.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2Ffloris_101.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1236,7 +1236,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/floris_101.ipynb"
+        <a href="https://github.com/NREL/floris/edit/main/docs/floris_101.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1991,9 +1991,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   843.620    1.104 
-GCH      843.904    5.635 
-CC       839.263    8.069 
+Jensen   843.620    0.832 
+GCH      843.904    4.447 
+CC       839.263    6.422 
 </pre></div>
 </div>
 </div>
@@ -2047,34 +2047,44 @@ CC       839.263    8.069
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=0 (0.0%)
-[Serial Refine] Processing pass=0, turbine_depth=1 (7.1%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=1 (7.1%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=2 (14.3%)
-[Serial Refine] Processing pass=0, turbine_depth=3 (21.4%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=3 (21.4%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=4 (28.6%)
-[Serial Refine] Processing pass=0, turbine_depth=5 (35.7%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=5 (35.7%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=6 (42.9%)
-[Serial Refine] Processing pass=1, turbine_depth=0 (50.0%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=0 (50.0%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=1 (57.1%)
-[Serial Refine] Processing pass=1, turbine_depth=2 (64.3%)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=3 (71.4%)
-[Serial Refine] Processing pass=1, turbine_depth=4 (78.6%)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=2 (64.3%)
+[Serial Refine] Processing pass=1, turbine_depth=3 (71.4%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=4 (78.6%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=5 (85.7%)
 [Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 2.047 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 1.525 s
 </pre></div>
 </div>
 </div>

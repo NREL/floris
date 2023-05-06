@@ -55,7 +55,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="floris.tools.floris_interface_legacy_reader" href="floris.tools.floris_interface_legacy_reader.html" />
-    <link rel="prev" title="floris.tools.floris_interface.set_rotor_diameter" href="floris.tools.floris_interface.set_rotor_diameter.html" />
+    <link rel="prev" title="floris.tools.floris_interface.generate_heterogeneous_wind_map" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
     
@@ -169,8 +169,13 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../reference.html">
-   Coming Soon!
+  <a class="reference internal" href="../wake_models.html">
+   Wake Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../bibliography.html">
+   Bibliography
   </a>
  </li>
 </ul>
@@ -690,11 +695,6 @@ const thebe_selector_output = ".output, .cell_output"
          floris.tools.floris_interface.generate_heterogeneous_wind_map
         </a>
        </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
-         floris.tools.floris_interface.set_rotor_diameter
-        </a>
-       </li>
        <li class="toctree-l4 current active">
         <a class="current reference internal" href="#">
          floris.tools.floris_interface.FlorisInterface
@@ -1173,7 +1173,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://github.com/nrel/floris"
+        <a href="https://github.com/NREL/floris"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1190,7 +1190,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.tools.floris_interface.FlorisInterface.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.tools.floris_interface.FlorisInterface.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1207,7 +1207,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.tools.floris_interface.FlorisInterface.rst"
+        <a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.tools.floris_interface.FlorisInterface.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1308,8 +1308,8 @@ single entry-point for the majority of users, simplifying the calls to
 methods on objects within FLORIS.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>configuration</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- <p>The Floris configuration dictarionary, JSON file,
-or YAML file. The configuration should have the following inputs specified.</p>
+<dd class="field-odd"><p><strong>configuration</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) -- <p>The Floris configuration dictarionary or YAML file.
+The configuration should have the following inputs specified.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><strong>flow_field</strong>: See <cite>floris.simulation.flow_field.FlowField</cite> for more details.</p></li>
@@ -1475,7 +1475,7 @@ Defaults to None.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.reinitialize">
-<span class="sig-name descname"><span class="pre">reinitialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">het_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.reinitialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.reinitialize" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">reinitialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">het_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.reinitialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.reinitialize" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1900,11 +1900,11 @@ watt-hours.</p>
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="floris.tools.floris_interface.set_rotor_diameter.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">floris.tools.floris_interface.set_rotor_diameter</p>
+            <p class="prev-next-title">floris.tools.floris_interface.generate_heterogeneous_wind_map</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="floris.tools.floris_interface_legacy_reader.html" title="next page">

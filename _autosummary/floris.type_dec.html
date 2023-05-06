@@ -169,8 +169,13 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../reference.html">
-   Coming Soon!
+  <a class="reference internal" href="../wake_models.html">
+   Wake Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../bibliography.html">
+   Bibliography
   </a>
  </li>
 </ul>
@@ -691,11 +696,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
-         floris.tools.floris_interface.set_rotor_diameter
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
         </a>
@@ -1173,7 +1173,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://github.com/nrel/floris"
+        <a href="https://github.com/NREL/floris"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1190,7 +1190,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.type_dec.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.type_dec.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1207,7 +1207,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.type_dec.rst"
+        <a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.type_dec.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1329,7 +1329,7 @@ title="Print to PDF"
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="floris.type_dec.FromDictMixin.html#floris.type_dec.FromDictMixin" title="floris.type_dec.FromDictMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FromDictMixin</span></code></a></p></td>
-<td><p>A Mixin class to allow for kwargs overloading when a data class doesn't have a specific parameter definied.</p></td>
+<td><p>A Mixin class to allow for kwargs overloading when a data class doesn't have a specific parameter defined.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1428,7 +1428,7 @@ object.</p>
 <dt class="sig sig-object py" id="floris.type_dec.FromDictMixin">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.type_dec.</span></span><span class="sig-name descname"><span class="pre">FromDictMixin</span></span><a class="reference internal" href="../_modules/floris/type_dec.html#FromDictMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.type_dec.FromDictMixin" title="Permalink to this definition">#</a></dt>
 <dd><p>A Mixin class to allow for kwargs overloading when a data class doesn't
-have a specific parameter definied. This allows passing of larger dictionaries
+have a specific parameter defined. This allows passing of larger dictionaries
 to a data class without throwing an error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -1458,12 +1458,13 @@ The data dictionary to be mapped.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.type_dec.FromDictMixin.as_dict">
 <span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/type_dec.html#FromDictMixin.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.type_dec.FromDictMixin.as_dict" title="Permalink to this definition">#</a></dt>
-<dd><p>Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+<dd><p>Creates a YAML friendly dictionary that can be saved for future reloading.
 This dictionary will contain only <cite>Python</cite> types that can later be converted to their
-proper <cite>Turbine</cite> formats.</p>
+proper formats. See <cite>_attr_floris_filter</cite> for detail on which attributes are
+removed from the export.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>All key, vaue pais required for class recreation.</p>
+<dd class="field-odd"><p>All key, value pairs required for class recreation.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>

@@ -169,8 +169,13 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../reference.html">
-   Coming Soon!
+  <a class="reference internal" href="../wake_models.html">
+   Wake Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../bibliography.html">
+   Bibliography
   </a>
  </li>
 </ul>
@@ -691,11 +696,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
-         floris.tools.floris_interface.set_rotor_diameter
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
         </a>
@@ -1173,7 +1173,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://github.com/nrel/floris"
+        <a href="https://github.com/NREL/floris"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1190,7 +1190,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.simulation.flow_field.FlowField.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.simulation.flow_field.FlowField.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1207,7 +1207,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.simulation.flow_field.FlowField.rst"
+        <a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.simulation.flow_field.FlowField.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1310,7 +1310,7 @@ title="Print to PDF"
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.as_dict" title="floris.simulation.flow_field.FlowField.as_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_dict</span></code></a></p></td>
-<td><p>Creates a JSON and YAML friendly dictionary that can be save for future reloading.</p></td>
+<td><p>Creates a YAML friendly dictionary that can be saved for future reloading.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.calculate_speed_ups" title="floris.simulation.flow_field.FlowField.calculate_speed_ups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_speed_ups</span></code></a></p></td>
 <td><p></p></td>
@@ -1615,12 +1615,13 @@ title="Print to PDF"
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.as_dict">
 <span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#floris.simulation.flow_field.FlowField.as_dict" title="Permalink to this definition">#</a></dt>
-<dd><p>Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+<dd><p>Creates a YAML friendly dictionary that can be saved for future reloading.
 This dictionary will contain only <cite>Python</cite> types that can later be converted to their
-proper <cite>Turbine</cite> formats.</p>
+proper formats. See <cite>_attr_floris_filter</cite> for detail on which attributes are
+removed from the export.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>All key, vaue pais required for class recreation.</p>
+<dd class="field-odd"><p>All key, value pairs required for class recreation.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>

@@ -169,8 +169,13 @@ const thebe_selector_output = ".output, .cell_output"
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../reference.html">
-   Coming Soon!
+  <a class="reference internal" href="../wake_models.html">
+   Wake Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../bibliography.html">
+   Bibliography
   </a>
  </li>
 </ul>
@@ -691,11 +696,6 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.set_rotor_diameter.html">
-         floris.tools.floris_interface.set_rotor_diameter
-        </a>
-       </li>
-       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
         </a>
@@ -1173,7 +1173,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://github.com/nrel/floris"
+        <a href="https://github.com/NREL/floris"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1190,7 +1190,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.simulation.farm.Farm.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.simulation.farm.Farm.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1207,7 +1207,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/nrel/floris/edit/main/docs/_autosummary/floris.simulation.farm.Farm.rst"
+        <a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.simulation.farm.Farm.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1303,7 +1303,7 @@ title="Print to PDF"
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.farm.</span></span><span class="sig-name descname"><span class="pre">Farm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/floris/floris/floris/turbine_library')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="floris.simulation.base.BaseClass.html#floris.simulation.base.BaseClass" title="floris.simulation.base.BaseClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.simulation.base.BaseClass</span></code></a></p>
 <p>Farm is where wind power plants should be instantiated from a YAML configuration
-file. The Farm will create a heterogenous set of turbines that compose a windfarm,
+file. The Farm will create a heterogenous set of turbines that compose a wind farm,
 validate the inputs, and then create a vectorized representation of the the turbine
 data.</p>
 <p>Farm is the container class of the FLORIS package. It brings
@@ -1319,7 +1319,7 @@ for generating output.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.as_dict" title="floris.simulation.farm.Farm.as_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_dict</span></code></a></p></td>
-<td><p>Creates a JSON and YAML friendly dictionary that can be save for future reloading.</p></td>
+<td><p>Creates a YAML friendly dictionary that can be saved for future reloading.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.calculate_tilt_for_eff_velocities" title="floris.simulation.farm.Farm.calculate_tilt_for_eff_velocities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_tilt_for_eff_velocities</span></code></a></p></td>
 <td><p></p></td>
@@ -1541,7 +1541,7 @@ for generating output.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.turbine_definitions">
-<span class="sig-name descname"><span class="pre">turbine_definitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#floris.simulation.farm.Farm.turbine_definitions" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">turbine_definitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#floris.simulation.farm.Farm.turbine_definitions" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1677,6 +1677,22 @@ for generating output.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_turbine_type">
+<span class="sig-name descname"><span class="pre">check_turbine_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_turbine_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_turbine_type" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>attribute</strong> (<em>attr._make.Attribute</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_library_path">
 <span class="sig-name descname"><span class="pre">check_library_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_library_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_library_path" title="Permalink to this definition">#</a></dt>
 <dd><p>Ensures that the input to <cite>library_path</cite> exists and is a directory.</p>
@@ -1689,16 +1705,6 @@ for generating output.</p>
 <li><p><strong>attribute</strong> (<em>attr._make.Attribute</em>) -- </p></li>
 <li><p><strong>value</strong> (<em>pathlib.Path</em>) -- </p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="floris.simulation.farm.Farm.check_turbine_type">
-<span class="sig-name descname"><span class="pre">check_turbine_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.check_turbine_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.check_turbine_type" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1848,12 +1854,13 @@ parameters as a dictionary.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.farm.Farm.as_dict">
 <span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#floris.simulation.farm.Farm.as_dict" title="Permalink to this definition">#</a></dt>
-<dd><p>Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+<dd><p>Creates a YAML friendly dictionary that can be saved for future reloading.
 This dictionary will contain only <cite>Python</cite> types that can later be converted to their
-proper <cite>Turbine</cite> formats.</p>
+proper formats. See <cite>_attr_floris_filter</cite> for detail on which attributes are
+removed from the export.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>All key, vaue pais required for class recreation.</p>
+<dd class="field-odd"><p>All key, value pairs required for class recreation.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
