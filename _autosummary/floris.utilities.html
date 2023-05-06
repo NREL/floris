@@ -152,6 +152,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../turbine_interaction.html">
+   Turbine Library Interface
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../input_reference.html">
    Input File Reference
   </a>
@@ -1062,6 +1067,16 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.round_nearest.html">
+       floris.utilities.round_nearest
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.round_nearest_2_or_5.html">
+       floris.utilities.round_nearest_2_or_5
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="floris.utilities.sind.html">
        floris.utilities.sind
       </a>
@@ -1317,6 +1332,12 @@ title="Print to PDF"
 <tr class="row-even"><td><p><a class="reference internal" href="floris.utilities.rotate_coordinates_rel_west.html#floris.utilities.rotate_coordinates_rel_west" title="floris.utilities.rotate_coordinates_rel_west"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_coordinates_rel_west</span></code></a></p></td>
 <td><p>This function rotates the given coordinates so that they are aligned with West (270) rather than North (0).</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.utilities.round_nearest.html#floris.utilities.round_nearest" title="floris.utilities.round_nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_nearest</span></code></a></p></td>
+<td><p>Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="floris.utilities.round_nearest_2_or_5.html#floris.utilities.round_nearest_2_or_5" title="floris.utilities.round_nearest_2_or_5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_nearest_2_or_5</span></code></a></p></td>
+<td><p>Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 2 or 5.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="floris.utilities.sind.html#floris.utilities.sind" title="floris.utilities.sind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sind</span></code></a></p></td>
 <td><p>Sine of an angle with the angle given in degrees.</p></td>
 </tr>
@@ -1564,14 +1585,14 @@ so that each element of the array coordinates[i] yields a three-component coordi
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.utilities.Loader">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">Loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#Loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.Loader" title="Permalink to this definition">#</a></dt>
-<dd><dl class="py attribute">
-<dt class="sig sig-object py" id="floris.utilities.Loader.yaml_constructors">
-<span class="sig-name descname"><span class="pre">yaml_constructors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'tag:yaml.org,2002:null':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_null&gt;,</span> <span class="pre">'tag:yaml.org,2002:bool':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_bool&gt;,</span> <span class="pre">'tag:yaml.org,2002:int':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_int&gt;,</span> <span class="pre">'tag:yaml.org,2002:float':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_float&gt;,</span> <span class="pre">'tag:yaml.org,2002:binary':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_binary&gt;,</span> <span class="pre">'tag:yaml.org,2002:timestamp':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_timestamp&gt;,</span> <span class="pre">'tag:yaml.org,2002:omap':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_omap&gt;,</span> <span class="pre">'tag:yaml.org,2002:pairs':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_pairs&gt;,</span> <span class="pre">'tag:yaml.org,2002:set':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_set&gt;,</span> <span class="pre">'tag:yaml.org,2002:str':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_str&gt;,</span> <span class="pre">'tag:yaml.org,2002:seq':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_seq&gt;,</span> <span class="pre">'tag:yaml.org,2002:map':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_map&gt;,</span> <span class="pre">None:</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_undefined&gt;,</span> <span class="pre">'!include':</span> <span class="pre">&lt;function</span> <span class="pre">Loader.include&gt;}</span></em><a class="headerlink" href="#floris.utilities.Loader.yaml_constructors" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
+<dd><dl class="py method">
 <dt class="sig sig-object py" id="floris.utilities.Loader.include">
 <span class="sig-name descname"><span class="pre">include</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#Loader.include"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.Loader.include" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.utilities.Loader.yaml_constructors">
+<span class="sig-name descname"><span class="pre">yaml_constructors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'tag:yaml.org,2002:null':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_null&gt;,</span> <span class="pre">'tag:yaml.org,2002:bool':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_bool&gt;,</span> <span class="pre">'tag:yaml.org,2002:int':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_int&gt;,</span> <span class="pre">'tag:yaml.org,2002:float':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_float&gt;,</span> <span class="pre">'tag:yaml.org,2002:binary':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_binary&gt;,</span> <span class="pre">'tag:yaml.org,2002:timestamp':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_timestamp&gt;,</span> <span class="pre">'tag:yaml.org,2002:omap':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_omap&gt;,</span> <span class="pre">'tag:yaml.org,2002:pairs':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_pairs&gt;,</span> <span class="pre">'tag:yaml.org,2002:set':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_set&gt;,</span> <span class="pre">'tag:yaml.org,2002:str':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_str&gt;,</span> <span class="pre">'tag:yaml.org,2002:seq':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_seq&gt;,</span> <span class="pre">'tag:yaml.org,2002:map':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_map&gt;,</span> <span class="pre">None:</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_undefined&gt;,</span> <span class="pre">'!include':</span> <span class="pre">&lt;function</span> <span class="pre">Loader.include&gt;}</span></em><a class="headerlink" href="#floris.utilities.Loader.yaml_constructors" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1580,6 +1601,49 @@ so that each element of the array coordinates[i] yields a three-component coordi
 <dt class="sig sig-object py" id="floris.utilities.load_yaml">
 <span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">load_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader=&lt;class</span> <span class="pre">'floris.utilities.Loader'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#load_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.load_yaml" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.utilities.round_nearest_2_or_5">
+<span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">round_nearest_2_or_5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#round_nearest_2_or_5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.round_nearest_2_or_5" title="Permalink to this definition">#</a></dt>
+<dd><p>Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 2 or 5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>int</em><em> | </em><em>float</em>) -- The number to be rounded.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The rounded number.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.utilities.round_nearest">
+<span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">round_nearest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#round_nearest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.round_nearest" title="Permalink to this definition">#</a></dt>
+<dd><p>Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em><em> | </em><em>float</em>) -- The number to be rounded.</p></li>
+<li><p><strong>base</strong> (<em>int</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The rounded number.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

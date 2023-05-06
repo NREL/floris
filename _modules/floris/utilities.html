@@ -149,6 +149,11 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../../turbine_interaction.html">
+   Turbine Library Interface
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../../input_reference.html">
    Input File Reference
   </a>
@@ -1059,6 +1064,16 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../_autosummary/floris.utilities.round_nearest.html">
+       floris.utilities.round_nearest
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../_autosummary/floris.utilities.round_nearest_2_or_5.html">
+       floris.utilities.round_nearest_2_or_5
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../_autosummary/floris.utilities.sind.html">
        floris.utilities.sind
       </a>
@@ -1248,6 +1263,7 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1517,6 +1533,32 @@ title="Open an issue"
 <div class="viewcode-block" id="load_yaml"><a class="viewcode-back" href="../../_autosummary/floris.utilities.load_yaml.html#floris.utilities.load_yaml">[docs]</a><span class="k">def</span> <span class="nf">load_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">Loader</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">loader</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="round_nearest_2_or_5"><a class="viewcode-back" href="../../_autosummary/floris.utilities.round_nearest_2_or_5.html#floris.utilities.round_nearest_2_or_5">[docs]</a><span class="k">def</span> <span class="nf">round_nearest_2_or_5</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 2 or 5.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (int | float): The number to be rounded.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The rounded number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_2</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">base_5</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">base_2</span> <span class="o">*</span> <span class="n">ceil</span><span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">base_2</span><span class="p">),</span> <span class="n">base_5</span> <span class="o">*</span> <span class="n">ceil</span><span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">base_5</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="round_nearest"><a class="viewcode-back" href="../../_autosummary/floris.utilities.round_nearest.html#floris.utilities.round_nearest">[docs]</a><span class="k">def</span> <span class="nf">round_nearest</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (int | float): The number to be rounded.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The rounded number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">base</span> <span class="o">*</span> <span class="n">ceil</span><span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span></div>
 </pre></div>
 
               </div>
