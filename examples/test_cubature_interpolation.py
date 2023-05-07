@@ -18,30 +18,14 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 
-"""
-04_sweep_wind_directions
-
-This example demonstrates vectorization of wind direction.  
-A vector of wind directions is passed to the intialize function 
-and the powers of the two simulated turbines is computed for all
-wind directions in one call
-
-The power of both turbines for each wind direction is then plotted
-
-"""
 
 # Instantiate FLORIS using either the GCH or CC model
-fi = FlorisInterface("inputs/jensen.yaml")  # GCH model matched to the default "legacy_gauss" of V2
-# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fi = FlorisInterface("/Users/rmudafor/Development/floris/examples/inputs/jensen.yaml")
+input_dict = fi.floris.as_dict()
+input_dict["solver"] = {"type": "cubature_grid"}
+fi = FlorisInterface(input_dict)
 
-# Define a two turbine farm
-D = 126.0
-layout_x = np.array([0, D * 5])
-layout_y = [0, 0]
-fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
-
-# Sweep wind speeds but keep wind direction fixed
-wd_array = np.arange(250.0, 291.0, 1.0)
+wd_array = np.arange(250.0, 251.0, 1.0)
 fi.reinitialize(wind_directions=wd_array)
 fi.calculate_wake()
 
@@ -59,8 +43,8 @@ hh = fi.floris.farm.turbine_definitions[ti]["hub_height"]
 r = fi.floris.farm.turbine_definitions[ti]["rotor_diameter"] / 2.0
 theta = np.linspace(0.0, 2 * np.pi, 1000)
 sc = ax[0].scatter(
-    fi.floris.grid.y[0, 0, ti, :, :].flatten(),
-    fi.floris.grid.z[0, 0, ti, :, :].flatten(),
+    fi.floris.grid.y[0, 0, ti].flatten(),
+    fi.floris.grid.z[0, 0, ti].flatten(),
     # c=fi.floris.grid.weights[0, 0, ti, :, :].flatten()
 )
 # plt.colorbar(sc, ax=ax[0])
