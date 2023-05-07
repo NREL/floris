@@ -654,7 +654,7 @@ class FlorisInterface(LoggerBase):
     def turbine_average_velocities(self) -> NDArrayFloat:
         return average_velocity(
             velocities=self.floris.flow_field.u,
-            method="simple-cubature",
+            method=self.floris.grid.average_method,
             cubature_coefficients=self.floris.grid.cubature_coefficients
         )
 

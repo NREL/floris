@@ -93,7 +93,7 @@ def sequential_solver(
 
         average_velocities = average_velocity(
             flow_field.u_sorted,
-            method="simple-cubature",
+            method=grid.average_method,
             cubature_coefficients=grid.cubature_coefficients
         )
 

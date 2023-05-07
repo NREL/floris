@@ -113,12 +113,12 @@ class Grid(ABC):
     def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
         # TODO move this to the grid types and off of the base class
         """Check that grid resolution is given as int or Vec3 with int components."""
-        if isinstance(value, int) and type(self) is TurbineGrid:
+        if isinstance(value, int) and isinstance(self, (TurbineGrid, CubatureGrid)):
             return
-        elif isinstance(value, Iterable) and type(self) is FlowFieldPlanarGrid:
+        elif isinstance(value, Iterable) and isinstance(self, FlowFieldPlanarGrid):
             assert type(value[0]) is int
             assert type(value[1]) is int
-        elif isinstance(value, Iterable) and type(self) is FlowFieldGrid:
+        elif isinstance(value, Iterable) and isinstance(self, FlowFieldGrid):
             assert type(value[0]) is int
             assert type(value[1]) is int
             assert type(value[2]) is int
@@ -148,6 +148,7 @@ class TurbineGrid(Grid):
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
+    average_method = "cubic-mean"
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -214,20 +215,97 @@ class TurbineGrid(Grid):
         #         the rotor radius.
         #         Defaults to 0.5.
 
+        # Create the data for the turbine grids
+        radius_ratio = 0.5
+        disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
+        template_grid = np.ones(
+            (
+                self.n_wind_directions,
+                self.n_wind_speeds,
+                self.n_turbines,
+                self.grid_resolution,
+                self.grid_resolution,
+            ),
+            dtype=floris_float_type
+        )
+        # Calculate the radial distance from the center of the turbine rotor.
+        # If a grid resolution of 1 is selected, create a disc_grid of zeros, as
+        # np.linspace would just return the starting value of -1 * disc_area_radius
+        # which would place the point below the center of the rotor.
+        if self.grid_resolution == 1:
+            disc_grid = np.zeros((np.shape(disc_area_radius)[0], 1 ))
+        else:
+            disc_grid = np.linspace(
+                -1 * disc_area_radius,
+                disc_area_radius,
+                self.grid_resolution,
+                dtype=floris_float_type,
+                axis=1
+            )
+        # Construct the turbine grids
+        # Here, they are already rotated to the correct orientation for each wind direction
+        _x = x[:, :, :, None, None] * template_grid
+
+        ones_grid = np.ones(
+            (self.n_turbines, self.grid_resolution, self.grid_resolution),
+            dtype=floris_float_type
+        )
+        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[None, None, :, :, None])
+        _z = z[:, :, :, None, None] + template_grid * ( disc_grid[:, None, :] * ones_grid )
+
+        # Sort the turbines at each wind direction
+
+        # Get the sorted indices for the x coordinates. These are the indices
+        # to sort the turbines from upstream to downstream for all wind directions.
+        # Also, store the indices to sort them back for when the calculation finishes.
+        self.sorted_indices = _x.argsort(axis=2)
+        self.sorted_coord_indices = x.argsort(axis=2)
+        self.unsorted_indices = self.sorted_indices.argsort(axis=2)
+
+        # Put the turbine coordinates into the final arrays in their sorted order
+        # These are the coordinates that should be used within the internal calculations
+        # such as the wake models and the solvers.
+        self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=2)
+        self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=2)
+        self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=2)
+
+        self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=2)
+        self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=2)
+        self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
+
+@define
+class CubatureGrid(Grid):
+    """
+    #TODO
+    """
+    sorted_indices: NDArrayInt = field(init=False)
+    sorted_coord_indices: NDArrayInt = field(init=False)
+    unsorted_indices: NDArrayInt = field(init=False)
+    average_method = "cubic-cubature"
+
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
+        self.set_grid()
+
+    def set_grid(self) -> None:
+        """
+        """
+        # These are the rotated coordinates of the wind turbines based on the wind direction
+        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+
         # Coefficients
-        coeff = {
+        self.cubature_coefficients = {
             "r": [-0.8164965809277260327324280, 0.0000000000000000000000000, 0.8164965809277260327324280],
             "t": [-0.8660254037844386467637232, 0.0000000000000000000000000, 0.8660254037844386467637232],
             "q": [ 0.5000000000000000000000000, 1.0000000000000000000000000, 0.5000000000000000000000000],
             "A": [ 0.3750000000000000000000000, 0.2500000000000000000000000, 0.3750000000000000000000000],
             "B": 1.047197551196598,
         }
+        yv = np.kron(self.cubature_coefficients["r"], self.cubature_coefficients["q"])
+        zv = np.kron(self.cubature_coefficients["r"], self.cubature_coefficients["t"])
 
-        self.cubature_coefficients = coeff
-        yv = np.kron(coeff["r"], coeff["q"])
-        zv = np.kron(coeff["r"], coeff["t"])
-
-        # Here, they are already rotated to the correct orientation for each wind direction
+        # Here, the coordinates are already rotated to the correct orientation for each
+        # wind direction
         template_grid = np.ones(
             (
                 self.n_wind_directions,
@@ -244,23 +322,6 @@ class TurbineGrid(Grid):
         for ti in range(self.n_turbines):
             _y[:, :, ti, :, :] += yv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
             _z[:, :, ti, :, :] += zv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
-
-        # import matplotlib.pyplot as plt
-        # fig, ax = plt.subplots()
-        # ax.plot(y, z, 'o')
-        # ax.axis("equal")
-        # theta = np.linspace(0.0, 2*np.pi, 1000)
-        # ax.plot(np.cos(theta), np.sin(theta), 'k--')
-        # plt.show()
-
-        # y_interp = rotor_radius * y - Yc
-        # z_interp = rotor_radius * z - Zc
-        # s = np.sum(
-        #     np.multiply(
-        #         np.kron(coeff["A"], np.ones(1, n)),
-        #         funct(y_interp, z_interp)
-        #     )
-        # ) *  coeff["B"] * rotor_radius**2.0;
 
         # Sort the turbines at each wind direction
 
