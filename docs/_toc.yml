@@ -13,12 +13,15 @@ parts:
     chapters:
     - file: floris_101
     - file: floating_wind_turbine
-    - file: input_reference
+    - file: turbine_interaction
+    - file: input_reference_main
+    - file: input_reference_turbine
     - file: examples
 
   - caption: Theory and Background
     chapters:
-    - file: reference
+    - file: wake_models
+    - file: bibliography
 
   - caption: Developer Reference
     chapters:

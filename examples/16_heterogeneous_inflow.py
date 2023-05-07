@@ -72,16 +72,19 @@ cross_plane_2d = fi_2d.calculate_cross_plane(
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
 visualize_cut_plane(horizontal_plane_2d, ax=ax_list[0], title="Horizontal", color_bar=True)
-ax_list[0].set_xlabel('x'); ax_list[0].set_ylabel('y')
+ax_list[0].set_xlabel('x')
+ax_list[0].set_ylabel('y')
 visualize_cut_plane(y_plane_2d, ax=ax_list[1], title="Streamwise profile", color_bar=True)
-ax_list[1].set_xlabel('x'); ax_list[1].set_ylabel('z')
+ax_list[1].set_xlabel('x')
+ax_list[1].set_ylabel('z')
 visualize_cut_plane(
     cross_plane_2d,
     ax=ax_list[2],
     title="Spanwise profile at 500m downstream",
     color_bar=True
 )
-ax_list[2].set_xlabel('y'); ax_list[2].set_ylabel('z')
+ax_list[2].set_xlabel('y')
+ax_list[2].set_ylabel('z')
 
 
 # Define the speed ups of the heterogeneous inflow, and their locations.
@@ -129,20 +132,23 @@ visualize_cut_plane(
     title="Horizontal",
     color_bar=True
 )
-ax_list[0].set_xlabel('x'); ax_list[0].set_ylabel('y')
+ax_list[0].set_xlabel('x')
+ax_list[0].set_ylabel('y')
 visualize_cut_plane(
     y_plane_3d,
     ax=ax_list[1],
     title="Streamwise profile",
     color_bar=True
 )
-ax_list[1].set_xlabel('x'); ax_list[1].set_ylabel('z')
+ax_list[1].set_xlabel('x')
+ax_list[1].set_ylabel('z')
 visualize_cut_plane(
     cross_plane_3d,
     ax=ax_list[2],
     title="Spanwise profile at 500m downstream",
     color_bar=True
 )
-ax_list[2].set_xlabel('y'); ax_list[2].set_ylabel('z')
+ax_list[2].set_xlabel('y')
+ax_list[2].set_ylabel('z')
 
 plt.show()
