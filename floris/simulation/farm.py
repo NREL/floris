@@ -158,7 +158,9 @@ class Farm(BaseClass):
             _turbine_types *= self.n_turbines
 
         # Map each turbine definition to its index in this list
-        self.turbine_definitions = [turbine_definition_cache[t] for t in _turbine_types]
+        self.turbine_definitions = [
+            copy.deepcopy(turbine_definition_cache[t]) for t in _turbine_types
+        ]
 
     @layout_x.validator
     def check_x(self, attribute: attrs.Attribute, value: Any) -> None:

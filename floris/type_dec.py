@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import copy
 from pathlib import Path
 from typing import (
     Any,
@@ -130,6 +131,9 @@ class FromDictMixin:
             cls
                 The `attr`-defined class.
         """
+        # Make a copy of the input dict to prevent any side effects
+        data = copy.deepcopy(data)
+
         # Check for any inputs that aren't part of the class definition
         class_attr_names = [a.name for a in cls.__attrs_attrs__]
         extra_args = [d for d in data if d not in class_attr_names]
