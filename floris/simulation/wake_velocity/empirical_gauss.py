@@ -23,6 +23,7 @@ from floris.simulation import (
     Grid,
     Turbine,
 )
+from floris.simulation.wake_velocity.gauss import gaussian_function
 from floris.utilities import (
     cosd,
     sind,
@@ -261,9 +262,6 @@ def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta_y, delta_z, z, HH, Ct,
     d = 1 - Ct * (sigma_y0 * sigma_z0)/(sigma_y * sigma_z) * cosd(yaw) * cosd(tilt)
     C = ne.evaluate("1 - sqrt(d)")
     return r, C
-
-def gaussian_function(C, r, n, sigma):
-    return C * np.exp(-1 * r ** n / (2 * sigma ** 2))
 
 def sigmoid_integral(x, center=0, width=1):
     y = np.zeros_like(x)
