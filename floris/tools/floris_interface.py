@@ -953,16 +953,16 @@ class FlorisInterface(LoggerBase):
         Extract the wind speed at points in the flow.
 
         Args:
-            points_x (1DArray or list): x-locations of points where 
+            points_x (1DArray or list): x-locations of points where
                 flow is desired.
-            points_y (1DArray or list): y-locations of points where 
+            points_y (1DArray or list): y-locations of points where
                 flow is desired.
-            points_z (1DArray or list): z-locations of points where 
+            points_z (1DArray or list): z-locations of points where
                 flow is desired.
 
         Returns:
-            3DArrayFloat containing wind speed, with dimensions 
-               (# of wind directions) x (# of wind speeds) x 
+            3DArrayFloat containing wind speed, with dimensions
+               (# of wind directions) x (# of wind speeds) x
                (# of sample points)
         """
 
