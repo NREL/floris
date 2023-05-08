@@ -219,22 +219,25 @@ def wind_delta(wind_directions: NDArrayFloat | float):
 
 
 def rotate_coordinates_rel_west(
-    wind_directions: NDArrayFloat,
-    coordinates: NDArrayFloat
+    wind_directions,
+    coordinates,
+    x_center_of_rotation=None,
+    y_center_of_rotation=None
 ):
     """
     This function rotates the given coordinates so that they are aligned with West (270) rather
     than North (0). The rotation happens about the centroid of the coordinates.
 
     Args:
-        wind_directions (NDArrayFloat): Series of wind directions to base the rotation
+        wind_directions (NDArrayFloat): Series of wind directions to base the rotation.
         coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)
-            so that each element of the array coordinates[i] yields a three-component coordinate
-
-    Returns:
-        (NDArrayFloat, NDArrayFloat, NDArrayFloat): x, y, and z components of the rotated
-            coordinates with shape (N wind directions, 1, N coordinates)
+            so that each element of the array coordinates[i] yields a three-component coordinate.
+        x_center_of_rotation (float, optional): The x-coordinate for the rotation center of the
+            input coordinates. Defaults to None.
+        y_center_of_rotation (float, optional): The y-coordinate for the rotational center of the
+            input coordinates. Defaults to None.
     """
+
     # Calculate the difference in given wind direction from 270 / West
     wind_deviation_from_west = wind_delta(wind_directions)
     wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))
@@ -243,8 +246,10 @@ def rotate_coordinates_rel_west(
     x_coordinates, y_coordinates, z_coordinates = coordinates.T
 
     # Find center of rotation - this is the center of box bounding all of the turbines
-    x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
-    y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
+    if x_center_of_rotation is None:
+        x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
+    if y_center_of_rotation is None:
+        y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
 
     # Rotate turbine coordinates about the center
     x_coord_offset = x_coordinates - x_center_of_rotation
@@ -260,7 +265,8 @@ def rotate_coordinates_rel_west(
         + y_center_of_rotation
     )
     z_coord_rotated = np.ones_like(wind_deviation_from_west) * z_coordinates
-    return x_coord_rotated, y_coord_rotated, z_coord_rotated
+    return x_coord_rotated, y_coord_rotated, z_coord_rotated, x_center_of_rotation, \
+        y_center_of_rotation
 
 
 class Loader(yaml.SafeLoader):

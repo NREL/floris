@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import copy
 
 import yaml
 from attrs import define, field
@@ -109,18 +110,6 @@ class Floris(BaseClass):
                 x1_bounds=self.solver["flow_field_bounds"][0],
                 x2_bounds=self.solver["flow_field_bounds"][1],
             )
-        elif self.solver["type"] == "points_grid":
-            self.grid = PointsGrid(
-                turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameters,
-                wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
-                grid_resolution=1,
-                time_series=self.flow_field.time_series,
-                points_x=self.solver["points_x"],
-                points_y=self.solver["points_y"],
-                points_z=self.solver["points_z"],
-            )
         else:
             raise ValueError(
                 f"Supported solver types are [turbine_grid, flow_field_grid],"
@@ -212,6 +201,42 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
+    def solve_for_points(self, points_x, points_y, points_z):
+        # Do the calculation with the TurbineGrid for a single wind speed
+        # and wind direction and 1 point on the grid. Then, use the result
+        # to construct the full flow field grid.
+        # This function call should be for a single wind direction and wind speed
+        # since the memory consumption is very large.
+
+        vel_model = self.wake.model_strings["velocity_model"]
+
+        if vel_model=="cc":
+            full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="turbopark":
+            full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
+        else:
+
+            # Instantiate the flow_grid
+            field_grid = PointsGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.rotor_diameters,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                grid_resolution=1,
+                time_series=self.flow_field.time_series,
+                points_x=points_x,
+                points_y=points_y,
+                points_z=points_z,
+                x_center_of_rotation=self.grid.xc_rot,
+                y_center_of_rotation=self.grid.yc_rot
+            )
+
+            self.flow_field.initialize_velocity_field(field_grid)
+
+            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+
+            return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
+    
     def finalize(self):
         # Once the wake calculation is finished, unsort the values to match
         # the user-supplied order of things.

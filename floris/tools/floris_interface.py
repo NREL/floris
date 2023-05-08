@@ -914,6 +914,37 @@ class FlorisInterface(LoggerBase):
 
         return aep
 
+    def sample_flow_at_points(
+        self,
+        points_x: NDArrayFloat,
+        points_y: NDArrayFloat,
+        points_z: NDArrayFloat,
+    ):
+        """
+        To be written
+        Args:
+            probe_points (list[tuple], optional): List of probe points to add.
+        Returns:
+            Nothing?
+        """
+
+        # Check that point_x, point_y, point_z are all the same length
+        if not (
+            len(points_x) == len(points_y)
+            and len(points_x) == len(points_z)
+        ):
+            raise ValueError(
+                "The number of points in each coordinate direction must be the same."
+            )
+
+        # Confirm calculate wake has been run
+        if self.floris.state is not State.USED:
+            raise RuntimeError(
+                "Can't run function `FlorisInterface.sample_flow_at_points` without "
+                "first running `FlorisInterface.calculate_wake`."
+            )
+
+        return self.floris.solve_for_points(points_x, points_y, points_z)
 
 
     @property

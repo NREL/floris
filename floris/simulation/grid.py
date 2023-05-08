@@ -79,6 +79,8 @@ class Grid(ABC):
     x_sorted: NDArrayFloat = field(init=False)
     y_sorted: NDArrayFloat = field(init=False)
     z_sorted: NDArrayFloat = field(init=False)
+    xc_rot: NDArrayFloat = field(init=False)
+    yc_rot: NDArrayFloat = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
@@ -208,7 +210,10 @@ class TurbineGrid(Grid):
         # the foot of the turbine where the tower meets the ground.
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, self.xc_rot, self.yc_rot = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array,
+        )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
@@ -363,7 +368,7 @@ class FlowFieldPlanarGrid(Grid):
         Then, create the grid based on this wind-from-left orientation
         """
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, _, _ = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
 
         max_diameter = np.max(self.reference_turbine_diameter)
 
@@ -487,7 +492,9 @@ class PointsGrid(Grid):
     points_x: NDArrayFloat = field()
     points_y: NDArrayFloat = field()
     points_z: NDArrayFloat = field()
-
+    x_center_of_rotation: float | None = field(default=None)
+    y_center_of_rotation: float | None = field(default=None)
+    
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
         self.set_grid()
@@ -499,7 +506,12 @@ class PointsGrid(Grid):
         point_coordinates = np.array(list(zip(self.points_x, self.points_y, self.points_z)))
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, point_coordinates)
-        self.x_sorted = x
-        self.y_sorted = y
-        self.z_sorted = z
+        x, y, z, _, _ = rotate_coordinates_rel_west(
+            self.wind_directions, 
+            point_coordinates,
+            x_center_of_rotation=self.x_center_of_rotation,
+            y_center_of_rotation=self.y_center_of_rotation
+        )
+        self.x_sorted = x[:,:,:,None,None]
+        self.y_sorted = y[:,:,:,None,None]
+        self.z_sorted = z[:,:,:,None,None]
