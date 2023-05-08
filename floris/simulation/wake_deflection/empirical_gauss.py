@@ -72,10 +72,6 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
 
         kwargs = {
             "x": grid.x_sorted,
-            "y": grid.y_sorted,
-            "z": grid.z_sorted,
-            "freestream_velocity": flow_field.u_initial_sorted,
-            "wind_veer": flow_field.wind_veer,
         }
         return kwargs
 
@@ -91,10 +87,6 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         rotor_diameter_i: float,
         *,
         x: np.ndarray,
-        y: np.ndarray,
-        z: np.ndarray,
-        freestream_velocity: np.ndarray,
-        wind_veer: float,
     ):
         """
         Calculates the deflection field of the wake.
@@ -114,13 +106,6 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
 
             x (np.array): Streamwise direction grid coordinates of the
                 flow field domain (m).
-            y (np.array): Cross stream direction grid coordinates of the
-                flow field domain (m) [not used].
-            z (np.array): Vertical direction grid coordinates of the
-                flow field domain (m) [not used].
-            freestream_velocity (np.array): Free stream wind speed (m/s)
-                [not used].
-            wind_veer (np.array): Wind veer (deg) [not used].
 
         Returns:
             np.array: Deflection field for the wake.

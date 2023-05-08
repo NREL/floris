@@ -80,7 +80,6 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             "x": grid.x_sorted,
             "y": grid.y_sorted,
             "z": grid.z_sorted,
-            "u_initial": flow_field.u_initial_sorted,
             "wind_veer": flow_field.wind_veer
         }
         return kwargs
@@ -105,7 +104,6 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         x: np.ndarray,
         y: np.ndarray,
         z: np.ndarray,
-        u_initial: np.ndarray,
         wind_veer: float
     ) -> None:
         """
@@ -140,8 +138,6 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
                 flow field domain (m).
             z (np.array): Vertical direction grid coordinates of the
                 flow field domain (m).
-            u_initial (np.array): Free stream wind speed (m/s)
-                [not used].
             wind_veer (np.array): Wind veer (deg).
 
         Returns:
