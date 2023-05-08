@@ -32,9 +32,8 @@ from floris.simulation.wake_deflection.gauss import (
     wake_added_yaw,
     yaw_added_turbulence_mixing,
 )
-from floris.utilities import cosd
 from floris.type_dec import NDArrayFloat
-
+from floris.utilities import cosd
 
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
