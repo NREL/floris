@@ -155,15 +155,6 @@ class FlorisInterface(LoggerBase):
                 self.floris.flow_field.n_wind_speeds
             )
 
-        # TODO is this required?
-        if tilt_angles is not None:
-            self.floris.farm.tilt_angles = tilt_angles
-        else:
-            self.floris.farm.set_tilt_to_ref_tilt(
-                self.floris.flow_field.n_wind_directions,
-                self.floris.flow_field.n_wind_speeds
-            )
-
         # Initialize solution space
         self.floris.initialize_domain()
 
@@ -663,7 +654,6 @@ class FlorisInterface(LoggerBase):
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:
-        # TODO: Should we have a `turbine_effective_velocities` function?
         return average_velocity(velocities=self.floris.flow_field.u)
 
     @property
