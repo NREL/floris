@@ -23,7 +23,7 @@ in thrust due to yaw or tilt of the turbine rotor. $\sigma_{y0}$ and
 $\sigma_{z0}$ define the wake width at the turbine location $x=0$, which are
 based on the user-specified rotor-diameter normalized initial width
 $\sigma_{0_D}$. Note that
-this constrasts with FLORIS's
+this contrasts with FLORIS's
 other Gaussian models, where $\sigma_{y0}$ and $\sigma_{z0}$ are defined at
 the end of the near wake/beginning of the far wake, at some $x_0 > 0$. The
 normalization term $8\sigma_{0_D}^2$ provides consistency with actuator
@@ -46,7 +46,7 @@ $b_0 = 0$ and $b_{n+1} = \infty$ by design.
 
 A slight modification is made to the above so that the wake width varies
 smoothly. As stated above, the wake expansion rate contains jump
-discountinuities that create "sharp" changes in the wake width. To avoid this,
+discontinuities that create "sharp" changes in the wake width. To avoid this,
 the indicator function $\mathbf{1}_{[a, b)}(x)$ is replaced with a pair of
 "smoothstep" functions that vary smoothly with width parameter $d$. In the
 limit as $d\rightarrow 0$, the approximation becomes exact.
@@ -66,7 +66,7 @@ logistic function width $d$ as `smoothing_length_D` (both specified in
 terms of rotor diameters).
 
 We expect that the default values for $\sigma_{0_D}$ and $d$ should be
-satisfactory for most users. Further, we antipate that most users will not
+satisfactory for most users. Further, we anticipate that most users will not
 need more than $n+1=3$ expansion rates (along with $n=2$ break points) to
 describe the wake expansion.
 
@@ -86,7 +86,7 @@ $\alpha$ should be the tilt angle _specified in radians, clockwise positive
 when the rotor is tilted back_.
 
 Finally, $c$ in the above deflection model is a 'deflection rate'. This
-specified how quickly the wake will reach it's maximum deflection
+specifies how quickly the wake will reach it's maximum deflection
 $k_\text{def} C_T \alpha \operatorname{ln}(3)$ for a given
 yaw/tilt angle.
 
@@ -99,7 +99,7 @@ lateral deflections (due to yaw misalignments) and vertical deflections
 
 We anticipate that most users will be able to use the default value for $c$,
 and set `vertical_deflection_gain_D` to the same value as
-`horizontal_deflection_gain_D` (which can also be acheived by providing
+`horizontal_deflection_gain_D` (which can also be achieved by providing
 `vertical_deflection_gain_D = -1`).
 
 ## Wake-induced mixing
@@ -133,7 +133,7 @@ The wake deflection model is similarly adjusted to
 
 $$ \delta = \frac{k_\text{def} C_T \alpha}{1 + w_d \text{WIM}_j}\operatorname{ln}\left(\frac{x/D - c}{x/D + c} + 2\right)$$
 
-where $w_d$ is the wake-induced mixing gain for delflection, provided by the
+where $w_d$ is the wake-induced mixing gain for deflection, provided by the
 user by setting `wim_gain_deflection`.
 
 ## Yaw added mixing
