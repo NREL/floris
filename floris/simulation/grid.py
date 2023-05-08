@@ -309,7 +309,10 @@ class FlowFieldGrid(Grid):
         """
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, _, _ = rotate_coordinates_rel_west(
+            self.wind_directions, 
+            self.turbine_coordinates_array
+        )
 
         # Construct the arrays storing the grid points
         eps = 0.01
