@@ -33,6 +33,8 @@ from floris.simulation.wake_deflection.gauss import (
     yaw_added_turbulence_mixing,
 )
 from floris.utilities import cosd
+from floris.type_dec import NDArrayFloat
+
 
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
@@ -1119,12 +1121,28 @@ def empirical_gauss_solver(
     flow_field: FlowField,
     grid: TurbineGrid,
     model_manager: WakeModelManager
-) -> None:
-    # Algorithm
-    # For each turbine, calculate its effect on every downstream turbine.
-    # For the current turbine, we are calculating the deficit that it adds to downstream turbines.
-    # Integrate this into the main data structure.
-    # Move on to the next turbine.
+) -> NDArrayFloat:
+    """
+    Algorithm:
+    For each turbine, calculate its effect on every downstream turbine.
+    For the current turbine, we are calculating the deficit that it adds to downstream turbines.
+    Integrate this into the main data structure.
+    Move on to the next turbine.
+
+    Args:
+        farm (Farm)
+        flow_field (FlowField)
+        grid (TurbineGrid)
+        model_manager (WakeModelManager)
+
+    Raises:
+        NotImplementedError: Raised if secondary steering is enabled with the EmGauss model.
+        NotImplementedError: Raised if transverse velocities is enabled with the EmGauss model.
+
+    Returns:
+        NDArrayFloat: wake induced mixing field primarily for use in the full-flow EmGauss solver
+    """
+
 
     # <<interface>>
     deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
@@ -1277,13 +1295,12 @@ def empirical_gauss_solver(
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
 
-    flow_field.wim_field = mixing_factor # This is used for full_flow calc
+    return mixing_factor
 
 def full_flow_empirical_gauss_solver(
     farm: Farm,
     flow_field: FlowField,
-    flow_field_grid:
-    FlowFieldGrid,
+    flow_field_grid: FlowFieldGrid,
     model_manager: WakeModelManager
 ) -> None:
 
@@ -1306,7 +1323,6 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm.construct_coordinates()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
-
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
         reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
@@ -1322,7 +1338,12 @@ def full_flow_empirical_gauss_solver(
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-    empirical_gauss_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
+    wim_field = empirical_gauss_solver(
+        turbine_grid_farm,
+        turbine_grid_flow_field,
+        turbine_grid,
+        model_manager
+    )
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
@@ -1381,8 +1402,7 @@ def full_flow_empirical_gauss_solver(
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = turbine_grid_farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
-        wake_induced_mixing_i = turbine_grid_flow_field.wim_field[:, :, i:i+1, :, None].\
-            sum(axis=3, keepdims=1)
+        wake_induced_mixing_i = wim_field[:, :, i:i+1, :, None].sum(axis=3, keepdims=1)
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i

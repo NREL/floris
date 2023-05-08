@@ -202,7 +202,7 @@ class Floris(BaseClass):
         # <<interface>>
         # start = time.time()
 
-        if vel_model in ["gauss", "cc", "turbokpark", "jensen"] and \
+        if vel_model in ["gauss", "cc", "turbopark", "jensen"] and \
             self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warn(
                 "The current model does not account for vertical wake deflection due to " +
@@ -211,28 +211,28 @@ class Floris(BaseClass):
             )
 
         if vel_model=="cc":
-            elapsed_time = cc_solver(
+            cc_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
                 self.wake
             )
         elif vel_model=="turbopark":
-            elapsed_time = turbopark_solver(
+            turbopark_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
                 self.wake
             )
         elif vel_model=="empirical_gauss":
-            elapsed_time = empirical_gauss_solver(
+            empirical_gauss_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
                 self.wake
             )
         else:
-            elapsed_time = sequential_solver(
+            sequential_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
@@ -242,7 +242,7 @@ class Floris(BaseClass):
         # elapsed_time = end - start
 
         self.finalize()
-        return elapsed_time
+        # return elapsed_time
 
     def solve_for_viz(self):
         # Do the calculation with the TurbineGrid for a single wind speed
