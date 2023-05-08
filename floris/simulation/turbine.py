@@ -446,8 +446,10 @@ def cubic_cubature(array, cubature_coefficients, axis=0):
     # n = len(cubature_coefficients["r"])
     weights = cubature_coefficients["CUBcoeff"].flatten()
     weights = weights * len(weights) / np.sum(weights)  # Originally next step is "sum", but here is "mean", so multiply by vector length
-    product = (array * weights[None, None, None, :, None])
-    return cubic_mean(product, axis)
+    # product = (array**3.0 * weights[None, None, None, :, None])
+    # return cubic_mean(product, axis)
+    return np.cbrt(np.mean((array**3.0 * weights[None, None, None, :, None]), axis=axis))
+    
 
 
 def average_velocity(
