@@ -51,10 +51,11 @@ REQUIRED = [
 #   pip install "floris[develop]"       installs developer packages in non-editable install
 EXTRAS = {
     "docs": {
-        "jupyter-book",
+        "jupyter-book<=0.13.3",
         "sphinx-book-theme",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
+        "sphinxcontrib.mermaid",
     },
     "develop": {
         "pytest",

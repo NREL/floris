@@ -33,7 +33,7 @@ if __name__=="__main__":
     # if len(sys.argv) > 1:
     #     floris = Floris(sys.argv[1])
     # else:
-    #     floris = Floris("example_input.json")
+    #     floris = Floris("example_input.yaml")
     # floris.farm.flow_field.calculate_wake()
 
     # start = time.time()

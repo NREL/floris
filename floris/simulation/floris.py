@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import yaml
@@ -66,6 +65,8 @@ class Floris(BaseClass):
     grid: Grid = field(init=False)
 
     def __attrs_post_init__(self) -> None:
+
+        self.check_deprecated_inputs()
 
         # Initialize farm quanitities that depend on other objects
         self.farm.construct_turbine_map()
@@ -140,6 +141,43 @@ class Floris(BaseClass):
             self.logging["file"]["enable"],
             self.logging["file"]["level"],
         )
+
+    def check_deprecated_inputs(self):
+        """
+        This function should used when the FLORIS input file changes in order to provide
+        an informative error and suggest a fix.
+        """
+
+        error_messages = []
+        # Check for missing values add in version 3.2 and 3.4
+        for turbine in self.farm.turbine_definitions:
+
+            if "ref_density_cp_ct" not in turbine.keys():
+                error_messages.append(
+                    "From FLORIS v3.2, the turbine definition must include 'ref_density_cp_ct'. "
+                    "This value represents the air density at which the provided Cp and Ct "
+                    "curves are defined. Previously, this was assumed to be 1.225 kg/m^3, "
+                    "and other air density values applied were assumed to be a deviation "
+                    "from the defined level. FLORIS now requires the user to explicitly "
+                    "define the reference density. Add 'ref_density_cp_ct' to your "
+                    "turbine definition and try again. For a description of the turbine inputs, "
+                    "see https://nrel.github.io/floris/input_reference_turbine.html."
+                )
+
+            if "ref_tilt_cp_ct" not in turbine.keys():
+                error_messages.append(
+                    "From FLORIS v3.4, the turbine definition must include 'ref_tilt_cp_ct'. "
+                    "This value represents the tilt angle at which the provided Cp and Ct "
+                    "curves are defined. Add 'ref_tilt_cp_ct' to your turbine definition and "
+                    "try again. For a description of the turbine inputs, "
+                    "see https://nrel.github.io/floris/input_reference_turbine.html."
+                )
+
+            if len(error_messages) > 0:
+                raise ValueError(
+                    f"{turbine['turbine_type']} turbine model\n" +
+                    "\n\n".join(error_messages)
+                )
 
     # @profile
     def initialize_domain(self):
@@ -236,48 +274,29 @@ class Floris(BaseClass):
     ## I/O
 
     @classmethod
-    def from_file(cls, input_file_path: str | Path, filetype: str = None) -> Floris:
-        """Creates a `Floris` instance from an input file. Must be filetype
-        JSON or YAML.
+    def from_file(cls, input_file_path: str | Path) -> Floris:
+        """Creates a `Floris` instance from an input file. Must be filetype YAML.
 
         Args:
             input_file_path (str): The relative or absolute file path and name to the
                 input file.
-            filetype (str): The type to export: [YAML | JSON]
 
         Returns:
             Floris: The class object instance.
         """
-        input_file_path = Path(input_file_path).resolve()
-        if filetype is None:
-            filetype = input_file_path.suffix.strip(".")
-
-        with open(input_file_path) as input_file:
-            if filetype.lower() in ("yml", "yaml"):
-                input_dict = load_yaml(input_file_path)
-            elif filetype.lower() == "json":
-                input_dict = json.load(input_file)
-
-                # TODO: This is a temporary hack to put the turbine definition into the farm.
-                # Long term, we need a strategy for handling this. The YAML file format supports
-                # pointers to other data, for example.
-                # input_dict["farm"]["turbine"] = input_dict["turbine"]
-                # input_dict.pop("turbine")
-            else:
-                raise ValueError("Supported import filetypes are JSON and YAML")
+        input_dict = load_yaml(Path(input_file_path).resolve())
         return Floris.from_dict(input_dict)
 
-    def to_file(self, output_file_path: str, filetype: str="YAML") -> None:
-        """Converts the `Floris` object to an input-ready JSON or YAML file at `output_file_path`.
+    def to_file(self, output_file_path: str) -> None:
+        """Converts the `Floris` object to an input-ready YAML file at `output_file_path`.
 
         Args:
             output_file_path (str): The full path and filename for where to save the file.
-            filetype (str): The type to export: [YAML | JSON]
         """
         with open(output_file_path, "w+") as f:
-            if filetype.lower() == "yaml":
-                yaml.dump(self.as_dict(), f, default_flow_style=False)
-            elif filetype.lower() == "json":
-                json.dump(self.as_dict(), f, indent=2, sort_keys=False)
-            else:
-                raise ValueError("Supported export filetypes are JSON and YAML")
+            yaml.dump(
+                self.as_dict(),
+                f,
+                sort_keys=False,
+                default_flow_style=False
+            )
