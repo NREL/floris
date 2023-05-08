@@ -967,11 +967,11 @@ class FlorisInterface(LoggerBase):
             )
 
         # Confirm calculate wake has been run
-        if self.floris.state is not State.USED:
-            raise RuntimeError(
-                "Can't run function `FlorisInterface.sample_flow_at_points` without "
-                "first running `FlorisInterface.calculate_wake`."
-            )
+        # if self.floris.state is not State.USED:
+        #     raise RuntimeError(
+        #         "Can't run function `FlorisInterface.sample_flow_at_points` without "
+        #         "first running `FlorisInterface.calculate_wake`."
+        #     )
 
         return self.floris.solve_for_points(points_x, points_y, points_z)
 
