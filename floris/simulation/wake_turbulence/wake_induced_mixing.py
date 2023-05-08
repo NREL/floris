@@ -74,7 +74,7 @@ class WakeInducedMixing(BaseModel):
             axial_induction_i (np.array): Axial induction factor of
                 the ith turbine (-).
             downstream_distance_D_i (np.array): The distance downstream
-                from turbine i to all other turbines (speficied in terms
+                from turbine i to all other turbines (specified in terms
                 of multiples of turbine i's rotor diameter) (D).
 
         Returns:

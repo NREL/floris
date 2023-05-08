@@ -23,7 +23,7 @@ from floris.tools.visualization import plot_rotor_values, visualize_cut_plane
 
 
 """
-This example illustrates the main parameters of the Empirical Guassian
+This example illustrates the main parameters of the Empirical Gaussian
 deflection model and their effects on the wind turbine wake.
 """
 

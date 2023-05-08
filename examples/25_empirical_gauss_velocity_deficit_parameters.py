@@ -23,7 +23,7 @@ from floris.tools.visualization import plot_rotor_values, visualize_cut_plane
 
 
 """
-This example illustrates the main parameters of the Empirical Guassian
+This example illustrates the main parameters of the Empirical Gaussian
 velocity deficit model and their effects on the wind turbine wake.
 """
 
@@ -38,7 +38,7 @@ num_in_row = 5
 yaw_angles = np.zeros((1, 1, num_in_row))
 
 # Define function for visualizing wakes
-def generate_wake_visualization(fi, title=None):
+def generate_wake_visualization(fi: FlorisInterface, title=None):
     # Using the FlorisInterface functions, get 2D slices.
     x_bounds = [-500, 3000]
     y_bounds = [-250, 250]

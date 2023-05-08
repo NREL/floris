@@ -131,7 +131,7 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
                 ith turbine.
             ct_i (np.array): Thrust coefficient for the ith turbine (-).
             hub_height_i (float): Hub height for the ith turbine (m).
-            rotor_diameter_i (np.array): Rotor diamter for the ith
+            rotor_diameter_i (np.array): Rotor diameter for the ith
                 turbine (m).
 
             x (np.array): Streamwise direction grid coordinates of the
@@ -164,8 +164,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         # Wake expansion in the lateral (y) and the vertical (z)
         # TODO: could compute shared components in sigma_z, sigma_y
         # with one function call.
-        sigma_y = empirical_guass_model_wake_width(
             x-x_i,
+        sigma_y = empirical_gauss_model_wake_width(
             self.wake_expansion_rates,
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_y0,
@@ -175,8 +175,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         sigma_y[upstream_mask] = \
             np.tile(sigma_y0, np.shape(sigma_y)[2:])[upstream_mask]
 
-        sigma_z = empirical_guass_model_wake_width(
             x-x_i,
+        sigma_z = empirical_gauss_model_wake_width(
             self.wake_expansion_rates,
             [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_z0,
@@ -281,7 +281,7 @@ def sigmoid_integral(x, center=0, width=1):
     y[in_smoothing_zone] = (width*(z**6 - 3*z**5 + 5/2*z**4)).flatten()
     return y
 
-def empirical_guass_model_wake_width(
+def empirical_gauss_model_wake_width(
     x,
     wake_expansion_rates,
     breakpoints,
