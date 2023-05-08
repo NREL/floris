@@ -51,19 +51,18 @@ fi.calculate_wake()
 
 # Simulate a met mast in between the turbines
 met_mast_option = 0 # Try 0, 1, 2, 3 (requires python >= 3.10)
-match met_mast_option:
-    case 0:
-        points_x = [3*D]*4
-        points_y = [0]*4
-    case 1:
-        points_x = [200.]*4
-        points_y = [200.]*4
-    case 2:
-        points_x = [20.]*4
-        points_y = [20.]*4
-    case 3:
-        points_x = [305.]*4
-        points_y = [158.]*4
+if met_mast_option == 0:
+    points_x = [3*D]*4
+    points_y = [0]*4
+elif met_mast_option == 1:
+    points_x = [200.]*4
+    points_y = [200.]*4
+elif met_mast_option == 2:
+    points_x = [20.]*4
+    points_y = [20.]*4
+elif met_mast_option == 3:
+    points_x = [305.]*4
+    points_y = [158.]*4
 
 points_z = [30, 90, 150, 250]
 
