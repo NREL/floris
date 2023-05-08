@@ -432,20 +432,20 @@ def cubic_mean(array, axis=0):
     return np.cbrt(np.mean(array ** 3.0, axis=axis))
 
 def simple_cubature(array, cubature_coefficients, axis=0):
-    A = cubature_coefficients["A"]
-    B = cubature_coefficients["B"]
-    n = len(cubature_coefficients["r"])
-    weights = np.kron(A, np.ones((1, n))).flatten()
-    weights = weights / np.mean(weights)
+    # A = cubature_coefficients["A"]
+    # B = cubature_coefficients["B"]
+    # n = len(cubature_coefficients["r"])
+    weights = cubature_coefficients["CUBcoeff"].flatten()
+    weights = weights * len(weights) / np.sum(weights)  # Originally next step is "sum", but here is "mean", so multiply by vector length
     product = (array * weights[None, None, None, :, None])
     return simple_mean(product, axis)
 
 def cubic_cubature(array, cubature_coefficients, axis=0):
-    A = cubature_coefficients["A"]
-    B = cubature_coefficients["B"]
-    n = len(cubature_coefficients["r"])
-    weights = np.kron(A, np.ones((1, n))).flatten()
-    weights = weights / np.mean(weights)
+    # A = cubature_coefficients["A"]
+    # B = cubature_coefficients["B"]
+    # n = len(cubature_coefficients["r"])
+    weights = cubature_coefficients["CUBcoeff"].flatten()
+    weights = weights * len(weights) / np.sum(weights)  # Originally next step is "sum", but here is "mean", so multiply by vector length
     product = (array * weights[None, None, None, :, None])
     return cubic_mean(product, axis)
 
