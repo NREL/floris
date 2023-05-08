@@ -127,28 +127,26 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         """
         # ==============================================================
 
-        deflection_gain_y = self.horizontal_deflection_gain_D*rotor_diameter_i
+        deflection_gain_y = self.horizontal_deflection_gain_D * rotor_diameter_i
         if self.vertical_deflection_gain_D == -1:
             deflection_gain_z = deflection_gain_y
         else:
-            deflection_gain_z = self.vertical_deflection_gain_D * \
-                rotor_diameter_i
+            deflection_gain_z = self.vertical_deflection_gain_D * rotor_diameter_i
 
         # Convert to radians, CW yaw for consistency with other models
         yaw_r = np.pi/180 * -yaw_i
         tilt_r = np.pi/180 * tilt_i
 
-        A_y = (deflection_gain_y*ct_i*yaw_r)/\
-              (1+self.mixing_gain_deflection*mixing_i)
-
-        A_z = (deflection_gain_z*ct_i*tilt_r)/\
-              (1+self.mixing_gain_deflection*mixing_i)
+        A_y = (deflection_gain_y * ct_i * yaw_r) / (1 + self.mixing_gain_deflection * mixing_i)
+        A_z = (deflection_gain_z * ct_i * tilt_r) / (1 + self.mixing_gain_deflection * mixing_i)
 
         # Apply downstream mask in the process
-        x_normalized = ((x - x_i)*np.array(x > x_i + 0.1))/rotor_diameter_i
+        x_normalized = (x - x_i) * np.array(x > x_i + 0.1) / rotor_diameter_i
 
-        log_term = np.log((x_normalized - self.deflection_rate) \
-                          /(x_normalized + self.deflection_rate) + 2)
+        log_term = np.log(
+            (x_normalized - self.deflection_rate) / (x_normalized + self.deflection_rate)
+            + 2
+        )
 
         deflection_y = A_y * log_term
         deflection_z = A_z * log_term
@@ -161,6 +159,9 @@ def yaw_added_wake_mixing(
     downstream_distance_D_i,
     yaw_added_mixing_gain
 ):
-    return axial_induction_i[:,:,:,0,0] * yaw_added_mixing_gain * \
-        (1 - cosd(yaw_angle_i[:,:,:,0,0]))\
+    return (
+        axial_induction_i[:,:,:,0,0]
+        * yaw_added_mixing_gain
+        * (1 - cosd(yaw_angle_i[:,:,:,0,0]))
         / downstream_distance_D_i**2
+    )

@@ -164,24 +164,24 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         # Wake expansion in the lateral (y) and the vertical (z)
         # TODO: could compute shared components in sigma_z, sigma_y
         # with one function call.
-            x-x_i,
         sigma_y = empirical_gauss_model_wake_width(
+            x - x_i,
             self.wake_expansion_rates,
-            [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
+            [b * rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_y0,
-            self.smoothing_length_D*rotor_diameter_i,
-            self.mixing_gain_velocity*mixing_i,
+            self.smoothing_length_D * rotor_diameter_i,
+            self.mixing_gain_velocity * mixing_i,
         )
         sigma_y[upstream_mask] = \
             np.tile(sigma_y0, np.shape(sigma_y)[2:])[upstream_mask]
 
-            x-x_i,
         sigma_z = empirical_gauss_model_wake_width(
+            x - x_i,
             self.wake_expansion_rates,
-            [b*rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
+            [b * rotor_diameter_i for b in self.breakpoints_D], # .flatten()[0]
             sigma_z0,
-            self.smoothing_length_D*rotor_diameter_i,
-            self.mixing_gain_velocity*mixing_i,
+            self.smoothing_length_D * rotor_diameter_i,
+            self.mixing_gain_velocity * mixing_i,
         )
         sigma_z[upstream_mask] = \
             np.tile(sigma_z0, np.shape(sigma_z)[2:])[upstream_mask]
@@ -204,8 +204,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             sigma_y0,
             sigma_z0
         )
-        # Normalize to match end of acuator disk model tube
-        C = C / (8*(self.sigma_0_D**2))
+        # Normalize to match end of actuator disk model tube
+        C = C / (8 * self.sigma_0_D**2 )
 
         wake_deficit = gaussian_function(C, r, 1, np.sqrt(0.5))
 
@@ -231,7 +231,7 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
                 sigma_z0
             )
             # Normalize to match end of acuator disk model tube
-            C_mirr = C_mirr / (8*(self.sigma_0_D**2))
+            C_mirr = C_mirr / (8 * self.sigma_0_D**2)
 
             # ASSUME sum-of-squares superposition for the real and mirror wakes
             wake_deficit = np.sqrt(
@@ -272,9 +272,9 @@ def gaussian_function(C, r, n, sigma):
 def sigmoid_integral(x, center=0, width=1):
     y = np.zeros_like(x)
     #TODO: Can this be made faster?
-    above_smoothing_zone = ((x-center) > width/2)
+    above_smoothing_zone = (x-center) > width/2
     y[above_smoothing_zone] = (x-center)[above_smoothing_zone]
-    in_smoothing_zone = (((x-center) >= -width/2) & ((x-center) <= width/2))
+    in_smoothing_zone = ((x-center) >= -width/2) & ((x-center) <= width/2)
     z = ((x-center)/width + 0.5)[in_smoothing_zone]
     if width.shape[0] > 1: # multiple turbine sizes
         width = np.broadcast_to(width, x.shape)[in_smoothing_zone]
@@ -294,7 +294,7 @@ def empirical_gauss_model_wake_width(
 
     sigma = (wake_expansion_rates[0] + mixing_final) * x + sigma_0
     for ib, b in enumerate(breakpoints):
-        sigma += (wake_expansion_rates[ib+1]-wake_expansion_rates[ib]) * \
+        sigma += (wake_expansion_rates[ib+1] - wake_expansion_rates[ib]) * \
             sigmoid_integral(x, center=b, width=smoothing_length)
 
     return sigma
