@@ -950,11 +950,20 @@ class FlorisInterface(LoggerBase):
         points_z: NDArrayFloat,
     ):
         """
-        To be written
+        Extract the wind speed at points in the flow.
+
         Args:
-            probe_points (list[tuple], optional): List of probe points to add.
+            points_x (1DArray or list): x-locations of points where 
+                flow is desired.
+            points_y (1DArray or list): y-locations of points where 
+                flow is desired.
+            points_z (1DArray or list): z-locations of points where 
+                flow is desired.
+
         Returns:
-            Nothing?
+            3DArrayFloat containing wind speed, with dimensions 
+               (# of wind directions) x (# of wind speeds) x 
+               (# of sample points)
         """
 
         # Check that point_x, point_y, point_z are all the same length
