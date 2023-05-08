@@ -13,6 +13,8 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import copy
+
 import numpy as np
 import pytest
 
@@ -188,6 +190,7 @@ class SampleInputs:
             "pT": 1.88,
             "generator_efficiency": 1.0,
             "ref_density_cp_ct": 1.225,
+            "ref_tilt_cp_ct": 5.0,
             "power_thrust_table": {
                 "power": [
                     0.000000,
@@ -342,6 +345,21 @@ class SampleInputs:
             },
             "TSR": 8.0
         }
+
+        self.turbine_floating = copy.deepcopy(self.turbine)
+        self.turbine_floating["floating_tilt_table"] = {
+            "tilt": [
+                5.0,
+                5.0,
+                5.0,
+            ],
+            "wind_speeds": [
+                0.0,
+                25.0,
+                50.0,
+            ],
+        }
+        self.turbine_floating["floating_correct_cp_ct_for_tilt"] = True
 
         self.farm = {
             "layout_x": X_COORDS,

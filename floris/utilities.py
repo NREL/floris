@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import os
+from math import ceil
 from typing import Tuple
 
 import numpy as np
@@ -288,7 +289,31 @@ class Loader(yaml.SafeLoader):
 Loader.add_constructor('!include', Loader.include)
 
 def load_yaml(filename, loader=Loader):
-    if isinstance(filename, dict):
-        return filename  # filename already yaml dict
     with open(filename) as fid:
         return yaml.load(fid, loader)
+
+
+def round_nearest_2_or_5(x: int | float) -> int:
+    """Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 2 or 5.
+
+    Args:
+        x (int | float): The number to be rounded.
+
+    Returns:
+        int: The rounded number.
+    """
+    base_2 = 2
+    base_5 = 5
+    return min(base_2 * ceil((x + 0.5) / base_2), base_5 * ceil((x + 0.5) / base_5))
+
+
+def round_nearest(x: int | float, base: int = 5) -> int:
+    """Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.
+
+    Args:
+        x (int | float): The number to be rounded.
+
+    Returns:
+        int: The rounded number.
+    """
+    return base * ceil((x + 0.5) / base)
