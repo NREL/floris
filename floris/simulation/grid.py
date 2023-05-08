@@ -368,7 +368,10 @@ class FlowFieldPlanarGrid(Grid):
         Then, create the grid based on this wind-from-left orientation
         """
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z, _, _ = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, _, _ = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array
+        )
 
         max_diameter = np.max(self.reference_turbine_diameter)
 
@@ -494,7 +497,7 @@ class PointsGrid(Grid):
     points_z: NDArrayFloat = field()
     x_center_of_rotation: float | None = field(default=None)
     y_center_of_rotation: float | None = field(default=None)
-    
+
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
         self.set_grid()
@@ -507,7 +510,7 @@ class PointsGrid(Grid):
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, _, _ = rotate_coordinates_rel_west(
-            self.wind_directions, 
+            self.wind_directions,
             point_coordinates,
             x_center_of_rotation=self.x_center_of_rotation,
             y_center_of_rotation=self.y_center_of_rotation

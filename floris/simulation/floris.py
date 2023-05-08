@@ -290,7 +290,7 @@ class Floris(BaseClass):
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
             return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
-    
+
     def finalize(self):
         # Once the wake calculation is finished, unsort the values to match
         # the user-supplied order of things.
