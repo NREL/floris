@@ -1,4 +1,5 @@
-(theory/empirical gauss model)=
+
+(empirical_gauss_model)=
 # Empirical Gaussian model
 
 FLORIS's "empirical" model has the same Gaussian wake shape as other popular
