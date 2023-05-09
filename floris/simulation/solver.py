@@ -1210,8 +1210,9 @@ def empirical_gauss_solver(
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
 
-        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(flow_field.u_sorted)\
-            [:, :, i:i+1, None, None]
+        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(
+            average_velocity(flow_field.u_sorted)
+        )[:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError(
@@ -1406,8 +1407,9 @@ def full_flow_empirical_gauss_solver(
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
 
-        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(flow_field.u_sorted)\
-            [:, :, i:i+1, None, None]
+        tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(
+            average_velocity(turbine_grid_flow_field.u_sorted)
+        )[:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError(
