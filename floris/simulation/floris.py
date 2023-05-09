@@ -256,7 +256,7 @@ class Floris(BaseClass):
 
     def solve_for_points(self, points_x, points_y, points_z):
         # Do the calculation with the TurbineGrid for a single wind speed
-        # and wind direction and 1 point on the grid. Then, use the result
+        # and wind direction and a 3x3 rotor grid. Then, use the result
         # to construct the full flow field grid.
         # This function call should be for a single wind direction and wind speed
         # since the memory consumption is very large.
